@@ -1,0 +1,260 @@
+# ============================================================
+#  KaliumCore - configuration
+#  Plugin de menu pour serveur de survie, pense pour etre
+#  reutilise tel quel sur d'autres serveurs (y compris temporaires).
+# ============================================================
+
+# Nom du lobby tel que declare dans le velocity.toml (bouton "Retour au lobby").
+lobby-server: lobby
+
+# Largeur des boutons du menu (1 a 1024).
+button-width: 220
+
+# Operateurs autorises a voir le bouton "Parametres" (en plus de la permission kaliumcore.admin,
+# accordee par defaut aux joueurs "op" du serveur - via un plugin de permissions comme LuckPerms
+# par exemple). Pseudo (insensible a la casse) ou UUID.
+operators:
+  - Maaxster
+  - LeKiwi06
+
+# Intervalle (en secondes) entre deux sauvegardes automatiques des statistiques des joueurs en ligne
+# (en plus de la sauvegarde systematique a la deconnexion et a l'arret du serveur).
+stats-autosave-seconds: 300
+
+# Modules du menu. Chaque module a sa propre section "enabled: true/false", modifiable en jeu depuis
+# l'ecran Parametres. Desactiver un module masque son bouton de menu (et ses statistiques associees
+# le cas echeant) mais n'arrete jamais l'enregistrement en arriere-plan (ex. les statistiques
+# continuent d'etre comptabilisees meme quand l'ecran Statistiques est desactive).
+modules:
+  stats:
+    enabled: true
+  claims:
+    enabled: true
+    # Un joueur peut reclamer un chunk depuis le menu (il doit s'y trouver).
+    claim-action: true
+    # Un joueur peut liberer un chunk qui lui appartient depuis le menu (il doit s'y trouver).
+    unclaim-action: true
+    # Protection des chunks reclames : casse/pose de blocs, utilisation des blocs interactifs
+    # (coffres, etabli, enclume...) et degats PvP contre le proprietaire dans son propre chunk.
+    protection: true
+    # Chunk principal ("base") : definissable/modifiable par le joueur depuis le menu (il doit se
+    # trouver sur un de ses chunks). Par defaut, la base est le premier chunk reclame.
+    home-chunk: true
+    # Conversion emplacement <-> objet transportable (pense pour circuler via un futur systeme de
+    # commerce).
+    item-conversion: true
+    # Emplacements ("claim slots") donnes aux nouveaux joueurs. Un emplacement = un chunk reclame ;
+    # aucune limite du nombre de chunks qu'un joueur peut posseder au-dela de ses emplacements (un
+    # operateur peut toujours lui en donner davantage, y compris en tres grand nombre).
+    default-slots: 6
+    # Objet obtenu en convertissant un emplacement (voir item-conversion ci-dessus).
+    token:
+      material: PAPER
+      name: "<gold><bold>Jeton d'emplacement"
+      lore:
+        - "<gray>Objet d'échange : convertis-le"
+        - "<gray>en emplacement de claim"
+        - "<gray>depuis le menu Claims."
+  market:
+    enabled: true
+    # Nombre maximum d'annonces actives simultanees par joueur (0 = illimite).
+    max-listings: 10
+    # Duree de vie par defaut d'une annonce avant expiration automatique (l'objet revient alors
+    # dans le coffre de recompenses du vendeur).
+    listing-duration-days: 7
+
+# Textes (format MiniMessage).
+messages:
+  menu-title: "<#09add3><bold>KaLium</bold> <dark_gray>- <white>Menu"
+  menu-header: "<gray>Que veux-tu faire ?"
+  close-button: "<red>Fermer"
+  back-button: "<#09add3><bold>Retour au lobby"
+  back-description: "<gray>Clique pour retourner au lobby."
+  back-menu-button: "<gray>Retour au menu"
+  home-button: "<#09add3><bold>Retour à la base"
+  home-description: "<gray>Te téléporte sur ton claim principal."
+  home-none: "<red>Tu n'as pas encore de base définie."
+  home-teleported: "<green>Direction ta base !"
+  stats-button: "<yellow><bold>Statistiques"
+  stats-description: "<gray>Consulte tes statistiques sur ce serveur."
+  settings-button: "<gray><bold>Paramètres"
+  settings-description: "<gray>Réservé aux opérateurs : active/désactive les options du menu."
+  connecting: "<gray>Connexion à <white><server><gray>..."
+  already-in-lobby: "<yellow>Tu es déjà au lobby."
+  reloaded: "<green>Configuration rechargée."
+  no-permission: "<red>Tu n'as pas la permission d'utiliser cette commande."
+  stats-title: "<yellow><bold>Statistiques"
+  stats-header: "<gray>Voici tes statistiques sur ce serveur."
+  stats-playtime: "<#09add3>Temps de jeu <dark_gray>: <white><value>"
+  stats-levels-spent: "<#09add3>Niveaux dépensés <dark_gray>: <white><value>"
+  stats-blocks-broken: "<#09add3>Blocs cassés <dark_gray>: <white><value>"
+  stats-blocks-placed: "<#09add3>Blocs posés <dark_gray>: <white><value>"
+  stats-monsters-killed: "<#09add3>Monstres tués <dark_gray>: <white><value>"
+  settings-title: "<gray><bold>Paramètres</bold> <dark_gray>- <white>KaliumCore"
+  settings-header: "<gray>Active ou désactive les options du menu."
+  settings-open-button: "<#09add3><bold><module> <gray>›"
+  settings-reload-button: "<#09add3><bold>Recharger la configuration"
+  settings-options-button: "<#09add3><bold>Options actives"
+  settings-options-title: "<gray><bold>Paramètres</bold> <dark_gray>- <white>Options actives"
+  settings-options-header: "<gray>Coche ou décoche chaque option, puis clique sur Enregistrer."
+  settings-options-save-button: "<green><bold>Enregistrer"
+  settings-options-saved: "<green>Options mises à jour."
+  toggle-on: "Activé"
+  toggle-off: "Désactivé"
+
+  # -------------------------------------------------------- claims (joueur)
+  claims-button: "<gold><bold>Claims"
+  claims-description: "<gray>Réclame ce chunk, gère ta base et tes emplacements."
+  claims-title: "<gold><bold>Claims"
+  claims-header: "<gray>Territoire du chunk où tu te trouves."
+  claims-slots: "<#09add3>Emplacements <dark_gray>: <white><used> / <total> utilisés"
+  claims-chunk-free: "<green>Ce chunk est libre."
+  claims-chunk-mine: "<green>Ce chunk t'appartient."
+  claims-chunk-other: "<red>Ce chunk appartient à <white><owner><red>."
+  claims-claim-button: "<green><bold>Réclamer ce chunk"
+  claims-claim-ok: "<green>Chunk réclamé."
+  claims-claim-taken: "<red>Ce chunk est déjà réclamé."
+  claims-claim-no-slots: "<red>Tu n'as plus d'emplacement disponible."
+  claims-unclaim-button: "<red><bold>Libérer ce chunk"
+  claims-unclaim-ok: "<green>Chunk libéré."
+  claims-unclaim-not-owner: "<red>Ce chunk ne t'appartient pas."
+  claims-home-set-button: "<#09add3><bold>Définir comme base"
+  claims-home-set-ok: "<green>Nouvelle base définie."
+  claims-home-set-not-owner: "<red>Tu dois te trouver sur un de tes chunks pour le définir comme base."
+  claims-token-to-item-button: "<gray><bold>Convertir un emplacement en jeton"
+  claims-token-to-item-description: "<gray>Transforme un emplacement libre en objet transportable."
+  claims-token-to-item-ok: "<green>Emplacement converti en jeton."
+  claims-token-to-item-none: "<red>Tu n'as pas d'emplacement disponible à convertir."
+  claims-item-to-token-button: "<gray><bold>Convertir un jeton en emplacement"
+  claims-item-to-token-description: "<gray>Consomme un jeton de ton inventaire pour gagner un emplacement."
+  claims-item-to-token-ok: "<green>Jeton converti en emplacement."
+  claims-item-to-token-none: "<red>Tu n'as pas de jeton d'emplacement dans ton inventaire."
+  claims-protected-build: "<red>Ce chunk appartient à <white><owner><red> : tu ne peux rien y casser ni poser."
+  claims-protected-interact: "<red>Ce chunk appartient à <white><owner><red> : tu ne peux pas utiliser ce bloc."
+  claims-protected-pvp: "<red>Le combat est bloqué : <white><owner><red> est protégé dans son chunk."
+
+  # -------------------------------------------------------- claims (parametres)
+  settings-claims-header: "<gray>Emplacements par défaut et gestion des joueurs. Le bouton \"Options\" ci-dessous regroupe les réglages fins (claim, unclaim, protection...)."
+  settings-claims-title: "<gold><bold>Paramètres</bold> <dark_gray>- <white>Claims"
+  settings-claims-toggle-master: "Système de claim"
+  settings-claims-toggle-claim: "Réclamer un chunk (claim)"
+  settings-claims-toggle-unclaim: "Libérer un chunk (unclaim)"
+  settings-claims-toggle-protection-break: "Protection - casse de blocs"
+  settings-claims-toggle-protection-place: "Protection - dépôt de blocs"
+  settings-claims-toggle-protection-interact: "Protection - utilisation de blocs (coffres, établis...)"
+  settings-claims-toggle-protection-pvp: "Protection - PvP"
+  settings-claims-toggle-home: "Chunk principal (base)"
+  settings-claims-toggle-item: "Conversion en jeton (emplacement ↔ objet)"
+  settings-claims-options-button: "<#09add3><bold>Options"
+  settings-claims-options-title: "<gold><bold>Claims</bold> <dark_gray>- <white>Options"
+  settings-claims-options-header: "<gray>Coche ou décoche chaque option, puis clique sur Enregistrer."
+  settings-claims-default-slots-label: "<gray>Emplacements par défaut (nouveaux joueurs)"
+  settings-claims-default-slots-current: "<gray>Valeur actuelle : <white><value>"
+  settings-claims-default-slots-save: "<#09add3><bold>Enregistrer les emplacements par défaut"
+  settings-claims-default-slots-saved: "<green>Emplacements par défaut réglés sur <white><value><green>."
+  settings-claims-manage-button: "<#09add3><bold>Gérer les emplacements d'un joueur"
+  settings-claims-manage-title: "<gold><bold>Claims</bold> <dark_gray>- <white>Gestion joueur"
+  settings-claims-manage-header: "<gray>Tape un pseudo, consulte ses emplacements, puis ajuste-les."
+  settings-claims-manage-player-label: "<gray>Pseudo du joueur"
+  settings-claims-manage-delta-label: "<gray>Ajustement (+/-)"
+  settings-claims-manage-consult-button: "<#09add3><bold>Consulter"
+  settings-claims-manage-apply-button: "<green><bold>Appliquer l'ajustement"
+  settings-claims-manage-unknown-player: "<red>Joueur introuvable."
+  settings-claims-manage-info: "<gray><player> <dark_gray>: <white><used><gray>/<white><total> <gray>utilisés (<white><available> <gray>libres)"
+  settings-claims-manage-applied: "<green>Emplacements de <white><player><green> réglés sur <white><total><green>."
+
+  # -------------------------------------------------------- commerce (joueur)
+  market-button: "<dark_green><bold>Commerce"
+  market-description: "<gray>Achète, vends et gère tes objets contre des émeraudes."
+  market-hub-title: "<gold><bold>Commerce"
+  market-hub-header: "<gray>Achète, vends et gère tes objets contre des émeraudes."
+  market-hub-sell-button: "<green><bold>Mettre en vente"
+  market-hub-mesventes-button: "<#09add3><bold>Mes ventes"
+  market-hub-search-button: "<#09add3><bold>Recherche"
+  market-hub-marche-button: "<#09add3><bold>Marché"
+  market-hub-flash-button: "<gold><bold>Vente flash"
+  market-hub-history-sales-button: "<#09add3><bold>Historique des ventes"
+  market-hub-history-purchases-button: "<#09add3><bold>Historique des achats"
+  market-hub-rewards-button: "<gold><bold>Rewards <dark_gray>(<white><count><dark_gray>)"
+  market-reward-title: "<gray><bold>Commerce</bold> <dark_gray>- <white>Récompenses"
+  market-title-flash: "<gold><bold>Commerce</bold> <dark_gray>- <white>Vente flash"
+  market-title-browse: "<gold><bold>Commerce</bold> <dark_gray>- <white>Marché"
+  market-title-mesventes: "<gold><bold>Commerce</bold> <dark_gray>- <white>Mes ventes"
+  market-title-recherche: "<gold><bold>Commerce</bold> <dark_gray>- <white>Recherche"
+  market-page-prev: "<#09add3><bold>« Page précédente"
+  market-page-next: "<#09add3><bold>Page suivante »"
+  market-page-info: "<gray>Page <white><page></white> / <white><total></white>"
+  market-back-menu: "<gray>« Retour au menu"
+  market-empty-flash: "<gray>Aucune vente flash en cours."
+  market-empty-browse: "<gray>Aucune annonce en vente."
+  market-empty-sell: "<gray>Tu n'as aucune annonce active."
+  market-empty-search: "<gray>Aucun objet en vente ne correspond à ta recherche."
+  market-empty-rewards: "<gray>Ton coffre de récompenses est vide."
+  market-lore-price: "<#09add3>Prix <dark_gray>: <white><price> émeraude(s)"
+  market-lore-average: "<#09add3>Prix de vente moyen <dark_gray>: <white><value> émeraude(s)"
+  market-lore-average-none: "<#09add3>Prix de vente moyen <dark_gray>: <gray>Aucune donnée"
+  market-lore-seller: "<#09add3>Vendeur <dark_gray>: <white><seller>"
+  market-lore-buy-hint: "<green>Clique pour acheter"
+  market-lore-cancel-hint: "<red>Clique pour retirer cette annonce"
+  market-lore-expires: "<#09add3>Expire le <dark_gray>: <white><date>"
+  market-lore-flash-stock: "<#09add3>Stock restant <dark_gray>: <white><remaining> / <total>"
+  market-lore-flash-window-active: "<#09add3>Se termine le <dark_gray>: <white><date>"
+  market-lore-flash-window-upcoming: "<#09add3>Disponible à partir du <dark_gray>: <white><date>"
+  market-lore-flash-soon: "<yellow>Pas encore disponible"
+  market-sell-dialog-title: "<gold><bold>Commerce</bold> <dark_gray>- <white>Mettre en vente"
+  market-sell-dialog-header: "<gray>Choisis le prix, la quantité et la durée, puis confirme."
+  market-sell-dialog-price-label: "<gray>Prix (émeraudes)"
+  market-sell-dialog-quantity-label: "<gray>Quantité"
+  market-sell-dialog-duration-label: "<gray>Durée de la vente (jours, 7 max)"
+  market-sell-dialog-confirm-button: "<green><bold>Mettre en vente"
+  market-sell-ok: "<green>Objet mis en vente."
+  market-sell-empty-hand: "<red>Tu dois tenir l'objet à vendre en main."
+  market-sell-limit: "<red>Tu as atteint ta limite d'annonces actives."
+  market-sell-disabled: "<red>Le système de commerce est désactivé."
+  market-sell-bad-price: "<red>Prix invalide."
+  market-cancel-ok: "<green>Annonce retirée, objet récupéré."
+  market-buy-ok: "<green>Achat effectué ! Récupère ton objet dans le coffre de récompenses."
+  market-buy-not-enough: "<red>Tu n'as pas assez d'émeraudes."
+  market-buy-own-listing: "<red>Tu ne peux pas acheter ta propre annonce."
+  market-buy-not-found: "<red>Cette annonce n'est plus disponible."
+  market-buy-disabled: "<red>Le système de commerce est désactivé."
+  market-search-dialog-title: "<gold><bold>Commerce</bold> <dark_gray>- <white>Recherche"
+  market-search-dialog-header: "<gray>Tape un mot-clé (nom français ou anglais), puis confirme."
+  market-search-dialog-label: "<gray>Mot-clé"
+  market-search-dialog-confirm-button: "<green><bold>Rechercher"
+  market-history-ventes-title: "<gold><bold>Commerce</bold> <dark_gray>- <white>Historique des ventes"
+  market-history-ventes-header: "<gray>Tes <white>ventes</white> les plus récentes (40 max)."
+  market-history-ventes-empty: "<gray>Tu n'as encore rien vendu."
+  market-history-achats-title: "<gold><bold>Commerce</bold> <dark_gray>- <white>Historique des achats"
+  market-history-achats-header: "<gray>Tes <white>achats</white> les plus récents (40 max)."
+  market-history-achats-empty: "<gray>Tu n'as encore rien acheté."
+  market-history-line-vente: "<white><item> <gray>x<qty> <dark_gray>- <green><price> émeraude(s) <dark_gray>- <gray>à <white><counterpart> <dark_gray>- <gray><date>"
+  market-history-line-achat: "<white><item> <gray>x<qty> <dark_gray>- <red><price> émeraude(s) <dark_gray>- <gray>à <white><counterpart> <dark_gray>- <gray><date>"
+  market-history-line-flash: "<white><item> <gray>x<qty> <dark_gray>- <gold><price> émeraude(s) <dark_gray>- <gray>vente flash de <white><counterpart> <dark_gray>- <gray><date>"
+
+  # -------------------------------------------------------- commerce (parametres)
+  settings-market-header: "<gray>Limites du commerce et ventes flash programmées."
+  settings-market-title: "<gold><bold>Paramètres</bold> <dark_gray>- <white>Commerce"
+  settings-market-toggle-master: "Système de commerce"
+  settings-market-max-listings-label: "<gray>Annonces actives max par joueur (0 = illimité)"
+  settings-market-max-listings-current: "<gray>Valeur actuelle : <white><value>"
+  settings-market-max-listings-save: "<#09add3><bold>Enregistrer les limites"
+  settings-market-max-listings-saved: "<green>Limite d'annonces réglée sur <white><value><green>."
+  settings-market-duration-label: "<gray>Durée par défaut proposée à la mise en vente (jours, 7 max)"
+  settings-market-schedule-flash-button: "<#09add3><bold>Programmer une vente flash"
+  settings-market-flash-list-button: "<#09add3><bold>Ventes flash programmées"
+  settings-market-flash-schedule-title: "<gold><bold>Commerce</bold> <dark_gray>- <white>Programmer une vente flash"
+  settings-market-flash-schedule-header: "<gray>Tiens l'objet à proposer en main, choisis prix/stock/délai/durée, puis confirme."
+  settings-market-flash-price-label: "<gray>Prix (émeraudes) par lot"
+  settings-market-flash-stock-label: "<gray>Stock (nombre de lots)"
+  settings-market-flash-delay-label: "<gray>Délai avant démarrage (minutes)"
+  settings-market-flash-duration-label: "<gray>Durée de la vente (minutes)"
+  settings-market-flash-confirm-button: "<green><bold>Programmer"
+  settings-market-flash-ok: "<green>Vente flash programmée."
+  settings-market-flash-empty-hand: "<red>Tu dois tenir l'objet à proposer en main."
+  settings-market-flash-bad-params: "<red>Paramètres invalides."
+  settings-market-flash-list-title: "<gold><bold>Commerce</bold> <dark_gray>- <white>Ventes flash programmées"
+  settings-market-flash-list-header: "<gray>Clique sur une vente pour l'annuler."
+  settings-market-flash-list-empty: "<gray>Aucune vente flash programmée."
+  settings-market-flash-list-entry: "<white><item> <dark_gray>- <gray><status>"
+  settings-market-flash-cancel-ok: "<green>Vente flash annulée."

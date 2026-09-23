@@ -1,0 +1,9 @@
+{
+  "id": "kaliumrelay",
+  "name": "KaliumRelay",
+  "version": "${project.version}",
+  "description": "Relais HTTP entre KalGames et KalBingo, independant de la presence d'un joueur sur l'un des deux serveurs.",
+  "authors": ["KaLium"],
+  "dependencies": [],
+  "main": "fr.kalium.relay.KaliumRelay"
+}

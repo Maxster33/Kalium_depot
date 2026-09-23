@@ -1,0 +1,27 @@
+name: KalGames
+version: '${project.version}'
+main: fr.kalium.games.KalGames
+api-version: '26.2'
+description: Hub, menus et parties instanciees (PvP Kit, parcours, course de bateau...) pour Kal-Games.
+authors: [KaLium]
+softdepend: [KaliumMenu, PlayerKits2]
+
+commands:
+  kalgames:
+    description: Commandes KalGames (hub, jeux, administration).
+    aliases: [kg]
+    usage: /<command> <hub|jeux|rejoindre|quitter|admin|reload>
+  hub:
+    description: Retourne au hub de Kal-Games.
+    usage: /<command>
+  bingo:
+    description: Bingo (test minimal en attendant l'intégration au hub) - créer/rejoindre une partie.
+    usage: /<command> <create|join <code>>
+
+permissions:
+  kalgames.admin:
+    description: Menu Parametres (mini-jeux, arenes, kits, instances) et rechargement.
+    default: op
+  kalgames.bypass:
+    description: Ignore la protection du hub (construire, casser, deplacer les objets).
+    default: op

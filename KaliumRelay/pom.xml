@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>fr.kalium</groupId>
+    <artifactId>KaliumRelay</artifactId>
+    <version>1.1.0</version>
+    <packaging>jar</packaging>
+    <name>KaliumRelay</name>
+
+    <!-- Cosmetique / suivi de version uniquement - comme pour KalGames/KalBingo/KaliumCore/
+         KaliumMenu, ce fichier n'est pas lu par build.sh (Maven Central n'est pas joignable
+         depuis cet environnement, seul repo.papermc.io l'est - build.sh compile donc via ECJ
+         avec les jars recuperes a la main dans libs/, voir build.sh). Plugin VELOCITY (proxy),
+         pas Paper : pas de dependance paper-api ici. -->
+    <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <!-- Version alignee sur le build reellement deploye sur le proxy (velocity-4.1.2-SNAPSHOT-27.jar,
+                 verifie via WinSCP le 23/09/2026) - pas la derniere stable (4.2.0) pour eviter tout risque
+                 d'incompatibilite d'API avec ce qui tourne reellement. -->
+            <groupId>com.velocitypowered</groupId>
+            <artifactId>velocity-api</artifactId>
+            <version>4.1.2-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <!-- Pour @Inject (com.google.inject.Inject) uniquement - jamais embarque dans le jar
+                 livre (scope provided : le systeme de plugins de Velocity EST Guice, donc garanti
+                 present et correctement resolu au runtime - voir KaliumRelay.java, note 1.0.1). -->
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>5.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>

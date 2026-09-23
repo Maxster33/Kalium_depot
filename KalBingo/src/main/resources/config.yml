@@ -1,0 +1,148 @@
+# ============================================================
+#  KalBingo - configuration
+#  Etapes 1/2/3/4 (architecture parties/instances, mondes a seed
+#  partagee, gestion joueurs/equipes, grille configurable) : pas encore
+#  de validation, d'interface, de detection de ligne ni d'administration
+#  complete (voir to_do_list_Kal_Games_Bingo.txt, ordre de priorite
+#  section 16). Beaucoup de reglages ci-dessous restent a affiner une
+#  fois les etapes suivantes implementees.
+# ============================================================
+
+game:
+  # Duree par defaut d'une partie, en secondes (1h). Sert uniquement de valeur
+  # de repli locale (ex. commande admin de test) : le reglage modifiable par
+  # les admins vit dans les parametres du mini-jeu Bingo cote kal-games (meme
+  # principe que les autres mini-jeux) et c'est CETTE valeur-la qui est
+  # transmise pour chaque partie - ce plugin n'impose donc pas de plafond.
+  default-duration-seconds: 3600
+  # AJOUTE le 23/09/2026 (GameEndService) : delai (secondes) avant suppression effective des
+  # mondes d'instance en fin de partie (victoire ou temps ecoule) - laisse le temps au transfert
+  # des joueurs (Connect vers kal-games, ou teleportation vers la salle d'attente) de sortir
+  # effectivement du monde avant qu'InstanceWorldManager.deleteInstanceWorld() ne tente de le
+  # decharger (echoue/log un avertissement si des joueurs y sont encore presents).
+  end-cleanup-delay-seconds: 5
+  # AJOUTE le 23/09/2026 (GameEndService) : duree (secondes) pendant laquelle les joueurs peuvent
+  # rester dans la salle d'attente Bingo APRES la fin d'une partie (victoire OU temps ecoule -
+  # traitement desormais unifie, voir GameEndService) avant expulsion automatique vers kal-games -
+  # demande explicite de l'utilisateur : "si ils reste trop longtemps dans la salle d'attente
+  # apres la partie alors ils sont expulsés (apres 10 minutes)".
+  post-game-lobby-timeout-seconds: 600
+  # AJOUTE le 23/09/2026 (GameEndService) : au-dela de ce delai (secondes) SANS AUCUN joueur
+  # connecte a une partie EN COURS, la partie est consideree comme abandonnee et se termine
+  # silencieusement (personne n'est la pour recevoir de message ni de salle d'attente) - demande
+  # explicite de l'utilisateur : "il faudrait que la partie se termine si personne n'est connecté
+  # dessus depuis 10 minutes." Distinct de reconnect-during-game.abandon-after-seconds ci-dessous
+  # (qui suit un JOUEUR individuel, sans action definie) : ce reglage-ci suit la PARTIE entiere et
+  # la termine reellement une fois depasse.
+  no-players-abandon-after-seconds: 600
+
+teams:
+  # Jusqu'a 4 equipes par partie, 1 a 4 joueurs par equipe (confirme par l'utilisateur).
+  max-teams: 4
+  max-team-size: 4
+
+# Grille Bingo (section 2 du cahier des charges). La liste des objectifs utilisables (item,
+# quantite, difficulte, condition) vit dans objectives.yml, PAS ici, pour rester modifiable
+# facilement sans toucher a la config principale (voir ObjectiveLibrary). Une seule grille est
+# generee par partie, partagee par toutes les equipes (hypothese de travail - section 14 du
+# cahier des charges liste ce point comme "a definir avant l'ouverture", a confirmer).
+grid:
+  # Taille de la grille (size x size cases). "Taille exacte" est listee section 14 comme "a
+  # definir avant l'ouverture" - 5 (grille 5x5, format Bingo Minecraft standard) est une valeur
+  # de depart raisonnable, PAS une decision finale. objectives.yml doit contenir au moins
+  # size x size objectifs pour qu'une grille puisse etre generee.
+  size: 5
+
+instances:
+  # Prefixe utilise pour nommer les mondes d'instance (ex: bingo_<gameId>_1, bingo_<gameId>_2...).
+  world-name-prefix: "bingo_"
+  # Nombre de parties Bingo simultanees maximum sur ce serveur (chacune pouvant creer
+  # jusqu'a teams.max-teams mondes independants : a garder prudent tant que le cout reel
+  # de la generation a la volee n'a pas ete mesure en conditions reelles).
+  max-simultaneous-games: 4
+  # AJOUTE le 23/09/2026 : delai (secondes) entre la generation de chaque monde d'instance lors de
+  # la pre-generation en cascade (voir InstanceWorldPreparer) - demande explicite de l'utilisateur :
+  # "générer les maps directement après la création de la partie et en cascade pour éviter les
+  # lags". Les mondes sont generes DES la creation de la salle d'attente (avant meme le choix des
+  # equipes), un par un, espaces de ce delai, plutot que tous d'un coup au lancement de la partie -
+  # avec repli sur la generation synchrone habituelle si l'hote lance la partie avant que la
+  # pre-generation en cascade ne soit terminee (voir GameManager.prepareInstances).
+  pregeneration-stagger-seconds: 10
+  # AJOUTE en 0.1.18 : rayon (blocs) de TERRAIN pre-genere autour du spawn de chaque map, des sa
+  # creation (donc pendant la salle d'attente) - creer le monde ne genere que la petite zone de
+  # spawn, le reste etait genere pendant que les joueurs exploraient (lag). Rayon choisi par
+  # l'utilisateur (~200 blocs). 0 = desactive. Plus grand = plus long a pre-generer.
+  pregeneration-radius-blocks: 200
+
+reconnect-during-game:
+  # Au-dela de ce delai de deconnexion consecutive PENDANT une partie en cours, le joueur
+  # est considere comme ayant abandonne. L'ACTION exacte a prendre dans ce cas n'est pas
+  # definie par le cahier des charges (seule la reconnexion "si le joueur etait deja dans
+  # la partie" est demandee, section 1 etape 2) : a valider avant d'implementer un
+  # comportement automatique. Ce reglage sert uniquement a detecter l'abandon, pas a agir.
+  abandon-after-seconds: 300
+  # Delai d'attente maximum, a l'arrivee sur ce serveur, pour un joueur dont la partie
+  # (gameId) n'est pas encore connue. Ce plugin interroge kal-games des l'arrivee du joueur
+  # (message "quelle partie pour ce joueur ?", reemis toutes les 2s, voir AssignmentService),
+  # c'est kal-games qui repond - ce reglage couvre le temps de cet aller-retour reseau avant
+  # de renvoyer le joueur vers kal-games en cas d'echec/timeout.
+  # LIMITE CONNUE (canal BungeeCord/Velocity, cf. ci-dessous) : ce message a besoin d'AU MOINS UN
+  # joueur connecte sur kal-games pour etre livre, dans les deux sens. En test a 2 comptes (hote +
+  # un second joueur qui rejoint), si les DEUX se retrouvent sur Kixster en meme temps, kal-games
+  # tombe a 0 joueur et la demande ne peut etre livree, quel que soit ce delai ni le nombre de
+  # reessais. Depuis la 0.1.10, un second chemin independant de tout joueur connecte (relais HTTP
+  # KaliumRelay, voir network.relay-url ci-dessous) resout ce cas en parallele - ce canal
+  # BungeeCord reste actif comme filet de securite. Augmenter cette valeur reste utile si le
+  # relais n'est pas configure/joignable.
+  assignment-wait-seconds: 30
+
+# Transfert de joueurs vers/depuis Kal-Games via le canal de messagerie BungeeCord (route par
+# Velocity), meme mecanisme que KalGames.connectLobby()/KaliumCore - pas de plugin proxy
+# supplementaire necessaire.
+network:
+  # Nom du serveur Kal-Games declare cote proxy (velocity.toml), pour le retour des joueurs
+  # en fin de partie/abandon.
+  kal-games-server-name: "kal-games"
+  # Nom de CE serveur declare cote proxy (velocity.toml) - AJOUTE le 23/09/2026 pour la
+  # reconnexion en cours de partie (voir ci-dessous, network.relay-url) : transmis a KaliumRelay
+  # pour qu'il sache vers quel serveur renvoyer un joueur qui se reconnecte pendant que sa partie
+  # est en cours.
+  self-server-name: "kixster"
+  # Relais HTTP (plugin Velocity KaliumRelay, sur le proxy) : interroge en PARALLELE du canal
+  # BungeeCord ci-dessus pour recuperer l'affectation de partie deposee par kal-games au moment
+  # du transfert (voir BingoPartyManager.transferToBingo cote KalGames) - independant de tout
+  # joueur connecte, ni ici ni sur kal-games, contrairement au canal ci-dessus. Sert aussi, depuis
+  # la reconnexion en cours de partie (demande explicite de l'utilisateur, 23/09/2026), a
+  # enregistrer aupres du proxy qu'un joueur est EN PARTIE sur ce serveur (voir
+  # RelayClient.registerActiveGame / PartyStarter) : si ce joueur se deconnecte puis se reconnecte
+  # avant la fin de la partie, le proxy le renvoie directement ici plutot que sur kal-games (voir
+  # KaliumRelay, PlayerChooseInitialServerEvent). relay-url vide = fonctionnalite desactivee
+  # (retour silencieux, aucune casse - le canal BungeeCord reste seul pour l'affectation ; la
+  # reconnexion directe, elle, n'a pas d'equivalent BungeeCord et reste simplement indisponible).
+  relay-url: "http://7018.mystrator.com:46199"
+  relay-token: "5e844e1f-0aac-4bd8-bb46-71c83431c9a8"
+
+# Salle d'attente vivant sur CE serveur (demande explicite de l'utilisateur : pas de salle
+# d'attente sur kal-games, les joueurs sont transferes ici des qu'ils rejoignent une partie).
+# Une seule salle-modele, capturee/recapturee a tout moment par un admin (voir la commande
+# /bingoadmin lobby pos1|pos2|spawn|capture - selection par position du joueur, comme pour
+# les arenes sur kal-games), puis dupliquee automatiquement sur plusieurs emplacements.
+lobby:
+  # Monde permanent (jamais supprime par le nettoyage des parties), contenant les emplacements
+  # de salle d'attente.
+  world-name: "bingo_lobby"
+  # Distance entre deux emplacements de salle d'attente, en blocs (garde-fou technique tant
+  # que la taille reelle de la salle construite n'est pas connue).
+  spacing: 300
+  # Distance AVANT le premier emplacement colle (le long de l'axe X depuis l'origine du monde).
+  # Le modele original capture par l'admin (/bingoadmin lobby capture ou /menu) reste construit
+  # EN PLACE, generalement pres du spawn du monde (0,80,0) - sans ce decalage, le premier
+  # emplacement colle (a l'origine du monde) tombe juste a cote et les deux sont visibles en meme
+  # temps. Augmenter cette valeur si c'est encore le cas.
+  slots-start-offset: 2000
+  # Taille maximale (par cote, en blocs) d'une selection capturable - garde-fou technique (256 au plus).
+  # Doit rester inferieure a spacing.
+  max-size: 256
+  # Blocs traites par tick pendant la capture, l'effacement et le collage des salles d'attente
+  # (plus bas = plus lent mais moins de charge pour le serveur).
+  blocks-per-tick: 30000

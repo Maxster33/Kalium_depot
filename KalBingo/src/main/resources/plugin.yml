@@ -1,0 +1,35 @@
+name: KalBingo
+version: '${project.version}'
+main: fr.kalium.bingo.BingoPlugin
+# meme format que KalGames (fr.kalium.games) sur le serveur kal-games
+api-version: '26.2'
+description: Mini-jeu Bingo (instances de mondes independants a seed partagee, par equipe) - serveur dedie, relie a Kal-Games via le proxy.
+authors: [KaLium]
+# Requis pour que ce plugin puisse fournir le generateur du monde par defaut du serveur (bukkit.yml
+# "worlds: <nom>: generator: KalBingo", utilise pour remplacer la map de Kixster par un monde vide) :
+# le monde principal est cree AVANT l'activation des plugins charges normalement (load: POSTWORLD,
+# la valeur par defaut), donc sans "load: STARTUP" CraftBukkit ne trouve pas encore le plugin et
+# abandonne silencieusement en generant un monde normal a la place.
+load: STARTUP
+
+commands:
+  bingoadmin:
+    description: Commandes d'administration du Bingo.
+    aliases: [bg-admin]
+    usage: /<command> lobby <tp|pos1|pos2|spawn|capture|info> | /<command> start <gameId> | /<command> grid <reload|show <gameId>>
+    permission: bingo.admin
+  bingoteam:
+    description: Assigner un joueur à une équipe (hôte de la partie uniquement).
+    aliases: [bg-team]
+    usage: /<command> <joueur> <1-4>
+  menu:
+    description: Menu graphique pour capturer/modifier la salle d'attente Bingo (opérateurs).
+    aliases: [bingomenu]
+    usage: /<command>
+    permission: bingo.admin
+    permission-message: §cVous n'avez pas la permission d'utiliser ce menu.
+
+permissions:
+  bingo.admin:
+    description: Administration des parties de Bingo.
+    default: op

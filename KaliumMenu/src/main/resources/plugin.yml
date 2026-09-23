@@ -1,0 +1,28 @@
+name: KaliumMenu
+version: '${project.version}'
+main: fr.kalium.menu.KaliumMenu
+api-version: '26.2'
+description: Menu de navigation (Dialog natif) entre le lobby et les autres serveurs du reseau KaLium.
+authors: [KaLium]
+
+commands:
+  servers:
+    description: Ouvre le menu de navigation entre les serveurs.
+    aliases: [serveurs, navigation]
+    usage: /<command>
+  lobby:
+    description: Retourne au lobby.
+    usage: /<command>
+  kaliummenu:
+    description: Administration du plugin KaliumMenu.
+    aliases: [kmenu]
+    usage: /<command> reload | give [joueur]
+    permission: kaliummenu.admin
+
+permissions:
+  kaliummenu.admin:
+    description: Permet de recharger la configuration.
+    default: op
+  kaliummenu.bypass:
+    description: Permet de deplacer et jeter la boussole de navigation.
+    default: op

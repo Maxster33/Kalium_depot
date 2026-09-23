@@ -1,0 +1,109 @@
+# ============================================================
+#  KalBingo - liste des objectifs utilisables pour generer les grilles
+# ============================================================
+#
+# ATTENTION : la liste ci-dessous n'est qu'un JEU D'EXEMPLES PLACEHOLDER pour permettre de
+# tester la generation de grille (section 2 du cahier des charges). Ce n'est PAS une liste
+# d'objectifs validee - voir to_do_list_Kal_Games_Bingo.txt section 13 : "la liste finale des
+# objectifs n'est pas encore entierement definie [...] ne pas ajouter automatiquement des
+# objectifs qui n'ont pas ete valides". A REMPLACER/COMPLETER avant l'ouverture.
+#
+# Ce fichier est charge depuis le dossier de donnees du plugin (pas depuis le .jar) : il peut
+# etre modifie librement sans recompiler ni remplacer le plugin. Utilisez
+# "/bingoadmin grid reload" pour appliquer les changements sans redemarrer le serveur.
+#
+# Format de chaque entree :
+#   material   : identifiant d'item Minecraft (voir la liste des Material Bukkit/Paper), ex: DIAMOND
+#   quantity   : quantite requise pour valider la case (optionnel, defaut 1)
+#   difficulty : EASY | MEDIUM | HARD | EXTREME
+#                (correspond aux couleurs du cahier des charges : bleu = EASY, jaune = MEDIUM,
+#                orange = HARD, rouge = EXTREME)
+#   condition  : condition particuliere de validation, texte libre (optionnel - non interpretee
+#                automatiquement pour l'instant, la validation des objectifs n'est pas encore
+#                implementee : section 3 du cahier des charges)
+#
+# La taille de grille est configuree separement dans config.yml (grid.size). Ce fichier doit
+# contenir au moins (grid.size x grid.size) objectifs pour qu'une grille puisse etre generee.
+
+objectives:
+  - material: OAK_LOG
+    quantity: 16
+    difficulty: EASY
+  - material: IRON_INGOT
+    quantity: 5
+    difficulty: EASY
+  - material: COD
+    quantity: 3
+    difficulty: EASY
+  - material: WHEAT
+    quantity: 8
+    difficulty: EASY
+  - material: BOOK
+    quantity: 1
+    difficulty: EASY
+  - material: SHIELD
+    quantity: 1
+    difficulty: EASY
+  - material: HONEY_BOTTLE
+    quantity: 1
+    difficulty: EASY
+  - material: COBBLESTONE
+    quantity: 32
+    difficulty: EASY
+  - material: DIAMOND
+    quantity: 1
+    difficulty: HARD
+  - material: GOLDEN_APPLE
+    quantity: 1
+    difficulty: MEDIUM
+  - material: ENDER_PEARL
+    quantity: 4
+    difficulty: MEDIUM
+  - material: EMERALD
+    quantity: 3
+    difficulty: MEDIUM
+  - material: DIAMOND_SWORD
+    quantity: 1
+    difficulty: MEDIUM
+  - material: SADDLE
+    quantity: 1
+    difficulty: MEDIUM
+  - material: OBSIDIAN
+    quantity: 4
+    difficulty: MEDIUM
+  - material: NAME_TAG
+    quantity: 1
+    difficulty: MEDIUM
+  - material: AMETHYST_SHARD
+    quantity: 3
+    difficulty: MEDIUM
+  - material: BLAZE_ROD
+    quantity: 2
+    difficulty: HARD
+  - material: GHAST_TEAR
+    quantity: 1
+    difficulty: HARD
+  - material: TRIDENT
+    quantity: 1
+    difficulty: HARD
+  - material: TURTLE_EGG
+    quantity: 1
+    difficulty: HARD
+  - material: DIAMOND_BLOCK
+    quantity: 1
+    difficulty: HARD
+  - material: NETHER_STAR
+    quantity: 1
+    difficulty: EXTREME
+  - material: TOTEM_OF_UNDYING
+    quantity: 1
+    difficulty: EXTREME
+  - material: ELYTRA
+    quantity: 1
+    difficulty: EXTREME
+  - material: BEACON
+    quantity: 1
+    difficulty: EXTREME
+  - material: NETHERITE_INGOT
+    quantity: 1
+    difficulty: EXTREME

@@ -1,0 +1,101 @@
+# ============================================================
+#  KaliumMenu - configuration
+#  Le meme fichier .jar est installe sur les 3 serveurs Paper.
+#  Seule la valeur "role" change : "lobby" sur le lobby,
+#  "backend" sur kixster et kal-games.
+# ============================================================
+
+# "lobby"   : le menu liste les serveurs de la section "servers".
+# "backend" : le menu propose uniquement le retour au lobby.
+role: backend
+
+# Nom du lobby tel que declare dans le velocity.toml.
+lobby-server: lobby
+
+# Affiche le nombre de joueurs de chaque serveur sur les boutons.
+show-player-count: true
+
+# Largeur des boutons du menu (1 a 1024).
+button-width: 220
+
+# Boussole de navigation (clic droit pour ouvrir le menu).
+compass:
+  enabled: true
+  material: COMPASS
+  # Emplacement de la hotbar, de 0 (gauche) a 8 (droite).
+  slot: 8
+  # Empeche de deplacer / jeter la boussole (sauf permission kaliummenu.bypass).
+  lock-item: true
+  name: "<#09add3><bold>Navigation"
+  lore:
+    - "<gray>Clic droit pour choisir"
+    - "<gray>ton serveur."
+
+# Operateurs autorises : ces joueurs voient dans le menu deux boutons -
+# un pour basculer rapidement entre operateur et joueur, un pour changer de mode de jeu
+# (survie -> creatif -> aventure -> spectateur -> survie) - sans passer par la console.
+# Le bouton de mode de jeu n'est propose qu'une fois operateur : en joueur, seule la survie est autorisee
+# (et le passage en joueur remet d'ailleurs automatiquement en survie).
+# Pseudo (insensible a la casse) ou UUID. Les deux s'appliquent au serveur ou se trouve le joueur.
+# Liste vide (operators: []) = boutons desactives pour tout le monde.
+operators:
+  - Maaxster
+  - LeKiwi06
+
+# Destinations desactivees sur CE serveur (1.5.0) : identifiants des boutons du menu (cles de "servers",
+# nom du lobby pour "Retour au lobby", cles de "local-entries"). Cachees pour tout le monde ; /lobby suit
+# "Retour au lobby". Se gere en jeu : menu > Parametres (operateurs, permission kaliummenu.admin).
+disabled-destinations: []
+
+# Serveurs proposes quand role = lobby.
+# La cle doit correspondre au nom dans le velocity.toml (minuscules recommandees).
+servers:
+  kixster:
+    display: "<green><bold>Kixster"
+    description: "<gray>Clique pour rejoindre <green>Kixster<gray>."
+  kal-games:
+    display: "<gold><bold>KalGames"
+    description: "<gray>Clique pour rejoindre <gold>KalGames<gray>."
+
+# Entrees locales : boutons qui executent une commande sur CE serveur (aucun changement de serveur).
+# Exemple pour Kal-Games : dans une partie, la boussole propose "Hub de Kal-Games".
+#  - action : command (par defaut) ou server
+#  - worlds / exclude-worlds : noms ou cles de mondes, "*" accepte (vide = tous les mondes)
+#    Le monde des parties de KalGames s'appelle "kalgames:instances".
+local-entries:
+  kalgames-hub:
+    display: "<gold><bold>Hub de Kal-Games"
+    description: "<gray>Retourne au hub de Kal-Games."
+    action: command
+    command: hub
+    worlds:
+      - "kalgames:*"
+
+# Textes (format MiniMessage).
+messages:
+  menu-title: "<#09add3><bold>KaLium</bold> <dark_gray>- <white>Navigation"
+  menu-header: "<gray>Choisis ta destination."
+  close-button: "<red>Fermer"
+  back-button: "<#09add3><bold>Retour au lobby"
+  back-description: "<gray>Clique pour retourner au lobby."
+  count-format: " <dark_gray>| <gray><count> en ligne"
+  connecting: "<gray>Connexion à <white><server><gray>..."
+  already-in-lobby: "<yellow>Tu es déjà au lobby."
+  no-servers: "<red>Aucun serveur n'est configuré."
+  reloaded: "<green>Configuration rechargée."
+  op-button-to-player: "<red><bold>Passer en joueur"
+  op-button-to-operator: "<green><bold>Passer opérateur"
+  op-description-to-player: "<gray>Retire tes droits d'opérateur sur <white>ce serveur<gray>."
+  op-description-to-operator: "<gray>Reprends tes droits d'opérateur sur <white>ce serveur<gray>."
+  op-now-player: "<yellow>Tu es maintenant <white>joueur<yellow> sur ce serveur."
+  op-now-operator: "<yellow>Tu es maintenant <green>opérateur<yellow> sur ce serveur."
+  gamemode-button: "<#09add3><bold>Mode : <mode>"
+  gamemode-description: "<gray>Clique pour passer en <mode><gray>."
+  gamemode-now: "<yellow>Tu es maintenant en mode <mode><yellow>."
+  gamemode-survival: "<white>Survie"
+  gamemode-creative: "<aqua>Créatif"
+  gamemode-adventure: "<gold>Aventure"
+  gamemode-spectator: "<gray>Spectateur"
+  gamemode-locked: "<red>En joueur, seul le mode survie est autorisé."
+  give-done: "<green>Boussole donnée à <player>."
+  player-not-found: "<red>Joueur introuvable."

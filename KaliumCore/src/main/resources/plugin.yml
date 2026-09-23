@@ -1,0 +1,25 @@
+name: KaliumCore
+version: '${project.version}'
+main: fr.kalium.core.KaliumCore
+api-version: '26.2'
+description: Menu central (Dialog natif) pour serveurs de survie longue duree - navigation, parametres, statistiques, claims et commerce des joueurs.
+authors: [KaLium]
+
+commands:
+  kalium:
+    description: Ouvre le menu KaliumCore.
+    aliases: [menu]
+    usage: /<command>
+  kaliumcore:
+    description: Administration du plugin KaliumCore.
+    aliases: [kcore]
+    usage: /<command> reload
+    permission: kaliumcore.admin
+
+permissions:
+  kaliumcore.admin:
+    description: Acces au bouton Parametres du menu et aux commandes d'administration.
+    default: op
+  kaliumcore.claims.bypass:
+    description: Ignore la protection des chunks reclames (casse/pose/interaction/PvP).
+    default: op
