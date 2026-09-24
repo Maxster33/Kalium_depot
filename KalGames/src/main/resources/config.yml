@@ -33,7 +33,7 @@ bingo:
   # l'environnement (Kixster pour les tests actuellement, demande explicite de l'utilisateur).
   server-name: kixster
   # Duree d'une partie, en secondes - sert UNIQUEMENT de repli pour la commande texte /bingo create
-  # (pas de formulaire possible en commande, voir BingoCommand - placeholder de test). Le menu du
+  # (pas de formulaire possible en commande, voir BingoCommand). Le menu du
   # hub, lui, utilise max-duration-minutes ci-dessous comme valeur pre-remplie (l'hote peut la
   # reduire, voir PlayerMenus.openBingoCreate) - garde ce reglage-ci pour ne pas casser /bingo create.
   duration-seconds: 3600

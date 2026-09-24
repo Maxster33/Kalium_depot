@@ -27,15 +27,15 @@ import java.util.logging.Logger;
  *  - attribution des equipes aux instances (etape 2)
  *  - generation de la grille d'objectifs de la partie (section 2, etape 4
  *    de l'ordre de priorite - voir assignGrid)
- *  - suivi des deconnexions pendant une partie en cours (detection
- *    seulement - l'action a prendre en cas d'abandon n'est pas encore
- *    definie par le cahier des charges, voir config.yml)
+ *  - suivi des deconnexions pendant une partie en cours (hasAbandoned :
+ *    detection seulement, aucune action - la fin de partie quand plus
+ *    personne n'est connecte est geree par GameEndService)
  *
- * Ne gere PAS encore : validation des objectifs, victoire, chronometre
- * visible, transfert reseau (voir fr.kalium.bingo.network) - briques
- * suivantes de l'ordre de priorite (section 16). La formation des equipes
- * elle-meme (choix manuel / equipe aleatoire) a lieu cote kal-games, en
- * amont : ce gestionnaire recoit des equipes deja formees.
+ * Validation, victoire, chronometre et fin de partie sont dans d'autres
+ * classes (ObjectiveValidationTask, GameEndService, GameHudService). Les
+ * equipes sont formees en amont, dans la salle d'attente de ce serveur (par
+ * l'hote, voir BingoParty/PartyMenu) : ce gestionnaire recoit des equipes
+ * deja formees.
  *
  * activeGames survit desormais a un redemarrage/crash du serveur (voir GamePersistence et
  * restoreGame ci-dessous) - demande explicite de l'utilisateur, 23/09/2026. Portee volontairement

@@ -18,9 +18,9 @@
 #   difficulty : EASY | MEDIUM | HARD | EXTREME
 #                (correspond aux couleurs du cahier des charges : bleu = EASY, jaune = MEDIUM,
 #                orange = HARD, rouge = EXTREME)
-#   condition  : condition particuliere de validation, texte libre (optionnel - non interpretee
-#                automatiquement pour l'instant, la validation des objectifs n'est pas encore
-#                implementee : section 3 du cahier des charges)
+#   condition  : condition particuliere de validation, texte libre (optionnel - affichee dans le
+#                menu Objectifs mais NON verifiee : la validation automatique ne regarde que
+#                l'item et la quantite)
 #
 # La taille de grille est configuree separement dans config.yml (grid.size). Ce fichier doit
 # contenir au moins (grid.size x grid.size) objectifs pour qu'une grille puisse etre generee.

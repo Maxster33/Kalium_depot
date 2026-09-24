@@ -17,11 +17,9 @@ import java.util.UUID;
  * charges), ainsi qu'une grille d'objectifs (section 2, voir GridGenerator -
  * une seule grille, partagee par toutes les equipes).
  *
- * Ne gere PAS encore : la validation des objectifs (section 3), les
- * conditions de victoire (section 5) - ces briques viennent plus loin dans
- * l'ordre de priorite (section 16) et ne sont pas encore implementees ici
- * pour eviter d'anticiper des regles non validees (condition de victoire
- * exacte, etc.).
+ * Porte aussi la progression de chaque equipe (teamProgress) et le calcul du
+ * score ; la validation elle-meme est faite par ObjectiveValidationTask et la
+ * fin de partie par GameEndService.
  */
 public class BingoGame {
 

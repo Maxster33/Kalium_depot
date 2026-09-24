@@ -19,10 +19,11 @@ import java.util.concurrent.TimeUnit;
  * Petit serveur HTTP (JDK uniquement, aucune dependance supplementaire) qui sert de boite aux
  * lettres entre KalGames et KalBingo : KalGames y DEPOSE (POST) l'affectation d'un joueur au
  * moment ou il le transfere vers Bingo ; KalBingo la RECUPERE (GET, qui consomme l'entree) des
- * que le joueur se connecte chez lui.
+ * que le joueur se connecte chez lui. La meme boite aux lettres sert aussi au signal "partie
+ * fermee" (cle "party-closed-<gameId>", depose par KalBingo, lu par KalGames).
  *
- * Remplace le canal BungeeCord/Velocity (sous-canaux KalBingoAssignRequest/Response, "Forward")
- * pour cette information precise : ce canal a besoin qu'un joueur QUELCONQUE soit connecte sur le
+ * Complete le canal BungeeCord/Velocity (sous-canaux KalBingoAssignRequest/Response, "Forward"),
+ * garde en parallele comme filet de securite : ce canal a besoin qu'un joueur QUELCONQUE soit connecte sur le
  * serveur CIBLE pour qu'un message puisse etre livre (limite du protocole Minecraft lui-meme, pas
  * du code) - en test a 2 comptes, si les deux se retrouvent sur Kixster en meme temps, kal-games
  * tombe a 0 joueur et l'affectation ne peut plus etre livree, quel que soit le nombre de
@@ -103,9 +104,9 @@ final class RelayHttpServer {
     /**
      * POST (corps = nom du serveur, ex. "kixster") : enregistre le joueur comme EN PARTIE sur ce
      * serveur - appele par KalBingo au lancement d'une partie (voir RelayClient.registerActiveGame
-     * / PartyStarter cote KalBingo). DELETE : retire l'enregistrement (pas encore appele nulle
-     * part cote KalBingo pour l'instant, aucune fin de partie n'existe encore - voir
-     * ActiveGameRegistry). Lu par KaliumRelay.onChooseInitialServer, directement en memoire.
+     * / PartyStarter cote KalBingo). DELETE : retire l'enregistrement - appele par KalBingo en fin
+     * de partie et a l'abandon d'un joueur (voir ActiveGameRegistry). Lu par
+     * KaliumRelay.onChooseInitialServer, directement en memoire.
      */
     private void handleActiveGame(HttpExchange exchange) {
         try {

@@ -90,7 +90,7 @@ public final class RelayClient {
 
     /**
      * Retire l'enregistrement "en partie" d'un joueur aupres du relais - a appeler en fin de partie
-     * (voir GameEndTask) pour qu'une FUTURE reconnexion (une fois la partie terminee) suive a
+     * (voir GameEndService) pour qu'une FUTURE reconnexion (une fois la partie terminee) suive a
      * nouveau le routage normal (kal-games) plutot que d'etre renvoyee vers Kixster indefiniment.
      * Bloquant - meme convention que registerActiveGame ci-dessus. Echoue silencieusement (log
      * seulement) : au pire, l'entree sera quand meme purgee par la purge de securite du relais

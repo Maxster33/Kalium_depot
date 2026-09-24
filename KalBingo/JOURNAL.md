@@ -10,7 +10,7 @@ vérité pour toutes les règles de jeu). Instruction explicite de l'utilisateur
 permanence : **ne jamais construire quelque chose de non demandé** ; proposer les idées techniques
 avant de les implémenter ; signaler toute ambiguïté ou tout document manquant plutôt que de deviner.
 
-## État actuel (22/09/2026)
+## État au 22/09/2026 (historique - l'état actuel est dans `REPRISE_PROJET.md` et dans les dernières sections ci-dessous)
 
 Étapes 1 à 3 du cahier des charges (section 16, ordre de priorité) :
 1. **Architecture parties/instances** — fait, par équipe (pas par joueur, voir plus bas).
@@ -1230,4 +1230,9 @@ l'utilisateur s'il le souhaite.
 - Le `config.yml` déployé sur Kixster n'est pas concerné (le plugin ne réécrit jamais un fichier existant) : il
   contient déjà le nouveau jeton, mis à la main le 24/09/2026.
 
-À déployer avec KaliumRelay 1.1.1 et KalGames 1.12.4 - pas urgent. **Statut : compilé, non déployé.**
+À déployer avec KaliumRelay 1.1.1 et KalGames 1.12.4 - pas urgent. Aussi dans cette version (même jour, demande de LeKiwi06) : commentaires du code et de `config.yml` /
+`objectives.yml` qui décrivaient des fonctions « pas encore implémentées » alors qu'elles existent (validation,
+fin de partie...) corrigés ; titre « État actuel » en tête de ce journal renommé en « État au 22/09/2026 ».
+Aucun changement de comportement.
+
+**Statut : compilé, non déployé.**

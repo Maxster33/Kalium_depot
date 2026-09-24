@@ -26,9 +26,10 @@ import java.util.stream.Collectors;
  * vers le serveur Bingo - pas de salle d'attente ici, elle vit sur le serveur Bingo
  * lui-meme, voir KalBingo).
  *
- * La duree de partie est lue depuis config.yml (bingo.duration-seconds) a la creation :
- * c'est bien ICI, cote kal-games, que ce reglage est modifiable par un admin (confirme
- * par l'utilisateur), pas dans KalBingo. La seed est tiree aleatoirement a chaque partie.
+ * La duree de partie est choisie par l'hote a la creation, plafonnee par
+ * bingo.max-duration-minutes (reglable par un operateur dans Parametres > Bingo) : c'est bien
+ * ICI, cote kal-games, que ce reglage vit, pas dans KalBingo. La seed est tiree aleatoirement a
+ * chaque partie.
  */
 public final class BingoPartyManager {
 
@@ -76,8 +77,7 @@ public final class BingoPartyManager {
      *                    que le REDUIRE, jamais le depasser, meme principe que teamCount/teamSize
      *                    ci-dessus). Le formulaire de creation (voir PlayerMenus.openBingoCreate) est
      *                    pre-rempli avec ce plafond. bingo.duration-seconds reste le repli pour les
-     *                    appelants qui ne proposent pas encore ce choix (ex. /bingo create, voir
-     *                    BingoCommand - placeholder de test, pas encore mis a jour).
+     *                    appelants qui ne proposent pas ce choix (/bingo create, voir BingoCommand).
      */
     public BingoParty create(Player host, int teamCount, int teamSize, Duration duration) {
         String gameId = UUID.randomUUID().toString();

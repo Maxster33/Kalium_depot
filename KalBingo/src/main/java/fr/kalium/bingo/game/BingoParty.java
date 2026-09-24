@@ -15,9 +15,9 @@ import java.util.UUID;
  * Une partie Bingo EN COURS DE FORMATION dans la salle d'attente de CE serveur (avant la
  * creation des instances de jeu par GameManager/PartyStarter). Alimentee par
  * AssignmentService des que kal-games confirme, pour un joueur, a quelle partie il
- * appartient (gameId, seed, duree, liste des joueurs attendus). Les joueurs choisissent
- * ensuite leur equipe ICI (demande explicite de l'utilisateur : pas de choix d'equipe
- * cote kal-games) via /bingoteam.
+ * appartient (gameId, seed, duree, liste des joueurs attendus). Les equipes sont ensuite
+ * assignees ICI par l'hote (menu PartyMenu ou /bingoteam - pas de choix d'equipe cote
+ * kal-games).
  */
 public final class BingoParty {
 

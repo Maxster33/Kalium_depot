@@ -1,11 +1,9 @@
 # ============================================================
 #  KalBingo - configuration
-#  Etapes 1/2/3/4 (architecture parties/instances, mondes a seed
-#  partagee, gestion joueurs/equipes, grille configurable) : pas encore
-#  de validation, d'interface, de detection de ligne ni d'administration
-#  complete (voir to_do_list_Kal_Games_Bingo.txt, ordre de priorite
-#  section 16). Beaucoup de reglages ci-dessous restent a affiner une
-#  fois les etapes suivantes implementees.
+#  Jeu Bingo complet (salle d'attente, mondes par equipe, grille,
+#  validation, score, fin de partie, persistance) - detail des versions
+#  dans JOURNAL.md. Ce fichier n'est copie qu'a la premiere installation :
+#  une nouvelle cle doit etre ajoutee a la main sur le serveur.
 # ============================================================
 
 game:

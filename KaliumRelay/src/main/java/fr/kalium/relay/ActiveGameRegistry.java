@@ -16,12 +16,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * Contrairement au store d'affectations (RelayHttpServer.Entry, purge apres 2 minutes - une
  * affectation non reclamee est une anomalie), une entree ici est censee vivre potentiellement
  * plusieurs heures (toute la duree d'une partie Bingo, 1h par defaut - voir KalBingo config.yml
- * game.default-duration-seconds). AUCUN mecanisme de fin de partie n'existe encore cote KalBingo
- * (GameManager.cleanupGame n'est appele nulle part pour l'instant - hors sujet de cette demande,
- * section 16 du cahier des charges) : les entrees ne sont donc PAS encore retirees automatiquement
- * a la fin d'une partie, seulement par la purge de securite ci-dessous (evite une fuite memoire
- * definitive si KalBingo redemarre sans jamais nettoyer, ex. crash serveur) - a revisiter une fois
- * qu'une vraie fin de partie existera cote KalBingo.
+ * game.default-duration-seconds). Les entrees sont retirees par KalBingo en fin de partie (DELETE,
+ * voir RelayClient.clearActiveGame / GameEndService, depuis KalBingo 0.1.12) ou quand un joueur
+ * abandonne ; la purge de securite ci-dessous (6h) ne sert que de filet si ce retrait echoue (relais
+ * injoignable, crash du serveur Bingo...).
  */
 final class ActiveGameRegistry {
 

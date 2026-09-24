@@ -9,10 +9,10 @@ import org.bukkit.entity.Player;
 /**
  * Commande minimale de creation/jointure de parties Bingo.
  *
- * PLACEHOLDER DE TEST : en attendant l'integration dans le hub kal-games (entree de menu
- * dediee "Bingo", tache #57, pas encore faite), le temps de valider le flux de bout en
- * bout (creation -> jointure -> transfert -> salle d'attente Bingo -> choix d'equipe).
- * A remplacer par un vrai menu une fois ce flux confirme fonctionnel.
+ * Commande texte gardee en parallele du menu "Bingo" du hub (PlayerMenus.openBingoMenu, demande
+ * explicite de l'utilisateur : "tout en laissant les commandes actuelles fonctionnelles"). Meme
+ * logique (BingoPartyManager) ; /bingo create utilise les valeurs par defaut de config.yml
+ * (equipes, duree), le menu laisse l'hote les choisir.
  */
 public final class BingoCommand implements CommandExecutor {
 

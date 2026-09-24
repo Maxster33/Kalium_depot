@@ -6,11 +6,10 @@ package fr.kalium.bingo.grid;
  * un fond de couleur sur l'item dans la carte : bleu = facile, jaune = moyen, orange =
  * difficile, rouge = extreme").
  *
- * Seule la difficulte elle-meme est geree ici (donnee sur l'objectif). Le calcul des points et
- * l'affichage de la couleur sur la carte custom relevent d'etapes ulterieures de l'ordre de
- * priorite (section 16 : validation/interface pour la couleur, fin de partie/classement pour
- * le systeme de points) - pas encore implementes, volontairement, pour ne pas anticiper des
- * regles de scoring non validees (section 14 : "systeme de points" a definir avant l'ouverture).
+ * La difficulte donne la couleur du nom de l'objectif dans le menu Objectifs (voir GameMenu). Elle
+ * n'intervient PAS dans le score (1 point par objectif quelle que soit la difficulte, voir
+ * BingoGame.score) : les points par difficulte ne sont pas encore definis (section 14 du cahier
+ * des charges : "systeme de points" a definir avant l'ouverture).
  */
 public enum Difficulty {
     EASY,

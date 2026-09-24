@@ -15,7 +15,7 @@ commands:
     description: Retourne au hub de Kal-Games.
     usage: /<command>
   bingo:
-    description: Bingo (test minimal en attendant l'intégration au hub) - créer/rejoindre une partie.
+    description: Bingo - créer ou rejoindre une partie (équivalent du menu Bingo du hub).
     usage: /<command> <create|join <code>>
 
 permissions:

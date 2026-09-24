@@ -35,11 +35,11 @@ n'est pas disponible.
 - Après chaque déploiement : envoyer un message récapitulatif en français à l'utilisateur (ce qui a changé,
   et rappeler qu'un redémarrage de Kal-Games est nécessaire).
 
-## État actuel (fin de session)
+## État au 22/09/2026 (historique - l'état actuel est dans `REPRISE_PROJET.md` et dans les dernières sections ci-dessous)
 
-- Dernière version déployée en prod (`kalgames@7021`) : **KalGames 1.9.5**, jar en place dans `/plugins/`,
+- Version déployée à cette date (`kalgames@7021`) : **KalGames 1.9.5**, jar en place dans `/plugins/`,
   ancien jar renommé en `.bak`.
-- `build.sh` et `pom.xml` sont actuellement sur `1.9.5`.
+- `build.sh` et `pom.xml` étaient alors sur `1.9.5`.
 - **22/09/2026 : tous les serveurs ont été redémarrés par l'utilisateur, et il confirme que tout fonctionne
   très bien.** Les changements 1.9.0 → 1.9.5 sont donc vérifiés et validés en jeu (spectateur : vol libre,
   spawn au point de fin, sortie via /hub ; persistance des arènes ; suppression d'arène ; courses de bateau
@@ -640,5 +640,10 @@ Les nouvelles clés ont une valeur par défaut dans le code : inutile de modifie
   « à renseigner uniquement dans le config.yml du serveur ». Aucun changement de code.
 - Le `config.yml` déployé sur kal-games n'est pas concerné (le plugin ne réécrit jamais un fichier existant) : il
   contient déjà le nouveau jeton, mis à la main le 24/09/2026.
+
+Aussi dans cette version (même jour, demande de LeKiwi06) : commentaires obsolètes corrigés (la commande
+`/bingo` n'est plus un « placeholder de test » : le menu Bingo du hub existe) et description de `/bingo` dans
+`plugin.yml` ; titre « État actuel » en tête de ce journal renommé en « État au 22/09/2026 ». Aucun
+changement de comportement.
 
 À déployer avec KaliumRelay 1.1.1 et KalBingo 0.1.23 - pas urgent. **Statut : compilé, non déployé.**

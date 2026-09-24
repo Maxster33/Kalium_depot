@@ -228,5 +228,10 @@ proxy, `config.yml` de kal-games et de Kixster), test Bingo réussi, sans redép
 - La ligne qui affichait le jeton à chaque démarrage est supprimée.
 - Aucun changement de comportement pour le proxy en service : son `relay.properties` contient déjà un jeton.
 
+Aussi dans cette version : commentaires de `ActiveGameRegistry` et `RelayHttpServer` corrigés (ils disaient
+qu'aucune fin de partie Bingo n'existait et que DELETE n'était appelé nulle part : KalBingo l'appelle en fin de
+partie et à l'abandon depuis 0.1.12 / 0.1.14). Les « Pour reprendre » plus haut qui disent le contraire sont
+historiques.
+
 À déployer en même temps que KalGames 1.12.4 et KalBingo 0.1.23 (même nettoyage, voir leurs JOURNAL) - pas urgent.
 **Statut : compilé, non déployé.**

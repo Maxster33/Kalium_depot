@@ -20,12 +20,12 @@ import org.bukkit.entity.Player;
  *    joueur, recapturable a tout moment. Gardees pour les habitues des commandes texte,
  *    mais l'utilisateur a demande en plus un menu graphique equivalent (/menu, voir
  *    gui.LobbyMenu) - la logique est partagee via LobbyCaptureService pour ne pas dupliquer ;
- *  - demarrage MANUEL d'une partie en attente (placeholder de test, voir PartyStarter -
- *    le vrai declenchement viendra avec l'etape interface/chronometre, pas encore traitee) ;
+ *  - demarrage d'une partie en attente par un operateur (meme regle que le bouton de l'hote,
+ *    delai minimum compris - voir PartyStarter) ;
  *  - grille (section 2) : "grid reload" recharge objectives.yml depuis le disque sans
  *    redemarrer le serveur, "grid show &lt;gameId&gt;" affiche en chat la grille generee pour
- *    une partie EN COURS - utile pour verifier la generation en attendant l'interface/carte
- *    custom (etape suivante de l'ordre de priorite, pas encore traitee).
+ *    une partie EN COURS - utile pour verifier la generation (les joueurs voient la grille dans
+ *    le menu Objectifs, voir GameMenu).
  */
 public class BingoAdminCommand implements CommandExecutor {
 

@@ -57,8 +57,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 | Jar | Contenu | À déployer |
 |---|---|---|
 | `KaliumRelay-1.1.1.jar` | plus de jeton écrit dans le code, jeton plus affiché dans la console | ensemble, pas urgent |
-| `KalGames-1.12.4.jar` | `relay-token: ""` dans le config.yml fourni (aucun changement de code) | ensemble, pas urgent |
-| `KalBingo-0.1.23.jar` | `relay-token: ""` dans le config.yml fourni (aucun changement de code) | ensemble, pas urgent |
+| `KalGames-1.12.4.jar` | `relay-token: ""` dans le config.yml fourni, commentaires corrigés (code compilé identique à 1.12.3) | ensemble, pas urgent |
+| `KalBingo-0.1.23.jar` | `relay-token: ""` dans le config.yml fourni, commentaires corrigés (code compilé identique à 0.1.22) | ensemble, pas urgent |
 
 Ces jars ne sont pas dans le dépôt : `sh <plugin>/build.sh` les recrée dans `sortie/`. Au déploiement, les
 `config.yml` des serveurs ne changent pas (ils contiennent déjà le nouveau jeton).
@@ -81,11 +81,9 @@ Ces jars ne sont pas dans le dépôt : `sh <plugin>/build.sh` les recrée dans `
 - Recapture du modèle de salle d'attente Bingo : seuls les emplacements actuellement configurés sont effacés.
 - Salle d'attente Bingo : monstres et PvP bloqués dans tout le monde `bingo_lobby` (modèle compris).
 - La pré-génération Bingo ne tient pas compte de `instances.max-simultaneous-games`.
-- Code et documentation en retard sur l'état réel (commentaires disant qu'aucune fin de partie Bingo n'existe,
-  section « État actuel » en tête de `KalGames/JOURNAL.md`), éléments inutilisés
-  (`reconnect-during-game.abandon-after-seconds` / `GameManager.hasAbandoned` dans KalBingo,
-  `bingo.max-party-size` dans KalGames). Recommandation : corriger commentaires et journaux sans nouvelle version,
-  supprimer le reste lors de la prochaine vraie version de chaque plugin.
+- Éléments inutilisés, à supprimer lors d'une prochaine version (commentaires et journaux obsolètes déjà corrigés
+  le 24/09/2026, dans les versions non déployées) : `reconnect-during-game.abandon-after-seconds` /
+  `GameManager.hasAbandoned` dans KalBingo, `bingo.max-party-size` dans KalGames.
 - **Jeton du relais** : l'ancien jeton, publié dans le dépôt public, a été remplacé le 24/09/2026 sur les 3
   serveurs (proxy `relay.properties`, kal-games et Kixster `config.yml`) ; le nouveau n'est écrit que sur les
   serveurs, jamais dans le dépôt. Code nettoyé le même jour (KaliumRelay 1.1.1, KalGames 1.12.4, KalBingo 0.1.23 :

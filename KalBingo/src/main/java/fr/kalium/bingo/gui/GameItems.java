@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * A la difference de LobbyItems (Nether Star totalement verrouillee, y compris deplacement dans
  * l'inventaire) : demande explicite de l'utilisateur, "qui ne soit pas bloque de maniere a
  * pouvoir liberer la case si on le souhaite mais qu'on ne puisse pas le jeter" - donc SEUL le
- * drop (PlayerDropItemEvent, voir GameProtectionListener) est empeche, l'objet peut etre deplace/
+ * drop (PlayerDropItemEvent, voir GameItemListener) est empeche, l'objet peut etre deplace/
  * range librement dans l'inventaire comme n'importe quel autre item.
  */
 public final class GameItems {
@@ -60,7 +60,7 @@ public final class GameItems {
     /**
      * Retire l'objet "Objectifs" de l'inventaire s'il est present (n'importe quelle case, meme
      * raison que LobbyItems.remove : le joueur a pu le deplacer). A appeler en fin de partie
-     * (voir GameEndTask) - le menu n'a plus de sens une fois la partie terminee.
+     * (voir GameEndService) - le menu n'a plus de sens une fois la partie terminee.
      */
     public void remove(Player player) {
         var inventory = player.getInventory();

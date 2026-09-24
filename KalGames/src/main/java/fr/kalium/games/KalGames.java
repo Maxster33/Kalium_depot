@@ -123,7 +123,7 @@ public final class KalGames extends JavaPlugin {
                 pluginCommand.setTabCompleter(command);
             }
         }
-        // Commande de test minimale, en attendant l'integration hub (tache #57) - voir BingoCommand.
+        // Commande texte /bingo, en parallele du menu "Bingo" du hub - voir BingoCommand.
         BingoCommand bingoCommand = new BingoCommand(this, bingoParties);
         PluginCommand bingoPluginCommand = getCommand("bingo");
         if (bingoPluginCommand != null) {

@@ -11,9 +11,9 @@ import java.util.UUID;
  * equipes, chaque equipe doivent pouvoir contenir 1 a 4 joueurs"). Le solo
  * est simplement une equipe a 1 joueur : meme modele pour les deux cas.
  *
- * La formation des equipes (choix manuel ou "equipe aleatoire" dans la salle
- * d'attente sur kal-games) n'est pas geree ici : cette classe ne fait que
- * representer le resultat final transmis a la partie Bingo.
+ * La formation des equipes (assignees par l'hote dans la salle d'attente de ce
+ * serveur, voir BingoParty/PartyMenu) n'est pas geree ici : cette classe ne fait
+ * que representer le resultat final transmis a la partie Bingo.
  */
 public class BingoTeam {
 

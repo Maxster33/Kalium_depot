@@ -52,15 +52,13 @@ import java.time.Duration;
  * Point d'entree du plugin KalBingo (serveur dedie, separe de kal-games -
  * decision confirmee par l'utilisateur).
  *
- * Etat actuel (voir JOURNAL.md / to_do_list_Kal_Games_Bingo.txt section 16,
- * ordre de priorite) : etapes 1 (architecture parties/instances), 2 (mondes
- * a seed partagee) et 3 (gestion des joueurs : salle d'attente, choix
- * d'equipe manuel/aleatoire, reception de l'affectation depuis kal-games).
- * Pas encore implementes : grille, validation, interface (carte custom),
- * chronometre/compte a rebours automatique, detection de ligne, fin de
- * partie/classement, integration recompenses. Le demarrage d'une partie
- * (PartyStarter) est actuellement declenche MANUELLEMENT par un admin
- * (/bingoadmin start) en attendant l'etape interface/chronometre.
+ * Etat actuel (detail par version dans JOURNAL.md) : salle d'attente et equipes assignees par
+ * l'hote, un overworld + Nether + End par equipe (meme seed), grille, validation automatique des
+ * objectifs, score, chronometre, fin de partie (victoire, temps ecoule, abandon), reconnexion,
+ * persistance des parties en cours. La partie est lancee par l'hote (menu) ou un operateur
+ * (/bingoadmin start), apres un delai minimum (PartyCountdownService). Pas encore faits (cahier des
+ * charges to_do_list_Kal_Games_Bingo.txt) : carte custom, detection de ligne a l'ecran, points par
+ * difficulte, conditions particulieres des objectifs, integration recompenses.
  */
 public class BingoPlugin extends JavaPlugin {
 
