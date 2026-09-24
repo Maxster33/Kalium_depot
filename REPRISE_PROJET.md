@@ -47,9 +47,9 @@ Copie exacte de chaque jar dans `jars-deployes/`.
 
 | Serveur | Jar | Test en jeu |
 |---|---|---|
-| Kixster | `KG_BingoGame-0.4.2.jar` (0.3.0, 0.4.0 puis 0.4.2 déployées le 24/09/2026 ; KalBingo renommé, données dans `plugins/KG_BingoGame/`, `bukkit.yml` : `generator: KG_BingoGame` ; config.yml du serveur : `lobby.max-size: 256`, `lobby.blocks-per-tick: 30000`) | 0.3.0 testée le 24/09/2026 (annonces, coefficients, Nether/End par équipe, nulle en solo, invincibilité OK) ; 0.4.0 testée (carte, têtes, résumé : « propre et sans bugs ») ; 0.4.2 non testée (contour des objets blancs, multiplicateur du blackout) |
-| kal-games | `KalGames-1.14.0.jar` + `KG_ScoreBoards-1.0.0.jar` + `KG_Bingo-1.1.0.jar` (déployés le 24/09/2026, classements migrés dans `plugins/KG_ScoreBoards/` ; `plugins/KG_Bingo/config.yml` = copie de celui de KalGames, jeton compris) | non testé (Rush ; capture d'arène sans crash à confirmer en recapturant le parkour ; menu Bingo déplacé) |
-| kal-games, lobby | `KaliumMenu-1.5.0.jar` | non confirmé (bouton Paramètres des téléportations) |
+| Kixster | `KG_BingoGame-0.5.0.jar` + `KLM_Menu-2.0.0.jar` (boussole désactivée : objectif du Bingo) (KG_BingoGame 0.3.0 à 0.5.0 déployées le 24/09/2026 ; KalBingo renommé, données dans `plugins/KG_BingoGame/`, `bukkit.yml` : `generator: KG_BingoGame` ; config.yml du serveur : `lobby.max-size: 256`, `lobby.blocks-per-tick: 30000`) | 0.3.0 testée le 24/09/2026 (annonces, coefficients, Nether/End par équipe, nulle en solo, invincibilité OK) ; 0.4.0 testée (carte, têtes, résumé : « propre et sans bugs ») ; 0.4.2 / 0.5.0 non testées (contour des objets blancs, multiplicateur du blackout, interface dans le catalogue) |
+| kal-games | `KalGames-1.15.0.jar` + `KG_ScoreBoards-1.1.0.jar` + `KG_Bingo-1.2.0.jar` + `KLM_Menu-2.0.0.jar` (déployés le 24/09/2026, classements migrés dans `plugins/KG_ScoreBoards/` ; `plugins/KG_Bingo/config.yml` = copie de celui de KalGames, jeton compris) | non testé (Rush ; capture d'arène sans crash à confirmer en recapturant le parkour ; catalogue « Interfaces ») |
+| lobby | `KLM_Menu-2.0.0.jar` (KaliumMenu renommé le 24/09/2026, dossier `plugins/KLM_Menu/`) | non testé (catalogue « Interfaces » ; Paramètres des téléportations non confirmés depuis la 1.5.0) |
 | proxy | `KaliumRelay-1.1.1.jar` (déployé le 24/09/2026) | relais confirmé le 24/09/2026 en 1.1.0 ; démarrage 1.1.1 vérifié dans le journal ; reconnexion directe non confirmée |
 | Kal-Test-Dev | `KaliumCore-1.4.0.jar` | non testé (projet en pause) |
 

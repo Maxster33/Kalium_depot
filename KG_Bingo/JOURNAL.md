@@ -45,4 +45,4 @@ sur le serveur sans être lue), non testé en jeu.**
 
 - Déclare **« Bingo »** (joueurs : créer / rejoindre une partie) et **« Bingo : réglages »** (admins) dans le
   catalogue de KLM_Menu. Dépend de KLM_Menu. Les classements Bingo viendront avec KG_ScoreBoards (étape B).
-**Déploiement** : avec KLM_Menu 2.0.0, KalGames 1.15.0. **Statut : compilé, non déployé.**
+**Déploiement** : avec KLM_Menu 2.0.0, KalGames 1.15.0. **Statut : déployé le 24/09/2026, non testé en jeu.**

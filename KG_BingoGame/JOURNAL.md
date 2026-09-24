@@ -1395,5 +1395,5 @@ parties sans adversaire (confirmé par LeKiwi06). Affiché dans la raison de la 
 
 - Déclare **« Salle d'attente Bingo »** (admins, permission `bingo.admin` : le même menu que `/menu`) dans le
   catalogue de KLM_Menu. Dépend de KLM_Menu (qui démarre lui aussi en `load: STARTUP`).
-**Déploiement** : avec KLM_Menu 2.0.0 sur Kixster (config avec `compass.enabled: false`). **Statut : compilé, non
-déployé.**
+**Déploiement** : avec KLM_Menu 2.0.0 sur Kixster (config avec `compass.enabled: false`). **Statut : déployé le 24/09/2026,
+non testé en jeu.**

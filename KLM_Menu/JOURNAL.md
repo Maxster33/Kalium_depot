@@ -50,4 +50,4 @@ pour trouver les interfaces de chaque chose ». Les mini-jeux gardent leurs prop
 `KaliumMenu-1.5.0.jar` dans `/plugins/_removed-kaliummenu-1.5.0/` (+ copie de `plugins/KaliumMenu/config.yml`),
 renommer `plugins/KaliumMenu/` en `plugins/KLM_Menu/`, envoyer `KLM_Menu-2.0.0.jar`. Nouveau sur Kixster : config par
 défaut avec **`compass.enabled: false`** (la boussole est un objectif du Bingo : elle le validerait) ; menu par
-`/servers`. **Statut : compilé, non déployé.**
+`/servers`. **Statut : déployé le 24/09/2026 sur kal-games, lobby et Kixster, non testé en jeu.**

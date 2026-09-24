@@ -692,4 +692,4 @@ KG_Bingo 1.1.0 fonctionne sans changement. **Statut : déployé sur kal-games le
 - Déclare **« Hub Kal-Games »** (joueurs : menu du hub) et **« Paramètres Kal-Games »** (admins : mini-jeux,
   arènes, kits, hub) dans le catalogue de KLM_Menu ; fournit la liste de ses mini-jeux à KG_ScoreBoards (ils
   apparaissent dans « Classements »). Dépend de KLM_Menu. Rien d'autre ne change.
-**Déploiement** : avec KLM_Menu 2.0.0 et KG_ScoreBoards 1.1.0. **Statut : compilé, non déployé.**
+**Déploiement** : avec KLM_Menu 2.0.0 et KG_ScoreBoards 1.1.0. **Statut : déployé le 24/09/2026, non testé en jeu.**

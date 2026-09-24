@@ -43,4 +43,4 @@ encore d'`archives/` ; textes des classements repris du `lang.yml` de KalGames ;
 - Interfaces déclarées dans le catalogue de KLM_Menu : **« Classements »** (joueurs : liste des jeux → Top 10) et
   **« Classements (modération) »** (admins : liste des jeux → menu modérateur : complets, archives, panneaux, clôture).
 - API : `addCategories(source, identifiants)` pour que les classements d'un plugin puissent être listés.
-**Déploiement** : avec KLM_Menu 2.0.0, KalGames 1.15.0. **Statut : compilé, non déployé.**
+**Déploiement** : avec KLM_Menu 2.0.0, KalGames 1.15.0. **Statut : déployé le 24/09/2026, non testé en jeu.**
