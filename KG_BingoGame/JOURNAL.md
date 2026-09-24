@@ -1361,3 +1361,9 @@ de fin de partie OK.
 
 **Déploiement** : remplacer le jar sur Kixster (aucune autre modification). Au 1er démarrage, attendre dans le
 journal « icône(s) d'objets chargée(s) pour la carte ». **Statut : déployé sur Kixster le 24/09/2026, non testé en jeu.**
+
+**Partie à une seule équipe (mode « solo », pour s'entraîner ou faire du speedrun) : comportement VOULU, à garder**
+(LeKiwi06, 24/09/2026, testé : « je veux que ça reste si un joueur veut try hard du speedrun »). Victoire aux bingos
+demandés ou à la grille complète, pas de nulle possible (message « Une nulle n'a de sens qu'à plusieurs équipes »,
+à garder aussi), pas de nulle automatique en blackout.
+Démarrage 0.4.0 sur Kixster : icônes préparées en 3 s (1508 objets, 28 sans icône, aucun parmi les objectifs).
