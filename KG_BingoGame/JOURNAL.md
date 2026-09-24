@@ -1367,3 +1367,5 @@ journal « icône(s) d'objets chargée(s) pour la carte ». **Statut : déployé
 demandés ou à la grille complète, pas de nulle possible (message « Une nulle n'a de sens qu'à plusieurs équipes »,
 à garder aussi), pas de nulle automatique en blackout.
 Démarrage 0.4.0 sur Kixster : icônes préparées en 3 s (1508 objets, 28 sans icône, aucun parmi les objectifs).
+Test de LeKiwi06 (24/09/2026) : carte, têtes, résumé « propres et sans bugs ». Limite connue, acceptée : les têtes
+des joueurs s'affichent sur Java mais pas sur Bedrock (Geyser).
