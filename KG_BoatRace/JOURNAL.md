@@ -31,3 +31,24 @@ Course de bateau de Kal-Games, sortie de KalGames (règle 2.2 de `REGLES.md`). C
   réserver).
 - Placement des checkpoints : nouvel éditeur de KalGames 1.18.0.
 **Déploiement** : avec KalGames 1.18.0. **Statut : déployé sur Kal-Games le 24/09/2026 à 20 h 07 (1.0.0 dans `_removed-kg_boatrace-1.0.0/`), testé et confirmé par LeKiwi06 le 24/09/2026 : vitesse cohérente, tour de plus de 45 s « non enregistré », checkpoints.**
+
+## 1.2.0 — étape 2 : classement en direct, écarts, données dans KG_ScoreBoards (24/09/2026)
+
+**Demandes de LeKiwi06** (cahier des charges, étape 2 et données de l'étape 1).
+- **Classement en direct** : tableau latéral propre à la course (mis à jour chaque seconde) : position, pseudo (vert
+  si arrivé), écart avec le premier au dernier point de passage commun, « +N t » pour les tours de retard, temps final
+  des arrivés. Titre : tour du premier / nombre de tours. Réglage « Classement en direct (tableau latéral) »
+  (`live-ranking`, activé par défaut). Le tableau que le joueur avait avant lui est rendu à la fin, à la sortie de la
+  partie et à la fermeture.
+- **Écarts à chaque checkpoint et à la ligne d'arrivée** (barre d'action, 2,5 s) : place au passage (P1 « en tête »),
+  écart avec le coureur passé juste avant, et écart avec son propre passage au tour précédent (vert = plus rapide).
+- **Données envoyées au journal de KG_ScoreBoards** (`journal/<aaaa-mm>/<mini-jeu>.jsonl`) :
+  - `lap` à chaque tour : `match` (identifiant unique de la course), `arena`, `public`, `player`, `name`, `platform`
+    (`java` / `bedrock`), `ranked`, `lap`, `laps`, `lapMillis`, `recorded` (sous le seuil des meilleurs temps),
+    `checkpoints`, `splits` (pour chaque passage : `cp`, `ms` depuis le début du tour, `place`, `kmh` d'entrée ; le
+    dernier = ligne d'arrivée) ;
+  - `race` en fin de course : `match`, `arena`, `public`, `laps`, `checkpoints`, `results` (`player`, `name`,
+    `platform`, `rank`, `finished`, `totalMillis`, `lapsDone`).
+  Servira aussi à mesurer l'écart Java / Bedrock (voir cahier des charges).
+**Déploiement** : **avec KG_ScoreBoards 1.3.0** (obligatoire) et KalGames 1.18.0. **Statut : compilé, non déployé, non
+testé en jeu.**

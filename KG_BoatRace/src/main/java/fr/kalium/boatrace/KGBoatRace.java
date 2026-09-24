@@ -41,6 +41,8 @@ public final class KGBoatRace extends JavaPlugin {
                         integer("min-players", "Joueurs minimum", 2, 1, 16, "Pour lancer une partie publique."),
                         integer("max-players", "Joueurs maximum", 12, 1, 32, "Places sur la grille (la grille de départ doit contenir autant de positions)."),
                         integer("gather-seconds", "Attente avant lancement (s)", 20, 5, 180, "Partie publique."),
+                        bool("live-ranking", "Classement en direct (tableau latéral)", true,
+                                "1.2.0 : classement de la course et écarts avec le premier, mis à jour chaque seconde."),
                         bool("allow-spectate", "Autoriser le mode spectateur", true, "Les joueurs peuvent regarder la partie (publique ou privée) sans y participer (vol libre).")),
                 List.of(
                         single("stands", "Gradins (attente)", true, "Où attendent les joueurs."),

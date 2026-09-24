@@ -36,6 +36,8 @@ public final class KGScoreBoards extends JavaPlugin {
 
     private Lang lang;
     private StatsService stats;
+    /** 1.3.0 : journal des parties (voir GameLog). */
+    private fr.kalium.scoreboards.data.GameLog gameLog;
     private BoardService boards;
     private Gui gui;
     private RankingMenus rankings;
@@ -76,6 +78,7 @@ public final class KGScoreBoards extends JavaPlugin {
             }
         });
         stats.load();
+        gameLog = new fr.kalium.scoreboards.data.GameLog(getDataFolder(), stats::zone, getLogger());
         boards = new BoardService(this);
         stats.onChange(boards::refreshSoon);
         gui = new Gui(this, lang); // 1.1.0 : boite a outils de KLM_Menu
@@ -139,6 +142,9 @@ public final class KGScoreBoards extends JavaPlugin {
         if (lang != null) {
             lang.saveIfNeeded();
         }
+        if (gameLog != null) {
+            gameLog.close();
+        }
     }
 
     // ------------------------------------------------------------------ API pour les autres plugins
@@ -192,6 +198,16 @@ public final class KGScoreBoards extends JavaPlugin {
     /** Mondes ou l'on ne peut pas placer de panneau (ex. le monde des parties de KalGames). */
     public void setForbiddenWorld(Predicate<World> forbiddenWorld) {
         this.forbiddenWorld = forbiddenWorld == null ? w -> false : forbiddenWorld;
+    }
+
+    /**
+     * 1.3.0 : ajoute un evenement au journal des parties du mini-jeu (voir GameLog : un fichier par mois et par
+     * mini-jeu, une ligne JSON par evenement). Appele par les jeux (KG_BoatRace : « lap », « race »...).
+     */
+    public void log(String game, String type, Map<String, Object> fields) {
+        if (gameLog != null) {
+            gameLog.record(game, type, fields);
+        }
     }
 
     public StatsService stats() {

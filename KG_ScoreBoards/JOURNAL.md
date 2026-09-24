@@ -50,3 +50,16 @@ encore d'`archives/` ; textes des classements repris du `lang.yml` de KalGames ;
 - « Classements » (accueil de kal-games) et « Classements (modération) » (Paramètres, admins) fournis à KG_Menu au
   lieu d'être inscrits directement dans KLM_Menu. Dépend de KG_Menu.
 **Déploiement** : avec KG_Menu 1.0.0, KalGames 1.16.0. **Statut : déployé sur Kal-Games (7001) le 24/09/2026, testé et confirmé par LeKiwi06 le 24/09/2026 (menus et panneaux du hub ; records à confirmer).**
+
+## 1.3.0 — journal des parties (24/09/2026)
+
+**Demande de LeKiwi06** (cahiers des charges KG_BoatRace / KG_Parkour) : enregistrer les temps de chaque checkpoint et
+les données des parties dans KG_ScoreBoards, seul interlocuteur du futur bot Discord, avec des données centralisées,
+claires et structurées.
+- Nouveau `GameLog` + méthode `log(jeu, type, champs)` pour les autres plugins : un fichier par mois et par mini-jeu,
+  `plugins/KG_ScoreBoards/journal/<aaaa-mm>/<mini-jeu>.jsonl`, **une ligne JSON par événement** (JSON Lines).
+- Champs communs à chaque ligne : `v` (version du format : 1), `type` (choisi par le jeu), `at` (date ISO 8601, fuseau
+  de `stats.timezone`), `game` (identifiant du mini-jeu) ; puis les champs du jeu (voir KG_BoatRace 1.2.0).
+- Écriture en arrière-plan, une à la fois, dans l'ordre ; les écritures en attente sont terminées à l'arrêt (5 s max).
+- Pas encore d'affichage en jeu de ces données (graphiques : plus tard).
+**Déploiement** : avec KG_BoatRace 1.2.0 (qui l'utilise). **Statut : compilé, non déployé, non testé en jeu.**

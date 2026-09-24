@@ -35,6 +35,10 @@ import java.util.UUID;
  *
  * 1.1.0 (etape 1 du cahier des charges) : vitesse en km/h, seuil d'enregistrement des meilleurs tours (45 s),
  * passages aux checkpoints mesures (temps, place, vitesse d'entree).
+ *
+ * 1.2.0 (etape 2) : classement en direct (tableau lateral), ecarts a chaque checkpoint (avec le coureur juste devant
+ * et avec son propre tour precedent), donnees de chaque tour et de chaque course envoyees au journal de
+ * KG_ScoreBoards (graphiques et futur bot Discord).
  */
 public final class BoatRaceInstance extends GameInstance {
 
@@ -65,10 +69,23 @@ public final class BoatRaceInstance extends GameInstance {
         final List<Split> splits = new ArrayList<>();
         /** Passages du tour precedent (ecart avec son propre passage precedent : etape 2). */
         List<Split> previousLapSplits = List.of();
+        /** 1.2.0 : instant (ms) de chaque passage, par (tour, checkpoint) : ecarts et classement en direct. */
+        final Map<Long, Long> passAt = new java.util.HashMap<>();
+        String name = "?";
     }
 
     /** Passage a un checkpoint : temps depuis le debut du tour (ms), place au passage, vitesse d'entree (km/h). */
     record Split(int checkpoint, long lapMillis, int place, double speedKmh) {
+    }
+
+    /** 1.2.0 : identifiant unique de la course en cours (journal de KG_ScoreBoards). */
+    private String matchId = "";
+    /** 1.2.0 : classement en direct (tableau lateral propre a la course) et tableaux des joueurs a leur rendre. */
+    private org.bukkit.scoreboard.Scoreboard board;
+    private final Map<UUID, org.bukkit.scoreboard.Scoreboard> previousBoards = new java.util.HashMap<>();
+
+    private static long key(int lap, int cp) {
+        return ((long) lap << 32) | cp;
     }
 
     /** Nombre de passages deja enregistres a chaque (tour, checkpoint) : donne la place au passage. */
@@ -159,6 +176,7 @@ public final class BoatRaceInstance extends GameInstance {
         racers.clear();
         finishOrder.clear();
         passages.clear();
+        matchId = UUID.randomUUID().toString();
         finishedCount = 0;
         graceLeft = -1;
         elapsed = 0;
@@ -185,6 +203,7 @@ public final class BoatRaceInstance extends GameInstance {
             Racer racer = new Racer();
             racer.lastCheckpoint = spot.clone();
             racer.previous = spot.clone();
+            racer.name = player.getName();
             racers.put(uuid, racer);
 
             plugin.hub().resetPlayer(player, GameMode.ADVENTURE);
@@ -337,23 +356,25 @@ public final class BoatRaceInstance extends GameInstance {
     private void reached(Player player, Racer racer) {
         List<Pos> checkpoints = arena().list("checkpoints");
         if (racer.next < checkpoints.size()) {
-            recordSplit(racer, racer.next);
+            Split split = recordSplit(racer, racer.next);
             racer.lastCheckpoint = loc(checkpoints.get(racer.next));
             racer.next++;
-            racer.noticeUntil = System.currentTimeMillis() + 1500;
+            racer.noticeUntil = System.currentTimeMillis() + 2500;
             int points = ranked(player) ? Math.max(0, minigame().getInt("points-checkpoint", 0)) : 0;
             if (points > 0) {
                 plugin.scores().award(player, minigame(), points, true);
             }
-            player.sendActionBar(points > 0
+            player.sendActionBar((points > 0
                     ? t("race.checkpoint-points", "<green>Point de contrôle <white><n>/<total></white> <gold>+<points> pt(s)",
                             "n", racer.next, "total", checkpoints.size(), "points", points)
                     : t("race.checkpoint", "<green>Point de contrôle <white><n>/<total>",
-                            "n", racer.next, "total", checkpoints.size()));
+                            "n", racer.next, "total", checkpoints.size()))
+                    .append(Component.text(" | ", NamedTextColor.DARK_GRAY)).append(gapLine(racer, split)));
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 1.4f);
             return;
         }
-        recordSplit(racer, checkpoints.size()); // la ligne d'arrivee compte comme dernier passage du tour
+        Split finishSplit = recordSplit(racer, checkpoints.size()); // la ligne d'arrivee compte comme dernier passage du tour
+        Component finishGap = gapLine(racer, finishSplit);
         racer.lap++;
         recordLap(player, racer);
         racer.previousLapSplits = List.copyOf(racer.splits);
@@ -364,16 +385,99 @@ public final class BoatRaceInstance extends GameInstance {
             racer.next = 0;
             racer.noticeUntil = System.currentTimeMillis() + 1500;
             racer.lastCheckpoint = loc(arena().point("finish"));
-            player.sendActionBar(t("race.lap", "<green>Tour <white><n>/<total>", "n", racer.lap + 1, "total", laps));
+            racer.noticeUntil = System.currentTimeMillis() + 2500;
+            player.sendActionBar(t("race.lap", "<green>Tour <white><n>/<total>", "n", racer.lap + 1, "total", laps)
+                    .append(Component.text(" | ", NamedTextColor.DARK_GRAY)).append(finishGap));
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.7f, 1.2f);
         }
     }
 
     /** 1.1.0 : passage au checkpoint n° cp (ou a la ligne d'arrivee) du tour en cours. */
-    private void recordSplit(Racer racer, int cp) {
-        long key = ((long) racer.lap << 32) | cp;
+    private Split recordSplit(Racer racer, int cp) {
+        long key = key(racer.lap, cp);
         int place = passages.merge(key, 1, Integer::sum);
-        racer.splits.add(new Split(cp, System.currentTimeMillis() - racer.lapStart, place, racer.speedKmh));
+        long now = System.currentTimeMillis();
+        racer.passAt.put(key, now);
+        Split split = new Split(cp, now - racer.lapStart, place, racer.speedKmh);
+        racer.splits.add(split);
+        return split;
+    }
+
+    /**
+     * 1.2.0 : ecarts au passage d'un checkpoint (ou de la ligne d'arrivee, cp = nombre de checkpoints) : avec le coureur
+     * passe juste avant (meme tour, meme checkpoint) et avec son propre passage au tour precedent.
+     */
+    private Component gapLine(Racer racer, Split split) {
+        long key = key(racer.lap, split.checkpoint());
+        long mine = racer.passAt.get(key);
+        Component ahead;
+        if (split.place() == 1) {
+            ahead = t("race.gap-leader", "<gold>P1 <gray>en tête");
+        } else {
+            long best = Long.MIN_VALUE;
+            for (Racer other : racers.values()) {
+                Long at = other == racer ? null : other.passAt.get(key);
+                if (at != null && at <= mine && at > best) {
+                    best = at;
+                }
+            }
+            ahead = best == Long.MIN_VALUE
+                    ? t("race.gap-place", "<gold>P<place>", "place", split.place())
+                    : t("race.gap-ahead", "<gold>P<place> <red>+<gap> <gray>sur le précédent", "place", split.place(), "gap", seconds(mine - best));
+        }
+        Split before = null;
+        for (Split previous : racer.previousLapSplits) {
+            if (previous.checkpoint() == split.checkpoint()) {
+                before = previous;
+            }
+        }
+        if (before == null) {
+            return ahead;
+        }
+        long delta = split.lapMillis() - before.lapMillis();
+        return ahead.append(delta <= 0
+                ? t("race.gap-self-better", " <dark_gray>| <green>-<gap> <gray>vs tour préc.", "gap", seconds(-delta))
+                : t("race.gap-self-worse", " <dark_gray>| <red>+<gap> <gray>vs tour préc.", "gap", seconds(delta)));
+    }
+
+    private static String seconds(long millis) {
+        return String.format(Locale.ROOT, "%d.%02d", millis / 1000, millis / 10 % 100);
+    }
+
+    /** 1.2.0 : Bedrock (Geyser / Floodgate : identifiant commencant par des zeros) ou Java. */
+    private static String platform(UUID uuid) {
+        return uuid.getMostSignificantBits() == 0 ? "bedrock" : "java";
+    }
+
+    /**
+     * 1.2.0 : ligne « lap » du journal de KG_ScoreBoards : un tour termine, avec chaque passage (checkpoint, temps
+     * depuis le debut du tour, place, vitesse d'entree en km/h ; le dernier = ligne d'arrivee).
+     */
+    private void logLap(Player player, Racer racer, long lapTime, boolean recorded) {
+        List<Map<String, Object>> splits = new ArrayList<>();
+        for (Split split : racer.splits) {
+            Map<String, Object> one = new LinkedHashMap<>();
+            one.put("cp", split.checkpoint());
+            one.put("ms", split.lapMillis());
+            one.put("place", split.place());
+            one.put("kmh", Math.round(split.speedKmh() * 10) / 10.0);
+            splits.add(one);
+        }
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("match", matchId);
+        fields.put("arena", arena().id());
+        fields.put("public", isPublic());
+        fields.put("player", player.getUniqueId().toString());
+        fields.put("name", player.getName());
+        fields.put("platform", platform(player.getUniqueId()));
+        fields.put("ranked", ranked(player));
+        fields.put("lap", racer.lap);
+        fields.put("laps", laps);
+        fields.put("lapMillis", lapTime);
+        fields.put("recorded", recorded);
+        fields.put("checkpoints", arena().list("checkpoints").size());
+        fields.put("splits", splits);
+        plugin.ranking().log(minigame().id(), "lap", fields);
     }
 
     /** Temps du tour qui vient d'etre termine : classement des meilleurs temps sur 1 tour. */
@@ -383,6 +487,7 @@ public final class BoatRaceInstance extends GameInstance {
         racer.lapStart = now;
         // 1.1.0 : seuls les tours sous le seuil (45 s par defaut, reglable) comptent pour les meilleurs temps.
         int maxSeconds = minigame().getInt("record-max-lap-seconds", 45);
+        logLap(player, racer, lapTime, maxSeconds <= 0 || lapTime <= maxSeconds * 1000L);
         if (maxSeconds > 0 && lapTime > maxSeconds * 1000L) {
             player.sendMessage(plugin.prefix().append(t("race.lap-time-unrecorded",
                     "<gray>Tour <white><n></white> : <white><time></white> <dark_gray>(non enregistré : plus de <max> s)",
@@ -473,6 +578,7 @@ public final class BoatRaceInstance extends GameInstance {
             }
             case RUNNING -> {
                 elapsed++;
+                updateBoard();
                 int limit = timeLimit();
                 if (graceLeft > 0) {
                     graceLeft--;
@@ -538,6 +644,7 @@ public final class BoatRaceInstance extends GameInstance {
                     return pit == null || pit.getWorld() != player.getWorld() ? distance : Math.min(distance, player.getLocation().distance(pit));
                 }));
 
+        logRace(unfinished);
         broadcast(t("race.results", "<gold><bold>Résultats"));
         int position = 1;
         for (UUID uuid : finishOrder) {
@@ -570,6 +677,149 @@ public final class BoatRaceInstance extends GameInstance {
                 becomeMatchSpectator(player);
             }
         }
+    }
+
+    /** 1.2.0 : ligne « race » du journal de KG_ScoreBoards : resultat de la course (arrives puis non arrives). */
+    private void logRace(List<Map.Entry<UUID, Racer>> unfinished) {
+        List<Map<String, Object>> results = new ArrayList<>();
+        int rank = 1;
+        for (UUID uuid : finishOrder) {
+            results.add(result(uuid, racers.get(uuid), rank++, true));
+        }
+        for (Map.Entry<UUID, Racer> entry : unfinished) {
+            results.add(result(entry.getKey(), entry.getValue(), rank++, false));
+        }
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("match", matchId);
+        fields.put("arena", arena().id());
+        fields.put("public", isPublic());
+        fields.put("laps", laps);
+        fields.put("checkpoints", arena().list("checkpoints").size());
+        fields.put("results", results);
+        plugin.ranking().log(minigame().id(), "race", fields);
+    }
+
+    private Map<String, Object> result(UUID uuid, Racer racer, int rank, boolean finished) {
+        Map<String, Object> one = new LinkedHashMap<>();
+        one.put("player", uuid.toString());
+        one.put("name", racer == null ? nameOf(uuid) : racer.name);
+        one.put("platform", platform(uuid));
+        one.put("rank", rank);
+        one.put("finished", finished);
+        one.put("totalMillis", finished && racer != null ? racer.finishMillis : null);
+        one.put("lapsDone", racer == null ? 0 : racer.lap);
+        return one;
+    }
+
+    // ------------------------------------------------------------------ 1.2.0 : classement en direct
+
+    /** Ordre en direct : arrives (ordre d'arrivee), puis tours, checkpoints et distance au prochain point. */
+    private List<UUID> liveOrder() {
+        List<UUID> order = new ArrayList<>(finishOrder);
+        List<Map.Entry<UUID, Racer>> running = new ArrayList<>();
+        for (Map.Entry<UUID, Racer> entry : racers.entrySet()) {
+            if (!entry.getValue().finished) {
+                running.add(entry);
+            }
+        }
+        running.sort(Comparator
+                .comparingInt((Map.Entry<UUID, Racer> e) -> -e.getValue().lap)
+                .thenComparingInt(e -> -e.getValue().next)
+                .thenComparingDouble(e -> {
+                    Player player = Bukkit.getPlayer(e.getKey());
+                    Location target = target(e.getValue());
+                    return player == null || target == null || player.getWorld() != world
+                            ? Double.MAX_VALUE : player.getLocation().distance(target);
+                }));
+        for (Map.Entry<UUID, Racer> entry : running) {
+            order.add(entry.getKey());
+        }
+        return order;
+    }
+
+    /** Ecart d'un coureur avec le premier, au dernier point de passage commun (ou tours de retard). */
+    private Component leaderGap(Racer racer, Racer leader) {
+        if (racer == leader) {
+            return Component.empty();
+        }
+        if (racer.finished) {
+            return Component.text(" " + formatTime(racer.finishMillis), NamedTextColor.GRAY);
+        }
+        int cps = arena().list("checkpoints").size() + 1;
+        int behind = (leader.lap * cps + leader.next - (racer.lap * cps + racer.next)) / cps;
+        if (behind >= 1) {
+            return Component.text(" +" + behind + " t", NamedTextColor.RED);
+        }
+        long last = racer.next > 0 ? key(racer.lap, racer.next - 1)
+                : racer.lap > 0 ? key(racer.lap - 1, cps - 1) : -1;
+        Long mine = last < 0 ? null : racer.passAt.get(last);
+        Long his = last < 0 ? null : leader.passAt.get(last);
+        return mine == null || his == null ? Component.empty() : Component.text(" +" + seconds(mine - his), NamedTextColor.RED);
+    }
+
+    /** Met a jour le tableau lateral de la course (chaque seconde) et le montre aux joueurs de la partie. */
+    private void updateBoard() {
+        if (!minigame().getBool("live-ranking", true) || racers.isEmpty()) {
+            return;
+        }
+        if (board == null) {
+            board = Bukkit.getScoreboardManager().getNewScoreboard();
+        }
+        org.bukkit.scoreboard.Objective old = board.getObjective("kgboatrace");
+        if (old != null) {
+            old.unregister();
+        }
+        int leaderLap = 0;
+        List<UUID> order = liveOrder();
+        Racer leader = order.isEmpty() ? null : racers.get(order.get(0));
+        if (leader != null) {
+            leaderLap = Math.min(laps, leader.lap + (leader.finished ? 0 : 1));
+        }
+        org.bukkit.scoreboard.Objective objective = board.registerNewObjective("kgboatrace", org.bukkit.scoreboard.Criteria.DUMMY,
+                t("race.board-title", "<gold><bold>Course <gray>- tour <white><lap>/<laps>", "lap", leaderLap, "laps", laps));
+        objective.setDisplaySlot(org.bukkit.scoreboard.DisplaySlot.SIDEBAR);
+        objective.numberFormat(io.papermc.paper.scoreboard.numbers.NumberFormat.blank());
+        int line = Math.min(15, order.size());
+        int position = 1;
+        for (UUID uuid : order) {
+            if (position > 15) {
+                break;
+            }
+            Racer racer = racers.get(uuid);
+            if (racer == null) {
+                continue;
+            }
+            org.bukkit.scoreboard.Score score = objective.getScore("p" + position);
+            score.customName(Component.text(position + ". ", NamedTextColor.GOLD)
+                    .append(Component.text(racer.name, racer.finished ? NamedTextColor.GREEN : NamedTextColor.WHITE))
+                    .append(leaderGap(racer, leader)));
+            score.setScore(line--);
+            position++;
+        }
+        for (UUID uuid : members) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null && player.getWorld() == world && player.getScoreboard() != board) {
+                previousBoards.putIfAbsent(uuid, player.getScoreboard());
+                player.setScoreboard(board);
+            }
+        }
+    }
+
+    /** Rend a un joueur le tableau qu'il avait avant la course. */
+    private void restoreBoard(UUID uuid) {
+        org.bukkit.scoreboard.Scoreboard previous = previousBoards.remove(uuid);
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null && board != null && player.getScoreboard() == board) {
+            player.setScoreboard(previous != null ? previous : Bukkit.getScoreboardManager().getMainScoreboard());
+        }
+    }
+
+    private void restoreAllBoards() {
+        for (UUID uuid : new ArrayList<>(previousBoards.keySet())) {
+            restoreBoard(uuid);
+        }
+        previousBoards.clear();
+        board = null;
     }
 
     private String nameOf(UUID uuid) {
@@ -612,6 +862,7 @@ public final class BoatRaceInstance extends GameInstance {
 
     @Override
     protected void onMemberLeft(UUID uuid, boolean wasParticipant, boolean disconnected) {
+        restoreBoard(uuid);
         Racer racer = racers.remove(uuid);
         released.remove(uuid);
         finishOrder.remove(uuid);
@@ -624,6 +875,12 @@ public final class BoatRaceInstance extends GameInstance {
         }
     }
 
+    /** Fermeture de la partie (joueurs renvoyes au hub sans passer par onMemberLeft) : tableaux rendus. */
+    @Override
+    protected void onClose() {
+        restoreAllBoards();
+    }
+
     private void abortCountdown() {
         if (phase == Phase.COUNTDOWN) {
             endMatch();
@@ -632,6 +889,7 @@ public final class BoatRaceInstance extends GameInstance {
 
     @Override
     protected void onMatchReset() {
+        restoreAllBoards();
         racers.clear();
         finishOrder.clear();
         passages.clear();
