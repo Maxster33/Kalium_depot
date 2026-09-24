@@ -1219,3 +1219,15 @@ noms de mondes de partie `..._<uuid>_<n>[_nether|_the_end]` peuvent être suppri
 l'utilisateur s'il le souhaite.
 
 **Déployé le 23/09/2026 via WinSCP sur Kixster** (0.1.21 archivée dans `_removed-kalbingo-0.1.21/`).
+
+## 0.1.23 — jeton du relais retiré du config.yml fourni (24/09/2026)
+
+**Demande de LeKiwi06** : ne plus jamais publier le jeton du relais dans le dépôt public (voir
+`KaliumRelay/JOURNAL.md`, 1.1.1, et `REGLES.md`, section 2).
+
+- `config.yml` fourni avec le plugin : `network.relay-token: ""` (au lieu de l'ancien jeton fixe) et commentaire
+  « à renseigner uniquement dans le config.yml du serveur ». Aucun changement de code.
+- Le `config.yml` déployé sur Kixster n'est pas concerné (le plugin ne réécrit jamais un fichier existant) : il
+  contient déjà le nouveau jeton, mis à la main le 24/09/2026.
+
+À déployer avec KaliumRelay 1.1.1 et KalGames 1.12.4 - pas urgent. **Statut : compilé, non déployé.**

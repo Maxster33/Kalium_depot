@@ -71,7 +71,10 @@ bingo:
   # restait bloque puis etait expulse quand kal-games se retrouvait sans aucun joueur en ligne.
   # relay-url vide = fonctionnalite desactivee (retour silencieux, aucune casse).
   relay-url: "http://7018.mystrator.com:46199"
-  relay-token: "5e844e1f-0aac-4bd8-bb46-71c83431c9a8"
+  # Jeton du relais : a renseigner UNIQUEMENT dans le config.yml du serveur, jamais ici (depot public,
+  # voir REGLES.md section 2). Meme valeur que "token" dans relay.properties du proxy. Vide = le relais
+  # refuse les requetes et seul le canal BungeeCord est utilise.
+  relay-token: ""
 
 gui:
   button-width: 240

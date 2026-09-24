@@ -29,7 +29,7 @@ import java.util.Optional;
  * plugins de Velocity repose entierement sur Guice : son propre Injector garantit que
  * com.google.inject.Inject est toujours present et correctement resolu, donc plus sur.
  */
-@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.1.0",
+@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.1.1",
         description = "Relais HTTP entre KalGames et KalBingo, independant de la presence d'un joueur.",
         authors = {"KaLium"})
 public final class KaliumRelay {

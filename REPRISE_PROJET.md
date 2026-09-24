@@ -52,6 +52,17 @@ Copie exacte de chaque jar dans `jars-deployes/`.
 
 Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne très bien ».
 
+### Versions compilées, non déployées
+
+| Jar | Contenu | À déployer |
+|---|---|---|
+| `KaliumRelay-1.1.1.jar` | plus de jeton écrit dans le code, jeton plus affiché dans la console | ensemble, pas urgent |
+| `KalGames-1.12.4.jar` | `relay-token: ""` dans le config.yml fourni (aucun changement de code) | ensemble, pas urgent |
+| `KalBingo-0.1.23.jar` | `relay-token: ""` dans le config.yml fourni (aucun changement de code) | ensemble, pas urgent |
+
+Ces jars ne sont pas dans le dépôt : `sh <plugin>/build.sh` les recrée dans `sortie/`. Au déploiement, les
+`config.yml` des serveurs ne changent pas (ils contiennent déjà le nouveau jeton).
+
 ## Chantiers en cours
 
 - **Rush (KalGames 1.11.0 → 1.12.3)** : jouable, jamais testé en jeu. Cahier des charges et décisions :
@@ -77,10 +88,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
   supprimer le reste lors de la prochaine vraie version de chaque plugin.
 - **Jeton du relais** : l'ancien jeton, publié dans le dépôt public, a été remplacé le 24/09/2026 sur les 3
   serveurs (proxy `relay.properties`, kal-games et Kixster `config.yml`) ; le nouveau n'est écrit que sur les
-  serveurs, jamais dans le dépôt. Nettoyage restant, à faire avec la prochaine vraie version de chaque plugin :
-  retirer l'ancienne valeur des `config.yml` fournis avec KalGames et KalBingo (mettre `relay-token: ""`), de
-  `KaliumRelay` (`RelayConfig.DEFAULT_TOKEN` → jeton aléatoire si absent, et ne plus l'afficher dans la console)
-  et de `KaliumRelay/JOURNAL.md`.
+  serveurs, jamais dans le dépôt. Code nettoyé le même jour (KaliumRelay 1.1.1, KalGames 1.12.4, KalBingo 0.1.23 :
+  plus aucun jeton dans le code, le relais ne l'affiche plus) : voir « Versions compilées, non déployées ».
 - Proxy : `geyserupdater-spigot.jar` (plugin Spigot) dans les plugins Velocity → erreur au démarrage, sans
   conséquence. Non touché (pas demandé).
 - Réglages utiles côté Kixster (`plugins/KalBingo/config.yml`) : `instances.pregeneration-radius-blocks` (200),

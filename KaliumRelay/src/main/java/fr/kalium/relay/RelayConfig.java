@@ -20,14 +20,11 @@ final class RelayConfig {
     /** Port ouvert par l'utilisateur sur l'hebergement Minestrator du proxy (46199). */
     private static final int DEFAULT_PORT = 46199;
 
-    /**
-     * Jeton par defaut - IDENTIQUE a celui deja renseigne dans network.relay-token cote KalGames
-     * ET KalBingo (config.yml), pour que les trois marchent ensemble sans etape de copier-coller
-     * manuelle. Un vrai secret aleatoire serait genere si la securite de ce canal devenait
-     * sensible (il ne transite que des UUID de partie Bingo et des noms de serveur) - a changer
-     * ICI et dans les deux config.yml a la fois si besoin.
-     */
-    private static final String DEFAULT_TOKEN = "5e844e1f-0aac-4bd8-bb46-71c83431c9a8";
+    // 1.1.1 : plus aucun jeton ecrit dans le code (l'ancien jeton fixe, publie dans le depot public, a du etre
+    // change le 24/09/2026 - voir REGLES.md, section 2). Si relay.properties n'a pas de jeton, un jeton
+    // aleatoire y est genere ; il est ensuite recopie A LA MAIN dans les config.yml de KalGames
+    // (bingo.relay-token) et KalBingo (network.relay-token) sur les serveurs. Il n'est jamais affiche dans la
+    // console.
 
     private final int port;
     private final String token;
@@ -60,20 +57,25 @@ final class RelayConfig {
                 props.setProperty("port", String.valueOf(DEFAULT_PORT));
                 changed = true;
             }
-            if (!props.containsKey("token")) {
-                props.setProperty("token", DEFAULT_TOKEN);
+            boolean generated = false;
+            if (props.getProperty("token", "").isBlank()) {
+                props.setProperty("token", UUID.randomUUID().toString());
                 changed = true;
+                generated = true;
             }
             if (changed) {
                 try (OutputStream out = Files.newOutputStream(file)) {
                     props.store(out, "KaliumRelay - port d'ecoute et jeton partage "
-                            + "(a copier tel quel dans network.relay-url / network.relay-token "
-                            + "cote KalGames ET KalBingo, config.yml)");
+                            + "(jeton a recopier dans bingo.relay-token de KalGames et network.relay-token "
+                            + "de KalBingo, config.yml des serveurs - jamais dans le depot git)");
                 }
+            }
+            if (generated) {
+                logger.warn("[KaliumRelay] Nouveau jeton genere dans relay.properties : le recopier dans les "
+                        + "config.yml de KalGames et KalBingo sur les serveurs.");
             }
             int port = Integer.parseInt(props.getProperty("port").trim());
             String token = props.getProperty("token").trim();
-            logger.info("[KaliumRelay] Jeton partage (a copier dans KalGames/KalBingo si besoin) : " + token);
             return new RelayConfig(port, token);
         } catch (IOException e) {
             logger.error("[KaliumRelay] Impossible de charger/creer relay.properties, valeurs par defaut utilisees.", e);

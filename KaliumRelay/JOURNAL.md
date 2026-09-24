@@ -156,7 +156,7 @@ plus de kal-games et Kixster, déjà nécessaires — voir JOURNAL.md respectifs
   hébergement Minestrator — un pare-feu intermédiaire pourrait encore bloquer), et consulter les logs
   du plugin KaliumRelay sur le proxy (préfixe `[KaliumRelay]`) — cette fois ils devraient au moins
   exister, ce qui n'était pas le cas avec la 1.0.0.
-- Le jeton partagé (`5e844e1f-0aac-4bd8-bb46-71c83431c9a8`) est actuellement une valeur fixe choisie
+- Le jeton partagé est actuellement une valeur fixe choisie
   pour éviter une étape de configuration manuelle. Si la sécurité de ce canal devient sensible (il ne
   transite que des UUID de partie et des noms de serveur, rien de plus sensible à ce stade), un vrai
   secret aléatoire devrait être généré et copié dans les trois `config.yml`/`relay.properties` à la
@@ -211,3 +211,22 @@ n'a pas besoin d'être redémarré cette fois, aucune modification côté KalGam
 - `DELETE /active-game/{playerId}` existe mais n'est jamais appelé (voir ci-dessus) : à relier au jour
   où une vraie fin de partie existera côté KalBingo (section 9 du cahier des charges), pour que le
   registre ne garde pas un joueur "en partie" indéfiniment après la fin réelle de sa partie.
+
+## 1.1.1 — plus de jeton écrit dans le code (24/09/2026)
+
+**Demande de LeKiwi06** : « comment on fait en sorte que le token ne leak pas de nouveau ? [...] si on change pas
+le système, ça va re leak au prochain dépôt ».
+
+**Cause** : le jeton partagé était une valeur fixe écrite dans `RelayConfig.java` et dans les `config.yml` fournis
+avec KalGames et KalBingo, donc publiée dans le dépôt GitHub public ; il était aussi affiché dans la console du
+proxy à chaque démarrage. Le jeton a été changé le 24/09/2026 à la main sur les 3 serveurs (`relay.properties` du
+proxy, `config.yml` de kal-games et de Kixster), test Bingo réussi, sans redéploiement.
+
+- `RelayConfig` : plus de `DEFAULT_TOKEN`. Si `relay.properties` n'a pas de jeton (ou un jeton vide), un jeton
+  aléatoire (`UUID.randomUUID()`) y est écrit, avec un avertissement dans la console indiquant de le recopier dans
+  les `config.yml` de KalGames et KalBingo - **sans afficher sa valeur**.
+- La ligne qui affichait le jeton à chaque démarrage est supprimée.
+- Aucun changement de comportement pour le proxy en service : son `relay.properties` contient déjà un jeton.
+
+À déployer en même temps que KalGames 1.12.4 et KalBingo 0.1.23 (même nettoyage, voir leurs JOURNAL) - pas urgent.
+**Statut : compilé, non déployé.**
