@@ -254,6 +254,8 @@ public final class AssignmentService {
         }
         party.markConnected(playerId);
         player.teleport(spawn);
+        // 0.3.1 : mode aventure dans la salle d'attente (demande de LeKiwi06, 24/09/2026), survie sur la map.
+        player.setGameMode(org.bukkit.GameMode.ADVENTURE);
         lobbyItems.give(player);
         player.sendMessage("§aBienvenue dans la salle d'attente Bingo ! Choisissez votre équipe : /bingoteam <1-"
                 + party.getTeamCount() + "|random> (ou l'objet de menu reçu).");

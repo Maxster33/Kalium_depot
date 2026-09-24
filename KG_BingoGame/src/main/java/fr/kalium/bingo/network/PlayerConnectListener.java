@@ -84,6 +84,7 @@ public final class PlayerConnectListener implements Listener {
                 playerReset.setGameSpawn(player, instance.getSpawnLocation());
             }
             gameItems.give(player); // au cas ou l'inventaire ait ete reinitialise entre-temps
+            player.setGameMode(org.bukkit.GameMode.SURVIVAL); // 0.3.1
             player.sendMessage("§aReconnexion à votre partie Bingo en cours.");
             return;
         }

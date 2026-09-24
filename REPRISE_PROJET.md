@@ -78,7 +78,13 @@ Aucune.
   1000 le préfixe adéquat (K, M, Md) avec 3 chiffres décimaux au plus.
 - **Découpage de KalGames** en plusieurs plugins (`REGLES.md`, section 2) : décidé le 24/09/2026, pas commencé.
   À faire progressivement, en commençant par le Rush. Le menu du hub deviendra aussi son propre plugin (`KG_Menu`,
-  annoncé par LeKiwi06 le 24/09/2026) : les prises `MenuEntry` de KalGames 1.13.0 le suivront. Même principe prévu pour les modules de KaliumCore
+  annoncé par LeKiwi06 le 24/09/2026) : les prises `MenuEntry` de KalGames 1.13.0 le suivront. À traiter à cette
+  étape (demande de LeKiwi06, vu en test le 24/09/2026) : dans la liste des parties Bingo, **le pseudo affiché
+  n'est pas celui de l'hôte** - cause : le texte `bingo.party-entry` (KG_Bingo, `BingoMenus.bingoPartyButton`)
+  contient le pseudo en dur, et KalGames écrit dans son `lang.yml` le texte d'une clé absente la 1re fois qu'il
+  s'affiche (`Lang.java`, ligne 54) : le pseudo du 1er hôte affiché y est resté figé. Corriger avec un
+  paramètre `<host>` ET une nouvelle clé (ou retirer la ligne du `lang.yml` du serveur). Rendre aussi plus clair
+  le nombre de joueurs par équipe (« 2x4 équipes » est ambigu). Même principe prévu pour les modules de KaliumCore
   (annoncé par LeKiwi06 le 24/09/2026 : `KG_Reward`, `KG_Economy`, `KG_Claim`, `KG_Sethome`...).
 
 ## Points ouverts / limites connues (rien de bloquant)

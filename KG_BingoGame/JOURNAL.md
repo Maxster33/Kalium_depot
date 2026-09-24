@@ -1321,3 +1321,16 @@ JOURNAL). Décision : noms internes du code conservés (`fr.kalium.bingo`, class
 procédure de migration de la 0.2.0 ci-dessus (jamais déployée), avec en plus : déplacer l'ancien
 `plugins/KG_BingoGame/objectives.yml` dans le dossier `_removed-...` pour que la nouvelle liste soit installée.
 Aucune partie en cours. **Statut : déployé sur Kixster le 24/09/2026 (migration faite, journal de démarrage OK : 200 objectifs), non testé en jeu.**
+
+## 0.3.1 — correctifs après le 1er test (24/09/2026)
+
+Test de LeKiwi06 avec 2 comptes : annonces, coefficients, Nether / End par équipe, nulle en solo et invincibilité
+de fin de partie OK.
+- **Points solo** : le bonus de victoire n'était pas multiplié par les coefficients des bingos dans les points
+  solo (un joueur seul avait 91 en solo pour 101 en équipe). Corrigé : un joueur seul a exactement les points de son
+  équipe (vérifié hors serveur, 13 vérifications).
+- **Modes de jeu** (demande de LeKiwi06) : aventure dans la salle d'attente (avant et après la partie), survie sur la
+  map (lancement et reconnexion).
+
+À tester plus tard : pseudos dans les annonces à plus de 2 comptes, nulle en groupe.
+**Statut : compilé, non déployé.**

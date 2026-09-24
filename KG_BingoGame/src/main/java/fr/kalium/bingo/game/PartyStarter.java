@@ -119,6 +119,7 @@ public final class PartyStarter {
                 Player player = Bukkit.getPlayer(playerId);
                 if (player != null && player.isOnline()) {
                     player.teleport(instance.getSpawnLocation());
+                    player.setGameMode(org.bukkit.GameMode.SURVIVAL); // 0.3.1 : survie sur la map
                     // Le point d'apparition sur la map devient le point de spawn du joueur (0.1.18,
                     // demande explicite : il reapparaissait sur le modele de la salle d'attente).
                     playerReset.setGameSpawn(player, instance.getSpawnLocation());

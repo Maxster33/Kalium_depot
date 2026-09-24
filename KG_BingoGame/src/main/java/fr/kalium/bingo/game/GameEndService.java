@@ -481,6 +481,7 @@ public final class GameEndService {
                         lingeringGameId.put(playerId, game.getGameId());
                         makeSafe(player);
                         player.teleport(spawn);
+                        player.setGameMode(org.bukkit.GameMode.ADVENTURE); // 0.3.1 : salle d'attente en aventure
                         lobbyItems.givePostGame(player);
                     } else {
                         // Aucune salle d'attente disponible (toutes occupees / pas de modele capture) :

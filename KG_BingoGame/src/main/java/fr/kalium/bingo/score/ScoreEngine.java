@@ -57,8 +57,8 @@ public final class ScoreEngine {
     private final int[] firstBingoTeam;
     private final Map<Integer, UUID[]> owners = new HashMap<>();
     private final Map<Integer, Set<Integer>> completedLines = new HashMap<>();
-    /** Gain de chaque bingo au moment ou il a ete acheve (equipe -> ligne -> gain), pour les points solo. */
-    private final Map<Integer, Map<Integer, Double>> bingoGains = new HashMap<>();
+    /** Bonus de coefficient de chaque bingo acheve (equipe -> ligne -> 0,5 / 1), pour les points solo. */
+    private final Map<Integer, Map<Integer, Double>> bingoFactors = new HashMap<>();
 
     public ScoreEngine(BingoGrid grid) {
         this.grid = grid;
@@ -161,7 +161,7 @@ public final class ScoreEngine {
                 }
             }
             double gain = factor * sum;
-            bingoGains.computeIfAbsent(team, t -> new HashMap<>()).put(line, gain);
+            bingoFactors.computeIfAbsent(team, t -> new HashMap<>()).put(line, factor);
             events.add(new BingoEvent(line, lineNames.get(line), firstBingo, hardOnly, gain, participants));
         }
         return new Result(cell, first, itemPoints, events);
@@ -236,7 +236,12 @@ public final class ScoreEngine {
         return total;
     }
 
-    /** Points solo d'un joueur (voir en-tete : proposition en attente de validation). */
+    /**
+     * Points solo d'un joueur (voir en-tete, confirme par LeKiwi06) : ses objectifs + le gain complet de chaque bingo
+     * auquel il a participe, bonus de victoire compris DANS le gain des bingos (0.3.1 : correctif - le bonus de
+     * victoire n'etait pas multiplie par les coefficients, si bien qu'un joueur seul avait moins de points solo
+     * que son equipe ; vu en test : 91 au lieu de 101). Pour un joueur seul dans son equipe, solo = equipe.
+     */
     public double soloScore(int team, UUID player, boolean winner) {
         UUID[] o = owners.get(team);
         if (o == null || player == null) {
@@ -248,12 +253,16 @@ public final class ScoreEngine {
                 total += basePlusFirst(team, cell) + (winner ? difficulty(cell).winBonus() : 0);
             }
         }
-        for (Map.Entry<Integer, Double> bingo : bingoGains.getOrDefault(team, Map.of()).entrySet()) {
-            for (int c : lines.get(bingo.getKey())) {
-                if (player.equals(o[c])) {
-                    total += bingo.getValue();
-                    break;
-                }
+        for (Map.Entry<Integer, Double> bingo : bingoFactors.getOrDefault(team, Map.of()).entrySet()) {
+            int[] cells = lines.get(bingo.getKey());
+            boolean participant = false;
+            double sum = 0;
+            for (int c : cells) {
+                participant |= player.equals(o[c]);
+                sum += basePlusFirst(team, c) + (winner ? difficulty(c).winBonus() : 0);
+            }
+            if (participant) {
+                total += bingo.getValue() * sum;
             }
         }
         return total;
