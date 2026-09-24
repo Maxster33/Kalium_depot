@@ -16,6 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KG_BingoGame — LeKiwi06 — depuis le 2026-09-24 11:36 — alléger la génération des maps et la salle d'attente (plusieurs parties simultanées sans lag)
+
 ## Requis parfois
 
 ## Demandes
