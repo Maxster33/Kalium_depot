@@ -14,9 +14,11 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 public final class GameMenuListener implements Listener {
 
     private final AbandonConfirmMenu abandonConfirmMenu;
+    private final fr.kalium.bingo.game.DrawVoteService drawVotes;
 
-    public GameMenuListener(AbandonConfirmMenu abandonConfirmMenu) {
+    public GameMenuListener(AbandonConfirmMenu abandonConfirmMenu, fr.kalium.bingo.game.DrawVoteService drawVotes) {
         this.abandonConfirmMenu = abandonConfirmMenu;
+        this.drawVotes = drawVotes;
     }
 
     @EventHandler
@@ -34,6 +36,9 @@ public final class GameMenuListener implements Listener {
         } else if (slot == GameMenu.ABANDON_SLOT && event.getWhoClicked() instanceof Player player) {
             player.closeInventory();
             abandonConfirmMenu.open(player);
+        } else if (slot == GameMenu.DRAW_SLOT && event.getWhoClicked() instanceof Player player) {
+            player.closeInventory();
+            drawVotes.propose(player); // 0.3.0
         }
     }
 

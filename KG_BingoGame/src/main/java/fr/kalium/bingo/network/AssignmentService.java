@@ -157,7 +157,7 @@ public final class AssignmentService {
                     roster.add(UUID.fromString(uuid));
                 }
             }
-            handleResponse(playerId, true, gameId, seed, durationSeconds, host, teamCount, teamSize, roster);
+            handleResponse(playerId, true, gameId, seed, durationSeconds, host, teamCount, teamSize, roster, fields.get("rules"));
         } catch (RuntimeException e) {
             plugin.getLogger().warning("[KG_BingoGame] Reponse du relais HTTP illisible pour " + playerId + " : " + e.getMessage());
         }
@@ -204,7 +204,7 @@ public final class AssignmentService {
 
     /** Appele par AssignmentNetworkListener a la reception d'une reponse de kal-games. */
     public void handleResponse(UUID playerId, boolean found, String gameId, long seed, long durationSeconds,
-                                UUID host, int teamCount, int teamSize, Set<UUID> roster) {
+                                UUID host, int teamCount, int teamSize, Set<UUID> roster, String rules) {
         if (!pending.remove(playerId)) {
             return; // deja resolu par l'autre voie (canal BungeeCord ou relais HTTP) ou par le timeout : on ignore
         }
@@ -238,6 +238,9 @@ public final class AssignmentService {
 
         BingoParty party = partyManager.getOrCreate(gameId, seed, Duration.ofSeconds(durationSeconds), host, teamCount, teamSize,
                 roster, () -> instanceWorldPreparer.startPreGeneration(gameId, seed, teamCount));
+        if (rules != null) {
+            party.setSettings(fr.kalium.bingo.game.BingoSettings.parse(rules)); // 0.3.0 : mode, bingos, composition
+        }
         Player player = Bukkit.getPlayer(playerId);
         if (player == null || !player.isOnline()) {
             return; // reconnectera plus tard, sa partie est deja enregistree

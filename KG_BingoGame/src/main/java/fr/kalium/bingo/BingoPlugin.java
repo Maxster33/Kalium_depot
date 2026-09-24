@@ -98,7 +98,10 @@ public class BingoPlugin extends JavaPlugin {
         int maxTeams = config.getInt("teams.max-teams");
         int maxTeamSize = config.getInt("teams.max-team-size");
         Duration defaultDuration = Duration.ofSeconds(config.getLong("game.default-duration-seconds"));
-        Duration abandonAfter = Duration.ofSeconds(config.getLong("reconnect-during-game.abandon-after-seconds"));
+        // 0.3.0 : deconnexion consecutive au-dela de ce delai = abandon definitif (demande explicite de LeKiwi06 :
+        // "le compte a rebours est celui d'un joueur deconnecte, donc 10 minutes"). Remplace l'ancienne cle
+        // reconnect-during-game.abandon-after-seconds, qui ne declenchait rien.
+        Duration abandonAfter = Duration.ofSeconds(config.getLong("game.disconnect-abandon-seconds", 600));
         int maxSimultaneousGames = config.getInt("instances.max-simultaneous-games");
         int gridSize = config.getInt("grid.size", 5);
 
@@ -147,6 +150,8 @@ public class BingoPlugin extends JavaPlugin {
         // salle d'attente - voir GameItems/GameMenu/GameItemListener, demande explicite de
         // l'utilisateur (liste des objectifs, temps restant, progression des equipes).
         GameItems gameItems = new GameItems(this);
+        gameItems.setInGameCheck(player -> gameManager.findGameOf(player.getUniqueId())
+                .filter(g -> g.getState() == fr.kalium.bingo.game.GameState.IN_PROGRESS).isPresent());
         GameMenu gameMenu = new GameMenu(this, gameManager);
         getServer().getPluginManager().registerEvents(new GameItemListener(gameItems, gameMenu), this);
 
@@ -173,7 +178,11 @@ public class BingoPlugin extends JavaPlugin {
         // l'utilisateur. Voir AbandonService/AbandonConfirmMenu/GameMenuListener.
         AbandonService abandonService = new AbandonService(this, gameManager, playerReset, relayClient, assignmentService, gameEndService);
         AbandonConfirmMenu abandonConfirmMenu = new AbandonConfirmMenu(this, abandonService);
-        getServer().getPluginManager().registerEvents(new GameMenuListener(abandonConfirmMenu), this);
+        // 0.3.0 : votes de nulle (voir DrawVoteService), proposes depuis le menu Objectifs ou /bingonulle.
+        fr.kalium.bingo.game.DrawVoteService drawVotes = new fr.kalium.bingo.game.DrawVoteService(gameManager);
+        gameEndService.setDrawVotes(drawVotes);
+        getCommand("bingonulle").setExecutor(new fr.kalium.bingo.command.DrawCommand(drawVotes));
+        getServer().getPluginManager().registerEvents(new GameMenuListener(abandonConfirmMenu, drawVotes), this);
 
         // Chronometre + scores en permanence au-dessus de la barre de vie (action bar) - AJOUTE le
         // 24/09/2026, demande explicite de l'utilisateur : "le chrono de la partie doit être
@@ -190,13 +199,19 @@ public class BingoPlugin extends JavaPlugin {
         // l'utilisateur). Toutes les secondes : suffisant pour une detection par inventaire, pas
         // besoin de reagir au tick pres. Verifie aussi la victoire (GameEndService.checkWin) des
         // qu'une case vient d'etre validee, et sauvegarde la progression (GamePersistence).
-        ObjectiveValidationTask objectiveValidationTask = new ObjectiveValidationTask(gameManager, gameEndService, gamePersistence);
+        ObjectiveValidationTask objectiveValidationTask = new ObjectiveValidationTask(gameManager, gameEndService, gamePersistence, gameItems);
         getServer().getScheduler().runTaskTimer(this, objectiveValidationTask::tick, 20L, 20L);
 
         // Fin par temps ecoule/abandon (GameEndService.tick, independant de la validation des
         // objectifs) et expulsion automatique de la salle d'attente post-partie (10 min par defaut) -
         // meme cadence que la validation des objectifs, pas besoin de plus de precision.
         getServer().getScheduler().runTaskTimer(this, gameEndService::tick, 20L, 20L);
+
+        // 0.3.0 : expulsion pour inactivite (5 min sans action par defaut), voir InactivityService.
+        fr.kalium.bingo.game.InactivityService inactivity = new fr.kalium.bingo.game.InactivityService(gameManager,
+                Duration.ofSeconds(config.getLong("game.inactivity-kick-seconds", 300)));
+        getServer().getPluginManager().registerEvents(inactivity, this);
+        getServer().getScheduler().runTaskTimer(this, inactivity::tick, 20L, 20L);
 
         // Filet de securite (voir GamePersistence) : sauvegarde periodique de toutes les parties EN
         // COURS, en plus de la sauvegarde a chaque validation d'objectif et au lancement - couvre le

@@ -223,7 +223,7 @@ public class GameManager {
      *                                la taille de grille configuree (grid.size)
      */
     public void assignGrid(BingoGame game) {
-        BingoGrid grid = gridGenerator.generate(gridSize, objectiveLibrary.all());
+        BingoGrid grid = gridGenerator.generate(gridSize, objectiveLibrary.all(), game.getSettings());
         game.setGrid(grid);
     }
 

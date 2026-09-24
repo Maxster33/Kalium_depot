@@ -2,11 +2,8 @@
 #  KG_BingoGame - liste des objectifs utilisables pour generer les grilles
 # ============================================================
 #
-# ATTENTION : la liste ci-dessous n'est qu'un JEU D'EXEMPLES PLACEHOLDER pour permettre de
-# tester la generation de grille (section 2 du cahier des charges). Ce n'est PAS une liste
-# d'objectifs validee - voir to_do_list_Kal_Games_Bingo.txt section 13 : "la liste finale des
-# objectifs n'est pas encore entierement definie [...] ne pas ajouter automatiquement des
-# objectifs qui n'ont pas ete valides". A REMPLACER/COMPLETER avant l'ouverture.
+# Liste VALIDEE par LeKiwi06 le 24/09/2026 : 100 faciles, 50 normaux, 25 difficiles, 25 extremes
+# (tous les identifiants verifies dans Paper 26.2).
 #
 # Ce fichier est charge depuis le dossier de donnees du plugin (pas depuis le .jar) : il peut
 # etre modifie librement sans recompiler ni remplacer le plugin. Utilisez
@@ -15,95 +12,614 @@
 # Format de chaque entree :
 #   material   : identifiant d'item Minecraft (voir la liste des Material Bukkit/Paper), ex: DIAMOND
 #   quantity   : quantite requise pour valider la case (optionnel, defaut 1)
-#   difficulty : EASY | MEDIUM | HARD | EXTREME
-#                (correspond aux couleurs du cahier des charges : bleu = EASY, jaune = MEDIUM,
-#                orange = HARD, rouge = EXTREME)
+#   difficulty : EASY (1 pt) | MEDIUM (3 pts) | HARD (5 pts) | EXTREME (10 pts)
+#                (couleurs : bleu = EASY, jaune = MEDIUM, orange = HARD, rouge = EXTREME)
 #   condition  : condition particuliere de validation, texte libre (optionnel - affichee dans le
 #                menu Objectifs mais NON verifiee : la validation automatique ne regarde que
 #                l'item et la quantite)
-#
-# La taille de grille est configuree separement dans config.yml (grid.size). Ce fichier doit
-# contenir au moins (grid.size x grid.size) objectifs pour qu'une grille puisse etre generee.
 
 objectives:
-  - material: OAK_LOG
+  # ---- Facile (100) ----
+  - material: OAK_LOG   # Bûche de chêne
     quantity: 16
     difficulty: EASY
-  - material: IRON_INGOT
-    quantity: 5
-    difficulty: EASY
-  - material: COD
-    quantity: 3
-    difficulty: EASY
-  - material: WHEAT
+  - material: BIRCH_LOG   # Bûche de bouleau
     quantity: 8
     difficulty: EASY
-  - material: BOOK
-    quantity: 1
+  - material: SPRUCE_LOG   # Bûche de sapin
+    quantity: 8
     difficulty: EASY
-  - material: SHIELD
-    quantity: 1
-    difficulty: EASY
-  - material: HONEY_BOTTLE
-    quantity: 1
-    difficulty: EASY
-  - material: COBBLESTONE
+  - material: OAK_PLANKS   # Planches de chêne
     quantity: 32
     difficulty: EASY
-  - material: DIAMOND
+  - material: STICK   # Bâton
+    quantity: 32
+    difficulty: EASY
+  - material: CRAFTING_TABLE   # Établi
+    quantity: 1
+    difficulty: EASY
+  - material: CHEST   # Coffre
+    quantity: 2
+    difficulty: EASY
+  - material: FURNACE   # Fourneau
+    quantity: 1
+    difficulty: EASY
+  - material: COBBLESTONE   # Pierres
+    quantity: 32
+    difficulty: EASY
+  - material: STONE   # Roche
+    quantity: 16
+    difficulty: EASY
+  - material: SMOOTH_STONE   # Roche lisse
+    quantity: 4
+    difficulty: EASY
+  - material: STONE_BRICKS   # Pierre taillée
+    quantity: 8
+    difficulty: EASY
+  - material: ANDESITE   # Andésite
+    quantity: 8
+    difficulty: EASY
+  - material: DIORITE   # Diorite
+    quantity: 8
+    difficulty: EASY
+  - material: GRANITE   # Granite
+    quantity: 8
+    difficulty: EASY
+  - material: GRAVEL   # Gravier
+    quantity: 8
+    difficulty: EASY
+  - material: FLINT   # Silex
+    quantity: 3
+    difficulty: EASY
+  - material: SAND   # Sable
+    quantity: 16
+    difficulty: EASY
+  - material: GLASS   # Verre
+    quantity: 8
+    difficulty: EASY
+  - material: GLASS_PANE   # Vitre
+    quantity: 16
+    difficulty: EASY
+  - material: CLAY_BALL   # Motte d'argile
+    quantity: 8
+    difficulty: EASY
+  - material: BRICK   # Brique
+    quantity: 8
+    difficulty: EASY
+  - material: TERRACOTTA   # Terre cuite
+    quantity: 4
+    difficulty: EASY
+  - material: COAL   # Charbon
+    quantity: 8
+    difficulty: EASY
+  - material: CHARCOAL   # Charbon de bois
+    quantity: 4
+    difficulty: EASY
+  - material: TORCH   # Torche
+    quantity: 16
+    difficulty: EASY
+  - material: IRON_INGOT   # Lingot de fer
+    quantity: 5
+    difficulty: EASY
+  - material: RAW_IRON   # Fer brut
+    quantity: 5
+    difficulty: EASY
+  - material: COPPER_INGOT   # Lingot de cuivre
+    quantity: 8
+    difficulty: EASY
+  - material: RAW_COPPER   # Cuivre brut
+    quantity: 8
+    difficulty: EASY
+  - material: IRON_PICKAXE   # Pioche en fer
+    quantity: 1
+    difficulty: EASY
+  - material: IRON_SWORD   # Épée en fer
+    quantity: 1
+    difficulty: EASY
+  - material: IRON_AXE   # Hache en fer
+    quantity: 1
+    difficulty: EASY
+  - material: IRON_SHOVEL   # Pelle en fer
+    quantity: 1
+    difficulty: EASY
+  - material: IRON_HOE   # Houe en fer
+    quantity: 1
+    difficulty: EASY
+  - material: SHIELD   # Bouclier
+    quantity: 1
+    difficulty: EASY
+  - material: BUCKET   # Seau
+    quantity: 1
+    difficulty: EASY
+  - material: WATER_BUCKET   # Seau d'eau
+    quantity: 1
+    difficulty: EASY
+  - material: SHEARS   # Cisailles
+    quantity: 1
+    difficulty: EASY
+  - material: FLINT_AND_STEEL   # Briquet
+    quantity: 1
+    difficulty: EASY
+  - material: BOW   # Arc
+    quantity: 1
+    difficulty: EASY
+  - material: ARROW   # Flèche
+    quantity: 16
+    difficulty: EASY
+  - material: STRING   # Ficelle
+    quantity: 8
+    difficulty: EASY
+  - material: BONE   # Os
+    quantity: 5
+    difficulty: EASY
+  - material: BONE_MEAL   # Poudre d'os
+    quantity: 8
+    difficulty: EASY
+  - material: ROTTEN_FLESH   # Chair putréfiée
+    quantity: 8
+    difficulty: EASY
+  - material: GUNPOWDER   # Poudre à canon
+    quantity: 3
+    difficulty: EASY
+  - material: SPIDER_EYE   # Oeil d'araignée
+    quantity: 2
+    difficulty: EASY
+  - material: FEATHER   # Plume
+    quantity: 8
+    difficulty: EASY
+  - material: LEATHER   # Cuir
+    quantity: 5
+    difficulty: EASY
+  - material: WHITE_WOOL   # Laine blanche
+    quantity: 8
+    difficulty: EASY
+  - material: WHITE_BED   # Lit blanc
+    quantity: 1
+    difficulty: EASY
+  - material: MUTTON   # Mouton cru
+    quantity: 3
+    difficulty: EASY
+  - material: COOKED_PORKCHOP   # Côtelette de porc cuite
+    quantity: 3
+    difficulty: EASY
+  - material: COOKED_CHICKEN   # Poulet rôti
+    quantity: 3
+    difficulty: EASY
+  - material: EGG   # Oeuf
+    quantity: 4
+    difficulty: EASY
+  - material: WHEAT   # Blé
+    quantity: 16
+    difficulty: EASY
+  - material: WHEAT_SEEDS   # Graines de blé
+    quantity: 16
+    difficulty: EASY
+  - material: BREAD   # Pain
+    quantity: 5
+    difficulty: EASY
+  - material: APPLE   # Pomme
+    quantity: 3
+    difficulty: EASY
+  - material: CARROT   # Carotte
+    quantity: 5
+    difficulty: EASY
+  - material: POTATO   # Pomme de terre
+    quantity: 5
+    difficulty: EASY
+  - material: BAKED_POTATO   # Pomme de terre cuite
+    quantity: 5
+    difficulty: EASY
+  - material: SUGAR_CANE   # Canne à sucre
+    quantity: 16
+    difficulty: EASY
+  - material: PAPER   # Papier
+    quantity: 16
+    difficulty: EASY
+  - material: SUGAR   # Sucre
+    quantity: 8
+    difficulty: EASY
+  - material: KELP   # Algue
+    quantity: 16
+    difficulty: EASY
+  - material: DRIED_KELP   # Algue séchée
+    quantity: 16
+    difficulty: EASY
+  - material: COD   # Morue crue
+    quantity: 3
+    difficulty: EASY
+  - material: SALMON   # Saumon cru
+    quantity: 3
+    difficulty: EASY
+  - material: FISHING_ROD   # Canne à pêche
+    quantity: 1
+    difficulty: EASY
+  - material: OAK_SAPLING   # Pousse de chêne
+    quantity: 5
+    difficulty: EASY
+  - material: OAK_LEAVES   # Feuilles de chêne
+    quantity: 16
+    difficulty: EASY
+  - material: DANDELION   # Pissenlit
+    quantity: 4
+    difficulty: EASY
+  - material: POPPY   # Coquelicot
+    quantity: 4
+    difficulty: EASY
+  - material: CORNFLOWER   # Bleuet
+    quantity: 2
+    difficulty: EASY
+  - material: OXEYE_DAISY   # Marguerite
+    quantity: 2
+    difficulty: EASY
+  - material: AZURE_BLUET   # Houstonie bleue
+    quantity: 2
+    difficulty: EASY
+  - material: RED_DYE   # Teinture rouge
+    quantity: 4
+    difficulty: EASY
+  - material: YELLOW_DYE   # Teinture jaune
+    quantity: 4
+    difficulty: EASY
+  - material: LADDER   # Échelle
+    quantity: 8
+    difficulty: EASY
+  - material: OAK_DOOR   # Porte en chêne
+    quantity: 3
+    difficulty: EASY
+  - material: OAK_FENCE   # Barrière en chêne
+    quantity: 16
+    difficulty: EASY
+  - material: OAK_BOAT   # Bateau en chêne
+    quantity: 1
+    difficulty: EASY
+  - material: PAINTING   # Tableau
+    quantity: 1
+    difficulty: EASY
+  - material: ITEM_FRAME   # Cadre
+    quantity: 1
+    difficulty: EASY
+  - material: ARMOR_STAND   # Porte-armure
+    quantity: 1
+    difficulty: EASY
+  - material: COMPOSTER   # Composteur
+    quantity: 1
+    difficulty: EASY
+  - material: BARREL   # Tonneau
+    quantity: 1
+    difficulty: EASY
+  - material: LEVER   # Levier
+    quantity: 2
+    difficulty: EASY
+  - material: STONE_BUTTON   # Bouton en pierre
+    quantity: 2
+    difficulty: EASY
+  - material: CAMPFIRE   # Feu de camp
+    quantity: 1
+    difficulty: EASY
+  - material: LANTERN   # Lanterne
+    quantity: 1
+    difficulty: EASY
+  - material: IRON_BARS   # Barreaux de fer
+    quantity: 16
+    difficulty: EASY
+  - material: IRON_DOOR   # Porte en fer
+    quantity: 1
+    difficulty: EASY
+  - material: CAULDRON   # Chaudron
+    quantity: 1
+    difficulty: EASY
+  - material: MINECART   # Wagonnet
+    quantity: 1
+    difficulty: EASY
+  - material: RAIL   # Rails
+    quantity: 16
+    difficulty: EASY
+  - material: LEATHER_HELMET   # Chapeau en cuir
+    quantity: 1
+    difficulty: EASY
+  - material: MILK_BUCKET   # Seau de lait
+    quantity: 1
+    difficulty: EASY
+  # ---- Normal (50) ----
+  - material: GOLD_INGOT   # Lingot d'or
+    quantity: 5
+    difficulty: MEDIUM
+  - material: RAW_GOLD   # Or brut
+    quantity: 5
+    difficulty: MEDIUM
+  - material: REDSTONE   # Poudre de redstone
+    quantity: 16
+    difficulty: MEDIUM
+  - material: LAPIS_LAZULI   # Lapis-lazuli
+    quantity: 16
+    difficulty: MEDIUM
+  - material: DIAMOND   # Diamant
+    quantity: 2
+    difficulty: MEDIUM
+  - material: EMERALD   # Émeraude
+    quantity: 1
+    difficulty: MEDIUM
+  - material: IRON_BLOCK   # Bloc de fer
+    quantity: 1
+    difficulty: MEDIUM
+  - material: GOLD_BLOCK   # Bloc d'or
+    quantity: 1
+    difficulty: MEDIUM
+  - material: COPPER_BLOCK   # Bloc de cuivre
+    quantity: 2
+    difficulty: MEDIUM
+  - material: IRON_CHESTPLATE   # Plastron en fer
+    quantity: 1
+    difficulty: MEDIUM
+  - material: IRON_HELMET   # Casque en fer
+    quantity: 1
+    difficulty: MEDIUM
+  - material: IRON_LEGGINGS   # Jambières en fer
+    quantity: 1
+    difficulty: MEDIUM
+  - material: IRON_BOOTS   # Bottes en fer
+    quantity: 1
+    difficulty: MEDIUM
+  - material: GOLDEN_APPLE   # Pomme dorée
+    quantity: 1
+    difficulty: MEDIUM
+  - material: GOLDEN_CARROT   # Carotte dorée
+    quantity: 3
+    difficulty: MEDIUM
+  - material: CROSSBOW   # Arbalète
+    quantity: 1
+    difficulty: MEDIUM
+  - material: COMPASS   # Boussole
+    quantity: 1
+    difficulty: MEDIUM
+  - material: CLOCK   # Montre
+    quantity: 1
+    difficulty: MEDIUM
+  - material: MAP   # Carte vierge
+    quantity: 1
+    difficulty: MEDIUM
+  - material: SPYGLASS   # Longue-vue
+    quantity: 1
+    difficulty: MEDIUM
+  - material: AMETHYST_SHARD   # Éclat d'améthyste
+    quantity: 4
+    difficulty: MEDIUM
+  - material: BOOK   # Livre
+    quantity: 3
+    difficulty: MEDIUM
+  - material: BOOKSHELF   # Bibliothèque
+    quantity: 1
+    difficulty: MEDIUM
+  - material: LEAD   # Laisse
+    quantity: 1
+    difficulty: MEDIUM
+  - material: SLIME_BALL   # Boule de slime
+    quantity: 3
+    difficulty: MEDIUM
+  - material: HONEY_BOTTLE   # Fiole de miel
+    quantity: 1
+    difficulty: MEDIUM
+  - material: HONEYCOMB   # Rayon de miel
+    quantity: 3
+    difficulty: MEDIUM
+  - material: PISTON   # Piston
+    quantity: 1
+    difficulty: MEDIUM
+  - material: STICKY_PISTON   # Piston collant
+    quantity: 1
+    difficulty: MEDIUM
+  - material: HOPPER   # Entonnoir
+    quantity: 1
+    difficulty: MEDIUM
+  - material: DISPENSER   # Distributeur
+    quantity: 1
+    difficulty: MEDIUM
+  - material: OBSERVER   # Observateur
+    quantity: 1
+    difficulty: MEDIUM
+  - material: REPEATER   # Répéteur de redstone
+    quantity: 1
+    difficulty: MEDIUM
+  - material: TNT   # TNT
+    quantity: 1
+    difficulty: MEDIUM
+  - material: JUKEBOX   # Jukebox
+    quantity: 1
+    difficulty: MEDIUM
+  - material: NOTE_BLOCK   # Bloc musical
+    quantity: 1
+    difficulty: MEDIUM
+  - material: ENDER_PEARL   # Perle de l'Ender
+    quantity: 2
+    difficulty: MEDIUM
+  - material: SADDLE   # Selle
+    quantity: 1
+    difficulty: MEDIUM
+  - material: PUMPKIN_PIE   # Tarte à la citrouille
+    quantity: 1
+    difficulty: MEDIUM
+  - material: CAKE   # Gâteau
+    quantity: 1
+    difficulty: MEDIUM
+  - material: MUSHROOM_STEW   # Soupe de champignons
+    quantity: 1
+    difficulty: MEDIUM
+  - material: SWEET_BERRIES   # Baies sucrées
+    quantity: 8
+    difficulty: MEDIUM
+  - material: PUMPKIN   # Citrouille
+    quantity: 2
+    difficulty: MEDIUM
+  - material: MELON_SLICE   # Tranche de pastèque
+    quantity: 8
+    difficulty: MEDIUM
+  - material: CACTUS   # Cactus
+    quantity: 4
+    difficulty: MEDIUM
+  - material: INK_SAC   # Poche d'encre
+    quantity: 3
+    difficulty: MEDIUM
+  - material: LILY_PAD   # Nénuphar
+    quantity: 2
+    difficulty: MEDIUM
+  - material: BLAST_FURNACE   # Haut fourneau
+    quantity: 1
+    difficulty: MEDIUM
+  - material: SMOKER   # Fumoir
+    quantity: 1
+    difficulty: MEDIUM
+  - material: ANVIL   # Enclume
+    quantity: 1
+    difficulty: MEDIUM
+  # ---- Difficile (25) ----
+  - material: DIAMOND_PICKAXE   # Pioche en diamant
     quantity: 1
     difficulty: HARD
-  - material: GOLDEN_APPLE
+  - material: DIAMOND_SWORD   # Épée en diamant
     quantity: 1
-    difficulty: MEDIUM
-  - material: ENDER_PEARL
-    quantity: 4
-    difficulty: MEDIUM
-  - material: EMERALD
-    quantity: 3
-    difficulty: MEDIUM
-  - material: DIAMOND_SWORD
+    difficulty: HARD
+  - material: DIAMOND_CHESTPLATE   # Plastron en diamant
     quantity: 1
-    difficulty: MEDIUM
-  - material: SADDLE
+    difficulty: HARD
+  - material: DIAMOND_BLOCK   # Bloc de diamant
     quantity: 1
-    difficulty: MEDIUM
-  - material: OBSIDIAN
-    quantity: 4
-    difficulty: MEDIUM
-  - material: NAME_TAG
-    quantity: 1
-    difficulty: MEDIUM
-  - material: AMETHYST_SHARD
-    quantity: 3
-    difficulty: MEDIUM
-  - material: BLAZE_ROD
+    difficulty: HARD
+  - material: OBSIDIAN   # Obsidienne
+    quantity: 8
+    difficulty: HARD
+  - material: CRYING_OBSIDIAN   # Obsidienne pleureuse
     quantity: 2
     difficulty: HARD
-  - material: GHAST_TEAR
+  - material: QUARTZ   # Quartz du Nether
+    quantity: 8
+    difficulty: HARD
+  - material: GLOWSTONE_DUST   # Poudre lumineuse
+    quantity: 8
+    difficulty: HARD
+  - material: MAGMA_CREAM   # Crème de magma
     quantity: 1
     difficulty: HARD
-  - material: TRIDENT
+  - material: BLAZE_ROD   # Bâton de Blaze
+    quantity: 2
+    difficulty: HARD
+  - material: NETHER_WART   # Verrues du Nether
+    quantity: 4
+    difficulty: HARD
+  - material: SOUL_SAND   # Sable des âmes
+    quantity: 8
+    difficulty: HARD
+  - material: BASALT   # Basalte
+    quantity: 16
+    difficulty: HARD
+  - material: BLACKSTONE   # Roche noire
+    quantity: 16
+    difficulty: HARD
+  - material: WARPED_STEM   # Tige biscornue
+    quantity: 8
+    difficulty: HARD
+  - material: CRIMSON_FUNGUS   # Champignon carmin
+    quantity: 2
+    difficulty: HARD
+  - material: GHAST_TEAR   # Larme de Ghast
     quantity: 1
     difficulty: HARD
-  - material: TURTLE_EGG
+  - material: ENCHANTING_TABLE   # Table d'enchantement
     quantity: 1
     difficulty: HARD
-  - material: DIAMOND_BLOCK
+  - material: NAME_TAG   # Étiquette
     quantity: 1
     difficulty: HARD
-  - material: NETHER_STAR
+  - material: BREWING_STAND   # Alambic
+    quantity: 1
+    difficulty: HARD
+  - material: ENDER_EYE   # Oeil de l'Ender
+    quantity: 1
+    difficulty: HARD
+  - material: EMERALD_BLOCK   # Bloc d'émeraude
+    quantity: 1
+    difficulty: HARD
+  - material: NAUTILUS_SHELL   # Coquille de nautile
+    quantity: 1
+    difficulty: HARD
+  - material: GLOW_INK_SAC   # Poche d'encre luisante
+    quantity: 2
+    difficulty: HARD
+  - material: GILDED_BLACKSTONE   # Roche noire dorée
+    quantity: 1
+    difficulty: HARD
+  # ---- Extreme (25) ----
+  - material: NETHERITE_INGOT   # Lingot de Netherite
     quantity: 1
     difficulty: EXTREME
-  - material: TOTEM_OF_UNDYING
+  - material: ANCIENT_DEBRIS   # Débris antiques
+    quantity: 2
+    difficulty: EXTREME
+  - material: NETHER_STAR   # Étoile du Nether
     quantity: 1
     difficulty: EXTREME
-  - material: ELYTRA
+  - material: TOTEM_OF_UNDYING   # Totem d'immortalité
     quantity: 1
     difficulty: EXTREME
-  - material: BEACON
+  - material: ELYTRA   # Élytres
     quantity: 1
     difficulty: EXTREME
-  - material: NETHERITE_INGOT
+  - material: DRAGON_BREATH   # Souffle de dragon
+    quantity: 1
+    difficulty: EXTREME
+  - material: SHULKER_SHELL   # Carapace de Shulker
+    quantity: 1
+    difficulty: EXTREME
+  - material: END_CRYSTAL   # Cristal de l'End
+    quantity: 1
+    difficulty: EXTREME
+  - material: END_STONE   # Pierre de l'End
+    quantity: 16
+    difficulty: EXTREME
+  - material: CHORUS_FRUIT   # Chorus
+    quantity: 4
+    difficulty: EXTREME
+  - material: TRIDENT   # Trident
+    quantity: 1
+    difficulty: EXTREME
+  - material: HEART_OF_THE_SEA   # Coeur de la mer
+    quantity: 1
+    difficulty: EXTREME
+  - material: TURTLE_SCUTE   # Écaille de tortue
+    quantity: 1
+    difficulty: EXTREME
+  - material: WITHER_SKELETON_SKULL   # Crâne de Wither squelette
+    quantity: 1
+    difficulty: EXTREME
+  - material: ENCHANTED_GOLDEN_APPLE   # Pomme dorée enchantée
+    quantity: 1
+    difficulty: EXTREME
+  - material: MUSIC_DISC_13   # Disque
+    quantity: 1
+    difficulty: EXTREME
+  - material: SPONGE   # Éponge
+    quantity: 1
+    difficulty: EXTREME
+  - material: PRISMARINE_CRYSTALS   # Cristaux de prismarine
+    quantity: 4
+    difficulty: EXTREME
+  - material: ECHO_SHARD   # Éclat d'écho
+    quantity: 1
+    difficulty: EXTREME
+  - material: GOAT_HORN   # Corne de chèvre
+    quantity: 1
+    difficulty: EXTREME
+  - material: SNIFFER_EGG   # Oeuf de renifleur
+    quantity: 1
+    difficulty: EXTREME
+  - material: DIAMOND_HORSE_ARMOR   # Armure en diamant pour cheval
+    quantity: 1
+    difficulty: EXTREME
+  - material: EXPERIENCE_BOTTLE   # Fiole d'expérience
+    quantity: 1
+    difficulty: EXTREME
+  - material: ENDER_CHEST   # Coffre de l'Ender
+    quantity: 1
+    difficulty: EXTREME
+  - material: MUSIC_DISC_PIGSTEP   # Disque
     quantity: 1
     difficulty: EXTREME

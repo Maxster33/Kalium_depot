@@ -100,6 +100,17 @@ public final class BingoParty {
         return seed;
     }
 
+    /** Reglages choisis par l'hote (0.3.0, voir BingoSettings). */
+    private BingoSettings settings = BingoSettings.defaults();
+
+    public BingoSettings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(BingoSettings settings) {
+        this.settings = settings == null ? BingoSettings.defaults() : settings;
+    }
+
     public Duration getDuration() {
         return duration;
     }

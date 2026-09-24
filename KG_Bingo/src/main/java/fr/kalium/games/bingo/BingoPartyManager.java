@@ -192,7 +192,8 @@ public final class BingoPartyManager {
                 + "host=" + party.host() + "\n"
                 + "teamCount=" + party.teamCount() + "\n"
                 + "teamSize=" + party.teamSize() + "\n"
-                + "roster=" + party.roster().stream().map(UUID::toString).collect(Collectors.joining(","));
+                + "roster=" + party.roster().stream().map(UUID::toString).collect(Collectors.joining(",")) + "\n"
+                + "rules=" + party.rules(); // 1.1.0
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url + "/assignment/" + playerId))

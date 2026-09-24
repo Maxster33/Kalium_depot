@@ -14,7 +14,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.Duration;
 import java.time.Instant;
+import fr.kalium.bingo.score.ScoreEngine;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.IntFunction;
@@ -105,11 +109,39 @@ public final class GameEndService {
         this.noPlayersAbandonAfter = noPlayersAbandonAfter;
     }
 
-    /** A appeler periodiquement (voir BingoPlugin) : declenche la fin par timeout/abandon des
-     *  parties en cours, puis verifie les expulsions de la salle d'attente post-partie. */
+    // ------------------------------------------------------------------ 0.3.0 : nulle, modes, classements
+
+    /** Resultat d'une partie terminee normalement (0.3.0). */
+    public enum Outcome {
+        /** Une equipe gagne (bingos demandes, grille complete, meilleur score au chrono, ou derniere en jeu). */
+        WIN,
+        /** Meilleurs scores egaux a la fin du chrono : compte comme une nulle pour les points, mais s'appelle
+         *  "Egalite" (precision de LeKiwi06 : "ce n'est pas la meme chose semantiquement"). */
+        EGALITE,
+        /** Nulle acceptee par vote. */
+        NULLE
+    }
+
+    private DrawVoteService drawVotes;
+    /** Blackout : derniere heure de jeu pour laquelle une nulle a ete proposee automatiquement. */
+    private final Map<String, Long> autoDrawHour = new HashMap<>();
+    /** "gameId:equipe" des equipes dont l'abandon complet a deja ete traite. */
+    private final java.util.Set<String> abandonedTeamsHandled = new java.util.HashSet<>();
+
+    public void setDrawVotes(DrawVoteService drawVotes) {
+        this.drawVotes = drawVotes;
+        drawVotes.setOnDrawAccepted(game -> finish(game, Outcome.NULLE, -1, "Nulle acceptée par toutes les équipes."));
+    }
+
+    /** A appeler periodiquement (voir BingoPlugin) : fin au chrono, abandons par deconnexion, nulle automatique du
+     *  blackout, fin sans joueur, votes, puis expulsions de la salle d'attente post-partie. */
     public void tick() {
         for (BingoGame game : gameManager.getActiveGames()) {
             if (game.getState() != GameState.IN_PROGRESS) {
+                continue;
+            }
+            checkDisconnectionAbandons(game);
+            if (game.getState() != GameState.IN_PROGRESS || game.isFrozen()) {
                 continue;
             }
             if (game.isTimeUp()) {
@@ -117,7 +149,19 @@ public final class GameEndService {
                 endByTimeout(game);
                 continue;
             }
+            if (game.getSettings().isBlackout() && drawVotes != null) {
+                // Demande explicite de LeKiwi06 : "proposition de match nul automatique a 1h de jeu en blackout,
+                // nouvelle proposition toutes les 1 heure".
+                long hours = game.getElapsed().toHours();
+                if (hours >= 1 && hours > autoDrawHour.getOrDefault(game.getGameId(), 0L)) {
+                    autoDrawHour.put(game.getGameId(), hours);
+                    drawVotes.proposeAutomatic(game, hours + " h de jeu");
+                }
+            }
             checkEmptiness(game);
+        }
+        if (drawVotes != null) {
+            drawVotes.tick();
         }
         sweepLingering();
     }
@@ -136,11 +180,39 @@ public final class GameEndService {
     }
 
     /**
+     * 0.3.0 - demande explicite de LeKiwi06 : un joueur deconnecte depuis game.disconnect-abandon-seconds (10 min)
+     * a abandonne DEFINITIVEMENT (meme consequence qu'un abandon volontaire, voir AbandonService). S'applique aussi
+     * au joueur expulse pour inactivite (voir InactivityService).
+     */
+    private void checkDisconnectionAbandons(BingoGame game) {
+        boolean any = false;
+        for (BingoInstance instance : game.getInstances()) {
+            for (UUID playerId : instance.getTeam().getPlayers()) {
+                if (instance.hasAbandoned(playerId) || instance.isPlayerConnected(playerId)
+                        || !gameManager.hasAbandoned(playerId)) {
+                    continue;
+                }
+                instance.markAbandoned(playerId);
+                gameManager.onPlayerReconnect(playerId); // oublie le compte a rebours
+                playerReset.resetOrDefer(playerId);
+                clearActiveGameAsync(playerId);
+                String name = Bukkit.getOfflinePlayer(playerId).getName();
+                broadcast(game, Component.text((name != null ? name : "Un joueur") + " (équipe " + instance.getTeam().getTeamNumber()
+                        + ") a abandonné : déconnecté depuis trop longtemps.", NamedTextColor.GRAY));
+                any = true;
+            }
+        }
+        if (any) {
+            checkTeamAbandonment(game);
+            checkImmediateAbandonment(game);
+        }
+    }
+
+    /**
      * A appeler par AbandonService juste apres qu'un joueur vient d'abandonner (voir
      * BingoInstance.markAbandoned) : si plus AUCUN joueur n'est desormais actif sur cette partie
      * (tous ont abandonne/deconnecte), inutile d'attendre game.no-players-abandon-after-seconds -
-     * la partie se termine tout de suite, plutot que de laisser tourner une partie vide pendant
-     * jusqu'a 10 minutes suite a un abandon deliberement complet.
+     * la partie se termine tout de suite.
      */
     public void checkImmediateAbandonment(BingoGame game) {
         if (game.getState() == GameState.IN_PROGRESS && !game.hasAnyConnectedPlayer()) {
@@ -150,70 +222,206 @@ public final class GameEndService {
     }
 
     /**
-     * A appeler par AbandonService juste apres un abandon (0.1.18) - demande explicite de
-     * l'utilisateur : "si tous les membres d'une équipe ont abandonné, fin de la partie", precisee
-     * via AskUserQuestion : la partie ne s'arrete QUE si cet abandon ne laisse plus qu'UNE SEULE
-     * equipe encore en jeu (4 equipes dont 1 abandonne entierement : les 3 autres continuent), avec
-     * un message neutre (pas de gagnant declare). Une equipe "en jeu" = au moins un membre qui n'a
-     * pas abandonne - une simple deconnexion ne compte pas (reconnexion possible).
-     *
-     * Partie a une seule equipe : rien ici, c'est checkImmediateAbandonment (plus aucun joueur actif)
-     * qui la termine - il n'y a personne a qui envoyer un message ou une salle d'attente.
+     * Apres un abandon (0.3.0 - demande explicite de LeKiwi06) : une equipe dont TOUS les membres ont abandonne
+     * perd et sera classee derniere quel que soit son score (ses joueurs gardent les points de l'equipe).
+     * - Il reste plusieurs equipes : la partie continue et une nulle est proposee a toutes ("fair-play").
+     * - Il n'en reste qu'une : la partie est arretee et cette equipe vote la nulle ; si elle refuse, le score
+     *   s'applique (elle gagne, les autres ayant abandonne).
      */
     public void checkTeamAbandonment(BingoGame game) {
         if (game.getState() != GameState.IN_PROGRESS || game.getInstances().size() < 2) {
             return;
         }
-        int teamsStillPlaying = 0;
-        int abandonedTeam = -1;
+        List<Integer> playing = new ArrayList<>();
+        List<Integer> newlyAbandoned = new ArrayList<>();
         for (BingoInstance instance : game.getInstances()) {
-            if (instance.isFullyAbandoned()) {
-                abandonedTeam = instance.getTeam().getTeamNumber();
-            } else {
-                teamsStillPlaying++;
+            int team = instance.getTeam().getTeamNumber();
+            if (!instance.isFullyAbandoned()) {
+                playing.add(team);
+            } else if (abandonedTeamsHandled.add(game.getGameId() + ":" + team)) {
+                newlyAbandoned.add(team);
             }
         }
-        if (abandonedTeam != -1 && teamsStillPlaying <= 1) {
-            emptySince.remove(game.getGameId());
-            endByTeamAbandon(game, abandonedTeam);
+        if (newlyAbandoned.isEmpty()) {
+            return;
+        }
+        for (int team : newlyAbandoned) {
+            broadcast(game, Component.text("L'équipe " + team + " a abandonné : elle perd la partie et sera classée dernière.",
+                    NamedTextColor.RED));
+        }
+        if (playing.size() >= 2 && drawVotes != null) {
+            drawVotes.proposeAutomatic(game, "Abandon de l'équipe " + newlyAbandoned.get(0));
+        } else if (playing.size() == 1) {
+            int last = playing.get(0);
+            if (drawVotes == null) {
+                finish(game, Outcome.WIN, last, "Toutes les autres équipes ont abandonné.");
+                return;
+            }
+            game.setFrozen(true);
+            drawVotes.proposeFinal(game, last, accepted -> {
+                if (game.getState() != GameState.IN_PROGRESS) {
+                    return;
+                }
+                if (accepted) {
+                    finish(game, Outcome.NULLE, -1, "Toutes les autres équipes ont abandonné : nulle acceptée.");
+                } else {
+                    finish(game, Outcome.WIN, last, "Toutes les autres équipes ont abandonné.");
+                }
+            });
         }
     }
 
     /**
-     * A appeler par ObjectiveValidationTask juste apres qu'une case vient d'etre validee pour
-     * cette equipe : verifie si elle a rempli TOUTE la grille et, si oui, termine la partie par
-     * victoire.
+     * A appeler par ObjectiveValidationTask juste apres une validation (0.3.0) : en mode bingos, la 1re equipe qui
+     * atteint le nombre de bingos demande gagne ; en blackout, la 1re qui valide toute la grille.
      */
     public void checkWin(BingoGame game, int teamNumber) {
-        if (game.getState() != GameState.IN_PROGRESS || game.getGrid() == null) {
+        if (game.getState() != GameState.IN_PROGRESS || game.isFrozen() || game.getGrid() == null) {
             return;
         }
-        int total = game.getGrid().getSize() * game.getGrid().getSize();
-        if (total > 0 && game.countValidated(teamNumber) >= total) {
-            endByWin(game, teamNumber);
+        BingoSettings settings = game.getSettings();
+        if (settings.isBlackout()) {
+            int total = game.getGrid().getSize() * game.getGrid().getSize();
+            if (game.countValidated(teamNumber) >= total) {
+                finish(game, Outcome.WIN, teamNumber, "L'équipe " + teamNumber + " a rempli toute la grille en premier.");
+            }
+        } else if (game.getScoreEngine().bingoCount(teamNumber) >= settings.bingosRequired()) {
+            finish(game, Outcome.WIN, teamNumber, "L'équipe " + teamNumber + " a achevé ses " + settings.bingosRequired()
+                    + " bingos en premier.");
         }
     }
 
+    /** Chrono ecoule (mode bingos) : le meilleur score gagne ; meilleurs scores egaux = Egalite. Les equipes qui
+     *  ont abandonne ne peuvent pas gagner. */
     private void endByTimeout(BingoGame game) {
-        if (game.getState() != GameState.IN_PROGRESS) {
-            return; // deja termine entre-temps (victoire) - evite un double declenchement
+        double best = -1;
+        List<Integer> top = new ArrayList<>();
+        for (BingoInstance instance : game.getInstances()) {
+            if (instance.isFullyAbandoned()) {
+                continue;
+            }
+            int team = instance.getTeam().getTeamNumber();
+            double score = game.score(team);
+            if (score > best + 1e-9) {
+                best = score;
+                top.clear();
+                top.add(team);
+            } else if (Math.abs(score - best) < 1e-9) {
+                top.add(team);
+            }
         }
-        logger.info("[KG_BingoGame] Partie '" + game.getGameId() + "' terminee (temps écoulé).");
-        finishAndSendToLobby(game, team -> Component.text("Temps écoulé ! La partie est terminée.", NamedTextColor.YELLOW));
+        if (top.size() == 1) {
+            finish(game, Outcome.WIN, top.get(0), "Temps écoulé : l'équipe " + top.get(0) + " a le meilleur score.");
+        } else {
+            finish(game, Outcome.EGALITE, -1, "Temps écoulé : égalité au score entre les équipes "
+                    + top.stream().map(String::valueOf).collect(java.util.stream.Collectors.joining(", ")) + " !");
+        }
     }
 
-    private void endByWin(BingoGame game, int winningTeam) {
-        logger.info("[KG_BingoGame] Partie '" + game.getGameId() + "' terminee (équipe " + winningTeam + " a rempli la grille).");
-        finishAndSendToLobby(game, team -> team == winningTeam
-                ? Component.text("Bravo, votre équipe a rempli la grille ! Partie terminée.", NamedTextColor.GREEN)
-                : Component.text("L'équipe " + winningTeam + " a rempli la grille en premier. Partie terminée.", NamedTextColor.YELLOW));
+    /**
+     * Fin de partie avec resultat (0.3.0) : calcule les points finaux et les classements, les affiche a tous, puis
+     * traitement commun (inventaires, salle d'attente, nettoyage).
+     *
+     * Victoire : bonus de victoire pour l'equipe gagnante, puis classement CUMULE - chaque equipe gagne ses points
+     * + ceux de toutes les equipes classees derriere elle (demande explicite de LeKiwi06). Ordre : gagnante, puis
+     * les autres par score, les equipes ayant abandonne toujours en dernier.
+     * Egalite / nulle : chaque equipe ne garde que ses propres points d'equipe.
+     */
+    public void finish(BingoGame game, Outcome outcome, int winner, String reason) {
+        if (game.getState() != GameState.IN_PROGRESS) {
+            return;
+        }
+        if (drawVotes != null) {
+            drawVotes.forget(game);
+        }
+        autoDrawHour.remove(game.getGameId());
+        game.setFrozen(false);
+        var engine = game.getScoreEngine();
+        boolean win = outcome == Outcome.WIN;
+
+        List<BingoInstance> order = new ArrayList<>(game.getInstances());
+        order.sort((a, b) -> {
+            int ta = a.getTeam().getTeamNumber();
+            int tb = b.getTeam().getTeamNumber();
+            if (win && ta == winner) {
+                return -1;
+            }
+            if (win && tb == winner) {
+                return 1;
+            }
+            if (a.isFullyAbandoned() != b.isFullyAbandoned()) {
+                return a.isFullyAbandoned() ? 1 : -1;
+            }
+            return Double.compare(engine.teamScore(tb), engine.teamScore(ta));
+        });
+        Map<Integer, Double> own = new HashMap<>();
+        for (BingoInstance instance : order) {
+            int team = instance.getTeam().getTeamNumber();
+            own.put(team, engine.teamScore(team, win && team == winner));
+        }
+
+        List<Component> summary = new ArrayList<>();
+        String title = switch (outcome) {
+            case WIN -> "Victoire de l'équipe " + winner;
+            case EGALITE -> "Égalité";
+            case NULLE -> "Match nul";
+        };
+        summary.add(Component.text("===== " + title + " =====", NamedTextColor.GOLD));
+        summary.add(Component.text(reason, NamedTextColor.YELLOW));
+        summary.add(Component.text(win ? "Classement des équipes (points + ceux des équipes derrière) :"
+                : "Points des équipes (chacune garde ses propres points) :", NamedTextColor.AQUA));
+        StringBuilder log = new StringBuilder("[KG_BingoGame] Partie '" + game.getGameId() + "' terminee (" + title + ") :");
+        for (int i = 0; i < order.size(); i++) {
+            BingoInstance instance = order.get(i);
+            int team = instance.getTeam().getTeamNumber();
+            double mine = own.get(team);
+            double behind = 0;
+            if (win) {
+                for (int j = i + 1; j < order.size(); j++) {
+                    behind += own.get(order.get(j).getTeam().getTeamNumber());
+                }
+            }
+            String line = (win ? (i + 1) + ". " : "- ") + "Équipe " + team + " : " + ScoreEngine.format(mine + behind) + " pts"
+                    + (behind > 0 ? " (" + ScoreEngine.format(mine) + " + " + ScoreEngine.format(behind) + ")" : "")
+                    + (instance.isFullyAbandoned() ? " — abandon" : "");
+            summary.add(Component.text(line, win && team == winner ? NamedTextColor.GREEN : NamedTextColor.WHITE));
+            log.append(" equipe ").append(team).append('=').append(ScoreEngine.format(mine + behind));
+        }
+        List<String> solos = new ArrayList<>();
+        List<Map.Entry<String, Double>> soloScores = new ArrayList<>();
+        for (BingoInstance instance : game.getInstances()) {
+            int team = instance.getTeam().getTeamNumber();
+            for (UUID playerId : instance.getTeam().getPlayers()) {
+                String name = Bukkit.getOfflinePlayer(playerId).getName();
+                soloScores.add(Map.entry(name != null ? name : playerId.toString().substring(0, 8),
+                        engine.soloScore(team, playerId, win && team == winner)));
+            }
+        }
+        soloScores.sort((a, b) -> Double.compare(b.getValue(), a.getValue()));
+        for (Map.Entry<String, Double> entry : soloScores) {
+            solos.add(entry.getKey() + " " + ScoreEngine.format(entry.getValue()));
+        }
+        summary.add(Component.text("Points solo : " + String.join(", ", solos), NamedTextColor.GRAY));
+        logger.info(log + " ; solo : " + String.join(", ", solos));
+
+        finishAndSendToLobby(game, team -> switch (outcome) {
+            case WIN -> team == winner
+                    ? Component.text("Victoire ! Votre équipe remporte la partie.", NamedTextColor.GREEN)
+                    : Component.text("L'équipe " + winner + " remporte la partie.", NamedTextColor.YELLOW);
+            case EGALITE -> Component.text("Égalité ! La partie est terminée.", NamedTextColor.YELLOW);
+            case NULLE -> Component.text("Match nul : la partie est terminée.", NamedTextColor.YELLOW);
+        }, summary);
     }
 
-    private void endByTeamAbandon(BingoGame game, int abandonedTeam) {
-        logger.info("[KG_BingoGame] Partie '" + game.getGameId() + "' terminee (l'equipe " + abandonedTeam
-                + " a entierement abandonne, il ne reste qu'une equipe en jeu).");
-        finishAndSendToLobby(game, team -> Component.text("L'équipe " + abandonedTeam
-                + " a entièrement abandonné. La partie est terminée.", NamedTextColor.YELLOW));
+    private void broadcast(BingoGame game, Component message) {
+        for (BingoInstance instance : game.getInstances()) {
+            for (UUID playerId : instance.getTeam().getPlayers()) {
+                Player player = Bukkit.getPlayer(playerId);
+                if (player != null && player.isOnline() && !instance.hasAbandoned(playerId)) {
+                    player.sendMessage(message);
+                }
+            }
+        }
     }
 
     /**
@@ -222,7 +430,7 @@ public final class GameEndService {
      * avec la nether star (menu de retour), et programme le nettoyage differe. `messageForTeam`
      * ne fait varier que le texte affiche (victoire/defaite vs temps ecoule).
      */
-    private void finishAndSendToLobby(BingoGame game, IntFunction<Component> messageForTeam) {
+    private void finishAndSendToLobby(BingoGame game, IntFunction<Component> messageForTeam, List<Component> summary) {
         game.setState(GameState.FINISHED);
         Location spawn = lobbySlots.reserve(game.getGameId());
         Instant deadline = Instant.now().plus(postGameLobbyTimeout);
@@ -240,14 +448,20 @@ public final class GameEndService {
                 Player player = Bukkit.getPlayer(playerId);
                 if (player != null && player.isOnline()) {
                     player.sendMessage(message);
+                    summary.forEach(player::sendMessage);
                     // Inventaire vide + point de spawn supprime (0.1.18, voir PlayerResetService).
                     playerReset.reset(player);
                     if (spawn != null) {
                         anyoneLingering = true;
-                        player.teleport(spawn);
-                        lobbyItems.givePostGame(player);
+                        // 0.3.0 : invincible des AVANT la teleportation et pendant tout le sejour en salle
+                        // d'attente post-partie (demande explicite de LeKiwi06, 24/09/2026 : "rendre les
+                        // joueurs invincibles dans le tp back lobby du fin de partie pour eviter la mort
+                        // imprevue" - voir LobbyProtectionListener.onAnyDamage).
                         lingeringDeadlines.put(playerId, deadline);
                         lingeringGameId.put(playerId, game.getGameId());
+                        makeSafe(player);
+                        player.teleport(spawn);
+                        lobbyItems.givePostGame(player);
                     } else {
                         // Aucune salle d'attente disponible (toutes occupees / pas de modele capture) :
                         // repli sur kal-games plutot que de laisser le joueur bloque sans nether star.
@@ -269,6 +483,21 @@ public final class GameEndService {
             lobbySlots.release(game.getGameId());
         }
         scheduleCleanup(game.getGameId());
+    }
+
+    /** Retire tout ce qui pourrait encore tuer le joueur apres la teleportation (feu, chute en cours,
+     *  poison/wither...) et remet vie et nourriture au maximum (0.3.0). */
+    private static void makeSafe(Player player) {
+        player.setFireTicks(0);
+        player.setFallDistance(0f);
+        player.setVelocity(new org.bukkit.util.Vector());
+        for (var effect : player.getActivePotionEffects()) {
+            player.removePotionEffect(effect.getType());
+        }
+        var maxHealth = player.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH);
+        player.setHealth(maxHealth != null ? maxHealth.getValue() : 20.0);
+        player.setFoodLevel(20);
+        player.setSaturation(20f);
     }
 
     /**

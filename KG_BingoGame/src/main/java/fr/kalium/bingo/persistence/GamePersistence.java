@@ -78,6 +78,8 @@ public final class GamePersistence {
         yaml.set("seed", game.getSeed());
         yaml.set("duration-seconds", game.getDuration().getSeconds());
         yaml.set("remaining-seconds", game.getRemaining().getSeconds());
+        yaml.set("settings", game.getSettings().encode()); // 0.3.0
+        yaml.set("elapsed-seconds", game.getElapsed().getSeconds()); // 0.3.0 (blackout : pas de temps restant)
 
         List<Map<String, Object>> instances = new ArrayList<>();
         for (BingoInstance instance : game.getInstances()) {
@@ -119,6 +121,14 @@ public final class GamePersistence {
                 }
                 yaml.set("progress." + team, validated);
             }
+            // 0.3.0 : journal ORDONNE des validations (equipe;case;joueur) - le rejouer redonne exactement les
+            // memes points (1re equipe, bingos, points solo, voir ScoreEngine). "progress" reste ecrit pour
+            // pouvoir revenir a une version precedente.
+            List<String> log = new ArrayList<>();
+            for (var v : game.getScoreEngine().log()) {
+                log.add(v.team() + ";" + v.cell() + ";" + (v.player() == null ? "" : v.player()));
+            }
+            yaml.set("validations", log);
         }
 
         try {
@@ -199,6 +209,7 @@ public final class GamePersistence {
         }
 
         BingoGame game = gameManager.restoreGame(gameId, seed, Duration.ofSeconds(durationSeconds), instances);
+        game.setSettings(fr.kalium.bingo.game.BingoSettings.parse(yaml.getString("settings")));
 
         int gridSize = yaml.getInt("grid.size");
         List<Map<?, ?>> rawCells = yaml.getMapList("grid.cells");
@@ -223,18 +234,29 @@ public final class GamePersistence {
             }
             game.setGrid(new BingoGrid(gridSize, cells));
 
+            List<String> log = yaml.getStringList("validations");
             ConfigurationSection progress = yaml.getConfigurationSection("progress");
-            if (progress != null) {
+            if (!log.isEmpty()) {
+                for (String entry : log) {
+                    String[] parts = entry.split(";", -1);
+                    UUID player = parts.length > 2 && !parts[2].isBlank() ? UUID.fromString(parts[2]) : null;
+                    game.markValidated(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), player);
+                }
+            } else if (progress != null) {
+                // Sauvegarde d'avant 0.3.0 : ordre et joueurs inconnus.
                 for (String teamKey : progress.getKeys(false)) {
                     int team = Integer.parseInt(teamKey);
                     for (int index : progress.getIntegerList(teamKey)) {
-                        game.markValidated(team, index);
+                        game.markValidated(team, index, null);
                     }
                 }
             }
         }
 
         game.restoreInProgress(Duration.ofSeconds(remainingSeconds));
+        if (game.getSettings().isBlackout()) {
+            game.restoreElapsed(Duration.ofSeconds(yaml.getLong("elapsed-seconds"))); // 0.3.0
+        }
         logger.info("[KG_BingoGame] Partie '" + gameId + "' restaurée (temps restant : " + remainingSeconds + "s).");
     }
 

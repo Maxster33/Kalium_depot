@@ -57,6 +57,19 @@ public final class BingoParty {
         return duration;
     }
 
+    /** Reglages de jeu choisis a la creation (1.1.0 : mode, bingos requis, composition de la grille), transmis
+     *  tels quels a KG_BingoGame ("mode=BINGOS;bingos=3;easy=10;medium=10;hard=5;extreme=0"). Vide = reglages par
+     *  defaut de KG_BingoGame. */
+    private String rules = "";
+
+    public String rules() {
+        return rules;
+    }
+
+    public void setRules(String rules) {
+        this.rules = rules == null ? "" : rules;
+    }
+
     /** Nombre d'equipes et taille max par equipe CHOISIS PAR L'HOTE a la creation (voir PlayerMenus.openBingoMenu). */
     public int teamCount() {
         return teamCount;

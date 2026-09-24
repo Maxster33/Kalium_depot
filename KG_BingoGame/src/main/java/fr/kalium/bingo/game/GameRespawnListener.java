@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import java.util.Optional;
@@ -42,5 +43,24 @@ public final class GameRespawnListener implements Listener {
         if (target == null || target.getWorld() == null || !GameManager.belongsTo(target.getWorld(), instance.get())) {
             event.setRespawnLocation(instance.get().getSpawnLocation());
         }
+    }
+
+    /**
+     * 0.3.0 : keepInventory GARANTI pour les joueurs d'une partie en cours, sans dependre de la regle de jeu du
+     * monde - en test (24/09/2026) la regle n'etait pas active sur les maps : LeKiwi06 l'avait activee a la main
+     * sur la sienne, Maxster33 non et a perdu son inventaire. Demande explicite : "activer le keep inventory sur
+     * les mondes des joueurs quand la partie demarre" (overworld, Nether et End de l'equipe).
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onDeath(PlayerDeathEvent event) {
+        boolean inGame = gameManager.findGameOf(event.getPlayer().getUniqueId())
+                .filter(g -> g.getState() == GameState.IN_PROGRESS).isPresent();
+        if (!inGame) {
+            return;
+        }
+        event.setKeepInventory(true);
+        event.getDrops().clear();
+        event.setKeepLevel(true);
+        event.setDroppedExp(0);
     }
 }

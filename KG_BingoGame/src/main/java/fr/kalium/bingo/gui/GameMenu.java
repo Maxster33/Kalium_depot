@@ -7,7 +7,10 @@ import fr.kalium.bingo.grid.BingoGrid;
 import fr.kalium.bingo.grid.Difficulty;
 import fr.kalium.bingo.grid.GridCell;
 import fr.kalium.bingo.grid.Objective;
+import fr.kalium.bingo.score.ScoreEngine;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -22,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Menu EN PARTIE (ouvert via l'objet papier, voir GameItems / GameItemListener) : la grille de
@@ -49,6 +53,8 @@ public final class GameMenu {
     private static final int GRID_COL_OFFSET = 2;
     public static final int CLOSE_SLOT = SIZE - 1;        // derniere rangee, derniere colonne
     public static final int ABANDON_SLOT = SIZE - 1 - 9;  // juste au-dessus de CLOSE_SLOT
+    /** 0.3.0 : proposer une nulle (voir DrawVoteService), juste au-dessus d'ABANDON_SLOT. */
+    public static final int DRAW_SLOT = SIZE - 1 - 18;
 
     private final GameManager gameManager;
 
@@ -88,28 +94,80 @@ public final class GameMenu {
 
         inv.setItem(CLOSE_SLOT, closeItem());
         inv.setItem(ABANDON_SLOT, abandonItem());
+        inv.setItem(DRAW_SLOT, drawItem());
 
         player.openInventory(inv);
     }
 
+    /**
+     * Case de la grille (0.3.0 - demande explicite de LeKiwi06, 24/09/2026) : nom de l'objet en francais (nom du
+     * jeu), difficulte et valeur ; pour CHAQUE equipe : complete ou non, par qui (pseudo entre parentheses), bonus
+     * de 1re equipe, coefficient des bingos et points que la case lui rapporte ; puis les bingos (ligne, colonne,
+     * diagonale) qui passent par cette case, UNIQUEMENT s'ils ont ete acheves par au moins une equipe ("pour
+     * eviter de surcharger inutilement").
+     */
     private ItemStack buildCellItem(BingoGame game, GridCell cell, int index, int myTeam) {
         Objective objective = cell.getObjective();
+        Difficulty difficulty = objective.difficulty();
+        ScoreEngine engine = game.getScoreEngine();
         ItemStack item = new ItemStack(objective.material(), Math.max(1, Math.min(64, objective.quantity())));
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(colorFor(objective.difficulty()) + objective.quantity() + "x " + objective.material().name());
+        meta.displayName(plain(Component.text(objective.quantity() + " ", colorFor(difficulty))
+                .append(Component.translatable(objective.material().translationKey(), colorFor(difficulty)))));
 
-        List<String> lore = new ArrayList<>();
-        lore.add("§8Difficulté : " + colorFor(objective.difficulty()) + objective.difficulty().name());
+        List<Component> lore = new ArrayList<>();
+        lore.add(plain(Component.text("Difficulté : ", NamedTextColor.DARK_GRAY)
+                .append(Component.text(difficulty.label() + " (" + difficulty.points() + " pt"
+                        + (difficulty.points() > 1 ? "s" : "") + ")", colorFor(difficulty)))));
         if (objective.hasCondition()) {
-            lore.add("§7" + objective.condition());
+            lore.add(plain(Component.text(objective.condition(), NamedTextColor.GRAY)));
         }
-        lore.add("");
+        lore.add(Component.empty());
         for (BingoInstance instance : game.getInstances()) {
             int team = instance.getTeam().getTeamNumber();
-            boolean done = game.isValidated(team, index);
-            lore.add("§7Équipe " + team + " : " + (done ? "§aComplété" : "§cNon complété"));
+            if (!game.isValidated(team, index)) {
+                lore.add(plain(Component.text("Équipe " + team + " : ", NamedTextColor.GRAY)
+                        .append(Component.text("Non complété", NamedTextColor.RED))));
+                continue;
+            }
+            Component line = Component.text("Équipe " + team + " : ", NamedTextColor.GRAY)
+                    .append(Component.text("Complété", NamedTextColor.GREEN));
+            String owner = nameOf(engine.ownerOf(team, index));
+            if (owner != null) {
+                line = line.append(Component.text(" (" + owner + ")", NamedTextColor.GRAY));
+            }
+            int first = engine.firstBonusOf(team, index);
+            if (engine.firstTeamOf(index) == team) {
+                line = line.append(Component.text("  1re +" + first, NamedTextColor.GOLD));
+            }
+            double coef = engine.coefficient(team, index);
+            if (coef > 1.0) {
+                line = line.append(Component.text("  ×" + ScoreEngine.format(coef), NamedTextColor.AQUA));
+            }
+            double points = (difficulty.points() + first) * coef;
+            line = line.append(Component.text("  = " + ScoreEngine.format(points) + " pts", NamedTextColor.WHITE));
+            lore.add(plain(line));
         }
-        meta.setLore(lore);
+        boolean header = false;
+        for (int lineIndex : engine.linesOf(index)) {
+            List<String> teams = new ArrayList<>();
+            for (BingoInstance instance : game.getInstances()) {
+                int team = instance.getTeam().getTeamNumber();
+                if (engine.hasCompleted(team, lineIndex)) {
+                    teams.add("équipe " + team + (engine.firstTeamOfLine(lineIndex) == team ? " (1re)" : ""));
+                }
+            }
+            if (teams.isEmpty()) {
+                continue;
+            }
+            if (!header) {
+                lore.add(Component.empty());
+                header = true;
+            }
+            lore.add(plain(Component.text("Bingo " + engine.lineName(lineIndex) + " : ", NamedTextColor.AQUA)
+                    .append(Component.text(String.join(", ", teams), NamedTextColor.WHITE))));
+        }
+        meta.lore(lore);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
         item.setItemMeta(meta);
 
@@ -119,6 +177,14 @@ public final class GameMenu {
         return item;
     }
 
+    private static Component plain(Component component) {
+        return component.decoration(TextDecoration.ITALIC, false);
+    }
+
+    private static String nameOf(UUID playerId) {
+        return playerId == null ? null : Bukkit.getOfflinePlayer(playerId).getName();
+    }
+
     /** Fait briller l'objet comme un livre enchanté, sans afficher d'enchantement dans le tooltip
      *  (ItemFlag.HIDE_ENCHANTS deja pose ci-dessus) - demande explicite de l'utilisateur : "il doit
      *  être brillant ... comme pour les livres enchantés par exemple". */
@@ -126,12 +192,12 @@ public final class GameMenu {
         item.addUnsafeEnchantment(Enchantment.LUCK_OF_THE_SEA, 1);
     }
 
-    private String colorFor(Difficulty difficulty) {
+    private NamedTextColor colorFor(Difficulty difficulty) {
         return switch (difficulty) {
-            case EASY -> "§9";
-            case MEDIUM -> "§e";
-            case HARD -> "§6";
-            case EXTREME -> "§c";
+            case EASY -> NamedTextColor.BLUE;
+            case MEDIUM -> NamedTextColor.YELLOW;
+            case HARD -> NamedTextColor.GOLD;
+            case EXTREME -> NamedTextColor.RED;
         };
     }
 
@@ -139,6 +205,18 @@ public final class GameMenu {
         ItemStack item = new ItemStack(Material.BARRIER);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName("§c§lFermer");
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private ItemStack drawItem() {
+        ItemStack item = new ItemStack(Material.WHITE_BANNER);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(plain(Component.text("Proposer une nulle", NamedTextColor.GOLD)));
+        meta.lore(List.of(
+                plain(Component.text("Votre équipe vote d'abord, puis toutes les autres.", NamedTextColor.GRAY)),
+                plain(Component.text("3 min pour voter, 30 min entre deux propositions.", NamedTextColor.GRAY)),
+                plain(Component.text("Nulle : chaque équipe garde ses propres points.", NamedTextColor.GRAY))));
         item.setItemMeta(meta);
         return item;
     }

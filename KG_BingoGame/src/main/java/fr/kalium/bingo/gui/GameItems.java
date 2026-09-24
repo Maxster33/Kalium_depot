@@ -71,6 +71,17 @@ public final class GameItems {
         }
     }
 
+    /** Repond a "ce joueur est-il dans une partie en cours ?" pour GameItemListener (0.3.0, branche par BingoPlugin). */
+    private java.util.function.Predicate<Player> inGame = p -> false;
+
+    public void setInGameCheck(java.util.function.Predicate<Player> inGame) {
+        this.inGame = inGame;
+    }
+
+    public boolean isInGame(Player player) {
+        return inGame.test(player);
+    }
+
     public boolean isOurs(ItemStack item) {
         if (item == null || item.getType().isAir() || !item.hasItemMeta()) {
             return false;

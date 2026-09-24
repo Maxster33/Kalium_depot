@@ -97,6 +97,7 @@ public final class BingoNetworkListener implements PluginMessageListener {
                 for (UUID member : party.roster()) {
                     payloadOut.writeUTF(member.toString());
                 }
+                payloadOut.writeUTF(party.rules()); // 1.1.0 : lu par KG_BingoGame 0.3.0+ (ignore par les plus anciens)
             }
             byte[] payload = payloadBytes.toByteArray();
 

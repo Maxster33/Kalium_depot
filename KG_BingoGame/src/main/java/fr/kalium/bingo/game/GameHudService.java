@@ -44,12 +44,18 @@ public final class GameHudService {
     }
 
     private Component build(BingoGame game) {
-        Component message = Component.text(format(game.getRemaining()), NamedTextColor.AQUA);
+        // 0.3.0 : blackout = temps de jeu ecoule (pas de chrono) ; mode bingos = temps restant.
+        boolean blackout = game.getSettings().isBlackout();
+        Component message = Component.text(blackout ? "Blackout " + format(game.getElapsed()) : format(game.getRemaining()),
+                NamedTextColor.AQUA);
         for (BingoInstance instance : game.getInstances()) {
             int team = instance.getTeam().getTeamNumber();
             message = message.append(Component.text("  |  ", NamedTextColor.DARK_GRAY))
                     .append(Component.text("Équipe " + team + " : ", NamedTextColor.GOLD))
-                    .append(Component.text(game.score(team) + " pts", NamedTextColor.WHITE));
+                    .append(Component.text(fr.kalium.bingo.score.ScoreEngine.format(game.score(team)) + " pts", NamedTextColor.WHITE))
+                    .append(blackout || game.getScoreEngine() == null ? Component.empty()
+                            : Component.text(" (" + game.getScoreEngine().bingoCount(team) + "/" + game.getSettings().bingosRequired()
+                            + " bingos)", NamedTextColor.GRAY));
         }
         return message;
     }

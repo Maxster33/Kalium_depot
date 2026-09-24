@@ -134,8 +134,19 @@ final class BingoMenus {
         List<DialogInput> inputs = new ArrayList<>();
         inputs.add(gui.number("teamCount", t("bingo.create-teams", "Nombre d'équipes"), 1, maxTeamCount, defaultCount, 1));
         inputs.add(gui.number("teamSize", t("bingo.create-teamsize", "Joueurs par équipe"), 1, maxTeamSize, defaultSize, 1));
-        inputs.add(gui.number("duration", t("bingo.create-duration", "Durée de la partie (minutes)"),
+        inputs.add(gui.number("duration", t("bingo.create-duration", "Durée de la partie (minutes, sauf blackout)"),
                 minDurationMinutes, maxDurationMinutes, defaultDurationMinutes, 5));
+        // 1.1.0 - demande explicite de LeKiwi06 (24/09/2026) : mode (bingos a achever, 3 a 12, avec chrono ; ou
+        // blackout, grille complete sans chrono) et composition de la grille par difficulte (25 cases ; par defaut
+        // 10 faciles, 10 normaux, 5 difficiles, 0 extreme - "trop dur pour des debutants").
+        inputs.add(gui.choice("mode", t("bingo.create-mode", "Mode de jeu"), List.of("BINGOS", "BLACKOUT"),
+                List.of(t("bingo.mode-bingos", "Bingos (lignes, colonnes, diagonales) avec chrono"),
+                        t("bingo.mode-blackout", "Blackout : grille complète, sans chrono")), "BINGOS"));
+        inputs.add(gui.number("bingos", t("bingo.create-bingos", "Bingos à achever pour gagner"), 3, 12, 3, 1));
+        inputs.add(gui.number("easy", t("bingo.create-easy", "Objectifs faciles"), 0, GRID_CELLS, 10, 1));
+        inputs.add(gui.number("medium", t("bingo.create-medium", "Objectifs normaux"), 0, GRID_CELLS, 10, 1));
+        inputs.add(gui.number("hard", t("bingo.create-hard", "Objectifs difficiles"), 0, GRID_CELLS, 5, 1));
+        inputs.add(gui.number("extreme", t("bingo.create-extreme", "Objectifs extrêmes"), 0, GRID_CELLS, 0, 1));
 
         List<ActionButton> buttons = new ArrayList<>();
         buttons.add(gui.form(t("bingo.create-confirm", "<green>Créer la partie"), null, (p, view) -> {
@@ -145,16 +156,42 @@ final class BingoMenus {
             int teamCount = teamCountValue == null ? defaultCount : Math.round(teamCountValue);
             int teamSize = teamSizeValue == null ? defaultSize : Math.round(teamSizeValue);
             int durationMinutes = durationValue == null ? defaultDurationMinutes : Math.round(durationValue);
-            bingoCreate(p, teamCount, teamSize, durationMinutes);
+            String mode = "BLACKOUT".equals(view.getText("mode")) ? "BLACKOUT" : "BINGOS";
+            int bingos = intOf(view.getFloat("bingos"), 3);
+            int easy = intOf(view.getFloat("easy"), 10);
+            int medium = intOf(view.getFloat("medium"), 10);
+            int hard = intOf(view.getFloat("hard"), 5);
+            int extreme = intOf(view.getFloat("extreme"), 0);
+            if (easy + medium + hard + extreme != GRID_CELLS) {
+                p.sendMessage(kg.prefix().append(t("bingo.create-bad-grid",
+                        "<red>La grille doit contenir exactement <cells> objectifs (vous en avez choisi <total>).",
+                        "cells", GRID_CELLS, "total", easy + medium + hard + extreme)));
+                openBingoCreate(p);
+                return;
+            }
+            String rules = "mode=" + mode + ";bingos=" + bingos + ";easy=" + easy + ";medium=" + medium
+                    + ";hard=" + hard + ";extreme=" + extreme;
+            bingoCreate(p, teamCount, teamSize, durationMinutes, rules,
+                    ("BLACKOUT".equals(mode) ? "blackout" : bingos + " bingos") + ", " + easy + " F / " + medium + " N / "
+                            + hard + " D / " + extreme + " X");
         }));
         buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openBingoMenu));
         List<Component> body = List.of(t("bingo.create-body", "<gray>Réglez la partie puis créez-la. Vous serez l'hôte."));
         gui.open(player, t("bingo.create-title", "<gold><bold>Nouvelle partie Bingo"), body, inputs, buttons, gui.close(), 1);
     }
 
-    private void bingoCreate(Player player, int teamCount, int teamSize, int durationMinutes) {
+    /** Nombre de cases d'une grille 5x5 (la composition choisie doit y correspondre). */
+    private static final int GRID_CELLS = 25;
+
+    private static int intOf(Float value, int fallback) {
+        return value == null ? fallback : Math.round(value);
+    }
+
+    private void bingoCreate(Player player, int teamCount, int teamSize, int durationMinutes, String rules, String summary) {
         BingoParty party = plugin.parties().create(player, teamCount, teamSize,
                 java.time.Duration.ofMinutes(durationMinutes));
+        party.setRules(rules);
+        player.sendMessage(kg.prefix().append(t("bingo.created-rules", "<gray>Règles : <white><rules>", "rules", summary)));
         player.sendMessage(kg.prefix().append(t("bingo.created",
                 "<green>Partie Bingo créée (<teams> équipe(s) x <size> joueur(s), <minutes> min). "
                         + "Code à partager : <white><bold><code></bold>",

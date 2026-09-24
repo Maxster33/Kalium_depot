@@ -6,14 +6,49 @@ package fr.kalium.bingo.grid;
  * un fond de couleur sur l'item dans la carte : bleu = facile, jaune = moyen, orange =
  * difficile, rouge = extreme").
  *
- * La difficulte donne la couleur du nom de l'objectif dans le menu Objectifs (voir GameMenu). Elle
- * n'intervient PAS dans le score (1 point par objectif quelle que soit la difficulte, voir
- * BingoGame.score) : les points par difficulte ne sont pas encore definis (section 14 du cahier
- * des charges : "systeme de points" a definir avant l'ouverture).
+ * La difficulte donne la couleur du nom de l'objectif dans le menu Objectifs (voir GameMenu) et, depuis
+ * la 0.3.0, ses points (voir ci-dessous).
  */
 public enum Difficulty {
-    EASY,
-    MEDIUM,
-    HARD,
-    EXTREME
+    // 0.3.0 - bareme demande par LeKiwi06 (24/09/2026) : valeur de l'objectif, bonus de la 1re equipe a le
+    // valider, bonus de victoire (ajoute sur chaque objectif valide par l'equipe gagnante). Les bonus sont
+    // ajoutes AVANT les coefficients des bingos (voir fr.kalium.bingo.score.ScoreEngine).
+    EASY("Facile", 1, 0, 1),
+    MEDIUM("Normal", 3, 1, 2),
+    HARD("Difficile", 5, 2, 3),
+    EXTREME("Extrême", 10, 3, 5);
+
+    private final String label;
+    private final int points;
+    private final int firstBonus;
+    private final int winBonus;
+
+    Difficulty(String label, int points, int firstBonus, int winBonus) {
+        this.label = label;
+        this.points = points;
+        this.firstBonus = firstBonus;
+        this.winBonus = winBonus;
+    }
+
+    /** Nom affiche en jeu. */
+    public String label() {
+        return label;
+    }
+
+    public int points() {
+        return points;
+    }
+
+    public int firstBonus() {
+        return firstBonus;
+    }
+
+    public int winBonus() {
+        return winBonus;
+    }
+
+    /** true pour les objectifs difficiles et extremes (bingo "uniquement difficile / extreme"). */
+    public boolean isHardOrAbove() {
+        return this == HARD || this == EXTREME;
+    }
 }

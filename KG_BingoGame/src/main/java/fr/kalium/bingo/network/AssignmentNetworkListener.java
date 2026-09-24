@@ -41,7 +41,7 @@ public final class AssignmentNetworkListener implements PluginMessageListener {
             UUID playerId = UUID.fromString(payloadIn.readUTF());
             boolean found = payloadIn.readBoolean();
             if (!found) {
-                assignmentService.handleResponse(playerId, false, null, 0L, 0L, null, 0, 0, null);
+                assignmentService.handleResponse(playerId, false, null, 0L, 0L, null, 0, 0, null, null);
                 return;
             }
             String gameId = payloadIn.readUTF();
@@ -55,7 +55,9 @@ public final class AssignmentNetworkListener implements PluginMessageListener {
             for (int i = 0; i < rosterSize; i++) {
                 roster.add(UUID.fromString(payloadIn.readUTF()));
             }
-            assignmentService.handleResponse(playerId, true, gameId, seed, durationSeconds, host, teamCount, teamSize, roster);
+            // 0.3.0 : reglages de partie (voir BingoSettings), absents si KG_Bingo est plus ancien.
+            String rules = payloadIn.available() > 0 ? payloadIn.readUTF() : null;
+            assignmentService.handleResponse(playerId, true, gameId, seed, durationSeconds, host, teamCount, teamSize, roster, rules);
         } catch (IOException e) {
             plugin.getLogger().warning("[KG_BingoGame] Réponse d'affectation illisible : " + e.getMessage());
         }

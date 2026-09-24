@@ -1,6 +1,7 @@
 package fr.kalium.bingo.game;
 
 import fr.kalium.bingo.grid.BingoGrid;
+import fr.kalium.bingo.score.ScoreEngine;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -44,6 +45,20 @@ public class BingoGame {
      */
     private final Map<Integer, boolean[]> teamProgress = new HashMap<>();
 
+    /** Reglages de la partie (0.3.0 : mode, bingos requis, composition - voir BingoSettings). */
+    private BingoSettings settings = BingoSettings.defaults();
+
+    public BingoSettings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(BingoSettings settings) {
+        this.settings = settings == null ? BingoSettings.defaults() : settings;
+    }
+
+    /** Points de la partie (0.3.0, voir ScoreEngine) - recree avec la grille. */
+    private ScoreEngine scoreEngine;
+
     public BingoGame(String gameId, long seed, Duration duration) {
         this.gameId = gameId;
         this.seed = seed;
@@ -85,6 +100,7 @@ public class BingoGame {
     /** Attache la grille et (re)initialise la progression de chaque equipe a "aucune case validee". */
     public void setGrid(BingoGrid grid) {
         this.grid = grid;
+        this.scoreEngine = new ScoreEngine(grid);
         teamProgress.clear();
         int cellCount = grid.getSize() * grid.getSize();
         for (BingoInstance instance : instances) {
@@ -97,14 +113,23 @@ public class BingoGame {
         return progress != null && cellIndex >= 0 && cellIndex < progress.length && progress[cellIndex];
     }
 
-    /** @return true si la case vient d'etre validee (false si elle l'etait deja). */
-    public boolean markValidated(int teamNumber, int cellIndex) {
+    /**
+     * Valide la case pour cette equipe et calcule ce qu'elle rapporte (0.3.0 : {@code player} = joueur qui
+     * possedait l'objet, null s'il est inconnu).
+     *
+     * @return les points gagnes, ou null si la case etait deja validee (ou hors grille).
+     */
+    public ScoreEngine.Result markValidated(int teamNumber, int cellIndex, UUID player) {
         boolean[] progress = teamProgress.get(teamNumber);
         if (progress == null || cellIndex < 0 || cellIndex >= progress.length || progress[cellIndex]) {
-            return false;
+            return null;
         }
         progress[cellIndex] = true;
-        return true;
+        return scoreEngine.validate(teamNumber, cellIndex, player);
+    }
+
+    public ScoreEngine getScoreEngine() {
+        return scoreEngine;
     }
 
     /** Nombre de cases validees par cette equipe (sur grid.getSize() * grid.getSize()). */
@@ -162,45 +187,17 @@ public class BingoGame {
     }
 
     /**
-     * Score de cette equipe (demande explicite de l'utilisateur, 24/09/2026) : 1 point par
-     * objectif valide + 1 point par RANGEE entierement validee (les 5 rangees de la grille
-     * uniquement - PAS les colonnes ni les diagonales, choix confirme via AskUserQuestion) + 5
-     * points bonus si la grille entiere est completee. Purement informatif/competitif (affiche
-     * dans GameHudService et GameMenu) : ne change PAS la condition de victoire, toujours
-     * declenchee par GameEndService.checkWin des qu'une equipe complete la grille entiere.
+     * Score d'equipe EN TEMPS REEL (0.3.0, bareme de LeKiwi06 - voir ScoreEngine) : remplace l'ancien score
+     * (1 point par objectif + 1 par rangee + 5 pour la grille complete). Sans bonus de victoire, ajoute en
+     * fin de partie.
      */
-    public int score(int teamNumber) {
-        if (grid == null) {
-            return 0;
-        }
-        int total = grid.getSize() * grid.getSize();
-        int objectivePoints = countValidated(teamNumber);
-        int linePoints = countCompletedRows(teamNumber);
-        int bonus = (total > 0 && objectivePoints >= total) ? 5 : 0;
-        return objectivePoints + linePoints + bonus;
-    }
-
-    private int countCompletedRows(int teamNumber) {
-        int size = grid.getSize();
-        int rows = 0;
-        for (int row = 0; row < size; row++) {
-            boolean complete = true;
-            for (int col = 0; col < size; col++) {
-                if (!isValidated(teamNumber, row * size + col)) {
-                    complete = false;
-                    break;
-                }
-            }
-            if (complete) {
-                rows++;
-            }
-        }
-        return rows;
+    public double score(int teamNumber) {
+        return scoreEngine == null ? 0 : scoreEngine.teamScore(teamNumber);
     }
 
     /** true si le temps imparti est ecoule (partie en cours uniquement). */
     public boolean isTimeUp() {
-        if (startedAt == null) {
+        if (startedAt == null || settings.isBlackout()) { // 0.3.0 : pas de chrono en blackout
             return false;
         }
         return Instant.now().isAfter(startedAt.plus(duration));
@@ -214,6 +211,31 @@ public class BingoGame {
         Duration elapsed = Duration.between(startedAt, Instant.now());
         Duration remaining = duration.minus(elapsed);
         return remaining.isNegative() ? Duration.ZERO : remaining;
+    }
+
+    /** Temps de jeu ecoule depuis le debut (0.3.0 : affiche en blackout, nulle proposee toutes les heures). */
+    public Duration getElapsed() {
+        if (startedAt == null) {
+            return Duration.ZERO;
+        }
+        Duration elapsed = Duration.between(startedAt, Instant.now());
+        return elapsed.isNegative() ? Duration.ZERO : elapsed;
+    }
+
+    /** Partie arretee en attendant le vote de la derniere equipe (0.3.0) : plus de validation ni de chrono. */
+    private boolean frozen;
+
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    /** Restauration d'une partie BLACKOUT (sans chrono) : reprend le temps de jeu deja ecoule (0.3.0). */
+    public void restoreElapsed(Duration elapsed) {
+        this.startedAt = Instant.now().minus(elapsed == null || elapsed.isNegative() ? Duration.ZERO : elapsed);
     }
 
     public Instant getStartedAt() {

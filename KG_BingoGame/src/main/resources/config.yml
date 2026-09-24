@@ -33,6 +33,12 @@ game:
   # (qui suit un JOUEUR individuel, sans action definie) : ce reglage-ci suit la PARTIE entiere et
   # la termine reellement une fois depasse.
   no-players-abandon-after-seconds: 600
+  # AJOUTE en 0.3.0 : un joueur deconnecte depuis ce delai (secondes) pendant une partie a abandonne
+  # DEFINITIVEMENT (demande de LeKiwi06 : 10 minutes). Son equipe perd si tous ses membres ont abandonne.
+  disconnect-abandon-seconds: 600
+  # AJOUTE en 0.3.0 : aucune action pendant ce delai (secondes) = expulsion pour inactivite (5 min), puis
+  # compte a rebours ci-dessus.
+  inactivity-kick-seconds: 300
 
 teams:
   # Jusqu'a 4 equipes par partie, 1 a 4 joueurs par equipe (confirme par l'utilisateur).
@@ -73,12 +79,6 @@ instances:
   pregeneration-radius-blocks: 200
 
 reconnect-during-game:
-  # Au-dela de ce delai de deconnexion consecutive PENDANT une partie en cours, le joueur
-  # est considere comme ayant abandonne. L'ACTION exacte a prendre dans ce cas n'est pas
-  # definie par le cahier des charges (seule la reconnexion "si le joueur etait deja dans
-  # la partie" est demandee, section 1 etape 2) : a valider avant d'implementer un
-  # comportement automatique. Ce reglage sert uniquement a detecter l'abandon, pas a agir.
-  abandon-after-seconds: 300
   # Delai d'attente maximum, a l'arrivee sur ce serveur, pour un joueur dont la partie
   # (gameId) n'est pas encore connue. Ce plugin interroge kal-games des l'arrivee du joueur
   # (message "quelle partie pour ce joueur ?", reemis toutes les 2s, voir AssignmentService),

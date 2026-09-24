@@ -1270,3 +1270,48 @@ JOURNAL). Décision : noms internes du code conservés (`fr.kalium.bingo`, class
    « [KG_BingoGame] Plugin active ».
 
 À déployer avec KaliumRelay 1.1.1, KalGames 1.13.0 et KG_Bingo 1.0.0. **Statut : compilé, non déployé.**
+
+## 0.3.0 — nouveau Bingo : barème de points, modes, nulle, inactivité (24/09/2026)
+
+**Demande de LeKiwi06** (cahier des charges du 24/09, précisé au fil de la conversation). Décisions : multiplicateurs
+**additifs** ; points en **temps réel** avec annonces ; la victoire va à la 1re équipe qui atteint son objectif.
+
+- **Liste d'objectifs validée** (`objectives.yml`) : 100 faciles, 50 normaux, 25 difficiles, 25 extrêmes.
+- **Modes** (`BingoSettings`, choisis dans le menu de création de KG_Bingo 1.1.0) :
+  - *Bingos* : lignes, colonnes et diagonales au choix, 3 à 12 à achever ; la 1re équipe qui y parvient gagne ;
+    chrono : à la fin du temps, le meilleur score gagne, meilleurs scores égaux = **« Égalité »** (compte comme une
+    nulle pour les points) ;
+  - *Blackout* : sans chrono, la 1re équipe qui remplit la grille gagne ; nulle proposée automatiquement à chaque
+    heure de jeu ;
+  - composition de la grille par difficulté (25 cases) ; défaut 10 F / 10 N / 5 D / 0 X.
+- **Barème** (`score/ScoreEngine`, valeurs dans `Difficulty`) : 1/3/5/10 ; 1re équipe sur un objectif +0/+1/+2/+3 ;
+  1re équipe à achever un bingo +0,5 au coefficient de ses cases, bingo uniquement difficile/extrême +0,5 pour toute
+  équipe ; victoire +1/+2/+3/+5 par objectif ; bonus ajoutés avant les coefficients ; classement cumulé en cas de
+  victoire (points + ceux des équipes derrière). Points solo : objectifs validés par le joueur + gain complet des
+  bingos auxquels il a participé (+ bonus de victoire sur ses objectifs). Testé hors serveur (11 vérifications).
+- **Annonces** à tous les joueurs de la partie : objectif validé (en 1er, pseudo, points), bingo (participants, points).
+  Classements d'équipe et solo affichés en fin de partie.
+- **Info-bulle** des objectifs : nom français, difficulté et valeur ; par équipe : pseudo, bonus de 1re, coefficient,
+  points ; bingos passant par la case affichés seulement s'ils ont été achevés.
+- **Nulle** (`DrawVoteService`, bouton du menu Objectifs, `/bingonulle proposer|oui|non`) : vote de l'équipe du
+  proposant puis de toutes les autres (majorité interne, **égalité de votes = oui**), 3 min, délai global de 30 min ;
+  nulle = chaque équipe garde ses propres points. Proposée aussi quand une équipe abandonne.
+- **Abandon** : déconnecté 10 min (`game.disconnect-abandon-seconds`) = abandon définitif ; équipe entièrement
+  abandonnée = perd, classée dernière ; s'il ne reste qu'une équipe, la partie s'arrête et elle vote la nulle (sinon
+  elle gagne).
+- **Inactivité** (`InactivityService`) : 5 min sans action (`game.inactivity-kick-seconds`) = expulsion, puis compte
+  à rebours de déconnexion.
+- **Invincibilité** entre la fin de partie et le départ de la salle d'attente (dégâts et faim annulés, feu / chute /
+  effets retirés avant la téléportation).
+- **keepInventory** garanti à la mort d'un joueur en partie (plus seulement par la règle du monde, qui ne s'était pas
+  appliquée en test) ; nouvelle API `GameRules.KEEP_INVENTORY`.
+- **Papier Objectifs** : ne peut plus quitter l'inventaire du joueur (artisanat, coffres, villageois, cadres...),
+  jamais lâché à la mort ; il ne compte plus pour l'objectif PAPER (bug).
+- Supprimée : clé `reconnect-during-game.abandon-after-seconds` (remplacée par `game.disconnect-abandon-seconds`).
+- **Non corrigé** : Nether commun à toutes les équipes vu en test (le code 0.1.22 prévoit un Nether par équipe) ;
+  diagnostic en attente des journaux de Kixster.
+
+**Déploiement** : avec KG_Bingo 1.1.0 (et les versions en attente : KaliumRelay 1.1.1, KalGames 1.13.0). Suivre la
+procédure de migration de la 0.2.0 ci-dessus (jamais déployée), avec en plus : déplacer l'ancien
+`plugins/KG_BingoGame/objectives.yml` dans le dossier `_removed-...` pour que la nouvelle liste soit installée.
+Aucune partie en cours. **Statut : compilé, non déployé, non testé en jeu.**

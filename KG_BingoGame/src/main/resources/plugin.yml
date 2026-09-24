@@ -22,6 +22,9 @@ commands:
     description: Assigner un joueur à une équipe (hôte de la partie uniquement).
     aliases: [bg-team]
     usage: /<command> <joueur> <1-4>
+  bingonulle:
+    description: Proposer une nulle dans une partie de Bingo, ou voter.
+    usage: /<command> [proposer|oui|non]
   menu:
     description: Menu graphique pour capturer/modifier la salle d'attente Bingo (opérateurs).
     aliases: [bingomenu]

@@ -15,6 +15,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -123,6 +125,27 @@ public final class LobbyProtectionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         if (isLobbyWorld(event.getLocation().getWorld()) && event.getEntity() instanceof Monster) {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * 0.3.0 : joueurs INVINCIBLES entre la fin de partie et leur depart de la salle d'attente post-partie
+     * (GameEndService.isLingering), quelle que soit la cause des degats et le monde ou ils se trouvent -
+     * demande explicite de LeKiwi06 (24/09/2026) : "rendre les joueurs invincibles dans le tp back lobby du
+     * fin de partie pour eviter la mort imprevue".
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onAnyDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player victim && gameEndService.isLingering(victim.getUniqueId())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onHunger(FoodLevelChangeEvent event) {
+        if (event.getEntity() instanceof Player player && gameEndService.isLingering(player.getUniqueId())
+                && event.getFoodLevel() < player.getFoodLevel()) {
             event.setCancelled(true);
         }
     }

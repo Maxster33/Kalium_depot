@@ -105,6 +105,7 @@ public final class PartyStarter {
         BingoGame game;
         try {
             game = gameManager.createGame(party.getGameId(), party.getSeed(), party.getDuration(), teams);
+            game.setSettings(party.getSettings()); // 0.3.0 - avant assignGrid (composition de la grille)
             gameManager.prepareInstances(game);
             gameManager.assignGrid(game);
         } catch (RuntimeException e) {
@@ -131,6 +132,7 @@ public final class PartyStarter {
                     // l'utilisateur, voir StarterKit) - AVANT le papier Objectifs (emplacement 8).
                     StarterKit.prepare(player);
                     gameItems.give(player);
+                    player.sendMessage("§6Partie lancée : §e" + game.getSettings().describe()); // 0.3.0
                     if (carrier == null) {
                         carrier = player; // voir PartyStatusNotifier - n'importe quel joueur en ligne suffit
                     }

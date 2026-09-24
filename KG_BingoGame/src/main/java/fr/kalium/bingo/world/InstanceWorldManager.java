@@ -142,7 +142,7 @@ public class InstanceWorldManager {
      * monde, non concerne).
      */
     public void applyGameRules(World world) {
-        world.setGameRule(GameRule.KEEP_INVENTORY, true);
+        world.setGameRule(org.bukkit.GameRules.KEEP_INVENTORY, true); // 0.3.0 : GameRule.KEEP_INVENTORY est "a supprimer" depuis 1.21.11
     }
 
     public Location getNaturalSpawn(World world) {

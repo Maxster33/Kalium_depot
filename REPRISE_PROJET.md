@@ -60,9 +60,9 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 | Jar | Contenu | À déployer |
 |---|---|---|
 | `KaliumRelay-1.1.1.jar` | plus de jeton écrit dans le code, jeton plus affiché dans la console | avec les autres |
-| `KalGames-1.13.0.jar` | le Bingo sort de KalGames ; prises `MenuEntry` pour les boutons d'autres plugins (inclut 1.12.4, jamais déployée) | **obligatoirement avec KG_Bingo 1.0.0** |
-| `KG_Bingo-1.0.0.jar` | nouveau plugin : partie Bingo du hub, déplacée de KalGames sans changement de comportement | **obligatoirement avec KalGames 1.13.0** |
-| `KG_BingoGame-0.2.0.jar` | KalBingo renommé (inclut 0.1.23 : `relay-token: ""`, commentaires corrigés ; code compilé identique à 0.1.22 hors nom) | avec les autres, **procédure de migration dans `KG_BingoGame/JOURNAL.md`** (dossier de données, `bukkit.yml`) |
+| `KalGames-1.13.0.jar` | le Bingo sort de KalGames ; prises `MenuEntry` pour les boutons d'autres plugins (inclut 1.12.4, jamais déployée) | **obligatoirement avec KG_Bingo 1.1.0** |
+| `KG_Bingo-1.1.0.jar` | nouveau plugin : partie Bingo du hub sortie de KalGames (1.0.0) + réglages du nouveau Bingo dans le menu de création (1.1.0) | **obligatoirement avec KalGames 1.13.0 et KG_BingoGame 0.3.0** |
+| `KG_BingoGame-0.3.0.jar` | KalBingo renommé (0.2.0) + nouveau Bingo (0.3.0 : barème, modes, nulle, inactivité, keepInventory, invincibilité, liste d'objectifs) | avec les autres, **procédure de migration + remplacement d'`objectives.yml` dans `KG_BingoGame/JOURNAL.md`** |
 
 Ces jars ne sont pas dans le dépôt : `sh <plugin>/build.sh` les recrée dans `sortie/`. Déploiement prévu en une
 seule fois après l'étape B (voir « Chantiers en cours »). Au déploiement de KG_Bingo : recopier la section `bingo:`
