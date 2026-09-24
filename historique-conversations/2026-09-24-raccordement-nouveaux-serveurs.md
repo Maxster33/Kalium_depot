@@ -30,3 +30,10 @@
 - Activer les destinations dans le menu du lobby quand les serveurs sont prêts.
 - voicechat : Kixster / kal-games / proxy non réglés ; décider de `voice_host` ou d'un voicechat sur le proxy.
 - Étapes suivantes de la migration.
+
+## Suite : migration complète (après-midi)
+- Demandé : copier entièrement kal-games → KalGames2 et Kixster (Bingo) → Serveur Jeux « sans rien oublier » ; noms
+  Velocity / KLM_Menu : KalGames2 devient kal-games, Serveur Jeux garde son nom, Bingo redevient kixster, l'ancien
+  kal-games devient event ; destinations des plugins mises à jour sur les nouveaux serveurs uniquement (+ proxy).
+- Décision : option B (transférer les noms dans le proxy) plutôt que renommer dans chaque plugin.
+- Fait / reste à faire : voir le compte rendu de Maxster33 dans `REPRISE_PROJET.md`.

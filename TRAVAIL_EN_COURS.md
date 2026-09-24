@@ -17,11 +17,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 ## Utilisés actuellement
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-09-24 13:58 — nouveau plugin : course de bateau sortie de KalGames (Grand Prix, fantôme, barème, temps par checkpoint)
-- KG_Bingo — Maxster33 — depuis le 2026-09-24 14:04 — migration kal-games → KalGames2 : `bingo.server-name` = `serveur-jeux` (config sur KalGames2 uniquement)
-- KG_BingoGame — Maxster33 — depuis le 2026-09-24 14:04 — migration Kixster → Serveur Jeux : `network.self-server-name` = `serveur-jeux`, `network.kal-games-server-name` = `kal-games` (config sur Serveur Jeux uniquement)
 
 ## Requis parfois
 
-- KLM_Menu, KalGames, KG_ScoreBoards, KaliumRelay — Maxster33 — depuis le 2026-09-24 14:04 — migration complète kal-games → KalGames2 et Kixster → Serveur Jeux (copie de tous les fichiers, sans changement de code) ; renommages Velocity (kal-games, serveur-jeux, kixster, event) et destinations du KLM_Menu du lobby. Au-delà de 2 plugins entre 13 h et 23 h : accord de LeKiwi06 à confirmer
 
 ## Demandes

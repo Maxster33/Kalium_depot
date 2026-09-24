@@ -15,19 +15,24 @@ Le détail technique de chaque version est dans `<plugin>/JOURNAL.md`. Documents
 |---|---|---|---|---|
 | Proxy Velocity | — | `ProxyVelocity@7018.mystrator.com` | port 25370 | KaliumRelay (relais HTTP, port 46199) |
 | Lobby | `lobby` | `lobby@7002.mystrator.com` | 91.197.6.152:28618 | KLM_Menu |
-| Hub mini-jeux | `kal-games` | `kalgames@7021.mystrator.com` | 51.254.174.133:21088 | KalGames, KG_Bingo, KG_ScoreBoards, KLM_Menu (KG_Menu à venir) |
-| Serveur Bingo (dédié) | `Bingo` (renommé par LeKiwi06 le 24/09, anciennement `Kixster`) | `kixster@7003.mystrator.com` | 91.197.6.212:29599 | KG_BingoGame, KLM_Menu (boussole désactivée) |
+| **Hub mini-jeux (Kal-Games)** | `kal-games` | `KalGames2@7001.mystrator.com` (onglet « KalGames2 ») | 91.197.6.24:22142 | KalGames, KG_Bingo, KG_ScoreBoards, KLM_Menu (KG_Menu à venir) |
+| **Bingo + jeux gourmands** (Manhunt...) | `serveur-jeux` | `serveurjeux@7015.mystrator.com` | 91.197.6.65:22470 | KG_BingoGame, KLM_Menu (boussole désactivée) |
+| Kixster SMP (redevient SMP, nettoyage à faire) | `kixster` | `kixster@7003.mystrator.com` | 91.197.6.212:29599 | KLM_Menu (plus de KG_BingoGame actif) |
+| Event (ancien hub kal-games, à reconvertir) | `event` | `kalgames@7021.mystrator.com` | 51.254.174.133:21088 | ancien hub : KalGames 1.15.1, KG_Bingo, KG_ScoreBoards, KLM_Menu (à nettoyer) |
 | Serveur de test survie | `kal-test-dev` | `Kal-Test-Dev@5038.mystrator.com` | 91.197.6.215:21621 | KaliumCore (projet en pause), KLM_Menu |
-| Futur hub mini-jeux (remplacera kal-games) | `kalgames2` | `KalGames2@7001.mystrator.com` | 91.197.6.24:22142 | KLM_Menu |
-| Jeux gourmands (Bingo à terme, Manhunt...) | `serveur-jeux` | `serveurjeux@7015.mystrator.com` | 91.197.6.65:22470 | KLM_Menu |
 
-Machines Minestrator : **machine 1** = proxy, lobby, kal-games, Kixster ; **machine 2** = Kal-Test-Dev ;
-**machine 3** = KalGames2, Serveur Jeux (serveurs créés le 24/09/2026).
+Machines Minestrator : **machine 1** = proxy, lobby, Event (ex kal-games), Kixster ; **machine 2** = Kal-Test-Dev ;
+**machine 3** = Kal-Games (ex KalGames2), Serveur Jeux (serveurs créés le 24/09/2026).
 
-**Migration prévue** (décidée par Maxster33 le 24/09/2026) : KalGames → KalGames2 ; le Bingo (Kixster) → Serveur
-Jeux ; Kixster retrouve sa fonction initiale (SMP) ; l'ancien serveur kal-games deviendra un serveur Event.
-Étape 1 (faite le 24/09/2026) : KalGames2, Serveur Jeux et Kal-Test-Dev raccordés au proxy (voir compte rendu de
-Maxster33).
+**Migration du 24/09/2026** (décidée par Maxster33, faite par son Claude) : le hub kal-games a été **copié en entier**
+sur KalGames2 et Kixster (Bingo) **en entier** sur Serveur Jeux (mondes, données des joueurs, classements, arènes,
+configs, plugins) ; les originaux sont intacts (arrêtés). Noms Velocity : `kal-games` → KalGames2, `event` → ancien
+kal-games, `kixster` → Kixster, `serveur-jeux` inchangé (l'ancien nom `Bingo` et `kalgames2` n'existent plus).
+**Tout déploiement pour le hub ou le Bingo se fait désormais sur KalGames2 (onglet 7001) et Serveur Jeux (7015)**,
+plus sur kalgames@7021 ni kixster@7003. Réglages propres aux nouveaux serveurs : ports de jeu, ports voicechat,
+KG_Bingo `bingo.server-name: serveur-jeux`, KG_BingoGame `network.self-server-name: "serveur-jeux"` (clé ajoutée à la
+main) et `network.kal-games-server-name: "kal-games"`. Copies de départ sur le PC de Maxster33 :
+`Téléchargements\migration-2026-09-24\` ; ancien contenu des nouveaux serveurs : `_removed-avant-migration-2026-09-24/`.
 
 **Raccordement d'un serveur Paper au proxy** : `config/paper-global.yml` → `proxies.velocity` : `enabled: true`,
 `online-mode: true`, `secret` = contenu de `forwarding.secret` du proxy (jamais dans le dépôt) ; `server.properties` :
@@ -75,13 +80,12 @@ Copie exacte de chaque jar dans `jars-deployes/`.
 
 | Serveur | Jar | Test en jeu |
 |---|---|---|
-| Kixster | `KG_BingoGame-0.5.0.jar` + `KLM_Menu-2.0.0.jar` (boussole désactivée : objectif du Bingo) (KG_BingoGame 0.3.0 à 0.5.0 déployées le 24/09/2026 ; KalBingo renommé, données dans `plugins/KG_BingoGame/`, `bukkit.yml` : `generator: KG_BingoGame` ; config.yml du serveur : `lobby.max-size: 256`, `lobby.blocks-per-tick: 30000`) | 0.3.0 testée le 24/09/2026 (annonces, coefficients, Nether/End par équipe, nulle en solo, invincibilité OK) ; 0.4.0 testée (carte, têtes, résumé : « propre et sans bugs ») ; 0.4.2 / 0.5.0 non testées (contour des objets blancs, multiplicateur du blackout, interface dans le catalogue) |
-| kal-games | `KalGames-1.15.1.jar` + `KG_ScoreBoards-1.1.0.jar` + `KG_Bingo-1.2.0.jar` + `KLM_Menu-2.0.0.jar` (déployés le 24/09/2026, classements migrés dans `plugins/KG_ScoreBoards/` ; `plugins/KG_Bingo/config.yml` = copie de celui de KalGames, jeton compris) | non testé (Rush ; capture d'arène sans crash à confirmer en recapturant le parkour ; catalogue « Interfaces ») |
-| lobby | `KLM_Menu-2.0.0.jar` (KaliumMenu renommé le 24/09/2026, dossier `plugins/KLM_Menu/` ; destinations `kalgames2`, `serveur-jeux`, `kal-test-dev` ajoutées le 24/09/2026, **désactivées** : à activer en jeu, menu > Paramètres) | non testé (catalogue « Interfaces » ; Paramètres des téléportations non confirmés depuis la 1.5.0 ; nouvelles destinations) |
+| **Serveur Jeux** (`serveur-jeux`, Bingo) | copie complète de Kixster du 24/09/2026 + `KG_BingoGame-0.5.0.jar` réinstallé (le jar n'était plus actif sur Kixster depuis 11:57 le 24/09, 0.5.0 rangée dans `_removed-kg_bingogame-0.5.0` ; 0.6.0 jamais déployée) + `KLM_Menu-2.0.0.jar` (boussole désactivée) + Floodgate, BedrockSkinRestorer, VelocityCommandForward. Config : `network.self-server-name: "serveur-jeux"`, `network.kal-games-server-name: "kal-games"`, `lobby.max-size: 256`, `lobby.blocks-per-tick: 30000` | 0.3.0 testée le 24/09/2026 ; 0.4.0 testée (« propre et sans bugs ») ; 0.4.2 / 0.5.0 non testées ; migration non testée |
+| **KalGames2** (`kal-games`, hub) | copie complète de kal-games du 24/09/2026 : `KalGames-1.15.1.jar` + `KG_ScoreBoards-1.1.0.jar` + `KG_Bingo-1.2.0.jar` (`bingo.server-name: serveur-jeux`) + `KLM_Menu-2.0.0.jar` + Floodgate, BedrockSkinRestorer, VelocityCommandForward (absents de l'ancien kal-games) | non testé (Rush ; capture d'arène ; catalogue « Interfaces » ; migration) |
+| lobby | `KLM_Menu-2.0.0.jar` (destinations au 24/09/2026 : `kixster` (désactivée), `kal-games`, `serveur-jeux`, `kal-test-dev`, `event` (désactivée) ; activer / désactiver en jeu : menu > Paramètres) | non testé (catalogue « Interfaces » ; nouvelles destinations) |
 | proxy | `KaliumRelay-1.1.1.jar` (déployé le 24/09/2026) | relais confirmé le 24/09/2026 en 1.1.0 ; démarrage 1.1.1 vérifié dans le journal ; reconnexion directe non confirmée |
 | Kal-Test-Dev | `KaliumCore-1.4.0.jar` + `KLM_Menu-2.0.0.jar` (24/09/2026, rôle `backend` par défaut) | non testé (projet en pause ; raccordement au proxy du 24/09 non testé) |
-| KalGames2 | `KLM_Menu-2.0.0.jar` (24/09/2026, rôle `backend` par défaut) + plugins communs du lobby | non testé (raccordement au proxy) |
-| Serveur Jeux | `KLM_Menu-2.0.0.jar` (24/09/2026, rôle `backend` par défaut) + plugins communs du lobby | non testé (raccordement au proxy) |
+| Kixster (`kixster`) et Event (`event`, ancien kal-games) | inchangés depuis la migration (arrêtés le 24/09/2026) ; Kixster n'a plus de KG_BingoGame actif ; reconversion SMP / Event à faire | - |
 
 Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne très bien ».
 
@@ -301,3 +305,23 @@ dans `_removed-config-2026-09-24/` (racine de chaque serveur) et `plugins/_remov
 - Erreurs de Claude : deux valeurs secrètes (secret Velocity, `management-server-secret`) affichées dans la
   conversation pendant une comparaison de fichiers (jamais publiées) ; un jar ouvert par erreur dans l'éditeur de
   WinSCP, refermé sans enregistrer.
+
+**Migration complète (après-midi du 24/09/2026)** - LeKiwi06 avait libéré KG_Bingo / KG_BingoGame :
+- kal-games et Kixster arrêtés par Maxster33, **copiés en entier** (912 Mo et 791 Mo, dossiers cachés `.paper`,
+  `.cache`, `.ai-backups` compris) sur KalGames2 et Serveur Jeux ; ancien contenu des nouveaux serveurs dans
+  `_removed-avant-migration-2026-09-24/`. Vérifié par comparaison fichier par fichier (seules différences : les
+  réglages ci-dessous).
+- Réglages : ports de jeu et voicechat des nouveaux serveurs, KG_Bingo `bingo.server-name: serveur-jeux`,
+  KG_BingoGame `network.self-server-name: "serveur-jeux"` (clé ajoutée). **Aucun changement de code** : KaliumRelay
+  ne connaît aucun nom de serveur (il relaie ceux que les plugins lui donnent), KLM_Menu des serveurs de jeu renvoie
+  seulement au lobby, et `kal-games` reste le nom du hub pour KG_BingoGame.
+- Proxy : `kal-games` → KalGames2, `event` → ancien kal-games, `kixster` → Kixster, `serveur-jeux` ; `Bingo` et
+  `kalgames2` supprimés. Lobby : destinations KLM_Menu `kixster` (désactivée), `kal-games`, `serveur-jeux`,
+  `kal-test-dev`, `event` (désactivée).
+- KG_BingoGame n'était plus actif sur Kixster (0.5.0 rangée à 11:57) : 0.5.0 réinstallée sur Serveur Jeux.
+- Ajout de Floodgate, BedrockSkinRestorer, VelocityCommandForward sur les 2 nouveaux serveurs (absents des originaux).
+- PC de Maxster33 : Java 27 installé, `telecharger-outils.sh` fait, compilation vérifiée (KaliumRelay). Sous Git Bash,
+  Java 27 n'est pas dans le PATH tant que Git Bash n'a pas été relancé : `export PATH="/c/Program Files/Java/jdk-27/bin:$PATH"`.
+- Travail désormais piloté par WinSCP.com + scripts (guide du Claude de LeKiwi06), plus par captures d'écran.
+- À faire : redémarrages (KalGames2, Serveur Jeux, lobby, proxy) et test en jeu ; nettoyage de Kixster (SMP) et
+  reconversion d'Event ; KG_BoatRace (LeKiwi06) à déployer sur KalGames2.
