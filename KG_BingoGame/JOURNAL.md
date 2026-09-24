@@ -1389,4 +1389,4 @@ multipliés, APRÈS l'ajout des points des équipes classées derrière :
 Temps = temps de jeu de la partie. Appliqué aussi aux points solo finaux des joueurs de l'équipe gagnante et aux
 parties sans adversaire (confirmé par LeKiwi06). Affiché dans la raison de la victoire
 (« blackout en 0 h 52 : ×2 »), dans le classement du tchat et dans le résumé. Inclut la 0.4.1.
-**Statut : compilé, non déployé.**
+**Statut : déployé sur Kixster le 24/09/2026, non testé en jeu.**

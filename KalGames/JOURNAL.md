@@ -685,4 +685,4 @@ bouton Bingo écrit en dur dans KalGames.
 - Les clés `stats.timezone` et `boards.scale` sont désormais lues dans la config de KG_ScoreBoards.
 
 **Déploiement** : obligatoirement avec KG_ScoreBoards 1.0.0 (migration des données dans son JOURNAL).
-KG_Bingo 1.1.0 fonctionne sans changement. **Statut : compilé, non déployé.**
+KG_Bingo 1.1.0 fonctionne sans changement. **Statut : déployé sur kal-games le 24/09/2026, démarrage vérifié.**

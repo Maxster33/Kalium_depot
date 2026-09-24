@@ -8,4 +8,3 @@ Format : `- <Plugin> — <pseudo> — depuis le <aaaa-mm-jj hh:mm> — <objet du
 <!-- Réservations ci-dessous -->
 - KalGames — LeKiwi06 — depuis le 2026-09-24 07:34 — découpage : classements vers KG_ScoreBoards
 - KG_ScoreBoards — LeKiwi06 — depuis le 2026-09-24 07:34 — création (classements sortis de KalGames, puis classements Bingo)
-- KG_BingoGame — LeKiwi06 — depuis le 2026-09-24 07:50 — carte : contour gris foncé des objets blancs

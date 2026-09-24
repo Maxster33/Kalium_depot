@@ -33,4 +33,5 @@ les résultats du Bingo arriveront plus tard par KaliumRelay ; archives détaill
 4. Envoyer `KG_ScoreBoards-1.0.0.jar` et `KalGames-1.14.0.jar`.
 5. Démarrer ; vérifier « KG_ScoreBoards actif », puis les classements et un panneau du hub.
 
-**Statut : compilé, non déployé.**
+**Statut : déployé sur kal-games le 24/09/2026** (migration faite par Claude : `stats.yml` et `boards.yml` déplacés, pas
+encore d'`archives/` ; textes des classements repris du `lang.yml` de KalGames ; démarrage vérifié dans le journal).
