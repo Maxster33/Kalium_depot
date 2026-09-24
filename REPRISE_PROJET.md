@@ -11,13 +11,32 @@ Le détail technique de chaque version est dans `<plugin>/JOURNAL.md`. Documents
 
 ## Architecture du réseau
 
-| Rôle | Nom Velocity | Hôte SFTP (onglet WinSCP) | Plugin(s) à nous |
-|---|---|---|---|
-| Proxy Velocity | — | `ProxyVelocity@7018.mystrator.com` | KaliumRelay (relais HTTP, port 46199) |
-| Lobby | `lobby` | `lobby@7002.mystrator.com` | KLM_Menu |
-| Hub mini-jeux | `kal-games` | `kalgames@7021.mystrator.com` | KalGames, KG_Bingo, KG_ScoreBoards, KLM_Menu (KG_Menu à venir) |
-| Serveur Bingo (dédié) | `kixster` | `kixster@7003.mystrator.com` | KG_BingoGame, KLM_Menu (boussole désactivée) |
-| Serveur de test survie | `Kal-Test-Dev` | `Kal-Test-Dev@5038` | KaliumCore (projet en pause) |
+| Rôle | Nom Velocity | Hôte SFTP (onglet WinSCP) | Adresse de jeu | Plugin(s) à nous |
+|---|---|---|---|---|
+| Proxy Velocity | — | `ProxyVelocity@7018.mystrator.com` | port 25370 | KaliumRelay (relais HTTP, port 46199) |
+| Lobby | `lobby` | `lobby@7002.mystrator.com` | 91.197.6.152:28618 | KLM_Menu |
+| Hub mini-jeux | `kal-games` | `kalgames@7021.mystrator.com` | 51.254.174.133:21088 | KalGames, KG_Bingo, KG_ScoreBoards, KLM_Menu (KG_Menu à venir) |
+| Serveur Bingo (dédié) | `Bingo` (renommé par LeKiwi06 le 24/09, anciennement `Kixster`) | `kixster@7003.mystrator.com` | 91.197.6.212:29599 | KG_BingoGame, KLM_Menu (boussole désactivée) |
+| Serveur de test survie | `kal-test-dev` | `Kal-Test-Dev@5038.mystrator.com` | 91.197.6.215:21621 | KaliumCore (projet en pause), KLM_Menu |
+| Futur hub mini-jeux (remplacera kal-games) | `kalgames2` | `KalGames2@7001.mystrator.com` | 91.197.6.24:22142 | KLM_Menu |
+| Jeux gourmands (Bingo à terme, Manhunt...) | `serveur-jeux` | `serveurjeux@7015.mystrator.com` | 91.197.6.65:22470 | KLM_Menu |
+
+Machines Minestrator : **machine 1** = proxy, lobby, kal-games, Kixster ; **machine 2** = Kal-Test-Dev ;
+**machine 3** = KalGames2, Serveur Jeux (serveurs créés le 24/09/2026).
+
+**Migration prévue** (décidée par Maxster33 le 24/09/2026) : KalGames → KalGames2 ; le Bingo (Kixster) → Serveur
+Jeux ; Kixster retrouve sa fonction initiale (SMP) ; l'ancien serveur kal-games deviendra un serveur Event.
+Étape 1 (faite le 24/09/2026) : KalGames2, Serveur Jeux et Kal-Test-Dev raccordés au proxy (voir compte rendu de
+Maxster33).
+
+**Raccordement d'un serveur Paper au proxy** : `config/paper-global.yml` → `proxies.velocity` : `enabled: true`,
+`online-mode: true`, `secret` = contenu de `forwarding.secret` du proxy (jamais dans le dépôt) ; `server.properties` :
+`online-mode=false` ; Floodgate avec la **même `key.pem`** que le proxy (le proxy envoie les données Bedrock :
+`send-floodgate-data: true`, sans elle les joueurs Bedrock sont expulsés). Une fois raccordé, le serveur refuse
+les connexions directes (passage obligatoire par le proxy).
+
+**Ports voicechat** (UDP, attribués par Minestrator) : proxy 44301, lobby 43841, Kixster 40046, kal-games 40002,
+Kal-Test-Dev 45595, Serveur Jeux 43131, KalGames2 43374.
 
 - **KLM_Menu** (tous les serveurs Paper, anciennement KaliumMenu) : couche profonde des interfaces - navigation
   entre serveurs et boussole, boîte à outils des menus (`fr.kalium.menu.api`), catalogue « Interfaces » où les
@@ -53,9 +72,11 @@ Copie exacte de chaque jar dans `jars-deployes/`.
 |---|---|---|
 | Kixster | `KG_BingoGame-0.5.0.jar` + `KLM_Menu-2.0.0.jar` (boussole désactivée : objectif du Bingo) (KG_BingoGame 0.3.0 à 0.5.0 déployées le 24/09/2026 ; KalBingo renommé, données dans `plugins/KG_BingoGame/`, `bukkit.yml` : `generator: KG_BingoGame` ; config.yml du serveur : `lobby.max-size: 256`, `lobby.blocks-per-tick: 30000`) | 0.3.0 testée le 24/09/2026 (annonces, coefficients, Nether/End par équipe, nulle en solo, invincibilité OK) ; 0.4.0 testée (carte, têtes, résumé : « propre et sans bugs ») ; 0.4.2 / 0.5.0 non testées (contour des objets blancs, multiplicateur du blackout, interface dans le catalogue) |
 | kal-games | `KalGames-1.15.1.jar` + `KG_ScoreBoards-1.1.0.jar` + `KG_Bingo-1.2.0.jar` + `KLM_Menu-2.0.0.jar` (déployés le 24/09/2026, classements migrés dans `plugins/KG_ScoreBoards/` ; `plugins/KG_Bingo/config.yml` = copie de celui de KalGames, jeton compris) | non testé (Rush ; capture d'arène sans crash à confirmer en recapturant le parkour ; catalogue « Interfaces ») |
-| lobby | `KLM_Menu-2.0.0.jar` (KaliumMenu renommé le 24/09/2026, dossier `plugins/KLM_Menu/`) | non testé (catalogue « Interfaces » ; Paramètres des téléportations non confirmés depuis la 1.5.0) |
+| lobby | `KLM_Menu-2.0.0.jar` (KaliumMenu renommé le 24/09/2026, dossier `plugins/KLM_Menu/` ; destinations `kalgames2`, `serveur-jeux`, `kal-test-dev` ajoutées le 24/09/2026, **désactivées** : à activer en jeu, menu > Paramètres) | non testé (catalogue « Interfaces » ; Paramètres des téléportations non confirmés depuis la 1.5.0 ; nouvelles destinations) |
 | proxy | `KaliumRelay-1.1.1.jar` (déployé le 24/09/2026) | relais confirmé le 24/09/2026 en 1.1.0 ; démarrage 1.1.1 vérifié dans le journal ; reconnexion directe non confirmée |
-| Kal-Test-Dev | `KaliumCore-1.4.0.jar` | non testé (projet en pause) |
+| Kal-Test-Dev | `KaliumCore-1.4.0.jar` + `KLM_Menu-2.0.0.jar` (24/09/2026, rôle `backend` par défaut) | non testé (projet en pause ; raccordement au proxy du 24/09 non testé) |
+| KalGames2 | `KLM_Menu-2.0.0.jar` (24/09/2026, rôle `backend` par défaut) + plugins communs du lobby | non testé (raccordement au proxy) |
+| Serveur Jeux | `KLM_Menu-2.0.0.jar` (24/09/2026, rôle `backend` par défaut) + plugins communs du lobby | non testé (raccordement au proxy) |
 
 Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne très bien ».
 
@@ -107,6 +128,18 @@ JOURNAL. Les jars se recréent avec `sh <plugin>/build.sh`.
   `-token`) : après le découpage des plugins, suppression par l'humain.
 
 ## Points ouverts / limites connues (rien de bloquant)
+
+- **Raccordement du 24/09/2026 (Maxster33)** : actif seulement après redémarrage de KalGames2, Serveur Jeux,
+  Kal-Test-Dev, du lobby (voicechat, destinations KLM_Menu) puis du proxy. À vérifier dans les journaux : Floodgate
+  sans erreur de clé, KLM_Menu chargé, connexion par le proxy (`/server kalgames2`...).
+- voicechat : ports réglés sur lobby, KalGames2, Serveur Jeux et Kal-Test-Dev ; **pas encore** sur Kixster (40046)
+  ni kal-games (40002) ; rien sur le proxy (44301 : aucun plugin voicechat sur Velocity pour l'instant). `voice_host`
+  laissé vide partout : derrière le proxy, les clients risquent de viser l'IP du proxy → à décider (voice_host
+  `<ip>:<port>` par serveur, ou voicechat sur le proxy).
+- Kal-Test-Dev garde son propre Geyser-Spigot (crossplay direct) : devenu inutile derrière le proxy (Geyser tourne
+  sur le proxy) ; non retiré (pas demandé). Le lobby a aussi un `Geyser-Spigot.jar` qui ne se charge pas (aucun dossier).
+- Lobby : la destination KLM_Menu `Kixster` (désactivée) vise un nom qui n'existe plus dans Velocity depuis le
+  renommage en `Bingo`.
 
 - KG_BingoGame : 18 anciens dossiers `bingo_<uuid>_<n>` de parties terminées avant 0.1.22 restent dans
   `Kixster SMP/dimensions/minecraft/` : à supprimer par l'humain s'il le souhaite.
@@ -237,3 +270,25 @@ Format : `### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici 
 - Erreurs de Claude, corrigées : commits incomplets (étape B du Bingo, journaux de KG_Menu), horodatages en UTC,
   journaux de serveur posés un moment dans le dossier du dépôt / dans Documents, deux dossiers de Kal-test-dev
   listés par erreur, ancien nom KaliumMenu non recherché avant le renommage (boussole du hub).
+
+### 2026-09-24 — Maxster33
+
+**Dépôt** : import du bundle `Kalium-depot.bundle` sur `Maxster33/Kalium_depot` (main + 5 étiquettes), dossier
+`historique-conversations/` créé.
+
+**Raccordement de nouveaux serveurs au proxy (étape 1 de la migration)** - fait par Claude via WinSCP, sauvegardes
+dans `_removed-config-2026-09-24/` (racine de chaque serveur) et `plugins/_removed-klm_menu-2.0.0/`,
+`plugins/_removed-voicechat-2.6.23/` (lobby) :
+- Proxy : `kalgames2`, `serveur-jeux`, `kal-test-dev` ajoutés dans `velocity.toml` (le renommage `Kixster` →
+  `Bingo` fait entre-temps par LeKiwi06 est conservé).
+- KalGames2 et Serveur Jeux (Paper neufs) : transfert Velocity activé (`paper-global.yml`), `online-mode=false`,
+  liste blanche désactivée ; plugins communs du lobby **avec leurs configurations** (Floodgate + clé du proxy,
+  BedrockSkinRestorer, VelocityCommandForward, LuckPerms (base H2 du lobby copiée), voicechat, WorldEdit, WorldGuard,
+  ConditionalEvents, PyxelRegions) + KLM_Menu 2.0.0 ; voicechat : ports 43374 / 43131.
+- Kal-Test-Dev : transfert Velocity activé (il était en `online-mode=false` SANS proxy : tout le monde pouvait s'y
+  connecter sous n'importe quel pseudo), clé Floodgate remplacée par celle du proxy, KLM_Menu 2.0.0, voicechat 45595.
+- Lobby : KLM_Menu, 3 nouvelles destinations (désactivées, à activer en jeu) ; voicechat : port 24454 → 43841.
+- Non fait : voicechat de Kixster / kal-games / proxy ; redémarrages (humain).
+- Erreurs de Claude : deux valeurs secrètes (secret Velocity, `management-server-secret`) affichées dans la
+  conversation pendant une comparaison de fichiers (jamais publiées) ; un jar ouvert par erreur dans l'éditeur de
+  WinSCP, refermé sans enregistrer.
