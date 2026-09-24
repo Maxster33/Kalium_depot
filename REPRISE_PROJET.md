@@ -14,9 +14,9 @@ Le détail technique de chaque version est dans `<plugin>/JOURNAL.md`. Documents
 | Rôle | Nom Velocity | Hôte SFTP (onglet WinSCP) | Plugin(s) à nous |
 |---|---|---|---|
 | Proxy Velocity | — | `ProxyVelocity@7018.mystrator.com` | KaliumRelay (relais HTTP, port 46199) |
-| Lobby | `lobby` | `lobby@7002.mystrator.com` | KaliumMenu |
-| Hub mini-jeux | `kal-games` | `kalgames@7021.mystrator.com` | KalGames, KaliumMenu (KG_Bingo à venir) |
-| Serveur Bingo (dédié) | `kixster` | `kixster@7003.mystrator.com` | KalBingo (KG_BingoGame à venir) |
+| Lobby | `lobby` | `lobby@7002.mystrator.com` | KLM_Menu |
+| Hub mini-jeux | `kal-games` | `kalgames@7021.mystrator.com` | KalGames, KG_Bingo, KG_ScoreBoards, KLM_Menu (KG_Menu à venir) |
+| Serveur Bingo (dédié) | `kixster` | `kixster@7003.mystrator.com` | KG_BingoGame, KLM_Menu (boussole désactivée) |
 | Serveur de test survie | `Kal-Test-Dev` | `Kal-Test-Dev@5038` | KaliumCore (projet en pause) |
 
 - **KalGames** : le hub et les mini-jeux (PvP Kit, Parcours, Course de bateau, Rush ; Hunger Games, Manhunt et
