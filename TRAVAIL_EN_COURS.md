@@ -16,14 +16,15 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KaliumMenu (devient KLM_Menu) — LeKiwi06 — depuis le 2026-09-24 09:07 — interface globale : renommage, boîte à outils des menus, catalogue des interfaces, découverte automatique
+- KLM_Menu — LeKiwi06 — depuis le 2026-09-24 09:07 — interface globale (boussole entièrement gérée par KLM_Menu, objets de navigation)
+- KG_Menu — LeKiwi06 — depuis le 2026-09-24 09:37 — création : menu du serveur kal-games, découverte des interfaces des jeux
+- KalGames — LeKiwi06 — depuis le 2026-09-24 07:34 — menus du hub vers KG_Menu
 
 ## Requis parfois
 
-- KalGames — LeKiwi06 — depuis le 2026-09-24 07:34 — menus du hub vers KG_Menu, boîte à outils de KLM_Menu
-- KG_ScoreBoards — LeKiwi06 — depuis le 2026-09-24 07:34 — boîte à outils de KLM_Menu, puis classements Bingo
-- KG_Bingo — LeKiwi06 — depuis le 2026-09-24 09:07 — inscription dans KG_Menu / KLM_Menu
-- KG_BingoGame — LeKiwi06 — depuis le 2026-09-24 09:07 — inscription de ses menus dans KLM_Menu
+- KG_ScoreBoards — LeKiwi06 — depuis le 2026-09-24 07:34 — classements dans KG_Menu, puis classements Bingo
+- KG_Bingo — LeKiwi06 — depuis le 2026-09-24 09:07 — inscription dans KG_Menu
+- KG_BingoGame — LeKiwi06 — depuis le 2026-09-24 09:07 — menus dans KLM_Menu
 - KaliumRelay — LeKiwi06 — depuis le 2026-09-24 09:07 — phase 2 : messages entre serveurs pour l'accès à distance
 
 ## Demandes
