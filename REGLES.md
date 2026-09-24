@@ -13,6 +13,17 @@ Chaque règle est suivie de sa raison (« Pourquoi ») : en cas de situation non
    - commit + `git push` **immédiatement**. Si le push est refusé : `git pull`, revérifier ; si l'autre a réservé
      le même plugin entre-temps, retirer sa ligne et avertir son humain.
    - Une demande qui touche plusieurs plugins : les réserver **tous** en une fois, ou aucun.
+   - **Deux catégories** (décision de LeKiwi06, 24/09/2026) :
+     - **Utilisés actuellement** : plugins modifiés en ce moment. Personne d'autre n'y touche.
+     - **Requis parfois** : plugins dont le chantier aura besoin ponctuellement (petite retouche, compilation contre
+       eux, déploiement groupé). Personne d'autre ne les modifie sans demande acceptée (voir ci-dessous).
+     La limite de 2 plugins (ci-dessous) ne compte que les « utilisés actuellement ».
+   - **Demandes de créneau** : pour toucher un plugin réservé par l'autre, ajouter une ligne dans la section
+     « Demandes » de `TRAVAIL_EN_COURS.md` (plugin, qui demande, créneau précis, ex. « de 13 h 50 à 14 h 00 »,
+     objet) et pousser, puis attendre la réponse. Le Claude de l'autre personne vérifie cette section à chaque
+     `git pull` : il peut répondre « accord » lui-même si le créneau ne gêne pas son travail en cours (sinon il
+     demande à son humain), note sa réponse avec l'heure et pousse ; pendant un créneau accordé il ne touche pas au
+     plugin. Pas de réponse = pas d'accord. Le demandeur retire sa ligne à la fin du créneau.
    - **De 13 h à 23 h (heure de Paris), 2 plugins réservés au maximum par personne.** Au-delà, il faut l'accord
      de l'autre personne, noté dans la réservation (« accord de <pseudo> »). En dehors de ces heures, pas de
      limite. Attention à l'heure utilisée (réservations comprises) : l'horloge d'un espace cloud est souvent en UTC,
@@ -25,7 +36,8 @@ Chaque règle est suivie de sa raison (« Pourquoi ») : en cas de situation non
      avec l'autre personne.
 
    Pourquoi : deux sessions qui modifient le même plugin en parallèle produisent des versions contradictoires
-   (et des conflits git). Une réservation n'est visible de l'autre qu'une fois poussée sur GitHub.
+   (et des conflits git). Une réservation n'est visible de l'autre qu'une fois poussée sur GitHub. Les catégories
+   et les créneaux permettent de partager un plugin sans double écriture.
 
 ## 2. Pendant le travail
 
