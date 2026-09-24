@@ -1387,6 +1387,6 @@ multipliés, APRÈS l'ajout des points des équipes classées derrière :
 - grille uniquement difficile / extrême (0 facile, 0 normal) : **×5 en moins d'1 h**, **×2 entre 1 h et 2 h**
   (« c'est une prouesse de faire un blackout comme ça en moins d'une heure, même en équipe »).
 Temps = temps de jeu de la partie. Appliqué aussi aux points solo finaux des joueurs de l'équipe gagnante et aux
-parties sans adversaire (supposition de Claude, non contredite - à confirmer). Affiché dans la raison de la victoire
+parties sans adversaire (confirmé par LeKiwi06). Affiché dans la raison de la victoire
 (« blackout en 0 h 52 : ×2 »), dans le classement du tchat et dans le résumé. Inclut la 0.4.1.
 **Statut : compilé, non déployé.**
