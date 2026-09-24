@@ -13,6 +13,12 @@ Chaque règle est suivie de sa raison (« Pourquoi ») : en cas de situation non
    - commit + `git push` **immédiatement**. Si le push est refusé : `git pull`, revérifier ; si l'autre a réservé
      le même plugin entre-temps, retirer sa ligne et avertir son humain.
    - Une demande qui touche plusieurs plugins : les réserver **tous** en une fois, ou aucun.
+   - **De 13 h à 23 h (heure de Paris), 2 plugins réservés au maximum par personne.** Au-delà, il faut l'accord
+     de l'autre personne, noté dans la réservation (« accord de <pseudo> »). En dehors de ces heures, pas de
+     limite. Attention : l'horloge d'un espace cloud est souvent en UTC, convertir en heure de Paris.
+
+     Pourquoi : de 13 h à 23 h, LeKiwi06 et Maxster33 sont actifs en même temps ; la limite évite qu'une personne
+     bloque tout le projet. Le découpage en petits plugins (section 2) la rend peu contraignante.
    - Ne **jamais** supprimer la réservation de quelqu'un d'autre, même ancienne : avertir son humain, qui voit
      avec l'autre personne.
 

@@ -70,7 +70,8 @@ Ces jars ne sont pas dans le dépôt : `sh <plugin>/build.sh` les recrée dans `
   `listener/RushListener.java`, `model/RushLayout.java`. Prochaine étape : retours de test (arène à configurer :
   salle d'attente + 11 points par base).
 - **Découpage de KalGames** en plusieurs plugins (`REGLES.md`, section 2) : décidé le 24/09/2026, pas commencé.
-  À faire progressivement, en commençant par le Rush.
+  À faire progressivement, en commençant par le Rush. Même principe prévu pour les modules de KaliumCore
+  (annoncé par LeKiwi06 le 24/09/2026 : `KG_Reward`, `KG_Economy`, `KG_Claim`, `KG_Sethome`...).
 
 ## Points ouverts / limites connues (rien de bloquant)
 
