@@ -1360,4 +1360,4 @@ de fin de partie OK.
   les têtes de ses joueurs : points solo finaux, objectifs, bingos).
 
 **Déploiement** : remplacer le jar sur Kixster (aucune autre modification). Au 1er démarrage, attendre dans le
-journal « icône(s) d'objets chargée(s) pour la carte ». **Statut : compilé, non déployé.**
+journal « icône(s) d'objets chargée(s) pour la carte ». **Statut : déployé sur Kixster le 24/09/2026, non testé en jeu.**

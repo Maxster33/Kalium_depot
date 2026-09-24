@@ -47,7 +47,7 @@ Copie exacte de chaque jar dans `jars-deployes/`.
 
 | Serveur | Jar | Test en jeu |
 |---|---|---|
-| Kixster | `KG_BingoGame-0.3.0.jar` (déployé le 24/09/2026 ; KalBingo renommé, données dans `plugins/KG_BingoGame/`, `bukkit.yml` : `generator: KG_BingoGame` ; config.yml du serveur : `lobby.max-size: 256`, `lobby.blocks-per-tick: 30000`) | non testé (nouveau Bingo, Nether/End par équipe, keepInventory) |
+| Kixster | `KG_BingoGame-0.4.0.jar` (0.3.0 déployée le 24/09/2026, 0.4.0 le même jour ; KalBingo renommé, données dans `plugins/KG_BingoGame/`, `bukkit.yml` : `generator: KG_BingoGame` ; config.yml du serveur : `lobby.max-size: 256`, `lobby.blocks-per-tick: 30000`) | 0.3.0 testée le 24/09/2026 (annonces, coefficients, Nether/End par équipe, nulle en solo, invincibilité OK) ; 0.4.0 non testée (carte, têtes, résumé) |
 | kal-games | `KalGames-1.13.0.jar` + `KG_Bingo-1.1.0.jar` (déployés le 24/09/2026 ; `plugins/KG_Bingo/config.yml` = copie de celui de KalGames, jeton compris) | non testé (Rush ; capture d'arène sans crash à confirmer en recapturant le parkour ; menu Bingo déplacé) |
 | kal-games, lobby | `KaliumMenu-1.5.0.jar` | non confirmé (bouton Paramètres des téléportations) |
 | proxy | `KaliumRelay-1.1.1.jar` (déployé le 24/09/2026) | relais confirmé le 24/09/2026 en 1.1.0 ; démarrage 1.1.1 vérifié dans le journal ; reconnexion directe non confirmée |
