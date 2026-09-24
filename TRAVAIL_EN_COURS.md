@@ -18,6 +18,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-09-24 13:58 — nouveau plugin : course de bateau sortie de KalGames (Grand Prix, fantôme, barème, temps par checkpoint)
 
+- Serveurs (hors plugins) + KG_BingoGame — Maxster33 — depuis le 2026-09-24 16:04 — correctifs de démarrage (hub : jar PlaceholderAPI mal placé ; Serveur Jeux : voicechat en double, AnvilUnlocker) ; nettoyage de Kixster (retrait du Bingo, retour à l'état d'avant le Bingo)
+
 ## Requis parfois
 
 
