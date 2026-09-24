@@ -111,7 +111,7 @@ public final class PlayerResetService {
             }
             yaml.save(pendingFile);
         } catch (IOException e) {
-            logger.warning("[KalBingo] Impossible d'enregistrer pending-resets.yml : " + e.getMessage());
+            logger.warning("[KG_BingoGame] Impossible d'enregistrer pending-resets.yml : " + e.getMessage());
         }
     }
 }

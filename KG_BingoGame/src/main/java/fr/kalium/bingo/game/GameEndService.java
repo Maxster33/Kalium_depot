@@ -198,19 +198,19 @@ public final class GameEndService {
         if (game.getState() != GameState.IN_PROGRESS) {
             return; // deja termine entre-temps (victoire) - evite un double declenchement
         }
-        logger.info("[KalBingo] Partie '" + game.getGameId() + "' terminee (temps écoulé).");
+        logger.info("[KG_BingoGame] Partie '" + game.getGameId() + "' terminee (temps écoulé).");
         finishAndSendToLobby(game, team -> Component.text("Temps écoulé ! La partie est terminée.", NamedTextColor.YELLOW));
     }
 
     private void endByWin(BingoGame game, int winningTeam) {
-        logger.info("[KalBingo] Partie '" + game.getGameId() + "' terminee (équipe " + winningTeam + " a rempli la grille).");
+        logger.info("[KG_BingoGame] Partie '" + game.getGameId() + "' terminee (équipe " + winningTeam + " a rempli la grille).");
         finishAndSendToLobby(game, team -> team == winningTeam
                 ? Component.text("Bravo, votre équipe a rempli la grille ! Partie terminée.", NamedTextColor.GREEN)
                 : Component.text("L'équipe " + winningTeam + " a rempli la grille en premier. Partie terminée.", NamedTextColor.YELLOW));
     }
 
     private void endByTeamAbandon(BingoGame game, int abandonedTeam) {
-        logger.info("[KalBingo] Partie '" + game.getGameId() + "' terminee (l'equipe " + abandonedTeam
+        logger.info("[KG_BingoGame] Partie '" + game.getGameId() + "' terminee (l'equipe " + abandonedTeam
                 + " a entierement abandonne, il ne reste qu'une equipe en jeu).");
         finishAndSendToLobby(game, team -> Component.text("L'équipe " + abandonedTeam
                 + " a entièrement abandonné. La partie est terminée.", NamedTextColor.YELLOW));
@@ -281,7 +281,7 @@ public final class GameEndService {
             return;
         }
         game.setState(GameState.FINISHED);
-        logger.info("[KalBingo] Partie '" + game.getGameId() + "' terminee (abandonnée, plus aucun joueur connecté depuis "
+        logger.info("[KG_BingoGame] Partie '" + game.getGameId() + "' terminee (abandonnée, plus aucun joueur connecté depuis "
                 + noPlayersAbandonAfter.toMinutes() + " min).");
         for (BingoInstance instance : game.getInstances()) {
             for (UUID playerId : instance.getTeam().getPlayers()) {

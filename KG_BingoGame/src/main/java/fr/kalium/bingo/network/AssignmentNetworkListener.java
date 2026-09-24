@@ -57,7 +57,7 @@ public final class AssignmentNetworkListener implements PluginMessageListener {
             }
             assignmentService.handleResponse(playerId, true, gameId, seed, durationSeconds, host, teamCount, teamSize, roster);
         } catch (IOException e) {
-            plugin.getLogger().warning("[KalBingo] Réponse d'affectation illisible : " + e.getMessage());
+            plugin.getLogger().warning("[KG_BingoGame] Réponse d'affectation illisible : " + e.getMessage());
         }
     }
 }

@@ -18,7 +18,7 @@ public final class PartyManager {
     /**
      * NE PAS remplacer par un simple computeIfAbsent : un joueur qui rejoint la partie APRES le
      * premier appel (ex. l'hote se connecte avant que kal-games ne sache qu'un second joueur a
-     * rejoint) doit quand meme etre ajoute au roster de la partie DEJA CREEE cote KalBingo - sinon
+     * rejoint) doit quand meme etre ajoute au roster de la partie DEJA CREEE cote KG_BingoGame - sinon
      * son UUID n'apparait jamais dans getExpectedRoster() (bug corrige en 0.1.9, repere lors du
      * test "un joueur qui rejoint arrive sur le modele puis se fait expulser").
      */

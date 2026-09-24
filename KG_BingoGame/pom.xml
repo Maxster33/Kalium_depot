@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.kalium</groupId>
-    <artifactId>KalBingo</artifactId>
-    <version>0.1.23</version>
+    <artifactId>KG_BingoGame</artifactId>
+    <version>0.2.0</version>
     <packaging>jar</packaging>
-    <name>KalBingo</name>
+    <name>KG_BingoGame</name>
 
     <properties>
         <!-- Paper 26.x requires Java 25 -->

@@ -1,4 +1,7 @@
-# JOURNAL — KalBingo
+# JOURNAL — KG_BingoGame (anciennement KalBingo)
+
+Le plugin s'appelait **KalBingo** jusqu'à la 0.1.23 (renommé en 0.2.0, voir la dernière section). Les sections
+ci-dessous gardent l'ancien nom : c'est de l'historique.
 
 Mini-jeu Bingo Minecraft pour Kal Games : plugin **séparé** de KalGames, tournant sur son propre
 serveur Paper dédié (Kixster pour les tests actuellement, facilement modifiable). Décision confirmée
@@ -1236,3 +1239,34 @@ fin de partie...) corrigés ; titre « État actuel » en tête de ce journal re
 Aucun changement de comportement.
 
 **Statut : compilé, non déployé.**
+
+## 0.2.0 — renommé KG_BingoGame (24/09/2026)
+
+**Demande de LeKiwi06** : « renommer Kalbingo (tout ce que le serveur exécute pour concrètement jouer la partie) en
+KG_BingoGame, pour coller au nouveau format de noms ». Étape B du découpage du Bingo (étape A : KG_Bingo, voir son
+JOURNAL). Décision : noms internes du code conservés (`fr.kalium.bingo`, classe principale `BingoPlugin`).
+
+- `plugin.yml` : `name: KG_BingoGame` ; dossier du dépôt `KalBingo/` → `KG_BingoGame/` ; jar `KG_BingoGame-0.2.0.jar`.
+- Messages de la console : préfixe `[KalBingo]` → `[KG_BingoGame]` ; commentaires mis à jour.
+- Vérifié : code compilé identique à 0.1.22 hormis le nom du plugin. Inclut 0.1.23 (jamais déployée).
+
+**Ce que le changement de nom implique sur Kixster** (à faire serveur ARRÊTÉ, sans partie en cours) :
+- le dossier de données devient `plugins/KG_BingoGame/` : y déplacer tout le contenu de `plugins/KalBingo/`
+  (`config.yml`, `objectives.yml`, `lobby_template.kgt`, `games/`, `pending-resets.yml`), sinon la salle d'attente,
+  les objectifs et les réglages (dont le jeton du relais) sont perdus ;
+- `bukkit.yml` (racine du serveur) : `generator: KalBingo` → `generator: KG_BingoGame`, sinon le monde principal
+  vide (`Kixster SMP`) n'a plus son générateur et du terrain normal peut y apparaître ;
+- les objets marqués par le plugin (Nether Star de la salle d'attente, papier « Objectifs ») changent d'étiquette
+  interne : un objet de l'ancienne version encore dans un inventaire ne serait plus reconnu. D'où : aucune partie en
+  cours au moment du déploiement.
+
+**Procédure de déploiement** (Kixster arrêté) :
+1. Déplacer `/plugins/KalBingo-0.1.22.jar` dans `/plugins/_removed-kalbingo-0.1.22/`, et y copier aussi le dossier
+   `/plugins/KalBingo/` (copie de sauvegarde) et `/bukkit.yml`.
+2. Renommer `/plugins/KalBingo/` en `/plugins/KG_BingoGame/`.
+3. Envoyer `KG_BingoGame-0.2.0.jar` dans `/plugins/`.
+4. Dans `/bukkit.yml`, remplacer `generator: KalBingo` par `generator: KG_BingoGame`.
+5. Démarrer Kixster ; dans `logs/latest.log`, vérifier l'absence de « Could not set generator » et la ligne
+   « [KG_BingoGame] Plugin active ».
+
+À déployer avec KaliumRelay 1.1.1, KalGames 1.13.0 et KG_Bingo 1.0.0. **Statut : compilé, non déployé.**

@@ -52,8 +52,8 @@ import java.util.UUID;
  */
 public final class AssignmentService {
 
-    public static final String REQUEST_SUBCHANNEL = "KalBingoAssignRequest";
-    public static final String RESPONSE_SUBCHANNEL = "KalBingoAssignResponse";
+    public static final String REQUEST_SUBCHANNEL = "KG_BingoGameAssignRequest";
+    public static final String RESPONSE_SUBCHANNEL = "KG_BingoGameAssignResponse";
 
     /** Intervalle entre deux reemissions de la requete, tant qu'aucune reponse n'est arrivee. */
     private static final long RETRY_INTERVAL_TICKS = 40L; // 2s
@@ -159,7 +159,7 @@ public final class AssignmentService {
             }
             handleResponse(playerId, true, gameId, seed, durationSeconds, host, teamCount, teamSize, roster);
         } catch (RuntimeException e) {
-            plugin.getLogger().warning("[KalBingo] Reponse du relais HTTP illisible pour " + playerId + " : " + e.getMessage());
+            plugin.getLogger().warning("[KG_BingoGame] Reponse du relais HTTP illisible pour " + playerId + " : " + e.getMessage());
         }
     }
 
@@ -198,7 +198,7 @@ public final class AssignmentService {
 
             player.sendPluginMessage(plugin, "BungeeCord", bytes.toByteArray());
         } catch (IOException e) {
-            plugin.getLogger().warning("[KalBingo] Impossible d'envoyer la demande d'affectation : " + e.getMessage());
+            plugin.getLogger().warning("[KG_BingoGame] Impossible d'envoyer la demande d'affectation : " + e.getMessage());
         }
     }
 

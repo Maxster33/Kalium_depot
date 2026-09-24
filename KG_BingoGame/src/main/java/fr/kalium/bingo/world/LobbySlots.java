@@ -56,7 +56,7 @@ public final class LobbySlots {
             world = Bukkit.createWorld(creator);
         }
         if (world == null) {
-            plugin.getLogger().severe("[KalBingo] Impossible de creer/charger le monde '" + worldName + "'.");
+            plugin.getLogger().severe("[KG_BingoGame] Impossible de creer/charger le monde '" + worldName + "'.");
             return false;
         }
         // IMPORTANT : ce spawn (utilise par Bukkit tant qu'un joueur n'a pas encore ete teleporte

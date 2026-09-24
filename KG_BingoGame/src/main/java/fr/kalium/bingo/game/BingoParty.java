@@ -44,7 +44,7 @@ public final class BingoParty {
     }
 
     /**
-     * Moment de creation de CETTE partie (salle d'attente KalBingo), utilise par
+     * Moment de creation de CETTE partie (salle d'attente KG_BingoGame), utilise par
      * PartyCountdownService pour calculer le delai minimum avant demarrage
      * (10s * nombre d'equipes, demande explicite de l'utilisateur - couvre la
      * pre-generation en cascade des mondes, voir InstanceWorldPreparer).
@@ -110,7 +110,7 @@ public final class BingoParty {
 
     /**
      * Fusionne un roster plus a jour recu de kal-games (ex : un joueur a rejoint la partie APRES
-     * que cet objet ait ete cree cote KalBingo - voir PartyManager.getOrCreate, correctif 0.1.9).
+     * que cet objet ait ete cree cote KG_BingoGame - voir PartyManager.getOrCreate, correctif 0.1.9).
      * N'ecrase rien, ajoute seulement.
      */
     public void mergeExpectedRoster(Set<UUID> moreExpected) {

@@ -83,7 +83,7 @@ public final class RelayClient {
             if (Thread.currentThread().isInterrupted()) {
                 Thread.currentThread().interrupt();
             }
-            plugin.getLogger().warning("[KalBingo] Impossible d'enregistrer la partie active aupres du relais pour "
+            plugin.getLogger().warning("[KG_BingoGame] Impossible d'enregistrer la partie active aupres du relais pour "
                     + playerId + " : " + e.getMessage());
         }
     }
@@ -114,7 +114,7 @@ public final class RelayClient {
             if (Thread.currentThread().isInterrupted()) {
                 Thread.currentThread().interrupt();
             }
-            plugin.getLogger().warning("[KalBingo] Impossible de retirer la partie active aupres du relais pour "
+            plugin.getLogger().warning("[KG_BingoGame] Impossible de retirer la partie active aupres du relais pour "
                     + playerId + " : " + e.getMessage());
         }
     }
@@ -144,7 +144,7 @@ public final class RelayClient {
             if (Thread.currentThread().isInterrupted()) {
                 Thread.currentThread().interrupt();
             }
-            plugin.getLogger().warning("[KalBingo] Impossible de publier la fermeture de la partie '" + gameId
+            plugin.getLogger().warning("[KG_BingoGame] Impossible de publier la fermeture de la partie '" + gameId
                     + "' sur le relais : " + e.getMessage());
         }
     }

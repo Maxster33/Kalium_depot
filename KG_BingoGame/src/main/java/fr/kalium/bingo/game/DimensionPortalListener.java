@@ -110,7 +110,7 @@ public final class DimensionPortalListener implements Listener {
                 return spawn != null ? spawn : overworld.getSpawnLocation();
             }
         } catch (RuntimeException e) {
-            logger.warning("[KalBingo] Portail vers le Nether/End de '" + ref.instance().getInstanceId() + "' : " + e.getMessage());
+            logger.warning("[KG_BingoGame] Portail vers le Nether/End de '" + ref.instance().getInstanceId() + "' : " + e.getMessage());
         }
         return null;
     }

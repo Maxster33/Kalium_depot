@@ -16,7 +16,7 @@ Le détail technique de chaque version est dans `<plugin>/JOURNAL.md`. Documents
 | Proxy Velocity | — | `ProxyVelocity@7018.mystrator.com` | KaliumRelay (relais HTTP, port 46199) |
 | Lobby | `lobby` | `lobby@7002.mystrator.com` | KaliumMenu |
 | Hub mini-jeux | `kal-games` | `kalgames@7021.mystrator.com` | KalGames, KaliumMenu (KG_Bingo à venir) |
-| Serveur Bingo (dédié) | `kixster` | `kixster@7003.mystrator.com` | KalBingo |
+| Serveur Bingo (dédié) | `kixster` | `kixster@7003.mystrator.com` | KalBingo (KG_BingoGame à venir) |
 | Serveur de test survie | `Kal-Test-Dev` | `Kal-Test-Dev@5038` | KaliumCore (projet en pause) |
 
 - **KalGames** : le hub et les mini-jeux (PvP Kit, Parcours, Course de bateau, Rush ; Hunger Games, Manhunt et
@@ -26,7 +26,7 @@ Le détail technique de chaque version est dans `<plugin>/JOURNAL.md`. Documents
 - **KG_Bingo** (nouveau, non déployé, dépend de KalGames) : menu "Bingo" du hub : créer une partie (équipes,
   taille, durée ≤ maximum des opérateurs) ou rejoindre une partie listée ; transfère les joueurs vers Kixster.
   Tant qu'il n'est pas déployé, c'est KalGames 1.12.3 qui fait ce travail.
-- **KalBingo** : tout le jeu Bingo, sur Kixster. Salle d'attente (modèle capturé via `/menu`, collé sur 4
+- **KalBingo** (renommé `KG_BingoGame` dans le dépôt, pas encore déployé sous ce nom) : tout le jeu Bingo, sur Kixster. Salle d'attente (modèle capturé via `/menu`, collé sur 4
   emplacements), équipes assignées par l'hôte, overworld + Nether + End par équipe (même seed), grille 5×5
   (`objectives.yml`, liste d'exemples encore provisoire), validation automatique par inventaire, score, HUD, fin
   de partie (victoire, temps, abandon d'équipe, plus personne connecté), parties en cours conservées au
@@ -62,7 +62,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 | `KaliumRelay-1.1.1.jar` | plus de jeton écrit dans le code, jeton plus affiché dans la console | avec les autres |
 | `KalGames-1.13.0.jar` | le Bingo sort de KalGames ; prises `MenuEntry` pour les boutons d'autres plugins (inclut 1.12.4, jamais déployée) | **obligatoirement avec KG_Bingo 1.0.0** |
 | `KG_Bingo-1.0.0.jar` | nouveau plugin : partie Bingo du hub, déplacée de KalGames sans changement de comportement | **obligatoirement avec KalGames 1.13.0** |
-| `KalBingo-0.1.23.jar` | `relay-token: ""` dans le config.yml fourni, commentaires corrigés (code compilé identique à 0.1.22) | avec les autres (étape B : deviendra KG_BingoGame) |
+| `KG_BingoGame-0.2.0.jar` | KalBingo renommé (inclut 0.1.23 : `relay-token: ""`, commentaires corrigés ; code compilé identique à 0.1.22 hors nom) | avec les autres, **procédure de migration dans `KG_BingoGame/JOURNAL.md`** (dossier de données, `bukkit.yml`) |
 
 Ces jars ne sont pas dans le dépôt : `sh <plugin>/build.sh` les recrée dans `sortie/`. Déploiement prévu en une
 seule fois après l'étape B (voir « Chantiers en cours »). Au déploiement de KG_Bingo : recopier la section `bingo:`
@@ -76,9 +76,8 @@ de `plugins/KalGames/config.yml` (kal-games) dans `plugins/KG_Bingo/config.yml`,
   salle d'attente + 11 points par base).
 - **Découpage du Bingo** (décidé le 24/09/2026, étape par étape) :
   - étape A, faite (non déployée) : `KG_Bingo` sorti de KalGames (KalGames 1.13.0 + KG_Bingo 1.0.0) ;
-  - étape B, à faire : renommer KalBingo en `KG_BingoGame` (le dossier de données `plugins/KalBingo/` sur Kixster
-    sera à déplacer vers `plugins/KG_BingoGame/`, et la ligne `generator: KalBingo` de `bukkit.yml` à changer,
-    serveur arrêté) ;
+  - étape B, faite (non déployée) : KalBingo renommé `KG_BingoGame` 0.2.0 (dossier du dépôt `KG_BingoGame/`) ;
+    migration de Kixster décrite dans `KG_BingoGame/JOURNAL.md` ;
   - puis déploiement de tout en une fois et test complet d'une partie.
 - **Découpage de KalGames** en plusieurs plugins (`REGLES.md`, section 2) : décidé le 24/09/2026, pas commencé.
   À faire progressivement, en commençant par le Rush. Le menu du hub deviendra aussi son propre plugin (`KG_Menu`,
@@ -115,7 +114,7 @@ Prérequis : Java 21 ou plus (testé avec Temurin 25) et Git Bash sous Windows.
 
 ```sh
 sh telecharger-outils.sh      # une seule fois par machine : compilateur ecj + bibliothèques dans outils-build/
-sh KalBingo/build.sh          # -> sortie/KalBingo-<version>.jar (idem pour les autres plugins)
+sh KG_BingoGame/build.sh      # -> sortie/KG_BingoGame-<version>.jar (idem pour les autres plugins)
 ```
 
 `outils-build/` et `sortie/` sont ignorés par git. Versions : ecj 3.46.100, paper-api 26.2.build.123 (et ses

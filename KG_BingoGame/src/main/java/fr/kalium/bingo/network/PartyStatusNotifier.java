@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public final class PartyStatusNotifier {
 
-    public static final String SUBCHANNEL = "KalBingoPartyClosed";
+    public static final String SUBCHANNEL = "KG_BingoGamePartyClosed";
 
     /** Durée pendant laquelle une fermeture est republiée sur le relais (voir la classe). */
     private static final long REPUBLISH_FOR_MILLIS = 6L * 60 * 60 * 1000;
@@ -91,7 +91,7 @@ public final class PartyStatusNotifier {
 
             carrier.sendPluginMessage(plugin, "BungeeCord", bytes.toByteArray());
         } catch (IOException e) {
-            plugin.getLogger().warning("[KalBingo] Impossible de prévenir kal-games de la fermeture de la partie '"
+            plugin.getLogger().warning("[KG_BingoGame] Impossible de prévenir kal-games de la fermeture de la partie '"
                     + gameId + "' : " + e.getMessage());
         }
     }

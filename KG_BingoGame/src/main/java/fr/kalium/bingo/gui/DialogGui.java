@@ -24,7 +24,7 @@ import java.util.List;
  * un menu plutôt qu'une page type inventaire").
  *
  * Volontairement plus simple que la version KalGames : pas de systeme de traduction multi-langue
- * (KalBingo n'en a pas, les messages restent en dur comme partout ailleurs dans ce plugin), pas
+ * (KG_BingoGame n'en a pas, les messages restent en dur comme partout ailleurs dans ce plugin), pas
  * de champs de saisie (PartyMenu n'en a pas besoin) - a etoffer si un besoin precis apparait
  * (regle du projet : ne pas construire au-dela de ce qui est demande).
  */
@@ -57,7 +57,7 @@ public final class DialogGui {
                             try {
                                 click.run(clicker);
                             } catch (Throwable t) {
-                                plugin.getLogger().warning("[KalBingo] Erreur de menu : " + t);
+                                plugin.getLogger().warning("[KG_BingoGame] Erreur de menu : " + t);
                             }
                         });
                     }

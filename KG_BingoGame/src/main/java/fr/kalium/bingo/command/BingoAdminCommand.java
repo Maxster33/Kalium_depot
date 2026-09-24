@@ -13,7 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * Commandes d'administration minimales de KalBingo (section 11 du cahier des charges :
+ * Commandes d'administration minimales de KG_BingoGame (section 11 du cahier des charges :
  * "ne creer que les commandes reellement necessaires") :
  *  - definition/mise a jour de la salle d'attente : selection "comme pour les arenes sur
  *    kal-games" (demande explicite de l'utilisateur), un coin = la position actuelle du

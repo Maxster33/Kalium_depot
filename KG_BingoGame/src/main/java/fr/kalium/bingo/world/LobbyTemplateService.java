@@ -63,7 +63,7 @@ public final class LobbyTemplateService {
             cached = LobbyTemplate.load(file);
             return cached;
         } catch (IOException | RuntimeException e) {
-            plugin.getLogger().warning("[KalBingo] Modele de salle d'attente illisible : " + e.getMessage());
+            plugin.getLogger().warning("[KG_BingoGame] Modele de salle d'attente illisible : " + e.getMessage());
             return null;
         }
     }
@@ -154,7 +154,7 @@ public final class LobbyTemplateService {
                     try {
                         template.save(file);
                     } catch (IOException e) {
-                        plugin.getLogger().severe("[KalBingo] Impossible de sauvegarder le modele de salle d'attente : " + e.getMessage());
+                        plugin.getLogger().severe("[KG_BingoGame] Impossible de sauvegarder le modele de salle d'attente : " + e.getMessage());
                     }
                 });
                 onDone.accept(template);
@@ -344,7 +344,7 @@ public final class LobbyTemplateService {
                     end(null);
                 }
             } catch (Throwable t) {
-                plugin.getLogger().severe("[KalBingo] Salle d'attente - " + label + " échoué : " + t);
+                plugin.getLogger().severe("[KG_BingoGame] Salle d'attente - " + label + " échoué : " + t);
                 end(t);
             }
         }
@@ -361,7 +361,7 @@ public final class LobbyTemplateService {
                 world.removePluginChunkTicket(cx, cz, plugin);
             }
             if (error == null) {
-                plugin.getLogger().info("[KalBingo] Salle d'attente - " + label + " terminé (" + sx + "x" + sy + "x" + sz
+                plugin.getLogger().info("[KG_BingoGame] Salle d'attente - " + label + " terminé (" + sx + "x" + sy + "x" + sz
                         + ", " + (System.currentTimeMillis() - started) / 1000 + " s).");
             }
             active = null;

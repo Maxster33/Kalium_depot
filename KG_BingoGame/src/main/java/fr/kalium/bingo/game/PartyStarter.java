@@ -108,7 +108,7 @@ public final class PartyStarter {
             gameManager.prepareInstances(game);
             gameManager.assignGrid(game);
         } catch (RuntimeException e) {
-            logger.warning("[KalBingo] Impossible de démarrer la partie '" + gameId + "' : " + e.getMessage());
+            logger.warning("[KG_BingoGame] Impossible de démarrer la partie '" + gameId + "' : " + e.getMessage());
             return Result.failure(Failure.CREATE_FAILED, e.getMessage());
         }
 

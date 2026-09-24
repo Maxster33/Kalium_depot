@@ -55,7 +55,7 @@ public class InstanceWorldManager {
         creator.type(WorldType.NORMAL);
         creator.environment(World.Environment.NORMAL);
 
-        logger.info("[KalBingo] Generation du monde d'instance '" + worldName
+        logger.info("[KG_BingoGame] Generation du monde d'instance '" + worldName
                 + "' (seed=" + seed + ")...");
 
         World world = creator.createWorld();
@@ -111,7 +111,7 @@ public class InstanceWorldManager {
         creator.seed(seed);
         creator.type(WorldType.NORMAL);
         creator.environment(environment);
-        logger.info("[KalBingo] Generation du monde d'instance '" + name + "' (seed=" + seed + ")...");
+        logger.info("[KG_BingoGame] Generation du monde d'instance '" + name + "' (seed=" + seed + ")...");
         World world = creator.createWorld();
         if (world == null) {
             throw new IllegalStateException("Echec de creation du monde '" + name + "'.");
@@ -129,7 +129,7 @@ public class InstanceWorldManager {
                 try {
                     createDimension(baseWorldName, environment, seed);
                 } catch (RuntimeException e) {
-                    logger.warning("[KalBingo] Rechargement du monde '" + name + "' echoue : " + e.getMessage());
+                    logger.warning("[KG_BingoGame] Rechargement du monde '" + name + "' echoue : " + e.getMessage());
                 }
             }
         }
@@ -200,7 +200,7 @@ public class InstanceWorldManager {
 
     private void deleteWorld(String worldName) {
         if (!INSTANCE_NAME.matcher(worldName).matches()) {
-            logger.severe("[KalBingo] Suppression refusee : '" + worldName + "' n'est pas un monde de partie.");
+            logger.severe("[KG_BingoGame] Suppression refusee : '" + worldName + "' n'est pas un monde de partie.");
             return;
         }
         java.util.Set<Path> folders = new java.util.LinkedHashSet<>();
@@ -210,12 +210,12 @@ public class InstanceWorldManager {
             for (var player : world.getPlayers()) {
                 // Les joueurs doivent avoir ete deplaces AVANT cet appel ;
                 // ceci est une securite, pas le mecanisme principal de sortie.
-                logger.warning("[KalBingo] Joueur " + player.getName()
+                logger.warning("[KG_BingoGame] Joueur " + player.getName()
                         + " encore present dans '" + worldName + "' lors de la suppression.");
             }
             boolean unloaded = Bukkit.unloadWorld(world, false);
             if (!unloaded) {
-                logger.severe("[KalBingo] Impossible de decharger le monde '" + worldName + "'.");
+                logger.severe("[KG_BingoGame] Impossible de decharger le monde '" + worldName + "'.");
                 return;
             }
         }
@@ -227,11 +227,11 @@ public class InstanceWorldManager {
             if (name != null && name.toString().equals(worldName) && Files.isDirectory(folder)) {
                 deleteDirectoryRecursively(folder);
                 deleted = true;
-                logger.info("[KalBingo] Monde '" + worldName + "' supprime du disque (" + folder + ").");
+                logger.info("[KG_BingoGame] Monde '" + worldName + "' supprime du disque (" + folder + ").");
             }
         }
         if (!deleted && world != null) {
-            logger.warning("[KalBingo] Dossier du monde '" + worldName + "' introuvable : rien n'a ete supprime du disque.");
+            logger.warning("[KG_BingoGame] Dossier du monde '" + worldName + "' introuvable : rien n'a ete supprime du disque.");
         }
     }
 
@@ -242,11 +242,11 @@ public class InstanceWorldManager {
                         try {
                             Files.delete(p);
                         } catch (IOException e) {
-                            logger.warning("[KalBingo] Impossible de supprimer " + p + " : " + e.getMessage());
+                            logger.warning("[KG_BingoGame] Impossible de supprimer " + p + " : " + e.getMessage());
                         }
                     });
         } catch (IOException e) {
-            logger.severe("[KalBingo] Erreur lors de la suppression du dossier " + path + " : " + e.getMessage());
+            logger.severe("[KG_BingoGame] Erreur lors de la suppression du dossier " + path + " : " + e.getMessage());
         }
     }
 }

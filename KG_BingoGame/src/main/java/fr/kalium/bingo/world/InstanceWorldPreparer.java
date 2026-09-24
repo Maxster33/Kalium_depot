@@ -133,7 +133,7 @@ public final class InstanceWorldPreparer {
                     }
                 }
             } catch (RuntimeException e) {
-                logger.warning("[KalBingo] Pré-génération du monde '" + worldName + "' (étape " + step + ") échouée : " + e.getMessage());
+                logger.warning("[KG_BingoGame] Pré-génération du monde '" + worldName + "' (étape " + step + ") échouée : " + e.getMessage());
             }
             generateNext(gameId, seed, teamCount, index + 1);
         }, delay);
@@ -187,7 +187,7 @@ public final class InstanceWorldPreparer {
             this.gameId = gameId;
             this.queue = queue;
             this.total = queue.size();
-            logger.info("[KalBingo] Pré-génération du terrain de '" + worldName + "' : " + total + " chunks (rayon "
+            logger.info("[KG_BingoGame] Pré-génération du terrain de '" + worldName + "' : " + total + " chunks (rayon "
                     + radiusChunks * 16 + " blocs).");
         }
 
@@ -214,7 +214,7 @@ public final class InstanceWorldPreparer {
             inFlight--;
             done++;
             if (!stopped && done == total) {
-                logger.info("[KalBingo] Terrain de '" + worldName + "' pré-généré (" + total + " chunks en "
+                logger.info("[KG_BingoGame] Terrain de '" + worldName + "' pré-généré (" + total + " chunks en "
                         + (System.currentTimeMillis() - startedAt) / 1000 + " s).");
                 return;
             }

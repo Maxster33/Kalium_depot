@@ -47,7 +47,7 @@ public final class ObjectiveLibrary {
         List<?> rawList = yaml.getList("objectives");
         List<Objective> loaded = new ArrayList<>();
         if (rawList == null) {
-            logger.warning("[KalBingo] objectives.yml : cle 'objectives' absente ou vide.");
+            logger.warning("[KG_BingoGame] objectives.yml : cle 'objectives' absente ou vide.");
             this.objectives = List.of();
             return;
         }
@@ -56,7 +56,7 @@ public final class ObjectiveLibrary {
             index++;
             ConfigurationSection section = toSection(raw);
             if (section == null) {
-                logger.warning("[KalBingo] objectives.yml : entree #" + index + " ignoree (format invalide).");
+                logger.warning("[KG_BingoGame] objectives.yml : entree #" + index + " ignoree (format invalide).");
                 continue;
             }
             Objective objective = parseEntry(section, index, logger);
@@ -65,7 +65,7 @@ public final class ObjectiveLibrary {
             }
         }
         this.objectives = Collections.unmodifiableList(loaded);
-        logger.info("[KalBingo] " + this.objectives.size() + " objectif(s) charge(s) depuis objectives.yml.");
+        logger.info("[KG_BingoGame] " + this.objectives.size() + " objectif(s) charge(s) depuis objectives.yml.");
     }
 
     /** SnakeYAML rend generalement chaque entree de liste comme un Map (pas directement une ConfigurationSection). */
@@ -86,12 +86,12 @@ public final class ObjectiveLibrary {
     private Objective parseEntry(ConfigurationSection section, int index, Logger logger) {
         String materialName = section.getString("material");
         if (materialName == null || materialName.isBlank()) {
-            logger.warning("[KalBingo] objectives.yml : entree #" + index + " ignoree (champ 'material' manquant).");
+            logger.warning("[KG_BingoGame] objectives.yml : entree #" + index + " ignoree (champ 'material' manquant).");
             return null;
         }
         Material material = Material.matchMaterial(materialName.trim());
         if (material == null) {
-            logger.warning("[KalBingo] objectives.yml : entree #" + index + " ignoree (item inconnu : '" + materialName + "').");
+            logger.warning("[KG_BingoGame] objectives.yml : entree #" + index + " ignoree (item inconnu : '" + materialName + "').");
             return null;
         }
         int quantity = Math.max(1, section.getInt("quantity", 1));
@@ -100,7 +100,7 @@ public final class ObjectiveLibrary {
         try {
             difficulty = Difficulty.valueOf(difficultyName.trim().toUpperCase());
         } catch (IllegalArgumentException e) {
-            logger.warning("[KalBingo] objectives.yml : entree #" + index + " (" + materialName
+            logger.warning("[KG_BingoGame] objectives.yml : entree #" + index + " (" + materialName
                     + ") - difficulte '" + difficultyName + "' inconnue, MEDIUM utilise par defaut.");
             difficulty = Difficulty.MEDIUM;
         }
@@ -108,7 +108,7 @@ public final class ObjectiveLibrary {
         try {
             return new Objective(material, quantity, difficulty, condition);
         } catch (IllegalArgumentException e) {
-            logger.warning("[KalBingo] objectives.yml : entree #" + index + " ignoree (" + e.getMessage() + ").");
+            logger.warning("[KG_BingoGame] objectives.yml : entree #" + index + " ignoree (" + e.getMessage() + ").");
             return null;
         }
     }

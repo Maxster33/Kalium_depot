@@ -1,4 +1,4 @@
-name: KalBingo
+name: KG_BingoGame
 version: '${project.version}'
 main: fr.kalium.bingo.BingoPlugin
 # meme format que KalGames (fr.kalium.games) sur le serveur kal-games
@@ -6,7 +6,7 @@ api-version: '26.2'
 description: Mini-jeu Bingo (instances de mondes independants a seed partagee, par equipe) - serveur dedie, relie a Kal-Games via le proxy.
 authors: [KaLium]
 # Requis pour que ce plugin puisse fournir le generateur du monde par defaut du serveur (bukkit.yml
-# "worlds: <nom>: generator: KalBingo", utilise pour remplacer la map de Kixster par un monde vide) :
+# "worlds: <nom>: generator: KG_BingoGame", utilise pour remplacer la map de Kixster par un monde vide) :
 # le monde principal est cree AVANT l'activation des plugins charges normalement (load: POSTWORLD,
 # la valeur par defaut), donc sans "load: STARTUP" CraftBukkit ne trouve pas encore le plugin et
 # abandonne silencieusement en generant un monde normal a la place.

@@ -69,7 +69,7 @@ public final class GamePersistence {
             return;
         }
         if (!dataDir.exists() && !dataDir.mkdirs()) {
-            logger.warning("[KalBingo] Impossible de créer le dossier de sauvegarde des parties (" + dataDir + ").");
+            logger.warning("[KG_BingoGame] Impossible de créer le dossier de sauvegarde des parties (" + dataDir + ").");
             return;
         }
 
@@ -124,7 +124,7 @@ public final class GamePersistence {
         try {
             yaml.save(fileFor(game.getGameId()));
         } catch (IOException e) {
-            logger.warning("[KalBingo] Impossible de sauvegarder la partie '" + game.getGameId() + "' : " + e.getMessage());
+            logger.warning("[KG_BingoGame] Impossible de sauvegarder la partie '" + game.getGameId() + "' : " + e.getMessage());
         }
     }
 
@@ -140,7 +140,7 @@ public final class GamePersistence {
     public void delete(String gameId) {
         File file = fileFor(gameId);
         if (file.exists() && !file.delete()) {
-            logger.warning("[KalBingo] Impossible de supprimer le fichier de sauvegarde de la partie '" + gameId + "'.");
+            logger.warning("[KG_BingoGame] Impossible de supprimer le fichier de sauvegarde de la partie '" + gameId + "'.");
         }
     }
 
@@ -163,11 +163,11 @@ public final class GamePersistence {
                 restoreOne(file);
                 restored++;
             } catch (RuntimeException e) {
-                logger.severe("[KalBingo] Impossible de restaurer la partie depuis '" + file.getName() + "' : " + e.getMessage());
+                logger.severe("[KG_BingoGame] Impossible de restaurer la partie depuis '" + file.getName() + "' : " + e.getMessage());
             }
         }
         if (restored > 0) {
-            logger.info("[KalBingo] " + restored + " partie(s) restaurée(s) après redémarrage/crash.");
+            logger.info("[KG_BingoGame] " + restored + " partie(s) restaurée(s) après redémarrage/crash.");
         }
     }
 
@@ -235,7 +235,7 @@ public final class GamePersistence {
         }
 
         game.restoreInProgress(Duration.ofSeconds(remainingSeconds));
-        logger.info("[KalBingo] Partie '" + gameId + "' restaurée (temps restant : " + remainingSeconds + "s).");
+        logger.info("[KG_BingoGame] Partie '" + gameId + "' restaurée (temps restant : " + remainingSeconds + "s).");
     }
 
     private int toInt(Object raw) {

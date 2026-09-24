@@ -49,7 +49,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.time.Duration;
 
 /**
- * Point d'entree du plugin KalBingo (serveur dedie, separe de kal-games -
+ * Point d'entree du plugin KG_BingoGame (serveur dedie, separe de kal-games -
  * decision confirmee par l'utilisateur).
  *
  * Etat actuel (detail par version dans JOURNAL.md) : salle d'attente et equipes assignees par
@@ -125,7 +125,7 @@ public class BingoPlugin extends JavaPlugin {
             @EventHandler
             public void onServerLoad(ServerLoadEvent event) {
                 if (!lobbySlots.init()) {
-                    getLogger().severe("[KalBingo] Le monde de la salle d'attente n'a pas pu être créé - le plugin continue sans salle d'attente.");
+                    getLogger().severe("[KG_BingoGame] Le monde de la salle d'attente n'a pas pu être créé - le plugin continue sans salle d'attente.");
                 }
                 // Restaure les parties EN COURS sauvegardees avant le dernier arret/crash (voir
                 // GamePersistence) - meme contrainte que lobbySlots.init() ci-dessus : la creation
@@ -258,7 +258,7 @@ public class BingoPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(
                 new LobbyProtectionListener(lobbySlots, lobbyItems, partyMenu, gameEndService, postGameMenu), this);
 
-        getLogger().info("[KalBingo] Plugin active (architecture parties/instances par equipe, mondes a seed partagee, "
+        getLogger().info("[KG_BingoGame] Plugin active (architecture parties/instances par equipe, mondes a seed partagee, "
                 + "salle d'attente + choix d'equipe, reception d'affectation depuis kal-games).");
     }
 
@@ -266,7 +266,7 @@ public class BingoPlugin extends JavaPlugin {
     public void onDisable() {
         getServer().getMessenger().unregisterOutgoingPluginChannel(this);
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
-        getLogger().info("[KalBingo] Plugin desactive.");
+        getLogger().info("[KG_BingoGame] Plugin desactive.");
     }
 
     public GameManager getGameManager() {
@@ -287,7 +287,7 @@ public class BingoPlugin extends JavaPlugin {
 
     /**
      * Permet a ce plugin de fournir le generateur d'un monde arbitraire (notamment le monde par
-     * defaut du serveur), via le mapping "worlds: &lt;nom&gt;: generator: KalBingo" de bukkit.yml.
+     * defaut du serveur), via le mapping "worlds: &lt;nom&gt;: generator: KG_BingoGame" de bukkit.yml.
      * Reutilise VoidGenerator (deja utilise pour bingo_lobby) : le monde est alors entierement vide.
      * Sert a remplacer la map par defaut de Kixster par un monde vide (demande explicite de
      * l'utilisateur), sans dependre d'un plugin tiers type Multiverse.
