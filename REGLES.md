@@ -15,7 +15,9 @@ Chaque règle est suivie de sa raison (« Pourquoi ») : en cas de situation non
    - Une demande qui touche plusieurs plugins : les réserver **tous** en une fois, ou aucun.
    - **De 13 h à 23 h (heure de Paris), 2 plugins réservés au maximum par personne.** Au-delà, il faut l'accord
      de l'autre personne, noté dans la réservation (« accord de <pseudo> »). En dehors de ces heures, pas de
-     limite. Attention : l'horloge d'un espace cloud est souvent en UTC, convertir en heure de Paris.
+     limite. Attention à l'heure utilisée (réservations comprises) : l'horloge d'un espace cloud est souvent en UTC,
+     à convertir en heure de Paris ; sous Git Bash (Windows), `TZ=Europe/Paris date` renvoie en réalité l'heure UTC
+     (fuseaux horaires absents) : utiliser `date` tout court, le PC étant réglé à l'heure de Paris.
 
      Pourquoi : de 13 h à 23 h, LeKiwi06 et Maxster33 sont actifs en même temps ; la limite évite qu'une personne
      bloque tout le projet. Le découpage en petits plugins (section 2) la rend peu contraignante.
