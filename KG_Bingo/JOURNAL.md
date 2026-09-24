@@ -38,4 +38,5 @@ fois pour créer `plugins/KG_Bingo/config.yml`, y recopier la section `bingo:` d
   (`/bingo create`), KG_BingoGame applique ses valeurs par défaut.
 
 **Déploiement** : avec KG_BingoGame 0.3.0 et KalGames 1.13.0 (remplace la 1.0.0, jamais déployée : même procédure).
-**Statut : compilé, non déployé.**
+**Statut : déployé sur kal-games le 24/09/2026 (config = copie de celle de KalGames, jeton compris, faite
+sur le serveur sans être lue), non testé en jeu.**

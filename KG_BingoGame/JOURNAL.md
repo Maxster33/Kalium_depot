@@ -1320,4 +1320,4 @@ JOURNAL). Décision : noms internes du code conservés (`fr.kalium.bingo`, class
 **Déploiement** : avec KG_Bingo 1.1.0 (et les versions en attente : KaliumRelay 1.1.1, KalGames 1.13.0). Suivre la
 procédure de migration de la 0.2.0 ci-dessus (jamais déployée), avec en plus : déplacer l'ancien
 `plugins/KG_BingoGame/objectives.yml` dans le dossier `_removed-...` pour que la nouvelle liste soit installée.
-Aucune partie en cours. **Statut : compilé, non déployé, non testé en jeu.**
+Aucune partie en cours. **Statut : déployé sur Kixster le 24/09/2026 (migration faite, journal de démarrage OK : 200 objectifs), non testé en jeu.**

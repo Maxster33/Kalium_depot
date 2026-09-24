@@ -234,4 +234,4 @@ partie et à l'abandon depuis 0.1.12 / 0.1.14). Les « Pour reprendre » plus ha
 historiques.
 
 À déployer en même temps que KalGames 1.12.4 et KalBingo 0.1.23 (même nettoyage, voir leurs JOURNAL) - pas urgent.
-**Statut : compilé, non déployé.**
+**Statut : déployé sur le proxy le 24/09/2026 (démarrage vérifié dans le journal).**

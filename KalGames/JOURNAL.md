@@ -670,4 +670,4 @@ bouton Bingo écrit en dur dans KalGames.
 
 **Déploiement** : obligatoirement **en même temps que KG_Bingo 1.0.0** (sinon le Bingo disparaît du hub). Le
 `config.yml` déployé sur kal-games garde sa section `bingo:` : sans effet désormais, à recopier dans
-`plugins/KG_Bingo/config.yml` (jeton compris) avant le redémarrage. **Statut : compilé, non déployé.**
+`plugins/KG_Bingo/config.yml` (jeton compris) avant le redémarrage. **Statut : déployé sur kal-games le 24/09/2026 avec KG_Bingo 1.1.0, non testé en jeu.**

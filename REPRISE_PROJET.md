@@ -47,26 +47,17 @@ Copie exacte de chaque jar dans `jars-deployes/`.
 
 | Serveur | Jar | Test en jeu |
 |---|---|---|
-| Kixster | `KalBingo-0.1.22.jar` (config.yml modifié : `lobby.max-size: 256`, `lobby.blocks-per-tick: 30000`) | non testé (Nether/End par équipe, keepInventory) |
-| kal-games | `KalGames-1.12.3.jar` | non testé (Rush ; capture d'arène sans crash à confirmer en recapturant le parkour) |
+| Kixster | `KG_BingoGame-0.3.0.jar` (déployé le 24/09/2026 ; KalBingo renommé, données dans `plugins/KG_BingoGame/`, `bukkit.yml` : `generator: KG_BingoGame` ; config.yml du serveur : `lobby.max-size: 256`, `lobby.blocks-per-tick: 30000`) | non testé (nouveau Bingo, Nether/End par équipe, keepInventory) |
+| kal-games | `KalGames-1.13.0.jar` + `KG_Bingo-1.1.0.jar` (déployés le 24/09/2026 ; `plugins/KG_Bingo/config.yml` = copie de celui de KalGames, jeton compris) | non testé (Rush ; capture d'arène sans crash à confirmer en recapturant le parkour ; menu Bingo déplacé) |
 | kal-games, lobby | `KaliumMenu-1.5.0.jar` | non confirmé (bouton Paramètres des téléportations) |
-| proxy | `KaliumRelay-1.1.0.jar` | relais confirmé par LeKiwi06 le 24/09/2026 (partie Bingo lancée et clôturée avec le nouveau jeton) ; reconnexion directe (1.1.0) non confirmée |
+| proxy | `KaliumRelay-1.1.1.jar` (déployé le 24/09/2026) | relais confirmé le 24/09/2026 en 1.1.0 ; démarrage 1.1.1 vérifié dans le journal ; reconnexion directe non confirmée |
 | Kal-Test-Dev | `KaliumCore-1.4.0.jar` | non testé (projet en pause) |
 
 Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne très bien ».
 
 ### Versions compilées, non déployées
 
-| Jar | Contenu | À déployer |
-|---|---|---|
-| `KaliumRelay-1.1.1.jar` | plus de jeton écrit dans le code, jeton plus affiché dans la console | avec les autres |
-| `KalGames-1.13.0.jar` | le Bingo sort de KalGames ; prises `MenuEntry` pour les boutons d'autres plugins (inclut 1.12.4, jamais déployée) | **obligatoirement avec KG_Bingo 1.1.0** |
-| `KG_Bingo-1.1.0.jar` | nouveau plugin : partie Bingo du hub sortie de KalGames (1.0.0) + réglages du nouveau Bingo dans le menu de création (1.1.0) | **obligatoirement avec KalGames 1.13.0 et KG_BingoGame 0.3.0** |
-| `KG_BingoGame-0.3.0.jar` | KalBingo renommé (0.2.0) + nouveau Bingo (0.3.0 : barème, modes, nulle, inactivité, keepInventory, invincibilité, liste d'objectifs) | avec les autres, **procédure de migration + remplacement d'`objectives.yml` dans `KG_BingoGame/JOURNAL.md`** |
-
-Ces jars ne sont pas dans le dépôt : `sh <plugin>/build.sh` les recrée dans `sortie/`. Déploiement prévu en une
-seule fois après l'étape B (voir « Chantiers en cours »). Au déploiement de KG_Bingo : recopier la section `bingo:`
-de `plugins/KalGames/config.yml` (kal-games) dans `plugins/KG_Bingo/config.yml`, **jeton compris**.
+Aucune.
 
 ## Chantiers en cours
 
