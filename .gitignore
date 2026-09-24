@@ -4,3 +4,7 @@ target/
 *.tmp
 .DS_Store
 Thumbs.db
+
+# Outils de compilation (compilateur + bibliotheques, 32 Mo) et jars produits sur le PC local
+outils-build/
+sortie/

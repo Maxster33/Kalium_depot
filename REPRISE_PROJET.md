@@ -72,9 +72,24 @@ de test de l'utilisateur (arène à configurer : salle d'attente + 11 points par
   26.2.build.123) utilisés pour compiler — permet de recompiler à l'identique sans rien retélécharger.
 - `jars-deployes/` : les jars actuellement en service (copie de secours).
 
+## Compiler sur un PC (depuis le dépôt git) - mis en place le 24/09/2026
+
+Prérequis : Java 21 ou plus (testé avec Temurin 25) et Git Bash sous Windows.
+
+```sh
+sh telecharger-outils.sh      # une seule fois par machine : compilateur ecj + bibliothèques dans outils-build/
+sh KalBingo/build.sh          # -> sortie/KalBingo-<version>.jar (idem pour les autres plugins)
+```
+
+`outils-build/` et `sortie/` sont ignorés par git. Versions utilisées : ecj 3.46.100, paper-api
+26.2.build.123 (et ses dépendances, voir le script). Vérifié le 24/09/2026 : les 5 jars recompilés ainsi sont
+identiques octet pour octet à ceux de `jars-deployes/` (hors manifeste). Le fichier `.gitattributes` impose des
+fins de ligne LF : sans lui, Git pour Windows convertit les config.yml en CRLF et les jars ne sont plus identiques.
+
 ## Compiler (dans l'espace de travail cloud de Claude)
 
-Les `build.sh` attendent les outils dans `/tmp/claude-0/`. Pour restaurer :
+Sans dossier `outils-build/` à la racine, les `build.sh` utilisent `/tmp/claude-0/` et écrivent dans
+`/mnt/user-data/outputs/`. Pour restaurer :
 
 ```sh
 unzip KalProjet-sauvegarde-2026-09-23.zip -d /home/claude/restore

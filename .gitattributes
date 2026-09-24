@@ -1,0 +1,5 @@
+# Fins de ligne Linux (LF) pour tous les fichiers texte, quel que soit le systeme (Windows compris) :
+# les ressources copiees dans les jars (config.yml...) restent identiques d une machine a l autre.
+* text=auto eol=lf
+*.jar binary
+*.png binary
