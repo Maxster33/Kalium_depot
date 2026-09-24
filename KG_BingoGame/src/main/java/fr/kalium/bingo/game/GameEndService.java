@@ -368,6 +368,28 @@ public final class GameEndService {
             own.put(team, engine.teamScore(team, win && team == winner));
         }
 
+        // 0.4.2 - demande de LeKiwi06 (24/09/2026) : blackout gagne en moins de 2 h = multiplicateur final, applique
+        // APRES l'ajout des points des equipes (et des joueurs) classees derriere : x2 en moins d'1 h, x1,5 entre 1 h
+        // et 2 h ; grille uniquement difficile / extreme : x5 en moins d'1 h, x2 entre 1 h et 2 h ("c'est une prouesse
+        // de faire un blackout comme ca en moins d'une heure, meme en equipe"). Equipe gagnante seulement (et ses
+        // joueurs pour les points solo), parties sans adversaire comprises.
+        double speed = 1.0;
+        String speedNote = "";
+        if (win && game.getSettings().isBlackout()) {
+            long minutes = game.getElapsed().toMinutes();
+            boolean hardOnly = game.getSettings().easy() == 0 && game.getSettings().medium() == 0;
+            if (minutes < 60) {
+                speed = hardOnly ? 5.0 : 2.0;
+            } else if (minutes < 120) {
+                speed = hardOnly ? 2.0 : 1.5;
+            }
+            if (speed > 1.0) {
+                speedNote = " — blackout en " + (minutes / 60) + " h " + String.format("%02d", minutes % 60)
+                        + " : ×" + ScoreEngine.format(speed);
+                reason = reason + speedNote;
+            }
+        }
+
         List<Component> summary = new ArrayList<>();
         String title = switch (outcome) {
             case WIN -> "Victoire de l'équipe " + TeamStyle.letter(winner);
@@ -389,11 +411,13 @@ public final class GameEndService {
                     behind += own.get(order.get(j).getTeam().getTeamNumber());
                 }
             }
-            String line = (win ? (i + 1) + ". " : "- ") + "Équipe " + TeamStyle.letter(team) + " : " + ScoreEngine.format(mine + behind) + " pts"
-                    + (behind > 0 ? " (" + ScoreEngine.format(mine) + " + " + ScoreEngine.format(behind) + ")" : "")
+            double mult = win && team == winner ? speed : 1.0;
+            String line = (win ? (i + 1) + ". " : "- ") + "Équipe " + TeamStyle.letter(team) + " : " + ScoreEngine.format((mine + behind) * mult) + " pts"
+                    + (behind > 0 || mult > 1.0 ? " (" + (behind > 0 ? ScoreEngine.format(mine) + " + " + ScoreEngine.format(behind) : ScoreEngine.format(mine))
+                    + (mult > 1.0 ? " ×" + ScoreEngine.format(mult) : "") + ")" : "")
                     + (instance.isFullyAbandoned() ? " — abandon" : "");
             summary.add(Component.text(line, TeamStyle.color(team)));
-            log.append(" equipe ").append(team).append('=').append(ScoreEngine.format(mine + behind));
+            log.append(" equipe ").append(team).append('=').append(ScoreEngine.format((mine + behind) * mult));
         }
         // Classement SOLO : memes regles que les equipes (precision de LeKiwi06, 24/09/2026). Victoire : joueurs de
         // l'equipe gagnante en tete, puis les autres par score, ceux qui ont abandonne en dernier ; chacun gagne ses
@@ -428,8 +452,9 @@ public final class GameEndService {
                     behind += soloList.get(j).points();
                 }
             }
-            solos.add((win ? (i + 1) + ". " : "") + soloList.get(i).name() + " " + ScoreEngine.format(soloList.get(i).points() + behind));
-            soloFinal.put(soloList.get(i).name(), soloList.get(i).points() + behind);
+            double mult = soloList.get(i).winnerTeam() ? speed : 1.0;
+            solos.add((win ? (i + 1) + ". " : "") + soloList.get(i).name() + " " + ScoreEngine.format((soloList.get(i).points() + behind) * mult));
+            soloFinal.put(soloList.get(i).name(), (soloList.get(i).points() + behind) * mult);
         }
         summary.add(Component.text((win ? "Classement solo : " : "Points solo : ") + String.join(", ", solos), NamedTextColor.GRAY));
         logger.info(log + " ; solo : " + String.join(", ", solos));
@@ -466,8 +491,9 @@ public final class GameEndService {
                 players.add(new fr.kalium.bingo.gui.SummaryMenu.PlayerLine(playerId, name != null ? name : "?", solo,
                         cells.size(), firsts, engine.bingosOf(team, playerId).size(), items));
             }
-            teamLines.add(new fr.kalium.bingo.gui.SummaryMenu.TeamLine(team, win ? i + 1 : 0, mine + behindPts, mine,
-                    instance.isFullyAbandoned(), players));
+            double mult = win && team == winner ? speed : 1.0;
+            teamLines.add(new fr.kalium.bingo.gui.SummaryMenu.TeamLine(team, win ? i + 1 : 0, (mine + behindPts) * mult, mine,
+                    behindPts, mult, instance.isFullyAbandoned(), players));
         }
         summaries.put(game.getGameId(), new fr.kalium.bingo.gui.SummaryMenu.Summary(title, reason, teamLines));
 

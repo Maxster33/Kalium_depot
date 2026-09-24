@@ -35,7 +35,8 @@ public final class SummaryMenu implements Listener {
     }
 
     /** Resultat d'une equipe, fige en fin de partie (ordre du classement). */
-    public record TeamLine(int team, int rank, double points, double own, boolean abandoned, List<PlayerLine> players) {
+    public record TeamLine(int team, int rank, double points, double own, double behind, double multiplier, boolean abandoned,
+                           List<PlayerLine> players) {
     }
 
     /** Resume complet d'une partie. */
@@ -83,9 +84,13 @@ public final class SummaryMenu implements Listener {
         meta.displayName(plain(Component.text((team.rank() > 0 ? team.rank() + ". " : "") + "Équipe " + TeamStyle.letter(team.team()),
                 TeamStyle.color(team.team()))));
         List<Component> lore = new ArrayList<>();
-        double behind = team.points() - team.own();
-        lore.add(plain(Component.text("Points : ", NamedTextColor.GRAY).append(Component.text(ScoreEngine.format(team.points())
-                + (behind > 1e-9 ? " (" + ScoreEngine.format(team.own()) + " + " + ScoreEngine.format(behind) + ")" : ""), NamedTextColor.WHITE))));
+        String detail = "";
+        if (team.behind() > 1e-9 || team.multiplier() > 1.0) {
+            detail = " (" + (team.behind() > 1e-9 ? ScoreEngine.format(team.own()) + " + " + ScoreEngine.format(team.behind())
+                    : ScoreEngine.format(team.own())) + (team.multiplier() > 1.0 ? " ×" + ScoreEngine.format(team.multiplier()) : "") + ")";
+        }
+        lore.add(plain(Component.text("Points : ", NamedTextColor.GRAY).append(Component.text(ScoreEngine.format(team.points()) + detail,
+                NamedTextColor.WHITE))));
         if (team.abandoned()) {
             lore.add(plain(Component.text("A abandonné", NamedTextColor.RED)));
         }
