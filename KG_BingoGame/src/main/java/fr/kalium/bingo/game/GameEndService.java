@@ -123,6 +123,14 @@ public final class GameEndService {
     }
 
     private DrawVoteService drawVotes;
+    /** 0.4.0 : resume de chaque partie terminee, consultable depuis la salle d'attente post-partie (SummaryMenu). */
+    private final Map<String, fr.kalium.bingo.gui.SummaryMenu.Summary> summaries = new HashMap<>();
+
+    /** Resume de la partie que ce joueur vient de terminer (null s'il n'est pas en salle d'attente post-partie). */
+    public fr.kalium.bingo.gui.SummaryMenu.Summary summaryFor(UUID playerId) {
+        String gameId = lingeringGameId.get(playerId);
+        return gameId == null ? null : summaries.get(gameId);
+    }
     /** Blackout : derniere heure de jeu pour laquelle une nulle a ete proposee automatiquement. */
     private final Map<String, Long> autoDrawHour = new HashMap<>();
     /** "gameId:equipe" des equipes dont l'abandon complet a deja ete traite. */
@@ -197,7 +205,7 @@ public final class GameEndService {
                 playerReset.resetOrDefer(playerId);
                 clearActiveGameAsync(playerId);
                 String name = Bukkit.getOfflinePlayer(playerId).getName();
-                broadcast(game, Component.text((name != null ? name : "Un joueur") + " (équipe " + instance.getTeam().getTeamNumber()
+                broadcast(game, Component.text((name != null ? name : "Un joueur") + " (équipe " + TeamStyle.letter(instance.getTeam().getTeamNumber())
                         + ") a abandonné : déconnecté depuis trop longtemps.", NamedTextColor.GRAY));
                 any = true;
             }
@@ -246,11 +254,11 @@ public final class GameEndService {
             return;
         }
         for (int team : newlyAbandoned) {
-            broadcast(game, Component.text("L'équipe " + team + " a abandonné : elle perd la partie et sera classée dernière.",
+            broadcast(game, Component.text("L'équipe " + TeamStyle.letter(team) + " a abandonné : elle perd la partie et sera classée dernière.",
                     NamedTextColor.RED));
         }
         if (playing.size() >= 2 && drawVotes != null) {
-            drawVotes.proposeAutomatic(game, "Abandon de l'équipe " + newlyAbandoned.get(0));
+            drawVotes.proposeAutomatic(game, "Abandon de l'équipe " + TeamStyle.letter(newlyAbandoned.get(0)));
         } else if (playing.size() == 1) {
             int last = playing.get(0);
             if (drawVotes == null) {
@@ -283,10 +291,10 @@ public final class GameEndService {
         if (settings.isBlackout()) {
             int total = game.getGrid().getSize() * game.getGrid().getSize();
             if (game.countValidated(teamNumber) >= total) {
-                finish(game, Outcome.WIN, teamNumber, "L'équipe " + teamNumber + " a rempli toute la grille en premier.");
+                finish(game, Outcome.WIN, teamNumber, "L'équipe " + TeamStyle.letter(teamNumber) + " a rempli toute la grille en premier.");
             }
         } else if (game.getScoreEngine().bingoCount(teamNumber) >= settings.bingosRequired()) {
-            finish(game, Outcome.WIN, teamNumber, "L'équipe " + teamNumber + " a achevé ses " + settings.bingosRequired()
+            finish(game, Outcome.WIN, teamNumber, "L'équipe " + TeamStyle.letter(teamNumber) + " a achevé ses " + settings.bingosRequired()
                     + " bingos en premier.");
         }
     }
@@ -311,10 +319,10 @@ public final class GameEndService {
             }
         }
         if (top.size() == 1) {
-            finish(game, Outcome.WIN, top.get(0), "Temps écoulé : l'équipe " + top.get(0) + " a le meilleur score.");
+            finish(game, Outcome.WIN, top.get(0), "Temps écoulé : l'équipe " + TeamStyle.letter(top.get(0)) + " a le meilleur score.");
         } else {
             finish(game, Outcome.EGALITE, -1, "Temps écoulé : égalité au score entre les équipes "
-                    + top.stream().map(String::valueOf).collect(java.util.stream.Collectors.joining(", ")) + " !");
+                    + top.stream().map(TeamStyle::letter).collect(java.util.stream.Collectors.joining(", ")) + " !");
         }
     }
 
@@ -362,7 +370,7 @@ public final class GameEndService {
 
         List<Component> summary = new ArrayList<>();
         String title = switch (outcome) {
-            case WIN -> "Victoire de l'équipe " + winner;
+            case WIN -> "Victoire de l'équipe " + TeamStyle.letter(winner);
             case EGALITE -> "Égalité";
             case NULLE -> "Match nul";
         };
@@ -381,10 +389,10 @@ public final class GameEndService {
                     behind += own.get(order.get(j).getTeam().getTeamNumber());
                 }
             }
-            String line = (win ? (i + 1) + ". " : "- ") + "Équipe " + team + " : " + ScoreEngine.format(mine + behind) + " pts"
+            String line = (win ? (i + 1) + ". " : "- ") + "Équipe " + TeamStyle.letter(team) + " : " + ScoreEngine.format(mine + behind) + " pts"
                     + (behind > 0 ? " (" + ScoreEngine.format(mine) + " + " + ScoreEngine.format(behind) + ")" : "")
                     + (instance.isFullyAbandoned() ? " — abandon" : "");
-            summary.add(Component.text(line, win && team == winner ? NamedTextColor.GREEN : NamedTextColor.WHITE));
+            summary.add(Component.text(line, TeamStyle.color(team)));
             log.append(" equipe ").append(team).append('=').append(ScoreEngine.format(mine + behind));
         }
         // Classement SOLO : memes regles que les equipes (precision de LeKiwi06, 24/09/2026). Victoire : joueurs de
@@ -412,6 +420,7 @@ public final class GameEndService {
             return Double.compare(b.points(), a.points());
         });
         List<String> solos = new ArrayList<>();
+        Map<String, Double> soloFinal = new HashMap<>();
         for (int i = 0; i < soloList.size(); i++) {
             double behind = 0;
             if (win) {
@@ -420,14 +429,52 @@ public final class GameEndService {
                 }
             }
             solos.add((win ? (i + 1) + ". " : "") + soloList.get(i).name() + " " + ScoreEngine.format(soloList.get(i).points() + behind));
+            soloFinal.put(soloList.get(i).name(), soloList.get(i).points() + behind);
         }
         summary.add(Component.text((win ? "Classement solo : " : "Points solo : ") + String.join(", ", solos), NamedTextColor.GRAY));
         logger.info(log + " ; solo : " + String.join(", ", solos));
 
+        // 0.4.0 : resume consultable en salle d'attente post-partie (SummaryMenu).
+        List<fr.kalium.bingo.gui.SummaryMenu.TeamLine> teamLines = new ArrayList<>();
+        for (int i = 0; i < order.size(); i++) {
+            BingoInstance instance = order.get(i);
+            int team = instance.getTeam().getTeamNumber();
+            double mine = own.get(team);
+            double behindPts = 0;
+            if (win) {
+                for (int j = i + 1; j < order.size(); j++) {
+                    behindPts += own.get(order.get(j).getTeam().getTeamNumber());
+                }
+            }
+            List<fr.kalium.bingo.gui.SummaryMenu.PlayerLine> players = new ArrayList<>();
+            for (UUID playerId : instance.getTeam().getPlayers()) {
+                String name = Bukkit.getOfflinePlayer(playerId).getName();
+                List<Integer> cells = engine.cellsOf(team, playerId);
+                int firsts = 0;
+                List<Component> items = new ArrayList<>();
+                for (int cell : cells) {
+                    boolean first = engine.firstTeamOf(cell) == team;
+                    if (first) {
+                        firsts++;
+                    }
+                    var objective = game.getGrid().getCells().get(cell).getObjective();
+                    items.add(Component.text(objective.quantity() + " ", NamedTextColor.GRAY)
+                            .append(Component.translatable(objective.material().translationKey(), NamedTextColor.GRAY))
+                            .append(Component.text(first ? " (1er)" : "", NamedTextColor.GOLD)));
+                }
+                double solo = soloFinal.getOrDefault(name != null ? name : playerId.toString().substring(0, 8), 0.0);
+                players.add(new fr.kalium.bingo.gui.SummaryMenu.PlayerLine(playerId, name != null ? name : "?", solo,
+                        cells.size(), firsts, engine.bingosOf(team, playerId).size(), items));
+            }
+            teamLines.add(new fr.kalium.bingo.gui.SummaryMenu.TeamLine(team, win ? i + 1 : 0, mine + behindPts, mine,
+                    instance.isFullyAbandoned(), players));
+        }
+        summaries.put(game.getGameId(), new fr.kalium.bingo.gui.SummaryMenu.Summary(title, reason, teamLines));
+
         finishAndSendToLobby(game, team -> switch (outcome) {
             case WIN -> team == winner
                     ? Component.text("Victoire ! Votre équipe remporte la partie.", NamedTextColor.GREEN)
-                    : Component.text("L'équipe " + winner + " remporte la partie.", NamedTextColor.YELLOW);
+                    : Component.text("L'équipe " + TeamStyle.letter(winner) + " remporte la partie.", TeamStyle.color(winner));
             case EGALITE -> Component.text("Égalité ! La partie est terminée.", NamedTextColor.YELLOW);
             case NULLE -> Component.text("Match nul : la partie est terminée.", NamedTextColor.YELLOW);
         }, summary);
@@ -618,6 +665,7 @@ public final class GameEndService {
         if (gameId == null || lingeringGameId.containsValue(gameId)) {
             return;
         }
+        summaries.remove(gameId);
         lobbySlots.release(gameId);
     }
 }

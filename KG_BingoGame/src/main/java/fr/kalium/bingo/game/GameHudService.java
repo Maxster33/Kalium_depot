@@ -51,7 +51,7 @@ public final class GameHudService {
         for (BingoInstance instance : game.getInstances()) {
             int team = instance.getTeam().getTeamNumber();
             message = message.append(Component.text("  |  ", NamedTextColor.DARK_GRAY))
-                    .append(Component.text("Équipe " + team + " : ", NamedTextColor.GOLD))
+                    .append(Component.text("Équipe " + TeamStyle.letter(team) + " : ", TeamStyle.color(team)))
                     .append(Component.text(fr.kalium.bingo.score.ScoreEngine.format(game.score(team)) + " pts", NamedTextColor.WHITE))
                     .append(blackout || game.getScoreEngine() == null ? Component.empty()
                             : Component.text(" (" + game.getScoreEngine().bingoCount(team) + "/" + game.getSettings().bingosRequired()

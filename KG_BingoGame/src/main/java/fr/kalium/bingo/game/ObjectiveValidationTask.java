@@ -130,7 +130,7 @@ public final class ObjectiveValidationTask {
         if (objective.quantity() > 1) {
             item = Component.text(objective.quantity() + " ", NamedTextColor.WHITE).append(item);
         }
-        Component line = Component.text("Équipe " + team + " valide ", NamedTextColor.GREEN)
+        Component line = TeamStyle.name(team).append(Component.text(" valide ", NamedTextColor.GREEN))
                 .append(item)
                 .append(Component.text(result.first() ? " en 1er" : "", NamedTextColor.GOLD))
                 // Joueur seul dans son equipe : pas de pseudo (precision de LeKiwi06 : "pas besoin d'afficher de
@@ -149,7 +149,7 @@ public final class ObjectiveValidationTask {
             }
             String detail = bingo.first() && bingo.hardOnly() ? " en 1er, difficile"
                     : bingo.first() ? " en 1er" : bingo.hardOnly() ? " difficile" : "";
-            Component bingoLine = Component.text("Équipe " + team + " valide un bingo : " + bingo.name(), NamedTextColor.AQUA)
+            Component bingoLine = TeamStyle.name(team).append(Component.text(" valide un bingo : " + bingo.name(), NamedTextColor.AQUA))
                     .append(Component.text(detail, NamedTextColor.GOLD))
                     .append(Component.text(solo(game, team) ? " " : " (" + names + ") ", NamedTextColor.GRAY))
                     .append(bingo.gain() > 0

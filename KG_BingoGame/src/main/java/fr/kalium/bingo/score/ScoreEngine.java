@@ -109,6 +109,11 @@ public final class ScoreEngine {
         return lines.get(line).clone();
     }
 
+    /** Nombre de validations enregistrees (la carte se redessine quand il change). */
+    public int validationCount() {
+        return log.size();
+    }
+
     public List<Validation> log() {
         return List.copyOf(log);
     }
@@ -266,6 +271,38 @@ public final class ScoreEngine {
             }
         }
         return total;
+    }
+
+    /** Cases validees par ce joueur pour son equipe (0.4.0, tetes du menu Objectifs). */
+    public List<Integer> cellsOf(int team, UUID player) {
+        List<Integer> result = new ArrayList<>();
+        UUID[] o = owners.get(team);
+        if (o != null && player != null) {
+            for (int cell = 0; cell < o.length; cell++) {
+                if (player.equals(o[cell])) {
+                    result.add(cell);
+                }
+            }
+        }
+        return result;
+    }
+
+    /** Bingos de l'equipe auxquels ce joueur a participe (au moins une case validee par lui). */
+    public List<Integer> bingosOf(int team, UUID player) {
+        List<Integer> result = new ArrayList<>();
+        UUID[] o = owners.get(team);
+        if (o == null || player == null) {
+            return result;
+        }
+        for (int line : completedLines.getOrDefault(team, Set.of())) {
+            for (int c : lines.get(line)) {
+                if (player.equals(o[c])) {
+                    result.add(line);
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     /** Nombre de bingos acheves par cette equipe. */

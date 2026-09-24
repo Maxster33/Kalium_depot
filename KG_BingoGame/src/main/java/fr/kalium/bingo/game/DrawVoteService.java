@@ -221,7 +221,7 @@ public final class DrawVoteService {
         List<String> parts = new ArrayList<>();
         for (BingoInstance instance : game.getInstances()) {
             int team = instance.getTeam().getTeamNumber();
-            parts.add("équipe " + team + " " + ScoreEngine.format(game.score(team)) + " pts");
+            parts.add("équipe " + TeamStyle.letter(team) + " " + ScoreEngine.format(game.score(team)) + " pts");
         }
         return String.join(", ", parts);
     }
@@ -305,7 +305,7 @@ public final class DrawVoteService {
                 vote.phase = Phase.ALL_TEAMS;
                 teamMessage(vote.game, vote.proposerTeam, Component.text("Votre équipe accepte : la nulle est proposée aux autres équipes.",
                         NamedTextColor.GOLD));
-                startStage(vote, others, Component.text("L'équipe " + vote.proposerTeam + " propose une nulle.", NamedTextColor.GOLD));
+                startStage(vote, others, Component.text("", NamedTextColor.GOLD).append(TeamStyle.name(vote.proposerTeam)).append(Component.text(" propose une nulle.", NamedTextColor.GOLD)));
             }
             case ALL_TEAMS, FINAL -> finish(vote, accepted);
         }

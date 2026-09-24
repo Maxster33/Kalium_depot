@@ -92,6 +92,17 @@ public final class GameMenu {
             }
         }
 
+        // 0.4.0 : tetes des coequipiers, colonne de gauche (demande de LeKiwi06 : "consulter les scores de nos
+        // partenaires dans le papier en passant sur leur tete a gauche du coffre" - equipe seulement).
+        int headRow = 0;
+        for (java.util.UUID mate : instanceOpt.get().getTeam().getPlayers()) {
+            if (headRow >= ROWS - 1) {
+                break;
+            }
+            inv.setItem(headRow * 9, headItem(game, myTeam, mate));
+            headRow++;
+        }
+
         inv.setItem(CLOSE_SLOT, closeItem());
         inv.setItem(ABANDON_SLOT, abandonItem());
         inv.setItem(DRAW_SLOT, drawItem());
@@ -126,11 +137,11 @@ public final class GameMenu {
         for (BingoInstance instance : game.getInstances()) {
             int team = instance.getTeam().getTeamNumber();
             if (!game.isValidated(team, index)) {
-                lore.add(plain(Component.text("Équipe " + team + " : ", NamedTextColor.GRAY)
+                lore.add(plain(Component.text("Équipe " + fr.kalium.bingo.game.TeamStyle.letter(team) + " : ", fr.kalium.bingo.game.TeamStyle.color(team))
                         .append(Component.text("Non complété", NamedTextColor.RED))));
                 continue;
             }
-            Component line = Component.text("Équipe " + team + " : ", NamedTextColor.GRAY)
+            Component line = Component.text("Équipe " + fr.kalium.bingo.game.TeamStyle.letter(team) + " : ", fr.kalium.bingo.game.TeamStyle.color(team))
                     .append(Component.text("Complété", NamedTextColor.GREEN));
             String owner = nameOf(engine.ownerOf(team, index));
             if (owner != null && instance.getTeam().getPlayers().size() > 1) { // seul dans l'equipe : pas de pseudo
@@ -154,7 +165,7 @@ public final class GameMenu {
             for (BingoInstance instance : game.getInstances()) {
                 int team = instance.getTeam().getTeamNumber();
                 if (engine.hasCompleted(team, lineIndex)) {
-                    teams.add("équipe " + team + (engine.firstTeamOfLine(lineIndex) == team ? " (1re)" : ""));
+                    teams.add("équipe " + fr.kalium.bingo.game.TeamStyle.letter(team) + (engine.firstTeamOfLine(lineIndex) == team ? " (1re)" : ""));
                 }
             }
             if (teams.isEmpty()) {
@@ -174,6 +185,40 @@ public final class GameMenu {
         if (game.isValidated(myTeam, index)) {
             glow(item);
         }
+        return item;
+    }
+
+    private ItemStack headItem(BingoGame game, int team, java.util.UUID playerId) {
+        ScoreEngine engine = game.getScoreEngine();
+        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+        org.bukkit.inventory.meta.SkullMeta meta = (org.bukkit.inventory.meta.SkullMeta) item.getItemMeta();
+        org.bukkit.OfflinePlayer player = Bukkit.getOfflinePlayer(playerId);
+        meta.setOwningPlayer(player);
+        String name = player.getName() != null ? player.getName() : "?";
+        meta.displayName(plain(Component.text(name, fr.kalium.bingo.game.TeamStyle.color(team))));
+        List<Integer> cells = engine.cellsOf(team, playerId);
+        int firsts = 0;
+        for (int cell : cells) {
+            if (engine.firstTeamOf(cell) == team) {
+                firsts++;
+            }
+        }
+        List<Component> lore = new ArrayList<>();
+        lore.add(plain(Component.text("Points solo : ", NamedTextColor.GRAY)
+                .append(Component.text(ScoreEngine.format(engine.soloScore(team, playerId, false)), NamedTextColor.WHITE))));
+        lore.add(plain(Component.text("Objectifs validés : ", NamedTextColor.GRAY)
+                .append(Component.text(cells.size() + (firsts > 0 ? " (dont " + firsts + " en 1er)" : ""), NamedTextColor.WHITE))));
+        List<Integer> bingos = engine.bingosOf(team, playerId);
+        lore.add(plain(Component.text("Bingos : ", NamedTextColor.GRAY)
+                .append(Component.text(String.valueOf(bingos.size()), NamedTextColor.WHITE))));
+        for (int cell : cells) {
+            Objective objective = game.getGrid().getCells().get(cell).getObjective();
+            lore.add(plain(Component.text(" • ", NamedTextColor.DARK_GRAY)
+                    .append(Component.translatable(objective.material().translationKey(), colorFor(objective.difficulty())))
+                    .append(Component.text(engine.firstTeamOf(cell) == team ? " (1er)" : "", NamedTextColor.GOLD))));
+        }
+        meta.lore(lore);
+        item.setItemMeta(meta);
         return item;
     }
 

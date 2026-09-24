@@ -150,6 +150,15 @@ public class BingoPlugin extends JavaPlugin {
         // salle d'attente - voir GameItems/GameMenu/GameItemListener, demande explicite de
         // l'utilisateur (liste des objectifs, temps restant, progression des equipes).
         GameItems gameItems = new GameItems(this);
+        // 0.4.0 : carte de la grille en main secondaire (icones du jeu officiel, voir fr.kalium.bingo.map).
+        fr.kalium.bingo.map.IconLibrary iconLibrary = new fr.kalium.bingo.map.IconLibrary(this);
+        iconLibrary.loadAsync();
+        fr.kalium.bingo.map.GameMapService gameMaps = new fr.kalium.bingo.map.GameMapService(iconLibrary);
+        gameManager.setOnCleanup(gameMaps::forget);
+        gameItems.setMapSupplier(
+                player -> gameManager.findGameOf(player.getUniqueId()).filter(g -> g.getGrid() != null)
+                        .map(gameMaps::mapItem).orElse(null),
+                player -> gameManager.findGameOf(player.getUniqueId()).map(gameMaps::mapIdOf).orElse(-1));
         gameItems.setInGameCheck(player -> gameManager.findGameOf(player.getUniqueId())
                 .filter(g -> g.getState() == fr.kalium.bingo.game.GameState.IN_PROGRESS).isPresent());
         GameMenu gameMenu = new GameMenu(this, gameManager);
@@ -269,7 +278,9 @@ public class BingoPlugin extends JavaPlugin {
         // Menu de retour post-partie (nether star de la salle d'attente APRES la fin d'une partie,
         // voir GameEndService/PostGameMenu) - AJOUTE le 23/09/2026, demande explicite de
         // l'utilisateur : "une netherstar pour qu'ils puissent retourner au hub kalgames (via un menu)".
-        PostGameMenu postGameMenu = new PostGameMenu(this, gameEndService);
+        fr.kalium.bingo.gui.SummaryMenu summaryMenu = new fr.kalium.bingo.gui.SummaryMenu();
+        getServer().getPluginManager().registerEvents(summaryMenu, this);
+        PostGameMenu postGameMenu = new PostGameMenu(this, gameEndService, summaryMenu);
         getServer().getPluginManager().registerEvents(
                 new LobbyProtectionListener(lobbySlots, lobbyItems, partyMenu, gameEndService, postGameMenu), this);
 

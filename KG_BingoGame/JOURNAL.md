@@ -1333,4 +1333,31 @@ de fin de partie OK.
   map (lancement et reconnexion).
 
 À tester plus tard : pseudos dans les annonces à plus de 2 comptes, nulle en groupe.
-**Statut : compilé, non déployé.**
+**Statut : jamais déployée seule, incluse dans la 0.4.0.**
+
+## 0.4.0 — carte de la grille, têtes, couleurs d'équipe, résumé de fin de partie (24/09/2026)
+
+**Demande de LeKiwi06** (inclut les correctifs de la 0.3.1).
+- **Couleurs d'équipe** (`TeamStyle`) : A rouge, B bleu, C jaune, D verte (numéro interne 1 à 4 inchangé), dans le
+  tchat, la barre d'action, le menu Objectifs, les classements et la carte. La salle d'attente (avant la partie)
+  garde les numéros d'équipe.
+- **Carte de la grille en main secondaire** (`map/`) : une seule carte par partie, la même pour tous. Fond blanc,
+  séparations noires ; case validée à la couleur de l'équipe, partagée en 2, 3 ou 4 bandes verticales de même
+  largeur si plusieurs équipes l'ont validée ; icône de l'objet centrée dans sa case (16x16, jamais sur les lignes) ;
+  quantité en bas à droite de l'icône, en blanc entouré de noir. Redessinée à chaque validation. Verrouillée comme le
+  papier (pas de jet, d'artisanat, de coffre, de cadre ; gardée à la mort, redonnée à la réapparition et à la
+  reconnexion ; remplacée si elle date d'avant un redémarrage). Le papier Objectifs est conservé.
+- **Icônes des objets** : prises dans le jeu officiel (demande de LeKiwi06 : « prends les textures vanilla du jeu »).
+  Au 1er démarrage d'une version du jeu, le plugin télécharge le jeu chez Mojang (~40 Mo), en extrait une icône par
+  objet dans `plugins/KG_BingoGame/icons/<version>/`, puis supprime le téléchargement ; aucune image dans le dépôt
+  (public). Objets sans image à plat (coffre, coffre de l'Ender, bouclier, têtes) : face avant découpée dans la
+  texture du modèle 3D. Testé hors serveur sur les 200 objectifs : 200 icônes trouvées. Tant que les icônes ne sont
+  pas prêtes (ou si le téléchargement échoue), la carte affiche « ? ».
+- **Têtes des coéquipiers** à gauche du menu Objectifs (équipe seulement) : points solo, objectifs validés (dont en
+  1er) et leur liste, bingos.
+- **Résumé de fin de partie** (`SummaryMenu`), bouton « Résumé de la partie » du menu de la nether star en salle
+  d'attente post-partie : une rangée par équipe dans l'ordre du classement (laine de sa couleur avec ses points, puis
+  les têtes de ses joueurs : points solo finaux, objectifs, bingos).
+
+**Déploiement** : remplacer le jar sur Kixster (aucune autre modification). Au 1er démarrage, attendre dans le
+journal « icône(s) d'objets chargée(s) pour la carte ». **Statut : compilé, non déployé.**

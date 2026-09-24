@@ -44,7 +44,8 @@ public final class GameItemListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onInteract(PlayerInteractEvent event) {
-        if (event.getHand() != EquipmentSlot.HAND || !gameItems.isOurs(event.getItem())) {
+        if (event.getHand() != EquipmentSlot.HAND || !gameItems.isOurs(event.getItem())
+                || event.getItem().getType() != org.bukkit.Material.PAPER) {
             return;
         }
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
@@ -132,13 +133,8 @@ public final class GameItemListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onRespawn(PlayerRespawnEvent event) {
         var player = event.getPlayer();
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (gameItems.isOurs(item)) {
-                return;
-            }
-        }
         if (gameItems.isInGame(player)) {
-            gameItems.give(player);
+            gameItems.give(player); // ne redonne que ce qui manque (papier, carte)
         }
     }
 }

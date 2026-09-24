@@ -228,7 +228,15 @@ public class GameManager {
     }
 
     /** Etape 12 : suppression des instances utilisees en fin de partie. */
+    /** 0.4.0 : appele au nettoyage d'une partie (oubli de sa carte, voir GameMapService). */
+    private java.util.function.Consumer<String> onCleanup = id -> { };
+
+    public void setOnCleanup(java.util.function.Consumer<String> onCleanup) {
+        this.onCleanup = onCleanup;
+    }
+
     public void cleanupGame(String gameId) {
+        onCleanup.accept(gameId);
         BingoGame game = activeGames.get(gameId);
         if (game == null) {
             return;

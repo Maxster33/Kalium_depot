@@ -26,15 +26,27 @@ public final class PostGameMenu {
     private final DialogGui gui;
     private final GameEndService gameEndService;
 
-    public PostGameMenu(JavaPlugin plugin, GameEndService gameEndService) {
+    private final SummaryMenu summaryMenu;
+
+    public PostGameMenu(JavaPlugin plugin, GameEndService gameEndService, SummaryMenu summaryMenu) {
         this.gui = new DialogGui(plugin);
         this.gameEndService = gameEndService;
+        this.summaryMenu = summaryMenu;
     }
 
     public void open(Player player) {
         List<Component> body = List.of(text("<gray>La partie est terminée. Vous pouvez repartir quand vous le souhaitez."));
-        List<ActionButton> buttons = List.of(
-                gui.button(text("<green><bold>Retour à kal-games"), null, gameEndService::leaveVoluntarily));
+        List<ActionButton> buttons = new java.util.ArrayList<>();
+        if (gameEndService.summaryFor(player.getUniqueId()) != null) {
+            // 0.4.0 : resume de la partie avec les tetes de tous les joueurs (demande de LeKiwi06).
+            buttons.add(gui.button(text("<gold>Résumé de la partie"), null, p -> {
+                var summary = gameEndService.summaryFor(p.getUniqueId());
+                if (summary != null) {
+                    summaryMenu.open(p, summary);
+                }
+            }));
+        }
+        buttons.add(gui.button(text("<green><bold>Retour à kal-games"), null, gameEndService::leaveVoluntarily));
         gui.open(player, text("<gold><bold>Partie terminée"), body, buttons, 1);
     }
 }

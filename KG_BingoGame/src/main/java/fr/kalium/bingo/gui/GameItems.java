@@ -42,19 +42,69 @@ public final class GameItems {
         return item;
     }
 
-    /** Donne l'objet s'il n'est pas deja present quelque part dans l'inventaire (evite les doublons). */
+    /**
+     * 0.4.0 : carte de la grille (voir fr.kalium.bingo.map), fournie par BingoPlugin : objet carte de la partie du
+     * joueur (null s'il n'est pas en partie) et numero de cette carte.
+     */
+    private java.util.function.Function<Player, ItemStack> mapItem = p -> null;
+    private java.util.function.ToIntFunction<Player> mapId = p -> -1;
+
+    public void setMapSupplier(java.util.function.Function<Player, ItemStack> mapItem, java.util.function.ToIntFunction<Player> mapId) {
+        this.mapItem = mapItem;
+        this.mapId = mapId;
+    }
+
+    /**
+     * Donne le papier "Objectifs" s'il n'est pas deja dans l'inventaire (evite les doublons) et, depuis la 0.4.0, la
+     * carte de la grille : en main secondaire si elle est libre, sinon dans l'inventaire. Une carte d'une autre
+     * partie (ou d'avant un redemarrage du serveur) est remplacee.
+     */
     public void give(Player player) {
         var inventory = player.getInventory();
-        for (ItemStack stack : inventory.getContents()) {
-            if (isOurs(stack)) {
-                return;
+        boolean hasMenu = false;
+        boolean hasMap = false;
+        int currentMap = mapId.applyAsInt(player);
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
+            ItemStack stack = inventory.getItem(slot);
+            String kind = kindOf(stack);
+            if ("game-menu".equals(kind)) {
+                hasMenu = true;
+            } else if ("game-map".equals(kind)) {
+                if (!hasMap && stack.getItemMeta() instanceof org.bukkit.inventory.meta.MapMeta meta
+                        && meta.hasMapView() && meta.getMapView() != null && meta.getMapView().getId() == currentMap) {
+                    hasMap = true;
+                } else {
+                    inventory.setItem(slot, null);
+                }
             }
         }
-        if (inventory.getItem(SLOT) == null) {
-            inventory.setItem(SLOT, menuItem());
-        } else {
-            inventory.addItem(menuItem());
+        if (!hasMenu) {
+            if (inventory.getItem(SLOT) == null) {
+                inventory.setItem(SLOT, menuItem());
+            } else {
+                inventory.addItem(menuItem());
+            }
         }
+        if (!hasMap) {
+            ItemStack map = mapItem.apply(player);
+            if (map != null) {
+                ItemMeta meta = map.getItemMeta();
+                meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "game-map");
+                map.setItemMeta(meta);
+                if (inventory.getItemInOffHand().getType().isAir()) {
+                    inventory.setItemInOffHand(map);
+                } else {
+                    inventory.addItem(map);
+                }
+            }
+        }
+    }
+
+    private String kindOf(ItemStack item) {
+        if (item == null || item.getType().isAir() || !item.hasItemMeta()) {
+            return null;
+        }
+        return item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
     }
 
     /**
@@ -86,6 +136,7 @@ public final class GameItems {
         if (item == null || item.getType().isAir() || !item.hasItemMeta()) {
             return false;
         }
-        return "game-menu".equals(item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING));
+        String kind = item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
+        return "game-menu".equals(kind) || "game-map".equals(kind); // 0.4.0 : la carte est verrouillee comme le papier
     }
 }
