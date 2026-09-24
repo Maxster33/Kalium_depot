@@ -16,8 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KLM_Menu — Maxster33 — depuis le 2026-09-24 12:10 — déploiement (2.0.0) sur KalGames2, Serveur Jeux et Kal-Test-Dev ; nouvelles destinations dans la config du lobby (aucun changement de code)
-- Serveurs (hors plugins) — Maxster33 — depuis le 2026-09-24 12:10 — raccordement de KalGames2, Serveur Jeux et Kal-Test-Dev au proxy : velocity.toml, paper-global.yml, server.properties, plugins communs du lobby (Floodgate, LuckPerms, voicechat...)
+- KG_BoatRace — LeKiwi06 — depuis le 2026-09-24 13:58 — nouveau plugin : course de bateau sortie de KalGames (Grand Prix, fantôme, barème, temps par checkpoint)
 
 ## Requis parfois
 
