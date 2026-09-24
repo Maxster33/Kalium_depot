@@ -15,4 +15,4 @@ Course de bateau de Kal-Games, sortie de KalGames (règle 2.2 de `REGLES.md`). C
   Même nom de type : mini-jeux, arènes et classements existants repris sans rien reconfigurer.
 - À l'arrêt du serveur, ferme lui-même ses courses en cours (Paper le désactive avant KalGames).
 - Dépend de KalGames (1.17.0 minimum) et KG_ScoreBoards.
-**Déploiement** : avec KalGames 1.17.0, sur Kal-Games (7001). **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : avec KalGames 1.17.0, sur Kal-Games (7001). **Statut : déployé le 24/09/2026 à 19 h 47, testé et confirmé par LeKiwi06 le 24/09/2026 (course de bateau, journal de démarrage : mini-jeu boatrace rattaché).**

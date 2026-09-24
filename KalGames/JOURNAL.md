@@ -739,4 +739,4 @@ virage (voir `KG_BoatRace/CAHIER_DES_CHARGES.md`).
 - `RaceInstance` ne sert plus qu'au Parcours ; sa partie « bateau » est inactive et disparaîtra à la sortie du Parcours
   (KG_Parkour).
 **Déploiement** : **avec KG_BoatRace 1.0.0** (sinon la course de bateau n'est plus jouable : ses mini-jeux restent
-gardés de côté, sans perte). Aucune clé de config nouvelle. **Statut : compilé, non déployé, non testé en jeu.**
+gardés de côté, sans perte). Aucune clé de config nouvelle. **Statut : déployé sur Kal-Games (7001) le 24/09/2026 à 19 h 47 avec KG_BoatRace 1.0.0 (1.16.0 et copies de config.yml, minigames.yml, arenas.yml dans `_removed-kalgames-1.16.0/`), testé et confirmé par LeKiwi06 le 24/09/2026 (course de bateau, journal de démarrage : mini-jeu boatrace rattaché).**
