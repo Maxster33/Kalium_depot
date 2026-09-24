@@ -6,3 +6,4 @@ modifié ni déployé par quelqu'un d'autre. Supprimer sa ligne à la fin du tra
 Format : `- <Plugin> — <pseudo> — depuis le <aaaa-mm-jj hh:mm> — <objet du travail>`
 
 <!-- Réservations ci-dessous -->
+- KG_BingoGame — LeKiwi06 — depuis le 2026-09-24 02:19 — etape B : fin du renommage (contenu oublie dans le commit precedent)
