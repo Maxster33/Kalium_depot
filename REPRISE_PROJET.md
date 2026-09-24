@@ -80,8 +80,8 @@ Copie exacte de chaque jar dans `jars-deployes/`.
 
 | Serveur | Jar | Test en jeu |
 |---|---|---|
-| **Serveur Jeux** (`serveur-jeux`, Bingo) | copie complète de Kixster du 24/09/2026 + `KG_BingoGame-0.5.0.jar` réinstallé (le jar n'était plus actif sur Kixster depuis 11:57 le 24/09, 0.5.0 rangée dans `_removed-kg_bingogame-0.5.0` ; 0.6.0 jamais déployée) + `KLM_Menu-2.0.0.jar` (boussole désactivée) + Floodgate, BedrockSkinRestorer, VelocityCommandForward. Config : `network.self-server-name: "serveur-jeux"`, `network.kal-games-server-name: "kal-games"`, `lobby.max-size: 256`, `lobby.blocks-per-tick: 30000` | 0.3.0 testée le 24/09/2026 ; 0.4.0 testée (« propre et sans bugs ») ; 0.4.2 / 0.5.0 non testées ; migration non testée |
-| **KalGames2** (`kal-games`, hub) | copie complète de kal-games du 24/09/2026 : `KalGames-1.15.1.jar` + `KG_ScoreBoards-1.1.0.jar` + `KG_Bingo-1.2.0.jar` (`bingo.server-name: serveur-jeux`) + `KLM_Menu-2.0.0.jar` + Floodgate, BedrockSkinRestorer, VelocityCommandForward (absents de l'ancien kal-games) | non testé (Rush ; capture d'arène ; catalogue « Interfaces » ; migration) |
+| **Serveur Jeux** (`serveur-jeux`, Bingo) | copie complète de Kixster du 24/09/2026 + **`KG_BingoGame-0.6.0.jar`** (déployée le 24/09/2026 à 17 h 15 par LeKiwi06 ; 0.5.0 rangée dans `_removed-kg_bingogame-0.5.0-b/`) + `KLM_Menu-2.0.0.jar` (boussole désactivée) + Floodgate, BedrockSkinRestorer, VelocityCommandForward. Config : `network.self-server-name: "serveur-jeux"`, `network.kal-games-server-name: "kal-games"`, `lobby.max-size: 256`, `lobby.blocks-per-tick: 5000` (vérifié le 24/09/2026), `instances.pregeneration-radius-blocks: 150` | 0.3.0 testée le 24/09/2026 ; 0.4.0 testée (« propre et sans bugs ») ; 0.4.2 / 0.5.0 / 0.6.0 non testées ; migration non testée |
+| **Kal-Games** (`kal-games`, hub, machine 7001, ex KalGames2) | copie complète de kal-games du 24/09/2026, puis le 24/09/2026 à 17 h 13 (LeKiwi06) : **`KalGames-1.16.0.jar` + `KG_Menu-1.0.0.jar` + `KLM_Menu-2.1.0.jar` + `KG_Bingo-1.3.0.jar` (`bingo.server-name: serveur-jeux`) + `KG_ScoreBoards-1.2.0.jar`** (anciens jars et configs dans les `_removed-…` de chaque plugin) + Floodgate, BedrockSkinRestorer, VelocityCommandForward, GrimAC | non testé (menus KG_Menu, boussole, Rush, capture d'arène, catalogue « Interfaces », migration) |
 | lobby | `KLM_Menu-2.0.0.jar` (destinations au 24/09/2026 : `kixster` (désactivée), `kal-games`, `serveur-jeux`, `kal-test-dev`, `event` (désactivée) ; activer / désactiver en jeu : menu > Paramètres) | non testé (catalogue « Interfaces » ; nouvelles destinations) |
 | proxy | `KaliumRelay-1.1.1.jar` (déployé le 24/09/2026) | relais confirmé le 24/09/2026 en 1.1.0 ; démarrage 1.1.1 vérifié dans le journal ; reconnexion directe non confirmée |
 | Kal-Test-Dev | `KaliumCore-1.4.0.jar` + `KLM_Menu-2.0.0.jar` (24/09/2026, rôle `backend` par défaut) | non testé (projet en pause ; raccordement au proxy du 24/09 non testé) |
@@ -92,26 +92,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-À installer **ensemble sur kal-games** (serveur arrêté), dans le dépôt depuis le 24/09/2026 :
-
-| Jar | Contenu |
-|---|---|
-| `KG_Menu-1.0.0.jar` | nouveau : menu du serveur kal-games, découverte des interfaces des jeux au démarrage, objet « Mini-jeux » du hub |
-| `KLM_Menu-2.1.0.jar` | boussole entièrement gérée par KLM_Menu (`giveNavigation`) ; lobby et Kixster peuvent rester en 2.0.0 |
-| `KalGames-1.16.0.jar` | menus du hub sortis vers KG_Menu, boussole demandée à KLM_Menu |
-| `KG_Bingo-1.3.0.jar` | boutons fournis à KG_Menu |
-| `KG_ScoreBoards-1.2.0.jar` | boutons fournis à KG_Menu |
-
-Procédure : ranger chaque ancien jar dans `_removed-<plugin>-<version>/`, envoyer les nouveaux ; relire les textes
-`item.games.*` du `lang.yml` de KalGames et les reprendre dans `plugins/KG_Menu/lang.yml` s'ils ont été modifiés ;
-après redémarrage, vérifier dans le journal « N fournisseur(s) d'interface trouvé(s) » (KG_Menu). Détails dans les
-JOURNAL. Les jars se recréent avec `sh <plugin>/build.sh`.
-
-À installer **sur Kixster**, indépendamment de ce qui précède :
-
-| Jar | Contenu |
-|---|---|
-| `KG_BingoGame-0.6.0.jar` | allègement : une seule file de génération des maps pour tout le serveur (débit réglable), lancement qui attend les maps (« Préparation des maps : X % »), zone de spawn plus gardée en mémoire, salle d'attente plus lente (10 000 blocs/tick). Dans le `config.yml` du serveur, passer `lobby.blocks-per-tick` de 30000 à 10000 à la main |
+Aucune (le 24/09/2026 à 17 h 15, tout ce qui était compilé a été déployé par LeKiwi06, voir le tableau ci-dessus).
 
 ## Chantiers en cours
 

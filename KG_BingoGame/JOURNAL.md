@@ -1437,4 +1437,4 @@ pour 4 équipes, plus si d'autres parties sont en file. Les Nether / End continu
 - Nouvelles clés **absentes du config.yml déployé** : valeurs par défaut du code. Sur Kixster, `lobby.blocks-per-tick`
   est écrit à 30000 : **le passer à la main à 10000** (ou moins) pour alléger la salle d'attente.
 
-**Statut : compilé, non déployé, non testé en jeu.**
+**Statut : déployé sur Serveur Jeux (7015) le 24/09/2026 par LeKiwi06 (0.5.0 rangée dans `_removed-kg_bingogame-0.5.0-b/`), non testé en jeu. `lobby.blocks-per-tick` du serveur : 5000 (choix de LeKiwi06).**

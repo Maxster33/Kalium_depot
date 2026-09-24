@@ -51,4 +51,4 @@ sur le serveur sans être lue), non testé en jeu.**
 
 - « Bingo » (accueil) et « Bingo » (Paramètres, admins) fournis à KG_Menu (découverte au démarrage), à la place des
   prises MenuEntry de KalGames et de l'inscription directe dans KLM_Menu (1.2.0). Dépend de KG_Menu.
-**Déploiement** : avec KG_Menu 1.0.0, KalGames 1.16.0. **Statut : compilé, non déployé.**
+**Déploiement** : avec KG_Menu 1.0.0, KalGames 1.16.0. **Statut : déployé sur Kal-Games (7001) le 24/09/2026, non testé en jeu.**

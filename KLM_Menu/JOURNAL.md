@@ -57,4 +57,4 @@ défaut avec **`compass.enabled: false`** (la boussole est un objectif du Bingo 
 **Demande de LeKiwi06** : « la boussole fait partie de l'interface [...] gérée sur tous les serveurs par le même
 plugin ». Nouvelle méthode `giveNavigation(joueur)` : un plugin qui vide l'inventaire (KalGames au hub) demande à
 KLM_Menu de remettre la boussole, au lieu de la commande console `/kaliummenu give`. En-tête de `config.yml` mis à
-jour. **Statut : compilé, non déployé** (avec KG_Menu 1.0.0).
+jour. **Statut : déployé sur Kal-Games (7001) le 24/09/2026 (avec KG_Menu 1.0.0), non testé en jeu** ; lobby, Kixster, Serveur Jeux et Kanvas restent en 2.0.0.

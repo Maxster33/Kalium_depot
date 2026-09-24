@@ -24,4 +24,4 @@ restart par KG_Menu ».
 - Dépend de KLM_Menu (boîte à outils des menus).
 
 **Déploiement** : avec KLM_Menu 2.1.0, KalGames 1.16.0, KG_Bingo 1.3.0, KG_ScoreBoards 1.2.0. Textes de l'objet du
-hub : reprendre `item.games.*` du `lang.yml` de KalGames s'ils ont été modifiés. **Statut : compilé, non déployé.**
+hub : reprendre `item.games.*` du `lang.yml` de KalGames s'ils ont été modifiés. **Statut : déployé sur Kal-Games (7001) le 24/09/2026 par LeKiwi06, non testé en jeu.**

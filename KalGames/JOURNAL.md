@@ -715,5 +715,6 @@ de zone du hub restent dans KalGames (« on s'en occupera plus tard »).
 - Au hub : objet du hub donné par KG_Menu, boussole par KLM_Menu (`giveNavigation`) - plus de commande console.
 - N'inscrit plus rien directement dans KLM_Menu (c'est KG_Menu qui y apparaît). `items.games` retiré de la config
   (voir `hub-item` dans celle de KG_Menu). Dépend de KG_Menu.
-**Déploiement** : avec KG_Menu 1.0.0, KLM_Menu 2.1.0, KG_Bingo 1.3.0, KG_ScoreBoards 1.2.0. **Statut : compilé, non
-déployé.**
+**Déploiement** : avec KG_Menu 1.0.0, KLM_Menu 2.1.0, KG_Bingo 1.3.0, KG_ScoreBoards 1.2.0. **Statut : déployé sur
+Kal-Games (7001) le 24/09/2026 par LeKiwi06 (anciens jars et configs dans les `_removed-…` de chaque plugin), non testé
+en jeu.**
