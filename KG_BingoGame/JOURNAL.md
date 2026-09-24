@@ -1397,3 +1397,44 @@ parties sans adversaire (confirmé par LeKiwi06). Affiché dans la raison de la 
   catalogue de KLM_Menu. Dépend de KLM_Menu (qui démarre lui aussi en `load: STARTUP`).
 **Déploiement** : avec KLM_Menu 2.0.0 sur Kixster (config avec `compass.enabled: false`). **Statut : déployé le 24/09/2026,
 non testé en jeu.**
+
+## 0.6.0 — allègement : génération des maps étalée, plusieurs parties simultanées (24/09/2026)
+
+**Demande de LeKiwi06** : « le bingo lag, les recaptures de map sont trop gourmandes (on va alléger ça en allongeant
+dans le temps), on aimerait pouvoir faire plusieurs games en simultanée sans que ça crash » ; précisé : « ralentir la
+vitesse de génération, pas grave si la game met 5 minutes à se lancer, on veut que ce soit fluide, on verra pour
+accélérer les processus quand on pourra se le permettre » (création des maps de partie ET salle d'attente).
+
+**Cause** : chaque partie avait sa propre cascade de création (jusqu'à 12 mondes par partie : overworld, Nether, End
+par équipe) et chaque monde pré-générait 4 chunks à la fois. 4 parties = jusqu'à 48 mondes et 192 chunks générés en
+parallèle, zones de spawn gardées en mémoire. Et si l'hôte lançait avant la fin, tous les overworlds manquants
+étaient créés dans le même tick (plusieurs secondes chacun : risque d'arrêt par le watchdog).
+
+**Changements**
+- `InstanceWorldPreparer` : **une seule file d'attente pour tout le serveur**. Un monde créé à la fois, espacé de
+  `instances.pregeneration-stagger-seconds` (10 s) du précédent, toutes parties confondues ; overworlds toujours avant
+  les Nether / End. Terrain : débit total limité, nouveaux réglages `instances.pregeneration-chunks-per-second` (20)
+  et `instances.pregeneration-max-chunks-in-flight` (2) ; terrain des overworlds servi en premier.
+- **Le lancement attend les maps** (`PartyStarter`, `PartyCountdownService.waitForMaps`) : après le délai de 10 s ×
+  équipes, si les overworlds des équipes et leur terrain ne sont pas prêts, la partie attend et affiche
+  « Préparation des maps : X % » dans la barre d'action, puis démarre seule. Plus de création de maps en bloc au
+  lancement (le repli synchrone ne sert plus qu'à un overworld dont la création a échoué).
+- Au lancement, les maps des **équipes restées vides** (salle prévue pour plus d'équipes) ne sont plus générées et
+  celles déjà créées sont supprimées tout de suite (moins de charge ; signalé, techniquement lié à la demande).
+- `InstanceWorldManager` : `keepSpawnLoaded(FALSE)` sur les mondes de partie (création plus courte, zone de spawn
+  plus gardée en mémoire) ; les dossiers des maps terminées sont effacés **en arrière-plan** (5 s après le
+  déchargement).
+- Salle d'attente (`LobbyTemplateService`) : `lobby.blocks-per-tick` 10 000 par défaut au lieu de 30 000, minimum
+  500 au lieu de 2 000.
+
+**Ordre de grandeur** (rayon 200 blocs = 729 chunks par monde, 20 chunks/s) : ~40 s pour une partie solo, ~2 min 30
+pour 4 équipes, plus si d'autres parties sont en file. Les Nether / End continuent en arrière-plan après le lancement.
+
+**Limites**
+- La création d'un monde reste une opération bloquante de Paper (plus courte sans la zone de spawn, non mesurée).
+- Un joueur qui prend un portail avant que son Nether / End soit prêt le fait toujours créer à ce moment-là (petit
+  blocage), plus probable qu'avant puisque la file est plus lente.
+- Nouvelles clés **absentes du config.yml déployé** : valeurs par défaut du code. Sur Kixster, `lobby.blocks-per-tick`
+  est écrit à 30000 : **le passer à la main à 10000** (ou moins) pour alléger la salle d'attente.
+
+**Statut : compilé, non déployé, non testé en jeu.**

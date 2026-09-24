@@ -6,6 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
+import org.bukkit.plugin.java.JavaPlugin;
+import net.kyori.adventure.util.TriState;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,12 +31,18 @@ import java.util.logging.Logger;
  * instances en meme temps peut etre couteuse en CPU/disque au lancement
  * d'une partie (instances.max-simultaneous-games sert de garde-fou
  * prudent en attendant une mesure reelle des performances).
+ *
+ * 0.6.0 (allegement, demande de LeKiwi06 du 24/09/2026) : la zone de spawn des mondes de partie n'est plus
+ * gardee chargee en permanence (keepSpawnLoaded = false : creation plus courte, moins de memoire par monde),
+ * et les dossiers des maps terminees sont effaces du disque en arriere-plan.
  */
 public class InstanceWorldManager {
 
+    private final JavaPlugin plugin;
     private final Logger logger;
 
-    public InstanceWorldManager(Logger logger) {
+    public InstanceWorldManager(JavaPlugin plugin, Logger logger) {
+        this.plugin = plugin;
         this.logger = logger;
     }
 
@@ -54,6 +62,7 @@ public class InstanceWorldManager {
         creator.seed(seed);
         creator.type(WorldType.NORMAL);
         creator.environment(World.Environment.NORMAL);
+        creator.keepSpawnLoaded(TriState.FALSE); // 0.6.0, voir en-tete
 
         logger.info("[KG_BingoGame] Generation du monde d'instance '" + worldName
                 + "' (seed=" + seed + ")...");
@@ -111,6 +120,7 @@ public class InstanceWorldManager {
         creator.seed(seed);
         creator.type(WorldType.NORMAL);
         creator.environment(environment);
+        creator.keepSpawnLoaded(TriState.FALSE); // 0.6.0, voir en-tete
         logger.info("[KG_BingoGame] Generation du monde d'instance '" + name + "' (seed=" + seed + ")...");
         World world = creator.createWorld();
         if (world == null) {
@@ -221,17 +231,27 @@ public class InstanceWorldManager {
         }
 
         folders.addAll(candidateFolders(worldName));
-        boolean deleted = false;
-        for (Path folder : folders) {
-            Path name = folder.getFileName();
-            if (name != null && name.toString().equals(worldName) && Files.isDirectory(folder)) {
-                deleteDirectoryRecursively(folder);
-                deleted = true;
-                logger.info("[KG_BingoGame] Monde '" + worldName + "' supprime du disque (" + folder + ").");
+        boolean wasLoaded = world != null;
+        Runnable delete = () -> {
+            boolean deleted = false;
+            for (Path folder : folders) {
+                Path name = folder.getFileName();
+                if (name != null && name.toString().equals(worldName) && Files.isDirectory(folder)) {
+                    deleteDirectoryRecursively(folder);
+                    deleted = true;
+                    logger.info("[KG_BingoGame] Monde '" + worldName + "' supprime du disque (" + folder + ").");
+                }
             }
-        }
-        if (!deleted && world != null) {
-            logger.warning("[KG_BingoGame] Dossier du monde '" + worldName + "' introuvable : rien n'a ete supprime du disque.");
+            if (!deleted && wasLoaded) {
+                logger.warning("[KG_BingoGame] Dossier du monde '" + worldName + "' introuvable : rien n'a ete supprime du disque.");
+            }
+        };
+        // 0.6.0 : effacement des fichiers en arriere-plan (5 s apres le dechargement, le temps que le serveur
+        // referme les fichiers du monde) plutot que sur le thread principal.
+        if (plugin.isEnabled()) {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, delete, 100L);
+        } else {
+            delete.run();
         }
     }
 

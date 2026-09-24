@@ -163,7 +163,8 @@ public class GameManager {
      * Etape 1 : genere effectivement les mondes de toutes les instances de la partie - ou plutot
      * RECLAME ceux deja pre-generes en cascade des la creation de la salle d'attente (voir
      * InstanceWorldPreparer), avec repli sur la generation synchrone habituelle pour une instance
-     * pas encore prete (hote ayant lance la partie avant la fin de la pre-generation).
+     * pas encore prete. 0.6.0 : le lancement attend que les maps soient pretes (voir PartyStarter) ; le
+     * repli ne sert plus qu'aux overworlds dont la pre-generation a echoue.
      */
     public void prepareInstances(BingoGame game) {
         for (BingoInstance instance : game.getInstances()) {
@@ -177,7 +178,7 @@ public class GameManager {
             Location spawn = worldManager.getNaturalSpawn(world);
             instance.setSpawnLocation(spawn);
         }
-        instanceWorldPreparer.forget(game.getGameId());
+        instanceWorldPreparer.forget(game.getGameId(), game.getInstances().size());
     }
 
     /**

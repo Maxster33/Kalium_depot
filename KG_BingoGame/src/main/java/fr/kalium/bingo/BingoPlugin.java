@@ -72,7 +72,7 @@ public class BingoPlugin extends JavaPlugin {
         saveDefaultConfig();
         FileConfiguration config = getConfig();
 
-        InstanceWorldManager worldManager = new InstanceWorldManager(getLogger());
+        InstanceWorldManager worldManager = new InstanceWorldManager(this, getLogger());
 
         String worldNamePrefix = config.getString("instances.world-name-prefix", "bingo_");
         // Pre-generation en cascade des mondes d'instance des la creation de la salle d'attente
@@ -85,8 +85,14 @@ public class BingoPlugin extends JavaPlugin {
         // explicite de l'utilisateur ("les maps ne sont toujours pas générées à l'avance"), rayon
         // choisi via AskUserQuestion (~200 blocs). 0 = desactive.
         int pregenerationRadius = config.getInt("instances.pregeneration-radius-blocks", 200);
+        // 0.6.0 : debit total de la pre-generation du terrain, toutes parties confondues (demande de LeKiwi06 :
+        // "ralentir la vitesse de génération [...] on veux que ce soit fluide"). Cles absentes du config.yml
+        // deja deploye : valeurs par defaut ci-dessous.
+        int pregenerationChunksPerSecond = config.getInt("instances.pregeneration-chunks-per-second", 20);
+        int pregenerationChunksInFlight = config.getInt("instances.pregeneration-max-chunks-in-flight", 2);
         InstanceWorldPreparer instanceWorldPreparer = new InstanceWorldPreparer(this, getLogger(), worldManager,
-                worldNamePrefix, pregenerationStagger, pregenerationRadius);
+                worldNamePrefix, pregenerationStagger, pregenerationRadius,
+                pregenerationChunksPerSecond, pregenerationChunksInFlight);
 
         // Liste d'objectifs (objectives.yml, dossier de donnees - PAS le .jar) et generation de
         // grille (section 2 du cahier des charges, etape 4 de l'ordre de priorite). load() copie
@@ -247,7 +253,8 @@ public class BingoPlugin extends JavaPlugin {
         PartyCountdownService partyCountdownService = new PartyCountdownService(this);
 
         PartyStarter partyStarter = new PartyStarter(getLogger(), this, gameManager, partyManager, lobbySlots,
-                lobbyItems, gameItems, relayClient, gamePersistence, partyStatusNotifier, partyCountdownService, playerReset);
+                lobbyItems, gameItems, relayClient, gamePersistence, partyStatusNotifier, partyCountdownService, playerReset,
+                instanceWorldPreparer);
         PartyCanceller partyCanceller = new PartyCanceller(partyManager, lobbySlots, assignmentService,
                 instanceWorldPreparer, partyStatusNotifier, partyCountdownService);
 

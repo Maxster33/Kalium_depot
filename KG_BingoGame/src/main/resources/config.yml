@@ -77,6 +77,12 @@ instances:
   # spawn, le reste etait genere pendant que les joueurs exploraient (lag). Rayon choisi par
   # l'utilisateur (~200 blocs). 0 = desactive. Plus grand = plus long a pre-generer.
   pregeneration-radius-blocks: 200
+  # AJOUTE en 0.6.0 : les mondes de TOUTES les parties passent par une seule file d'attente (un monde cree a
+  # la fois, overworlds en premier). Debit total de pre-generation du terrain, toutes parties confondues :
+  # chunks par seconde, et nombre maximum de chunks en cours en meme temps. Plus bas = plus fluide mais
+  # lancement des parties plus long (la partie attend que ses maps soient pretes).
+  pregeneration-chunks-per-second: 20
+  pregeneration-max-chunks-in-flight: 2
 
 reconnect-during-game:
   # Delai d'attente maximum, a l'arrivee sur ce serveur, pour un joueur dont la partie
@@ -146,4 +152,5 @@ lobby:
   max-size: 256
   # Blocs traites par tick pendant la capture, l'effacement et le collage des salles d'attente
   # (plus bas = plus lent mais moins de charge pour le serveur).
-  blocks-per-tick: 30000
+  # 0.6.0 : 10000 par defaut (au lieu de 30000), 500 minimum.
+  blocks-per-tick: 10000

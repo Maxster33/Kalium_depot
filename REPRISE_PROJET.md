@@ -76,6 +76,12 @@ Procédure : ranger chaque ancien jar dans `_removed-<plugin>-<version>/`, envoy
 après redémarrage, vérifier dans le journal « N fournisseur(s) d'interface trouvé(s) » (KG_Menu). Détails dans les
 JOURNAL. Les jars se recréent avec `sh <plugin>/build.sh`.
 
+À installer **sur Kixster**, indépendamment de ce qui précède :
+
+| Jar | Contenu |
+|---|---|
+| `KG_BingoGame-0.6.0.jar` | allègement : une seule file de génération des maps pour tout le serveur (débit réglable), lancement qui attend les maps (« Préparation des maps : X % »), zone de spawn plus gardée en mémoire, salle d'attente plus lente (10 000 blocs/tick). Dans le `config.yml` du serveur, passer `lobby.blocks-per-tick` de 30000 à 10000 à la main |
+
 ## Chantiers en cours
 
 - **Interfaces** (décidé par LeKiwi06 le 24/09/2026) : KLM_Menu 2.0.0 déployé partout. À déployer sur kal-games :
@@ -104,11 +110,14 @@ JOURNAL. Les jars se recréent avec `sh <plugin>/build.sh`.
 
 - KG_BingoGame : 18 anciens dossiers `bingo_<uuid>_<n>` de parties terminées avant 0.1.22 restent dans
   `Kixster SMP/dimensions/minecraft/` : à supprimer par l'humain s'il le souhaite.
-- Création d'une map Bingo : bloque Kixster ~8 s par map (génération synchrone du monde). Proposé, pas traité.
+- Création d'une map Bingo : bloque Kixster ~8 s par map (génération synchrone du monde). KG_BingoGame 0.6.0 (non
+  déployée) : zone de spawn plus préparée, une seule map créée à la fois pour tout le serveur ; blocage restant à
+  mesurer.
 - Un joueur Bingo déconnecté au moment exact du lancement ne reçoit ni kit de départ ni soin à son retour.
 - Recapture du modèle de salle d'attente Bingo : seuls les emplacements actuellement configurés sont effacés.
 - Salle d'attente Bingo : monstres et PvP bloqués dans tout le monde `bingo_lobby` (modèle compris).
-- La pré-génération Bingo ne tient pas compte de `instances.max-simultaneous-games`.
+- La pré-génération Bingo ne tient pas compte de `instances.max-simultaneous-games` (0.6.0 : sans conséquence de
+  charge, toutes les parties passent par une seule file de génération).
 - Éléments inutilisés, à supprimer lors d'une prochaine version (commentaires et journaux obsolètes déjà corrigés
   le 24/09/2026, dans les versions non déployées) : `bingo.max-party-size` dans KG_Bingo.
 - **Jeton du relais** : l'ancien jeton, publié dans le dépôt public, a été remplacé le 24/09/2026 sur les 3
@@ -119,7 +128,8 @@ JOURNAL. Les jars se recréent avec `sh <plugin>/build.sh`.
 - Têtes des joueurs (menus du Bingo) : invisibles sur Bedrock (Geyser) - accepté.
 - Réglages utiles côté Kixster (`plugins/KG_BingoGame/config.yml`) : `instances.pregeneration-radius-blocks` (200),
   `instances.pregeneration-stagger-seconds` (10), `game.post-game-lobby-timeout-seconds` (600),
-  `game.no-players-abandon-after-seconds` (600).
+  `game.no-players-abandon-after-seconds` (600) ; à partir de 0.6.0 : `instances.pregeneration-chunks-per-second`
+  (20) et `instances.pregeneration-max-chunks-in-flight` (2), à ajouter à la main pour accélérer / ralentir.
 - KalGames, réglages de charge : `arenas.capture-blocks-per-tick` (30 000), `instances.wipe-blocks-per-tick`
   (20 000), `instances.paste-blocks-per-tick` (40 000).
 

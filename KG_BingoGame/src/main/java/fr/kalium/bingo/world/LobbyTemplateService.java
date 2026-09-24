@@ -72,9 +72,11 @@ public final class LobbyTemplateService {
         return Math.max(4, Math.min(256, plugin.getConfig().getInt("lobby.max-size", 256)));
     }
 
-    /** Cout maximal par tick (1 par bloc lu, 4 par bloc modifie). */
+    /** Cout maximal par tick (1 par bloc lu, 4 par bloc modifie). 0.6.0 : 10 000 par defaut au lieu de 30 000, et
+     *  jusqu'a 500 minimum (demande de LeKiwi06 : "les recaptures de map sont trop gourmandes [...] on va alléger
+     *  ça en allongeant dans le temps"). */
     private int blocksPerTick() {
-        return Math.max(2_000, Math.min(500_000, plugin.getConfig().getInt("lobby.blocks-per-tick", 30_000)));
+        return Math.max(500, Math.min(500_000, plugin.getConfig().getInt("lobby.blocks-per-tick", 10_000)));
     }
 
     /** true tant qu'une capture, un effacement ou un collage est en cours ou en attente. */

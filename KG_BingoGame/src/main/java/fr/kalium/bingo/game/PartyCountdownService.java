@@ -12,6 +12,8 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BooleanSupplier;
+import java.util.function.IntSupplier;
 
 /**
  * Delai minimum avant qu'une partie en salle d'attente puisse reellement demarrer : 10 secondes
@@ -80,6 +82,40 @@ public final class PartyCountdownService {
         }, remainingTicks);
 
         active.put(gameId, new Countdown(broadcastTask, startTask));
+        return true;
+    }
+
+    /**
+     * 0.6.0 : attente des maps (voir PartyStarter, InstanceWorldPreparer.mapsReady) - verifie chaque seconde si
+     * elles sont pretes, affiche l'avancement dans la barre d'action, puis appelle onReady. Partage le suivi des
+     * comptes a rebours (annule par cancel(), rien de fait si une attente est deja en cours pour ce gameId).
+     *
+     * @return true si une NOUVELLE attente vient d'etre programmee
+     */
+    public boolean waitForMaps(BingoParty party, BooleanSupplier ready, IntSupplier progress, Runnable onReady) {
+        String gameId = party.getGameId();
+        if (active.containsKey(gameId)) {
+            return false;
+        }
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            if (ready.getAsBoolean()) {
+                Countdown countdown = active.remove(gameId);
+                if (countdown != null) {
+                    countdown.broadcastTask().cancel();
+                }
+                onReady.run();
+                return;
+            }
+            Component message = Component.text("Préparation des maps : ", NamedTextColor.GOLD)
+                    .append(Component.text(progress.getAsInt() + " %", NamedTextColor.AQUA));
+            for (UUID playerId : party.getConnected()) {
+                Player player = Bukkit.getPlayer(playerId);
+                if (player != null && player.isOnline()) {
+                    player.sendActionBar(message);
+                }
+            }
+        }, 20L, 20L);
+        active.put(gameId, new Countdown(task, task));
         return true;
     }
 

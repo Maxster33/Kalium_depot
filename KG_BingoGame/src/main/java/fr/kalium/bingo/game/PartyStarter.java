@@ -5,6 +5,7 @@ import fr.kalium.bingo.gui.LobbyItems;
 import fr.kalium.bingo.network.PartyStatusNotifier;
 import fr.kalium.bingo.network.RelayClient;
 import fr.kalium.bingo.persistence.GamePersistence;
+import fr.kalium.bingo.world.InstanceWorldPreparer;
 import fr.kalium.bingo.world.LobbySlots;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -64,11 +65,13 @@ public final class PartyStarter {
     private final PartyStatusNotifier partyStatusNotifier;
     private final PartyCountdownService countdownService;
     private final PlayerResetService playerReset;
+    private final InstanceWorldPreparer worldPreparer;
 
     public PartyStarter(Logger logger, JavaPlugin plugin, GameManager gameManager, PartyManager partyManager,
                          LobbySlots lobbySlots, LobbyItems lobbyItems, GameItems gameItems, RelayClient relayClient,
                          GamePersistence gamePersistence, PartyStatusNotifier partyStatusNotifier,
-                         PartyCountdownService countdownService, PlayerResetService playerReset) {
+                         PartyCountdownService countdownService, PlayerResetService playerReset,
+                         InstanceWorldPreparer worldPreparer) {
         this.logger = logger;
         this.plugin = plugin;
         this.gameManager = gameManager;
@@ -81,6 +84,7 @@ public final class PartyStarter {
         this.partyStatusNotifier = partyStatusNotifier;
         this.countdownService = countdownService;
         this.playerReset = playerReset;
+        this.worldPreparer = worldPreparer;
     }
 
     public Result start(String gameId) {
@@ -100,6 +104,19 @@ public final class PartyStarter {
                             + "automatiquement dans " + formatSeconds(countdownService.remaining(party)) + "."
                     : "§eLa partie démarrera automatiquement dans " + formatSeconds(countdownService.remaining(party)) + ".";
             return Result.scheduled(message);
+        }
+
+        // 0.6.0 : attend que les maps des equipes soient pretes (overworld + terrain) au lieu de generer d'un
+        // coup celles qui manquent (plusieurs secondes de blocage par map) - demande de LeKiwi06 : "pas grave si
+        // la game met 5 minutes a se lancer, on veux que ce soit fluide".
+        if (!worldPreparer.mapsReady(gameId, teams.size())) {
+            worldPreparer.ensureQueued(gameId, party.getSeed(), teams.size());
+            countdownService.waitForMaps(party,
+                    () -> worldPreparer.mapsReady(gameId, party.teamsForGameCreation().size()),
+                    () -> worldPreparer.progressPercent(gameId, party.teamsForGameCreation().size()),
+                    () -> start(gameId));
+            return Result.scheduled("§eMaps en préparation (" + worldPreparer.progressPercent(gameId, teams.size())
+                    + " %) : la partie démarrera automatiquement dès qu'elles seront prêtes.");
         }
 
         BingoGame game;
