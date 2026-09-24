@@ -129,6 +129,10 @@ JOURNAL. Les jars se recréent avec `sh <plugin>/build.sh`.
 
 ## Points ouverts / limites connues (rien de bloquant)
 
+- **KalGames2 et Serveur Jeux repassés en Paper 26.2-121** (24/09/2026, 13 h) : créés en Paper 26.3 alpha, ils ne
+  démarraient pas (WorldEdit 7.4.5 incompatible → crash au démarrage). `server.jar` remplacé par le
+  `paper-26.2-121.jar` du lobby ; jar 26.3 et monde généré en 26.3 rangés dans `_removed-paper-26.3/`. Si le panneau
+  Minestrator réinstalle la 26.3 au démarrage, choisir la 26.2 dans le panneau.
 - **Raccordement du 24/09/2026 (Maxster33)** : actif seulement après redémarrage de KalGames2, Serveur Jeux,
   Kal-Test-Dev, du lobby (voicechat, destinations KLM_Menu) puis du proxy. À vérifier dans les journaux : Floodgate
   sans erreur de clé, KLM_Menu chargé, connexion par le proxy (`/server kalgames2`...).
