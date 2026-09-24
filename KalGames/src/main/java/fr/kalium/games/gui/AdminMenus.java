@@ -770,34 +770,8 @@ public final class AdminMenus {
                 }
             }
         } else {
-            List<Pos> list = arena.list(spec.key());
-            body.add(t("admin.point-count", "<gray>Positions enregistrées : <white><n>", "n", list.size()));
-            buttons.add(btn(t("admin.point-add", "<green>Ajouter ici (ma position)"), null, p -> {
-                arena.lists().computeIfAbsent(spec.key(), k -> new ArrayList<>()).add(Pos.of(p.getLocation()));
-                plugin.repository().save();
-                warnOutside(p, arena, p.getLocation());
-                openPoint(p, arena, spec);
-            }));
-            if (!list.isEmpty()) {
-                buttons.add(btn(t("admin.point-remove-last", "<yellow>Retirer la dernière"), null, p -> {
-                    List<Pos> current = arena.lists().get(spec.key());
-                    if (current != null && !current.isEmpty()) {
-                        current.remove(current.size() - 1);
-                        plugin.repository().save();
-                    }
-                    openPoint(p, arena, spec);
-                }));
-                buttons.add(btn(t("admin.point-clear-all", "<red>Tout effacer"), null, p -> {
-                    arena.lists().remove(spec.key());
-                    plugin.repository().save();
-                    openPoint(p, arena, spec);
-                }));
-                for (int i = 0; i < list.size() && i < 24; i++) {
-                    Pos pos = list.get(i);
-                    buttons.add(btn(t("admin.point-goto-n", "<aqua>Aller au n°<n> <dark_gray>(<pos>)", "n", i + 1, "pos", pos.pretty()), null,
-                            p -> p.teleport(pos.at(world, 0, 0))));
-                }
-            }
+            openPointList(player, arena, spec, 0);
+            return;
         }
         buttons.add(back(p -> {
             if (spec.group() != null) {
@@ -807,6 +781,179 @@ public final class AdminMenus {
             }
         }));
         gui.open(player, Component.text(spec.label()), body, List.of(), buttons, gui.close(), 1);
+    }
+
+    // ------------------------------------------------------------------ 1.18.0 : editeur de liste de points
+
+    /** Nombre de points affiches par page de l'editeur de liste. */
+    private static final int POINTS_PER_PAGE = 18;
+
+    /**
+     * Liste de points (checkpoints, grille de depart...) : ajout a la fin, puis un bouton par point, qui ouvre sa fiche
+     * (y aller, remplacer, inserer avant, supprimer, reglages). Paginee : plus de limite d'affichage.
+     */
+    private void openPointList(Player player, Arena arena, PointSpec spec, int page) {
+        List<Pos> list = arena.list(spec.key());
+        int pages = Math.max(1, (list.size() + POINTS_PER_PAGE - 1) / POINTS_PER_PAGE);
+        int current = Math.max(0, Math.min(page, pages - 1));
+        List<Component> body = new ArrayList<>();
+        if (!spec.help().isBlank()) {
+            body.add(Component.text(spec.help()));
+        }
+        body.add(t("admin.point-count", "<gray>Positions enregistrées : <white><n>", "n", list.size()));
+        body.add(t("admin.point-list-tip", "<gray>Cliquez sur un point pour le modifier, le déplacer, insérer un point avant lui ou le supprimer."));
+        List<ActionButton> buttons = new ArrayList<>();
+        buttons.add(btn(t("admin.point-add", "<green>Ajouter à la fin (ma position)"), null, p -> {
+            arena.insertPoint(spec.key(), arena.list(spec.key()).size(), Pos.of(p.getLocation()));
+            plugin.repository().save();
+            warnOutside(p, arena, p.getLocation());
+            openPointList(p, arena, spec, Integer.MAX_VALUE);
+        }));
+        int from = current * POINTS_PER_PAGE;
+        for (int i = from; i < list.size() && i < from + POINTS_PER_PAGE; i++) {
+            int index = i;
+            Pos pos = list.get(i);
+            boolean hasSettings = !spec.perPoint().isEmpty() && !arena.pointSettings(spec.key(), i).isEmpty();
+            buttons.add(btn(t("admin.point-item", "<white>n°<n> <dark_gray>(<pos>)<extra>", "n", i + 1, "pos", pos.pretty(),
+                    "extra", hasSettings ? Component.text(" ⚙", net.kyori.adventure.text.format.NamedTextColor.GOLD) : Component.empty()), null, p -> openListPoint(p, arena, spec, index)));
+        }
+        if (current > 0) {
+            buttons.add(btn(t("admin.page-previous", "<yellow>« Page précédente"), null, p -> openPointList(p, arena, spec, current - 1)));
+        }
+        if (current < pages - 1) {
+            buttons.add(btn(t("admin.page-next", "<yellow>Page suivante »"), null, p -> openPointList(p, arena, spec, current + 1)));
+        }
+        if (!list.isEmpty()) {
+            buttons.add(btn(t("admin.point-clear-all", "<red>Tout effacer"), null, p -> gui.confirm(p,
+                    Component.text(spec.label()),
+                    t("admin.point-clear-confirm", "<red>Effacer les <white><n></white> positions (et leurs réglages) ?", "n", arena.list(spec.key()).size()),
+                    yes -> {
+                        arena.clearPoints(spec.key());
+                        plugin.repository().save();
+                        openPointList(yes, arena, spec, 0);
+                    },
+                    no -> openPointList(no, arena, spec, current))));
+        }
+        buttons.add(back(p -> {
+            if (spec.group() != null) {
+                openPointGroup(p, arena, spec.group());
+            } else {
+                openArena(p, arena);
+            }
+        }));
+        Component title = pages > 1
+                ? Component.text(spec.label() + " (" + (current + 1) + "/" + pages + ")")
+                : Component.text(spec.label());
+        gui.open(player, title, body, List.of(), buttons, gui.close(), 2);
+    }
+
+    /** Fiche d'un point d'une liste. */
+    private void openListPoint(Player player, Arena arena, PointSpec spec, int index) {
+        List<Pos> list = arena.list(spec.key());
+        if (index < 0 || index >= list.size()) {
+            openPointList(player, arena, spec, 0);
+            return;
+        }
+        int page = index / POINTS_PER_PAGE;
+        Pos pos = list.get(index);
+        World world = creationWorld(arena, player);
+        List<Component> body = new ArrayList<>();
+        body.add(t("admin.point-sheet", "<gray>Point n°<white><n></white> sur <white><total></white> : <white><pos>",
+                "n", index + 1, "total", list.size(), "pos", pos.pretty()));
+        List<ActionButton> buttons = new ArrayList<>();
+        buttons.add(btn(t("admin.point-goto", "<aqua>Y aller"), null, p -> p.teleport(pos.at(world, 0, 0))));
+        buttons.add(btn(t("admin.point-replace", "<green>Remplacer par ma position"), null, p -> {
+            arena.replacePoint(spec.key(), index, Pos.of(p.getLocation()));
+            plugin.repository().save();
+            warnOutside(p, arena, p.getLocation());
+            openListPoint(p, arena, spec, index);
+        }));
+        buttons.add(btn(t("admin.point-insert", "<green>Insérer un point AVANT celui-ci (ma position)"),
+                t("admin.point-insert-tip", "<gray>Le nouveau point prend le n°<n>, les suivants sont décalés.", "n", index + 1), p -> {
+                    arena.insertPoint(spec.key(), index, Pos.of(p.getLocation()));
+                    plugin.repository().save();
+                    warnOutside(p, arena, p.getLocation());
+                    openListPoint(p, arena, spec, index);
+                }));
+        if (!spec.perPoint().isEmpty()) {
+            buttons.add(btn(t("admin.point-settings", "<gold>Réglages de ce point"), null, p -> openPointSettings(p, arena, spec, index)));
+        }
+        if (index > 0) {
+            buttons.add(btn(t("admin.point-previous", "<yellow>« Point précédent"), null, p -> openListPoint(p, arena, spec, index - 1)));
+        }
+        if (index < list.size() - 1) {
+            buttons.add(btn(t("admin.point-next", "<yellow>Point suivant »"), null, p -> openListPoint(p, arena, spec, index + 1)));
+        }
+        buttons.add(btn(t("admin.point-delete", "<red>Supprimer ce point"), null, p -> gui.confirm(p,
+                Component.text(spec.label()),
+                t("admin.point-delete-confirm", "<red>Supprimer le point n°<white><n></white> (et ses réglages) ? Les suivants sont renumérotés.", "n", index + 1),
+                yes -> {
+                    arena.removePoint(spec.key(), index);
+                    plugin.repository().save();
+                    openPointList(yes, arena, spec, page);
+                },
+                no -> openListPoint(no, arena, spec, index))));
+        buttons.add(back(p -> openPointList(p, arena, spec, page)));
+        gui.open(player, Component.text(spec.label() + " n°" + (index + 1)), body, List.of(), buttons, gui.close(), 1);
+    }
+
+    /** Reglages propres a un point (PointSpec.perPoint) : valeur par defaut tant que rien n'est enregistre. */
+    private void openPointSettings(Player player, Arena arena, PointSpec spec, int index) {
+        Map<String, Object> values = arena.pointSettings(spec.key(), index);
+        List<DialogInput> inputs = new ArrayList<>();
+        for (SettingSpec setting : spec.perPoint()) {
+            Component label = setting.help().isBlank()
+                    ? Component.text(setting.label())
+                    : Component.text(setting.label() + " - " + setting.help());
+            String key = "p_" + setting.key();
+            Object value = values.getOrDefault(setting.key(), setting.def());
+            switch (setting.kind()) {
+                case BOOL -> inputs.add(gui.toggle(key, label, value instanceof Boolean b ? b : Boolean.TRUE.equals(setting.def())));
+                case TEXT -> inputs.add(gui.text(key, label, String.valueOf(value), 200));
+                case INT -> {
+                    int current = value instanceof Number n ? n.intValue() : ((Number) setting.def()).intValue();
+                    if (setting.max() - setting.min() <= SLIDER_MAX_SPAN) {
+                        inputs.add(gui.number(key, label, (float) setting.min(), (float) setting.max(), current, 1));
+                    } else {
+                        inputs.add(gui.text(key, Component.text(setting.label() + " (" + (int) setting.min() + " à " + (int) setting.max() + ")"),
+                                String.valueOf(current), 6));
+                    }
+                }
+            }
+        }
+        List<ActionButton> buttons = new ArrayList<>();
+        buttons.add(frm(t("admin.save", "<green>Enregistrer"), null, (p, view) -> {
+            Map<String, Object> target = arena.pointSettings(spec.key(), index);
+            for (SettingSpec setting : spec.perPoint()) {
+                String key = "p_" + setting.key();
+                switch (setting.kind()) {
+                    case BOOL -> {
+                        Boolean value = view.getBoolean(key);
+                        if (value != null) {
+                            target.put(setting.key(), value);
+                        }
+                    }
+                    case TEXT -> {
+                        String value = view.getText(key);
+                        if (value != null) {
+                            target.put(setting.key(), value);
+                        }
+                    }
+                    case INT -> {
+                        Float slider = setting.max() - setting.min() <= SLIDER_MAX_SPAN ? view.getFloat(key) : null;
+                        Object old = target.getOrDefault(setting.key(), setting.def());
+                        int value = slider != null ? Math.round(slider)
+                                : parseInt(view.getText(key), old instanceof Number n ? n.intValue() : 0);
+                        target.put(setting.key(), (int) Math.max(setting.min(), Math.min(setting.max(), value)));
+                    }
+                }
+            }
+            plugin.repository().save();
+            say(p, "admin.saved", "<green>Enregistré.");
+            openListPoint(p, arena, spec, index);
+        }));
+        buttons.add(back(p -> openListPoint(p, arena, spec, index)));
+        gui.open(player, Component.text(spec.label() + " n°" + (index + 1) + " : réglages"), List.of(), inputs, buttons, gui.close(), 1);
     }
 
     private void setPoint(Player player, Arena arena, PointSpec spec, Location location) {

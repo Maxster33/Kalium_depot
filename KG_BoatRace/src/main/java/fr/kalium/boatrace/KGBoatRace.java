@@ -32,6 +32,8 @@ public final class KGBoatRace extends JavaPlugin {
                         text("boat-type", "Type de bateau", "OAK_BOAT", "Ex. OAK_BOAT, BIRCH_BOAT, CHERRY_BOAT."),
                         integer("points-win", "Points du 1er (2e = -1, 3e = -2)", 3, 0, 50, "Points attribués au podium."),
                         integer("points-checkpoint", "Points par point de contrôle atteint", 0, 0, 50, "Gagnés à chaque point de contrôle."),
+                        integer("record-max-lap-seconds", "Meilleurs temps : tours enregistrés jusqu'à (s)", 45, 0, 600,
+                                "1.1.0 : un tour plus long n'entre pas dans les meilleurs temps. 0 = tous les tours."),
                         integer("time-limit-seconds", "Temps limite (s)", 600, 30, 3600, "Fin de la course pour tout le monde."),
                         integer("countdown-seconds", "Compte à rebours (s)", 5, 0, 15, "Avant le départ."),
                         integer("checkpoint-radius", "Rayon des points de contrôle et de la ligne d'arrivée", 8, 1, 15, "En blocs (rayon de détection autour du point)."),

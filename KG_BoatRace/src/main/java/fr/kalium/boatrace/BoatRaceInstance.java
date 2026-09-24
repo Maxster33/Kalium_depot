@@ -32,6 +32,9 @@ import java.util.UUID;
  * Course de bateau (points de controle, tours). 1.0.0 : reprise telle quelle de RaceInstance de KalGames 1.16.0
  * (partie « bateau » seulement : le Parcours reste dans KalGames pour l'instant), sans changement de comportement.
  * Les textes restent ceux du lang.yml de KalGames (cles race.*).
+ *
+ * 1.1.0 (etape 1 du cahier des charges) : vitesse en km/h, seuil d'enregistrement des meilleurs tours (45 s),
+ * passages aux checkpoints mesures (temps, place, vitesse d'entree).
  */
 public final class BoatRaceInstance extends GameInstance {
 
@@ -52,7 +55,24 @@ public final class BoatRaceInstance extends GameInstance {
         long lapStart;
         /** Jusqu'a cet instant, un message d'action bar (point de controle, retour...) reste affiche. */
         long noticeUntil;
+        /** 1.1.0 : vitesse lissee (km/h), calculee a partir du deplacement entre deux passages de la boucle. */
+        double speedKmh;
+        /**
+         * 1.1.0 : passages aux checkpoints du tour en cours, dans l'ordre (temps depuis le debut du tour, place au
+         * passage, vitesse d'entree). Donnees des futurs classements en direct, ecarts et graphiques (cahier des
+         * charges, etape 1).
+         */
+        final List<Split> splits = new ArrayList<>();
+        /** Passages du tour precedent (ecart avec son propre passage precedent : etape 2). */
+        List<Split> previousLapSplits = List.of();
     }
+
+    /** Passage a un checkpoint : temps depuis le debut du tour (ms), place au passage, vitesse d'entree (km/h). */
+    record Split(int checkpoint, long lapMillis, int place, double speedKmh) {
+    }
+
+    /** Nombre de passages deja enregistres a chaque (tour, checkpoint) : donne la place au passage. */
+    private final Map<Long, Integer> passages = new java.util.HashMap<>();
 
     /** Nombre de tours maximal d'une course. */
     static final int MAX_LAPS = 40;
@@ -138,6 +158,7 @@ public final class BoatRaceInstance extends GameInstance {
     protected void beginMatch() {
         racers.clear();
         finishOrder.clear();
+        passages.clear();
         finishedCount = 0;
         graceLeft = -1;
         elapsed = 0;
@@ -268,6 +289,7 @@ public final class BoatRaceInstance extends GameInstance {
                 mountBoat(player, current);
                 racer.remountCooldown = 15;
             }
+            updateSpeed(racer, current);
             Location target = target(racer);
             boolean atTarget = target != null && distanceToSegment(racer.previous, current, target) <= radius;
             if (!atTarget) {
@@ -285,18 +307,37 @@ public final class BoatRaceInstance extends GameInstance {
         }
     }
 
+    /**
+     * 1.1.0 : vitesse en km/h a partir du deplacement horizontal depuis le passage precedent de la boucle
+     * (GameInstance.TICK_INTERVAL ticks), lissee pour eviter les sauts d'affichage. 1 bloc = 1 metre.
+     */
+    private static void updateSpeed(Racer racer, Location current) {
+        if (racer.previous == null || racer.previous.getWorld() != current.getWorld()) {
+            return;
+        }
+        double dx = current.getX() - racer.previous.getX();
+        double dz = current.getZ() - racer.previous.getZ();
+        double metersPerSecond = Math.sqrt(dx * dx + dz * dz) * 20.0 / GameInstance.TICK_INTERVAL;
+        double kmh = metersPerSecond * 3.6;
+        if (kmh > 400) {
+            return; // teleportation (retour au checkpoint...) : pas une vraie vitesse
+        }
+        racer.speedKmh = racer.speedKmh * 0.6 + kmh * 0.4;
+    }
+
     /** Ligne d'action bar d'un coureur : chrono, tour, points de controle atteints. */
     private Component racerStatus(Racer racer, long now) {
         List<Pos> checkpoints = arena().list("checkpoints");
         long run = Math.max(0, now - racer.runStart);
-        return t("race.status", "<gold><time> <dark_gray>| <gray>Tour <white><lap>/<laps></white> <dark_gray>| <gray>Contrôle <white><cp>/<total></white>",
-                "time", formatTenths(run), "lap", racer.lap + 1, "laps", laps,
+        return t("race.status-speed", "<gold><time> <dark_gray>| <aqua><speed> km/h <dark_gray>| <gray>Tour <white><lap>/<laps></white> <dark_gray>| <gray>Contrôle <white><cp>/<total></white>",
+                "time", formatTenths(run), "speed", Math.round(racer.speedKmh), "lap", racer.lap + 1, "laps", laps,
                 "cp", racer.next, "total", checkpoints.size());
     }
 
     private void reached(Player player, Racer racer) {
         List<Pos> checkpoints = arena().list("checkpoints");
         if (racer.next < checkpoints.size()) {
+            recordSplit(racer, racer.next);
             racer.lastCheckpoint = loc(checkpoints.get(racer.next));
             racer.next++;
             racer.noticeUntil = System.currentTimeMillis() + 1500;
@@ -312,8 +353,11 @@ public final class BoatRaceInstance extends GameInstance {
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 1.4f);
             return;
         }
+        recordSplit(racer, checkpoints.size()); // la ligne d'arrivee compte comme dernier passage du tour
         racer.lap++;
         recordLap(player, racer);
+        racer.previousLapSplits = List.copyOf(racer.splits);
+        racer.splits.clear();
         if (racer.lap >= laps) {
             racerFinished(player, racer);
         } else {
@@ -325,11 +369,26 @@ public final class BoatRaceInstance extends GameInstance {
         }
     }
 
+    /** 1.1.0 : passage au checkpoint n° cp (ou a la ligne d'arrivee) du tour en cours. */
+    private void recordSplit(Racer racer, int cp) {
+        long key = ((long) racer.lap << 32) | cp;
+        int place = passages.merge(key, 1, Integer::sum);
+        racer.splits.add(new Split(cp, System.currentTimeMillis() - racer.lapStart, place, racer.speedKmh));
+    }
+
     /** Temps du tour qui vient d'etre termine : classement des meilleurs temps sur 1 tour. */
     private void recordLap(Player player, Racer racer) {
         long now = System.currentTimeMillis();
         long lapTime = now - racer.lapStart;
         racer.lapStart = now;
+        // 1.1.0 : seuls les tours sous le seuil (45 s par defaut, reglable) comptent pour les meilleurs temps.
+        int maxSeconds = minigame().getInt("record-max-lap-seconds", 45);
+        if (maxSeconds > 0 && lapTime > maxSeconds * 1000L) {
+            player.sendMessage(plugin.prefix().append(t("race.lap-time-unrecorded",
+                    "<gray>Tour <white><n></white> : <white><time></white> <dark_gray>(non enregistré : plus de <max> s)",
+                    "n", racer.lap, "time", formatTime(lapTime), "max", maxSeconds)));
+            return;
+        }
         if (plugin.scores().recordLap(player, minigame(), lapTime, ranked(player))) {
             player.sendMessage(plugin.prefix().append(t("race.lap-record",
                     "<light_purple>Nouveau record personnel sur 1 tour : <white><time></white> !", "time", formatTime(lapTime))));
@@ -575,6 +634,7 @@ public final class BoatRaceInstance extends GameInstance {
     protected void onMatchReset() {
         racers.clear();
         finishOrder.clear();
+        passages.clear();
         finishedCount = 0;
         graceLeft = -1;
     }

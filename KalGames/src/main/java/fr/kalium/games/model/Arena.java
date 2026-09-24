@@ -92,6 +92,81 @@ public final class Arena {
         return value instanceof Number number ? number.intValue() : fallback;
     }
 
+    // ------------------------------------------------------------------ 1.18.0 : edition d'une liste de points
+
+    /**
+     * Reglages propres a chaque point d'une liste (voir PointSpec.perPoint), dans le meme ordre que la liste :
+     * cle de la liste -> un dictionnaire par point. Toujours tenu a la meme taille que la liste par les methodes
+     * ci-dessous (insertion, suppression...), pour que les reglages suivent leur point.
+     */
+    private final Map<String, List<Map<String, Object>>> pointSettings = new LinkedHashMap<>();
+
+    public Map<String, List<Map<String, Object>>> pointSettings() {
+        return pointSettings;
+    }
+
+    /** Reglages du point n° index (0 = premier) de la liste ; dictionnaire modifiable, vide si aucun. */
+    public Map<String, Object> pointSettings(String key, int index) {
+        List<Map<String, Object>> all = pointSettings.computeIfAbsent(key, k -> new ArrayList<>());
+        while (all.size() <= index) {
+            all.add(new LinkedHashMap<>());
+        }
+        return all.get(index);
+    }
+
+    /** Valeur d'un reglage du point n° index, ou null si non defini (l'appelant applique sa valeur par defaut). */
+    public Object pointSetting(String key, int index, String setting) {
+        List<Map<String, Object>> all = pointSettings.get(key);
+        return all == null || index < 0 || index >= all.size() ? null : all.get(index).get(setting);
+    }
+
+    private List<Pos> editableList(String key) {
+        return lists.computeIfAbsent(key, k -> new ArrayList<>());
+    }
+
+    /** Insere un point a la position index (0 = en tete ; taille = a la fin), avec des reglages vides. */
+    public void insertPoint(String key, int index, Pos pos) {
+        List<Pos> list = editableList(key);
+        int at = Math.max(0, Math.min(index, list.size()));
+        // Aligne d'abord la taille des reglages sur celle de la liste (anciennes arenes sans reglages).
+        List<Map<String, Object>> all = pointSettings.computeIfAbsent(key, k -> new ArrayList<>());
+        while (all.size() < list.size()) {
+            all.add(new LinkedHashMap<>());
+        }
+        while (all.size() > list.size()) {
+            all.remove(all.size() - 1);
+        }
+        list.add(at, pos);
+        all.add(at, new LinkedHashMap<>());
+    }
+
+    /** Remplace la position du point n° index (ses reglages sont gardes). */
+    public void replacePoint(String key, int index, Pos pos) {
+        List<Pos> list = editableList(key);
+        if (index >= 0 && index < list.size()) {
+            list.set(index, pos);
+        }
+    }
+
+    /** Supprime le point n° index et ses reglages. */
+    public void removePoint(String key, int index) {
+        List<Pos> list = editableList(key);
+        if (index < 0 || index >= list.size()) {
+            return;
+        }
+        list.remove(index);
+        List<Map<String, Object>> all = pointSettings.get(key);
+        if (all != null && index < all.size()) {
+            all.remove(index);
+        }
+    }
+
+    /** Vide la liste et ses reglages. */
+    public void clearPoints(String key) {
+        lists.remove(key);
+        pointSettings.remove(key);
+    }
+
     /** Libelles des elements obligatoires encore manquants (vide = arene complete). */
     public List<String> missing(MinigameType type) {
         List<String> missing = new ArrayList<>();

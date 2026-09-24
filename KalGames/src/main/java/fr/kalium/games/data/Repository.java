@@ -201,6 +201,19 @@ public final class Repository {
                         arena.lists().put(key, values);
                     }
                 }
+                // 1.18.0 : reglages propres a chaque point d'une liste (checkpoints...), dans l'ordre de la liste.
+                ConfigurationSection perPoint = s.getConfigurationSection("point-settings");
+                if (perPoint != null) {
+                    for (String key : perPoint.getKeys(false)) {
+                        List<Map<String, Object>> values = new ArrayList<>();
+                        for (Map<?, ?> raw : perPoint.getMapList(key)) {
+                            Map<String, Object> one = new LinkedHashMap<>();
+                            raw.forEach((k, v) -> one.put(String.valueOf(k), v));
+                            values.add(one);
+                        }
+                        arena.pointSettings().put(key, values);
+                    }
+                }
                 ConfigurationSection itemLists = s.getConfigurationSection("itemlists");
                 if (itemLists != null) {
                     for (String key : itemLists.getKeys(false)) {
@@ -289,6 +302,12 @@ public final class Repository {
                     values.add(pos.serialize());
                 }
                 ar.set(base + ".lists." + entry.getKey(), values);
+            }
+            for (Map.Entry<String, List<Map<String, Object>>> entry : arena.pointSettings().entrySet()) {
+                boolean any = entry.getValue().stream().anyMatch(one -> !one.isEmpty());
+                if (any) {
+                    ar.set(base + ".point-settings." + entry.getKey(), entry.getValue());
+                }
             }
             for (Map.Entry<String, List<ItemStack>> entry : arena.itemLists().entrySet()) {
                 ar.set(base + ".itemlists." + entry.getKey(), entry.getValue());

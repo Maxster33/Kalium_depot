@@ -740,3 +740,18 @@ virage (voir `KG_BoatRace/CAHIER_DES_CHARGES.md`).
   (KG_Parkour).
 **Déploiement** : **avec KG_BoatRace 1.0.0** (sinon la course de bateau n'est plus jouable : ses mini-jeux restent
 gardés de côté, sans perte). Aucune clé de config nouvelle. **Statut : déployé sur Kal-Games (7001) le 24/09/2026 à 19 h 47 avec KG_BoatRace 1.0.0 (1.16.0 et copies de config.yml, minigames.yml, arenas.yml dans `_removed-kalgames-1.16.0/`), testé et confirmé par LeKiwi06 le 24/09/2026 (course de bateau, journal de démarrage : mini-jeu boatrace rattaché).**
+
+## 1.18.0 — éditeur de listes de points (checkpoints...) et réglages par point (24/09/2026)
+
+**Demande de LeKiwi06** (cahiers des charges KG_BoatRace / KG_Parkour) : pouvoir poser soi-même plus de checkpoints
+avec une vraie interface, et régler chaque checkpoint (temps ajouté, difficulté, paliers : Parcours).
+- **Éditeur de liste** (Paramètres > Arènes > une arène > une liste de points, ex. Points de contrôle, Grille de
+  départ) : « Ajouter à la fin (ma position) », un bouton par point (n°, position, ⚙ s'il a des réglages), pages de
+  18 points (plus de limite d'affichage à 24), « Tout effacer » avec confirmation.
+- **Fiche d'un point** : Y aller, Remplacer par ma position, **Insérer un point AVANT** (les suivants sont décalés),
+  Point précédent / suivant, **Supprimer ce point** (confirmation, les suivants sont renumérotés), Réglages.
+- **Réglages par point** (`PointSpec.withPointSettings`) : déclarés par le type de jeu (aucun pour l'instant ; le
+  Parcours les utilisera), enregistrés dans `arenas.yml` sous `point-settings.<liste>` (un dictionnaire par point,
+  dans l'ordre), et **déplacés avec leur point** lors d'une insertion ou d'une suppression.
+**Déploiement** : avec KG_BoatRace 1.1.0 (KG_BoatRace 1.0.0 reste compatible). **Statut : compilé, non déployé, non
+testé en jeu.**
