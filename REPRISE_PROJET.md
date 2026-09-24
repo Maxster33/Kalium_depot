@@ -323,5 +323,6 @@ dans `_removed-config-2026-09-24/` (racine de chaque serveur) et `plugins/_remov
 - PC de Maxster33 : Java 27 installé, `telecharger-outils.sh` fait, compilation vérifiée (KaliumRelay). Sous Git Bash,
   Java 27 n'est pas dans le PATH tant que Git Bash n'a pas été relancé : `export PATH="/c/Program Files/Java/jdk-27/bin:$PATH"`.
 - Travail désormais piloté par WinSCP.com + scripts (guide du Claude de LeKiwi06), plus par captures d'écran.
-- À faire : redémarrages (KalGames2, Serveur Jeux, lobby, proxy) et test en jeu ; nettoyage de Kixster (SMP) et
+- **Migration confirmée par Maxster33 le 24/09/2026** (« tout a l'air de fonctionner correctement ») après redémarrage ; journaux de démarrage de KalGames2 et Serveur Jeux : Paper 26.2-122, seules erreurs = celles déjà présentes sur les originaux (jar `PlaceholderAPIScoreboardObjectivesPlaceholder.jar` illisible sur le hub ; 2 voicechat et AnvilUnlocker sans ProtocolLib sur le Bingo), non corrigées (pas demandé).
+- À faire : nettoyage de Kixster (SMP) et
   reconversion d'Event ; KG_BoatRace (LeKiwi06) à déployer sur KalGames2.
