@@ -37,3 +37,13 @@
   kal-games devient event ; destinations des plugins mises à jour sur les nouveaux serveurs uniquement (+ proxy).
 - Décision : option B (transférer les noms dans le proxy) plutôt que renommer dans chaque plugin.
 - Fait / reste à faire : voir le compte rendu de Maxster33 dans `REPRISE_PROJET.md`.
+
+## Suite : correctifs et Kixster rendu au SMP (fin d'après-midi)
+- Demandé : réparer les erreurs de démarrage (extension PlaceholderAPI mal placée sur le hub, voicechat en double et
+  AnvilUnlocker sur le Bingo), puis remettre Kixster exactement comme avant le Bingo.
+- Décisions de Maxster33 : AnvilUnlocker retiré du Bingo ; sur Kixster, WorldEdit gardé, voicechat 2.6.24 retiré,
+  KLM_Menu gardé sans boussole avec `/menu` (alias de `/servers`), `generate-structures=false` laissé.
+- Vérifié après redémarrage (24/09, 16 h 30) : KalGames2 et Serveur Jeux sans erreur ; Kixster : seule l'erreur
+  AnvilUnlocker d'avant le Bingo (sans ProtocolLib).
+- Reste à faire : reconversion de l'ancien kal-games en serveur Event ; tests en jeu ; KG_BoatRace (LeKiwi06) à
+  déployer sur KalGames2.
