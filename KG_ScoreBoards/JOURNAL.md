@@ -63,3 +63,13 @@ claires et structurées.
 - Écriture en arrière-plan, une à la fois, dans l'ordre ; les écritures en attente sont terminées à l'arrêt (5 s max).
 - Pas encore d'affichage en jeu de ces données (graphiques : plus tard).
 **Déploiement** : avec KG_BoatRace 1.2.0 (qui l'utilise). **Statut : compilé, non déployé, non testé en jeu.**
+
+## 1.4.0 — points décimaux (24/09/2026)
+
+**Demande de LeKiwi06** : autoriser les points décimaux (barèmes à coefficients x1,5...), affichés selon la charte.
+- Points stockés en décimal (`stats.yml`, archives) ; anciens fichiers lus sans conversion (les entiers restent valables).
+- `addPoints(..., double)` (arrondi au centième) ; l'ancien `addPoints(..., int)` reste disponible.
+- Affichage (`StatsService.formatPoints`, menus et panneaux) : 6 chiffres au plus, décimales (2 au plus) jusqu'à un
+  million, puis « M » / « Md » avec 3 décimales au plus : 3 ; 12,5 ; 1234,56 ; 12345,7 ; 123456 ; 1,235 M ; 2,5 Md.
+  (Pas de « K » : sous un million, 6 chiffres suffisent - à changer si LeKiwi06 préfère 12,35 K.)
+**Déploiement** : avec KG_BoatRace 1.3.0 (qui l'utilise). **Statut : compilé, non déployé, non testé en jeu.**

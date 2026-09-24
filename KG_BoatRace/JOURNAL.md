@@ -52,3 +52,30 @@ Course de bateau de Kal-Games, sortie de KalGames (règle 2.2 de `REGLES.md`). C
   Servira aussi à mesurer l'écart Java / Bedrock (voir cahier des charges).
 **Déploiement** : **avec KG_ScoreBoards 1.3.0** (obligatoire) et KalGames 1.18.0. **Statut : compilé, non déployé, non
 testé en jeu.**
+
+## 1.3.0 — barème, hors-piste, anti-collision, tableau aéré (24/09/2026)
+
+**Demandes de LeKiwi06** : « fais le barème de point et le hors piste, et surtout l'anticollision des bateaux » ;
+tableau latéral « un peu trop compact à 2 joueurs » (proposition validée : lignes vides + meilleur tour).
+- **Barème** (remplace les points du podium et par checkpoint, réglages `points-win` / `points-checkpoint` retirés) :
+  par tour, d'abord les points (1 par tour, +1 sans hors-piste, +n à chaque série de 3 tours propres d'affilée,
+  n = numéro de la série, remis à zéro par un hors-piste), puis les multiplicateurs **additifs** : chrono (moins de
+  45 s x1,5, 40 s x2, 35 s x3, 30 s x5) et tour en tête (tous les checkpoints du tour passés 1er, x1,5). Grand Prix
+  (course de 40 tours terminée) : x1,5 sur le total. Tout est réglable dans les réglages de la course (coefficients
+  en dixièmes : 15 = x1,5). Détail affiché au joueur à chaque tour.
+- **Fin de course** : classement au temps avec les points entre parenthèses, puis classement aux points avec le cumul
+  (ses points + ceux de tous les joueurs en dessous) ; c'est le cumul qui est crédité (points décimaux,
+  KG_ScoreBoards 1.4.0), pour les joueurs classés hors opérateurs.
+- **Hors-piste** : le bateau touche, sous lui ou sur ses côtés (mur, bordure), un bloc autre qu'un bloc de piste
+  (réglage `track-blocks`, « PACKED_ICE,BLUE_ICE » par défaut) ; en l'air, rien n'est compté. Une fois par tour :
+  message, son, tour non « propre ». Attention : un marquage au sol d'un autre bloc (tapis, neige...) compte comme
+  hors-piste s'il n'est pas ajouté à la liste.
+- **Anti-collision** (`CollisionShield`, réglage `anti-collision`, activé) : pour chaque coureur Java, les vrais
+  bateaux et pilotes adverses sont cachés et remplacés par une copie sans collision (coque en dalle du bois du bateau,
+  tête du joueur, pseudo) qui suit leur position. Joueurs Bedrock : voient les vrais bateaux (à tester). Protection
+  levée pour un coureur arrivé ou sorti, et pour tous en fin de course. Limite : un adversaire caché disparaît aussi
+  de la liste Tab pendant la course.
+- **Tableau latéral** : lignes vides autour des positions (10 au plus) et « Meilleur tour » de la course en cours.
+- Journal : `lap` gagne `points`, `base`, `multiplier`, `clean`, `seriesBonus`, `lead`, `timeCoefficient` ; les
+  résultats de `race` gagnent `points`, `cumulative`, `offTracks`.
+**Déploiement** : **avec KG_ScoreBoards 1.4.0** (obligatoire). **Statut : compilé, non déployé, non testé en jeu.**

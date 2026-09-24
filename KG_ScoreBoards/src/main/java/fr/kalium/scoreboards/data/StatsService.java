@@ -36,7 +36,8 @@ public final class StatsService {
     public static final class Row {
         private final UUID uuid;
         private String name;
-        private int points;
+        /** 1.4.0 : points decimaux (baremes a coefficients : x1,5...). */
+        private double points;
         private long bestMs = -1;
         private long bestLapMs = -1;
 
@@ -53,8 +54,13 @@ public final class StatsService {
             return name;
         }
 
-        public int points() {
+        public double points() {
             return points;
+        }
+
+        /** 1.4.0 : points prets a afficher (voir formatPoints). */
+        public String pointsText() {
+            return formatPoints(points);
         }
 
         /** Meilleur temps en millisecondes, ou -1 s'il n'y en a pas. */
@@ -98,7 +104,7 @@ public final class StatsService {
 
     /** Ordre d'un classement : points decroissants, puis meilleur temps, puis nom. */
     private static final Comparator<Row> ORDER = Comparator
-            .comparingInt((Row row) -> -row.points)
+            .comparingDouble((Row row) -> -row.points)
             .thenComparingLong(Row::tieTime)
             .thenComparing(row -> row.name.toLowerCase(Locale.ROOT));
 
@@ -178,6 +184,31 @@ public final class StatsService {
         return new Archive(key, key, 0).label();
     }
 
+    /**
+     * 1.4.0 : affichage des points (charte : 6 chiffres au plus, decimales jusqu'a un million, puis M / Md avec 3
+     * decimales au plus). Ex. 3 ; 12,5 ; 1234,56 ; 123456 ; 1,235 M ; 2,5 Md.
+     */
+    public static String formatPoints(double points) {
+        double abs = Math.abs(points);
+        if (abs >= 1_000_000_000d) {
+            return trim(String.format(Locale.FRANCE, "%.3f", points / 1_000_000_000d)) + " Md";
+        }
+        if (abs >= 999_999.5d) { // au-dela, l'arrondi donnerait 7 chiffres
+            return trim(String.format(Locale.FRANCE, "%.3f", points / 1_000_000d)) + " M";
+        }
+        int integerDigits = abs < 1 ? 1 : (int) Math.floor(Math.log10(abs)) + 1;
+        int decimals = Math.max(0, Math.min(2, 6 - integerDigits));
+        return trim(String.format(Locale.FRANCE, "%." + decimals + "f", points));
+    }
+
+    private static String trim(String text) {
+        if (!text.contains(",")) {
+            return text;
+        }
+        text = text.replaceAll("0+$", "");
+        return text.endsWith(",") ? text.substring(0, text.length() - 1) : text;
+    }
+
     public static String formatTime(long millis) {
         long minutes = millis / 60000;
         long seconds = millis / 1000 % 60;
@@ -236,7 +267,7 @@ public final class StatsService {
                 try {
                     UUID uuid = UUID.fromString(key);
                     Row row = new Row(uuid, s.getString("name", "?"));
-                    row.points = s.getInt("points", 0);
+                    row.points = s.getDouble("points", 0);
                     row.bestMs = s.getLong("best-ms", -1L);
                     row.bestLapMs = s.getLong("best-lap-ms", -1L);
                     rows.put(uuid, row);
@@ -321,6 +352,12 @@ public final class StatsService {
 
     /** Ajoute des points au joueur (classement general et du mois). */
     public void addPoints(String minigame, UUID uuid, String name, int points) {
+        addPoints(minigame, uuid, name, (double) points);
+    }
+
+    /** 1.4.0 : points decimaux (arrondis au centieme). */
+    public void addPoints(String minigame, UUID uuid, String name, double points) {
+        points = Math.round(points * 100) / 100.0;
         if (points <= 0) {
             return;
         }
@@ -628,7 +665,7 @@ public final class StatsService {
                 UUID uuid = UUID.fromString(String.valueOf(line.get("uuid")));
                 Row row = new Row(uuid, String.valueOf(line.get("name")));
                 Object points = line.get("points");
-                row.points = points instanceof Number number ? number.intValue() : 0;
+                row.points = points instanceof Number number ? number.doubleValue() : 0;
                 Object best = line.get("best-ms");
                 row.bestMs = best instanceof Number number ? number.longValue() : -1L;
                 Object lap = line.get("best-lap-ms");

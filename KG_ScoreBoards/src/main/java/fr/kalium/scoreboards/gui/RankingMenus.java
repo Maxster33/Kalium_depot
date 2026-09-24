@@ -96,7 +96,7 @@ public final class RankingMenus {
             for (int i = 0; i < all.size(); i++) {
                 if (all.get(i).uuid().equals(uuid)) {
                     Row mine = all.get(i);
-                    body.add(t("rank.mine", "<gray>Votre position : <white><rank></white> <dark_gray>(<points> pts)", "rank", i + 1, "points", mine.points()));
+                    body.add(t("rank.mine", "<gray>Votre position : <white><rank></white> <dark_gray>(<points> pts)", "rank", i + 1, "points", mine.pointsText()));
                     break;
                 }
             }
@@ -255,7 +255,7 @@ public final class RankingMenus {
                             "rank", i + 1, "name", row.name(), "time", StatsService.formatTime(row.bestLapMs()))
                     : t(showTime ? "rank.remove-line-time" : "rank.remove-line",
                             showTime ? "<yellow><rank>.</yellow> <white><name></white> <gray>- <points> pts - <time>" : "<yellow><rank>.</yellow> <white><name></white> <gray>- <points> pts",
-                            "rank", i + 1, "name", row.name(), "points", row.points(),
+                            "rank", i + 1, "name", row.name(), "points", row.pointsText(),
                             "time", showTime ? StatsService.formatTime(shown) : "");
             UUID target = row.uuid();
             String targetName = row.name();
