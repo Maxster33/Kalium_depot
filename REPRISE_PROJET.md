@@ -78,7 +78,13 @@ de `plugins/KalGames/config.yml` (kal-games) dans `plugins/KG_Bingo/config.yml`,
   - étape A, faite (non déployée) : `KG_Bingo` sorti de KalGames (KalGames 1.13.0 + KG_Bingo 1.0.0) ;
   - étape B, faite (non déployée) : KalBingo renommé `KG_BingoGame` 0.2.0 (dossier du dépôt `KG_BingoGame/`) ;
     migration de Kixster décrite dans `KG_BingoGame/JOURNAL.md` ;
+  - nouveau Bingo, fait (non déployé, non testé) : KG_BingoGame 0.3.0 + KG_Bingo 1.1.0 (barème, modes, nulle,
+    inactivité...) ; reste le **Nether commun à toutes les équipes** vu en test (journaux de Kixster à lire) ;
   - puis déploiement de tout en une fois et test complet d'une partie.
+- **KG_ScoreBoards** (annoncé par LeKiwi06 le 24/09/2026, après le Bingo) : scoreboards sortis de KalGames,
+  alimentés entre autres par les points d'équipe et solo du Bingo. Affichage des scores décidé : **6 chiffres au
+  plus** ; une décimale tant que c'est possible, plus de décimale à partir de 1 million ; puis à chaque puissance de
+  1000 le préfixe adéquat (K, M, Md) avec 3 chiffres décimaux au plus.
 - **Découpage de KalGames** en plusieurs plugins (`REGLES.md`, section 2) : décidé le 24/09/2026, pas commencé.
   À faire progressivement, en commençant par le Rush. Le menu du hub deviendra aussi son propre plugin (`KG_Menu`,
   annoncé par LeKiwi06 le 24/09/2026) : les prises `MenuEntry` de KalGames 1.13.0 le suivront. Même principe prévu pour les modules de KaliumCore
@@ -94,8 +100,7 @@ de `plugins/KalGames/config.yml` (kal-games) dans `plugins/KG_Bingo/config.yml`,
 - Salle d'attente Bingo : monstres et PvP bloqués dans tout le monde `bingo_lobby` (modèle compris).
 - La pré-génération Bingo ne tient pas compte de `instances.max-simultaneous-games`.
 - Éléments inutilisés, à supprimer lors d'une prochaine version (commentaires et journaux obsolètes déjà corrigés
-  le 24/09/2026, dans les versions non déployées) : `reconnect-during-game.abandon-after-seconds` /
-  `GameManager.hasAbandoned` dans KalBingo, `bingo.max-party-size` dans KalGames.
+  le 24/09/2026, dans les versions non déployées) : `bingo.max-party-size` dans KG_Bingo.
 - **Jeton du relais** : l'ancien jeton, publié dans le dépôt public, a été remplacé le 24/09/2026 sur les 3
   serveurs (proxy `relay.properties`, kal-games et Kixster `config.yml`) ; le nouveau n'est écrit que sur les
   serveurs, jamais dans le dépôt. Code nettoyé le même jour (KaliumRelay 1.1.1, KalGames 1.12.4, KalBingo 0.1.23 :

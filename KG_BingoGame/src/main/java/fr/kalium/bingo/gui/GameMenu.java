@@ -133,7 +133,7 @@ public final class GameMenu {
             Component line = Component.text("Équipe " + team + " : ", NamedTextColor.GRAY)
                     .append(Component.text("Complété", NamedTextColor.GREEN));
             String owner = nameOf(engine.ownerOf(team, index));
-            if (owner != null) {
+            if (owner != null && instance.getTeam().getPlayers().size() > 1) { // seul dans l'equipe : pas de pseudo
                 line = line.append(Component.text(" (" + owner + ")", NamedTextColor.GRAY));
             }
             int first = engine.firstBonusOf(team, index);

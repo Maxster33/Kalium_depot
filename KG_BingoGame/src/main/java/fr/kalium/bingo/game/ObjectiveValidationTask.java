@@ -133,7 +133,9 @@ public final class ObjectiveValidationTask {
         Component line = Component.text("Équipe " + team + " valide ", NamedTextColor.GREEN)
                 .append(item)
                 .append(Component.text(result.first() ? " en 1er" : "", NamedTextColor.GOLD))
-                .append(Component.text(" (" + holder.getName() + ") ", NamedTextColor.GRAY))
+                // Joueur seul dans son equipe : pas de pseudo (precision de LeKiwi06 : "pas besoin d'afficher de
+                // pseudo, comme il est seul").
+                .append(Component.text(solo(game, team) ? " " : " (" + holder.getName() + ") ", NamedTextColor.GRAY))
                 .append(Component.text("+" + ScoreEngine.format(result.itemPoints()) + " points !", NamedTextColor.YELLOW));
         broadcast(game, line);
         for (ScoreEngine.BingoEvent bingo : result.bingos()) {
@@ -149,12 +151,22 @@ public final class ObjectiveValidationTask {
                     : bingo.first() ? " en 1er" : bingo.hardOnly() ? " difficile" : "";
             Component bingoLine = Component.text("Équipe " + team + " valide un bingo : " + bingo.name(), NamedTextColor.AQUA)
                     .append(Component.text(detail, NamedTextColor.GOLD))
-                    .append(Component.text(" (" + names + ") ", NamedTextColor.GRAY))
+                    .append(Component.text(solo(game, team) ? " " : " (" + names + ") ", NamedTextColor.GRAY))
                     .append(bingo.gain() > 0
                             ? Component.text("+" + ScoreEngine.format(bingo.gain()) + " points !", NamedTextColor.YELLOW)
                             : Component.text("(pas de bonus)", NamedTextColor.DARK_GRAY));
             broadcast(game, bingoLine);
         }
+    }
+
+    /** true si l'equipe ne compte qu'un joueur. */
+    private static boolean solo(BingoGame game, int team) {
+        for (BingoInstance instance : game.getInstances()) {
+            if (instance.getTeam().getTeamNumber() == team) {
+                return instance.getTeam().getPlayers().size() <= 1;
+            }
+        }
+        return false;
     }
 
     private void broadcast(BingoGame game, Component message) {
