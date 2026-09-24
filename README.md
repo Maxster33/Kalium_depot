@@ -1,6 +1,8 @@
 # Kalium — plugins du réseau Minecraft KaLium
 
-Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu avec Claude.
+Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par LeKiwi06 et Maxster33 avec Claude.
+
+**Avant toute chose, lire dans l'ordre : `REGLES.md`, `TRAVAIL_EN_COURS.md`, `REPRISE_PROJET.md`.**
 
 | Dossier | Plugin | Serveur |
 |---|---|---|
@@ -10,18 +12,7 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu avec
 | `KaliumRelay/` | Relais HTTP entre serveurs | proxy Velocity |
 | `KaliumCore/` | Survie (projet en pause) | Kal-Test-Dev |
 
-- **À lire en premier** : `REPRISE_PROJET.md` (état du projet, versions déployées, compilation, déploiement, règles).
 - Historique détaillé de chaque plugin : `<plugin>/JOURNAL.md`.
 - `jars-deployes/` : copies des jars actuellement en service.
-
-## Règles de travail (valables pour chaque session Claude)
-
-- Ne rien construire qui n'ait pas été explicitement demandé ; en cas de doute, demander avant.
-- Déploiement non destructif : l'ancien jar va dans `/plugins/_removed-<plugin>-<version>/`.
-- Textes en jeu en français.
-- Chaque nouvelle version : `VERSION=` dans `build.sh`, `<version>` dans `pom.xml`, section dans `JOURNAL.md`.
-- Plusieurs Claude en parallèle : un plugin par session, et récupérer (`git pull`) avant de commencer.
-
-Le compilateur et les bibliothèques (`outils-build/`, ~32 Mo) ne sont pas dans le dépôt : `sh telecharger-outils.sh`
-les récupère (une fois par machine), puis `sh <plugin>/build.sh` produit le jar dans `sortie/`
-(voir `REPRISE_PROJET.md`, section « Compiler »).
+- Compiler : `sh telecharger-outils.sh` (une fois par machine), puis `sh <plugin>/build.sh` → jar dans `sortie/`
+  (détails dans `REPRISE_PROJET.md`, section « Compiler »).
