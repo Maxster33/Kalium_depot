@@ -19,25 +19,29 @@ Le détail technique de chaque version est dans `<plugin>/JOURNAL.md`. Documents
 | Serveur Bingo (dédié) | `kixster` | `kixster@7003.mystrator.com` | KG_BingoGame, KLM_Menu (boussole désactivée) |
 | Serveur de test survie | `Kal-Test-Dev` | `Kal-Test-Dev@5038` | KaliumCore (projet en pause) |
 
-- **KalGames** : le hub et les mini-jeux (PvP Kit, Parcours, Course de bateau, Rush ; Hunger Games, Manhunt et
-  Build Battle configurables mais sans moteur). Chaque partie joue sur une copie de l'arène collée dans le monde
-  vide `kalgames:instances` ; copies réutilisées et conservées aux arrêts propres. Classements général / mensuel /
-  archives, panneaux dans le hub. Depuis 1.13.0 (non déployée), le Bingo n'y est plus : il est dans KG_Bingo.
-- **KG_Bingo** (nouveau, non déployé, dépend de KalGames) : menu "Bingo" du hub : créer une partie (équipes,
-  taille, durée ≤ maximum des opérateurs) ou rejoindre une partie listée ; transfère les joueurs vers Kixster.
-  Tant qu'il n'est pas déployé, c'est KalGames 1.12.3 qui fait ce travail.
-- **KalBingo** (renommé `KG_BingoGame` dans le dépôt, pas encore déployé sous ce nom) : tout le jeu Bingo, sur Kixster. Salle d'attente (modèle capturé via `/menu`, collé sur 4
-  emplacements), équipes assignées par l'hôte, overworld + Nether + End par équipe (même seed), grille 5×5
-  (`objectives.yml`, liste d'exemples encore provisoire), validation automatique par inventaire, score, HUD, fin
-  de partie (victoire, temps, abandon d'équipe, plus personne connecté), parties en cours conservées au
-  redémarrage.
+- **KLM_Menu** (tous les serveurs Paper, anciennement KaliumMenu) : couche profonde des interfaces - navigation
+  entre serveurs et boussole, boîte à outils des menus (`fr.kalium.menu.api`), catalogue « Interfaces » où les
+  plugins déclarent leurs interfaces (découvertes au démarrage). Boussole désactivée sur Kixster (objectif du Bingo).
+- **KG_Menu** (kal-games, **compilé, pas encore déployé**) : menu du serveur kal-games (liste des jeux, Paramètres,
+  objet « Mini-jeux » du hub), alimenté par les plugins de kal-games qui s'y déclarent. Hiérarchie : KLM_Menu → menu
+  de chaque serveur → interfaces des jeux.
+- **KalGames** : le hub (arrivée, protections de zone) et les mini-jeux (PvP Kit, Parcours, Course de bateau, Rush ;
+  Hunger Games, Manhunt et Build Battle configurables mais sans moteur). Chaque partie joue sur une copie de l'arène
+  collée dans le monde vide `kalgames:instances`. Dépend de KG_ScoreBoards et KLM_Menu (et de KG_Menu à partir de 1.16.0).
+- **KG_ScoreBoards** : classements (général, du mois, archives, panneaux flottants du hub), sortis de KalGames ;
+  chaque plugin y inscrit ses classements. Classements Bingo et archives détaillées : à venir (étape B).
+- **KG_Bingo** : partie Bingo du hub : créer une partie (équipes, taille, durée, mode, composition de la grille) ou
+  rejoindre une partie listée ; transfère les joueurs vers Kixster.
+- **KG_BingoGame** (anciennement KalBingo) : tout le jeu Bingo sur Kixster - salle d'attente, un overworld + Nether +
+  End par équipe (même seed), grille 5×5 (200 objectifs), barème en temps réel, modes Bingos / Blackout, nulle,
+  carte de la grille en main secondaire, résumé de fin de partie, parties conservées au redémarrage.
 - **Communication kal-games ↔ Kixster** : deux chemins en parallèle.
   1. Canal BungeeCord "Forward" — ne livre un message QUE si au moins un joueur est connecté sur le serveur
      CIBLE (limite du protocole Minecraft, source de plusieurs bugs passés).
   2. Relais HTTP KaliumRelay (sur le proxy) — indépendant des joueurs. `/assignment/<clé>` (POST dépose, GET lit
      et efface, expire en 2 min) et `/active-game/<uuid>` (joueur en partie, pour la reconnexion directe).
-     Jeton : `relay-token` dans les config.yml de KalGames (`bingo.`, puis KG_Bingo après déploiement) et
-     KalBingo (`network.`).
+     Jeton : `relay-token` dans les config.yml de KG_Bingo (`bingo.`, kal-games) et KG_BingoGame (`network.`,
+     Kixster) ; `relay.properties` sur le proxy. Jamais dans le dépôt.
 - **Signal "partie fermée"** (Bingo démarré/annulé → retiré de la liste kal-games) : Forward + clé relais
   `party-closed-<gameId>` republiée chaque minute pendant 6 h ; kal-games interroge le relais toutes les 5 s.
 
@@ -74,35 +78,31 @@ JOURNAL. Les jars se recréent avec `sh <plugin>/build.sh`.
 
 ## Chantiers en cours
 
-- **Rush (KalGames 1.11.0 → 1.12.3)** : jouable, jamais testé en jeu. Cahier des charges et décisions :
-  `KalGames/JOURNAL.md`, sections 1.11.0 à 1.12.3. Code : `game/RushInstance.java`, `game/RushItems.java`,
-  `listener/RushListener.java`, `model/RushLayout.java`. Prochaine étape : retours de test (arène à configurer :
-  salle d'attente + 11 points par base).
-- **Découpage du Bingo** (décidé le 24/09/2026, étape par étape) :
-  - étape A, faite (non déployée) : `KG_Bingo` sorti de KalGames (KalGames 1.13.0 + KG_Bingo 1.0.0) ;
-  - étape B, faite (non déployée) : KalBingo renommé `KG_BingoGame` 0.2.0 (dossier du dépôt `KG_BingoGame/`) ;
-    migration de Kixster décrite dans `KG_BingoGame/JOURNAL.md` ;
-  - nouveau Bingo, fait (non déployé, non testé) : KG_BingoGame 0.3.0 + KG_Bingo 1.1.0 (barème, modes, nulle,
-    inactivité...) ; le « Nether commun » vu en test venait de la 0.1.20 (journaux de Kixster) : Nether / End par équipe à tester ;
-  - puis déploiement de tout en une fois et test complet d'une partie.
-- **KG_ScoreBoards** (annoncé par LeKiwi06 le 24/09/2026, après le Bingo) : scoreboards sortis de KalGames,
-  alimentés entre autres par les points d'équipe et solo du Bingo. Affichage des scores décidé : **6 chiffres au
-  plus** ; une décimale tant que c'est possible, plus de décimale à partir de 1 million ; puis à chaque puissance de
-  1000 le préfixe adéquat (K, M, Md) avec 3 chiffres décimaux au plus.
-- **Découpage de KalGames** en plusieurs plugins (`REGLES.md`, section 2) : décidé le 24/09/2026, pas commencé.
-  À faire progressivement, en commençant par le Rush. Le menu du hub deviendra aussi son propre plugin (`KG_Menu`,
-  annoncé par LeKiwi06 le 24/09/2026) : les prises `MenuEntry` de KalGames 1.13.0 le suivront. À traiter à cette
-  étape (demande de LeKiwi06, vu en test le 24/09/2026) : dans la liste des parties Bingo, **le pseudo affiché
-  n'est pas celui de l'hôte** - cause : le texte `bingo.party-entry` (KG_Bingo, `BingoMenus.bingoPartyButton`)
-  contient le pseudo en dur, et KalGames écrit dans son `lang.yml` le texte d'une clé absente la 1re fois qu'il
-  s'affiche (`Lang.java`, ligne 54) : le pseudo du 1er hôte affiché y est resté figé. Corriger avec un
-  paramètre `<host>` ET une nouvelle clé (ou retirer la ligne du `lang.yml` du serveur). Rendre aussi plus clair
-  le nombre de joueurs par équipe (« 2x4 équipes » est ambigu). Même principe prévu pour les modules de KaliumCore
-  (annoncé par LeKiwi06 le 24/09/2026 : `KG_Reward`, `KG_Economy`, `KG_Claim`, `KG_Sethome`...).
+- **Interfaces** (décidé par LeKiwi06 le 24/09/2026) : KLM_Menu 2.0.0 déployé partout. À déployer sur kal-games :
+  KG_Menu 1.0.0 + KLM_Menu 2.1.0 + KalGames 1.16.0 + KG_Bingo 1.3.0 + KG_ScoreBoards 1.2.0 (voir « Versions
+  compilées, non déployées »). Ensuite **phase 2** : accès des opérateurs aux interfaces des autres serveurs via
+  KaliumRelay (menus faits avec la boîte à outils ; menus en coffre et actions sur le joueur impossibles à distance).
+  Plus tard : un menu par serveur pour la créa, le skyblock, la survie.
+- **KG_ScoreBoards, étape B** : classements Bingo individuels solo / duo / trio / squad + blackout (tout enregistrer :
+  points solo et d'équipe, taille d'équipe, mode, objectifs en 1er, bingos, victoire / défaite / nulle ; parties sans
+  adversaire comptées), points à décimales (format : 6 chiffres max, décimale jusqu'à 1 million, puis K / M / Md
+  avec 3 décimales max), **journal des gains** (JSON Lines par mois, pour un futur bot Discord) et **fiche de chaque
+  partie** (avec l'heure de chaque objectif). **Étape C** : KG_BingoGame envoie les résultats via KaliumRelay.
+- **Bingo, bug à corriger** : dans la liste des parties (KG_Bingo), **le pseudo affiché n'est pas celui de
+  l'hôte** - le texte `bingo.party-entry` contient le pseudo en dur et le `lang.yml` de KalGames l'a figé à la 1re
+  apparition. Corriger avec un paramètre `<host>` ET une nouvelle clé ; rendre aussi plus clair le nombre de joueurs
+  par équipe (« 2x4 équipes » est ambigu).
+- **Rush (KalGames)** : jouable, jamais testé en jeu (arène à configurer : salle d'attente + 11 points par base).
+  Voir `KalGames/JOURNAL.md`, sections 1.11.0 à 1.12.3.
+- **Découpage de KalGames** en plugins par jeu (`REGLES.md`, section 2), progressivement, en commençant par le Rush.
+  Même principe prévu pour KaliumCore (`KG_Reward`, `KG_Economy`, `KG_Claim`, `KG_Sethome`...). Protections de
+  zone du hub : restent dans KalGames pour l'instant.
+- **Nettoyage des serveurs** : ne garder que les 2 derniers `_removed-…` par plugin (+ anciens `.bak`, dossiers
+  `-token`) : après le découpage des plugins, suppression par l'humain.
 
 ## Points ouverts / limites connues (rien de bloquant)
 
-- KalBingo : 18 anciens dossiers `bingo_<uuid>_<n>` de parties terminées avant 0.1.22 restent dans
+- KG_BingoGame : 18 anciens dossiers `bingo_<uuid>_<n>` de parties terminées avant 0.1.22 restent dans
   `Kixster SMP/dimensions/minecraft/` : à supprimer par l'humain s'il le souhaite.
 - Création d'une map Bingo : bloque Kixster ~8 s par map (génération synchrone du monde). Proposé, pas traité.
 - Un joueur Bingo déconnecté au moment exact du lancement ne reçoit ni kit de départ ni soin à son retour.
@@ -112,12 +112,12 @@ JOURNAL. Les jars se recréent avec `sh <plugin>/build.sh`.
 - Éléments inutilisés, à supprimer lors d'une prochaine version (commentaires et journaux obsolètes déjà corrigés
   le 24/09/2026, dans les versions non déployées) : `bingo.max-party-size` dans KG_Bingo.
 - **Jeton du relais** : l'ancien jeton, publié dans le dépôt public, a été remplacé le 24/09/2026 sur les 3
-  serveurs (proxy `relay.properties`, kal-games et Kixster `config.yml`) ; le nouveau n'est écrit que sur les
-  serveurs, jamais dans le dépôt. Code nettoyé le même jour (KaliumRelay 1.1.1, KalGames 1.12.4, KalBingo 0.1.23 :
-  plus aucun jeton dans le code, le relais ne l'affiche plus) : voir « Versions compilées, non déployées ».
-- Proxy : `geyserupdater-spigot.jar` (plugin Spigot) dans les plugins Velocity → erreur au démarrage, sans
-  conséquence. Non touché (pas demandé).
-- Réglages utiles côté Kixster (`plugins/KalBingo/config.yml`) : `instances.pregeneration-radius-blocks` (200),
+  serveurs ; le nouveau n'est écrit que sur les serveurs. Plus aucun jeton dans le code (KaliumRelay 1.1.1).
+- Vus dans les journaux, non touchés (pas demandé) : proxy `geyserupdater-spigot.jar` (plugin Spigot sur
+  Velocity) ; kal-games : config de ConditionalEvents invalide (ligne 10) ; Kixster : AnvilUnlocker sans
+  ProtocolLib, deux voicechat (2.6.23 et 2.6.24), Geyser sur le serveur au lieu du proxy.
+- Têtes des joueurs (menus du Bingo) : invisibles sur Bedrock (Geyser) - accepté.
+- Réglages utiles côté Kixster (`plugins/KG_BingoGame/config.yml`) : `instances.pregeneration-radius-blocks` (200),
   `instances.pregeneration-stagger-seconds` (10), `game.post-game-lobby-timeout-seconds` (600),
   `game.no-players-abandon-after-seconds` (600).
 - KalGames, réglages de charge : `arenas.capture-blocks-per-tick` (30 000), `instances.wipe-blocks-per-tick`
