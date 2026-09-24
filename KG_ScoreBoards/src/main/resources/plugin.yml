@@ -5,4 +5,4 @@ api-version: '26.2'
 description: Classements des mini-jeux (points, meilleurs temps, archives mensuelles, panneaux du hub), utilises par KalGames et KG_Bingo.
 authors: [KaLium]
 # 1.1.0 : boite a outils des menus et catalogue des interfaces.
-depend: [KLM_Menu]
+depend: [KLM_Menu, KG_Menu]

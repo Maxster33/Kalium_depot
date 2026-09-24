@@ -91,50 +91,40 @@ public final class KGScoreBoards extends JavaPlugin {
             lang.saveIfNeeded();
             stats.saveIfNeeded(false);
         }, 20L * 30, 20L * 30);
-        // 1.1.0 : interfaces declarees a KLM_Menu (catalogue "Interfaces" de la boussole).
-        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
-                fr.kalium.menu.api.MenuSection.of(this, "rankings", fr.kalium.menu.api.MenuSection.Audience.PLAYERS,
-                        t("klm.rankings", "<light_purple>Classements"),
-                        t("klm.rankings-tip", "<gray>Top 10 général et du mois de chaque jeu."),
-                        (p, back) -> openList(p, false, back)),
-                this, org.bukkit.plugin.ServicePriority.Normal);
-        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
-                new fr.kalium.menu.api.MenuSection() {
-                    @Override
-                    public String id() {
-                        return "rankings-admin";
-                    }
+        // 1.2.0 : boutons fournis a KG_Menu (menu du serveur kal-games) au lieu de KLM_Menu directement : "Classements"
+        // dans l'accueil, "Classements (modération)" dans les Parametres.
+        getServer().getServicesManager().register(fr.kalium.kgmenu.api.MenuProvider.class, new fr.kalium.kgmenu.api.MenuProvider() {
+            @Override
+            public org.bukkit.plugin.Plugin owner() {
+                return KGScoreBoards.this;
+            }
 
-                    @Override
-                    public org.bukkit.plugin.Plugin owner() {
-                        return KGScoreBoards.this;
-                    }
+            @Override
+            public int order() {
+                return 90;
+            }
 
-                    @Override
-                    public Component title() {
-                        return t("klm.rankings-admin", "<light_purple>Classements (modération)");
-                    }
+            @Override
+            public List<Entry> games(Player player) {
+                return List.of();
+            }
 
-                    @Override
-                    public Component description() {
-                        return t("klm.rankings-admin-tip", "<gray>Classements complets, archives, panneaux du hub, clôture du mois.");
-                    }
+            @Override
+            public List<Entry> extras(Player player) {
+                return List.of(new Entry("rankings", t("klm.rankings", "<light_purple>Classements"),
+                        t("klm.rankings-tip", "<gray>Top 10 général et du mois de chaque jeu."), (p, back) -> openList(p, false, back)));
+            }
 
-                    @Override
-                    public Audience audience() {
-                        return Audience.ADMINS;
-                    }
-
-                    @Override
-                    public boolean visibleTo(Player player) {
-                        return isAdmin(player);
-                    }
-
-                    @Override
-                    public void open(Player player, Consumer<Player> back) {
-                        openList(player, true, back);
-                    }
-                }, this, org.bukkit.plugin.ServicePriority.Normal);
+            @Override
+            public List<Entry> settings(Player player) {
+                if (!isAdmin(player)) {
+                    return List.of();
+                }
+                return List.of(new Entry("rankings-admin", t("klm.rankings-admin", "<light_purple>Classements (modération)"),
+                        t("klm.rankings-admin-tip", "<gray>Classements complets, archives, panneaux du hub, clôture du mois."),
+                        (p, back) -> openList(p, true, back)));
+            }
+        }, this, org.bukkit.plugin.ServicePriority.Normal);
         getLogger().info("KG_ScoreBoards actif.");
     }
 

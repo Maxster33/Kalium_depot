@@ -16,7 +16,7 @@ import java.util.List;
  * d'attente) et Parametres > Bingo (duree maximale). Deplaces tels quels de KalGames (PlayerMenus / AdminMenus,
  * 1.10.1 a 1.10.6) dans KG_Bingo 1.0.0, sans changement de comportement : memes textes (cles "bingo." et
  * "admin.bingo-" du lang.yml de KalGames), meme apparence (assistant Gui de KalGames). Les boutons sont
- * branches sur les menus de KalGames par KGBingo.onEnable (MenuEntry).
+ * fournis a KG_Menu par KGBingo.onEnable (MenuProvider, 1.3.0).
  */
 final class BingoMenus {
 

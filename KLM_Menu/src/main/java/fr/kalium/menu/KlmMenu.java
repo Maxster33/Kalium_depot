@@ -796,6 +796,18 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
                         || item.getItemMeta().getPersistentDataContainer().has(legacyCompassKey, PersistentDataType.BYTE));
     }
 
+    /**
+     * 2.1.0 - API pour les autres plugins : remet les objets de navigation de KLM_Menu (la boussole) apres qu'un
+     * plugin a vide l'inventaire du joueur (ex. KalGames au hub). Demande de LeKiwi06 : "la boussole fait partie de
+     * l'interface [...] geree sur tous les serveurs par le meme plugin" - les autres plugins ne la fabriquent plus
+     * (KalGames passait par la commande /kaliummenu give). Sans effet si la boussole est desactivee sur ce serveur.
+     */
+    public void giveNavigation(Player player) {
+        if (player != null && player.isOnline()) {
+            giveCompass(player);
+        }
+    }
+
     private void giveCompass(Player player) {
         if (!getConfig().getBoolean("compass.enabled", true)) {
             return;

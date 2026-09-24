@@ -1,6 +1,6 @@
 # ============================================================
-#  KaliumMenu - configuration
-#  Le meme fichier .jar est installe sur les 3 serveurs Paper.
+#  KLM_Menu (anciennement KaliumMenu) - configuration
+#  Le meme fichier .jar est installe sur tous les serveurs Paper.
 #  Seule la valeur "role" change : "lobby" sur le lobby,
 #  "backend" sur kixster et kal-games.
 # ============================================================

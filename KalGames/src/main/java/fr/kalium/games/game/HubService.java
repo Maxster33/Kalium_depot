@@ -101,9 +101,9 @@ public final class HubService {
         player.setVelocity(new Vector());
     }
 
-    /** Objets du hub : menu des mini-jeux + boussole de KLM_Menu. */
+    /** Objets du hub : objet de KG_Menu (menu des mini-jeux) + boussole de KLM_Menu (1.16.0 : geres par ces plugins). */
     public void giveHubItems(Player player) {
-        player.getInventory().setItem(plugin.items().slot("items.games.slot", 4), plugin.items().gamesItem());
+        plugin.kgMenu().giveHubItem(player);
         giveCompass(player);
     }
 
@@ -117,14 +117,12 @@ public final class HubService {
     }
 
     /**
-     * La boussole est celle de KLM_Menu (commande /kaliummenu give, qui verrouille l'objet). 1.15.1 : correctif - le
-     * plugin s'appelait KaliumMenu jusqu'au 24/09/2026 ; apres son renommage en KLM_Menu, la boussole n'etait plus
-     * redonnee au hub (vu par LeKiwi06). Les deux noms sont acceptes.
+     * La boussole est geree par KLM_Menu (1.16.0 - demande de LeKiwi06 : "la boussole fait partie de l'interface [...]
+     * geree sur tous les serveurs par le meme plugin") : KalGames lui demande seulement de la remettre apres avoir vide
+     * l'inventaire.
      */
     private void giveCompass(Player player) {
-        if (Bukkit.getPluginManager().isPluginEnabled("KLM_Menu") || Bukkit.getPluginManager().isPluginEnabled("KaliumMenu")) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "kaliummenu give " + player.getName());
-        }
+        plugin.klm().giveNavigation(player);
     }
 
     /** Etat des joueurs dans les gradins d'une partie. */

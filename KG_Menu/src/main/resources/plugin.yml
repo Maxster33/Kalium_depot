@@ -1,0 +1,12 @@
+name: KG_Menu
+version: '${project.version}'
+main: fr.kalium.kgmenu.KgMenu
+api-version: '26.2'
+description: Menu du serveur kal-games (liste des jeux, parametres), alimente par les plugins de kal-games et affiche dans KLM_Menu.
+authors: [KaLium]
+depend: [KLM_Menu]
+
+permissions:
+  kgmenu.bypass:
+    description: Permet de deplacer et jeter l'objet du hub (comme avant dans KalGames, personne par defaut).
+    default: false

@@ -1,7 +1,6 @@
 package fr.kalium.games.bingo;
 
 import fr.kalium.games.KalGames;
-import fr.kalium.games.gui.MenuEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
@@ -14,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * (REGLES.md, section 2). Le jeu lui-meme tourne sur le serveur Bingo (plugin KalBingo, futur KG_BingoGame).
  *
  * Depend de KalGames (plugin.yml : depend) : utilise ses menus (assistant Gui, textes lang.yml) et y ajoute ses
- * boutons via les "prises" MenuEntry (PlayerMenus.addGameEntry / AdminMenus.addSettingsEntry).
+ * boutons (1.3.0) en les fournissant a KG_Menu, le menu du serveur kal-games (MenuProvider).
  */
 public final class KGBingo extends JavaPlugin {
 
@@ -50,67 +49,40 @@ public final class KGBingo extends JavaPlugin {
         BingoMenus menus = new BingoMenus(this, kg);
         // Bingo : serveur dedie separe, pas un Minigame/Arena classique de KalGames - bouton visible de tous
         // (comme /bingo create et /bingo join).
-        kg.menus().addGameEntry(new MenuEntry(ENTRY_ID,
-                () -> menus.t("bingo.hub-entry", "<gold><bold>Bingo"),
-                () -> menus.t("bingo.hub-entry-tip", "<gray>Mini-jeu sur serveur dédié : créez une partie ou rejoignez-en une avec un code."),
-                menus::openBingoMenu));
-        kg.admin().addSettingsEntry(new MenuEntry(ENTRY_ID,
-                () -> menus.t("admin.home-bingo", "<light_purple>Bingo"),
-                () -> menus.t("admin.home-bingo-tip", "<gray>Durée maximale d'une partie."),
-                menus::openBingoSettings));
-        // 1.2.0 : interfaces declarees a KLM_Menu (catalogue "Interfaces" de la boussole).
-        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
-                fr.kalium.menu.api.MenuSection.of(this, "bingo", fr.kalium.menu.api.MenuSection.Audience.PLAYERS,
-                        menus.t("bingo.hub-entry", "<gold><bold>Bingo"),
+        // 1.3.0 : boutons fournis a KG_Menu (menu du serveur kal-games), decouverts au demarrage - remplace les prises
+        // MenuEntry de KalGames et l'inscription directe dans KLM_Menu (1.2.0).
+        getServer().getServicesManager().register(fr.kalium.kgmenu.api.MenuProvider.class, new fr.kalium.kgmenu.api.MenuProvider() {
+            @Override
+            public org.bukkit.plugin.Plugin owner() {
+                return KGBingo.this;
+            }
+
+            @Override
+            public int order() {
+                return 20;
+            }
+
+            @Override
+            public java.util.List<Entry> games(org.bukkit.entity.Player player) {
+                return java.util.List.of(new Entry(ENTRY_ID, menus.t("bingo.hub-entry", "<gold><bold>Bingo"),
                         menus.t("bingo.hub-entry-tip", "<gray>Mini-jeu sur serveur dédié : créez une partie ou rejoignez-en une avec un code."),
-                        (p, back) -> menus.openBingoMenu(p)),
-                this, org.bukkit.plugin.ServicePriority.Normal);
-        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
-                new fr.kalium.menu.api.MenuSection() {
-                    @Override
-                    public String id() {
-                        return "settings";
-                    }
+                        (p, back) -> menus.openBingoMenu(p)));
+            }
 
-                    @Override
-                    public org.bukkit.plugin.Plugin owner() {
-                        return KGBingo.this;
-                    }
-
-                    @Override
-                    public net.kyori.adventure.text.Component title() {
-                        return menus.t("admin.home-bingo", "<light_purple>Bingo") .append(net.kyori.adventure.text.Component.text(" : réglages"));
-                    }
-
-                    @Override
-                    public net.kyori.adventure.text.Component description() {
-                        return menus.t("admin.home-bingo-tip", "<gray>Durée maximale d'une partie.");
-                    }
-
-                    @Override
-                    public Audience audience() {
-                        return Audience.ADMINS;
-                    }
-
-                    @Override
-                    public boolean visibleTo(org.bukkit.entity.Player player) {
-                        return kg.isAdmin(player);
-                    }
-
-                    @Override
-                    public void open(org.bukkit.entity.Player player, java.util.function.Consumer<org.bukkit.entity.Player> back) {
-                        menus.openBingoSettings(player);
-                    }
-                }, this, org.bukkit.plugin.ServicePriority.Normal);
+            @Override
+            public java.util.List<Entry> settings(org.bukkit.entity.Player player) {
+                if (!kg.isAdmin(player)) {
+                    return java.util.List.of();
+                }
+                return java.util.List.of(new Entry(ENTRY_ID, menus.t("admin.home-bingo", "<light_purple>Bingo"),
+                        menus.t("admin.home-bingo-tip", "<gray>Durée maximale d'une partie."), (p, back) -> menus.openBingoSettings(p)));
+            }
+        }, this, org.bukkit.plugin.ServicePriority.Normal);
         getLogger().info("KG_Bingo actif.");
     }
 
     @Override
     public void onDisable() {
-        if (kg != null) {
-            kg.menus().removeGameEntry(ENTRY_ID);
-            kg.admin().removeSettingsEntry(ENTRY_ID);
-        }
         getServer().getMessenger().unregisterOutgoingPluginChannel(this);
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
     }

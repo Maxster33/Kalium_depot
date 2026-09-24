@@ -15,6 +15,7 @@ import java.util.List;
 /** Objets verrouilles du plugin : menu des mini-jeux (hub), menu de la partie, dernier checkpoint. */
 public final class ItemService {
 
+    /** Ancien objet "Mini-jeux" du hub (1.16.0 : fourni par KG_Menu) - reconnu pour les objets encore en inventaire. */
     public static final String GAMES = "games";
     public static final String GAME = "game";
     public static final String CHECKPOINT = "checkpoint";
@@ -38,11 +39,6 @@ public final class ItemService {
         meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, kind);
         item.setItemMeta(meta);
         return item;
-    }
-
-    public ItemStack gamesItem() {
-        return build(GAMES, "items.games", Material.NETHER_STAR, "item.games",
-                "<gold><bold>Mini-jeux", new String[]{"<gray>Clic droit pour choisir", "<gray>un mini-jeu."});
     }
 
     public ItemStack gameMenuItem() {

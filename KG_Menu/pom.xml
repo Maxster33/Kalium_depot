@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.kalium</groupId>
-    <artifactId>KLM_Menu</artifactId>
-    <version>2.1.0</version>
+    <artifactId>KG_Menu</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>KLM_Menu</name>
+    <name>KG_Menu</name>
 
     <properties>
         <!-- Paper 26.x requires Java 25 -->

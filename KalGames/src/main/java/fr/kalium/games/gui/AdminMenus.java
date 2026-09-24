@@ -121,24 +121,6 @@ public final class AdminMenus {
         return player.getWorld();
     }
 
-    // ------------------------------------------------------------------ boutons ajoutes par d'autres plugins (1.13.0)
-
-    /** Boutons de l'accueil des Parametres declares par d'autres plugins (voir MenuEntry), dans l'ordre d'ajout. */
-    private final List<MenuEntry> settingsEntries = new ArrayList<>();
-
-    /**
-     * Ajoute (ou remplace, meme id) un bouton dans l'accueil des Parametres (moderateurs), apres "Hub de Kal-Games".
-     * Le clic n'est execute que pour un moderateur (kalgames.admin).
-     */
-    public void addSettingsEntry(MenuEntry entry) {
-        removeSettingsEntry(entry.id());
-        settingsEntries.add(entry);
-    }
-
-    public void removeSettingsEntry(String id) {
-        settingsEntries.removeIf(e -> e.id().equals(id));
-    }
-
     // ------------------------------------------------------------------ accueil
 
     public void openHome(Player player) {
@@ -164,18 +146,15 @@ public final class AdminMenus {
         buttons.add(btn(t("admin.home-arenas", "<green>Arènes"), t("admin.home-arenas-tip", "<gray>Points, capture de la zone, test."), p -> openArenas(p, null)));
         buttons.add(btn(t("admin.home-kits", "<aqua>Kits"), t("admin.home-kits-tip", "<gray>Créer depuis votre inventaire ou importer de PlayerKits2."), this::openKits));
         buttons.add(btn(t("admin.home-hub", "<yellow>Hub de Kal-Games"), t("admin.home-hub-tip", "<gray>Définir le point d'arrivée."), this::openHub));
-        // 1.13.0 : boutons ajoutes par d'autres plugins (ex. "Bingo" par KG_Bingo), voir MenuEntry.
-        for (MenuEntry entry : new ArrayList<>(settingsEntries)) {
-            buttons.add(btn(entry.label().get(), entry.tooltip() == null ? null : entry.tooltip().get(), entry.click()));
-        }
         buttons.add(btn(t("admin.home-games", "<light_purple>Parties en cours"), null, this::openInstances));
         buttons.add(btn(t("admin.home-reload", "<gray>Recharger la configuration"), null, p -> {
             plugin.reloadAll();
             say(p, "admin.reloaded", "<green>Configuration rechargée.");
             openHome(p);
         }));
-        buttons.add(btn(t("menu.back", "<gray>Retour"), null, plugin.menus()::openGames));
-        gui.open(player, t("admin.home-title", "<light_purple><bold>Paramètres Kal-Games"), body, List.of(), buttons, null, 1);
+        // 1.16.0 : retour a l'accueil "Parametres" de KG_Menu (reglages de tous les plugins de kal-games).
+        buttons.add(btn(t("menu.back", "<gray>Retour"), null, p -> plugin.kgMenu().openSettings(p, null)));
+        gui.open(player, t("admin.mg-home-title", "<light_purple><bold>Mini-jeux Kal-Games : paramètres"), body, List.of(), buttons, null, 1);
     }
 
     // ------------------------------------------------------------------ hub

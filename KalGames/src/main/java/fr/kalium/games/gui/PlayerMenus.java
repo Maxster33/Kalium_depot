@@ -44,48 +44,43 @@ public final class PlayerMenus {
         return plugin.lang().parse(minigame.display());
     }
 
-    /** Point d'entree de l'objet verrouille (clic droit). */
+    /**
+     * Objet du hub, objet "menu de la partie", /kalgames menu : KG_Menu ouvre le menu de la partie en cours (voir
+     * openCurrent) ou l'accueil de kal-games (1.16.0 : le cadre des menus du hub est dans KG_Menu).
+     */
     public void openMenuFor(Player player) {
-        long now = System.currentTimeMillis();
-        Long previous = lastOpen.put(player.getUniqueId(), now);
-        if (previous != null && now - previous < COOLDOWN_MS) {
-            return;
-        }
+        plugin.kgMenu().openFor(player);
+    }
+
+    /** Menu de la partie ou spectateur si le joueur est dans un mini-jeu de KalGames (true), sinon rien (false). */
+    public boolean openCurrent(Player player) {
         if (plugin.instances().of(player) != null) {
             openGameMenu(player);
-        } else if (plugin.instances().spectatorOf(player) != null) {
-            openSpectatorMenu(player);
-        } else {
-            openGames(player);
+            return true;
         }
+        if (plugin.instances().spectatorOf(player) != null) {
+            openSpectatorMenu(player);
+            return true;
+        }
+        return false;
     }
 
     public void forget(UUID uuid) {
         lastOpen.remove(uuid);
     }
 
-    // ------------------------------------------------------------------ boutons ajoutes par d'autres plugins (1.13.0)
-
-    /** Boutons du menu Mini-jeux declares par d'autres plugins (voir MenuEntry), dans l'ordre d'ajout. */
-    private final List<MenuEntry> gameEntries = new ArrayList<>();
-
-    /** Ajoute (ou remplace, meme id) un bouton dans le menu Mini-jeux, apres les mini-jeux de KalGames. */
-    public void addGameEntry(MenuEntry entry) {
-        removeGameEntry(entry.id());
-        gameEntries.add(entry);
-    }
-
-    public void removeGameEntry(String id) {
-        gameEntries.removeIf(e -> e.id().equals(id));
-    }
-
     // ------------------------------------------------------------------ hub : liste des mini-jeux
 
+    /** Accueil de kal-games (dans KG_Menu depuis la 1.16.0). */
     public void openGames(Player player) {
-        List<ActionButton> buttons = new ArrayList<>();
+        plugin.kgMenu().openHome(player, null);
+    }
+
+    /** Boutons des mini-jeux de KalGames pour l'accueil de KG_Menu (1.16.0 : meme contenu que l'ancien menu). */
+    public List<fr.kalium.kgmenu.api.MenuProvider.Entry> gameEntries(Player player) {
+        List<fr.kalium.kgmenu.api.MenuProvider.Entry> entries = new ArrayList<>();
         boolean admin = plugin.isAdmin(player);
         InstanceManager manager = plugin.instances();
-
         for (Minigame minigame : plugin.repository().minigames()) {
             if (!minigame.playable()) {
                 continue;
@@ -104,23 +99,11 @@ public final class PlayerMenus {
             } else {
                 tip.add(t("menu.games-unusable", "<red>Aucune arène complète (visible des modérateurs uniquement)."));
             }
-            buttons.add(gui.button(name(minigame), Component.join(net.kyori.adventure.text.JoinConfiguration.newlines(), tip),
-                    p -> openMinigame(p, minigame)));
+            entries.add(new fr.kalium.kgmenu.api.MenuProvider.Entry(minigame.id(), name(minigame),
+                    Component.join(net.kyori.adventure.text.JoinConfiguration.newlines(), tip),
+                    (p, back) -> openMinigame(p, minigame)));
         }
-        // 1.13.0 : boutons ajoutes par d'autres plugins (ex. "Bingo" par KG_Bingo), voir MenuEntry.
-        for (MenuEntry entry : new ArrayList<>(gameEntries)) {
-            buttons.add(gui.button(entry.label().get(), entry.tooltip() == null ? null : entry.tooltip().get(), entry.click()));
-        }
-        if (admin) {
-            buttons.add(gui.button(t("menu.settings", "<light_purple><bold>Paramètres"),
-                    t("menu.settings-tip", "<gray>Réservé aux modérateurs : mini-jeux, arènes, kits, hub."),
-                    p -> plugin.admin().openHome(p)));
-        }
-        List<Component> body = new ArrayList<>();
-        body.add(buttons.isEmpty()
-                ? t("menu.games-empty", "<gray>Aucun mini-jeu n'est disponible pour le moment.")
-                : t("menu.games-intro", "<gray>Choisissez un mini-jeu."));
-        gui.open(player, t("menu.games-title", "<gold><bold>Mini-jeux Kal-Games"), body, List.of(), buttons, null, 1);
+        return entries;
     }
 
     // ------------------------------------------------------------------ mini-jeu choisi

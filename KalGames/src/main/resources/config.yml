@@ -30,9 +30,7 @@ gui:
 
 # Objets verrouilles (emplacement de la hotbar 0-8 et matiere).
 items:
-  games:
-    slot: 4
-    material: NETHER_STAR
+  # 1.16.0 : l'objet "Mini-jeux" du hub (anciennement items.games) est reglé dans la config de KG_Menu (hub-item).
   game-menu:
     slot: 4
     material: NETHER_STAR

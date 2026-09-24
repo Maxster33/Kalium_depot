@@ -1,0 +1,16 @@
+# ============================================================
+#  KG_Menu - configuration
+#  Menu du serveur kal-games : liste des jeux et parametres, alimentes par les plugins de kal-games
+#  (KalGames, KG_Bingo, KG_ScoreBoards...). Detail des versions dans JOURNAL.md.
+#  Ce fichier n'est copie qu'a la premiere installation : une nouvelle cle doit etre ajoutee a la main.
+# ============================================================
+
+# Objet du hub qui ouvre le menu (anciennement items.games dans la config de KalGames).
+hub-item:
+  # Emplacement de la barre d'objets, de 0 (gauche) a 8 (droite).
+  slot: 4
+  material: NETHER_STAR
+
+gui:
+  # Largeur des boutons des menus (100 a 400).
+  button-width: 240

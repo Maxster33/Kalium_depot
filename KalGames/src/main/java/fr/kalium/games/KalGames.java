@@ -99,7 +99,7 @@ public final class KalGames extends JavaPlugin {
             }
         }
         // 1.13.0 : le Bingo (menu, /bingo, lien avec le serveur Bingo) est dans le plugin separe KG_Bingo, qui
-        // ajoute ses boutons aux menus via PlayerMenus.addGameEntry / AdminMenus.addSettingsEntry.
+        // fournit ses boutons a KG_Menu (1.16.0, voir KG_Bingo / KGBingo.onEnable).
 
         // Le monde des instances est cree une fois le serveur completement demarre.
         Bukkit.getScheduler().runTask(this, () -> {
@@ -121,49 +121,38 @@ public final class KalGames extends JavaPlugin {
         BukkitTask save = Bukkit.getScheduler().runTaskTimer(this, () -> {
             lang.saveIfNeeded();
         }, 20L * 30, 20L * 30);
-        // 1.15.0 : interfaces declarees a KLM_Menu (catalogue "Interfaces" de la boussole).
-        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
-                fr.kalium.menu.api.MenuSection.of(this, "hub", fr.kalium.menu.api.MenuSection.Audience.PLAYERS,
-                        t("klm.hub", "<gold>Hub Kal-Games"), t("klm.hub-tip", "<gray>Mini-jeux : parties publiques et privées, classements."),
-                        (p, back) -> menus.openMenuFor(p)),
-                this, org.bukkit.plugin.ServicePriority.Normal);
-        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
-                new fr.kalium.menu.api.MenuSection() {
-                    @Override
-                    public String id() {
-                        return "settings";
-                    }
+        // 1.16.0 : les interfaces de KalGames sont fournies a KG_Menu (menu du serveur kal-games), qui les affiche et
+        // apparait lui-meme dans le catalogue de KLM_Menu.
+        getServer().getServicesManager().register(fr.kalium.kgmenu.api.MenuProvider.class, new fr.kalium.kgmenu.api.MenuProvider() {
+            @Override
+            public org.bukkit.plugin.Plugin owner() {
+                return KalGames.this;
+            }
 
-                    @Override
-                    public org.bukkit.plugin.Plugin owner() {
-                        return KalGames.this;
-                    }
+            @Override
+            public int order() {
+                return 10;
+            }
 
-                    @Override
-                    public net.kyori.adventure.text.Component title() {
-                        return t("klm.settings", "<yellow>Paramètres Kal-Games");
-                    }
+            @Override
+            public java.util.List<Entry> games(Player player) {
+                return menus.gameEntries(player);
+            }
 
-                    @Override
-                    public net.kyori.adventure.text.Component description() {
-                        return t("klm.settings-tip", "<gray>Mini-jeux, arènes, kits, hub.");
-                    }
+            @Override
+            public java.util.List<Entry> settings(Player player) {
+                if (!isAdmin(player)) {
+                    return java.util.List.of();
+                }
+                return java.util.List.of(new Entry("kalgames", t("klm.settings", "<gold>Mini-jeux Kal-Games"),
+                        t("klm.settings-tip", "<gray>Mini-jeux, arènes, kits, hub, parties en cours."), (p, back) -> admin.openHome(p)));
+            }
 
-                    @Override
-                    public Audience audience() {
-                        return Audience.ADMINS;
-                    }
-
-                    @Override
-                    public boolean visibleTo(Player player) {
-                        return isAdmin(player);
-                    }
-
-                    @Override
-                    public void open(Player player, java.util.function.Consumer<Player> back) {
-                        admin.openHome(player);
-                    }
-                }, this, org.bukkit.plugin.ServicePriority.Normal);
+            @Override
+            public boolean openCurrent(Player player) {
+                return menus.openCurrent(player);
+            }
+        }, this, org.bukkit.plugin.ServicePriority.Normal);
         getLogger().info("KalGames actif : " + repository.minigames().size() + " mini-jeu(x), " + repository.arenas().size()
                 + " arène(s), " + kits.all().size() + " kit(s).");
         if (save.isCancelled()) {
@@ -244,6 +233,16 @@ public final class KalGames extends JavaPlugin {
     /** Donnees des classements (KG_ScoreBoards). */
     public fr.kalium.scoreboards.data.StatsService stats() {
         return ranking.stats();
+    }
+
+    /** Menu du serveur kal-games (KG_Menu, 1.16.0). */
+    public fr.kalium.kgmenu.KgMenu kgMenu() {
+        return (fr.kalium.kgmenu.KgMenu) getServer().getPluginManager().getPlugin("KG_Menu");
+    }
+
+    /** Interface globale du reseau (KLM_Menu : boussole, navigation). */
+    public fr.kalium.menu.KlmMenu klm() {
+        return (fr.kalium.menu.KlmMenu) getServer().getPluginManager().getPlugin("KLM_Menu");
     }
 
     /** Classements : menus, panneaux (KG_ScoreBoards). */
