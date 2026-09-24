@@ -44,3 +44,9 @@ encore d'`archives/` ; textes des classements repris du `lang.yml` de KalGames ;
   **« Classements (modération) »** (admins : liste des jeux → menu modérateur : complets, archives, panneaux, clôture).
 - API : `addCategories(source, identifiants)` pour que les classements d'un plugin puissent être listés.
 **Déploiement** : avec KLM_Menu 2.0.0, KalGames 1.15.0. **Statut : déployé le 24/09/2026, non testé en jeu.**
+
+## 1.2.0 — boutons fournis à KG_Menu (24/09/2026)
+
+- « Classements » (accueil de kal-games) et « Classements (modération) » (Paramètres, admins) fournis à KG_Menu au
+  lieu d'être inscrits directement dans KLM_Menu. Dépend de KG_Menu.
+**Déploiement** : avec KG_Menu 1.0.0, KalGames 1.16.0. **Statut : compilé, non déployé.**

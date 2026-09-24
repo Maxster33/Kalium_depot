@@ -702,3 +702,18 @@ renommage) : KalGames redonne la boussole au hub (après avoir vidé l'inventair
 « KaliumMenu » est actif. Corrigé : `KLM_Menu` (ou l'ancien nom) ; l'outil « créer un kit depuis mon inventaire »
 écarte aussi les boussoles à la nouvelle étiquette (`klm_menu:menu_compass`). `softdepend` : KaliumMenu retiré
 (KLM_Menu est déjà dans `depend`). **Statut : déployé sur kal-games le 24/09/2026 (redémarrage à faire).**
+
+## 1.16.0 — menus du hub dans KG_Menu (24/09/2026)
+
+**Demande de LeKiwi06** : menu du serveur kal-games séparé (KG_Menu), boussole gérée par KLM_Menu. Les protections
+de zone du hub restent dans KalGames (« on s'en occupera plus tard »).
+- Retirés : le cadre de l'accueil joueur (liste des jeux) et de l'accueil Paramètres (prises `MenuEntry` supprimées),
+  l'objet « Mini-jeux » du hub (dans KG_Menu ; les anciens encore en inventaire ouvrent KG_Menu).
+- KalGames fournit à KG_Menu : ses mini-jeux (même contenu qu'avant), « Mini-jeux Kal-Games » dans Paramètres (son
+  ancien accueil admin : mini-jeux, arènes, kits, hub, parties en cours, recharger ; titre « Mini-jeux Kal-Games :
+  paramètres » ; son bouton « Retour » ramène aux Paramètres de KG_Menu) et le menu de la partie en cours.
+- Au hub : objet du hub donné par KG_Menu, boussole par KLM_Menu (`giveNavigation`) - plus de commande console.
+- N'inscrit plus rien directement dans KLM_Menu (c'est KG_Menu qui y apparaît). `items.games` retiré de la config
+  (voir `hub-item` dans celle de KG_Menu). Dépend de KG_Menu.
+**Déploiement** : avec KG_Menu 1.0.0, KLM_Menu 2.1.0, KG_Bingo 1.3.0, KG_ScoreBoards 1.2.0. **Statut : compilé, non
+déployé.**

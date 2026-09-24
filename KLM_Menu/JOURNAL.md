@@ -51,3 +51,10 @@ pour trouver les interfaces de chaque chose ». Les mini-jeux gardent leurs prop
 renommer `plugins/KaliumMenu/` en `plugins/KLM_Menu/`, envoyer `KLM_Menu-2.0.0.jar`. Nouveau sur Kixster : config par
 défaut avec **`compass.enabled: false`** (la boussole est un objectif du Bingo : elle le validerait) ; menu par
 `/servers`. **Statut : déployé le 24/09/2026 sur kal-games, lobby et Kixster, non testé en jeu.**
+
+## 2.1.0 — la boussole entièrement gérée par KLM_Menu (24/09/2026)
+
+**Demande de LeKiwi06** : « la boussole fait partie de l'interface [...] gérée sur tous les serveurs par le même
+plugin ». Nouvelle méthode `giveNavigation(joueur)` : un plugin qui vide l'inventaire (KalGames au hub) demande à
+KLM_Menu de remettre la boussole, au lieu de la commande console `/kaliummenu give`. En-tête de `config.yml` mis à
+jour. **Statut : compilé, non déployé** (avec KG_Menu 1.0.0).
