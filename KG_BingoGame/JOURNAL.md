@@ -1311,8 +1311,11 @@ JOURNAL). Décision : noms internes du code conservés (`fr.kalium.bingo`, class
 - **Papier Objectifs** : ne peut plus quitter l'inventaire du joueur (artisanat, coffres, villageois, cadres...),
   jamais lâché à la mort ; il ne compte plus pour l'objectif PAPER (bug).
 - Supprimée : clé `reconnect-during-game.abandon-after-seconds` (remplacée par `game.disconnect-abandon-seconds`).
-- **Non corrigé** : Nether commun à toutes les équipes vu en test (le code 0.1.22 prévoit un Nether par équipe) ;
-  diagnostic en attente des journaux de Kixster.
+- **Nether commun vu en test : pas un bug de la 0.1.22.** Les journaux de Kixster montrent que cette partie (23/09,
+  21 h 50 – 22 h 52) tournait encore avec la **0.1.20**, d'avant les Nether / End par équipe et le keepInventory ; la
+  0.1.22 a été déposée à 23 h 15. La seule partie jouée en 0.1.22 (24/09, 3 h 35, test du jeton) a bien généré un
+  Nether et un End par équipe (`..._1_nether`, `..._2_the_end`...), mais s'est terminée au bout d'une minute : les
+  portails n'ont jamais été essayés. À tester : Nether et End de chaque équipe, et keepInventory.
 
 **Déploiement** : avec KG_Bingo 1.1.0 (et les versions en attente : KaliumRelay 1.1.1, KalGames 1.13.0). Suivre la
 procédure de migration de la 0.2.0 ci-dessus (jamais déployée), avec en plus : déplacer l'ancien

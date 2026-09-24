@@ -79,7 +79,7 @@ de `plugins/KalGames/config.yml` (kal-games) dans `plugins/KG_Bingo/config.yml`,
   - étape B, faite (non déployée) : KalBingo renommé `KG_BingoGame` 0.2.0 (dossier du dépôt `KG_BingoGame/`) ;
     migration de Kixster décrite dans `KG_BingoGame/JOURNAL.md` ;
   - nouveau Bingo, fait (non déployé, non testé) : KG_BingoGame 0.3.0 + KG_Bingo 1.1.0 (barème, modes, nulle,
-    inactivité...) ; reste le **Nether commun à toutes les équipes** vu en test (journaux de Kixster à lire) ;
+    inactivité...) ; le « Nether commun » vu en test venait de la 0.1.20 (journaux de Kixster) : Nether / End par équipe à tester ;
   - puis déploiement de tout en une fois et test complet d'une partie.
 - **KG_ScoreBoards** (annoncé par LeKiwi06 le 24/09/2026, après le Bingo) : scoreboards sortis de KalGames,
   alimentés entre autres par les points d'équipe et solo du Bingo. Affichage des scores décidé : **6 chiffres au
