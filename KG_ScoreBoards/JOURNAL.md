@@ -49,4 +49,4 @@ encore d'`archives/` ; textes des classements repris du `lang.yml` de KalGames ;
 
 - « Classements » (accueil de kal-games) et « Classements (modération) » (Paramètres, admins) fournis à KG_Menu au
   lieu d'être inscrits directement dans KLM_Menu. Dépend de KG_Menu.
-**Déploiement** : avec KG_Menu 1.0.0, KalGames 1.16.0. **Statut : déployé sur Kal-Games (7001) le 24/09/2026, non testé en jeu.**
+**Déploiement** : avec KG_Menu 1.0.0, KalGames 1.16.0. **Statut : déployé sur Kal-Games (7001) le 24/09/2026, testé et confirmé par LeKiwi06 le 24/09/2026 (menus et panneaux du hub ; records à confirmer).**

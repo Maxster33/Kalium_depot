@@ -17,12 +17,11 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 ## Utilisés actuellement
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-09-24 13:58 — nouveau plugin : course de bateau sortie de KalGames (Grand Prix, fantôme, barème, temps par checkpoint)
+- KalGames — LeKiwi06 — depuis le 2026-09-24 18:05 — sortie de la course de bateau vers KG_BoatRace (puis du Parkour vers KG_Parkour)
 
 
 ## Requis parfois
 
-- KG_BingoGame — LeKiwi06 — depuis le 2026-09-24 17:06 — déploiement de la 0.6.0 sur Serveur Jeux (7015)
-- KalGames, KG_Menu, KLM_Menu, KG_Bingo, KG_ScoreBoards — LeKiwi06 — depuis le 2026-09-24 17:06 — déploiement groupé sur Kal-Games (7001) : KalGames 1.16.0, KG_Menu 1.0.0, KLM_Menu 2.1.0, KG_Bingo 1.3.0, KG_ScoreBoards 1.2.0 (aucun changement de code)
 
 
 ## Demandes
