@@ -35,3 +35,12 @@ les résultats du Bingo arriveront plus tard par KaliumRelay ; archives détaill
 
 **Statut : déployé sur kal-games le 24/09/2026** (migration faite par Claude : `stats.yml` et `boards.yml` déplacés, pas
 encore d'`archives/` ; textes des classements repris du `lang.yml` de KalGames ; démarrage vérifié dans le journal).
+
+## 1.1.0 — boîte à outils et catalogue de KLM_Menu (24/09/2026)
+
+- Menus et textes : boîte à outils de KLM_Menu (`fr.kalium.menu.api`) ; copies locales de `Gui` et `Lang`
+  supprimées. Dépend de KLM_Menu.
+- Interfaces déclarées dans le catalogue de KLM_Menu : **« Classements »** (joueurs : liste des jeux → Top 10) et
+  **« Classements (modération) »** (admins : liste des jeux → menu modérateur : complets, archives, panneaux, clôture).
+- API : `addCategories(source, identifiants)` pour que les classements d'un plugin puissent être listés.
+**Déploiement** : avec KLM_Menu 2.0.0, KalGames 1.15.0. **Statut : compilé, non déployé.**

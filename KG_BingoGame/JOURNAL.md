@@ -1390,3 +1390,10 @@ Temps = temps de jeu de la partie. Appliqué aussi aux points solo finaux des jo
 parties sans adversaire (confirmé par LeKiwi06). Affiché dans la raison de la victoire
 (« blackout en 0 h 52 : ×2 »), dans le classement du tchat et dans le résumé. Inclut la 0.4.1.
 **Statut : déployé sur Kixster le 24/09/2026, non testé en jeu.**
+
+## 0.5.0 — interface dans le catalogue de KLM_Menu (24/09/2026)
+
+- Déclare **« Salle d'attente Bingo »** (admins, permission `bingo.admin` : le même menu que `/menu`) dans le
+  catalogue de KLM_Menu. Dépend de KLM_Menu (qui démarre lui aussi en `load: STARTUP`).
+**Déploiement** : avec KLM_Menu 2.0.0 sur Kixster (config avec `compass.enabled: false`). **Statut : compilé, non
+déployé.**

@@ -4,7 +4,7 @@
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.14.0
+VERSION=1.15.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -19,7 +19,7 @@ case "$(uname -s)" in
 esac
 # 1.14.0 : depend de KG_ScoreBoards (compile d'abord ; ses classes servent seulement a compiler, jamais embarquees).
 sh "$DIR/../KG_ScoreBoards/build.sh" > /dev/null
-CP="$(win "$TOOLS/classes/KG_ScoreBoards")$SEP"
+CP="$(win "$TOOLS/classes/KG_ScoreBoards")$SEP$(win "$TOOLS/classes/KLM_Menu")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
 OUT="$TOOLS/classes/KalGames"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"

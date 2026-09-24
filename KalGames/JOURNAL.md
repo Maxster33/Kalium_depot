@@ -686,3 +686,10 @@ bouton Bingo écrit en dur dans KalGames.
 
 **Déploiement** : obligatoirement avec KG_ScoreBoards 1.0.0 (migration des données dans son JOURNAL).
 KG_Bingo 1.1.0 fonctionne sans changement. **Statut : déployé sur kal-games le 24/09/2026, démarrage vérifié.**
+
+## 1.15.0 — interfaces dans le catalogue de KLM_Menu (24/09/2026)
+
+- Déclare **« Hub Kal-Games »** (joueurs : menu du hub) et **« Paramètres Kal-Games »** (admins : mini-jeux,
+  arènes, kits, hub) dans le catalogue de KLM_Menu ; fournit la liste de ses mini-jeux à KG_ScoreBoards (ils
+  apparaissent dans « Classements »). Dépend de KLM_Menu. Rien d'autre ne change.
+**Déploiement** : avec KLM_Menu 2.0.0 et KG_ScoreBoards 1.1.0. **Statut : compilé, non déployé.**

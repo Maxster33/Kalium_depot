@@ -74,7 +74,7 @@ public final class KalGames extends JavaPlugin {
             };
             return new fr.kalium.scoreboards.Category(id, lang.parse(minigame.display()), kind);
         };
-        ranking.addCategories(categories);
+        ranking.addCategories(categories, () -> repository.minigames().stream().map(fr.kalium.games.model.Minigame::id).toList());
         ranking.setAdminCheck(this::isAdmin);
         scores = new ScoreBridge(this);
         hub = new HubService(this);
@@ -121,6 +121,49 @@ public final class KalGames extends JavaPlugin {
         BukkitTask save = Bukkit.getScheduler().runTaskTimer(this, () -> {
             lang.saveIfNeeded();
         }, 20L * 30, 20L * 30);
+        // 1.15.0 : interfaces declarees a KLM_Menu (catalogue "Interfaces" de la boussole).
+        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
+                fr.kalium.menu.api.MenuSection.of(this, "hub", fr.kalium.menu.api.MenuSection.Audience.PLAYERS,
+                        t("klm.hub", "<gold>Hub Kal-Games"), t("klm.hub-tip", "<gray>Mini-jeux : parties publiques et privées, classements."),
+                        (p, back) -> menus.openMenuFor(p)),
+                this, org.bukkit.plugin.ServicePriority.Normal);
+        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
+                new fr.kalium.menu.api.MenuSection() {
+                    @Override
+                    public String id() {
+                        return "settings";
+                    }
+
+                    @Override
+                    public org.bukkit.plugin.Plugin owner() {
+                        return KalGames.this;
+                    }
+
+                    @Override
+                    public net.kyori.adventure.text.Component title() {
+                        return t("klm.settings", "<yellow>Paramètres Kal-Games");
+                    }
+
+                    @Override
+                    public net.kyori.adventure.text.Component description() {
+                        return t("klm.settings-tip", "<gray>Mini-jeux, arènes, kits, hub.");
+                    }
+
+                    @Override
+                    public Audience audience() {
+                        return Audience.ADMINS;
+                    }
+
+                    @Override
+                    public boolean visibleTo(Player player) {
+                        return isAdmin(player);
+                    }
+
+                    @Override
+                    public void open(Player player, java.util.function.Consumer<Player> back) {
+                        admin.openHome(player);
+                    }
+                }, this, org.bukkit.plugin.ServicePriority.Normal);
         getLogger().info("KalGames actif : " + repository.minigames().size() + " mini-jeu(x), " + repository.arenas().size()
                 + " arène(s), " + kits.all().size() + " kit(s).");
         if (save.isCancelled()) {

@@ -6,6 +6,7 @@ import fr.kalium.scoreboards.board.BoardService;
 import fr.kalium.scoreboards.data.StatsService;
 import fr.kalium.scoreboards.data.StatsService.Archive;
 import fr.kalium.scoreboards.data.StatsService.Row;
+import fr.kalium.menu.api.Gui;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;

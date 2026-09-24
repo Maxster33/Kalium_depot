@@ -58,6 +58,50 @@ public final class KGBingo extends JavaPlugin {
                 () -> menus.t("admin.home-bingo", "<light_purple>Bingo"),
                 () -> menus.t("admin.home-bingo-tip", "<gray>Durée maximale d'une partie."),
                 menus::openBingoSettings));
+        // 1.2.0 : interfaces declarees a KLM_Menu (catalogue "Interfaces" de la boussole).
+        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
+                fr.kalium.menu.api.MenuSection.of(this, "bingo", fr.kalium.menu.api.MenuSection.Audience.PLAYERS,
+                        menus.t("bingo.hub-entry", "<gold><bold>Bingo"),
+                        menus.t("bingo.hub-entry-tip", "<gray>Mini-jeu sur serveur dédié : créez une partie ou rejoignez-en une avec un code."),
+                        (p, back) -> menus.openBingoMenu(p)),
+                this, org.bukkit.plugin.ServicePriority.Normal);
+        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
+                new fr.kalium.menu.api.MenuSection() {
+                    @Override
+                    public String id() {
+                        return "settings";
+                    }
+
+                    @Override
+                    public org.bukkit.plugin.Plugin owner() {
+                        return KGBingo.this;
+                    }
+
+                    @Override
+                    public net.kyori.adventure.text.Component title() {
+                        return menus.t("admin.home-bingo", "<light_purple>Bingo") .append(net.kyori.adventure.text.Component.text(" : réglages"));
+                    }
+
+                    @Override
+                    public net.kyori.adventure.text.Component description() {
+                        return menus.t("admin.home-bingo-tip", "<gray>Durée maximale d'une partie.");
+                    }
+
+                    @Override
+                    public Audience audience() {
+                        return Audience.ADMINS;
+                    }
+
+                    @Override
+                    public boolean visibleTo(org.bukkit.entity.Player player) {
+                        return kg.isAdmin(player);
+                    }
+
+                    @Override
+                    public void open(org.bukkit.entity.Player player, java.util.function.Consumer<org.bukkit.entity.Player> back) {
+                        menus.openBingoSettings(player);
+                    }
+                }, this, org.bukkit.plugin.ServicePriority.Normal);
         getLogger().info("KG_Bingo actif.");
     }
 

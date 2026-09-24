@@ -1,9 +1,9 @@
 package fr.kalium.scoreboards;
 
 import fr.kalium.scoreboards.board.BoardService;
-import fr.kalium.scoreboards.data.Lang;
+import fr.kalium.menu.api.Lang;
 import fr.kalium.scoreboards.data.StatsService;
-import fr.kalium.scoreboards.gui.Gui;
+import fr.kalium.menu.api.Gui;
 import fr.kalium.scoreboards.gui.RankingMenus;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -15,6 +15,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -39,6 +40,8 @@ public final class KGScoreBoards extends JavaPlugin {
     private Gui gui;
     private RankingMenus rankings;
     private final List<Function<String, Category>> providers = new ArrayList<>();
+    /** 1.1.0 : identifiants des classements de chaque source (pour les lister dans le catalogue de KLM_Menu). */
+    private final Map<Function<String, Category>, java.util.function.Supplier<java.util.Collection<String>>> lists = new java.util.LinkedHashMap<>();
     private Predicate<Player> adminCheck = p -> p.hasPermission("kalgames.admin");
     private Predicate<World> forbiddenWorld = w -> false;
 
@@ -75,7 +78,7 @@ public final class KGScoreBoards extends JavaPlugin {
         stats.load();
         boards = new BoardService(this);
         stats.onChange(boards::refreshSoon);
-        gui = new Gui(this);
+        gui = new Gui(this, lang); // 1.1.0 : boite a outils de KLM_Menu
         rankings = new RankingMenus(this, gui);
 
         // Panneaux : une fois le serveur completement demarre (mondes charges, plugins utilisateurs actifs).
@@ -88,6 +91,50 @@ public final class KGScoreBoards extends JavaPlugin {
             lang.saveIfNeeded();
             stats.saveIfNeeded(false);
         }, 20L * 30, 20L * 30);
+        // 1.1.0 : interfaces declarees a KLM_Menu (catalogue "Interfaces" de la boussole).
+        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
+                fr.kalium.menu.api.MenuSection.of(this, "rankings", fr.kalium.menu.api.MenuSection.Audience.PLAYERS,
+                        t("klm.rankings", "<light_purple>Classements"),
+                        t("klm.rankings-tip", "<gray>Top 10 général et du mois de chaque jeu."),
+                        (p, back) -> openList(p, false, back)),
+                this, org.bukkit.plugin.ServicePriority.Normal);
+        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
+                new fr.kalium.menu.api.MenuSection() {
+                    @Override
+                    public String id() {
+                        return "rankings-admin";
+                    }
+
+                    @Override
+                    public org.bukkit.plugin.Plugin owner() {
+                        return KGScoreBoards.this;
+                    }
+
+                    @Override
+                    public Component title() {
+                        return t("klm.rankings-admin", "<light_purple>Classements (modération)");
+                    }
+
+                    @Override
+                    public Component description() {
+                        return t("klm.rankings-admin-tip", "<gray>Classements complets, archives, panneaux du hub, clôture du mois.");
+                    }
+
+                    @Override
+                    public Audience audience() {
+                        return Audience.ADMINS;
+                    }
+
+                    @Override
+                    public boolean visibleTo(Player player) {
+                        return isAdmin(player);
+                    }
+
+                    @Override
+                    public void open(Player player, Consumer<Player> back) {
+                        openList(player, true, back);
+                    }
+                }, this, org.bukkit.plugin.ServicePriority.Normal);
         getLogger().info("KG_ScoreBoards actif.");
     }
 
@@ -111,8 +158,29 @@ public final class KGScoreBoards extends JavaPlugin {
         providers.add(provider);
     }
 
+    /** Idem, avec la liste de ses identifiants (1.1.0 : les classements apparaissent dans le catalogue de KLM_Menu). */
+    public void addCategories(Function<String, Category> provider, java.util.function.Supplier<java.util.Collection<String>> ids) {
+        providers.add(provider);
+        lists.put(provider, ids);
+    }
+
     public void removeCategories(Function<String, Category> provider) {
         providers.remove(provider);
+        lists.remove(provider);
+    }
+
+    /** Tous les classements connus (dans l'ordre des sources). */
+    public List<Category> categories() {
+        List<Category> all = new ArrayList<>();
+        for (Map.Entry<Function<String, Category>, java.util.function.Supplier<java.util.Collection<String>>> entry : lists.entrySet()) {
+            for (String id : entry.getValue().get()) {
+                Category category = entry.getKey().apply(id);
+                if (category != null) {
+                    all.add(category);
+                }
+            }
+        }
+        return all;
     }
 
     /** Classement de cet identifiant, ou null s'il n'est fourni par aucun plugin. */
@@ -158,6 +226,28 @@ public final class KGScoreBoards extends JavaPlugin {
         if (category != null) {
             rankings.openAdmin(player, category, back);
         }
+    }
+
+    /** Liste des classements (catalogue de KLM_Menu) : joueur (Top 10) ou moderation. */
+    private void openList(Player player, boolean admin, Consumer<Player> back) {
+        List<io.papermc.paper.registry.data.dialog.ActionButton> buttons = new ArrayList<>();
+        for (Category category : categories()) {
+            Consumer<Player> here = p -> openList(p, admin, back);
+            buttons.add(gui.button(category.name(), null, p -> {
+                if (admin) {
+                    rankings.openAdmin(p, category, here);
+                } else {
+                    rankings.openPlayer(p, category, false, false, here);
+                }
+            }));
+        }
+        if (back != null) {
+            buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, back::accept));
+        }
+        gui.open(player, admin ? t("klm.rankings-admin", "<light_purple>Classements (modération)") : t("klm.rankings", "<light_purple>Classements"),
+                List.of(buttons.size() > (back != null ? 1 : 0) ? t("klm.rankings-body", "<gray>Choisissez un jeu.")
+                        : t("klm.rankings-none", "<gray>Aucun classement pour le moment.")),
+                List.of(), buttons, null, 1);
     }
 
     /** Retire tous les panneaux d'un classement (ex. mini-jeu supprime). */

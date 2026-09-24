@@ -11,6 +11,8 @@ authors: [KaLium]
 # la valeur par defaut), donc sans "load: STARTUP" CraftBukkit ne trouve pas encore le plugin et
 # abandonne silencieusement en generant un monde normal a la place.
 load: STARTUP
+# 0.5.0 : interface declaree dans le catalogue de KLM_Menu (qui demarre lui aussi en STARTUP).
+depend: [KLM_Menu]
 
 commands:
   bingoadmin:

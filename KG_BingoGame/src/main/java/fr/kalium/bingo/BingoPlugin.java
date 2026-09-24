@@ -265,6 +265,45 @@ public class BingoPlugin extends JavaPlugin {
         LobbyMenu lobbyMenu = new LobbyMenu(lobbyCaptureService);
         getServer().getPluginManager().registerEvents(lobbyMenu, this);
         getCommand("menu").setExecutor(new MenuCommand(lobbyMenu));
+        // 0.5.0 : interface declaree a KLM_Menu (catalogue "Interfaces" de la boussole), operateurs seulement.
+        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
+                new fr.kalium.menu.api.MenuSection() {
+                    @Override
+                    public String id() {
+                        return "lobby";
+                    }
+
+                    @Override
+                    public org.bukkit.plugin.Plugin owner() {
+                        return BingoPlugin.this;
+                    }
+
+                    @Override
+                    public net.kyori.adventure.text.Component title() {
+                        return net.kyori.adventure.text.Component.text("Salle d'attente Bingo", net.kyori.adventure.text.format.NamedTextColor.GOLD);
+                    }
+
+                    @Override
+                    public net.kyori.adventure.text.Component description() {
+                        return net.kyori.adventure.text.Component.text("Capturer ou modifier le modèle de la salle d'attente (comme /menu).",
+                                net.kyori.adventure.text.format.NamedTextColor.GRAY);
+                    }
+
+                    @Override
+                    public Audience audience() {
+                        return Audience.ADMINS;
+                    }
+
+                    @Override
+                    public boolean visibleTo(org.bukkit.entity.Player player) {
+                        return player.hasPermission("bingo.admin");
+                    }
+
+                    @Override
+                    public void open(org.bukkit.entity.Player player, java.util.function.Consumer<org.bukkit.entity.Player> back) {
+                        lobbyMenu.open(player);
+                    }
+                }, this, org.bukkit.plugin.ServicePriority.Normal);
 
         // Menu JOUEUR de la salle d'attente (objet Nether Star verrouille, voir LobbyItems) : vue
         // des equipes + lancer/annuler la partie (hote uniquement) - demande explicite de

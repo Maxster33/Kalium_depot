@@ -1,4 +1,4 @@
-package fr.kalium.scoreboards.data;
+package fr.kalium.menu.api;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -13,8 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Textes du plugin (format MiniMessage). Chaque texte est declare dans le code avec sa valeur par
- * defaut ; lang.yml se remplit automatiquement et peut etre edite pour changer les messages.
+ * Textes d'un plugin (format MiniMessage). Chaque texte est declare dans le code avec sa valeur par defaut ;
+ * lang.yml (dans le dossier du plugin qui l'utilise) se remplit automatiquement et peut etre edite.
+ * Boite a outils commune de KLM_Menu (2.0.0), reprise de KalGames : chaque plugin cree la sienne.
  */
 public final class Lang {
 

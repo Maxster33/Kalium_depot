@@ -1,6 +1,7 @@
-package fr.kalium.scoreboards.gui;
+package fr.kalium.menu.api;
 
-import fr.kalium.scoreboards.KGScoreBoards;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 import io.papermc.paper.dialog.Dialog;
 import io.papermc.paper.dialog.DialogResponseView;
 import io.papermc.paper.registry.data.dialog.ActionButton;
@@ -18,8 +19,11 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Assistant pour les menus (Dialog natif de Minecraft, aucun coffre). Copie de celui de KalGames 1.13.0 (a reunir dans
- * le futur socle commun KG_Core). */
+/**
+ * Assistant pour les menus (Dialog natif de Minecraft, aucun coffre) - boite a outils commune de KLM_Menu (2.0.0),
+ * reprise telle quelle de KalGames. Chaque plugin cree le sien avec son propre Lang (ses textes) : largeur des boutons
+ * lue dans sa config (gui.button-width, 240 par defaut).
+ */
 public final class Gui {
 
     /** Action d'un bouton. */
@@ -68,10 +72,24 @@ public final class Gui {
         }
     }
 
-    private final KGScoreBoards plugin;
+    private final JavaPlugin plugin;
+    private final Lang lang;
 
-    public Gui(KGScoreBoards plugin) {
+    public Gui(JavaPlugin plugin, Lang lang) {
         this.plugin = plugin;
+        this.lang = lang;
+    }
+
+    private Component t(String key, String def) {
+        return lang.c(key, def);
+    }
+
+    private void sync(Runnable runnable) {
+        if (Bukkit.isPrimaryThread()) {
+            runnable.run();
+        } else {
+            Bukkit.getScheduler().runTask(plugin, runnable);
+        }
     }
 
     private int width() {
@@ -92,7 +110,7 @@ public final class Gui {
         return ActionButton.create(label, tooltip, width(),
                 DialogAction.customClick((view, audience) -> {
                     if (audience instanceof Player clicker) {
-                        plugin.sync(() -> {
+                        sync(() -> {
                             try {
                                 click.run(clicker, new KeyedView(view));
                             } catch (Throwable t) {
@@ -110,7 +128,7 @@ public final class Gui {
     }
 
     public ActionButton close() {
-        return close(plugin.t("gui.close", "<red>Fermer"));
+        return close(t("gui.close", "<red>Fermer"));
     }
 
     // ------------------------------------------------------------------ champs
@@ -176,15 +194,15 @@ public final class Gui {
     /** Petit message avec un bouton pour continuer. */
     public void notice(Player player, Component title, Component message, Click after) {
         List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(button(plugin.t("gui.ok", "<green>OK"), null, after == null ? p -> { } : after));
+        buttons.add(button(t("gui.ok", "<green>OK"), null, after == null ? p -> { } : after));
         open(player, title, List.of(message), List.of(), buttons, close(), 1);
     }
 
     /** Confirmation oui / non. */
     public void confirm(Player player, Component title, Component message, Click yes, Click no) {
         List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(button(plugin.t("gui.yes", "<green>Confirmer"), null, yes));
-        buttons.add(button(plugin.t("gui.no", "<red>Annuler"), null, no == null ? p -> { } : no));
-        open(player, title, List.of(message), List.of(), buttons, close(plugin.t("gui.close", "<red>Fermer")), 2);
+        buttons.add(button(t("gui.yes", "<green>Confirmer"), null, yes));
+        buttons.add(button(t("gui.no", "<red>Annuler"), null, no == null ? p -> { } : no));
+        open(player, title, List.of(message), List.of(), buttons, close(t("gui.close", "<red>Fermer")), 2);
     }
 }

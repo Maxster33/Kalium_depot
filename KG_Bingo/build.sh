@@ -5,7 +5,7 @@
 # Depend de KalGames : KalGames est compile d'abord et ses classes servent seulement a compiler (jamais embarquees).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.1.0
+VERSION=1.2.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -19,7 +19,7 @@ case "$(uname -s)" in
   *) SEP=':'; win() { printf '%s' "$1"; } ;;
 esac
 sh "$DIR/../KalGames/build.sh" > /dev/null
-CP="$(win "$TOOLS/classes/KalGames")$SEP$(win "$TOOLS/classes/KG_ScoreBoards")$SEP"
+CP="$(win "$TOOLS/classes/KalGames")$SEP$(win "$TOOLS/classes/KG_ScoreBoards")$SEP$(win "$TOOLS/classes/KLM_Menu")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
 OUT="$TOOLS/classes/KG_Bingo"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"

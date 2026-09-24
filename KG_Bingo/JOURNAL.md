@@ -40,3 +40,9 @@ fois pour créer `plugins/KG_Bingo/config.yml`, y recopier la section `bingo:` d
 **Déploiement** : avec KG_BingoGame 0.3.0 et KalGames 1.13.0 (remplace la 1.0.0, jamais déployée : même procédure).
 **Statut : déployé sur kal-games le 24/09/2026 (config = copie de celle de KalGames, jeton compris, faite
 sur le serveur sans être lue), non testé en jeu.**
+
+## 1.2.0 — interfaces dans le catalogue de KLM_Menu (24/09/2026)
+
+- Déclare **« Bingo »** (joueurs : créer / rejoindre une partie) et **« Bingo : réglages »** (admins) dans le
+  catalogue de KLM_Menu. Dépend de KLM_Menu. Les classements Bingo viendront avec KG_ScoreBoards (étape B).
+**Déploiement** : avec KLM_Menu 2.0.0, KalGames 1.15.0. **Statut : compilé, non déployé.**

@@ -4,7 +4,7 @@ main: fr.kalium.games.bingo.KGBingo
 api-version: '26.2'
 description: Partie Bingo du hub kal-games (creer / rejoindre une partie, transfert vers le serveur Bingo).
 authors: [KaLium]
-depend: [KalGames]
+depend: [KalGames, KLM_Menu]
 
 commands:
   bingo:

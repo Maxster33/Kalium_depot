@@ -1,9 +1,12 @@
-name: KaliumMenu
+name: KLM_Menu
 version: '${project.version}'
-main: fr.kalium.menu.KaliumMenu
+main: fr.kalium.menu.KlmMenu
 api-version: '26.2'
-description: Menu de navigation (Dialog natif) entre le lobby et les autres serveurs du reseau KaLium.
+description: Interfaces du reseau KaLium (navigation entre serveurs, catalogue des interfaces des plugins, boite a outils des menus). Present sur tous les serveurs Paper.
 authors: [KaLium]
+# 2.0.0 : demarre avant la creation des mondes, pour que des plugins en load: STARTUP (KG_BingoGame, generateur de
+# monde de Kixster) puissent en dependre. KLM_Menu ne cree aucun monde.
+load: STARTUP
 
 commands:
   servers:
@@ -14,8 +17,8 @@ commands:
     description: Retourne au lobby.
     usage: /<command>
   kaliummenu:
-    description: Administration du plugin KaliumMenu.
-    aliases: [kmenu]
+    description: Administration du plugin KLM_Menu.
+    aliases: [kmenu, klm]
     usage: /<command> reload | give [joueur]
     permission: kaliummenu.admin
 

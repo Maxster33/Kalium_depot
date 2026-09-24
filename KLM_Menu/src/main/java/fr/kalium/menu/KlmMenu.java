@@ -58,10 +58,15 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Menu de navigation entre serveurs, base sur les Dialogs natifs de Minecraft (aucun coffre).
- * Le transfert passe par le canal BungeeCord, supporte par Velocity (bungee-plugin-message-channel = true).
+ * KLM_Menu (anciennement KaliumMenu, renomme en 2.0.0) : la couche profonde des interfaces du reseau KaLium, presente
+ * sur TOUS les serveurs Paper (demande de LeKiwi06, 24/09/2026).
+ * - Navigation entre serveurs (lobby, hubs...), base sur les Dialogs natifs de Minecraft (aucun coffre). Le transfert
+ *   passe par le canal BungeeCord, supporte par Velocity (bungee-plugin-message-channel = true).
+ * - Boite a outils des menus pour les autres plugins (fr.kalium.menu.api : Gui, Lang).
+ * - Catalogue des interfaces : chaque plugin declare les siennes (MenuSection, registre de services de Paper) ;
+ *   KLM_Menu les decouvre au demarrage et les affiche, rangees par plugin, dans le bouton "Interfaces".
  */
-public final class KaliumMenu extends JavaPlugin implements Listener, PluginMessageListener, CommandExecutor, TabCompleter {
+public final class KlmMenu extends JavaPlugin implements Listener, PluginMessageListener, CommandExecutor, TabCompleter {
 
     private static final String CHANNEL = "BungeeCord";
     private static final long OPEN_COOLDOWN_MS = 800L;
@@ -72,13 +77,19 @@ public final class KaliumMenu extends JavaPlugin implements Listener, PluginMess
     private final Map<String, ServerEntry> servers = new LinkedHashMap<>();
 
     private NamespacedKey compassKey;
+    /** 2.0.0 : etiquette des boussoles donnees par KaliumMenu (avant le renommage), toujours reconnue. */
+    private final NamespacedKey legacyCompassKey = new NamespacedKey("kaliummenu", "menu_compass");
+    /** 2.0.0 : interfaces declarees par les plugins (voir MenuSection), mises a jour par refreshSections(). */
+    private final List<fr.kalium.menu.api.MenuSection> sections = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private fr.kalium.menu.api.Lang lang;
+    private fr.kalium.menu.api.Gui gui;
     private boolean lobbyRole;
     private String lobbyServer;
     private boolean showCounts;
     private int buttonWidth;
 
     /** Bouton special (en plus de "changer de serveur" / "executer une commande"). */
-    private enum Special { NONE, OP_SWITCH, GAMEMODE_SWITCH, SETTINGS }
+    private enum Special { NONE, OP_SWITCH, GAMEMODE_SWITCH, SETTINGS, CATALOG }
 
     /** Entree du menu : un serveur, ou (local = true) une commande executee sur ce serveur. */
     private record ServerEntry(String id, String display, String description, boolean local, String command,
@@ -118,6 +129,8 @@ public final class KaliumMenu extends JavaPlugin implements Listener, PluginMess
         saveDefaultConfig();
         loadSettings();
         compassKey = new NamespacedKey(this, "menu_compass");
+        lang = new fr.kalium.menu.api.Lang(this);
+        gui = new fr.kalium.menu.api.Gui(this, lang);
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, CHANNEL);
         getServer().getMessenger().registerIncomingPluginChannel(this, CHANNEL, this);
@@ -134,13 +147,137 @@ public final class KaliumMenu extends JavaPlugin implements Listener, PluginMess
         // Garde le cache du nombre de joueurs a jour tant qu'un joueur est en ligne.
         getServer().getScheduler().runTaskTimer(this, this::refreshCounts, 40L, 200L);
 
-        getLogger().info("KaliumMenu actif (role : " + (lobbyRole ? "lobby" : "backend") + ").");
+        // 2.0.0 : decouverte des interfaces une fois TOUS les plugins actives (et suivi des ajouts / retraits).
+        getServer().getScheduler().runTask(this, () -> refreshSections(true));
+
+        getLogger().info("KLM_Menu actif (role : " + (lobbyRole ? "lobby" : "backend") + ").");
     }
 
     @Override
     public void onDisable() {
         getServer().getMessenger().unregisterOutgoingPluginChannel(this);
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
+        if (lang != null) {
+            lang.saveIfNeeded();
+        }
+    }
+
+    // ------------------------------------------------------------------ catalogue des interfaces (2.0.0)
+
+    /** Interroge le registre de services : toutes les interfaces declarees par les plugins actifs. */
+    private void refreshSections(boolean log) {
+        List<fr.kalium.menu.api.MenuSection> found = new ArrayList<>();
+        for (var registration : getServer().getServicesManager().getRegistrations(fr.kalium.menu.api.MenuSection.class)) {
+            if (registration.getPlugin().isEnabled()) {
+                found.add(registration.getProvider());
+            }
+        }
+        found.sort(java.util.Comparator.comparing((fr.kalium.menu.api.MenuSection s) -> s.owner().getName().toLowerCase(Locale.ROOT))
+                .thenComparing(s -> s.audience().ordinal()));
+        sections.clear();
+        sections.addAll(found);
+        lang.saveIfNeeded();
+        if (log) {
+            java.util.Set<String> owners = new java.util.TreeSet<>();
+            for (var section : found) {
+                owners.add(section.owner().getName());
+            }
+            getLogger().info(found.size() + " interface(s) trouvée(s)" + (owners.isEmpty() ? "." : " : " + String.join(", ", owners) + "."));
+        }
+    }
+
+    @EventHandler
+    public void onServiceRegister(org.bukkit.event.server.ServiceRegisterEvent event) {
+        if (event.getProvider().getService() == fr.kalium.menu.api.MenuSection.class) {
+            getServer().getScheduler().runTask(this, () -> refreshSections(false));
+        }
+    }
+
+    @EventHandler
+    public void onServiceUnregister(org.bukkit.event.server.ServiceUnregisterEvent event) {
+        if (event.getProvider().getService() == fr.kalium.menu.api.MenuSection.class) {
+            getServer().getScheduler().runTask(this, () -> refreshSections(false));
+        }
+    }
+
+    @EventHandler
+    public void onPluginDisable(org.bukkit.event.server.PluginDisableEvent event) {
+        if (event.getPlugin() != this) {
+            sections.removeIf(section -> section.owner() == event.getPlugin());
+        }
+    }
+
+    private List<fr.kalium.menu.api.MenuSection> visibleSections(Player player) {
+        List<fr.kalium.menu.api.MenuSection> list = new ArrayList<>();
+        for (var section : sections) {
+            try {
+                if (section.owner().isEnabled() && section.visibleTo(player)) {
+                    list.add(section);
+                }
+            } catch (RuntimeException e) {
+                getLogger().warning("Interface " + section.owner().getName() + "/" + section.id() + " : " + e);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Catalogue (demande de LeKiwi06 : "une interface claire pour trouver les interfaces de chaque chose") : un bouton
+     * par plugin, puis ses interfaces. Un plugin qui n'en a qu'une l'ouvre directement.
+     */
+    private void openCatalog(Player player) {
+        Map<String, List<fr.kalium.menu.api.MenuSection>> byPlugin = new LinkedHashMap<>();
+        for (var section : visibleSections(player)) {
+            byPlugin.computeIfAbsent(section.owner().getName(), k -> new ArrayList<>()).add(section);
+        }
+        List<Component> body = new ArrayList<>();
+        body.add(lang.c("catalog.body", "<gray>Toutes les interfaces de <white>ce serveur<gray>, rangées par plugin."));
+        if (byPlugin.isEmpty()) {
+            body.add(lang.c("catalog.empty", "<gray>Aucune interface disponible ici."));
+        }
+        List<ActionButton> buttons = new ArrayList<>();
+        for (Map.Entry<String, List<fr.kalium.menu.api.MenuSection>> entry : byPlugin.entrySet()) {
+            List<fr.kalium.menu.api.MenuSection> list = entry.getValue();
+            Component label = lang.c("catalog.plugin", "<gold><plugin></gold> <dark_gray>(<n>)",
+                    "plugin", entry.getKey(), "n", list.size());
+            Component tip = list.size() == 1 ? list.get(0).description()
+                    : lang.c("catalog.plugin-tip", "<gray><n> interfaces", "n", list.size());
+            buttons.add(gui.button(label, tip, p -> {
+                if (list.size() == 1) {
+                    openSection(p, list.get(0));
+                } else {
+                    openPluginSections(p, entry.getKey(), list);
+                }
+            }));
+        }
+        buttons.add(gui.button(lang.c("catalog.back", "<gray>Retour"), null, this::openMenu));
+        gui.open(player, lang.c("catalog.title", "<#09add3><bold>Interfaces"), body, List.of(), buttons, null, 1);
+    }
+
+    private void openPluginSections(Player player, String pluginName, List<fr.kalium.menu.api.MenuSection> list) {
+        List<ActionButton> buttons = new ArrayList<>();
+        for (var section : list) {
+            Component label = section.audience() == fr.kalium.menu.api.MenuSection.Audience.ADMINS
+                    ? section.title().append(lang.c("catalog.admin-mark", " <dark_gray>(admin)"))
+                    : section.title();
+            buttons.add(gui.button(label, section.description(), p -> openSection(p, section)));
+        }
+        buttons.add(gui.button(lang.c("catalog.back", "<gray>Retour"), null, this::openCatalog));
+        gui.open(player, lang.c("catalog.plugin-title", "<gold><bold><plugin>", "plugin", pluginName),
+                List.of(lang.c("catalog.plugin-body", "<gray>Interfaces de <white><plugin><gray>.", "plugin", pluginName)),
+                List.of(), buttons, null, 1);
+    }
+
+    private void openSection(Player player, fr.kalium.menu.api.MenuSection section) {
+        if (!section.owner().isEnabled() || !section.visibleTo(player)) {
+            player.sendMessage(mm.deserialize(msg("destination-disabled")));
+            return;
+        }
+        try {
+            section.open(player, this::openCatalog);
+        } catch (RuntimeException e) {
+            getLogger().warning("Ouverture de " + section.owner().getName() + "/" + section.id() + " impossible : " + e);
+        }
     }
 
     private void loadSettings() {
@@ -391,6 +528,10 @@ public final class KaliumMenu extends JavaPlugin implements Listener, PluginMess
             entries.addAll(menuEntries());
         }
         entries.removeIf(entry -> isDisabled(entry.id()));
+        if (!visibleSections(player).isEmpty()) {
+            entries.add(new ServerEntry("catalog", msg("catalog-button"), msg("catalog-description"),
+                    true, "", List.of(), List.of(), Special.CATALOG));
+        }
         if (player.hasPermission("kaliummenu.admin")) {
             entries.add(new ServerEntry("settings", msg("settings-button"), msg("settings-description"),
                     true, "", List.of(), List.of(), Special.SETTINGS));
@@ -475,6 +616,8 @@ public final class KaliumMenu extends JavaPlugin implements Listener, PluginMess
                                             cycleGamemode(clicker);
                                         } else if (entry.special() == Special.SETTINGS) {
                                             openSettings(clicker);
+                                        } else if (entry.special() == Special.CATALOG) {
+                                            openCatalog(clicker);
                                         } else if (isDisabled(target)) {
                                             clicker.sendMessage(mm.deserialize(msg("destination-disabled")));
                                         } else if (entry.local()) {
@@ -649,7 +792,8 @@ public final class KaliumMenu extends JavaPlugin implements Listener, PluginMess
         return item != null
                 && !item.getType().isAir()
                 && item.hasItemMeta()
-                && item.getItemMeta().getPersistentDataContainer().has(compassKey, PersistentDataType.BYTE);
+                && (item.getItemMeta().getPersistentDataContainer().has(compassKey, PersistentDataType.BYTE)
+                        || item.getItemMeta().getPersistentDataContainer().has(legacyCompassKey, PersistentDataType.BYTE));
     }
 
     private void giveCompass(Player player) {
@@ -787,6 +931,8 @@ public final class KaliumMenu extends JavaPlugin implements Listener, PluginMess
             return value;
         }
         return switch (key) {
+            case "catalog-button" -> "<#09add3><bold>Interfaces";
+            case "catalog-description" -> "<gray>Toutes les interfaces de <white>ce serveur<gray> (jeux, classements, réglages...).";
             case "settings-button" -> "<yellow><bold>Paramètres";
             case "settings-description" -> "<gray>Activer ou désactiver les téléportations de <white>ce serveur<gray>.";
             case "settings-title" -> "<yellow><bold>Paramètres des téléportations";
