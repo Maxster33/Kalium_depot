@@ -701,4 +701,4 @@ KG_Bingo 1.1.0 fonctionne sans changement. **Statut : déployé sur kal-games le
 renommage) : KalGames redonne la boussole au hub (après avoir vidé l'inventaire) seulement si un plugin nommé
 « KaliumMenu » est actif. Corrigé : `KLM_Menu` (ou l'ancien nom) ; l'outil « créer un kit depuis mon inventaire »
 écarte aussi les boussoles à la nouvelle étiquette (`klm_menu:menu_compass`). `softdepend` : KaliumMenu retiré
-(KLM_Menu est déjà dans `depend`). **Statut : compilé.**
+(KLM_Menu est déjà dans `depend`). **Statut : déployé sur kal-games le 24/09/2026 (redémarrage à faire).**
