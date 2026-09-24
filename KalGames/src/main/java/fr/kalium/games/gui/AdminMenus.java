@@ -121,6 +121,24 @@ public final class AdminMenus {
         return player.getWorld();
     }
 
+    // ------------------------------------------------------------------ boutons ajoutes par d'autres plugins (1.13.0)
+
+    /** Boutons de l'accueil des Parametres declares par d'autres plugins (voir MenuEntry), dans l'ordre d'ajout. */
+    private final List<MenuEntry> settingsEntries = new ArrayList<>();
+
+    /**
+     * Ajoute (ou remplace, meme id) un bouton dans l'accueil des Parametres (moderateurs), apres "Hub de Kal-Games".
+     * Le clic n'est execute que pour un moderateur (kalgames.admin).
+     */
+    public void addSettingsEntry(MenuEntry entry) {
+        removeSettingsEntry(entry.id());
+        settingsEntries.add(entry);
+    }
+
+    public void removeSettingsEntry(String id) {
+        settingsEntries.removeIf(e -> e.id().equals(id));
+    }
+
     // ------------------------------------------------------------------ accueil
 
     public void openHome(Player player) {
@@ -146,7 +164,10 @@ public final class AdminMenus {
         buttons.add(btn(t("admin.home-arenas", "<green>Arènes"), t("admin.home-arenas-tip", "<gray>Points, capture de la zone, test."), p -> openArenas(p, null)));
         buttons.add(btn(t("admin.home-kits", "<aqua>Kits"), t("admin.home-kits-tip", "<gray>Créer depuis votre inventaire ou importer de PlayerKits2."), this::openKits));
         buttons.add(btn(t("admin.home-hub", "<yellow>Hub de Kal-Games"), t("admin.home-hub-tip", "<gray>Définir le point d'arrivée."), this::openHub));
-        buttons.add(btn(t("admin.home-bingo", "<light_purple>Bingo"), t("admin.home-bingo-tip", "<gray>Durée maximale d'une partie."), this::openBingoSettings));
+        // 1.13.0 : boutons ajoutes par d'autres plugins (ex. "Bingo" par KG_Bingo), voir MenuEntry.
+        for (MenuEntry entry : new ArrayList<>(settingsEntries)) {
+            buttons.add(btn(entry.label().get(), entry.tooltip() == null ? null : entry.tooltip().get(), entry.click()));
+        }
         buttons.add(btn(t("admin.home-games", "<light_purple>Parties en cours"), null, this::openInstances));
         buttons.add(btn(t("admin.home-reload", "<gray>Recharger la configuration"), null, p -> {
             plugin.reloadAll();
@@ -172,39 +193,6 @@ public final class AdminMenus {
         buttons.add(btn(t("admin.hub-tp", "<aqua>Aller au hub"), null, p -> p.teleport(plugin.hub().hubLocation())));
         buttons.add(back(this::openHome));
         gui.open(player, t("admin.hub-title", "<yellow><bold>Hub de Kal-Games"), body, List.of(), buttons, gui.close(), 1);
-    }
-
-    // ------------------------------------------------------------------ bingo (serveur separe, voir KalBingo)
-
-    /**
-     * Reglage admin : duree MAXIMALE (minutes) d'une partie Bingo - demande explicite de
-     * l'utilisateur, "le temps par defaut maximum doit être 1h, cette limite doit pouvoir etre
-     * changee via les parametres de kalgames. le createur de la partie doit pouvoir réduire le
-     * temps mais ne doit pas pouvoir dépasser le temps maximum défini par les opérateurs." Le
-     * formulaire de creation (PlayerMenus.openBingoCreate) se pre-remplit avec cette valeur et
-     * plafonne le choix de l'hote dessus ; BingoPartyManager.create() applique la meme borne cote
-     * serveur (jamais de confiance au client). Persiste directement dans config.yml (bingo.max-
-     * duration-minutes), pas via le systeme Minigame/SettingSpec : Bingo n'est pas un Minigame.
-     */
-    private void openBingoSettings(Player player) {
-        int minDurationMinutes = Math.max(1, plugin.getConfig().getInt("bingo.min-duration-minutes", 5));
-        int currentMax = Math.max(minDurationMinutes, plugin.getConfig().getInt("bingo.max-duration-minutes", 60));
-        List<DialogInput> inputs = List.of(
-                gui.number("maxDuration", t("admin.bingo-max-duration", "Durée maximale d'une partie (minutes)"),
-                        minDurationMinutes, 24 * 60, currentMax, 5));
-        List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(frm(t("admin.save", "<green>Enregistrer"), null, (p, view) -> {
-            Float value = view.getFloat("maxDuration");
-            int newMax = Math.max(minDurationMinutes, value == null ? currentMax : Math.round(value));
-            plugin.getConfig().set("bingo.max-duration-minutes", newMax);
-            plugin.saveConfig();
-            say(p, "admin.saved", "<green>Enregistré.");
-            openBingoSettings(p);
-        }));
-        buttons.add(back(this::openHome));
-        List<Component> body = List.of(t("admin.bingo-body",
-                "<gray>L'hôte d'une partie peut réduire la durée à la création, jamais la dépasser."));
-        gui.open(player, t("admin.bingo-title", "<light_purple><bold>Bingo"), body, inputs, buttons, gui.close(), 1);
     }
 
     // ------------------------------------------------------------------ mini-jeux

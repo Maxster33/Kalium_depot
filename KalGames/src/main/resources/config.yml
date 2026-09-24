@@ -25,57 +25,6 @@ hub:
 # Nom du lobby declare dans le velocity.toml (bouton "Retour au lobby").
 lobby-server: lobby
 
-# Mini-jeu Bingo (serveur separe, voir KalBingo). Cree/rejoint une partie et transfere les
-# joueurs - la salle d'attente et le choix d'equipe vivent sur le serveur Bingo lui-meme
-# (demande explicite de l'utilisateur), pas ici.
-bingo:
-  # Nom du serveur Bingo declare dans le velocity.toml - a modifier facilement selon
-  # l'environnement (Kixster pour les tests actuellement, demande explicite de l'utilisateur).
-  server-name: kixster
-  # Duree d'une partie, en secondes - sert UNIQUEMENT de repli pour la commande texte /bingo create
-  # (pas de formulaire possible en commande, voir BingoCommand). Le menu du
-  # hub, lui, utilise max-duration-minutes ci-dessous comme valeur pre-remplie (l'hote peut la
-  # reduire, voir PlayerMenus.openBingoCreate) - garde ce reglage-ci pour ne pas casser /bingo create.
-  duration-seconds: 3600
-  # AJOUTE le 23/09/2026 : duree MAXIMALE (en minutes) qu'une partie peut avoir, modifiable par un
-  # OPERATEUR via Paramètres > Bingo (menu admin, voir AdminMenus.openBingoSettings) - demande
-  # explicite de l'utilisateur : "le temps par defaut maximum doit être 1h, cette limite doit
-  # pouvoir etre changee via les parametres de kalgames. le createur de la partie doit pouvoir
-  # réduire le temps mais ne doit pas pouvoir dépasser le temps maximum défini par les opérateurs."
-  # Le formulaire de creation (menu "Bingo" du hub) est donc pre-rempli avec CETTE valeur et permet
-  # de la reduire jusqu'a min-duration-minutes, jamais de la depasser.
-  max-duration-minutes: 60
-  # Plancher technique (minutes) - pas expose dans le menu admin (non demande), evite juste une
-  # partie degenerement courte (grille impossible a terminer).
-  min-duration-minutes: 5
-  # PLUS UTILISE depuis le 24/09/2026 (corrige un bug : une partie 2 equipes x 1 joueur affichait
-  # "2/16" et pouvait accepter jusqu'a 16 joueurs au lieu de 2). La capacite reelle d'une partie
-  # est desormais TOUJOURS teamCount x teamSize, choisis par l'hote a la creation - voir
-  # BingoParty.maxPlayers(). Cle laissee ici sans effet pour eviter de casser un config.yml deja
-  # deploye ; peut etre supprimee sans risque lors d'un prochain nettoyage.
-  max-party-size: 16
-  # Bornes du nombre d'equipes / joueurs par equipe proposees a l'hote lors de la creation
-  # (menu "Bingo" du hub) - doivent rester cohérentes avec KalBingo (teams.max-teams /
-  # teams.max-team-size, 4x4 par defaut - confirme par l'utilisateur : "jusqu'a 4 equipes,
-  # 1 a 4 joueurs par equipe").
-  max-team-count: 4
-  max-team-size: 4
-  # Valeurs utilisees par la commande texte /bingo create (pas de formulaire possible en
-  # commande) - le menu du hub, lui, laisse l'hote choisir a chaque creation.
-  default-team-count: 2
-  default-team-size: 4
-  # Relais HTTP (plugin Velocity KaliumRelay, sur le proxy) : des qu'un joueur est transfere vers
-  # Bingo, sa partie y est deposee directement par ce biais plutot que par le canal BungeeCord
-  # (Forward), qui a besoin d'un joueur connecte sur le serveur CIBLE pour livrer un message -
-  # limite du protocole Minecraft lui-meme, responsable du bug ou un second joueur qui rejoignait
-  # restait bloque puis etait expulse quand kal-games se retrouvait sans aucun joueur en ligne.
-  # relay-url vide = fonctionnalite desactivee (retour silencieux, aucune casse).
-  relay-url: "http://7018.mystrator.com:46199"
-  # Jeton du relais : a renseigner UNIQUEMENT dans le config.yml du serveur, jamais ici (depot public,
-  # voir REGLES.md section 2). Meme valeur que "token" dans relay.properties du proxy. Vide = le relais
-  # refuse les requetes et seul le canal BungeeCord est utilise.
-  relay-token: ""
-
 gui:
   button-width: 240
 

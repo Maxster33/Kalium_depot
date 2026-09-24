@@ -1,6 +1,5 @@
 package fr.kalium.games.bingo;
 
-import fr.kalium.games.KalGames;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,10 +15,10 @@ import org.bukkit.entity.Player;
  */
 public final class BingoCommand implements CommandExecutor {
 
-    private final KalGames plugin;
+    private final KGBingo plugin;
     private final BingoPartyManager parties;
 
-    public BingoCommand(KalGames plugin, BingoPartyManager parties) {
+    public BingoCommand(KGBingo plugin, BingoPartyManager parties) {
         this.plugin = plugin;
         this.parties = parties;
     }

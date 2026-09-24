@@ -1,0 +1,12 @@
+name: KG_Bingo
+version: '${project.version}'
+main: fr.kalium.games.bingo.KGBingo
+api-version: '26.2'
+description: Partie Bingo du hub kal-games (creer / rejoindre une partie, transfert vers le serveur Bingo).
+authors: [KaLium]
+depend: [KalGames]
+
+commands:
+  bingo:
+    description: Bingo - créer ou rejoindre une partie (équivalent du menu Bingo du hub).
+    usage: /<command> <create|join <code>>

@@ -7,7 +7,8 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 | Dossier | Plugin | Serveur |
 |---|---|---|
 | `KalGames/` | Hub et mini-jeux (Rush, parkour, courses...) | kal-games |
-| `KalBingo/` | Jeu Bingo complet | Kixster |
+| `KG_Bingo/` | Partie Bingo du hub : créer / rejoindre, transfert vers Kixster (dépend de KalGames) | kal-games |
+| `KalBingo/` | Le jeu Bingo lui-même (futur `KG_BingoGame`) | Kixster |
 | `KaliumMenu/` | Menu de navigation entre serveurs | chaque serveur Paper |
 | `KaliumRelay/` | Relais HTTP entre serveurs | proxy Velocity |
 | `KaliumCore/` | Survie (projet en pause) | Kal-Test-Dev |

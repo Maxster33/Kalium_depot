@@ -1,7 +1,6 @@
 package fr.kalium.games.gui;
 
 import fr.kalium.games.KalGames;
-import fr.kalium.games.bingo.BingoParty;
 import fr.kalium.games.data.Kit;
 import fr.kalium.games.game.GameInstance;
 import fr.kalium.games.game.InstanceManager;
@@ -65,6 +64,21 @@ public final class PlayerMenus {
         lastOpen.remove(uuid);
     }
 
+    // ------------------------------------------------------------------ boutons ajoutes par d'autres plugins (1.13.0)
+
+    /** Boutons du menu Mini-jeux declares par d'autres plugins (voir MenuEntry), dans l'ordre d'ajout. */
+    private final List<MenuEntry> gameEntries = new ArrayList<>();
+
+    /** Ajoute (ou remplace, meme id) un bouton dans le menu Mini-jeux, apres les mini-jeux de KalGames. */
+    public void addGameEntry(MenuEntry entry) {
+        removeGameEntry(entry.id());
+        gameEntries.add(entry);
+    }
+
+    public void removeGameEntry(String id) {
+        gameEntries.removeIf(e -> e.id().equals(id));
+    }
+
     // ------------------------------------------------------------------ hub : liste des mini-jeux
 
     public void openGames(Player player) {
@@ -93,11 +107,10 @@ public final class PlayerMenus {
             buttons.add(gui.button(name(minigame), Component.join(net.kyori.adventure.text.JoinConfiguration.newlines(), tip),
                     p -> openMinigame(p, minigame)));
         }
-        // Bingo : serveur dedie separe (voir KalBingo), pas un Minigame/Arena classique - entree manuelle,
-        // visible de tous (comme /bingo create et /bingo join, qui restent disponibles en parallele).
-        buttons.add(gui.button(t("bingo.hub-entry", "<gold><bold>Bingo"),
-                t("bingo.hub-entry-tip", "<gray>Mini-jeu sur serveur dédié : créez une partie ou rejoignez-en une avec un code."),
-                this::openBingoMenu));
+        // 1.13.0 : boutons ajoutes par d'autres plugins (ex. "Bingo" par KG_Bingo), voir MenuEntry.
+        for (MenuEntry entry : new ArrayList<>(gameEntries)) {
+            buttons.add(gui.button(entry.label().get(), entry.tooltip() == null ? null : entry.tooltip().get(), entry.click()));
+        }
         if (admin) {
             buttons.add(gui.button(t("menu.settings", "<light_purple><bold>Paramètres"),
                     t("menu.settings-tip", "<gray>Réservé aux modérateurs : mini-jeux, arènes, kits, hub."),
@@ -682,140 +695,5 @@ public final class PlayerMenus {
         }
         buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openGameMenu));
         gui.open(player, t("teams.title", "<aqua><bold>Équipes"), body, List.of(), buttons, gui.close(), 1);
-    }
-
-    // ------------------------------------------------------------------ Bingo (serveur separe, voir KalBingo)
-
-    /** Nombre maximum de parties encore en salle d'attente affichees dans le menu Bingo - au-dela,
-     *  les plus anciennes ne s'affichent pas (choix confirme par l'utilisateur, 24/09/2026). */
-    private static final int BINGO_OPEN_PARTIES_SHOWN = 6;
-
-    /**
-     * Menu Bingo : creer une partie (hote, code genere), en rejoindre une avec un code, OU cliquer
-     * directement sur l'une des parties encore en salle d'attente listees ci-dessous (AJOUTE le
-     * 24/09/2026, demande explicite de l'utilisateur : "il faut pouvoir voir les parties qui sont
-     * creees et encore en salle d'attente dans le menu kalgames de maniere a pouvoir la rejoindre
-     * facilement") - puis transfert vers le serveur Bingo (bingo.server-name). Reutilise exactement
-     * la meme logique que /bingo create et /bingo join (BingoPartyManager, voir BingoCommand) - les
-     * deux commandes restent disponibles en parallele, ce menu n'est qu'un autre point d'entree vers
-     * le meme systeme.
-     */
-    public void openBingoMenu(Player player) {
-        List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(gui.button(t("bingo.create", "<green>Créer une partie Bingo"),
-                t("bingo.create-tip", "<gray>Choisissez le nombre d'équipes et de joueurs par équipe, puis devenez l'hôte."),
-                this::openBingoCreate));
-        buttons.add(gui.form(t("bingo.join", "<aqua>Rejoindre avec un code"), null, (p, view) -> {
-            String code = view.getText("code");
-            bingoJoin(p, code == null ? "" : code);
-        }));
-
-        // Parties encore en salle d'attente, cliquables directement (pas besoin de connaitre le
-        // code) - voir BingoPartyManager.openParties, alimentee par PartyStatusNotifier cote
-        // KalBingo des qu'une partie demarre/est annulee. Une partie deja pleine reste affichee
-        // (visibilite confirmee par l'utilisateur) mais son bouton n'inscrit pas le joueur : il est
-        // juste informe qu'elle est complete. "Pleine" = capacite REELLE de CETTE partie
-        // (party.maxPlayers(), equipes x taille choisies par l'hote), PAS le plafond global
-        // bingo.max-party-size (corrige le 24/09/2026 - affichait par ex. "2/16" pour une partie a
-        // 2 equipes d'1 joueur, qui ne peut en realite accueillir que 2 joueurs).
-        for (BingoParty party : plugin.bingoParties().openParties(BINGO_OPEN_PARTIES_SHOWN)) {
-            buttons.add(bingoPartyButton(party));
-        }
-
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openGames));
-        List<DialogInput> inputs = List.of(gui.text("code", t("bingo.join-input", "Code de la partie"), "", 8));
-        List<Component> body = new ArrayList<>();
-        body.add(t("bingo.body", "<gray>Créez une partie (vous serez l'hôte), rejoignez-en une avec un code, "
-                + "ou cliquez directement sur une partie encore en salle d'attente ci-dessous."));
-        gui.open(player, t("bingo.title", "<gold><bold>Bingo"), body, inputs, buttons, gui.close(), 1);
-    }
-
-    /** Un bouton par partie encore en salle d'attente listee dans openBingoMenu - voir ce menu. */
-    private ActionButton bingoPartyButton(BingoParty party) {
-        String hostName = Bukkit.getOfflinePlayer(party.host()).getName();
-        int current = party.roster().size();
-        int maxPartySize = party.maxPlayers();
-        boolean full = current >= maxPartySize;
-        Component label = t("bingo.party-entry",
-                "<yellow>" + (hostName == null ? "?" : hostName) + "</yellow> <gray>· <teams>x<size> équipes · <current>/<max></gray>"
-                        + (full ? " <red>(complet)</red>" : ""),
-                "teams", party.teamCount(), "size", party.teamSize(), "current", current, "max", maxPartySize);
-        Component tooltip = t("bingo.party-entry-tip", full
-                ? "<red>Cette partie est déjà complète."
-                : "<gray>Cliquez pour rejoindre directement cette partie.");
-        if (full) {
-            return gui.button(label, tooltip, p ->
-                    p.sendMessage(plugin.prefix().append(t("bingo.party-full", "<red>Cette partie est déjà complète."))));
-        }
-        return gui.button(label, tooltip, p -> bingoJoin(p, party.code()));
-    }
-
-    /**
-     * Ecran de creation : nombre d'equipes / joueurs par equipe, choisis par l'hote pour CETTE
-     * partie (bornes par bingo.max-team-count/-size de config.yml - 4x4 par defaut, confirme par
-     * l'utilisateur). Demande explicite : "je puisse directement configurer le nombre d'équipe et
-     * le nombre de personne par équipe" a la creation.
-     */
-    public void openBingoCreate(Player player) {
-        int maxTeamCount = Math.max(1, plugin.getConfig().getInt("bingo.max-team-count", 4));
-        int maxTeamSize = Math.max(1, plugin.getConfig().getInt("bingo.max-team-size", 4));
-        int defaultCount = Math.max(1, Math.min(maxTeamCount, plugin.getConfig().getInt("bingo.default-team-count", 2)));
-        int defaultSize = Math.max(1, Math.min(maxTeamSize, plugin.getConfig().getInt("bingo.default-team-size", 4)));
-
-        // Duree de partie (demande explicite de l'utilisateur, 23/09/2026) : choisie par l'hote en
-        // MINUTES (plus lisible qu'en secondes dans un formulaire), bornee par bingo.min/max-duration-
-        // minutes - meme principe que teamCount/teamSize ci-dessus. Pre-remplie AVEC LE MAXIMUM admin
-        // (bingo.max-duration-minutes, modifiable via Parametres > Bingo, voir AdminMenus.openBingoSettings) :
-        // demande explicite de l'utilisateur, "le createur de la partie doit pouvoir réduire le temps
-        // mais ne doit pas pouvoir dépasser le temps maximum défini par les opérateurs" - l'hote ne peut
-        // donc que reduire cette valeur, jamais la depasser (borne haute du champ ci-dessous).
-        int minDurationMinutes = Math.max(1, plugin.getConfig().getInt("bingo.min-duration-minutes", 5));
-        int maxDurationMinutes = Math.max(minDurationMinutes, plugin.getConfig().getInt("bingo.max-duration-minutes", 60));
-        int defaultDurationMinutes = maxDurationMinutes;
-
-        List<DialogInput> inputs = new ArrayList<>();
-        inputs.add(gui.number("teamCount", t("bingo.create-teams", "Nombre d'équipes"), 1, maxTeamCount, defaultCount, 1));
-        inputs.add(gui.number("teamSize", t("bingo.create-teamsize", "Joueurs par équipe"), 1, maxTeamSize, defaultSize, 1));
-        inputs.add(gui.number("duration", t("bingo.create-duration", "Durée de la partie (minutes)"),
-                minDurationMinutes, maxDurationMinutes, defaultDurationMinutes, 5));
-
-        List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(gui.form(t("bingo.create-confirm", "<green>Créer la partie"), null, (p, view) -> {
-            Float teamCountValue = view.getFloat("teamCount");
-            Float teamSizeValue = view.getFloat("teamSize");
-            Float durationValue = view.getFloat("duration");
-            int teamCount = teamCountValue == null ? defaultCount : Math.round(teamCountValue);
-            int teamSize = teamSizeValue == null ? defaultSize : Math.round(teamSizeValue);
-            int durationMinutes = durationValue == null ? defaultDurationMinutes : Math.round(durationValue);
-            bingoCreate(p, teamCount, teamSize, durationMinutes);
-        }));
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openBingoMenu));
-        List<Component> body = List.of(t("bingo.create-body", "<gray>Réglez la partie puis créez-la. Vous serez l'hôte."));
-        gui.open(player, t("bingo.create-title", "<gold><bold>Nouvelle partie Bingo"), body, inputs, buttons, gui.close(), 1);
-    }
-
-    private void bingoCreate(Player player, int teamCount, int teamSize, int durationMinutes) {
-        BingoParty party = plugin.bingoParties().create(player, teamCount, teamSize,
-                java.time.Duration.ofMinutes(durationMinutes));
-        player.sendMessage(plugin.prefix().append(t("bingo.created",
-                "<green>Partie Bingo créée (<teams> équipe(s) x <size> joueur(s), <minutes> min). "
-                        + "Code à partager : <white><bold><code></bold>",
-                "teams", party.teamCount(), "size", party.teamSize(),
-                "minutes", party.duration().toMinutes(), "code", party.code())));
-        plugin.bingoParties().transferToBingo(player);
-    }
-
-    private void bingoJoin(Player player, String code) {
-        if (code.isBlank()) {
-            player.sendMessage(plugin.prefix().append(t("bingo.join-empty", "<red>Merci d'indiquer un code.")));
-            return;
-        }
-        BingoParty party = plugin.bingoParties().join(player, code);
-        if (party == null) {
-            player.sendMessage(plugin.prefix().append(t("bingo.join-invalid", "<red>Code invalide, partie pleine ou introuvable.")));
-            return;
-        }
-        player.sendMessage(plugin.prefix().append(t("bingo.joined", "<green>Partie rejointe, transfert en cours…")));
-        plugin.bingoParties().transferToBingo(player);
     }
 }

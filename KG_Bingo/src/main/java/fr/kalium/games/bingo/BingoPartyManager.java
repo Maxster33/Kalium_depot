@@ -1,6 +1,5 @@
 package fr.kalium.games.bingo;
 
-import fr.kalium.games.KalGames;
 import org.bukkit.entity.Player;
 
 import java.io.ByteArrayOutputStream;
@@ -35,14 +34,14 @@ public final class BingoPartyManager {
 
     private static final String CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
-    private final KalGames plugin;
+    private final KGBingo plugin;
     private final Map<String, BingoParty> byCode = new HashMap<>();
     private final Map<String, BingoParty> byGameId = new HashMap<>();
     private final Map<UUID, BingoParty> byPlayer = new HashMap<>();
     private final SecureRandom random = new SecureRandom();
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build();
 
-    public BingoPartyManager(KalGames plugin) {
+    public BingoPartyManager(KGBingo plugin) {
         this.plugin = plugin;
     }
 
@@ -218,7 +217,7 @@ public final class BingoPartyManager {
      * connecte ICI - or au demarrage d'une partie tout le monde est en general sur Kixster, donc le
      * signal se perdait. KalBingo le publie desormais aussi sur le relais HTTP (cle
      * "party-closed-<gameId>", voir PartyStatusNotifier/RelayClient.postPartyClosed cote KalBingo) :
-     * interroge ici toutes les 5 s (voir KalGames.onEnable) pour chaque partie encore listee, sans
+     * interroge ici toutes les 5 s (voir KGBingo.onEnable) pour chaque partie encore listee, sans
      * bloquer le thread principal. Silencieux si relay-url n'est pas configure.
      */
     public void pollClosedParties() {

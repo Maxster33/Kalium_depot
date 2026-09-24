@@ -647,3 +647,27 @@ Aussi dans cette version (même jour, demande de LeKiwi06) : commentaires obsol�
 changement de comportement.
 
 À déployer avec KaliumRelay 1.1.1 et KalBingo 0.1.23 - pas urgent. **Statut : compilé, non déployé.**
+
+## 1.13.0 — le Bingo sort de KalGames (plugin KG_Bingo), menus ouverts aux autres plugins (24/09/2026)
+
+**Demande de LeKiwi06** : appliquer la règle « un plugin = un rôle » (`REGLES.md`, section 2) au Bingo : « il faut
+donc isoler KG_bingo (tout ce que kal-games doit gérer pour le bingo) de kal_games ». Étape A d'un découpage en
+deux étapes (étape B : renommer KalBingo en KG_BingoGame). Choix validé : une « prise » générique plutôt qu'un
+bouton Bingo écrit en dur dans KalGames.
+
+- **Retiré** (déplacé tel quel dans le nouveau plugin `KG_Bingo`, voir son JOURNAL) : package
+  `fr.kalium.games.bingo` (`BingoCommand`, `BingoNetworkListener`, `BingoParty`, `BingoPartyManager`), menus Bingo de
+  `PlayerMenus` (bouton du hub, création, liste des parties, jointure), écran Paramètres > Bingo d'`AdminMenus`,
+  section `bingo:` de `config.yml`, commande `/bingo` de `plugin.yml`, canal BungeeCord entrant (ne servait qu'au
+  Bingo), tâche `pollClosedParties`.
+- **Ajouté** : `gui.MenuEntry` + `PlayerMenus.addGameEntry/removeGameEntry` (boutons du menu Mini-jeux, après les
+  mini-jeux de KalGames) et `AdminMenus.addSettingsEntry/removeSettingsEntry` (accueil des Paramètres, après « Hub de
+  Kal-Games », clic réservé aux modérateurs). Ces prises suivront le menu quand il sortira dans `KG_Menu` (prévu).
+- Comportement pour les joueurs inchangé si KG_Bingo est installé (même bouton, même place, mêmes textes). Sans
+  KG_Bingo, le bouton Bingo n'apparaît simplement plus.
+- Vérifié : les autres classes compilées sont identiques à 1.12.3 (seules `KalGames`, `PlayerMenus`, `AdminMenus`
+  changent, `MenuEntry` est nouvelle). Inclut les changements de 1.12.4 (jamais déployée).
+
+**Déploiement** : obligatoirement **en même temps que KG_Bingo 1.0.0** (sinon le Bingo disparaît du hub). Le
+`config.yml` déployé sur kal-games garde sa section `bingo:` : sans effet désormais, à recopier dans
+`plugins/KG_Bingo/config.yml` (jeton compris) avant le redémarrage. **Statut : compilé, non déployé.**

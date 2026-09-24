@@ -1,8 +1,5 @@
 package fr.kalium.games;
 
-import fr.kalium.games.bingo.BingoCommand;
-import fr.kalium.games.bingo.BingoNetworkListener;
-import fr.kalium.games.bingo.BingoPartyManager;
 import fr.kalium.games.command.KalGamesCommand;
 import fr.kalium.games.data.KitLibrary;
 import fr.kalium.games.data.Lang;
@@ -52,7 +49,6 @@ public final class KalGames extends JavaPlugin {
     private StatsService stats;
     private BoardService boards;
     private RankingMenus rankings;
-    private BingoPartyManager bingoParties;
 
     @Override
     public void onEnable() {
@@ -102,13 +98,7 @@ public final class KalGames extends JavaPlugin {
         admin = new AdminMenus(this, gui);
         instances = new InstanceManager(this);
 
-        bingoParties = new BingoPartyManager(this);
-        // 1.10.7 : retire de la liste les parties Bingo demarrees/annulees, signal lu sur le relais
-        // HTTP (voir BingoPartyManager.pollClosedParties) - toutes les 5 s.
-        Bukkit.getScheduler().runTaskTimer(this, bingoParties::pollClosedParties, 100L, 100L);
-
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BingoNetworkListener(this, bingoParties));
         getServer().getPluginManager().registerEvents(new ConnectionListener(this), this);
         getServer().getPluginManager().registerEvents(new HubListener(this), this);
         getServer().getPluginManager().registerEvents(new GameListener(this), this);
@@ -123,12 +113,8 @@ public final class KalGames extends JavaPlugin {
                 pluginCommand.setTabCompleter(command);
             }
         }
-        // Commande texte /bingo, en parallele du menu "Bingo" du hub - voir BingoCommand.
-        BingoCommand bingoCommand = new BingoCommand(this, bingoParties);
-        PluginCommand bingoPluginCommand = getCommand("bingo");
-        if (bingoPluginCommand != null) {
-            bingoPluginCommand.setExecutor(bingoCommand);
-        }
+        // 1.13.0 : le Bingo (menu, /bingo, lien avec le serveur Bingo) est dans le plugin separe KG_Bingo, qui
+        // ajoute ses boutons aux menus via PlayerMenus.addGameEntry / AdminMenus.addSettingsEntry.
 
         // Le monde des instances est cree une fois le serveur completement demarre.
         Bukkit.getScheduler().runTask(this, () -> {
@@ -241,10 +227,6 @@ public final class KalGames extends JavaPlugin {
 
     public RankingMenus rankings() {
         return rankings;
-    }
-
-    public BingoPartyManager bingoParties() {
-        return bingoParties;
     }
 
     public Gui gui() {

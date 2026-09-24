@@ -1,6 +1,5 @@
 package fr.kalium.games.bingo;
 
-import fr.kalium.games.KalGames;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
@@ -30,10 +29,10 @@ public final class BingoNetworkListener implements PluginMessageListener {
      *  retirer de la liste des parties rejoignables (BingoPartyManager.openParties). */
     private static final String PARTY_CLOSED_SUBCHANNEL = "KalBingoPartyClosed";
 
-    private final KalGames plugin;
+    private final KGBingo plugin;
     private final BingoPartyManager parties;
 
-    public BingoNetworkListener(KalGames plugin, BingoPartyManager parties) {
+    public BingoNetworkListener(KGBingo plugin, BingoPartyManager parties) {
         this.plugin = plugin;
         this.parties = parties;
     }
