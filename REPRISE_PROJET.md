@@ -17,7 +17,7 @@ Le détail technique de chaque version est dans `<plugin>/JOURNAL.md`. Documents
 | Lobby | `lobby` | `lobby@7002.mystrator.com` | 91.197.6.152:28618 | KLM_Menu |
 | **Hub mini-jeux (Kal-Games)** | `kal-games` | `KalGames2@7001.mystrator.com` (onglet « KalGames2 ») | 91.197.6.24:22142 | KalGames, KG_Bingo, KG_ScoreBoards, KLM_Menu (KG_Menu à venir) |
 | **Bingo + jeux gourmands** (Manhunt...) | `serveur-jeux` | `serveurjeux@7015.mystrator.com` | 91.197.6.65:22470 | KG_BingoGame, KLM_Menu (boussole désactivée) |
-| Kixster SMP (redevient SMP, nettoyage à faire) | `kixster` | `kixster@7003.mystrator.com` | 91.197.6.212:29599 | KLM_Menu (plus de KG_BingoGame actif) |
+| Kixster SMP (rendu au SMP le 24/09/2026) | `kixster` | `kixster@7003.mystrator.com` | 91.197.6.212:29599 | KLM_Menu (boussole désactivée, menu par `/menu`) |
 | Event (ancien hub kal-games, à reconvertir) | `event` | `kalgames@7021.mystrator.com` | 51.254.174.133:21088 | ancien hub : KalGames 1.15.1, KG_Bingo, KG_ScoreBoards, KLM_Menu (à nettoyer) |
 | Serveur de test survie | `kal-test-dev` | `Kal-Test-Dev@5038.mystrator.com` | 91.197.6.215:21621 | KaliumCore (projet en pause), KLM_Menu |
 
@@ -85,7 +85,8 @@ Copie exacte de chaque jar dans `jars-deployes/`.
 | lobby | `KLM_Menu-2.0.0.jar` (destinations au 24/09/2026 : `kixster` (désactivée), `kal-games`, `serveur-jeux`, `kal-test-dev`, `event` (désactivée) ; activer / désactiver en jeu : menu > Paramètres) | non testé (catalogue « Interfaces » ; nouvelles destinations) |
 | proxy | `KaliumRelay-1.1.1.jar` (déployé le 24/09/2026) | relais confirmé le 24/09/2026 en 1.1.0 ; démarrage 1.1.1 vérifié dans le journal ; reconnexion directe non confirmée |
 | Kal-Test-Dev | `KaliumCore-1.4.0.jar` + `KLM_Menu-2.0.0.jar` (24/09/2026, rôle `backend` par défaut) | non testé (projet en pause ; raccordement au proxy du 24/09 non testé) |
-| Kixster (`kixster`) et Event (`event`, ancien kal-games) | inchangés depuis la migration (arrêtés le 24/09/2026) ; Kixster n'a plus de KG_BingoGame actif ; reconversion SMP / Event à faire | - |
+| Kixster (`kixster`) | remis dans l'état d'avant le Bingo le 24/09/2026 : monde d'origine `Kixster SMP` (ex `Kixster SMP_bak`, dernière sauvegarde 23/09 00:11), plugins SMP du 14/09 + WorldEdit 7.4.6-beta (gardé) + `KLM_Menu-2.0.0.jar` (boussole désactivée, `/menu` = alias de `/servers` dans `commands.yml`) ; tout le Bingo rangé dans `/_removed-bingo-2026-09-24/` et `/plugins/_removed-bingo-2026-09-24/` | non testé |
+| Event (`event`, ancien kal-games) | inchangé depuis la migration (arrêté le 24/09/2026) ; reconversion à faire | - |
 
 Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne très bien ».
 
@@ -323,6 +324,12 @@ dans `_removed-config-2026-09-24/` (racine de chaque serveur) et `plugins/_remov
 - PC de Maxster33 : Java 27 installé, `telecharger-outils.sh` fait, compilation vérifiée (KaliumRelay). Sous Git Bash,
   Java 27 n'est pas dans le PATH tant que Git Bash n'a pas été relancé : `export PATH="/c/Program Files/Java/jdk-27/bin:$PATH"`.
 - Travail désormais piloté par WinSCP.com + scripts (guide du Claude de LeKiwi06), plus par captures d'écran.
-- **Migration confirmée par Maxster33 le 24/09/2026** (« tout a l'air de fonctionner correctement ») après redémarrage ; journaux de démarrage de KalGames2 et Serveur Jeux : Paper 26.2-122, seules erreurs = celles déjà présentes sur les originaux (jar `PlaceholderAPIScoreboardObjectivesPlaceholder.jar` illisible sur le hub ; 2 voicechat et AnvilUnlocker sans ProtocolLib sur le Bingo), non corrigées (pas demandé).
+- **Correctifs et nettoyage (fin d'après-midi du 24/09/2026)** : KalGames2 : `PlaceholderAPIScoreboardObjectivesPlaceholder.jar`
+  (extension PlaceholderAPI, pas un plugin) déplacé dans `plugins/PlaceholderAPI/expansions/`. Serveur Jeux : voicechat
+  2.6.23 rangé (2.6.24 gardé), AnvilUnlocker retiré (sans ProtocolLib, inutile au Bingo). Kixster rendu au SMP : monde
+  d'origine restauré, `bukkit.yml` sans générateur Bingo, KG_BingoGame + anciens `_removed-kalbingo/kg_bingogame` +
+  mondes ratés (`_failed_v0.1.3`, `_crashed_0.1.4`) + monde vide du Bingo (avec `bingo_lobby`) + fichier `Depot`
+  (journal envoyé par erreur à la place d'un jar le 24/09 à 12:05) rangés dans `_removed-bingo-2026-09-24/` ;
+  voicechat 2.6.24 rangé ; WorldEdit gardé ; `generate-structures=false` laissé (décisions de Maxster33).- **Migration confirmée par Maxster33 le 24/09/2026** (« tout a l'air de fonctionner correctement ») après redémarrage ; journaux de démarrage de KalGames2 et Serveur Jeux : Paper 26.2-122, seules erreurs = celles déjà présentes sur les originaux (jar `PlaceholderAPIScoreboardObjectivesPlaceholder.jar` illisible sur le hub ; 2 voicechat et AnvilUnlocker sans ProtocolLib sur le Bingo), non corrigées (pas demandé).
 - À faire : nettoyage de Kixster (SMP) et
   reconversion d'Event ; KG_BoatRace (LeKiwi06) à déployer sur KalGames2.
