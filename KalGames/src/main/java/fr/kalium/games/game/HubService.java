@@ -101,7 +101,7 @@ public final class HubService {
         player.setVelocity(new Vector());
     }
 
-    /** Objets du hub : menu des mini-jeux + boussole de KaliumMenu. */
+    /** Objets du hub : menu des mini-jeux + boussole de KLM_Menu. */
     public void giveHubItems(Player player) {
         player.getInventory().setItem(plugin.items().slot("items.games.slot", 4), plugin.items().gamesItem());
         giveCompass(player);
@@ -116,9 +116,13 @@ public final class HubService {
         giveCompass(player);
     }
 
-    /** La boussole est celle de KaliumMenu (commande /kmenu give, qui verrouille l'objet). */
+    /**
+     * La boussole est celle de KLM_Menu (commande /kaliummenu give, qui verrouille l'objet). 1.15.1 : correctif - le
+     * plugin s'appelait KaliumMenu jusqu'au 24/09/2026 ; apres son renommage en KLM_Menu, la boussole n'etait plus
+     * redonnee au hub (vu par LeKiwi06). Les deux noms sont acceptes.
+     */
     private void giveCompass(Player player) {
-        if (Bukkit.getPluginManager().isPluginEnabled("KaliumMenu")) {
+        if (Bukkit.getPluginManager().isPluginEnabled("KLM_Menu") || Bukkit.getPluginManager().isPluginEnabled("KaliumMenu")) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "kaliummenu give " + player.getName());
         }
     }

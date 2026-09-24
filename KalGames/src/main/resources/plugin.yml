@@ -7,7 +7,7 @@ depend: [KG_ScoreBoards, KLM_Menu]
 # 1.15.0 : interfaces declarees dans le catalogue de KLM_Menu.
 description: Hub, menus et parties instanciees (PvP Kit, parcours, course de bateau...) pour Kal-Games.
 authors: [KaLium]
-softdepend: [KaliumMenu, PlayerKits2]
+softdepend: [PlayerKits2]
 
 commands:
   kalgames:

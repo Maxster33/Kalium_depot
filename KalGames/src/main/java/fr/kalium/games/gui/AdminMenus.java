@@ -450,8 +450,13 @@ public final class AdminMenus {
         if (plugin.items().isOurs(item)) {
             return true;
         }
-        NamespacedKey compass = new NamespacedKey("kaliummenu", "menu_compass");
-        return item.hasItemMeta() && item.getItemMeta().getPersistentDataContainer().has(compass, PersistentDataType.BYTE);
+        // Boussole de KLM_Menu (etiquette "klm_menu:") ou de l'ancien KaliumMenu ("kaliummenu:") - 1.15.1.
+        if (!item.hasItemMeta()) {
+            return false;
+        }
+        var data = item.getItemMeta().getPersistentDataContainer();
+        return data.has(new NamespacedKey("klm_menu", "menu_compass"), PersistentDataType.BYTE)
+                || data.has(new NamespacedKey("kaliummenu", "menu_compass"), PersistentDataType.BYTE);
     }
 
     private void openKits(Player player) {

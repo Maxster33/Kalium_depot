@@ -693,3 +693,12 @@ KG_Bingo 1.1.0 fonctionne sans changement. **Statut : déployé sur kal-games le
   arènes, kits, hub) dans le catalogue de KLM_Menu ; fournit la liste de ses mini-jeux à KG_ScoreBoards (ils
   apparaissent dans « Classements »). Dépend de KLM_Menu. Rien d'autre ne change.
 **Déploiement** : avec KLM_Menu 2.0.0 et KG_ScoreBoards 1.1.0. **Statut : déployé le 24/09/2026, non testé en jeu.**
+
+## 1.15.1 — correctif : boussole du hub après le renommage de KaliumMenu (24/09/2026)
+
+**Bug vu par LeKiwi06** : plus de boussole dans le hub de kal-games après le déploiement de KLM_Menu 2.0.0. Cause
+(erreur de Claude : les mentions de l'ancien nom n'avaient pas été recherchées dans tout le dépôt avant le
+renommage) : KalGames redonne la boussole au hub (après avoir vidé l'inventaire) seulement si un plugin nommé
+« KaliumMenu » est actif. Corrigé : `KLM_Menu` (ou l'ancien nom) ; l'outil « créer un kit depuis mon inventaire »
+écarte aussi les boussoles à la nouvelle étiquette (`klm_menu:menu_compass`). `softdepend` : KaliumMenu retiré
+(KLM_Menu est déjà dans `depend`). **Statut : compilé.**
