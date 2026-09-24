@@ -1369,3 +1369,12 @@ demandés ou à la grille complète, pas de nulle possible (message « Une nulle
 Démarrage 0.4.0 sur Kixster : icônes préparées en 3 s (1508 objets, 28 sans icône, aucun parmi les objectifs).
 Test de LeKiwi06 (24/09/2026) : carte, têtes, résumé « propres et sans bugs ». Limite connue, acceptée : les têtes
 des joueurs s'affichent sur Java mais pas sur Bedrock (Geyser).
+
+## 0.4.1 — contour des objets blancs sur la carte (24/09/2026)
+
+**Demande de LeKiwi06** : « mets un contour gris foncé pour les items de couleur blanche pour qu'ils ressortent
+mieux ». Une icône dont au moins la moitié des pixels visibles sont blancs ou gris très clair (clairs et peu
+colorés) reçoit un contour gris foncé d'un pixel autour de sa silhouette, sans toucher les lignes de la grille.
+Parmi les 200 objectifs, 18 sont concernés (bûche de bouleau, diorite, sable, verre, vitre, fer, ficelle, os, plume,
+laine et lit blancs, papier, sucre, carte, gâteau...) ; l'or et le diamant n'en ont pas. Vérifié sur un aperçu
+dessiné hors serveur. **Statut : compilé, non déployé.**

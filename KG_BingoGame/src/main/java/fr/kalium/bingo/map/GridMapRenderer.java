@@ -33,6 +33,9 @@ public final class GridMapRenderer extends MapRenderer {
     private static final Color WHITE = Color.WHITE;
     private static final Color BLACK = Color.BLACK;
     private static final Color UNKNOWN = new Color(120, 120, 120);
+    /** Contour des objets blancs (0.4.1). */
+    private static final Color OUTLINE = new Color(64, 64, 64);
+    private final java.util.Map<org.bukkit.Material, Boolean> light = new java.util.HashMap<>();
 
     private final BingoGame game;
     private final java.util.function.Function<org.bukkit.Material, BufferedImage> icons;
@@ -127,6 +130,18 @@ public final class GridMapRenderer extends MapRenderer {
             drawOutlined(canvas, "?", x0 + 5, y0 + 4, UNKNOWN);
             return;
         }
+        // 0.4.1 - demande de LeKiwi06 : "met un contour gris fonce pour les items de couleur blanche pour qu'ils
+        // ressortent mieux" (sucre, poudre d'os, laine blanche, papier... sur le fond blanc).
+        if (light.computeIfAbsent(objective.material(), m -> isLight(image))) {
+            for (int x = -1; x <= 16; x++) {
+                for (int y = -1; y <= 16; y++) {
+                    if (!opaque(image, x, y) && (opaque(image, x - 1, y) || opaque(image, x + 1, y)
+                            || opaque(image, x, y - 1) || opaque(image, x, y + 1))) {
+                        set(canvas, x0 + x, y0 + y, OUTLINE);
+                    }
+                }
+            }
+        }
         for (int x = 0; x < 16; x++) {
             for (int y = 0; y < 16; y++) {
                 int argb = image.getRGB(x, y);
@@ -135,6 +150,33 @@ public final class GridMapRenderer extends MapRenderer {
                 }
             }
         }
+    }
+
+    private static boolean opaque(BufferedImage image, int x, int y) {
+        return x >= 0 && y >= 0 && x < 16 && y < 16 && (image.getRGB(x, y) >>> 24) >= 128;
+    }
+
+    /** Objet "blanc" : au moins la moitie de ses pixels visibles sont blancs ou gris tres clair. */
+    static boolean isLight(BufferedImage image) {
+        int visible = 0;
+        int bright = 0;
+        for (int x = 0; x < 16; x++) {
+            for (int y = 0; y < 16; y++) {
+                int argb = image.getRGB(x, y);
+                if ((argb >>> 24) < 128) {
+                    continue;
+                }
+                visible++;
+                int r = (argb >> 16) & 0xFF;
+                int g = (argb >> 8) & 0xFF;
+                int b = argb & 0xFF;
+                // tres clair ET peu colore (blanc ou gris clair ; l'or ou le diamant ne comptent pas)
+                if (0.299 * r + 0.587 * g + 0.114 * b >= 190 && Math.max(r, Math.max(g, b)) - Math.min(r, Math.min(g, b)) <= 60) {
+                    bright++;
+                }
+            }
+        }
+        return visible > 0 && bright * 2 >= visible;
     }
 
     /** Quantite alignee a droite sur {@code right} et en bas sur {@code bottom} (pixels inclus). */
