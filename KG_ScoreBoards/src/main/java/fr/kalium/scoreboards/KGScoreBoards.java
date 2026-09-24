@@ -1,0 +1,201 @@
+package fr.kalium.scoreboards;
+
+import fr.kalium.scoreboards.board.BoardService;
+import fr.kalium.scoreboards.data.Lang;
+import fr.kalium.scoreboards.data.StatsService;
+import fr.kalium.scoreboards.gui.Gui;
+import fr.kalium.scoreboards.gui.RankingMenus;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+/**
+ * KG_ScoreBoards (1.0.0) : les classements, sortis de KalGames 1.13.0 (demande de LeKiwi06, 24/09/2026 : un plugin =
+ * un role). Donnees (stats.yml, archives/), panneaux flottants du hub (boards.yml) et menus de classement, a
+ * l'identique de KalGames 1.13.0 pour les joueurs.
+ *
+ * Autonome (option 1 choisie par LeKiwi06) : il ne depend d'aucun autre plugin. Les plugins qui l'utilisent
+ * (KalGames, puis KG_Bingo) :
+ * - fournissent leurs classements (addCategories : identifiant -&gt; nom et type) ;
+ * - enregistrent les points et les temps (stats()) ;
+ * - ouvrent les menus de classement en indiquant ou revient le bouton "Retour" ;
+ * - peuvent fournir la regle "moderateur" et les mondes interdits aux panneaux (setAdminCheck, setForbiddenWorld).
+ */
+public final class KGScoreBoards extends JavaPlugin {
+
+    private Lang lang;
+    private StatsService stats;
+    private BoardService boards;
+    private Gui gui;
+    private RankingMenus rankings;
+    private final List<Function<String, Category>> providers = new ArrayList<>();
+    private Predicate<Player> adminCheck = p -> p.hasPermission("kalgames.admin");
+    private Predicate<World> forbiddenWorld = w -> false;
+
+    @Override
+    public void onEnable() {
+        saveDefaultConfig();
+        lang = new Lang(this);
+        stats = new StatsService(new StatsService.Host() {
+            @Override
+            public java.io.File dataFolder() {
+                return getDataFolder();
+            }
+
+            @Override
+            public String timezone() {
+                return getConfig().getString("stats.timezone", "");
+            }
+
+            @Override
+            public java.util.logging.Logger logger() {
+                return getLogger();
+            }
+
+            @Override
+            public void async(Runnable task) {
+                Bukkit.getScheduler().runTaskAsynchronously(KGScoreBoards.this, task);
+            }
+
+            @Override
+            public boolean enabled() {
+                return isEnabled();
+            }
+        });
+        stats.load();
+        boards = new BoardService(this);
+        stats.onChange(boards::refreshSoon);
+        gui = new Gui(this);
+        rankings = new RankingMenus(this, gui);
+
+        // Panneaux : une fois le serveur completement demarre (mondes charges, plugins utilisateurs actifs).
+        Bukkit.getScheduler().runTask(this, () -> {
+            boards.load();
+            boards.start();
+            lang.saveIfNeeded();
+        });
+        BukkitTask save = Bukkit.getScheduler().runTaskTimer(this, () -> {
+            lang.saveIfNeeded();
+            stats.saveIfNeeded(false);
+        }, 20L * 30, 20L * 30);
+        getLogger().info("KG_ScoreBoards actif.");
+    }
+
+    @Override
+    public void onDisable() {
+        if (boards != null) {
+            boards.stop();
+        }
+        if (stats != null) {
+            stats.saveIfNeeded(true);
+        }
+        if (lang != null) {
+            lang.saveIfNeeded();
+        }
+    }
+
+    // ------------------------------------------------------------------ API pour les autres plugins
+
+    /** Ajoute une source de classements (identifiant -&gt; classement, ou null si inconnu de cette source). */
+    public void addCategories(Function<String, Category> provider) {
+        providers.add(provider);
+    }
+
+    public void removeCategories(Function<String, Category> provider) {
+        providers.remove(provider);
+    }
+
+    /** Classement de cet identifiant, ou null s'il n'est fourni par aucun plugin. */
+    public Category category(String id) {
+        for (Function<String, Category> provider : providers) {
+            Category category = provider.apply(id);
+            if (category != null) {
+                return category;
+            }
+        }
+        return null;
+    }
+
+    /** Regle "moderateur" pour les menus d'administration (par defaut : permission kalgames.admin, comme avant). */
+    public void setAdminCheck(Predicate<Player> adminCheck) {
+        this.adminCheck = adminCheck == null ? p -> p.hasPermission("kalgames.admin") : adminCheck;
+    }
+
+    /** Mondes ou l'on ne peut pas placer de panneau (ex. le monde des parties de KalGames). */
+    public void setForbiddenWorld(Predicate<World> forbiddenWorld) {
+        this.forbiddenWorld = forbiddenWorld == null ? w -> false : forbiddenWorld;
+    }
+
+    public StatsService stats() {
+        return stats;
+    }
+
+    public BoardService boards() {
+        return boards;
+    }
+
+    /** Top 10 d'un classement pour un joueur ; back = bouton "Retour". */
+    public void openPlayer(Player player, String categoryId, boolean monthly, Consumer<Player> back) {
+        Category category = category(categoryId);
+        if (category != null) {
+            rankings.openPlayer(player, category, monthly, false, back);
+        }
+    }
+
+    /** Menu moderateur d'un classement ; back = bouton "Retour". */
+    public void openAdmin(Player player, String categoryId, Consumer<Player> back) {
+        Category category = category(categoryId);
+        if (category != null) {
+            rankings.openAdmin(player, category, back);
+        }
+    }
+
+    /** Retire tous les panneaux d'un classement (ex. mini-jeu supprime). */
+    public void removeBoardsOf(String categoryId) {
+        boards.removeAllOf(categoryId);
+    }
+
+    // ------------------------------------------------------------------ outils internes (textes, droits)
+
+    public Lang lang() {
+        return lang;
+    }
+
+    public Component prefix() {
+        return lang.c("prefix", "<gold><bold>KalGames</bold> <dark_gray>» ");
+    }
+
+    public Component t(String key, String def, Object... pairs) {
+        return lang.c(key, def, pairs);
+    }
+
+    public void tell(CommandSender to, String key, String def, Object... pairs) {
+        to.sendMessage(prefix().append(t(key, def, pairs)));
+    }
+
+    public boolean isAdmin(Player player) {
+        return adminCheck.test(player);
+    }
+
+    public boolean isForbiddenWorld(World world) {
+        return world != null && forbiddenWorld.test(world);
+    }
+
+    public void sync(Runnable runnable) {
+        if (Bukkit.isPrimaryThread()) {
+            runnable.run();
+        } else {
+            Bukkit.getScheduler().runTask(this, runnable);
+        }
+    }
+}

@@ -99,8 +99,6 @@ scoring:
 # Classements (points cumules et meilleurs temps) : general depuis la creation du serveur + classement du mois.
 # A chaque changement de mois le classement complet est archive (dossier archives/) puis remis a zero.
 stats:
-  # Fuseau horaire du changement de mois (ex. Europe/Paris, Pacific/Noumea). Vide = fuseau du serveur.
-  timezone: ''
   # Les parties privees comptent pour les classements et le datapack.
   count-private-games: true
   # Parties privees : nombre maximum de parties par jour, par joueur et par jeu, dont les points comptent
@@ -109,7 +107,5 @@ stats:
   # Les points et temps des operateurs (OP) ne comptent pas pour les classements.
   exclude-operators: true
 
-# Panneaux de classement du hub (places depuis Parametres > Mini-jeux > Classements).
-boards:
-  # Taille du texte.
-  scale: 1.3
+# 1.14.0 : fuseau horaire des classements (stats.timezone) et taille des panneaux (boards.scale) : voir la
+# config de KG_ScoreBoards.

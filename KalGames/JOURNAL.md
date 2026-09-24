@@ -671,3 +671,18 @@ bouton Bingo écrit en dur dans KalGames.
 **Déploiement** : obligatoirement **en même temps que KG_Bingo 1.0.0** (sinon le Bingo disparaît du hub). Le
 `config.yml` déployé sur kal-games garde sa section `bingo:` : sans effet désormais, à recopier dans
 `plugins/KG_Bingo/config.yml` (jeton compris) avant le redémarrage. **Statut : déployé sur kal-games le 24/09/2026 avec KG_Bingo 1.1.0, non testé en jeu.**
+
+## 1.14.0 — classements sortis dans KG_ScoreBoards (24/09/2026)
+
+**Demande de LeKiwi06** : découpage de KalGames, les classements deviennent le plugin autonome **KG_ScoreBoards**
+(voir son JOURNAL). Aucun changement pour les joueurs.
+- Retirés de KalGames : `StatsService`, `BoardService`, `RankingMenus` (déplacés). KalGames dépend désormais de
+  KG_ScoreBoards (`depend:`) ; il lui fournit ses mini-jeux comme classements (nom, type parcours / course de bateau),
+  sa règle « modérateur » (`kalgames.admin`) et le monde des parties (pas de panneau dedans).
+- Inchangés : `ScoreBridge` (attribution des points, commandes du datapack, `stats.exclude-operators`), limite des
+  parties privées classées (`stats.count-private-games`, `stats.private-daily-limit`), menus des mini-jeux (le bouton
+  Classements ouvre les menus de KG_ScoreBoards, « Retour » revient au mini-jeu).
+- Les clés `stats.timezone` et `boards.scale` sont désormais lues dans la config de KG_ScoreBoards.
+
+**Déploiement** : obligatoirement avec KG_ScoreBoards 1.0.0 (migration des données dans son JOURNAL).
+KG_Bingo 1.1.0 fonctionne sans changement. **Statut : compilé, non déployé.**

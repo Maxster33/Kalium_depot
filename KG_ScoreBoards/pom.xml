@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.kalium</groupId>
-    <artifactId>KalGames</artifactId>
-    <version>1.14.0</version>
+    <artifactId>KG_ScoreBoards</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>KalGames</name>
+    <name>KG_ScoreBoards</name>
 
     <properties>
         <!-- Paper 26.x requires Java 25 -->

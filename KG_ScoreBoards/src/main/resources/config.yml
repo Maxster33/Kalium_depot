@@ -1,0 +1,20 @@
+# ============================================================
+#  KG_ScoreBoards - configuration
+#  Classements des mini-jeux (sortis de KalGames 1.13.0) : points cumules et meilleurs temps, general
+#  depuis la creation du serveur + classement du mois. Detail des versions dans JOURNAL.md.
+#  Ce fichier n'est copie qu'a la premiere installation : une nouvelle cle doit etre ajoutee a la main.
+# ============================================================
+
+stats:
+  # Fuseau horaire du changement de mois (ex. Europe/Paris, Pacific/Noumea). Vide = fuseau du serveur.
+  # (anciennement stats.timezone dans la config de KalGames)
+  timezone: ''
+
+# Panneaux de classement du hub (places depuis Parametres > Mini-jeux > Classements).
+boards:
+  # Taille du texte.
+  scale: 1.3
+
+gui:
+  # Largeur des boutons des menus (100 a 400).
+  button-width: 240

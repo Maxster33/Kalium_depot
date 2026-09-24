@@ -703,7 +703,7 @@ public final class RaceInstance extends GameInstance {
     }
 
     private static String formatTime(long millis) {
-        return fr.kalium.games.data.StatsService.formatTime(millis);
+        return fr.kalium.scoreboards.data.StatsService.formatTime(millis);
     }
 
     private static String formatTenths(long millis) {

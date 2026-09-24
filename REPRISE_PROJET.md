@@ -57,7 +57,11 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-Aucune.
+| Jar | Contenu | À déployer |
+|---|---|---|
+| `KG_BingoGame-0.4.2.jar` | contour des objets blancs sur la carte (0.4.1) + multiplicateur de vitesse du blackout (0.4.2) | seul, remplacer le jar sur Kixster |
+| `KG_ScoreBoards-1.0.0.jar` | nouveau plugin : classements sortis de KalGames sans changement pour les joueurs | **obligatoirement avec KalGames 1.14.0**, migration des données dans `KG_ScoreBoards/JOURNAL.md` |
+| `KalGames-1.14.0.jar` | classements retirés (dépend de KG_ScoreBoards) | **obligatoirement avec KG_ScoreBoards 1.0.0** |
 
 ## Chantiers en cours
 

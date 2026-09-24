@@ -161,7 +161,7 @@ public final class PlayerMenus {
                     t("menu.spectate-tip", "<gray>Mode spectateur, sans y participer."), p -> openSpectate(p, minigame)));
         }
         buttons.add(gui.button(t("menu.rankings", "<light_purple>Classements"),
-                t("menu.rankings-tip", "<gray>Top 10 général et du mois."), p -> plugin.rankings().openPlayer(p, minigame, false)));
+                t("menu.rankings-tip", "<gray>Top 10 général et du mois."), p -> plugin.ranking().openPlayer(p, minigame.id(), false, q -> plugin.menus().openMinigame(q, minigame))));
         buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openGames));
         List<Component> body = new ArrayList<>();
         body.add(minigame.description().isBlank() ? Component.empty() : plugin.lang().parse("<gray>" + minigame.description()));
@@ -193,7 +193,7 @@ public final class PlayerMenus {
                     t("menu.spectate-tip", "<gray>Mode spectateur, sans y participer."), p -> openSpectate(p, minigame)));
         }
         buttons.add(gui.button(t("menu.rankings", "<light_purple>Classements"),
-                t("menu.rankings-tip", "<gray>Top 10 général et du mois."), p -> plugin.rankings().openPlayer(p, minigame, false)));
+                t("menu.rankings-tip", "<gray>Top 10 général et du mois."), p -> plugin.ranking().openPlayer(p, minigame.id(), false, q -> plugin.menus().openMinigame(q, minigame))));
         buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openGames));
         List<Component> body = new ArrayList<>();
         if (!minigame.description().isBlank()) {

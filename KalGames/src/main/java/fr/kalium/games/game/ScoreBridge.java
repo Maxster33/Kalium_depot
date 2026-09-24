@@ -56,7 +56,7 @@ public final class ScoreBridge {
             return;
         }
         plugin.stats().addPoints(minigame.id(), player.getUniqueId(), player.getName(), points);
-        plugin.boards().refreshSoon();
+        plugin.ranking().boards().refreshSoon();
         if (!plugin.getConfig().getBoolean("scoring.bridge.enabled", true)) {
             return;
         }
@@ -69,7 +69,7 @@ public final class ScoreBridge {
             return false;
         }
         boolean record = plugin.stats().recordTime(minigame.id(), player.getUniqueId(), player.getName(), millis);
-        plugin.boards().refreshSoon();
+        plugin.ranking().boards().refreshSoon();
         return record;
     }
 
@@ -79,7 +79,7 @@ public final class ScoreBridge {
             return false;
         }
         boolean record = plugin.stats().recordLap(minigame.id(), player.getUniqueId(), player.getName(), millis);
-        plugin.boards().refreshSoon();
+        plugin.ranking().boards().refreshSoon();
         return record;
     }
 

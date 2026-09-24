@@ -4,8 +4,6 @@ import fr.kalium.games.command.KalGamesCommand;
 import fr.kalium.games.data.KitLibrary;
 import fr.kalium.games.data.Lang;
 import fr.kalium.games.data.Repository;
-import fr.kalium.games.data.StatsService;
-import fr.kalium.games.game.BoardService;
 import fr.kalium.games.game.HubService;
 import fr.kalium.games.game.InstanceManager;
 import fr.kalium.games.game.ItemService;
@@ -13,7 +11,6 @@ import fr.kalium.games.game.ScoreBridge;
 import fr.kalium.games.gui.AdminMenus;
 import fr.kalium.games.gui.Gui;
 import fr.kalium.games.gui.PlayerMenus;
-import fr.kalium.games.gui.RankingMenus;
 import fr.kalium.games.listener.ConnectionListener;
 import fr.kalium.games.listener.GameListener;
 import fr.kalium.games.listener.HubListener;
@@ -46,9 +43,9 @@ public final class KalGames extends JavaPlugin {
     private Gui gui;
     private PlayerMenus menus;
     private AdminMenus admin;
-    private StatsService stats;
-    private BoardService boards;
-    private RankingMenus rankings;
+    /** 1.14.0 : les classements (donnees, panneaux, menus) sont dans le plugin KG_ScoreBoards. */
+    private fr.kalium.scoreboards.KGScoreBoards ranking;
+    private java.util.function.Function<String, fr.kalium.scoreboards.Category> categories;
 
     @Override
     public void onEnable() {
@@ -61,40 +58,28 @@ public final class KalGames extends JavaPlugin {
         templates = new TemplateService(this);
         worlds = new InstanceWorld(this);
         items = new ItemService(this);
-        stats = new StatsService(new StatsService.Host() {
-            @Override
-            public java.io.File dataFolder() {
-                return getDataFolder();
+        // 1.14.0 : classements dans KG_ScoreBoards (depend: dans plugin.yml). KalGames lui fournit ses mini-jeux comme
+        // classements (nom affiche, type : temps de parcours ou temps sur 1 tour), sa regle "moderateur" et le monde
+        // des parties (pas de panneau de classement dedans).
+        ranking = (fr.kalium.scoreboards.KGScoreBoards) getServer().getPluginManager().getPlugin("KG_ScoreBoards");
+        categories = id -> {
+            fr.kalium.games.model.Minigame minigame = repository.minigame(id);
+            if (minigame == null) {
+                return null;
             }
-
-            @Override
-            public String timezone() {
-                return getConfig().getString("stats.timezone", "");
-            }
-
-            @Override
-            public java.util.logging.Logger logger() {
-                return getLogger();
-            }
-
-            @Override
-            public void async(Runnable task) {
-                Bukkit.getScheduler().runTaskAsynchronously(KalGames.this, task);
-            }
-
-            @Override
-            public boolean enabled() {
-                return isEnabled();
-            }
-        });
-        stats.load();
-        boards = new BoardService(this);
-        stats.onChange(boards::refreshSoon);
+            fr.kalium.scoreboards.Category.Kind kind = switch (minigame.type()) {
+                case BOAT_RACE -> fr.kalium.scoreboards.Category.Kind.LAP;
+                case PARKOUR -> fr.kalium.scoreboards.Category.Kind.TIME;
+                default -> fr.kalium.scoreboards.Category.Kind.POINTS;
+            };
+            return new fr.kalium.scoreboards.Category(id, lang.parse(minigame.display()), kind);
+        };
+        ranking.addCategories(categories);
+        ranking.setAdminCheck(this::isAdmin);
         scores = new ScoreBridge(this);
         hub = new HubService(this);
         gui = new Gui(this);
         menus = new PlayerMenus(this, gui);
-        rankings = new RankingMenus(this, gui);
         admin = new AdminMenus(this, gui);
         instances = new InstanceManager(this);
 
@@ -129,13 +114,12 @@ public final class KalGames extends JavaPlugin {
             // Pre-generation des arenes (course de bateau...) : apres le demarrage complet, un collage a la fois.
             // Ne complete que ce qui manque encore : les copies restaurees ci-dessus comptent deja.
             Bukkit.getScheduler().runTaskLater(this, instances::prewarm, 100L);
-            boards.load();
-            boards.start();
+            // Monde des parties connu seulement maintenant : pas de panneau de classement dedans.
+            ranking.setForbiddenWorld(w -> w == worlds.world());
             lang.saveIfNeeded();
         });
         BukkitTask save = Bukkit.getScheduler().runTaskTimer(this, () -> {
             lang.saveIfNeeded();
-            stats.saveIfNeeded(false);
         }, 20L * 30, 20L * 30);
         getLogger().info("KalGames actif : " + repository.minigames().size() + " mini-jeu(x), " + repository.arenas().size()
                 + " arène(s), " + kits.all().size() + " kit(s).");
@@ -154,11 +138,8 @@ public final class KalGames extends JavaPlugin {
             // (voir instances.stop() ci-dessus, qui les a sauvegardees) seront restaurees au prochain demarrage.
             worlds.markClean();
         }
-        if (boards != null) {
-            boards.stop();
-        }
-        if (stats != null) {
-            stats.saveIfNeeded(true);
+        if (ranking != null && categories != null) {
+            ranking.removeCategories(categories);
         }
         if (lang != null) {
             lang.saveIfNeeded();
@@ -174,8 +155,8 @@ public final class KalGames extends JavaPlugin {
         lang.load();
         kits.load();
         repository.load(kits);
-        boards.load();
-        boards.refreshAll();
+        ranking.boards().load();
+        ranking.boards().refreshAll();
         instances.prewarm();
     }
 
@@ -217,16 +198,14 @@ public final class KalGames extends JavaPlugin {
         return scores;
     }
 
-    public StatsService stats() {
-        return stats;
+    /** Donnees des classements (KG_ScoreBoards). */
+    public fr.kalium.scoreboards.data.StatsService stats() {
+        return ranking.stats();
     }
 
-    public BoardService boards() {
-        return boards;
-    }
-
-    public RankingMenus rankings() {
-        return rankings;
+    /** Classements : menus, panneaux (KG_ScoreBoards). */
+    public fr.kalium.scoreboards.KGScoreBoards ranking() {
+        return ranking;
     }
 
     public Gui gui() {

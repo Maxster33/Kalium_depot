@@ -1,0 +1,6 @@
+name: KG_ScoreBoards
+version: '${project.version}'
+main: fr.kalium.scoreboards.KGScoreBoards
+api-version: '26.2'
+description: Classements des mini-jeux (points, meilleurs temps, archives mensuelles, panneaux du hub), utilises par KalGames et KG_Bingo.
+authors: [KaLium]

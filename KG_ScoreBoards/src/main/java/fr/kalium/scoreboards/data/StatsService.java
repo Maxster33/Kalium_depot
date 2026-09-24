@@ -1,4 +1,4 @@
-package fr.kalium.games.data;
+package fr.kalium.scoreboards.data;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

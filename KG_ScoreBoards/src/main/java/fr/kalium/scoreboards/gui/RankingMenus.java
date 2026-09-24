@@ -1,11 +1,11 @@
-package fr.kalium.games.gui;
+package fr.kalium.scoreboards.gui;
 
-import fr.kalium.games.KalGames;
-import fr.kalium.games.data.StatsService;
-import fr.kalium.games.data.StatsService.Archive;
-import fr.kalium.games.data.StatsService.Row;
-import fr.kalium.games.game.BoardService;
-import fr.kalium.games.model.Minigame;
+import fr.kalium.scoreboards.Category;
+import fr.kalium.scoreboards.KGScoreBoards;
+import fr.kalium.scoreboards.board.BoardService;
+import fr.kalium.scoreboards.data.StatsService;
+import fr.kalium.scoreboards.data.StatsService.Archive;
+import fr.kalium.scoreboards.data.StatsService.Row;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -16,15 +16,25 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-/** Menus des classements : consultation par les joueurs, et outils des moderateurs (archives, panneaux du hub). */
+/**
+ * Menus des classements : consultation par les joueurs, et outils des moderateurs (archives, panneaux du hub).
+ * KG_ScoreBoards 1.0.0 : deplace de KalGames 1.13.0 ; le bouton "Retour" des deux menus d'entree ramene la ou le plugin
+ * appelant l'a demande (back), le reste est identique.
+ */
 public final class RankingMenus {
 
     private static final int PAGE = 15;
 
-    private final KalGames plugin;
+    private final KGScoreBoards plugin;
     private final Gui gui;
+    /** Retour du menu moderateur, par moderateur (memorise pour les sous-menus qui y reviennent). */
+    private final java.util.Map<UUID, java.util.function.Consumer<Player>> adminBack = new java.util.HashMap<>();
 
-    public RankingMenus(KalGames plugin, Gui gui) {
+    private java.util.function.Consumer<Player> backOf(Player player) {
+        return adminBack.getOrDefault(player.getUniqueId(), p -> { });
+    }
+
+    public RankingMenus(KGScoreBoards plugin, Gui gui) {
         this.plugin = plugin;
         this.gui = gui;
     }
@@ -33,8 +43,8 @@ public final class RankingMenus {
         return plugin.t(key, def, pairs);
     }
 
-    private Component name(Minigame minigame) {
-        return plugin.lang().parse(minigame.display());
+    private Component name(Category minigame) {
+        return minigame.name();
     }
 
     private boolean guard(Player player) {
@@ -55,13 +65,8 @@ public final class RankingMenus {
 
     // ------------------------------------------------------------------ joueurs
 
-    /** Top 10 general ou du mois d'un mini-jeu. */
-    public void openPlayer(Player player, Minigame minigame, boolean monthly) {
-        openPlayer(player, minigame, monthly, false);
-    }
-
-    /** Top 10 general ou du mois ; lap = meilleurs temps sur 1 tour (courses de bateau). */
-    public void openPlayer(Player player, Minigame minigame, boolean monthly, boolean lap) {
+    /** Top 10 general ou du mois ; lap = meilleurs temps sur 1 tour (courses de bateau) ; back = bouton "Retour". */
+    public void openPlayer(Player player, Category minigame, boolean monthly, boolean lap, java.util.function.Consumer<Player> back) {
         StatsService stats = plugin.stats();
         BoardService boards = plugin.boards();
         boolean lapAvailable = boards.hasLapTimes(minigame);
@@ -97,19 +102,20 @@ public final class RankingMenus {
         }
         List<ActionButton> buttons = new ArrayList<>();
         buttons.add(gui.button(monthly ? t("rank.show-all", "<gold>Voir le classement général") : t("rank.show-month", "<gold>Voir le classement du mois"),
-                null, p -> openPlayer(p, minigame, !monthly, showLap)));
+                null, p -> openPlayer(p, minigame, !monthly, showLap, back)));
         if (lapAvailable) {
             buttons.add(gui.button(showLap ? t("rank.show-points", "<aqua>Voir le classement des points")
                             : t("rank.show-lap", "<aqua>Voir les meilleurs temps sur 1 tour"),
-                    null, p -> openPlayer(p, minigame, monthly, !showLap)));
+                    null, p -> openPlayer(p, minigame, monthly, !showLap, back)));
         }
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, p -> plugin.menus().openMinigame(p, minigame)));
+        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, back::accept));
         gui.open(player, t("rank.title", "<light_purple><bold>Classements <name>", "name", name(minigame)), body, List.of(), buttons, gui.close(), 1);
     }
 
     // ------------------------------------------------------------------ moderateurs
 
-    public void openAdmin(Player player, Minigame minigame) {
+    public void openAdmin(Player player, Category minigame, java.util.function.Consumer<Player> back) {
+        adminBack.put(player.getUniqueId(), back);
         if (!guard(player)) {
             return;
         }
@@ -142,14 +148,15 @@ public final class RankingMenus {
                             plugin.tell(q, "rank.closed", archive == null
                                     ? "<yellow>Aucun joueur classé : rien à archiver, le classement du mois est remis à zéro."
                                     : "<green>Mois archivé (<label>) et remis à zéro.", "label", archive == null ? "" : archive.label());
-                            openAdmin(q, minigame);
-                        }, q -> openAdmin(q, minigame))));
-        buttons.add(adminButton(t("menu.back", "<gray>Retour"), null, p -> plugin.admin().openMinigame(p, minigame)));
+                            openAdmin(q, minigame, backOf(q));
+                        }, q -> openAdmin(q, minigame, backOf(q)))));
+        java.util.function.Consumer<Player> exit = back;
+        buttons.add(adminButton(t("menu.back", "<gray>Retour"), null, exit::accept));
         gui.open(player, t("rank.admin-title", "<light_purple><bold>Classements <name>", "name", name(minigame)), body, List.of(), buttons, gui.close(), 1);
     }
 
     /** Classement complet pagine. source : all, month, a:&lt;archive&gt; ; lap-all, lap-month, la:&lt;archive&gt; = temps sur 1 tour. */
-    private void openFull(Player player, Minigame minigame, String source, int page) {
+    private void openFull(Player player, Category minigame, String source, int page) {
         if (!guard(player)) {
             return;
         }
@@ -217,7 +224,7 @@ public final class RankingMenus {
                     if (source.startsWith("a:") || source.startsWith("la:")) {
                         openArchives(p, minigame);
                     } else {
-                        openAdmin(p, minigame);
+                        openAdmin(p, minigame, backOf(p));
                     }
                 }));
         gui.open(player, t("rank.full-title", "<light_purple><bold><name>", "name", name(minigame)), body, List.of(), buttons, gui.close(), 1);
@@ -226,7 +233,7 @@ public final class RankingMenus {
     private static final int REMOVE_PAGE = 10;
 
     /** Choix du joueur dont on efface les points et le temps (classement general), ou son temps sur 1 tour (lap). */
-    private void openRemove(Player player, Minigame minigame, int page, boolean lap) {
+    private void openRemove(Player player, Category minigame, int page, boolean lap) {
         if (!guard(player)) {
             return;
         }
@@ -282,7 +289,7 @@ public final class RankingMenus {
                 List.of(), buttons, gui.close(), 1);
     }
 
-    private void openArchives(Player player, Minigame minigame) {
+    private void openArchives(Player player, Category minigame) {
         if (!guard(player)) {
             return;
         }
@@ -295,7 +302,7 @@ public final class RankingMenus {
                     : t("rank.archive-line-empty", "<dark_gray><label> <gray>(aucun joueur)", "label", archive.label());
             buttons.add(adminButton(label, null, p -> openFull(p, minigame, "a:" + archive.id(), 0)));
         }
-        buttons.add(adminButton(t("menu.back", "<gray>Retour"), null, p -> openAdmin(p, minigame)));
+        buttons.add(adminButton(t("menu.back", "<gray>Retour"), null, p -> openAdmin(p, minigame, backOf(p))));
         gui.open(player, t("rank.archives-title", "<aqua><bold>Archives <name>", "name", name(minigame)),
                 List.of(archives.isEmpty()
                         ? t("rank.archives-none", "<gray>Aucune archive pour le moment : la première sera créée à la fin du mois.")
@@ -312,7 +319,7 @@ public final class RankingMenus {
         return String.format(Locale.ROOT, "%s %.1f, %.1f, %.1f", location.getWorld().getName(), location.getX(), location.getY(), location.getZ());
     }
 
-    private void openBoards(Player player, Minigame minigame) {
+    private void openBoards(Player player, Category minigame) {
         if (!guard(player)) {
             return;
         }
@@ -351,12 +358,12 @@ public final class RankingMenus {
                 openBoards(p, minigame);
             }));
         }
-        buttons.add(adminButton(t("menu.back", "<gray>Retour"), null, p -> openAdmin(p, minigame)));
+        buttons.add(adminButton(t("menu.back", "<gray>Retour"), null, p -> openAdmin(p, minigame, backOf(p))));
         gui.open(player, t("rank.boards-title", "<green><bold>Panneaux de classement"), body, List.of(), buttons, gui.close(), 1);
     }
 
-    private void place(Player player, Minigame minigame, boolean monthly, boolean lap) {
-        if (player.getWorld() == plugin.worlds().world()) {
+    private void place(Player player, Category minigame, boolean monthly, boolean lap) {
+        if (plugin.isForbiddenWorld(player.getWorld())) {
             plugin.tell(player, "rank.boards-wrong-world", "<red>Placez le panneau dans le hub, pas dans le monde des parties.");
             return;
         }

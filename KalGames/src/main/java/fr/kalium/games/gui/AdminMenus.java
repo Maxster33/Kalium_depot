@@ -306,7 +306,7 @@ public final class AdminMenus {
         }
         buttons.add(btn(t("admin.mg-arena-list", "<green>Arènes (<n>)", "n", arenas.size()), null, p -> openArenas(p, minigame)));
         buttons.add(btn(t("admin.mg-rankings", "<light_purple>Classements (général, mois, archives, panneaux du hub)"), null,
-                p -> plugin.rankings().openAdmin(p, minigame)));
+                p -> plugin.ranking().openAdmin(p, minigame.id(), q -> plugin.admin().openMinigame(q, minigame))));
         buttons.add(btn(t("admin.mg-delete", "<dark_red>Supprimer le mini-jeu"), null, p -> gui.confirm(p,
                 t("admin.mg-delete-title", "<dark_red>Supprimer ?"),
                 t("admin.mg-delete-body", "<gray>Le mini-jeu <white><name></white> et toutes ses arènes seront supprimés.", "name", plugin.lang().parse(minigame.display())),
@@ -318,7 +318,7 @@ public final class AdminMenus {
                     for (Arena arena : plugin.repository().arenasOf(minigame.id())) {
                         plugin.templates().delete(arena.id());
                     }
-                    plugin.boards().removeAllOf(minigame.id());
+                    plugin.ranking().removeBoardsOf(minigame.id());
                     plugin.repository().deleteMinigame(minigame.id());
                     say(q, "admin.mg-deleted", "<green>Mini-jeu supprimé.");
                     openMinigames(q);

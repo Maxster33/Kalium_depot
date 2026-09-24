@@ -2,6 +2,8 @@ name: KalGames
 version: '${project.version}'
 main: fr.kalium.games.KalGames
 api-version: '26.2'
+# 1.14.0 : classements (points, temps, archives, panneaux) dans le plugin KG_ScoreBoards.
+depend: [KG_ScoreBoards]
 description: Hub, menus et parties instanciees (PvP Kit, parcours, course de bateau...) pour Kal-Games.
 authors: [KaLium]
 softdepend: [KaliumMenu, PlayerKits2]

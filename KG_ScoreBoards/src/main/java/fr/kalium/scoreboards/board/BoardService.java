@@ -1,10 +1,9 @@
-package fr.kalium.games.game;
+package fr.kalium.scoreboards.board;
 
-import fr.kalium.games.KalGames;
-import fr.kalium.games.data.StatsService;
-import fr.kalium.games.data.StatsService.Row;
-import fr.kalium.games.model.Minigame;
-import fr.kalium.games.model.MinigameType;
+import fr.kalium.scoreboards.Category;
+import fr.kalium.scoreboards.KGScoreBoards;
+import fr.kalium.scoreboards.data.StatsService;
+import fr.kalium.scoreboards.data.StatsService.Row;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import org.bukkit.Bukkit;
@@ -36,13 +35,15 @@ import java.util.Map;
 /**
  * Classements affiches dans le hub : un panneau de texte flottant (entite d'affichage) par mini-jeu et par
  * type (general / du mois), place par un moderateur depuis le menu Parametres. Le texte se met a jour tout seul.
+ * KG_ScoreBoards 1.0.0 : deplace de KalGames 1.13.0 ; le nom et le type du mini-jeu viennent du classement (Category)
+ * fourni par le plugin qui l'utilise.
  */
 public final class BoardService implements Listener {
 
     public static final int TOP = 10;
     private static final String TAG = "kalgames_board:";
 
-    private final KalGames plugin;
+    private final KGScoreBoards plugin;
     private final File file;
     private final Map<String, Location> boards = new LinkedHashMap<>();
     /** Entrees dont le monde est introuvable au chargement : conservees telles quelles (et leurs panneaux laisses en place). */
@@ -50,7 +51,7 @@ public final class BoardService implements Listener {
     private BukkitTask pending;
     private BukkitTask timer;
 
-    public BoardService(KalGames plugin) {
+    public BoardService(KGScoreBoards plugin) {
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), "boards.yml");
     }
@@ -177,23 +178,23 @@ public final class BoardService implements Listener {
     // ------------------------------------------------------------------ affichage
 
     /** Temps affiche a cote des points : meilleur temps sur 1 tour (course de bateau) ou meilleur temps de course (parcours). -1 = aucun. */
-    public long shownTime(Minigame minigame, Row row) {
-        if (minigame == null) {
+    public long shownTime(Category category, Row row) {
+        if (category == null) {
             return -1;
         }
-        return switch (minigame.type()) {
-            case BOAT_RACE -> row.bestLapMs();
-            case PARKOUR -> row.bestMs();
+        return switch (category.kind()) {
+            case LAP -> row.bestLapMs();
+            case TIME -> row.bestMs();
             default -> -1;
         };
     }
 
     /** Lignes de classement (rang, joueur, points, meilleur temps eventuel). */
-    public Component rows(List<Row> rows, int firstRank, Minigame minigame) {
+    public Component rows(List<Row> rows, int firstRank, Category category) {
         List<Component> lines = new ArrayList<>();
         int rank = firstRank;
         for (Row row : rows) {
-            long time = shownTime(minigame, row);
+            long time = shownTime(category, row);
             boolean showTime = time >= 0;
             lines.add(plugin.t(showTime ? "board.line-time" : "board.line",
                     showTime ? "<yellow><rank>.</yellow> <white><name></white> <dark_gray>-</dark_gray> <green><points> pts</green> <dark_gray>-</dark_gray> <aqua><time></aqua>"
@@ -225,12 +226,12 @@ public final class BoardService implements Listener {
     }
 
     /** Ce mini-jeu a un classement des meilleurs temps sur 1 tour ? (courses de bateau) */
-    public boolean hasLapTimes(Minigame minigame) {
-        return minigame != null && minigame.type() == MinigameType.BOAT_RACE;
+    public boolean hasLapTimes(Category category) {
+        return category != null && category.kind() == Category.Kind.LAP;
     }
 
-    public boolean hasTimes(Minigame minigame) {
-        return minigame != null && (minigame.type() == MinigameType.PARKOUR || minigame.type() == MinigameType.BOAT_RACE);
+    public boolean hasTimes(Category category) {
+        return category != null && (category.kind() == Category.Kind.TIME || category.kind() == Category.Kind.LAP);
     }
 
     /** Texte complet d'un panneau. */
@@ -239,8 +240,8 @@ public final class BoardService implements Listener {
     }
 
     public Component render(String minigameId, boolean monthly, boolean lap) {
-        Minigame minigame = plugin.repository().minigame(minigameId);
-        Component name = minigame == null ? Component.text(minigameId) : plugin.lang().parse(minigame.display());
+        Category minigame = plugin.category(minigameId);
+        Component name = minigame == null ? Component.text(minigameId) : minigame.name();
         StatsService stats = plugin.stats();
         if (lap) {
             Component lapTitle = monthly
