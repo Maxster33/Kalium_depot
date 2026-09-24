@@ -57,7 +57,20 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-Aucune.
+À installer **ensemble sur kal-games** (serveur arrêté), dans le dépôt depuis le 24/09/2026 :
+
+| Jar | Contenu |
+|---|---|
+| `KG_Menu-1.0.0.jar` | nouveau : menu du serveur kal-games, découverte des interfaces des jeux au démarrage, objet « Mini-jeux » du hub |
+| `KLM_Menu-2.1.0.jar` | boussole entièrement gérée par KLM_Menu (`giveNavigation`) ; lobby et Kixster peuvent rester en 2.0.0 |
+| `KalGames-1.16.0.jar` | menus du hub sortis vers KG_Menu, boussole demandée à KLM_Menu |
+| `KG_Bingo-1.3.0.jar` | boutons fournis à KG_Menu |
+| `KG_ScoreBoards-1.2.0.jar` | boutons fournis à KG_Menu |
+
+Procédure : ranger chaque ancien jar dans `_removed-<plugin>-<version>/`, envoyer les nouveaux ; relire les textes
+`item.games.*` du `lang.yml` de KalGames et les reprendre dans `plugins/KG_Menu/lang.yml` s'ils ont été modifiés ;
+après redémarrage, vérifier dans le journal « N fournisseur(s) d'interface trouvé(s) » (KG_Menu). Détails dans les
+JOURNAL. Les jars se recréent avec `sh <plugin>/build.sh`.
 
 ## Chantiers en cours
 
@@ -154,7 +167,7 @@ Format : `### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici 
 
 ### 2026-09-24 — LeKiwi06
 
-*(Publié en cours de session par précaution ; complété si la session continue.)*
+*(Fin de session : toutes les réservations libérées ; KG_Menu et les versions qui l'accompagnent restent à déployer.)*
 
 **Mise en route et règles**
 - Dépôt cloné sur le PC de LeKiwi06, compilation locale (`telecharger-outils.sh`, `build.sh` PC + cloud,
