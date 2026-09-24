@@ -3,7 +3,6 @@ package fr.kalium.games.listener;
 import fr.kalium.games.KalGames;
 import fr.kalium.games.game.GameInstance;
 import fr.kalium.games.game.ItemService;
-import fr.kalium.games.game.RaceInstance;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -101,8 +100,8 @@ public final class HubListener implements Listener {
                 case ItemService.GAMES, ItemService.GAME -> plugin.menus().openMenuFor(player);
                 case ItemService.CHECKPOINT -> {
                     GameInstance game = plugin.instances().of(player);
-                    if (game instanceof RaceInstance race) {
-                        race.useCheckpointItem(player);
+                    if (game != null) {
+                        game.useCheckpointItem(player); // 1.17.0 : crochet generique (KG_BoatRace...)
                     }
                 }
                 default -> {

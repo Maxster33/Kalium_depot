@@ -8,10 +8,16 @@ import static fr.kalium.games.model.SettingSpec.bool;
 import static fr.kalium.games.model.SettingSpec.integer;
 import static fr.kalium.games.model.SettingSpec.text;
 
-/** Types de mini-jeux : reglages, points d'arene a definir et disponibilite du moteur. */
-public enum MinigameType {
+/**
+ * Types de mini-jeux : reglages, points d'arene a definir et moteur du jeu.
+ *
+ * 1.17.0 : n'est plus une enumeration fermee mais un registre ouvert : un plugin de jeu separe (KG_BoatRace...)
+ * enregistre son type (reglages, points d'arene, moteur) avec register(). Les types restants ici sont ceux dont le
+ * moteur est encore dans KalGames (ou sans moteur).
+ */
+public final class MinigameType {
 
-    PVP_KIT("PvP Kit", true,
+    public static final MinigameType PVP_KIT = register(new MinigameType("PVP_KIT", "PvP Kit", true,
             "Combat d'équipes (jusqu'à 4) avec vote du kit. Dernière équipe en vie.",
             List.of(
                     integer("vote-seconds", "Durée du vote de kit (s)", 60, 10, 180, "Le vote se termine plus tôt si tout le monde a voté."),
@@ -33,9 +39,9 @@ public enum MinigameType {
                     single("spawn-a", "Départ équipe A", true, "Regarde vers le centre."),
                     single("spawn-b", "Départ équipe B", true, "Regarde vers le centre."),
                     single("spawn-c", "Départ équipe C", false, "Optionnel : active la 3e équipe."),
-                    single("spawn-d", "Départ équipe D", false, "Optionnel : active la 4e équipe."))),
+                    single("spawn-d", "Départ équipe D", false, "Optionnel : active la 4e équipe."))));
 
-    PARKOUR("Parcours", true,
+    public static final MinigameType PARKOUR = register(new MinigameType("PARKOUR", "Parcours", true,
             "Course chronométrée avec points de contrôle. Le premier à l'arrivée gagne.",
             List.of(
                     integer("prewarm-arenas", "Copies de chaque arène préchargées au démarrage", 0, 0, 10, "Collées dès le démarrage du serveur et gardées de côté : aucune arène à charger au lancement d'une partie (0 = aucune)."),
@@ -56,33 +62,9 @@ public enum MinigameType {
                     single("stands", "Gradins (attente)", true, "Où attendent les joueurs."),
                     single("start", "Départ", true, "Position de départ de tous les joueurs."),
                     list("checkpoints", "Points de contrôle (dans l'ordre)", false, "Ajoutez-les dans l'ordre du parcours."),
-                    single("finish", "Arrivée", true, "Zone d'arrivée."))),
+                    single("finish", "Arrivée", true, "Zone d'arrivée."))));
 
-    BOAT_RACE("Course de bateau", true,
-            "Course en bateau avec points de contrôle et tours. Le premier à finir les tours gagne.",
-            List.of(
-                    integer("max-private-games", "Parties privées simultanées maximum", 4, 0, 40, "0 = pas de limite."),
-                    integer("public-laps", "Nombre de tours (parties publiques)", 3, 1, 40, "Fixe pour toutes les parties publiques."),
-                    integer("laps", "Nombre de tours par défaut (parties privées)", 3, 1, 40, "L'hôte peut choisir jusqu'à 40 tours."),
-                    text("boat-type", "Type de bateau", "OAK_BOAT", "Ex. OAK_BOAT, BIRCH_BOAT, CHERRY_BOAT."),
-                    integer("points-win", "Points du 1er (2e = -1, 3e = -2)", 3, 0, 50, "Points attribués au podium."),
-                    integer("points-checkpoint", "Points par point de contrôle atteint", 0, 0, 50, "Gagnés à chaque point de contrôle."),
-                    integer("time-limit-seconds", "Temps limite (s)", 600, 30, 3600, "Fin de la course pour tout le monde."),
-                    integer("countdown-seconds", "Compte à rebours (s)", 5, 0, 15, "Avant le départ."),
-                    integer("checkpoint-radius", "Rayon des points de contrôle et de la ligne d'arrivée", 8, 1, 15, "En blocs (rayon de détection autour du point)."),
-                    integer("void-y", "Hauteur de chute (Y absolu)", -64, -64, 320, "Sous cette hauteur : retour au dernier point de contrôle. -64 = automatique (juste sous l'arène)."),
-                    integer("min-players", "Joueurs minimum", 2, 1, 16, "Pour lancer une partie publique."),
-                    integer("max-players", "Joueurs maximum", 12, 1, 32, "Places sur la grille (la grille de départ doit contenir autant de positions)."),
-                    integer("gather-seconds", "Attente avant lancement (s)", 20, 5, 180, "Partie publique."),
-                    bool("allow-spectate", "Autoriser le mode spectateur", true, "Les joueurs peuvent regarder la partie (publique ou privée) sans y participer (vol libre).")),
-            List.of(
-                    single("stands", "Gradins (attente)", true, "Où attendent les joueurs."),
-                    list("start-grid", "Grille de départ (une place par bateau)", true, "Ajoutez une position par participant."),
-                    list("checkpoints", "Points de contrôle (dans l'ordre)", false, "Ajoutez-les dans l'ordre du circuit."),
-                    single("finish", "Ligne d'arrivée", true, "Franchie à chaque tour."),
-                    single("finish-pit", "Ligne d'arrivée : 2e point (pitstop)", false, "Optionnel : franchir l'un ou l'autre des deux points de la ligne d'arrivée valide le tour."))),
-
-    RUSH("Rush", true,
+    public static final MinigameType RUSH = register(new MinigameType("RUSH", "Rush", true,
             "Chaque équipe défend son lit. Récupérez des ressources, construisez des ponts, achetez de l'équipement et détruisez le lit adverse. La dernière équipe en vie gagne.",
             List.of(
                     integer("team-size", "Joueurs maximum par équipe", 4, 1, 4, "Une équipe pleine ne peut plus être rejointe."),
@@ -98,9 +80,9 @@ public enum MinigameType {
                     integer("prewarm-arenas", "Copies de chaque arène préchargées au démarrage", 0, 0, 10, "Collées dès le démarrage du serveur et gardées de côté : aucune arène à charger au lancement d'une partie (0 = aucune)."),
                     integer("max-private-games", "Parties privées simultanées maximum", 0, 0, 40, "0 = pas de limite."),
                     bool("allow-spectate", "Autoriser le mode spectateur", true, "Les joueurs peuvent regarder la partie (publique ou privée) sans y participer (vol libre).")),
-            RushLayout.points()),
+            RushLayout.points()));
 
-    HUNGER_GAMES("Hunger Games", false,
+    public static final MinigameType HUNGER_GAMES = register(new MinigameType("HUNGER_GAMES", "Hunger Games", false,
             "Dernier survivant, coffres de butin et bordure qui se réduit. Moteur à venir : la configuration est déjà disponible.",
             List.of(
                     integer("min-players", "Joueurs minimum", 2, 2, 48, ""),
@@ -114,9 +96,9 @@ public enum MinigameType {
                     single("stands", "Salle d'attente", true, ""),
                     single("center", "Centre de l'arène", true, ""),
                     list("spawns", "Plateformes de départ", true, "Une par joueur maximum.")),
-            List.of(new ItemListSpec("loot", "Butin des coffres"))),
+            List.of(new ItemListSpec("loot", "Butin des coffres"))));
 
-    MANHUNT("Manhunt", false,
+    public static final MinigameType MANHUNT = register(new MinigameType("MANHUNT", "Manhunt", false,
             "Un speedrunner contre des chasseurs qui suivent sa boussole. Moteur à venir : la configuration est déjà disponible.",
             List.of(
                     integer("hunter-count", "Nombre de chasseurs", 1, 1, 8, ""),
@@ -130,9 +112,9 @@ public enum MinigameType {
                     single("stands", "Salle d'attente", true, ""),
                     single("runner-spawn", "Départ du speedrunner", false, "Si l'arène modèle est utilisée."),
                     single("hunter-spawn", "Départ des chasseurs", false, "Si l'arène modèle est utilisée.")),
-            List.of()),
+            List.of()));
 
-    BUILD_BATTLE("Build Battle", false,
+    public static final MinigameType BUILD_BATTLE = register(new MinigameType("BUILD_BATTLE", "Build Battle", false,
             "Chaque joueur construit sur un thème, puis les constructions sont votées. Moteur à venir : la configuration est déjà disponible.",
             List.of(
                     integer("build-seconds", "Durée de construction (s)", 300, 60, 1800, ""),
@@ -144,31 +126,140 @@ public enum MinigameType {
             List.of(
                     single("stands", "Salle d'attente", true, ""),
                     list("plots", "Terrains de construction", true, "Un point central par terrain.")),
-            List.of());
+            List.of()));
+
+
+
+    // 1.17.0 : moteurs des types fournis par KalGames. Les autres plugins (KG_BoatRace...) enregistrent leurs propres
+    // types avec register(), moteur compris.
+    static {
+        PVP_KIT.engine(fr.kalium.games.game.PvpInstance::new);
+        PARKOUR.engine(fr.kalium.games.game.RaceInstance::new).ranking(fr.kalium.scoreboards.Category.Kind.TIME);
+        RUSH.engine(fr.kalium.games.game.RushInstance::new).prewarmAllowed(true);
+        PVP_KIT.prewarmAllowed(true);
+        PARKOUR.prewarmAllowed(true);
+    }
 
     /** Liste d'objets (butin...) editee depuis l'inventaire du moderateur. */
     public record ItemListSpec(String key, String label) {
     }
 
+    /**
+     * Option numerique proposee a l'hote a la creation d'une partie privee (ex. nombre de tours) : cle dans les
+     * options de la partie, bornes, et reglage du mini-jeu qui donne la valeur par defaut.
+     */
+    public record CreateOption(String key, String label, int min, int max, String defaultSetting, int fallback) {
+    }
+
+    /** Fabrique d'une partie de ce type (le moteur du jeu). */
+    @FunctionalInterface
+    public interface GameFactory {
+        fr.kalium.games.game.GameInstance create(fr.kalium.games.KalGames plugin, String id, Minigame minigame, Arena arena,
+                                                  fr.kalium.games.world.Template template, boolean publicGame,
+                                                  java.util.Map<String, Object> options, int slot);
+    }
+
+    /** Registre des types (classe interne : initialisee avant le premier register(), quel que soit l'ordre). */
+    private static final class Registry {
+        static final java.util.Map<String, MinigameType> TYPES = new java.util.LinkedHashMap<>();
+        static final List<java.util.function.Consumer<MinigameType>> LISTENERS = new java.util.concurrent.CopyOnWriteArrayList<>();
+    }
+
+    /**
+     * Enregistre (ou remplace, meme nom) un type de mini-jeu. 1.17.0 : utilise par les plugins de jeu separes
+     * (KG_BoatRace...) a leur demarrage ; les mini-jeux de ce type deja enregistres dans minigames.yml sont alors
+     * rattaches (voir Repository).
+     */
+    public static MinigameType register(MinigameType type) {
+        Registry.TYPES.put(type.name, type);
+        for (java.util.function.Consumer<MinigameType> listener : Registry.LISTENERS) {
+            listener.accept(type);
+        }
+        return type;
+    }
+
+    /** Appele a chaque enregistrement de type (voir register). */
+    public static void onRegister(java.util.function.Consumer<MinigameType> listener) {
+        Registry.LISTENERS.add(listener);
+    }
+
+    /** Tous les types connus, dans l'ordre d'enregistrement. */
+    public static List<MinigameType> values() {
+        return List.copyOf(Registry.TYPES.values());
+    }
+
+    /** Type de ce nom (ex. "BOAT_RACE") ; IllegalArgumentException s'il n'est pas (encore) enregistre. */
+    public static MinigameType valueOf(String name) {
+        MinigameType type = name == null ? null : Registry.TYPES.get(name.toUpperCase(java.util.Locale.ROOT));
+        if (type == null) {
+            throw new IllegalArgumentException("Type de mini-jeu inconnu : " + name);
+        }
+        return type;
+    }
+
+    private final String name;
     private final String display;
-    private final boolean playable;
+    private final boolean configurable;
     private final String description;
     private final List<SettingSpec> settings;
     private final List<PointSpec> points;
     private final List<ItemListSpec> itemLists;
+    private GameFactory engine;
+    private fr.kalium.scoreboards.Category.Kind ranking = fr.kalium.scoreboards.Category.Kind.POINTS;
+    private final List<CreateOption> createOptions = new java.util.ArrayList<>();
+    private boolean prewarmAllowed;
 
-    MinigameType(String display, boolean playable, String description, List<SettingSpec> settings, List<PointSpec> points) {
-        this(display, playable, description, settings, points, List.of());
+    private MinigameType(String name, String display, boolean configurable, String description, List<SettingSpec> settings,
+                         List<PointSpec> points) {
+        this(name, display, configurable, description, settings, points, List.of());
     }
 
-    MinigameType(String display, boolean playable, String description, List<SettingSpec> settings,
-                 List<PointSpec> points, List<ItemListSpec> itemLists) {
+    private MinigameType(String name, String display, boolean configurable, String description, List<SettingSpec> settings,
+                         List<PointSpec> points, List<ItemListSpec> itemLists) {
+        this.name = name;
         this.display = display;
-        this.playable = playable;
+        this.configurable = configurable;
         this.description = description;
         this.settings = settings;
         this.points = points;
         this.itemLists = itemLists;
+    }
+
+    /** Type fourni par un autre plugin (le moteur est donne ensuite avec engine()). */
+    public MinigameType(String name, String display, String description, List<SettingSpec> settings, List<PointSpec> points) {
+        this(name.toUpperCase(java.util.Locale.ROOT), display, true, description, settings, points, List.of());
+    }
+
+    public MinigameType engine(GameFactory factory) {
+        this.engine = factory;
+        return this;
+    }
+
+    /** Genre de classement (points, temps de parcours, meilleur tour) dans KG_ScoreBoards. */
+    public MinigameType ranking(fr.kalium.scoreboards.Category.Kind kind) {
+        this.ranking = kind;
+        return this;
+    }
+
+    public MinigameType createOption(CreateOption option) {
+        this.createOptions.add(option);
+        return this;
+    }
+
+    /** Vrai si des copies d'arene peuvent etre collees a l'avance (reglage "prewarm-arenas"). */
+    public MinigameType prewarmAllowed(boolean value) {
+        this.prewarmAllowed = value;
+        return this;
+    }
+
+    /** Nom technique, enregistre dans minigames.yml (ex. "PVP_KIT"). */
+    public String name() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     public String display() {
@@ -177,7 +268,23 @@ public enum MinigameType {
 
     /** Vrai si un moteur de jeu existe (sinon : configuration seulement). */
     public boolean playable() {
-        return playable;
+        return configurable && engine != null;
+    }
+
+    public GameFactory engine() {
+        return engine;
+    }
+
+    public fr.kalium.scoreboards.Category.Kind ranking() {
+        return ranking;
+    }
+
+    public List<CreateOption> createOptions() {
+        return createOptions;
+    }
+
+    public boolean prewarmAllowed() {
+        return prewarmAllowed;
     }
 
     public String description() {

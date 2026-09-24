@@ -90,7 +90,7 @@ public final class ConnectionListener implements Listener {
         }
         if (game != null && game.ready()) {
             event.setRespawnLocation(game.stands());
-            if (game instanceof fr.kalium.games.game.RaceInstance race && race.racing(player.getUniqueId())) {
+            if (game.racing(player.getUniqueId())) { // 1.17.0 : crochet generique (KG_BoatRace...)
                 return;
             }
             plugin.later(1L, () -> {

@@ -1,0 +1,7 @@
+name: KG_BoatRace
+version: '${project.version}'
+main: fr.kalium.boatrace.KGBoatRace
+api-version: '26.2'
+description: Course de bateau de Kal-Games (sortie de KalGames), branchee sur le moteur de parties de KalGames.
+authors: [KaLium]
+depend: [KalGames, KG_ScoreBoards]

@@ -55,6 +55,8 @@ public final class KalGames extends JavaPlugin {
         kits.load();
         repository = new Repository(this);
         repository.load(kits);
+        // 1.17.0 : les plugins de jeu separes (KG_BoatRace...) enregistrent leur type apres le demarrage de KalGames.
+        fr.kalium.games.model.MinigameType.onRegister(repository::resolvePending);
         templates = new TemplateService(this);
         worlds = new InstanceWorld(this);
         items = new ItemService(this);
@@ -67,12 +69,8 @@ public final class KalGames extends JavaPlugin {
             if (minigame == null) {
                 return null;
             }
-            fr.kalium.scoreboards.Category.Kind kind = switch (minigame.type()) {
-                case BOAT_RACE -> fr.kalium.scoreboards.Category.Kind.LAP;
-                case PARKOUR -> fr.kalium.scoreboards.Category.Kind.TIME;
-                default -> fr.kalium.scoreboards.Category.Kind.POINTS;
-            };
-            return new fr.kalium.scoreboards.Category(id, lang.parse(minigame.display()), kind);
+            // 1.17.0 : genre de classement donne par le type (KG_BoatRace : meilleur tour).
+            return new fr.kalium.scoreboards.Category(id, lang.parse(minigame.display()), minigame.type().ranking());
         };
         ranking.addCategories(categories, () -> repository.minigames().stream().map(fr.kalium.games.model.Minigame::id).toList());
         ranking.setAdminCheck(this::isAdmin);

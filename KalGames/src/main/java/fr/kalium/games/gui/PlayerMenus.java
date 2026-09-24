@@ -318,12 +318,14 @@ public final class PlayerMenus {
                     List.of(t("menu.kitmode-vote", "Vote avant chaque manche"),
                             t("menu.kitmode-random", "Kit aléatoire à chaque manche (le même pour toutes les équipes)")), "vote"));
         } else {
-            int max = minigame.getInt("max-players", type == MinigameType.BOAT_RACE ? 12 : 8);
+            int max = minigame.getInt("max-players", 8);
             if (max > 1) {
                 inputs.add(gui.number("maxPlayers", t("menu.create-max", "Joueurs maximum"), 1, max, Math.min(max, 4), 1));
             }
-            if (type == MinigameType.BOAT_RACE) {
-                inputs.add(gui.number("laps", t("menu.create-laps", "Nombre de tours (1 à 40)"), 1, 40, Math.max(1, Math.min(40, minigame.getInt("laps", 3))), 1));
+            // 1.17.0 : options declarees par le type (ex. nombre de tours de KG_BoatRace).
+            for (MinigameType.CreateOption option : type.createOptions()) {
+                int def = Math.max(option.min(), Math.min(option.max(), minigame.getInt(option.defaultSetting(), option.fallback())));
+                inputs.add(gui.number(option.key(), plugin.lang().parse(option.label()), option.min(), option.max(), def, 1));
             }
             if (type == MinigameType.PARKOUR) {
                 inputs.add(gui.toggle("training", t("menu.create-training",
@@ -339,7 +341,9 @@ public final class PlayerMenus {
             putNumber(options, "teams", view);
             putNumber(options, "teamSize", view);
             putNumber(options, "maxPlayers", view);
-            putNumber(options, "laps", view);
+            for (MinigameType.CreateOption option : minigame.type().createOptions()) {
+                putNumber(options, option.key(), view);
+            }
             Boolean haste = view.getBoolean("haste");
             if (haste != null) {
                 options.put("haste", haste);

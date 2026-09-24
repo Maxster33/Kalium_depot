@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.kalium</groupId>
-    <artifactId>KalGames</artifactId>
-    <version>1.17.0</version>
+    <artifactId>KG_BoatRace</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>KalGames</name>
+    <name>KG_BoatRace</name>
 
     <properties>
         <!-- Paper 26.x requires Java 25 -->
@@ -28,6 +28,13 @@
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>26.2.build.123-stable</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- KalGames (moteur de parties, textes) : fourni par le serveur, jamais embarque (voir build.sh). -->
+        <dependency>
+            <groupId>fr.kalium</groupId>
+            <artifactId>KalGames</artifactId>
+            <version>1.17.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

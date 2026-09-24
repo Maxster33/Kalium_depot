@@ -720,3 +720,23 @@ Kal-Games (7001) le 24/09/2026 par LeKiwi06 (anciens jars et configs dans les `_
 confirmé par LeKiwi06 le 24/09/2026** : menus du hub, course de bateau (grille, menu de la partie), Parkour,
 classements, Java et Bedrock. Constaté : les joueurs Bedrock accélèrent plus vite et gardent mieux leur vitesse en
 virage (voir `KG_BoatRace/CAHIER_DES_CHARGES.md`).
+
+## 1.17.0 — types de mini-jeux ouverts aux autres plugins, la course de bateau sort dans KG_BoatRace (24/09/2026)
+
+**Demande de LeKiwi06** : sortir la course de bateau de KalGames dans son propre plugin (KG_BoatRace), étape 0 de
+`KG_BoatRace/CAHIER_DES_CHARGES.md`, dans le cadre de l'architecture cible (`ARCHITECTURE_CIBLE.md`).
+- `MinigameType` n'est plus une énumération fermée mais un **registre** : un plugin de jeu séparé enregistre son type
+  (réglages, points d'arène, **moteur**, genre de classement, options de création de partie privée, préchargement
+  autorisé ou non) avec `MinigameType.register(...)`. Les types restants dans KalGames : PvP Kit, Parcours, Rush,
+  Hunger Games, Manhunt, Build Battle.
+- **BOAT_RACE retiré de KalGames** (enregistré par KG_BoatRace). Les mini-jeux d'un type pas encore enregistré au
+  démarrage sont **gardés de côté** (réécrits à l'identique dans `minigames.yml`, jamais perdus) puis rattachés dès que
+  le type est enregistré (journal : « Mini-jeu <id> rattaché au type BOAT_RACE »).
+- Crochets génériques dans `GameInstance` (`racing`, `useCheckpointItem`, `releaseHold`) à la place des tests
+  `instanceof RaceInstance` du hub, des écouteurs et d'`InstanceManager`. Création de partie : moteur fourni par le
+  type. Classements : genre donné par le type. Menu de création de partie privée : options déclarées par le type
+  (nombre de tours de la course). Préchargement des arènes : autorisé par le type (jamais pour la course de bateau).
+- `RaceInstance` ne sert plus qu'au Parcours ; sa partie « bateau » est inactive et disparaîtra à la sortie du Parcours
+  (KG_Parkour).
+**Déploiement** : **avec KG_BoatRace 1.0.0** (sinon la course de bateau n'est plus jouable : ses mini-jeux restent
+gardés de côté, sans perte). Aucune clé de config nouvelle. **Statut : compilé, non déployé, non testé en jeu.**

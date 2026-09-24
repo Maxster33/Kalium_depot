@@ -271,12 +271,9 @@ public final class InstanceManager {
         GameInstance instance;
         MinigameType type = minigame.type();
         try {
-            instance = switch (type) {
-                case PVP_KIT -> new PvpInstance(plugin, id, minigame, arena, template, publicGame, options, cell.slot);
-                case PARKOUR, BOAT_RACE -> new RaceInstance(plugin, id, minigame, arena, template, publicGame, options, cell.slot);
-                case RUSH -> new RushInstance(plugin, id, minigame, arena, template, publicGame, options, cell.slot);
-                default -> null;
-            };
+            // 1.17.0 : le moteur est fourni par le type (KalGames ou un plugin de jeu separe, ex. KG_BoatRace).
+            MinigameType.GameFactory engine = type.engine();
+            instance = engine == null ? null : engine.create(plugin, id, minigame, arena, template, publicGame, options, cell.slot);
         } catch (RuntimeException e) {
             giveUp(cell, recycled);
             plugin.getLogger().severe("Création de la partie impossible : " + e);
@@ -493,8 +490,8 @@ public final class InstanceManager {
         if (current == instance) {
             return plugin.t("join.already", "<yellow>Vous êtes déjà dans cette partie.");
         }
-        if (current instanceof RaceInstance race) {
-            race.releaseHold(player.getUniqueId());
+        if (current != null) {
+            current.releaseHold(player.getUniqueId());
         }
         Component refusal = instance.admit(player);
         if (refusal != null) {

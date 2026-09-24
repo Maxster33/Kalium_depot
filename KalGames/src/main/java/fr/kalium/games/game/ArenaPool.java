@@ -77,8 +77,8 @@ final class ArenaPool {
      * collees qu'a la demande, comme les autres mini-jeux.
      */
     private int prewarm(Minigame minigame) {
-        if (minigame.type() == fr.kalium.games.model.MinigameType.BOAT_RACE) {
-            return 0;
+        if (!minigame.type().prewarmAllowed()) {
+            return 0; // 1.17.0 : decide par le type (la course de bateau, KG_BoatRace, n'en pre-genere jamais)
         }
         int columns = Math.max(1, plugin.getConfig().getInt("instances.per-arena", plugin.getConfig().getInt("instances.columns", 10)));
         return Math.max(0, Math.min(columns, minigame.getInt("prewarm-arenas", 0)));

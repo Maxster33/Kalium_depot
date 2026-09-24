@@ -26,6 +26,8 @@ public final class Repository {
     private final File arenasFile;
     private final Map<String, Minigame> minigames = new LinkedHashMap<>();
     private final Map<String, Arena> arenas = new LinkedHashMap<>();
+    /** 1.17.0 : mini-jeux dont le type (fourni par un autre plugin) n'est pas encore enregistre - id -> section lue. */
+    private final Map<String, ConfigurationSection> pending = new LinkedHashMap<>();
 
     public Repository(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -93,6 +95,7 @@ public final class Repository {
     public void load(KitLibrary kitLibrary) {
         minigames.clear();
         arenas.clear();
+        pending.clear();
         boolean fresh = !minigamesFile.exists();
 
         YamlConfiguration mg = YamlConfiguration.loadConfiguration(minigamesFile);
@@ -107,25 +110,64 @@ public final class Repository {
                 try {
                     type = MinigameType.valueOf(s.getString("type", "PVP_KIT").toUpperCase(Locale.ROOT));
                 } catch (IllegalArgumentException e) {
-                    plugin.getLogger().warning("Mini-jeu " + id + " : type inconnu, ignore.");
+                    // 1.17.0 : type fourni par un autre plugin (KG_BoatRace...) pas encore demarre : le mini-jeu est
+                    // garde tel quel (reecrit a l'identique a chaque sauvegarde) et rattache des que son type est
+                    // enregistre (voir resolvePending).
+                    pending.put(id, s);
                     continue;
                 }
-                Minigame minigame = new Minigame(id, s.getString("display", id), type);
-                minigame.description(s.getString("description", ""));
-                minigame.enabled(s.getBoolean("enabled", true));
-                minigame.publicEnabled(s.getBoolean("public", true));
-                minigame.privateEnabled(s.getBoolean("private", true));
-                minigame.kits().addAll(s.getStringList("kits"));
-                ConfigurationSection settings = s.getConfigurationSection("settings");
-                if (settings != null) {
-                    for (String key : settings.getKeys(false)) {
-                        minigame.settings().put(key, settings.get(key));
-                    }
-                }
-                minigames.put(id, minigame);
+                minigames.put(id, read(id, s, type));
             }
         }
+        loadArenas();
+        if (fresh) {
+            bootstrapDefaults(kitLibrary);
+        }
+    }
 
+    /**
+     * 1.17.0 : un type vient d'etre enregistre (voir MinigameType.register) : rattache les mini-jeux de ce type mis de
+     * cote au chargement.
+     */
+    public void resolvePending(MinigameType type) {
+        pending.entrySet().removeIf(entry -> {
+            if (!type.name().equalsIgnoreCase(entry.getValue().getString("type", ""))) {
+                return false;
+            }
+            minigames.put(entry.getKey(), read(entry.getKey(), entry.getValue(), type));
+            plugin.getLogger().info("Mini-jeu " + entry.getKey() + " rattaché au type " + type.name() + ".");
+            return true;
+        });
+    }
+
+    /** Recopie une section (et ses sous-sections) a l'identique. */
+    private static void copy(ConfigurationSection from, ConfigurationSection to) {
+        for (String key : from.getKeys(false)) {
+            if (from.isConfigurationSection(key)) {
+                copy(from.getConfigurationSection(key), to.createSection(key));
+            } else {
+                to.set(key, from.get(key));
+            }
+        }
+    }
+
+    private Minigame read(String id, ConfigurationSection s, MinigameType type) {
+        Minigame minigame = new Minigame(id, s.getString("display", id), type);
+        minigame.description(s.getString("description", ""));
+        minigame.enabled(s.getBoolean("enabled", true));
+        minigame.publicEnabled(s.getBoolean("public", true));
+        minigame.privateEnabled(s.getBoolean("private", true));
+        minigame.kits().addAll(s.getStringList("kits"));
+        ConfigurationSection settings = s.getConfigurationSection("settings");
+        if (settings != null) {
+            for (String key : settings.getKeys(false)) {
+                minigame.settings().put(key, settings.get(key));
+            }
+        }
+        return minigame;
+    }
+
+    private void loadArenas() {
         YamlConfiguration ar = YamlConfiguration.loadConfiguration(arenasFile);
         ConfigurationSection arSection = ar.getConfigurationSection("arenas");
         if (arSection != null) {
@@ -183,10 +225,6 @@ public final class Repository {
                 arenas.put(id, arena);
             }
         }
-
-        if (fresh) {
-            bootstrapDefaults(kitLibrary);
-        }
     }
 
     /**
@@ -218,6 +256,10 @@ public final class Repository {
 
     public void save() {
         YamlConfiguration mg = new YamlConfiguration();
+        // 1.17.0 : mini-jeux d'un type pas (encore) enregistre : recopies a l'identique, jamais perdus.
+        for (Map.Entry<String, ConfigurationSection> entry : pending.entrySet()) {
+            copy(entry.getValue(), mg.createSection("minigames." + entry.getKey()));
+        }
         for (Minigame minigame : minigames.values()) {
             String base = "minigames." + minigame.id();
             mg.set(base + ".display", minigame.display());

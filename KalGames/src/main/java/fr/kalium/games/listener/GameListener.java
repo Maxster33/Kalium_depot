@@ -2,7 +2,6 @@ package fr.kalium.games.listener;
 
 import fr.kalium.games.KalGames;
 import fr.kalium.games.game.GameInstance;
-import fr.kalium.games.game.RaceInstance;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -427,7 +426,7 @@ public final class GameListener implements Listener {
     public void onVehicleExit(VehicleExitEvent event) {
         if (event.getExited() instanceof Player player) {
             GameInstance game = plugin.instances().of(player);
-            if (game instanceof RaceInstance race && race.racing(player.getUniqueId())) {
+            if (game != null && game.racing(player.getUniqueId())) { // 1.17.0 : crochet generique
                 event.setCancelled(true);
             }
         }

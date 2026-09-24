@@ -518,6 +518,23 @@ public abstract class GameInstance {
 
     public abstract boolean canFight(Player attacker, Player victim);
 
+    /**
+     * 1.17.0 : crochets generiques pour les jeux fournis par d'autres plugins (KG_BoatRace...), a la place des tests
+     * « instanceof RaceInstance » du hub et des ecouteurs.
+     * Le joueur est-il en course (vehicule verrouille : pas de sortie, pas de renvoi en tribune a la reapparition) ?
+     */
+    public boolean racing(UUID uuid) {
+        return false;
+    }
+
+    /** Objet « dernier point de controle » utilise (clic droit). */
+    public void useCheckpointItem(Player player) {
+    }
+
+    /** Le joueur va etre deplace (changement de partie...) : ne plus verrouiller son vehicule. */
+    public void releaseHold(UUID uuid) {
+    }
+
     public boolean frozen(Player player) {
         return false;
     }

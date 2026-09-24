@@ -6,8 +6,10 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 
 | Dossier | Plugin | Serveur |
 |---|---|---|
-| `KalGames/` | Hub et mini-jeux (Rush, parkour, courses...) | kal-games |
+| `KalGames/` | Hub, moteur des parties et mini-jeux restants (PvP Kit, Parcours, Rush) - voir `ARCHITECTURE_CIBLE.md` | kal-games |
 | `KG_Menu/` | Menu du serveur kal-games (jeux, paramètres), alimenté par les plugins de kal-games | kal-games |
+| `KG_BoatRace/` | Course de bateau (sortie de KalGames ; cahier des charges dans le dossier) | kal-games |
+| `KG_Parkour/` | Parcours (à sortir de KalGames ; pour l'instant seulement le cahier des charges) | kal-games |
 | `KG_ScoreBoards/` | Classements (points, temps, archives, panneaux du hub) - KalGames en dépend | kal-games |
 | `KG_Bingo/` | Partie Bingo du hub : créer / rejoindre, transfert vers Kixster (dépend de KalGames) | kal-games |
 | `KG_BingoGame/` | Le jeu Bingo lui-même (anciennement KalBingo) | Kixster |
