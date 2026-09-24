@@ -104,6 +104,12 @@ mot de passe : sessions enregistrées, ou mot de passe tapé par l'humain.
    suppression définitive n'est faite que par l'humain.
 
    Pourquoi : il n'existe aucune sauvegarde des serveurs accessible par SFTP ; un fichier supprimé est perdu.
+
+   **On ne garde que les 2 derniers dossiers `_removed-…` de chaque plugin** sur chaque serveur Minestrator
+   (décision de LeKiwi06, 24/09/2026). À chaque déploiement, celui qui déploie liste les dossiers en trop (les plus
+   anciens) ; leur suppression définitive reste faite par l'humain. Attention : le dépôt n'existe que depuis le
+   23/09/2026, les versions plus anciennes n'existent QUE dans ces dossiers ; si on veut les garder, les télécharger
+   sur un PC avant de les supprimer.
 4. Ne jamais taper d'accents dans l'éditeur intégré de WinSCP (texte corrompu) : un texte accentué se change
    dans le code source, puis on recompile.
 5. Claude ne redémarre jamais un serveur : c'est l'humain qui le fait.
