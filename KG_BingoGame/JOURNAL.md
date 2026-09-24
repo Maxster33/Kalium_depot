@@ -1288,7 +1288,10 @@ JOURNAL). Décision : noms internes du code conservés (`fr.kalium.bingo`, class
   1re équipe à achever un bingo +0,5 au coefficient de ses cases, bingo uniquement difficile/extrême +0,5 pour toute
   équipe ; victoire +1/+2/+3/+5 par objectif ; bonus ajoutés avant les coefficients ; classement cumulé en cas de
   victoire (points + ceux des équipes derrière). Points solo : objectifs validés par le joueur + gain complet des
-  bingos auxquels il a participé (+ bonus de victoire sur ses objectifs). Testé hors serveur (11 vérifications).
+  bingos auxquels il a participé (+ bonus de victoire sur ses objectifs) ; classement solo avec les MÊMES règles que
+  les équipes (victoire : joueurs gagnants en tête, abandons en dernier, points + ceux des joueurs derrière ; nulle
+  ou égalité : points propres). Joueur seul dans son équipe : pas de pseudo dans les annonces ni l'info-bulle.
+  Testé hors serveur (11 vérifications).
 - **Annonces** à tous les joueurs de la partie : objectif validé (en 1er, pseudo, points), bingo (participants, points).
   Classements d'équipe et solo affichés en fin de partie.
 - **Info-bulle** des objectifs : nom français, difficulté et valeur ; par équipe : pseudo, bonus de 1re, coefficient,

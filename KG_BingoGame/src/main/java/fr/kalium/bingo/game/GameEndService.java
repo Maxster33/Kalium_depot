@@ -387,21 +387,41 @@ public final class GameEndService {
             summary.add(Component.text(line, win && team == winner ? NamedTextColor.GREEN : NamedTextColor.WHITE));
             log.append(" equipe ").append(team).append('=').append(ScoreEngine.format(mine + behind));
         }
-        List<String> solos = new ArrayList<>();
-        List<Map.Entry<String, Double>> soloScores = new ArrayList<>();
+        // Classement SOLO : memes regles que les equipes (precision de LeKiwi06, 24/09/2026). Victoire : joueurs de
+        // l'equipe gagnante en tete, puis les autres par score, ceux qui ont abandonne en dernier ; chacun gagne ses
+        // points + ceux de tous les joueurs classes derriere lui. Egalite / nulle : chacun garde ses propres points.
+        record Solo(String name, double points, boolean winnerTeam, boolean abandoned) {
+        }
+        List<Solo> soloList = new ArrayList<>();
         for (BingoInstance instance : game.getInstances()) {
             int team = instance.getTeam().getTeamNumber();
             for (UUID playerId : instance.getTeam().getPlayers()) {
                 String name = Bukkit.getOfflinePlayer(playerId).getName();
-                soloScores.add(Map.entry(name != null ? name : playerId.toString().substring(0, 8),
-                        engine.soloScore(team, playerId, win && team == winner)));
+                soloList.add(new Solo(name != null ? name : playerId.toString().substring(0, 8),
+                        engine.soloScore(team, playerId, win && team == winner), win && team == winner,
+                        instance.hasAbandoned(playerId)));
             }
         }
-        soloScores.sort((a, b) -> Double.compare(b.getValue(), a.getValue()));
-        for (Map.Entry<String, Double> entry : soloScores) {
-            solos.add(entry.getKey() + " " + ScoreEngine.format(entry.getValue()));
+        soloList.sort((a, b) -> {
+            if (a.winnerTeam() != b.winnerTeam()) {
+                return a.winnerTeam() ? -1 : 1;
+            }
+            if (a.abandoned() != b.abandoned()) {
+                return a.abandoned() ? 1 : -1;
+            }
+            return Double.compare(b.points(), a.points());
+        });
+        List<String> solos = new ArrayList<>();
+        for (int i = 0; i < soloList.size(); i++) {
+            double behind = 0;
+            if (win) {
+                for (int j = i + 1; j < soloList.size(); j++) {
+                    behind += soloList.get(j).points();
+                }
+            }
+            solos.add((win ? (i + 1) + ". " : "") + soloList.get(i).name() + " " + ScoreEngine.format(soloList.get(i).points() + behind));
         }
-        summary.add(Component.text("Points solo : " + String.join(", ", solos), NamedTextColor.GRAY));
+        summary.add(Component.text((win ? "Classement solo : " : "Points solo : ") + String.join(", ", solos), NamedTextColor.GRAY));
         logger.info(log + " ; solo : " + String.join(", ", solos));
 
         finishAndSendToLobby(game, team -> switch (outcome) {
