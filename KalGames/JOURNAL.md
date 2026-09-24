@@ -753,5 +753,4 @@ avec une vraie interface, et régler chaque checkpoint (temps ajouté, difficult
 - **Réglages par point** (`PointSpec.withPointSettings`) : déclarés par le type de jeu (aucun pour l'instant ; le
   Parcours les utilisera), enregistrés dans `arenas.yml` sous `point-settings.<liste>` (un dictionnaire par point,
   dans l'ordre), et **déplacés avec leur point** lors d'une insertion ou d'une suppression.
-**Déploiement** : avec KG_BoatRace 1.1.0 (KG_BoatRace 1.0.0 reste compatible). **Statut : compilé, non déployé, non
-testé en jeu.**
+**Déploiement** : avec KG_BoatRace 1.1.0 (KG_BoatRace 1.0.0 reste compatible). **Statut : déployé sur Kal-Games le 24/09/2026 à 20 h 07 (1.17.0 et arenas.yml dans `_removed-kalgames-1.17.0/`), testé et confirmé par LeKiwi06 le 24/09/2026 : 7 checkpoints posés avec l'éditeur sur la course, compteur OK.**

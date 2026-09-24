@@ -30,4 +30,4 @@ Course de bateau de Kal-Games, sortie de KalGames (règle 2.2 de `REGLES.md`). C
   classement en direct et des écarts (étape 2) et des données envoyées à KG_ScoreBoards (à faire, KG_ScoreBoards à
   réserver).
 - Placement des checkpoints : nouvel éditeur de KalGames 1.18.0.
-**Déploiement** : avec KalGames 1.18.0. **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : avec KalGames 1.18.0. **Statut : déployé sur Kal-Games le 24/09/2026 à 20 h 07 (1.0.0 dans `_removed-kg_boatrace-1.0.0/`), testé et confirmé par LeKiwi06 le 24/09/2026 : vitesse cohérente, tour de plus de 45 s « non enregistré », checkpoints.**
