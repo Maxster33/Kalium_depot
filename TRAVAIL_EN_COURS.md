@@ -16,8 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KG_BoatRace — LeKiwi06 — depuis le 2026-09-24 13:58 — nouveau plugin : course de bateau sortie de KalGames (Grand Prix, fantôme, barème, temps par checkpoint)
-- KG_ScoreBoards — LeKiwi06 — depuis le 2026-09-24 20:15 — données des parties (temps par checkpoint...) pour KG_BoatRace et le futur bot Discord
 
 
 ## Requis parfois

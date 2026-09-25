@@ -154,3 +154,66 @@ autoriser `Textinputhost` (clavier tactile Windows) si des clics échouent.
   `game.post-game-lobby-timeout-seconds` (600), `game.no-players-abandon-after-seconds` (600).
   Toute nouvelle clé doit être AJOUTÉE à la main dans le fichier déployé (le plugin ne réécrit pas
   un config.yml existant) ; redémarrage requis.
+
+### 2026-09-24 — LeKiwi06
+
+*(Fin de session : toutes les réservations libérées ; KG_Menu et les versions qui l'accompagnent restent à déployer.)*
+
+**Mise en route et règles**
+- Dépôt cloné sur le PC de LeKiwi06, compilation locale (`telecharger-outils.sh`, `build.sh` PC + cloud,
+  `.gitattributes` LF) : jars recompilés identiques à ceux en service.
+- `REGLES.md` créé et complété : réservations en **deux catégories** (utilisés actuellement / requis parfois) avec
+  **demandes de créneau** auxquelles le Claude de l'autre peut répondre ; 2 plugins « utilisés » max par personne de
+  13 h à 23 h (heure de Paris, `date` simple sous Git Bash) ; un plugin = un rôle ; secrets seulement sur les
+  serveurs ; non destructif (`_removed-…`, **2 derniers gardés par plugin**, suppression par l'humain).
+  `REPRISE_PROJET.md` restructuré, ancienne version dans `archive_reprise.md`.
+- Sécurité : jeton du relais remplacé sur les 3 serveurs par LeKiwi06 (jamais écrit dans le dépôt ni la
+  conversation) ; KaliumRelay 1.1.1 sans jeton dans le code.
+- WinSCP : tous les serveurs enregistrés avec mot de passe (Kal-games, Kal-test-dev, Kixster, Lobby, Proxy Velocity) ;
+  Claude déploie par ces sites sans jamais taper de mot de passe ; l'humain arrête / redémarre.
+
+**Bingo (terminé et déployé)**
+- Découpage : `KG_Bingo` (hub) + KalBingo renommé `KG_BingoGame` (Kixster migré).
+- Nouveau Bingo (KG_BingoGame 0.3.0 → 0.5.0) : 200 objectifs validés ; modes Bingos (3 à 12, chrono) et Blackout ;
+  composition de la grille au choix ; barème en temps réel (1/3/5/10, 1re équipe, coefficients additifs, victoire,
+  classement cumulé équipe et solo) ; blackout gagné en moins de 2 h : ×2 / ×1,5 (difficile + extrême : ×5 / ×2) ;
+  nulle par vote, « Égalité » au score, abandon (10 min), inactivité (5 min), invincibilité de fin, keepInventory,
+  papier verrouillé ; carte de la grille en main secondaire (icônes du jeu officiel, contour des objets blancs),
+  couleurs d'équipe A rouge / B bleu / C jaune / D verte, têtes des coéquipiers, résumé de fin de partie ; mode solo
+  gardé pour le speedrun.
+- Testé par LeKiwi06 : « propre et sans bugs ». Limite acceptée : têtes invisibles sur Bedrock. Le « Nether commun »
+  vu en test venait de l'ancienne 0.1.20.
+
+**Classements : KG_ScoreBoards**
+- Plugin autonome (étape A faite et déployée) : classements sortis de KalGames, données migrées sur kal-games
+  (`stats.yml`, `boards.yml`), `StatsService` compilé identique. Panneaux du hub : Paramètres > Mini-jeux Kal-Games >
+  mini-jeu > Classements > Panneaux dans le hub.
+- Décisions pour la suite (étape B, non faite) : toutes les parties enregistrées, par joueur et par catégorie (solo /
+  duo / trio / squad, blackout) : points, objectifs en 1er, bingos, victoire / défaite / nulle ; parties sans
+  adversaire comptées ; seuls les classements individuels affichés au début ; archives détaillées (futur bot
+  Discord) ; résultats du Bingo transmis par KaliumRelay ; format des scores : 6 chiffres max, puis K / M / Md.
+
+**Interfaces : KLM_Menu et KG_Menu**
+- Hiérarchie décidée : **KLM_Menu** (tous les serveurs : navigation, boussole, boîte à outils des menus, catalogue
+  « Interfaces ») → **menu de chaque serveur** (KG_Menu pour kal-games ; plus tard créa, skyblock, survie) →
+  interfaces des jeux, **découvertes au démarrage**. Les mini-jeux gardent leurs propres écrans. Protections de zone
+  du hub : restent dans KalGames pour l'instant.
+- KLM_Menu 2.0.0 (KaliumMenu renommé) déployé sur kal-games, lobby et Kixster (boussole désactivée sur Kixster :
+  c'est un objectif du Bingo). Bug corrigé : plus de boussole au hub (KalGames 1.15.1).
+- Compilés, **non déployés** : KG_Menu 1.0.0, KLM_Menu 2.1.0, KalGames 1.16.0, KG_Bingo 1.3.0, KG_ScoreBoards 1.2.0
+  (à installer ensemble sur kal-games, voir leurs JOURNAL).
+- Prévu : phase 2 (accès des admins aux interfaces des autres serveurs, via KaliumRelay ; limite : menus en coffre et
+  actions sur le joueur impossibles à distance).
+
+**À faire / à savoir**
+- Liste des parties Bingo : pseudo de l'hôte figé dans `lang.yml` et affichage des équipes ambigu → à corriger
+  (KG_Bingo / KG_Menu).
+- À tester : pseudos dans les annonces à 3 comptes ou plus, nulle en groupe, multiplicateur du blackout, catalogue
+  « Interfaces », KG_Menu.
+- Tri des anciens dossiers `_removed-…` et `.bak` : après le découpage des plugins.
+- Vus dans les journaux, hors de notre travail : config de ConditionalEvents invalide (kal-games), AnvilUnlocker sans
+  ProtocolLib, 2 voicechat et Geyser sur Kixster, geyserupdater-spigot sur le proxy.
+- Points 2 et 3 de la première lecture : à rappeler quand LeKiwi06 le demande.
+- Erreurs de Claude, corrigées : commits incomplets (étape B du Bingo, journaux de KG_Menu), horodatages en UTC,
+  journaux de serveur posés un moment dans le dossier du dépôt / dans Documents, deux dossiers de Kal-test-dev
+  listés par erreur, ancien nom KaliumMenu non recherché avant le renommage (boussole du hub).

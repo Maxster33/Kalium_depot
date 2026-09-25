@@ -50,10 +50,11 @@ Chaque règle est suivie de sa raison (« Pourquoi ») : en cas de situation non
    que l'utilisateur n'a pas encore fait.
 
 2. **Un plugin = un rôle.** Tout nouveau jeu ou nouvelle fonction indépendante devient un plugin séparé ; les
-   plugins interagissent entre eux plutôt que d'être fusionnés. Pour les jeux de Kal-Games : un socle commun
-   (`KG_Core` : monde des instances, arènes, hub, menus, textes, classements) dont dépendent les jeux
-   (`KG_PvpKit`, `KG_Rush`...). KalGames actuel est découpé **progressivement**, quand on retouche une de ses
-   parties (en commençant par le Rush), jamais d'un bloc.
+   plugins interagissent entre eux plutôt que d'être fusionnés. Répartition visée, nommage (`KLM_` réseau, `KG_`
+   mini-jeux, un préfixe par serveur) et charte : `ARCHITECTURE_CIBLE.md` (décidé par LeKiwi06 le 24/09/2026 :
+   KG_Instances, KLM_Hub + WorldGuard, KG_Menu, KG_ScoreBoards, un plugin par jeu). KalGames actuel est découpé
+   **progressivement**, quand on retouche une de ses parties, jamais d'un bloc : d'abord les jeux les plus joués
+   (course de bateau : fait, KG_BoatRace ; Parkour ; PvP Kit), le Rush plus tard.
 
    Pourquoi : un plugin surchargé fait qu'une mise à jour ou un bug d'un jeu touche tous les autres jeux et
    menus. Limite : tous les plugins partagent le même serveur ; un blocage du serveur (watchdog) les arrête

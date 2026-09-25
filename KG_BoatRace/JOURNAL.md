@@ -107,4 +107,4 @@ bateau et pas sous le bateau entier, comme ça le hors-piste ne compte que pour 
   vérifié tous les 0,4 bloc. Le contact latéral qui ralentit (mur, bordure surélevée) compte toujours.
 - Détail des points du tour en gris clair (« trop foncé ») : nouvelle clé `race.lap-points-2` (l'ancienne
   `race.lap-points` est déjà figée dans le `lang.yml` du serveur, elle n'est plus utilisée).
-**Déploiement** : seul. **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : seul. **Statut : déployé sur Kal-Games le 25/09/2026 à 12 h 59 (1.4.0 dans `_removed-kg_boatrace-1.4.0/`), testé et confirmé par LeKiwi06 le 25/09/2026.**
