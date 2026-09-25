@@ -94,10 +94,16 @@ final class BingoMenus {
         int current = party.roster().size();
         int maxPartySize = party.maxPlayers();
         boolean full = current >= maxPartySize;
-        Component label = t("bingo.party-entry",
-                "<yellow>" + (hostName == null ? "?" : hostName) + "</yellow> <gray>· <teams>x<size> équipes · <current>/<max></gray>"
-                        + (full ? " <red>(complet)</red>" : ""),
-                "teams", party.teamCount(), "size", party.teamSize(), "current", current, "max", maxPartySize);
+        // 1.4.0 : le pseudo de l'hote est un parametre (<host>) : l'ancienne cle « bingo.party-entry » contenait le pseudo
+        // ecrit en dur et avait ete figee dans le lang.yml du serveur au premier affichage (toujours le meme pseudo).
+        // Nouvelle cle, et nombre d'equipes / de joueurs par equipe plus clair qu'avant (« 2x4 équipes »).
+        Component label = t("bingo.party-entry-2",
+                "<yellow><host></yellow> <gray>· <teams> équipe(s) de <size> · <current>/<max> joueurs</gray>",
+                "host", hostName == null ? "?" : hostName, "teams", party.teamCount(), "size", party.teamSize(),
+                "current", current, "max", maxPartySize);
+        if (full) {
+            label = label.append(t("bingo.party-entry-full", " <red>(complet)"));
+        }
         Component tooltip = t("bingo.party-entry-tip", full
                 ? "<red>Cette partie est déjà complète."
                 : "<gray>Cliquez pour rejoindre directement cette partie.");

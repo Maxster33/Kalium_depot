@@ -52,3 +52,14 @@ sur le serveur sans être lue), non testé en jeu.**
 - « Bingo » (accueil) et « Bingo » (Paramètres, admins) fournis à KG_Menu (découverte au démarrage), à la place des
   prises MenuEntry de KalGames et de l'inscription directe dans KLM_Menu (1.2.0). Dépend de KG_Menu.
 **Déploiement** : avec KG_Menu 1.0.0, KalGames 1.16.0. **Statut : déployé sur Kal-Games (7001) le 24/09/2026, testé et confirmé par LeKiwi06 le 24/09/2026 (création, liste, transfert vers Serveur Jeux).**
+
+## 1.4.0 — pseudo de l'hôte dans la liste des parties (25/09/2026)
+
+**Signalé par LeKiwi06** : « le bouton dans la liste des games de bingo est buggué, il ne met pas le pseudo du joueur
+qui l'a créé, il met toujours Maxster » (bug déjà noté dans `REPRISE_PROJET.md`).
+- Cause : le texte par défaut de `bingo.party-entry` contenait le pseudo écrit en dur ; le `lang.yml` de KalGames l'a
+  enregistré au premier affichage (« <yellow>Maaxster</yellow>... ») et l'a réutilisé pour toutes les parties.
+- Correctif : nouvelle clé `bingo.party-entry-2` avec le paramètre `<host>` ; « (complet) » dans sa propre clé
+  (`bingo.party-entry-full`). Nombre d'équipes plus clair, comme prévu dans REPRISE : « 2 équipe(s) de 4 · 3/8
+  joueurs » au lieu de « 2x4 équipes · 3/8 ». L'ancienne clé reste dans le `lang.yml` du serveur, inutilisée.
+**Déploiement** : seul, sur Kal-Games (7001). **Statut : compilé, non déployé, non testé en jeu.**
