@@ -44,24 +44,54 @@ de plots en créatif. Préfixe `KV_` = Kanvas (voir la charte dans `ARCHITECTURE
   pour qu'aucun joueur ne puisse faire tomber le serveur.
 - **Extension du monde** : quand il n'y a plus de plot libre, le plugin génère de nouveaux plots (routes et
   délimitations comprises) autour des plots existants.
+- **Monde** : `New World (2)`, à renommer **`kanvas`**.
+- **Dimensions** : plot moyen = **49 x 49** constructibles, entouré d'une bordure en bedrock (non comprise). Route =
+  **9 de large bordures en bedrock comprises** (bedrock + 7 de route + bedrock), soit un pas de grille de **58** blocs.
+  Grand plot = 2 x 2 moyens + la route centrale = **107 x 107**.
+- **Déblocages** : au départ 1 moyen + 1 grand. Le **2e moyen** et le **2e grand** se débloquent chacun à **100 points**
+  cumulés sur un plot.
+- **Votes** : en entrant dans un plot validé (qu'on a le droit de noter), le joueur **reçoit les 5 terracottas** ; il
+  clique avec l'une d'elles pour voter. 1 terracotta = 1 à 5 points (rouge 1 … vert foncé 5).
+- **Inventaire en visite** : à l'entrée d'un plot validé qu'on peut noter, l'inventaire est **sauvegardé** puis rendu
+  à la sortie. Les 5 terracottas sont sur les **5 cases centrales de la hotbar** (cases 3 à 7), plus une **poudre de
+  blaze pour signaler le plot** : menu de raisons à cocher, avec une case « Autre » où l'on écrit sa raison.
+- **Déblocages précisés** : un plot **moyen** à 100 points débloque le 2e moyen ; un plot **grand** à 100 points
+  débloque le 2e grand.
+- **Agrandir un plot (moyen → grand)** : si les 3 plots voisins qui forment le 2 x 2 sont libres, on retire simplement
+  les routes entre eux. Sinon, le plugin choisit une zone de 2 x 2 plots libres ailleurs : la construction y est
+  **collée au centre**, l'ancien plot est **remis à zéro et libéré**. L'agrandissement **change le type de place
+  occupée** (moyen → grand) et n'est possible que si le joueur a une **place grand libre**.
+- **Plot validé** : pas d'agrandissement direct ; option **« Dupliquer en version grande »** : copie collée au centre
+  d'un nouveau grand plot (en travaux, place grand requise) ; l'original reste validé avec ses votes.
+- **Signalements** : raisons à cocher : contenu inapproprié, copie d'un autre build, plot vide ou bâclé, triche aux
+  votes, Autre (texte libre). Message en jeu au staff connecté + **sauvegarde dans un fichier**, consultables dans
+  l'**interface admin de `KV_Menu`**. Actions du staff : classer le signalement, dévalider le plot, le remettre à zéro.
+- **Titre / description** : titre de 32 caractères, description de 200, codes couleur autorisés, modifiables à tout
+  moment par le créateur.
+- **Classement du mois** : total des **votes reçus pendant le mois**.
+- **Entités** : la limite **10 (moyen) / 25 (grand)** compte **toutes les entités sauf les peintures** (porte-armures,
+  cadres, véhicules, mobs…). Peintures limitées à part : **20 (moyen) / 30 (grand)**.
+- **Redstone désactivée** pour le moment.
+- **Œufs d'apparition autorisés** : les mobs apparaissent sans IA, immobiles, invulnérables, silencieux, retirables en
+  un clic par les constructeurs du plot (et comptés dans la limite d'entités).
+- **Menu des visites** : (1) téléportation **aléatoire vers un plot validé qu'on n'a pas encore noté** ; (2) **liste
+  des joueurs** (têtes) : un clic ouvre les plots du joueur ; (3) **liste de tous les plots** à explorer soi-même.
+- **Lore** : chaque plot peut avoir un **titre** et une **description**, définis par le créateur (affichés à l'entrée du
+  plot, dans les menus de visite et les classements).
 
 ## Architecture proposée (à valider)
 
-- Plugin `KV_Plots` : monde de plots, réservation, éditeurs, validation, votes, déblocages, classements.
+- Plugin `KV_Plots` : monde de plots, réservation, éditeurs, validation, votes, déblocages, agrandissement,
+  signalements, titre / description, données des classements.
+- Plugin `KV_Menu` : menus joueurs (mes plots, visites, réglages du plot) et interface admin (signalements).
+- Plugin `KV_ScoreBoards` : affichage des classements (menus, panneaux), appelable depuis KLM_Menu.
 - Protection : une région WorldGuard par plot (membres = créateur + éditeurs), construction interdite ailleurs.
 - FAWE à la place de WorldEdit (limité aux régions WorldGuard dont on est membre).
 - Créatif + vol forcés à l'arrivée ; désactiver le « mode survie forcé » de KLM_Menu sur Kanvas.
 
 ## Questions ouvertes
 
-1. Quel monde (`world` ou `New World (2)`) ? Dimensions d'un plot moyen, largeur des routes (à relever dans le monde).
-   Un grand plot peut-il être formé de N'IMPORTE QUELS 2 x 2 moyens voisins, ou de blocs 2 x 2 fixés à l'avance ?
-2. Limite de 2 par taille : au départ 1 moyen + 1 grand, le 2e moyen débloqué à 100 points ; et le 2e grand ?
-3. Votes : menu des 5 terracottas sur le plot ? 3/5 = 3 points ?
-4. Classement « du mois » : votes reçus ce mois-ci, ou plots validés ce mois-ci ?
-5. Entités limitées (10 / 25) : seulement les mobs, ou aussi porte-armures, cadres, peintures, véhicules ?
-6. Redstone : libre, ou limitée (horloges qui font laguer) ? Œufs d'apparition / autres objets à bloquer ?
-7. Visites : téléportation sur n'importe quel plot (liste, `/plot visit <pseudo>`) ?
+Aucune pour les règles du jeu. Reste à valider : l'architecture et le tri des plugins ci-dessous.
 
 ## Plugins de Kanvas (tri proposé, à valider)
 

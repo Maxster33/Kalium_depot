@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KV_Plots — LeKiwi06 — depuis le 2026-09-26 00:30 — création (grille de plots, réservation, protection) ; cahier des charges complété
 
 
 
