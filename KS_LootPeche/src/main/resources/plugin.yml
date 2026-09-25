@@ -1,0 +1,6 @@
+name: KS_LootPeche
+version: '${project.version}'
+main: fr.kalium.lootpeche.KSLootPeche
+api-version: '26.2'
+description: Peche sans livres enchantes (remplaces par un autre tresor tire au sort).
+authors: [KaLium]

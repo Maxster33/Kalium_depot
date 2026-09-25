@@ -117,7 +117,7 @@ les choix d'interprétation qui en découlent (partie 3). **Règle posée par Ma
 | `KS_Crafts` | Crafts ci-dessus + bedrock breaker + verrue (briques, alambic) |
 | `KS_LootBlocs` | Minerais, feuilles (pousses, pommes), verrue sans drop |
 | `KS_LootEntites` | Golem, pigmen, sorcière, capitaine (fiole sinistre), calmars, wither squelette, chair putréfiée, endermite, warden, fioles d'expérience |
-| `KS_LootPeche` | Livres enchantés remplacés par un autre trésor |
+| `KS_LootPeche` | Livres enchantés remplacés par un autre trésor (arc, canne à pêche, étiquette, carapace de nautile, selle) |
 | `KS_LootPotions` | Toutes les potions à ramasser (blocs et mobs), sauf celle du tirage de l'endermite |
 | `KS_Elixirs` | Reporté |
 
