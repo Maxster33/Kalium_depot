@@ -35,25 +35,40 @@ import java.util.UUID;
  * les heurter), et remplaces par une copie visuelle sans aucune collision (entites d'affichage) : une coque, la tete
  * du joueur et son pseudo, qui suivent sa position.
  *
- * Joueurs Bedrock (Geyser) : les entites d'affichage y passent mal ; ils continuent de voir les vrais bateaux (donc de
- * les heurter de leur cote) : a tester, voir le cahier des charges. Les copies ne comptent jamais comme hors-piste
- * (le hors-piste ne regarde que les blocs du monde).
+ * 1.4.0 : les joueurs Bedrock (Geyser) sont proteges aussi (en 1.3.0 ils voyaient encore les vrais bateaux, d'ou des
+ * collisions : les tests du 24/09/2026 etaient presque tous entre joueurs Bedrock). Geyser affichant mal les entites
+ * d'affichage, leur copie est un porte-armure invisible sans collision (tete du joueur + pseudo). Les bateaux de
+ * course sont aussi places dans une equipe « sans collision » du tableau principal : le serveur ne les pousse plus
+ * l'un contre l'autre. Les copies ne comptent jamais comme hors-piste (le hors-piste ne regarde que les blocs).
  *
  * Limite : un joueur cache disparait aussi de la liste des joueurs (Tab) du coureur pendant la course.
  */
 final class CollisionShield {
 
-    private record Copy(BlockDisplay hull, ItemDisplay head, TextDisplay name) {
-        List<Entity> all() {
+    private record Copy(BlockDisplay hull, ItemDisplay head, TextDisplay name, org.bukkit.entity.ArmorStand bedrock) {
+        /** Copie vue par les joueurs Java. */
+        List<Entity> java() {
             return List.of(hull, head, name);
         }
 
+        List<Entity> all() {
+            return List.of(hull, head, name, bedrock);
+        }
+
+        /** Parties vues par ce joueur. */
+        List<Entity> forViewer(UUID viewer) {
+            return CollisionShield.bedrock(viewer) ? List.of(bedrock) : java();
+        }
+
         void remove() {
-            hull.remove();
-            head.remove();
-            name.remove();
+            for (Entity part : all()) {
+                part.remove();
+            }
         }
     }
+
+    /** Equipe « sans collision » du tableau principal, pour les bateaux de course (voir en-tete). */
+    private static final String TEAM = "kg_boatrace_nc";
 
     private final Plugin plugin;
     private final World world;
@@ -121,7 +136,33 @@ final class CollisionShield {
                     new Vector3f(1f, 1f, 1f), new AxisAngle4f()));
             prepare(display);
         });
-        return new Copy(hull, head, name);
+        org.bukkit.entity.ArmorStand stand = world.spawn(at.clone().subtract(0, 0.5, 0), org.bukkit.entity.ArmorStand.class, armor -> {
+            armor.setMarker(true); // aucune boite de collision
+            armor.setInvisible(true);
+            armor.setGravity(false);
+            armor.setInvulnerable(true);
+            armor.setPersistent(false);
+            armor.setVisibleByDefault(false);
+            armor.customName(Component.text(owner.getName(), NamedTextColor.WHITE));
+            armor.setCustomNameVisible(true);
+            ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
+            if (skull.getItemMeta() instanceof SkullMeta meta) {
+                meta.setOwningPlayer(owner);
+                skull.setItemMeta(meta);
+            }
+            armor.getEquipment().setHelmet(skull);
+        });
+        return new Copy(hull, head, name, stand);
+    }
+
+    private org.bukkit.scoreboard.Team team() {
+        org.bukkit.scoreboard.Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+        org.bukkit.scoreboard.Team team = main.getTeam(TEAM);
+        if (team == null) {
+            team = main.registerNewTeam(TEAM);
+            team.setOption(org.bukkit.scoreboard.Team.Option.COLLISION_RULE, org.bukkit.scoreboard.Team.OptionStatus.NEVER);
+        }
+        return team;
     }
 
     private static void prepare(Display display) {
@@ -135,8 +176,8 @@ final class CollisionShield {
     private void hideFrom(UUID viewerId, UUID otherId) {
         Player viewer = Bukkit.getPlayer(viewerId);
         Player other = Bukkit.getPlayer(otherId);
-        if (viewer == null || bedrock(viewerId)) {
-            return; // Bedrock : voit les vrais bateaux (voir en-tete)
+        if (viewer == null) {
+            return;
         }
         if (other != null) {
             viewer.hideEntity(plugin, other);
@@ -147,7 +188,7 @@ final class CollisionShield {
         }
         Copy copy = copies.get(otherId);
         if (copy != null) {
-            for (Entity part : copy.all()) {
+            for (Entity part : copy.forViewer(viewerId)) {
                 viewer.showEntity(plugin, part);
             }
         }
@@ -189,9 +230,10 @@ final class CollisionShield {
             Entity known = boats.get(id);
             if (vehicle != null && vehicle != known) {
                 boats.put(id, vehicle);
+                team().addEntity(vehicle);
                 for (UUID viewer : active) {
                     Player v = Bukkit.getPlayer(viewer);
-                    if (!viewer.equals(id) && v != null && !bedrock(viewer)) {
+                    if (!viewer.equals(id) && v != null) {
                         v.hideEntity(plugin, vehicle);
                     }
                 }
@@ -205,9 +247,10 @@ final class CollisionShield {
             if (vehicle == null) {
                 at.setYaw(player.getLocation().getYaw());
             }
-            for (Entity part : copy.all()) {
+            for (Entity part : copy.java()) {
                 part.teleport(at);
             }
+            copy.bedrock().teleport(at.clone().subtract(0, 0.5, 0));
         }
     }
 
@@ -224,7 +267,10 @@ final class CollisionShield {
         if (copy != null) {
             copy.remove();
         }
-        boats.remove(id);
+        Entity boat = boats.remove(id);
+        if (boat != null) {
+            team().removeEntity(boat);
+        }
     }
 
     /** Fin de la course : tout est rendu visible, copies supprimees. */

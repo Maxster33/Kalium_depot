@@ -43,6 +43,9 @@ import java.util.UUID;
  * 1.3.0 (etapes 3 et 7) : bareme de points (remplace les points du podium), detection du hors-piste (bateau qui
  * touche autre chose que les blocs de piste), anti-collision entre bateaux (CollisionShield), tableau lateral aere
  * avec le meilleur tour de la course.
+ *
+ * 1.4.0 : anti-collision etendu aux joueurs Bedrock ; hors-piste verifie sur tout le trajet et contact lateral compte
+ * seulement s'il ralentit le bateau ; record personnel du joueur dans son tableau lateral.
  */
 public final class BoatRaceInstance extends GameInstance {
 
@@ -78,6 +81,9 @@ public final class BoatRaceInstance extends GameInstance {
         String name = "?";
         /** 1.3.0 : hors-piste pendant le tour en cours. */
         boolean lapOffTrack;
+        /** 1.4.0 : position du bateau au controle precedent et vitesse instantanee (hors-piste). */
+        Location boatBefore;
+        double instantKmh;
         /** 1.3.0 : tours propres d'affilee depuis la derniere serie validee, et series validees d'affilee. */
         int cleanStreak;
         int series;
@@ -93,7 +99,7 @@ public final class BoatRaceInstance extends GameInstance {
     /** 1.2.0 : identifiant unique de la course en cours (journal de KG_ScoreBoards). */
     private String matchId = "";
     /** 1.2.0 : classement en direct (tableau lateral propre a la course) et tableaux des joueurs a leur rendre. */
-    private org.bukkit.scoreboard.Scoreboard board;
+    private final Map<UUID, org.bukkit.scoreboard.Scoreboard> boards = new java.util.HashMap<>();
     private final Map<UUID, org.bukkit.scoreboard.Scoreboard> previousBoards = new java.util.HashMap<>();
 
     /** 1.3.0 : anti-collision (null si desactive) et blocs de piste (hors-piste = tout autre bloc touche). */
@@ -300,51 +306,37 @@ public final class BoatRaceInstance extends GameInstance {
      * l'air (saut), rien n'est compte. Une seule fois par tour : le tour n'est plus « propre ».
      */
     private void checkOffTrack(Player player, Racer racer) {
-        if (racer.lapOffTrack || !(player.getVehicle() instanceof org.bukkit.entity.Boat boat)) {
+        if (!(player.getVehicle() instanceof org.bukkit.entity.Boat boat)) {
+            racer.instantKmh = 0;
             return;
         }
         org.bukkit.util.BoundingBox box = boat.getBoundingBox();
-        boolean touching = false;
-        // Sous le bateau : 5 points (coins et centre), juste sous la coque.
-        double y = box.getMinY() - 0.05;
-        double[][] under = {{box.getMinX() + 0.1, box.getMinZ() + 0.1}, {box.getMaxX() - 0.1, box.getMinZ() + 0.1},
-                {box.getMinX() + 0.1, box.getMaxZ() - 0.1}, {box.getMaxX() - 0.1, box.getMaxZ() - 0.1}, {box.getCenterX(), box.getCenterZ()}};
-        for (double[] point : under) {
-            org.bukkit.block.Block block = world.getBlockAt((int) Math.floor(point[0]), (int) Math.floor(y), (int) Math.floor(point[1]));
-            if (block.getType().isAir()) {
-                continue;
-            }
-            if (!trackBlocks.contains(block.getType())) {
-                touching = true;
-                break;
-            }
+        Location now = boat.getLocation();
+        Location before = racer.boatBefore;
+        racer.boatBefore = now.clone();
+        double dx = 0;
+        double dz = 0;
+        double dy = 0;
+        if (before != null && before.getWorld() == now.getWorld()) {
+            dx = now.getX() - before.getX();
+            dy = now.getY() - before.getY();
+            dz = now.getZ() - before.getZ();
         }
-        // Sur les cotes : un bloc solide (mur, bordure) au niveau de la coque, juste au-dela de ses bords.
-        if (!touching) {
-            double margin = 0.08;
-            int minX = (int) Math.floor(box.getMinX() - margin);
-            int maxX = (int) Math.floor(box.getMaxX() + margin);
-            int minZ = (int) Math.floor(box.getMinZ() - margin);
-            int maxZ = (int) Math.floor(box.getMaxZ() + margin);
-            int yLow = (int) Math.floor(box.getMinY() + 0.2);
-            int yHigh = (int) Math.floor(box.getMinY() + 0.5);
-            org.bukkit.util.BoundingBox outer = box.clone().expand(margin, 0, margin);
-            for (int bx = minX; bx <= maxX && !touching; bx++) {
-                for (int bz = minZ; bz <= maxZ && !touching; bz++) {
-                    for (int by = yLow; by <= yHigh && !touching; by++) {
-                        org.bukkit.block.Block block = world.getBlockAt(bx, by, bz);
-                        if (block.isPassable() || trackBlocks.contains(block.getType())) {
-                            continue;
-                        }
-                        for (org.bukkit.util.BoundingBox part : block.getCollisionShape().getBoundingBoxes()) {
-                            if (part.shift(bx, by, bz).overlaps(outer)) {
-                                touching = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+        double distance = Math.sqrt(dx * dx + dz * dz);
+        double instant = distance * 20.0 / GameInstance.TICK_INTERVAL * 3.6;
+        boolean slowed = racer.instantKmh > 15 && instant < racer.instantKmh * 0.85;
+        racer.instantKmh = instant;
+        if (racer.lapOffTrack || distance > 20) {
+            return; // deja compte pour ce tour, ou teleportation
+        }
+        // 1.4.0 : tout le trajet depuis le controle precedent est verifie (tous les 0,4 bloc), et plus seulement la
+        // position actuelle : a 140 km/h le bateau parcourt ~4 blocs entre deux controles.
+        int steps = Math.max(1, (int) Math.ceil(distance / 0.4));
+        boolean touching = false;
+        for (int i = 0; i < steps && !touching; i++) {
+            double back = (double) i / steps; // 0 = position actuelle, vers 1 = position precedente
+            org.bukkit.util.BoundingBox at = box.clone().shift(-dx * back, -dy * back, -dz * back);
+            touching = groundOffTrack(at) || (slowed && sideContact(at));
         }
         if (touching) {
             racer.lapOffTrack = true;
@@ -353,6 +345,51 @@ public final class BoatRaceInstance extends GameInstance {
             player.sendActionBar(t("race.off-track", "<red><bold>Hors-piste !</bold> <gray>Bonus « tour propre » perdu pour ce tour."));
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.8f, 0.6f);
         }
+    }
+
+    /** Sous le bateau (coins et centre, juste sous la coque) : un bloc qui n'est pas un bloc de piste. En l'air : rien. */
+    private boolean groundOffTrack(org.bukkit.util.BoundingBox box) {
+        double y = box.getMinY() - 0.05;
+        double[][] under = {{box.getMinX() + 0.1, box.getMinZ() + 0.1}, {box.getMaxX() - 0.1, box.getMinZ() + 0.1},
+                {box.getMinX() + 0.1, box.getMaxZ() - 0.1}, {box.getMaxX() - 0.1, box.getMaxZ() - 0.1}, {box.getCenterX(), box.getCenterZ()}};
+        for (double[] point : under) {
+            org.bukkit.block.Block block = world.getBlockAt((int) Math.floor(point[0]), (int) Math.floor(y), (int) Math.floor(point[1]));
+            if (!block.getType().isAir() && !trackBlocks.contains(block.getType())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Sur les cotes : un bloc solide autre qu'un bloc de piste (mur, bordure) contre la coque. 1.4.0 : ne compte que si
+     * le bateau vient de ralentir (regle du cahier des charges : un contact qui freine) - un simple frolement non.
+     */
+    private boolean sideContact(org.bukkit.util.BoundingBox box) {
+        double margin = 0.12;
+        org.bukkit.util.BoundingBox outer = box.clone().expand(margin, 0, margin);
+        int minX = (int) Math.floor(outer.getMinX());
+        int maxX = (int) Math.floor(outer.getMaxX());
+        int minZ = (int) Math.floor(outer.getMinZ());
+        int maxZ = (int) Math.floor(outer.getMaxZ());
+        int yLow = (int) Math.floor(box.getMinY() + 0.2);
+        int yHigh = (int) Math.floor(box.getMinY() + 0.5);
+        for (int bx = minX; bx <= maxX; bx++) {
+            for (int bz = minZ; bz <= maxZ; bz++) {
+                for (int by = yLow; by <= yHigh; by++) {
+                    org.bukkit.block.Block block = world.getBlockAt(bx, by, bz);
+                    if (block.isPassable() || trackBlocks.contains(block.getType())) {
+                        continue;
+                    }
+                    for (org.bukkit.util.BoundingBox part : block.getCollisionShape().getBoundingBoxes()) {
+                        if (part.shift(bx, by, bz).overlaps(outer)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private void mountBoat(Player player, Location where) {
@@ -993,17 +1030,13 @@ public final class BoatRaceInstance extends GameInstance {
         return mine == null || his == null ? Component.empty() : Component.text(" +" + seconds(mine - his), NamedTextColor.RED);
     }
 
-    /** Met a jour le tableau lateral de la course (chaque seconde) et le montre aux joueurs de la partie. */
+    /**
+     * Met a jour le tableau lateral de la course (chaque seconde). 1.4.0 : un tableau PAR JOUEUR : memes lignes pour
+     * tous (positions, meilleur tour de la course) + son record personnel (objectif a battre).
+     */
     private void updateBoard() {
         if (!minigame().getBool("live-ranking", true) || racers.isEmpty()) {
             return;
-        }
-        if (board == null) {
-            board = Bukkit.getScoreboardManager().getNewScoreboard();
-        }
-        org.bukkit.scoreboard.Objective old = board.getObjective("kgboatrace");
-        if (old != null) {
-            old.unregister();
         }
         int leaderLap = 0;
         List<UUID> order = liveOrder();
@@ -1011,13 +1044,8 @@ public final class BoatRaceInstance extends GameInstance {
         if (leader != null) {
             leaderLap = Math.min(laps, leader.lap + (leader.finished ? 0 : 1));
         }
-        org.bukkit.scoreboard.Objective objective = board.registerNewObjective("kgboatrace", org.bukkit.scoreboard.Criteria.DUMMY,
-                t("race.board-title", "<gold><bold>Course <gray>- tour <white><lap>/<laps>", "lap", leaderLap, "laps", laps));
-        objective.setDisplaySlot(org.bukkit.scoreboard.DisplaySlot.SIDEBAR);
-        objective.numberFormat(io.papermc.paper.scoreboard.numbers.NumberFormat.blank());
-        int line = 15;
-        objective.getScore("space1").customName(Component.empty());
-        objective.getScore("space1").setScore(line--);
+        List<Component> lines = new ArrayList<>();
+        lines.add(Component.empty());
         int position = 1;
         for (UUID uuid : order) {
             if (position > 10) {
@@ -1027,25 +1055,50 @@ public final class BoatRaceInstance extends GameInstance {
             if (racer == null) {
                 continue;
             }
-            org.bukkit.scoreboard.Score score = objective.getScore("p" + position);
-            score.customName(Component.text(position + ". ", NamedTextColor.GOLD)
+            lines.add(Component.text(position + ". ", NamedTextColor.GOLD)
                     .append(Component.text(racer.name, racer.finished ? NamedTextColor.GREEN : NamedTextColor.WHITE))
                     .append(leaderGap(racer, leader)));
-            score.setScore(line--);
             position++;
         }
         if (bestLapName != null) {
-            objective.getScore("space2").customName(Component.empty());
-            objective.getScore("space2").setScore(line--);
-            objective.getScore("best1").customName(t("race.board-best", "<gray>Meilleur tour :"));
-            objective.getScore("best1").setScore(line--);
-            objective.getScore("best2").customName(Component.text(" " + bestLapName + " ", NamedTextColor.WHITE)
+            lines.add(Component.empty());
+            lines.add(t("race.board-best", "<gray>Meilleur tour :"));
+            lines.add(Component.text(" " + bestLapName + " ", NamedTextColor.WHITE)
                     .append(Component.text(formatTime(bestLapMillis), NamedTextColor.AQUA)));
-            objective.getScore("best2").setScore(line--);
         }
+        Component title = t("race.board-title", "<gold><bold>Course <gray>- tour <white><lap>/<laps>", "lap", leaderLap, "laps", laps);
         for (UUID uuid : members) {
             Player player = Bukkit.getPlayer(uuid);
-            if (player != null && player.getWorld() == world && player.getScoreboard() != board) {
+            if (player == null || player.getWorld() != world) {
+                continue;
+            }
+            List<Component> mine = new ArrayList<>(lines);
+            fr.kalium.scoreboards.data.StatsService.Row row = plugin.ranking().stats().playerRow(minigame().id(), uuid);
+            long pb = row == null ? -1 : row.bestLapMs();
+            mine.add(Component.empty());
+            mine.add(t("race.board-pb", "<gray>Ton record :"));
+            mine.add(pb < 0
+                    ? t("race.board-pb-none", " <dark_gray>aucun (tour de moins de <max> s)", "max", minigame().getInt("record-max-lap-seconds", 45))
+                    : Component.text(" " + formatTime(pb), NamedTextColor.LIGHT_PURPLE));
+            org.bukkit.scoreboard.Scoreboard board = boards.computeIfAbsent(uuid, u -> Bukkit.getScoreboardManager().getNewScoreboard());
+            org.bukkit.scoreboard.Objective old = board.getObjective("kgboatrace");
+            if (old != null) {
+                old.unregister();
+            }
+            org.bukkit.scoreboard.Objective objective = board.registerNewObjective("kgboatrace", org.bukkit.scoreboard.Criteria.DUMMY, title);
+            objective.setDisplaySlot(org.bukkit.scoreboard.DisplaySlot.SIDEBAR);
+            objective.numberFormat(io.papermc.paper.scoreboard.numbers.NumberFormat.blank());
+            int score = 15;
+            int index = 0;
+            for (Component line : mine) {
+                if (score <= 0) {
+                    break;
+                }
+                org.bukkit.scoreboard.Score entry = objective.getScore("l" + index++);
+                entry.customName(line);
+                entry.setScore(score--);
+            }
+            if (player.getScoreboard() != board) {
                 previousBoards.putIfAbsent(uuid, player.getScoreboard());
                 player.setScoreboard(board);
             }
@@ -1055,6 +1108,7 @@ public final class BoatRaceInstance extends GameInstance {
     /** Rend a un joueur le tableau qu'il avait avant la course. */
     private void restoreBoard(UUID uuid) {
         org.bukkit.scoreboard.Scoreboard previous = previousBoards.remove(uuid);
+        org.bukkit.scoreboard.Scoreboard board = boards.remove(uuid);
         Player player = Bukkit.getPlayer(uuid);
         if (player != null && board != null && player.getScoreboard() == board) {
             player.setScoreboard(previous != null ? previous : Bukkit.getScoreboardManager().getMainScoreboard());
@@ -1062,11 +1116,11 @@ public final class BoatRaceInstance extends GameInstance {
     }
 
     private void restoreAllBoards() {
-        for (UUID uuid : new ArrayList<>(previousBoards.keySet())) {
+        for (UUID uuid : new ArrayList<>(boards.keySet())) {
             restoreBoard(uuid);
         }
         previousBoards.clear();
-        board = null;
+        boards.clear();
     }
 
     private String nameOf(UUID uuid) {

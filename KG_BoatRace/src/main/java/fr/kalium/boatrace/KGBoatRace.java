@@ -50,7 +50,7 @@ public final class KGBoatRace extends JavaPlugin {
                         text("track-blocks", "Blocs de piste (hors-piste = tout autre bloc touché)", "PACKED_ICE,BLUE_ICE",
                                 "Noms de blocs séparés par des virgules."),
                         bool("anti-collision", "Anti-collision entre bateaux", true,
-                                "Les adversaires sont remplacés par des copies sans collision (joueurs Java ; Bedrock : vrais bateaux)."),
+                                "Les adversaires sont remplacés par des copies sans collision (Java : coque, tête et pseudo ; Bedrock : tête et pseudo)."),
                         integer("record-max-lap-seconds", "Meilleurs temps : tours enregistrés jusqu'à (s)", 45, 0, 600,
                                 "1.1.0 : un tour plus long n'entre pas dans les meilleurs temps. 0 = tous les tours."),
                         integer("time-limit-seconds", "Temps limite (s)", 600, 30, 3600, "Fin de la course pour tout le monde."),

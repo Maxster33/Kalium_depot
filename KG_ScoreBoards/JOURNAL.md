@@ -72,4 +72,4 @@ claires et structurées.
 - Affichage (`StatsService.formatPoints`, menus et panneaux) : 6 chiffres au plus, décimales (2 au plus) jusqu'à un
   million, puis « M » / « Md » avec 3 décimales au plus : 3 ; 12,5 ; 1234,56 ; 12345,7 ; 123456 ; 1,235 M ; 2,5 Md.
   (Pas de « K » : sous un million, 6 chiffres suffisent - à changer si LeKiwi06 préfère 12,35 K.)
-**Déploiement** : avec KG_BoatRace 1.3.0 (qui l'utilise). **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : avec KG_BoatRace 1.3.0. **Statut : déployé sur Kal-Games le 24/09/2026 à 21 h 14, points décimaux crédités en course (testé).**

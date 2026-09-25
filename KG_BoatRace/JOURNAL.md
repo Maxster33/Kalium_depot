@@ -78,4 +78,22 @@ tableau latéral « un peu trop compact à 2 joueurs » (proposition validée : 
 - **Tableau latéral** : lignes vides autour des positions (10 au plus) et « Meilleur tour » de la course en cours.
 - Journal : `lap` gagne `points`, `base`, `multiplier`, `clean`, `seriesBonus`, `lead`, `timeCoefficient` ; les
   résultats de `race` gagnent `points`, `cumulative`, `offTracks`.
-**Déploiement** : **avec KG_ScoreBoards 1.4.0** (obligatoire). **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : **avec KG_ScoreBoards 1.4.0** (obligatoire). **Statut : déployé sur Kal-Games le 24/09/2026 à 21 h 14, testé par LeKiwi06 et des joueurs (15 courses) : barème validé, tableau validé ; anti-collision inopérant pour les joueurs Bedrock et hors-piste irrégulier (corrigés en 1.4.0).**
+
+## 1.4.0 — retours de test : anti-collision Bedrock, hors-piste fiable, record personnel (25/09/2026)
+
+**Retours de LeKiwi06** après les courses du 24/09 au soir (15 courses, presque toutes entre joueurs Bedrock, journal
+de KG_ScoreBoards) : « l'anti-collision n'avait pas l'air de marcher », « le hors-piste est un peu capricieux, des fois
+il ne détecte pas les blocs jaunes sur le bord de la piste, des fois il détecte à peine on frôle », « est-ce que tu as
+aussi le PB du joueur, pour qu'il sache son objectif à battre ? ». Barème et tableau aéré validés.
+- **Anti-collision** : en 1.3.0 les joueurs Bedrock voyaient encore les vrais bateaux, d'où les collisions. Ils sont
+  maintenant protégés aussi : leur copie est un porte-armure invisible sans collision (tête + pseudo, que Geyser
+  affiche bien). Les bateaux de course sont en plus placés dans une équipe « sans collision » du tableau principal
+  (`kg_boatrace_nc`) : le serveur ne les pousse plus l'un contre l'autre.
+- **Hors-piste** : vérifié sur **tout le trajet** depuis le contrôle précédent (tous les 0,4 bloc), et plus seulement à
+  la position du moment (à 140 km/h, ~4 blocs entre deux contrôles : bordures ratées). Un contact **latéral** (mur,
+  bordure) ne compte que s'il **ralentit** le bateau (vitesse en baisse de plus de 15 %) : un simple frôlement ne
+  compte plus. Un bloc sous le bateau qui n'est pas un bloc de piste compte toujours.
+- **Record personnel** : le tableau latéral est maintenant propre à chaque joueur : mêmes positions et meilleur tour de
+  la course, plus « Ton record » (meilleur tour enregistré dans les classements, ou « aucun »).
+**Déploiement** : seul (KG_ScoreBoards 1.4.0 déjà en place). **Statut : compilé, non déployé, non testé en jeu.**
