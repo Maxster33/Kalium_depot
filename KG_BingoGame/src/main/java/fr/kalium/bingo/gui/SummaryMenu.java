@@ -31,12 +31,13 @@ import java.util.UUID;
 public final class SummaryMenu implements Listener {
 
     /** Resultat d'un joueur, fige en fin de partie. */
-    public record PlayerLine(UUID id, String name, double solo, int objectives, int firsts, int bingos, List<Component> items) {
+    public record PlayerLine(UUID id, String name, double solo, int objectives, int firsts, int bingos, List<Component> items,
+                             double xp) {
     }
 
     /** Resultat d'une equipe, fige en fin de partie (ordre du classement). */
     public record TeamLine(int team, int rank, double points, double own, double behind, double multiplier, boolean abandoned,
-                           List<PlayerLine> players) {
+                           List<PlayerLine> players, double xp) {
     }
 
     /** Resume complet d'une partie. */
@@ -89,6 +90,9 @@ public final class SummaryMenu implements Listener {
             detail = " (" + (team.behind() > 1e-9 ? ScoreEngine.format(team.own()) + " + " + ScoreEngine.format(team.behind())
                     : ScoreEngine.format(team.own())) + (team.multiplier() > 1.0 ? " ×" + ScoreEngine.format(team.multiplier()) : "") + ")";
         }
+        if (team.xp() > 1e-9) {
+            detail = detail + " + " + ScoreEngine.format(team.xp()) + " XP"; // 0.7.8 : bonus d'XP
+        }
         lore.add(plain(Component.text("Points : ", NamedTextColor.GRAY).append(Component.text(ScoreEngine.format(team.points()) + detail,
                 NamedTextColor.WHITE))));
         if (team.abandoned()) {
@@ -105,7 +109,8 @@ public final class SummaryMenu implements Listener {
         meta.setOwningPlayer(Bukkit.getOfflinePlayer(line.id()));
         meta.displayName(plain(Component.text(line.name(), TeamStyle.color(team))));
         List<Component> lore = new ArrayList<>();
-        lore.add(plain(Component.text("Points solo : ", NamedTextColor.GRAY).append(Component.text(ScoreEngine.format(line.solo()), NamedTextColor.WHITE))));
+        lore.add(plain(Component.text("Points solo : ", NamedTextColor.GRAY).append(Component.text(ScoreEngine.format(line.solo())
+                + (line.xp() > 1e-9 ? " (dont " + ScoreEngine.format(line.xp()) + " XP)" : ""), NamedTextColor.WHITE))));
         lore.add(plain(Component.text("Objectifs validés : ", NamedTextColor.GRAY).append(Component.text(line.objectives()
                 + (line.firsts() > 0 ? " (dont " + line.firsts() + " en 1er)" : ""), NamedTextColor.WHITE))));
         lore.add(plain(Component.text("Bingos : ", NamedTextColor.GRAY).append(Component.text(String.valueOf(line.bingos()), NamedTextColor.WHITE))));

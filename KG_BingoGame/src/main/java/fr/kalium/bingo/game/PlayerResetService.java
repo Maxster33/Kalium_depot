@@ -61,6 +61,19 @@ public final class PlayerResetService {
         inventory.setItemInOffHand(null);
         player.setItemOnCursor(null);
         player.setRespawnLocation(null);
+        resetExperience(player);
+    }
+
+    /**
+     * 0.7.8 : XP remise a zero (demande de LeKiwi06, 25/09/2026 : « on ne perd pas notre xp d'une partie à l'autre de
+     * bingo, fais en sorte de les retirer et ajoute-les aux points des joueurs en fin de partie comme points bonus »).
+     * Appelee au lancement de la partie et, via reset, en fin de partie (apres le calcul du bonus, voir GameEndService)
+     * et a l'abandon.
+     */
+    public void resetExperience(Player player) {
+        player.setLevel(0);
+        player.setExp(0f);
+        player.setTotalExperience(0);
     }
 
     /** Remise a zero immediate si le joueur est en ligne, sinon differee a sa prochaine connexion. */

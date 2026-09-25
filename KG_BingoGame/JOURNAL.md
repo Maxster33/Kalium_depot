@@ -1541,3 +1541,20 @@ ServerLoadEvent), donc jamais chargé.
 - Inclut 0.7.6 (barrières non recopiées).
 **Déploiement** : seul, sur Serveur Jeux, le 25/09/2026 à 21 h 23 (0.7.5 et 0.7.6 dans leurs `_removed-…`).
 **Statut : déployé, non testé en jeu.**
+
+## 0.7.8 — XP retirée entre les parties, convertie en points bonus (25/09/2026)
+
+**Demandé par LeKiwi06** : « on ne perd pas notre xp d'une partie à l'autre de bingo, fais en sorte de les retirer et
+ajoute-les aux points des joueurs en fin de partie comme points bonus ». Choix de LeKiwi06 :
+- **0,1 point par niveau d'XP** du joueur à la fin de la partie (niveau 30 = 3 points) ;
+- compté **en solo et pour l'équipe** (somme des bonus de ses joueurs) ;
+- **ajouté à la fin**, sans cumul des équipes derrière ni multiplicateur de blackout ; il ne change pas l'ordre du
+  classement ;
+- seulement pour les joueurs **présents à la fin** (pas d'abandon, connectés).
+Mise en œuvre :
+- XP (niveaux, barre, total) remise à zéro au lancement de la partie (PartyStarter) : seule l'XP gagnée pendant la
+  partie compte ; puis à la fin (après le calcul du bonus), à l'abandon et au retour d'un joueur déconnecté
+  (PlayerResetService.reset / remise à zéro différée).
+- Résumé de fin : « Équipe A : 42 pts (… + 1,5 XP) », solo « Pseudo 12 (dont 0,8 XP) » ; idem dans le menu du
+  résumé (SummaryMenu) et dans la console.
+**Déploiement** : seul, sur Serveur Jeux. **Statut : compilé, non déployé, non testé en jeu.**

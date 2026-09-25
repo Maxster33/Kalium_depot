@@ -140,6 +140,7 @@ public final class PartyStarter {
                     // Le point d'apparition sur la map devient le point de spawn du joueur (0.1.18,
                     // demande explicite : il reapparaissait sur le modele de la salle d'attente).
                     playerReset.setGameSpawn(player, instance.getSpawnLocation());
+                    playerReset.resetExperience(player); // 0.7.8 : seule l'XP gagnee pendant la partie compte
                     instance.setPlayerConnected(playerId, true);
                     // La salle d'attente est quittee pour de bon : la Nether Star ne sert plus a
                     // rien sur la carte de jeu (demande explicite de l'utilisateur, elle restait

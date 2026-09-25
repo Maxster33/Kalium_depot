@@ -71,6 +71,9 @@ public final class GameEndService {
     private final GameManager gameManager;
     private final LobbySlots lobbySlots;
     private final LobbyItems lobbyItems;
+    /** 0.7.8 : points bonus par niveau d'XP en fin de partie (choix de LeKiwi06 : 0,1). */
+    private static final double XP_POINTS_PER_LEVEL = 0.1;
+
     private final RelayClient relayClient;
     private final AssignmentService assignmentService;
     private final GamePersistence gamePersistence;
@@ -390,6 +393,28 @@ public final class GameEndService {
             }
         }
 
+        // 0.7.8 : bonus d'XP (demande de LeKiwi06, 25/09/2026) - 0,1 point par niveau d'XP du joueur a la fin de la
+        // partie (l'XP est remise a zero au lancement, voir PartyStarter). Joueurs presents a la fin seulement (pas
+        // d'abandon, connectes). Ajoute tel quel au total final, solo et equipe (somme de ses joueurs), sans cumul
+        // des equipes derriere ni multiplicateur ; il ne change pas l'ordre du classement. L'XP est ensuite retiree
+        // par la remise a zero de fin de partie (PlayerResetService.reset).
+        Map<UUID, Double> xpBonus = new HashMap<>();
+        Map<Integer, Double> teamXp = new HashMap<>();
+        for (BingoInstance instance : game.getInstances()) {
+            int team = instance.getTeam().getTeamNumber();
+            for (UUID playerId : instance.getTeam().getPlayers()) {
+                Player player = Bukkit.getPlayer(playerId);
+                if (player == null || !player.isOnline() || instance.hasAbandoned(playerId)) {
+                    continue;
+                }
+                double bonus = player.getLevel() * XP_POINTS_PER_LEVEL;
+                if (bonus > 0) {
+                    xpBonus.put(playerId, bonus);
+                    teamXp.merge(team, bonus, Double::sum);
+                }
+            }
+        }
+
         List<Component> summary = new ArrayList<>();
         String title = switch (outcome) {
             case WIN -> "Victoire de l'équipe " + TeamStyle.letter(winner);
@@ -412,17 +437,18 @@ public final class GameEndService {
                 }
             }
             double mult = win && team == winner ? speed : 1.0;
-            String line = (win ? (i + 1) + ". " : "- ") + "Équipe " + TeamStyle.letter(team) + " : " + ScoreEngine.format((mine + behind) * mult) + " pts"
-                    + (behind > 0 || mult > 1.0 ? " (" + (behind > 0 ? ScoreEngine.format(mine) + " + " + ScoreEngine.format(behind) : ScoreEngine.format(mine))
-                    + (mult > 1.0 ? " ×" + ScoreEngine.format(mult) : "") + ")" : "")
+            double xp = teamXp.getOrDefault(team, 0.0);
+            String line = (win ? (i + 1) + ". " : "- ") + "Équipe " + TeamStyle.letter(team) + " : " + ScoreEngine.format((mine + behind) * mult + xp) + " pts"
+                    + (behind > 0 || mult > 1.0 || xp > 0 ? " (" + (behind > 0 ? ScoreEngine.format(mine) + " + " + ScoreEngine.format(behind) : ScoreEngine.format(mine))
+                    + (mult > 1.0 ? " ×" + ScoreEngine.format(mult) : "") + (xp > 0 ? " + " + ScoreEngine.format(xp) + " XP" : "") + ")" : "")
                     + (instance.isFullyAbandoned() ? " — abandon" : "");
             summary.add(Component.text(line, TeamStyle.color(team)));
-            log.append(" equipe ").append(team).append('=').append(ScoreEngine.format((mine + behind) * mult));
+            log.append(" equipe ").append(team).append('=').append(ScoreEngine.format((mine + behind) * mult + xp));
         }
         // Classement SOLO : memes regles que les equipes (precision de LeKiwi06, 24/09/2026). Victoire : joueurs de
         // l'equipe gagnante en tete, puis les autres par score, ceux qui ont abandonne en dernier ; chacun gagne ses
         // points + ceux de tous les joueurs classes derriere lui. Egalite / nulle : chacun garde ses propres points.
-        record Solo(String name, double points, boolean winnerTeam, boolean abandoned) {
+        record Solo(String name, double points, boolean winnerTeam, boolean abandoned, double xp) {
         }
         List<Solo> soloList = new ArrayList<>();
         for (BingoInstance instance : game.getInstances()) {
@@ -431,7 +457,7 @@ public final class GameEndService {
                 String name = Bukkit.getOfflinePlayer(playerId).getName();
                 soloList.add(new Solo(name != null ? name : playerId.toString().substring(0, 8),
                         engine.soloScore(team, playerId, win && team == winner), win && team == winner,
-                        instance.hasAbandoned(playerId)));
+                        instance.hasAbandoned(playerId), xpBonus.getOrDefault(playerId, 0.0)));
             }
         }
         soloList.sort((a, b) -> {
@@ -453,8 +479,10 @@ public final class GameEndService {
                 }
             }
             double mult = soloList.get(i).winnerTeam() ? speed : 1.0;
-            solos.add((win ? (i + 1) + ". " : "") + soloList.get(i).name() + " " + ScoreEngine.format((soloList.get(i).points() + behind) * mult));
-            soloFinal.put(soloList.get(i).name(), (soloList.get(i).points() + behind) * mult);
+            double xp = soloList.get(i).xp();
+            solos.add((win ? (i + 1) + ". " : "") + soloList.get(i).name() + " " + ScoreEngine.format((soloList.get(i).points() + behind) * mult + xp)
+                    + (xp > 0 ? " (dont " + ScoreEngine.format(xp) + " XP)" : ""));
+            soloFinal.put(soloList.get(i).name(), (soloList.get(i).points() + behind) * mult + xp);
         }
         summary.add(Component.text((win ? "Classement solo : " : "Points solo : ") + String.join(", ", solos), NamedTextColor.GRAY));
         logger.info(log + " ; solo : " + String.join(", ", solos));
@@ -489,11 +517,12 @@ public final class GameEndService {
                 }
                 double solo = soloFinal.getOrDefault(name != null ? name : playerId.toString().substring(0, 8), 0.0);
                 players.add(new fr.kalium.bingo.gui.SummaryMenu.PlayerLine(playerId, name != null ? name : "?", solo,
-                        cells.size(), firsts, engine.bingosOf(team, playerId).size(), items));
+                        cells.size(), firsts, engine.bingosOf(team, playerId).size(), items, xpBonus.getOrDefault(playerId, 0.0)));
             }
             double mult = win && team == winner ? speed : 1.0;
-            teamLines.add(new fr.kalium.bingo.gui.SummaryMenu.TeamLine(team, win ? i + 1 : 0, (mine + behindPts) * mult, mine,
-                    behindPts, mult, instance.isFullyAbandoned(), players));
+            double xpPts = teamXp.getOrDefault(team, 0.0);
+            teamLines.add(new fr.kalium.bingo.gui.SummaryMenu.TeamLine(team, win ? i + 1 : 0, (mine + behindPts) * mult + xpPts, mine,
+                    behindPts, mult, instance.isFullyAbandoned(), players, xpPts));
         }
         summaries.put(game.getGameId(), new fr.kalium.bingo.gui.SummaryMenu.Summary(title, reason, teamLines));
 
