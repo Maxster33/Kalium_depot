@@ -116,11 +116,9 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
   le relais), l'affichage en jeu des données du journal (graphiques).
 - **Interfaces** : KG_Menu 1.0.0 et KLM_Menu 2.1.0 en service sur Kal-Games. Phase 2 : accès des opérateurs aux
   interfaces des autres serveurs (voir la charte).
-- **Bingo, bug à corriger** : dans la liste des parties (KG_Bingo), **le pseudo affiché n'est pas celui de
-  l'hôte** - le texte `bingo.party-entry` contient le pseudo en dur et le `lang.yml` de KalGames l'a figé à la 1re
-  apparition. Corriger avec un paramètre `<host>` ET une nouvelle clé ; rendre aussi plus clair le nombre de joueurs
-  par équipe (« 2x4 équipes » est ambigu). Salle d'attente du Bingo : la nouvelle salle (plus grande, vers X -16,
-  Z 24 du monde `bingo_lobby` de Serveur Jeux) n'a jamais été capturée : à faire par `/bingoadmin lobby`.
+- **Bingo** : pseudo de l'hôte dans la liste des parties corrigé (KG_Bingo 1.4.0) ; nouvelle salle d'attente capturée
+  par LeKiwi06 le 25/09/2026 (67x44x83) ; succès limités à la partie et préparation des maps 3 fois plus rapide
+  (KG_BingoGame 0.7.2), tout testé. Reste à tester : Nether / End de chaque équipe.
 - **Rush (KalGames)** : jouable, jamais testé en jeu ; à peaufiner plus tard (jeu de niche, après les jeux les plus
   joués). Voir `KalGames/JOURNAL.md`, sections 1.11.0 à 1.12.3.
 - **Nettoyage des serveurs** : ne garder que les 2 derniers `_removed-…` par plugin (+ anciens `.bak`, dossiers

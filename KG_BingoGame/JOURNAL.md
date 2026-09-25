@@ -1447,7 +1447,7 @@ achievements de nos coéquipiers et adversaires ».
 - `AdvancementScopeListener` : l'annonce d'un succès d'un joueur en partie n'est envoyée qu'aux joueurs de sa partie
   (coéquipiers et adversaires, pas ceux qui ont abandonné) ; celle d'un joueur hors partie (salle d'attente, après une
   partie) seulement aux joueurs hors partie. Le succès est toujours obtenu normalement.
-**Déploiement** : seul, sur Serveur Jeux (7015). **Statut : déployé le 25/09/2026 à 16 h 29 ; correctif incomplet : toujours bloqué à 0 % après une partie annulée (voir 0.7.2).**
+**Déploiement** : seul, sur Serveur Jeux (7015). **Statut : déployé le 25/09/2026 à 15 h 16, testé et confirmé par LeKiwi06 le 25/09/2026 (succès limités à la partie, 2 parties simultanées).**
 
 ## 0.7.1 — correctif : préparation des maps bloquée à 0 % (25/09/2026)
 

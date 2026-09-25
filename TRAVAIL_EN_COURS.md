@@ -16,8 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KG_Bingo — LeKiwi06 — depuis le 2026-09-25 14:05 — liste des parties : pseudo de l'hôte (toujours « Maxster »)
-- KG_BingoGame — LeKiwi06 — depuis le 2026-09-25 13:50 — succès (advancements) visibles seulement par les joueurs de la même partie
 
 
 
