@@ -1,7 +1,7 @@
 # KV_Plots - reglages (cahier des charges : KV_Plots/CAHIER_DES_CHARGES.md)
 
-# Monde des plots (ex « New World (2) », renomme « kanvas »).
-monde: kanvas
+# Monde des plots (ex « New World (2) », renomme « Kanvas » ; majuscule comprise).
+monde: Kanvas
 
 grille:
   # Coin nord-ouest (x et z les plus petits) de l'interieur constructible du plot (0, 0), bordure non comprise.

@@ -48,8 +48,10 @@ Limites connues :
   sans IA, titre / description, menus (KV_Menu), extension du monde.
 
 À faire au déploiement (serveur Kanvas) :
-- ~~Renommer `New World (2)` en `kanvas`~~ : fait par LeKiwi06 le 26/09/2026.
-- FAWE à la place de WorldEdit, avec `region-restrictions: true` et les limites anti-crash (config de FAWE).
+- ~~Renommer `New World (2)`~~ : fait par LeKiwi06 le 26/09/2026, en `Kanvas` (monde principal).
+- ~~FAWE à la place de WorldEdit~~ (2.15.4, fait par LeKiwi06) ; reste à régler `region-restrictions: true` et les limites
+  anti-crash (config de FAWE).
 - Désactiver le « mode survie forcé » de KLM_Menu sur Kanvas.
 
-**Statut : non testé en jeu, non déployé.**
+**Déployé sur Kanvas le 26/09/2026 (01:43, sans KV_Menu), en attente de redémarrage. Statut : non testé en jeu.**
+Réglage : `monde: Kanvas` (majuscule : le dossier du monde et `level-name` s'appellent `Kanvas`).

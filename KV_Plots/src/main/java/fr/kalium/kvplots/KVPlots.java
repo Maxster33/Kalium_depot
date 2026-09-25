@@ -38,7 +38,7 @@ public final class KVPlots extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        String nomMonde = getConfig().getString("monde", "kanvas");
+        String nomMonde = getConfig().getString("monde", "Kanvas");
         monde = getServer().getWorld(nomMonde);
         if (monde == null) monde = new WorldCreator(nomMonde).createWorld(); // charge le dossier existant
         grille = new Grille(getConfig().getInt("grille.origine-x", 0), getConfig().getInt("grille.origine-z", 0),
