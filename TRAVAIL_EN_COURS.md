@@ -16,6 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KG_BingoGame — LeKiwi06 — depuis le 2026-09-25 13:50 — succès (advancements) visibles seulement par les joueurs de la même partie
+
 
 
 ## Requis parfois
