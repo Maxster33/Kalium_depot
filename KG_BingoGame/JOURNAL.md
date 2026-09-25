@@ -1520,3 +1520,11 @@ pas le bon nom).
 - Inclut 0.7.4.
 **Déploiement** : seul, sur Serveur Jeux, le 25/09/2026 à 21 h 18 (0.7.3 rangée dans `_removed-kg_bingogame-0.7.3`).
 **Statut : déployé, non testé en jeu.**
+
+## 0.7.6 — plus de barrières dans les salles d'attente (25/09/2026)
+
+**Demandé par LeKiwi06** : « tu n'as pas enlevé les blocs invisibles maintenant que l'on est invulnérable ».
+- Au collage des salles d'attente, les barrières du modèle (157 dans la capture de 21 h 04) sont remplacées par de
+  l'air. Le modèle et la salle d'origine les gardent : pas besoin de recapturer. Les salles étant recollées à chaque
+  démarrage, un redémarrage suffit. Un joueur qui tombe dans le vide est ramené à la salle la plus proche (0.7.3).
+**Déploiement** : seul, sur Serveur Jeux. **Statut : compilé, non déployé, non testé en jeu.**

@@ -216,6 +216,12 @@ public final class LobbyTemplateService {
             @Override
             int apply(Block block, int rx, int ry, int rz) {
                 int index = template.paletteIndexAt(rx, ry, rz);
+                // 0.7.6 : les barrieres ne sont pas recopiees dans les salles collees (demande de LeKiwi06,
+                // 25/09/2026 : « enlever les blocs invisibles maintenant que l'on est invulnérable » - voir
+                // LobbyProtectionListener). Le modele et la salle d'origine les gardent.
+                if (index != 0 && template.data(index).getMaterial() == org.bukkit.Material.BARRIER) {
+                    index = 0;
+                }
                 if (index == 0) {
                     if (block.getType().isAir()) {
                         return 1;
