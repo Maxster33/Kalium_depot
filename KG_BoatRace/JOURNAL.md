@@ -96,4 +96,13 @@ aussi le PB du joueur, pour qu'il sache son objectif à battre ? ». Barème et 
   compte plus. Un bloc sous le bateau qui n'est pas un bloc de piste compte toujours.
 - **Record personnel** : le tableau latéral est maintenant propre à chaque joueur : mêmes positions et meilleur tour de
   la course, plus « Ton record » (meilleur tour enregistré dans les classements, ou « aucun »).
-**Déploiement** : seul (KG_ScoreBoards 1.4.0 déjà en place). **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : seul (KG_ScoreBoards 1.4.0 déjà en place). **Statut : déployé le 25/09/2026 à 12 h 44, testé par LeKiwi06 : anti-collision OK (Java et Bedrock), record dans le tableau OK ; hors-piste trop sévère au bord (corrigé en 1.4.1).**
+
+## 1.4.1 — hors-piste : seulement sous le joueur (25/09/2026)
+
+**Retour de LeKiwi06** (1.4.0 testée : anti-collision réparé, Java et Bedrock ; tableau latéral « bien mieux ») :
+« je suis au bord sans toucher et ça me le compte quand même ; le mieux est de vérifier le bloc sous le joueur dans le
+bateau et pas sous le bateau entier, comme ça le hors-piste ne compte que pour une vraie bonne sortie de piste ».
+- Contrôle au sol : un seul point, sous le joueur (centre du bateau), au lieu des 4 coins + centre. Le trajet reste
+  vérifié tous les 0,4 bloc. Le contact latéral qui ralentit (mur, bordure surélevée) compte toujours.
+**Déploiement** : seul. **Statut : compilé, non déployé, non testé en jeu.**

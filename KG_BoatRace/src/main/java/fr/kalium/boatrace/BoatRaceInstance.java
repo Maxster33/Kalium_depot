@@ -347,18 +347,15 @@ public final class BoatRaceInstance extends GameInstance {
         }
     }
 
-    /** Sous le bateau (coins et centre, juste sous la coque) : un bloc qui n'est pas un bloc de piste. En l'air : rien. */
+    /**
+     * Sous le joueur (centre du bateau, juste sous la coque) : un bloc qui n'est pas un bloc de piste. En l'air : rien.
+     * 1.4.1 : seulement sous le joueur et plus sous toute la coque (demande de LeKiwi06 : un bateau au bord de la piste,
+     * dont un coin mord la bordure, ne compte plus ; seule une vraie sortie de piste compte).
+     */
     private boolean groundOffTrack(org.bukkit.util.BoundingBox box) {
-        double y = box.getMinY() - 0.05;
-        double[][] under = {{box.getMinX() + 0.1, box.getMinZ() + 0.1}, {box.getMaxX() - 0.1, box.getMinZ() + 0.1},
-                {box.getMinX() + 0.1, box.getMaxZ() - 0.1}, {box.getMaxX() - 0.1, box.getMaxZ() - 0.1}, {box.getCenterX(), box.getCenterZ()}};
-        for (double[] point : under) {
-            org.bukkit.block.Block block = world.getBlockAt((int) Math.floor(point[0]), (int) Math.floor(y), (int) Math.floor(point[1]));
-            if (!block.getType().isAir() && !trackBlocks.contains(block.getType())) {
-                return true;
-            }
-        }
-        return false;
+        org.bukkit.block.Block block = world.getBlockAt((int) Math.floor(box.getCenterX()), (int) Math.floor(box.getMinY() - 0.05),
+                (int) Math.floor(box.getCenterZ()));
+        return !block.getType().isAir() && !trackBlocks.contains(block.getType());
     }
 
     /**
