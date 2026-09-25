@@ -1512,11 +1512,11 @@ pas le bon nom).
   rechargés au démarrage. `/bingoadmin lobby capture` suffit après un redémarrage, y compris depuis la console.
 - `/bingoadmin lobby info` affiche aussi les trois positions (marche depuis la console). Chaque définition et chaque
   capture écrit les coordonnées dans la console.
-- Positions de la capture du 25/09 à 20 h 57, retrouvées à partir des 12 cristaux de l'End (position dans le modèle
-  comparée à leur position dans le monde, résultat identique pour les 12) : monde `bingo_lobby`, coin 1 `-70 62 -13`,
-  coin 2 `-8 108 67` (63x47x81), apparition `-14.63 78.94 3.48` (orientation 150.6 / 27.1). LeKiwi06 indique pour
-  le coin 2 `-7 107 67`, puis demande `-5` en X « pour être sûr » : c'est `-5 107 67` qui sera déposé dans
-  `lobby_capture.yml` au déploiement (salle alors de 66x46x81, par rapport à la capture de 20 h 57 : trois colonnes de
-  plus côté X, une couche de moins en haut).
+- Positions de la dernière capture (25/09 à 21 h 04, modèle 64x46x82), retrouvées à partir des 12 cristaux de l'End
+  (position dans le modèle comparée à leur position dans le monde, résultat identique pour les 12) : monde
+  `bingo_lobby`, coin 1 `-69 63 -14`, coin 2 `-6 108 67`, apparition `-13.49 79 2.77` (orientation 144.0 / 13.5).
+  LeKiwi06 a demandé X -5 pour le coin 2 « pour être sûr » : `lobby_capture.yml` déposé avec coin 1 `-69 63 -14`,
+  coin 2 `-5 108 67` et cette apparition.
 - Inclut 0.7.4.
-**Déploiement** : seul, sur Serveur Jeux. **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : seul, sur Serveur Jeux, le 25/09/2026 à 21 h 18 (0.7.3 rangée dans `_removed-kg_bingogame-0.7.3`).
+**Statut : déployé, non testé en jeu.**
