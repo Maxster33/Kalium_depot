@@ -66,6 +66,9 @@ de plots en créatif. Préfixe `KV_` = Kanvas (voir la charte dans `ARCHITECTURE
 - **Signalements** : raisons à cocher : contenu inapproprié, copie d'un autre build, plot vide ou bâclé, triche aux
   votes, Autre (texte libre). Message en jeu au staff connecté + **sauvegarde dans un fichier**, consultables dans
   l'**interface admin de `KV_Menu`**. Actions du staff : classer le signalement, dévalider le plot, le remettre à zéro.
+- **Réserver un plot** : sur un plot libre, le joueur prend celui où il se tient (pour un grand : un groupe de 2 x 2
+  plots libres qui le contient) ; ailleurs, le plot libre le plus proche du centre de la grille.
+- **Grand plot libéré** (remis à zéro) : il **redevient 4 plots moyens** (routes et bordures reconstruites).
 - **Titre / description** : titre de 32 caractères, description de 200, codes couleur autorisés, modifiables à tout
   moment par le créateur.
 - **Classement du mois** : total des **votes reçus pendant le mois**.

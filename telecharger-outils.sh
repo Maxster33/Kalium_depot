@@ -39,4 +39,10 @@ get "https://libraries.minecraft.net/com/mojang/brigadier/1.3.10/brigadier-1.3.1
 get "$C/org/jspecify/jspecify/1.0.0/jspecify-1.0.0.jar" "$L/jspecify-1.0.0.jar"
 get "$C/org/checkerframework/checker-qual/3.49.2/checker-qual-3.49.2.jar" "$L/checker-qual-3.49.2.jar"
 get "$C/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar" "$L/annotations-26.1.0.jar"
+# WorldGuard / WorldEdit (API seulement, pour KV_Plots ; sur le serveur, FAWE fournit l'API WorldEdit)
+E=https://maven.enginehub.org/repo
+get "$E/com/sk89q/worldguard/worldguard-core/7.0.19/worldguard-core-7.0.19.jar" "$L/worldguard-core-7.0.19.jar"
+get "$E/com/sk89q/worldguard/worldguard-bukkit/7.0.19/worldguard-bukkit-7.0.19.jar" "$L/worldguard-bukkit-7.0.19.jar"
+get "$E/com/sk89q/worldedit/worldedit-core/7.4.5/worldedit-core-7.4.5.jar" "$L/worldedit-core-7.4.5.jar"
+get "$E/com/sk89q/worldedit/worldedit-bukkit/7.4.5/worldedit-bukkit-7.4.5.jar" "$L/worldedit-bukkit-7.4.5.jar"
 echo "Outils prets dans $DIR/outils-build"

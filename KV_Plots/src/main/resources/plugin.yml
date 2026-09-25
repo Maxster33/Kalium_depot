@@ -1,0 +1,18 @@
+name: KV_Plots
+version: '${project.version}'
+main: fr.kalium.kvplots.KVPlots
+api-version: '26.2'
+description: Serveur Kanvas - plots de construction en creatif (reservation, editeurs, protection WorldGuard).
+authors: [KaLium]
+depend: [WorldGuard]
+
+commands:
+  plot:
+    description: Reserver et gerer ses plots.
+    usage: /<command> reserver|tp|liste|info|editeur
+    permission: kvplots.joueur
+
+permissions:
+  kvplots.joueur:
+    description: Reserver des plots, s'y teleporter, gerer ses editeurs.
+    default: true
