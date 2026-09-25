@@ -105,4 +105,6 @@ aussi le PB du joueur, pour qu'il sache son objectif à battre ? ». Barème et 
 bateau et pas sous le bateau entier, comme ça le hors-piste ne compte que pour une vraie bonne sortie de piste ».
 - Contrôle au sol : un seul point, sous le joueur (centre du bateau), au lieu des 4 coins + centre. Le trajet reste
   vérifié tous les 0,4 bloc. Le contact latéral qui ralentit (mur, bordure surélevée) compte toujours.
+- Détail des points du tour en gris clair (« trop foncé ») : nouvelle clé `race.lap-points-2` (l'ancienne
+  `race.lap-points` est déjà figée dans le `lang.yml` du serveur, elle n'est plus utilisée).
 **Déploiement** : seul. **Statut : compilé, non déployé, non testé en jeu.**

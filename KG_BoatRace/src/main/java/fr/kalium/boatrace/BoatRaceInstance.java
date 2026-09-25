@@ -712,8 +712,10 @@ public final class BoatRaceInstance extends GameInstance {
             bestLapName = player.getName();
         }
         LapScore score = scoreLap(racer, lapTime);
-        player.sendMessage(plugin.prefix().append(t("race.lap-points",
-                "<gold>+<points> pt(s) <dark_gray>(<detail>) <gray>- total <white><total></white> pts",
+        // 1.4.1 : detail en gris clair (demande de LeKiwi06 : trop fonce) ; nouvelle cle, l'ancienne etant deja figee
+        // dans le lang.yml du serveur.
+        player.sendMessage(plugin.prefix().append(t("race.lap-points-2",
+                "<gold>+<points> pt(s) <gray>(<detail>) - total <white><total></white> pts",
                 "points", fr.kalium.scoreboards.data.StatsService.formatPoints(score.points()), "detail", score.detail(),
                 "total", fr.kalium.scoreboards.data.StatsService.formatPoints(racer.points))));
         // 1.1.0 : seuls les tours sous le seuil (45 s par defaut, reglable) comptent pour les meilleurs temps.
