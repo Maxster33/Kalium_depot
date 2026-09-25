@@ -768,3 +768,13 @@ de la 6e partie privée de la journée, ni points ni records ne comptaient.
   enregistrée dans le journal de KG_ScoreBoards (`points` / `time`), **comptée ou non**, avec la raison
   (`operateur`, `partie-non-classee`). Les jeux appellent toujours `ScoreBridge.award(partie, joueur, points)`.
 **Déploiement** : avec KG_ScoreBoards 1.5.0 (commande de vérification). **Statut : déployé le 25/09/2026 à 20 h 37, testé et confirmé par LeKiwi06 le 25/09/2026.**
+
+## 1.19.1 — Parcours : orientation de la caméra gardée aux points de contrôle (25/09/2026)
+
+**Signalé par LeKiwi06** : « les cp nous font spawn dans le mauvais sens parfois, enregistre l'angle de caméra du
+joueur quand il les passe ». Le retour au point de contrôle reprenait l'orientation enregistrée avec l'arène.
+- En passant un point de contrôle (ou la ligne d'arrivée entre deux tours), le point de retour prend l'orientation
+  (yaw et pitch) de la caméra du joueur à ce moment. Vaut pour toutes les courses de RaceInstance (Parcours et
+  courses de bateaux de KalGames). Le départ garde l'orientation de l'arène.
+- Correctif mis dans KalGames en attendant le futur KG_Parkour (demande de LeKiwi06).
+**Déploiement** : seul, sur kal-games. **Statut : compilé, non déployé, non testé en jeu.**

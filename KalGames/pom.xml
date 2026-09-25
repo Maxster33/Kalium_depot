@@ -6,7 +6,7 @@
 
     <groupId>fr.kalium</groupId>
     <artifactId>KalGames</artifactId>
-    <version>1.19.0</version>
+    <version>1.19.1</version>
     <packaging>jar</packaging>
     <name>KalGames</name>
 

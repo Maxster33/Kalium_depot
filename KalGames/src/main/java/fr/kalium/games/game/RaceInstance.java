@@ -371,7 +371,7 @@ public final class RaceInstance extends GameInstance {
     private void reached(Player player, Racer racer) {
         List<Pos> checkpoints = arena().list("checkpoints");
         if (racer.next < checkpoints.size()) {
-            racer.lastCheckpoint = loc(checkpoints.get(racer.next));
+            racer.lastCheckpoint = facing(loc(checkpoints.get(racer.next)), player);
             racer.next++;
             racer.segmentStart = System.currentTimeMillis();
             racer.noticeUntil = racer.segmentStart + 1500;
@@ -402,7 +402,7 @@ public final class RaceInstance extends GameInstance {
             racer.next = 0;
             racer.segmentStart = System.currentTimeMillis();
             racer.noticeUntil = racer.segmentStart + 1500;
-            racer.lastCheckpoint = loc(arena().point("finish"));
+            racer.lastCheckpoint = facing(loc(arena().point("finish")), player);
             player.sendActionBar(t("race.lap", "<green>Tour <white><n>/<total>", "n", racer.lap + 1, "total", laps));
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.7f, 1.2f);
         }
@@ -542,6 +542,17 @@ public final class RaceInstance extends GameInstance {
     @Override
     public void releaseHold(UUID uuid) {
         released.add(uuid);
+    }
+
+    /**
+     * 1.19.1 : le retour au point de controle garde l'orientation de la camera du joueur au moment ou il l'a passe, et
+     * non celle enregistree avec l'arene (demande de LeKiwi06, 25/09/2026 : « les cp nous font spawn dans le mauvais
+     * sens parfois, enregistre l'angle de caméra du joueur quand il les passe »).
+     */
+    private static Location facing(Location spot, Player player) {
+        spot.setYaw(player.getLocation().getYaw());
+        spot.setPitch(player.getLocation().getPitch());
+        return spot;
     }
 
     private void respawn(Player player, Racer racer) {
