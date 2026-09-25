@@ -27,9 +27,8 @@ import java.util.zip.GZIPOutputStream;
 /**
  * Modele de la salle d'attente Bingo : un cuboide de BlockData + un point d'apparition
  * relatif, capture une fois par un admin (voir BingoAdminCommand) puis colle a plusieurs
- * emplacements (LobbySlots). Volontairement minimal (pas d'entites, de contenus de
- * coffres, de panneaux geres specifiquement) : la salle d'attente n'est qu'un lieu ou les
- * joueurs choisissent leur equipe, pas une arene de jeu.
+ * emplacements (LobbySlots). 0.7.3 : les entites sont aussi copiees (voir EntityCopy) ; pas de contenus
+ * de coffres ni de panneaux geres specifiquement.
  *
  * 0.1.21 (taille maximale portee a 256 blocs par cote, demande explicite de l'utilisateur) : les blocs
  * sont stockes sous forme de PALETTE (liste des etats de blocs differents) + un indice 16 bits par
@@ -40,6 +39,8 @@ public final class LobbyTemplate {
 
     /** Premier entier d'un fichier au nouveau format (apres decompression). */
     private static final int MAGIC = 0x4B4C5432; // "KLT2"
+    /** 0.7.3 : meme format + entites a la fin. */
+    private static final int MAGIC_ENTITIES = 0x4B4C5433; // "KLT3"
     /** Nombre maximal d'etats de blocs differents (indice 16 bits). */
     public static final int MAX_PALETTE = 65_535;
     public static final String AIR = "minecraft:air";
@@ -57,6 +58,25 @@ public final class LobbyTemplate {
     private final double spawnOffsetZ;
     private final float spawnYaw;
     private final float spawnPitch;
+
+    /**
+     * 0.7.3 : entites de la salle (animaux, porte-armures, cadres... ; demande de LeKiwi06 : « l'entité que j'avais
+     * placée dans le hub n'a pas été dupliquée dans les autres hubs (la vache) ») : position relative au coin le plus
+     * bas, orientation et copie complete de l'entite (SNBT de Paper : type, nom, equipement, IA...).
+     */
+    public record EntityCopy(double dx, double dy, double dz, float yaw, float pitch, String snapshot) {
+    }
+
+    private List<EntityCopy> entities = List.of();
+
+    public List<EntityCopy> entities() {
+        return entities;
+    }
+
+    LobbyTemplate withEntities(List<EntityCopy> list) {
+        this.entities = List.copyOf(list);
+        return this;
+    }
 
     LobbyTemplate(int sizeX, int sizeY, int sizeZ, String[] palette, char[] blocks,
                   double spawnOffsetX, double spawnOffsetY, double spawnOffsetZ,
@@ -123,7 +143,7 @@ public final class LobbyTemplate {
         File tmp = new File(file.getParentFile(), file.getName() + ".tmp");
         try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(
                 new GZIPOutputStream(new FileOutputStream(tmp), 1 << 16), 1 << 16))) {
-            out.writeInt(MAGIC);
+            out.writeInt(MAGIC_ENTITIES);
             out.writeInt(sizeX);
             out.writeInt(sizeY);
             out.writeInt(sizeZ);
@@ -138,6 +158,17 @@ public final class LobbyTemplate {
             }
             for (char index : blocks) {
                 out.writeChar(index);
+            }
+            out.writeInt(entities.size());
+            for (EntityCopy copy : entities) {
+                out.writeDouble(copy.dx());
+                out.writeDouble(copy.dy());
+                out.writeDouble(copy.dz());
+                out.writeFloat(copy.yaw());
+                out.writeFloat(copy.pitch());
+                byte[] bytes = copy.snapshot().getBytes(StandardCharsets.UTF_8);
+                out.writeInt(bytes.length);
+                out.write(bytes);
             }
         }
         Files.move(tmp.toPath(), file.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
@@ -156,7 +187,8 @@ public final class LobbyTemplate {
     private static LobbyTemplate loadBinary(File file) throws IOException {
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(
                 new GZIPInputStream(new FileInputStream(file), 1 << 16), 1 << 16))) {
-            if (in.readInt() != MAGIC) {
+            int magic = in.readInt();
+            if (magic != MAGIC && magic != MAGIC_ENTITIES) {
                 throw new IOException("Format de modele inconnu.");
             }
             int sizeX = in.readInt();
@@ -182,7 +214,23 @@ public final class LobbyTemplate {
                     throw new IOException("Modele corrompu (indice de palette).");
                 }
             }
-            return new LobbyTemplate(sizeX, sizeY, sizeZ, palette, blocks, sx, sy, sz, yaw, pitch);
+            LobbyTemplate template = new LobbyTemplate(sizeX, sizeY, sizeZ, palette, blocks, sx, sy, sz, yaw, pitch);
+            if (magic == MAGIC_ENTITIES) {
+                int count = in.readInt();
+                List<EntityCopy> list = new ArrayList<>();
+                for (int i = 0; i < count; i++) {
+                    double dx = in.readDouble();
+                    double dy = in.readDouble();
+                    double dz = in.readDouble();
+                    float eyaw = in.readFloat();
+                    float epitch = in.readFloat();
+                    byte[] bytes = new byte[in.readInt()];
+                    in.readFully(bytes);
+                    list.add(new EntityCopy(dx, dy, dz, eyaw, epitch, new String(bytes, StandardCharsets.UTF_8)));
+                }
+                template.withEntities(list);
+            }
+            return template;
         }
     }
 

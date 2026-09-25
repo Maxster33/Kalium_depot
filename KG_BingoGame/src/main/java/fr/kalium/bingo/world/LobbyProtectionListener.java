@@ -90,6 +90,12 @@ public final class LobbyProtectionListener implements Listener {
         // (portes, boutons, leviers, coffres...) et plaques de pression (Action.PHYSICAL).
         if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.PHYSICAL)
                 && event.getClickedBlock() != null && lobbySlots.isInSlotArea(event.getClickedBlock().getLocation())) {
+            // 0.7.3 : les plaques de pression et fils de declenchement fonctionnent (signale par LeKiwi06 : « les
+            // plaques de pression ne fonctionnent pas ») ; le reste (terre labouree...) reste protege.
+            String type = event.getClickedBlock().getType().name();
+            if (event.getAction() == Action.PHYSICAL && (type.endsWith("PRESSURE_PLATE") || type.equals("TRIPWIRE"))) {
+                return;
+            }
             event.setCancelled(true);
         }
     }
@@ -137,15 +143,71 @@ public final class LobbyProtectionListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onAnyDamage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player victim && gameEndService.isLingering(victim.getUniqueId())) {
+        if (!(event.getEntity() instanceof Player victim)) {
+            // 0.7.3 : les entites des salles d'attente (vache...) sont invulnerables (demande de LeKiwi06).
+            if (lobbySlots.isInSlotArea(event.getEntity().getLocation())) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        // 0.7.3 : invincible aussi dans TOUTE la salle d'attente (avant la partie), pas seulement apres (signale par
+        // LeKiwi06 : « on n'est pas réellement invincible dans le hub, on perd notre vie et notre nourriture »).
+        boolean lobby = isLobbyWorld(victim.getWorld());
+        if (lobby || gameEndService.isLingering(victim.getUniqueId())) {
             event.setCancelled(true);
+            if (lobby && event.getCause() == EntityDamageEvent.DamageCause.VOID) {
+                // Plus de degats : sans ce retour, le joueur tomberait indefiniment.
+                org.bukkit.Location spawn = lobbySlots.nearestSpawn(victim.getLocation());
+                victim.teleport(spawn != null ? spawn : victim.getWorld().getSpawnLocation());
+                victim.setFallDistance(0);
+            }
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onHunger(FoodLevelChangeEvent event) {
-        if (event.getEntity() instanceof Player player && gameEndService.isLingering(player.getUniqueId())
+        if (event.getEntity() instanceof Player player
+                && (isLobbyWorld(player.getWorld()) || gameEndService.isLingering(player.getUniqueId()))
                 && event.getFoodLevel() < player.getFoodLevel()) {
+            event.setCancelled(true);
+        }
+    }
+
+    // ------------------------------------------------------------------ 0.7.3 : nether star bloquee dans sa case
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onDrop(org.bukkit.event.player.PlayerDropItemEvent event) {
+        if (lobbyItems.isOurs(event.getItemDrop().getItemStack())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent event) {
+        boolean ours = lobbyItems.isOurs(event.getCurrentItem()) || lobbyItems.isOurs(event.getCursor());
+        if (!ours && event.getClick() == org.bukkit.event.inventory.ClickType.NUMBER_KEY
+                && event.getWhoClicked() instanceof Player player) {
+            ours = lobbyItems.isOurs(player.getInventory().getItem(event.getHotbarButton()));
+        }
+        if (!ours && event.getClick() == org.bukkit.event.inventory.ClickType.SWAP_OFFHAND
+                && event.getWhoClicked() instanceof Player player) {
+            ours = lobbyItems.isOurs(player.getInventory().getItemInOffHand());
+        }
+        if (ours) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onInventoryDrag(org.bukkit.event.inventory.InventoryDragEvent event) {
+        if (lobbyItems.isOurs(event.getOldCursor())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onSwapHands(org.bukkit.event.player.PlayerSwapHandItemsEvent event) {
+        if (lobbyItems.isOurs(event.getMainHandItem()) || lobbyItems.isOurs(event.getOffHandItem())) {
             event.setCancelled(true);
         }
     }

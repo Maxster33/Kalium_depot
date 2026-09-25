@@ -118,6 +118,23 @@ public final class LobbyTemplateService {
         final float yaw = spawnMarker.getYaw();
         final float pitch = spawnMarker.getPitch();
 
+        // 0.7.3 : entites de la salle (hors joueurs, objets au sol, projectiles), relevees tout de suite (l'admin est
+        // sur place : les chunks de la salle sont charges).
+        final List<LobbyTemplate.EntityCopy> entities = new ArrayList<>();
+        for (org.bukkit.entity.Entity entity : world.getNearbyEntities(new org.bukkit.util.BoundingBox(minX, minY, minZ,
+                maxX + 1, maxY + 1, maxZ + 1))) {
+            if (!copiable(entity)) {
+                continue;
+            }
+            org.bukkit.entity.EntitySnapshot snapshot = entity.createSnapshot();
+            if (snapshot == null) {
+                continue;
+            }
+            Location at = entity.getLocation();
+            entities.add(new LobbyTemplate.EntityCopy(at.getX() - minX, at.getY() - minY, at.getZ() - minZ,
+                    at.getYaw(), at.getPitch(), snapshot.getAsString()));
+        }
+
         final char[] blocks = new char[sizeX * sizeY * sizeZ];
         final List<String> palette = new ArrayList<>();
         final Map<BlockData, Integer> indexes = new HashMap<>();
@@ -150,7 +167,7 @@ public final class LobbyTemplateService {
                     return;
                 }
                 LobbyTemplate template = new LobbyTemplate(sizeX, sizeY, sizeZ, palette.toArray(new String[0]), blocks,
-                        spawnOffsetX, spawnOffsetY, spawnOffsetZ, yaw, pitch);
+                        spawnOffsetX, spawnOffsetY, spawnOffsetZ, yaw, pitch).withEntities(entities);
                 cached = template;
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                     try {
@@ -184,6 +201,7 @@ public final class LobbyTemplateService {
 
             @Override
             void finished(Throwable error) {
+                removeEntities(template, origin);
                 if (done != null) {
                     done.run();
                 }
@@ -215,11 +233,59 @@ public final class LobbyTemplateService {
 
             @Override
             void finished(Throwable error) {
+                placeEntities(template, origin);
                 if (done != null) {
                     done.run();
                 }
             }
         });
+    }
+
+    /** 0.7.3 : entites copiees avec la salle (voir LobbyTemplate.EntityCopy). */
+    private static boolean copiable(org.bukkit.entity.Entity entity) {
+        return !(entity instanceof org.bukkit.entity.Player) && !(entity instanceof org.bukkit.entity.Item)
+                && !(entity instanceof org.bukkit.entity.ExperienceOrb) && !(entity instanceof org.bukkit.entity.Projectile);
+    }
+
+    /** Retire les entites copiables presentes dans la zone d'une salle collee a origin (avant recollage / effacement). */
+    private void removeEntities(LobbyTemplate template, Location origin) {
+        org.bukkit.util.BoundingBox box = new org.bukkit.util.BoundingBox(origin.getBlockX(), origin.getBlockY(), origin.getBlockZ(),
+                origin.getBlockX() + template.sizeX(), origin.getBlockY() + template.sizeY(), origin.getBlockZ() + template.sizeZ());
+        for (org.bukkit.entity.Entity entity : origin.getWorld().getNearbyEntities(box)) {
+            if (copiable(entity)) {
+                entity.remove();
+            }
+        }
+    }
+
+    /**
+     * Recree les entites du modele dans une salle collee a origin. Les anciennes copies (collage precedent, redemarrage)
+     * sont d'abord retirees : pas de doublons. Les chunks de la zone sont charges pour l'occasion.
+     */
+    private void placeEntities(LobbyTemplate template, Location origin) {
+        if (template.entities().isEmpty()) {
+            return;
+        }
+        World world = origin.getWorld();
+        for (int cx = origin.getBlockX() >> 4; cx <= (origin.getBlockX() + template.sizeX()) >> 4; cx++) {
+            for (int cz = origin.getBlockZ() >> 4; cz <= (origin.getBlockZ() + template.sizeZ()) >> 4; cz++) {
+                world.getChunkAt(cx, cz).getEntities(); // charge le chunk et ses entites
+            }
+        }
+        removeEntities(template, origin);
+        int placed = 0;
+        for (LobbyTemplate.EntityCopy copy : template.entities()) {
+            try {
+                Location at = new Location(world, origin.getBlockX() + copy.dx(), origin.getBlockY() + copy.dy(),
+                        origin.getBlockZ() + copy.dz(), copy.yaw(), copy.pitch());
+                org.bukkit.entity.Entity created = Bukkit.getEntityFactory().createEntitySnapshot(copy.snapshot()).createEntity(at);
+                created.setInvulnerable(true); // decor de la salle : ne peut pas etre tue (demande de LeKiwi06)
+                placed++;
+            } catch (RuntimeException e) {
+                plugin.getLogger().warning("[KG_BingoGame] Entité de la salle d'attente non recréée : " + e.getMessage());
+            }
+        }
+        plugin.getLogger().info("[KG_BingoGame] Salle d'attente : " + placed + " entité(s) recréée(s).");
     }
 
     // ------------------------------------------------------------------ file d'attente

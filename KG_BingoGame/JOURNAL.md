@@ -1476,3 +1476,21 @@ achievements de nos coéquipiers et adversaires ».
   **8** (clé absente du config.yml de Serveur Jeux : 8 appliqué). Config de Serveur Jeux modifiée le 25/09/2026 :
   `pregeneration-chunks-per-second: 40`, `pregeneration-stagger-seconds: 5`, `lobby.blocks-per-tick: 10000`.
 **Déploiement** : seul, sur Serveur Jeux (7015). **Statut : déployé le 25/09/2026 à 16 h 37, testé et confirmé par LeKiwi06 le 25/09/2026 : plus de blocage après une partie annulée ; map de 441 chunks préparée en 29 s (au lieu de ~94 s).**
+
+## 0.7.3 — salle d'attente : invincibilité, nether star bloquée, plaques de pression, entités (25/09/2026)
+
+**Signalé par LeKiwi06** : « on n'est pas réellement invincible dans le hub, on perd notre vie et notre barre de
+nourriture » ; « on peut dropper la nether star (bloque-la dans sa case) » ; « les plaques de pression ne fonctionnent
+pas » ; « l'entité que j'avais placée dans le hub n'a pas été dupliquée dans les autres hubs (la vache) » ; « rends la
+vache invulnérable ».
+- **Invincibilité** dans tout le monde de la salle d'attente (avant la partie aussi, plus seulement après) : dégâts et
+  perte de nourriture annulés. Chute dans le vide : retour au point d'apparition de la salle la plus proche
+  (`LobbySlots.nearestSpawn`). Les blocs invisibles (barrières) des salles pourront être retirés (à faire).
+- **Nether star** bloquée : ni jetée, ni déplacée (clic, touche numérique, main secondaire, glisser).
+- **Plaques de pression** et fils de déclenchement actifs dans les salles (le reste des interactions reste bloqué).
+- **Entités copiées** avec la salle : relevées à la capture (hors joueurs, objets au sol, projectiles), enregistrées
+  dans le modèle (nouveau format `KLT3`, l'ancien `KLT2` reste lisible), recréées à chaque collage (anciennes copies
+  retirées d'abord : pas de doublons) et **invulnérables** ; toute entité des salles est protégée des dégâts.
+  ⚠️ Le modèle actuel a été capturé avant : **recapturer la salle** pour que la vache soit copiée.
+**Déploiement** : seul, sur Serveur Jeux (modèle d'avant dans `_removed-kg_bingogame-0.7.2/`). **Statut : déployé le
+25/09/2026 à 20 h 51, non testé en jeu.**

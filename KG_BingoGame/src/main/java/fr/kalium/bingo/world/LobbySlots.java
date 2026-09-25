@@ -176,6 +176,20 @@ public final class LobbySlots {
         return null; // toutes les salles d'attente sont occupees
     }
 
+    /**
+     * 0.7.3 : point d'apparition de la salle d'attente la plus proche de cette position (chute dans le vide : le
+     * joueur, invincible, est ramene dans SA salle). Null si aucun modele.
+     */
+    public Location nearestSpawn(Location location) {
+        LobbyTemplate template = templateService.get();
+        if (template == null || world == null || slotCount <= 0) {
+            return null;
+        }
+        int slot = (int) Math.round((location.getX() - startOffset - template.sizeX() / 2.0) / spacing);
+        slot = Math.max(0, Math.min(slotCount - 1, slot));
+        return template.spawnLocation(slotOrigin(slot));
+    }
+
     public synchronized void release(String gameId) {
         occupied.remove(gameId);
     }
