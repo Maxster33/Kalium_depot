@@ -89,7 +89,8 @@ public class BingoPlugin extends JavaPlugin {
         // "ralentir la vitesse de génération [...] on veux que ce soit fluide"). Cles absentes du config.yml
         // deja deploye : valeurs par defaut ci-dessous.
         int pregenerationChunksPerSecond = config.getInt("instances.pregeneration-chunks-per-second", 20);
-        int pregenerationChunksInFlight = config.getInt("instances.pregeneration-max-chunks-in-flight", 2);
+        // 0.7.2 : 8 par defaut (au lieu de 2) : c'etait la vraie limite de vitesse (~94 s par map de 441 chunks).
+        int pregenerationChunksInFlight = config.getInt("instances.pregeneration-max-chunks-in-flight", 8);
         InstanceWorldPreparer instanceWorldPreparer = new InstanceWorldPreparer(this, getLogger(), worldManager,
                 worldNamePrefix, pregenerationStagger, pregenerationRadius,
                 pregenerationChunksPerSecond, pregenerationChunksInFlight);

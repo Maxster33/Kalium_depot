@@ -82,7 +82,7 @@ instances:
   # chunks par seconde, et nombre maximum de chunks en cours en meme temps. Plus bas = plus fluide mais
   # lancement des parties plus long (la partie attend que ses maps soient pretes).
   pregeneration-chunks-per-second: 20
-  pregeneration-max-chunks-in-flight: 2
+  pregeneration-max-chunks-in-flight: 8
 
 reconnect-during-game:
   # Delai d'attente maximum, a l'arrivee sur ce serveur, pour un joueur dont la partie

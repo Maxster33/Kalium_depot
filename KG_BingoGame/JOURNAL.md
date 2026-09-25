@@ -1447,7 +1447,7 @@ achievements de nos coéquipiers et adversaires ».
 - `AdvancementScopeListener` : l'annonce d'un succès d'un joueur en partie n'est envoyée qu'aux joueurs de sa partie
   (coéquipiers et adversaires, pas ceux qui ont abandonné) ; celle d'un joueur hors partie (salle d'attente, après une
   partie) seulement aux joueurs hors partie. Le succès est toujours obtenu normalement.
-**Déploiement** : seul, sur Serveur Jeux (7015). **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : seul, sur Serveur Jeux (7015). **Statut : déployé le 25/09/2026 à 16 h 29 ; correctif incomplet : toujours bloqué à 0 % après une partie annulée (voir 0.7.2).**
 
 ## 0.7.1 — correctif : préparation des maps bloquée à 0 % (25/09/2026)
 
@@ -1460,4 +1460,19 @@ achievements de nos coéquipiers et adversaires ».
 - Rappel : la préparation démarre dès que le créateur arrive sur Serveur Jeux (quelques secondes après la création
   sur le hub) ; la vitesse dépend de `instances.pregeneration-chunks-per-second` (20) et
   `instances.pregeneration-stagger-seconds` (10), pas de `lobby.blocks-per-tick` (salle d'attente).
+**Déploiement** : seul, sur Serveur Jeux (7015). **Statut : déployé le 25/09/2026 à 16 h 29 ; correctif incomplet : toujours bloqué à 0 % après une partie annulée (voir 0.7.2).**
+
+## 0.7.2 — correctif complet du blocage à 0 % ; préparation plus rapide (25/09/2026)
+
+**Constaté par LeKiwi06** (capture d'écran, 16 h 32) : toujours « Préparation des maps : 0 % » avec la 0.7.1.
+- Cause : en 0.7.1, un terrain de map supprimée n'était marqué « arrêté » qu'au moment de chercher le prochain chunk ;
+  or on ne cherchait plus de chunk, justement parce que ses demandes perdues occupaient toutes les places : blocage
+  en boucle (scénario : créer une partie, la quitter pendant la préparation, en recréer une).
+- Correctif : à chaque tick, les terrains des maps supprimées et les terrains finis sont retirés AVANT de compter les
+  demandes en cours ; une demande de chunk restée sans réponse 60 s est oubliée et comptée comme faite (plus aucun
+  blocage possible).
+- **Vitesse** : les journaux montraient ~94 s par map de 441 chunks, quel que soit le débit réglé : la vraie limite
+  était `instances.pregeneration-max-chunks-in-flight` (2 chunks générés en même temps). Valeur par défaut portée à
+  **8** (clé absente du config.yml de Serveur Jeux : 8 appliqué). Config de Serveur Jeux modifiée le 25/09/2026 :
+  `pregeneration-chunks-per-second: 40`, `pregeneration-stagger-seconds: 5`, `lobby.blocks-per-tick: 10000`.
 **Déploiement** : seul, sur Serveur Jeux (7015). **Statut : compilé, non déployé, non testé en jeu.**

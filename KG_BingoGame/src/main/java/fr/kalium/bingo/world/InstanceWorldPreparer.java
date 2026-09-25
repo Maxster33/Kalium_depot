@@ -245,14 +245,20 @@ public final class InstanceWorldPreparer {
     private int chunksInFlight() {
         int total = 0;
         for (ChunkJob job : jobs) {
-            if (!job.stopped) {
-                total += job.pending;
-            }
+            total += job.pending();
         }
         return total;
     }
 
     private void pumpChunks() {
+        // 0.7.2 : d'abord retirer les terrains des maps supprimees (partie annulee / terminee) et ceux qui sont finis,
+        // AVANT de compter les demandes en cours. En 0.7.1 un terrain supprime n'etait marque qu'en cherchant le
+        // prochain chunk, ce qui n'arrivait plus justement parce que ses demandes perdues occupaient toutes les places :
+        // blocage a 0 %.
+        for (ChunkJob job : jobs) {
+            job.checkStopped();
+        }
+        jobs.removeIf(job -> job.stopped || (job.queue.isEmpty() && job.pending() == 0));
         chunkCredit = Math.min(chunkCredit + chunksPerTick, Math.max(1.0, chunksPerTick));
         while (chunkCredit >= 1.0 && chunksInFlight() < maxChunksInFlight) {
             ChunkJob job = nextJob();
@@ -266,14 +272,21 @@ public final class InstanceWorldPreparer {
 
     /** Prochain terrain a servir : les overworlds d'abord, puis Nether / End, dans l'ordre d'arrivee. */
     private ChunkJob nextJob() {
-        jobs.removeIf(ChunkJob::exhausted);
         for (ChunkJob job : jobs) {
-            if (job.overworld) {
+            if (job.overworld && !job.queue.isEmpty()) {
                 return job;
             }
         }
-        return jobs.isEmpty() ? null : jobs.get(0);
+        for (ChunkJob job : jobs) {
+            if (!job.queue.isEmpty()) {
+                return job;
+            }
+        }
+        return null;
     }
+
+    /** 0.7.2 : une demande de chunk sans reponse depuis ce delai est oubliee (ne bloque plus jamais la file). */
+    private static final long CHUNK_TIMEOUT_MS = 60_000L;
 
     /** Une pre-generation de terrain pour UN monde. Toujours manipule sur le thread principal. */
     public final class ChunkJob {
@@ -285,8 +298,8 @@ public final class InstanceWorldPreparer {
         private final int total;
         private final long startedAt = System.currentTimeMillis();
         private int done;
-        /** Demandes de chunks envoyees et pas encore terminees. */
-        private int pending;
+        /** Instants d'envoi des demandes de chunks pas encore terminees (voir pending()). */
+        private final Deque<Long> sentAt = new ArrayDeque<>();
         private boolean stopped;
 
         ChunkJob(World world, String gameId, Deque<int[]> queue, boolean overworld) {
@@ -300,18 +313,28 @@ public final class InstanceWorldPreparer {
                     + radiusChunks * 16 + " blocs).");
         }
 
-        /** true s'il n'y a plus rien a demander (tout demande, ou monde supprime / partie annulee). */
-        boolean exhausted() {
+        /** Monde supprime ou partie annulee / terminee : on arrete ce terrain. */
+        void checkStopped() {
             if (!stopped && (Bukkit.getWorld(worldName) == null || (gameId != null && cancelledGameIds.contains(gameId)))) {
-                stopped = true; // monde supprime (partie annulee/terminee) : on arrete
+                stopped = true;
                 queue.clear();
             }
-            return queue.isEmpty();
+        }
+
+        /** Demandes en cours, sans compter celles restees sans reponse depuis plus de CHUNK_TIMEOUT_MS. */
+        int pending() {
+            long limit = System.currentTimeMillis() - CHUNK_TIMEOUT_MS;
+            while (!sentAt.isEmpty() && sentAt.peekFirst() < limit) {
+                sentAt.pollFirst();
+                done++; // oubliee : comptee comme faite (sinon le terrain ne serait jamais « termine »)
+                checkComplete();
+            }
+            return sentAt.size();
         }
 
         void requestNext() {
             int[] chunk = queue.poll();
-            pending++;
+            sentAt.addLast(System.currentTimeMillis());
             world.getChunkAtAsync(chunk[0], chunk[1], true).whenComplete((c, error) -> {
                 if (Bukkit.isPrimaryThread()) {
                     onChunkDone();
@@ -322,9 +345,18 @@ public final class InstanceWorldPreparer {
         }
 
         private void onChunkDone() {
-            pending--;
+            if (sentAt.pollFirst() == null) {
+                return; // demande deja oubliee (et comptee) : rien a faire
+            }
             done++;
-            if (!stopped && done == total) {
+            checkComplete();
+        }
+
+        private boolean completed;
+
+        private void checkComplete() {
+            if (!stopped && !completed && done >= total) {
+                completed = true;
                 if (overworld) {
                     terrainDone.add(worldName);
                 }
