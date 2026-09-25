@@ -1437,4 +1437,14 @@ pour 4 équipes, plus si d'autres parties sont en file. Les Nether / End continu
 - Nouvelles clés **absentes du config.yml déployé** : valeurs par défaut du code. Sur Kixster, `lobby.blocks-per-tick`
   est écrit à 30000 : **le passer à la main à 10000** (ou moins) pour alléger la salle d'attente.
 
-**Statut : déployé sur Serveur Jeux (7015) le 24/09/2026 par LeKiwi06 (0.5.0 rangée dans `_removed-kg_bingogame-0.5.0-b/`), testé et confirmé par LeKiwi06 le 24/09/2026 : préparation des maps fluide (~2 min, « plus aucun lag à la génération »), partie complète, Bedrock OK ; à confirmer : Nether / End de l'équipe, 2 parties simultanées à 2 joueurs. `lobby.blocks-per-tick` du serveur : 5000 (choix de LeKiwi06).**
+**Statut : déployé sur Serveur Jeux (7015) le 24/09/2026 par LeKiwi06 (0.5.0 rangée dans `_removed-kg_bingogame-0.5.0-b/`), testé et confirmé par LeKiwi06 le 24/09/2026 : préparation des maps fluide (~2 min, « plus aucun lag à la génération »), partie complète, Bedrock OK ; à confirmer : Nether / End de l'équipe, 2 parties simultanées à 2 joueurs. 2 parties simultanées confirmées le 25/09/2026. `lobby.blocks-per-tick` du serveur : 5000 (choix de LeKiwi06).**
+
+## 0.7.0 — succès limités à la partie (25/09/2026)
+
+**Demande de LeKiwi06** (test à 2 parties simultanées, réussi) : « on voit juste les achievements vanilla des autres
+parties, pas les points et annonces du bingo ; j'aimerais que ce ne soit pas le cas, mais qu'on voie quand même les
+achievements de nos coéquipiers et adversaires ».
+- `AdvancementScopeListener` : l'annonce d'un succès d'un joueur en partie n'est envoyée qu'aux joueurs de sa partie
+  (coéquipiers et adversaires, pas ceux qui ont abandonné) ; celle d'un joueur hors partie (salle d'attente, après une
+  partie) seulement aux joueurs hors partie. Le succès est toujours obtenu normalement.
+**Déploiement** : seul, sur Serveur Jeux (7015). **Statut : compilé, non déployé, non testé en jeu.**

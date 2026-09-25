@@ -181,6 +181,8 @@ public class BingoPlugin extends JavaPlugin {
         // abandon - AJOUTE en 0.1.18, demande explicite de l'utilisateur, voir PlayerResetService.
         PlayerResetService playerReset = new PlayerResetService(this);
         getServer().getPluginManager().registerEvents(new GameRespawnListener(gameManager), this);
+        // 0.7.0 : annonces des succes (advancements) limitees aux joueurs de la meme partie.
+        getServer().getPluginManager().registerEvents(new fr.kalium.bingo.game.AdvancementScopeListener(gameManager), this);
         // 0.1.22 : Nether et End propres a chaque equipe (portails rediriges, voir DimensionPortalListener).
         getServer().getPluginManager().registerEvents(new fr.kalium.bingo.game.DimensionPortalListener(getLogger(), gameManager), this);
 
