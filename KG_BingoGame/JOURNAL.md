@@ -1475,4 +1475,4 @@ achievements de nos coéquipiers et adversaires ».
   était `instances.pregeneration-max-chunks-in-flight` (2 chunks générés en même temps). Valeur par défaut portée à
   **8** (clé absente du config.yml de Serveur Jeux : 8 appliqué). Config de Serveur Jeux modifiée le 25/09/2026 :
   `pregeneration-chunks-per-second: 40`, `pregeneration-stagger-seconds: 5`, `lobby.blocks-per-tick: 10000`.
-**Déploiement** : seul, sur Serveur Jeux (7015). **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : seul, sur Serveur Jeux (7015). **Statut : déployé le 25/09/2026 à 16 h 37, testé et confirmé par LeKiwi06 le 25/09/2026 : plus de blocage après une partie annulée ; map de 441 chunks préparée en 29 s (au lieu de ~94 s).**
