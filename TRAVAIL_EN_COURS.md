@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KalGames — LeKiwi06 — depuis le 2026-09-25 19:20 — suppression de la limite de 5 parties privées comptées par jour (points et records de la course non comptés)
 
 
 
