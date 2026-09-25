@@ -48,7 +48,7 @@ Limites connues :
   sans IA, titre / description, menus (KV_Menu), extension du monde.
 
 À faire au déploiement (serveur Kanvas) :
-- Renommer le dossier du monde `New World (2)` en `kanvas` (et `level-name` si c'est le monde principal).
+- ~~Renommer `New World (2)` en `kanvas`~~ : fait par LeKiwi06 le 26/09/2026.
 - FAWE à la place de WorldEdit, avec `region-restrictions: true` et les limites anti-crash (config de FAWE).
 - Désactiver le « mode survie forcé » de KLM_Menu sur Kanvas.
 
