@@ -1514,7 +1514,8 @@ pas le bon nom).
   capture écrit les coordonnées dans la console.
 - Positions de la capture du 25/09 à 20 h 57, retrouvées à partir des 12 cristaux de l'End (position dans le modèle
   comparée à leur position dans le monde, résultat identique pour les 12) : monde `bingo_lobby`, coin 1 `-70 62 -13`,
-  coin 2 `-8 108 67` (63x47x81), apparition `-14.63 78.94 3.48` (orientation 150.6 / 27.1). Elles seront déposées dans
-  `lobby_capture.yml` au déploiement.
+  coin 2 `-8 108 67` (63x47x81), apparition `-14.63 78.94 3.48` (orientation 150.6 / 27.1). LeKiwi06 indique pour
+  le coin 2 `-7 107 67` : c'est cette valeur qui sera déposée dans `lobby_capture.yml` au déploiement (salle alors de
+  64x46x81 : une colonne de plus côté X, une couche de moins en haut, par rapport à la capture de 20 h 57).
 - Inclut 0.7.4.
 **Déploiement** : seul, sur Serveur Jeux. **Statut : compilé, non déployé, non testé en jeu.**
