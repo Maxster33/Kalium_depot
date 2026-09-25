@@ -86,7 +86,7 @@ Copie exacte de chaque jar dans `jars-deployes/`.
 | proxy | `KaliumRelay-1.1.1.jar` (déployé le 24/09/2026) | relais confirmé le 24/09/2026 en 1.1.0 ; démarrage 1.1.1 vérifié dans le journal ; reconnexion directe non confirmée |
 | Kanvas (ex Kal-Test-Dev) | `KaliumCore-1.4.0.jar` + `KLM_Menu-2.0.0.jar` (24/09/2026, rôle `backend` par défaut) | non testé (projet en pause ; raccordement au proxy du 24/09 non testé) |
 | Kixster (`kixster`) | remis dans l'état d'avant le Bingo le 24/09/2026 : monde d'origine `Kixster SMP` (ex `Kixster SMP_bak`, dernière sauvegarde 23/09 00:11), plugins SMP du 14/09 + WorldEdit 7.4.6-beta (gardé) + `KLM_Menu-2.0.0.jar` (boussole désactivée, `/menu` = alias de `/servers` dans `commands.yml`) ; tout le Bingo rangé dans `/_removed-bingo-2026-09-24/` et `/plugins/_removed-bingo-2026-09-24/` | non testé |
-| Event (`event`, ancien kal-games) | reconverti en **survie classique** le 25/09/2026 : nouveau monde `world` (généré au premier démarrage, seed aléatoire, difficulté hard) ; ancien hub `Kal-Games` et vieux `world` dans `/_removed-survie-2026-09-25/` ; KalGames, KG_Bingo, KG_ScoreBoards (et tous leurs anciens jars) dans `/plugins/_removed-kalgames-event-2026-09-25/` ; `KLM_Menu-2.0.0.jar` (boussole désactivée, `/menu` = alias de `/servers` dans `commands.yml`) + **`KS_Dimensions-1.0.0.jar`** ; plugins tiers du hub gardés (PlayerKits2, ConditionalEvents, PyxelRegions, WorldGuard, GrimAC, JEIRecipeFix, PlaceholderAPI, ViaVersion / ViaBackwards, LuckPerms, voicechat, WorldEdit) | non testé |
+| Event (`event`, ancien kal-games) | reconverti en **survie classique** le 25/09/2026 : nouveau monde `world` (généré au premier démarrage, seed aléatoire, difficulté hard) ; ancien hub `Kal-Games` et vieux `world` dans `/_removed-survie-2026-09-25/` ; KalGames, KG_Bingo, KG_ScoreBoards (et tous leurs anciens jars) dans `/plugins/_removed-kalgames-event-2026-09-25/` ; `KLM_Menu-2.0.0.jar` (boussole désactivée, `/menu` = alias de `/servers` dans `commands.yml`) + **`KS_Dimensions-1.0.0.jar`** ; + Floodgate (config et clé du proxy, 25/09/2026) ; PlayerKits2 retiré (`/plugins/_removed-playerkits2-1.23.3/`) ; extension PlaceholderAPI remise dans `plugins/PlaceholderAPI/expansions/` ; plugins tiers du hub gardés (ConditionalEvents, PyxelRegions, WorldGuard, GrimAC, JEIRecipeFix, PlaceholderAPI, ViaVersion / ViaBackwards, LuckPerms, voicechat, WorldEdit) | non testé |
 
 Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne très bien ».
 
@@ -126,11 +126,9 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
 
 ## Points ouverts / limites connues (rien de bloquant)
 
-- **Serveur Event (25/09/2026)** : pas de Floodgate (comme l'ancien kal-games) alors que le proxy envoie les données
-  Bedrock : joueurs Bedrock probablement refusés ; `PlaceholderAPIScoreboardObjectivesPlaceholder.jar` encore dans
-  `plugins/` (erreur au démarrage, à déplacer dans `plugins/PlaceholderAPI/expansions/` comme sur Kal-Games) ;
-  PlayerKits2, ConditionalEvents, PyxelRegions et WorldGuard gardent leurs réglages du hub (kits, événements,
-  régions de l'ancien monde) : à vérifier pour la survie. Signalé, non corrigé (pas demandé).
+- **Serveur Event (25/09/2026)** : ConditionalEvents, PyxelRegions et WorldGuard gardent leurs réglages du hub (événements,
+  régions de l'ancien monde) : à vérifier pour la survie. Floodgate installé, extension PlaceholderAPI déplacée,
+  PlayerKits2 retiré (demande de Maxster33, 25/09/2026).
 - **KalGames2 et Serveur Jeux repassés en Paper 26.2-121** (24/09/2026, 13 h) : créés en Paper 26.3 alpha, ils ne
   démarraient pas (WorldEdit 7.4.5 incompatible → crash au démarrage). `server.jar` remplacé par le
   `paper-26.2-121.jar` du lobby ; jar 26.3 et monde généré en 26.3 rangés dans `_removed-paper-26.3/`. Si le panneau
@@ -268,5 +266,6 @@ commande) :
   pour activer / désactiver les portails du Nether et de l'End ; un portail désactivé bloque l'aller depuis le monde
   normal, jamais le retour (voir son JOURNAL). Compilé, déployé, non testé.
 - À faire / à savoir : démarrer Event (l'humain) et tester ; activer la destination `event` dans le menu du lobby ;
-  voir « Points ouverts » (Floodgate absent, extension PlaceholderAPI mal placée, configs de hub de PlayerKits2 /
-  ConditionalEvents / PyxelRegions / WorldGuard).
+  voir « Points ouverts ». Ensuite (même jour) : Floodgate installé (config et clé du proxy), extension
+  PlaceholderAPI déplacée dans `expansions/`, PlayerKits2 retiré (`/plugins/_removed-playerkits2-1.23.3/`).
+  Restent à vérifier : réglages de hub de ConditionalEvents / PyxelRegions / WorldGuard.

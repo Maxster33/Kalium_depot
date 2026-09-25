@@ -24,3 +24,8 @@
 ## Reste à faire
 - Démarrer Event et tester (`/menu`, `/dimensions`, portails) ; activer la destination `event` du lobby.
 - Points ouverts d'Event : Floodgate, extension PlaceholderAPI mal placée, configs de hub des plugins tiers.
+
+## Suite
+- Demandé : installer Floodgate, remettre l'extension PlaceholderAPI à sa place, enlever PlayerKits2 (Event).
+- Fait : Floodgate (config et clé du proxy reprises du lobby), extension dans `plugins/PlaceholderAPI/expansions/`,
+  PlayerKits2 rangé dans `/plugins/_removed-playerkits2-1.23.3/`. Non testé (Event pas encore démarré).
