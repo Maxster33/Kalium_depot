@@ -36,6 +36,7 @@ public final class LobbyCaptureService {
     private Location pos1;
     private Location pos2;
     private Location spawnMark;
+    private boolean loaded;
 
     public LobbyCaptureService(LobbyTemplateService lobbyTemplateService, LobbySlots lobbySlots, File dataFolder,
                                Logger logger) {
@@ -43,12 +44,20 @@ public final class LobbyCaptureService {
         this.lobbySlots = lobbySlots;
         this.file = new File(dataFolder, "lobby_capture.yml");
         this.logger = logger;
-        load();
     }
 
+    /**
+     * 0.7.7 : chargement au premier usage - le monde de la salle d'attente est cree apres la construction de ce
+     * service (voir BingoPlugin, creation de monde differee), le chargement dans le constructeur ne trouvait donc
+     * jamais le monde (0.7.5).
+     */
     private void load() {
         World world = lobbySlots.world();
-        if (!file.exists() || world == null) {
+        if (loaded || world == null) {
+            return;
+        }
+        loaded = true;
+        if (!file.exists()) {
             return;
         }
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
@@ -106,14 +115,17 @@ public final class LobbyCaptureService {
     }
 
     public boolean isPos1Set(Player player) {
+        load();
         return pos1 != null;
     }
 
     public boolean isPos2Set(Player player) {
+        load();
         return pos2 != null;
     }
 
     public boolean isSpawnSet(Player player) {
+        load();
         return spawnMark != null;
     }
 
@@ -140,6 +152,7 @@ public final class LobbyCaptureService {
         if (!checkWorld(player)) {
             return false;
         }
+        load();
         pos1 = player.getLocation();
         save();
         player.sendMessage("§aCoin 1 défini à votre position. §7(" + text(pos1) + ")");
@@ -151,6 +164,7 @@ public final class LobbyCaptureService {
         if (!checkWorld(player)) {
             return false;
         }
+        load();
         pos2 = player.getLocation();
         save();
         player.sendMessage("§aCoin 2 défini à votre position. §7(" + text(pos2) + ")");
@@ -162,6 +176,7 @@ public final class LobbyCaptureService {
         if (!checkWorld(player)) {
             return false;
         }
+        load();
         spawnMark = player.getLocation();
         save();
         player.sendMessage("§aPoint d'apparition des joueurs défini à votre position/orientation actuelle. §7(" + text(spawnMark) + ")");
@@ -175,6 +190,7 @@ public final class LobbyCaptureService {
      * @return false en cas de refus immediat (message deja envoye au joueur).
      */
     public boolean capture(CommandSender player) {
+        load();
         Location c1 = pos1;
         Location c2 = pos2;
         Location spawn = spawnMark;
@@ -222,6 +238,7 @@ public final class LobbyCaptureService {
     }
 
     public void sendInfo(CommandSender player) {
+        load();
         boolean exists = lobbyTemplateService.exists();
         player.sendMessage("§7Salle d'attente : " + (exists ? "§adéfinie" : "§cnon définie")
                 + "§7 - emplacements configurés : " + lobbySlots.slotCount());

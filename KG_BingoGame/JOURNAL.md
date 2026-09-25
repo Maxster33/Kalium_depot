@@ -1519,7 +1519,8 @@ pas le bon nom).
   coin 2 `-5 108 67` et cette apparition.
 - Inclut 0.7.4.
 **Déploiement** : seul, sur Serveur Jeux, le 25/09/2026 à 21 h 18 (0.7.3 rangée dans `_removed-kg_bingogame-0.7.3`).
-**Statut : déployé, non testé en jeu.**
+**Statut : démarrée à 21 h 19 : salles collées, 17 entités recréées dans chacune, mais positions NON rechargées
+(corrigé en 0.7.7).**
 
 ## 0.7.6 — plus de barrières dans les salles d'attente (25/09/2026)
 
@@ -1527,4 +1528,16 @@ pas le bon nom).
 - Au collage des salles d'attente, les barrières du modèle (157 dans la capture de 21 h 04) sont remplacées par de
   l'air. Le modèle et la salle d'origine les gardent : pas besoin de recapturer. Les salles étant recollées à chaque
   démarrage, un redémarrage suffit. Un joueur qui tombe dans le vide est ramené à la salle la plus proche (0.7.3).
-**Déploiement** : seul, sur Serveur Jeux. **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : déposée le 25/09/2026 à 21 h 22 puis remplacée par 0.7.7 avant tout démarrage
+(`_removed-kg_bingogame-0.7.6`). **Statut : jamais démarrée (voir 0.7.7).**
+
+## 0.7.7 — positions de capture réellement rechargées (25/09/2026)
+
+**Constaté dans la console de Serveur Jeux** (démarrage de 0.7.5 à 21 h 19) : pas de ligne « positions de capture
+rechargées ». Le fichier était lu à la construction du service, avant la création du monde `bingo_lobby` (reportée à
+ServerLoadEvent), donc jamais chargé.
+- Les positions sont maintenant chargées au premier usage (menu, `/bingoadmin lobby ...`, capture), une fois le monde
+  prêt. `lobby_capture.yml` n'avait pas été modifié (toujours celui déposé à 21 h 18).
+- Inclut 0.7.6 (barrières non recopiées).
+**Déploiement** : seul, sur Serveur Jeux, le 25/09/2026 à 21 h 23 (0.7.5 et 0.7.6 dans leurs `_removed-…`).
+**Statut : déployé, non testé en jeu.**
