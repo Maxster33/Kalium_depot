@@ -62,4 +62,4 @@ qui l'a créé, il met toujours Maxster » (bug déjà noté dans `REPRISE_PROJE
 - Correctif : nouvelle clé `bingo.party-entry-2` avec le paramètre `<host>` ; « (complet) » dans sa propre clé
   (`bingo.party-entry-full`). Nombre d'équipes plus clair, comme prévu dans REPRISE : « 2 équipe(s) de 4 · 3/8
   joueurs » au lieu de « 2x4 équipes · 3/8 ». L'ancienne clé reste dans le `lang.yml` du serveur, inutilisée.
-**Déploiement** : seul, sur Kal-Games (7001). **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : seul, sur Kal-Games (7001). **Statut : déployé le 25/09/2026 à 15 h 16, testé et confirmé par LeKiwi06 le 25/09/2026 (pseudo du créateur, équipes).**
