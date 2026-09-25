@@ -18,7 +18,7 @@ Le détail technique de chaque version est dans `<plugin>/JOURNAL.md`. Documents
 | **Hub mini-jeux (Kal-Games)** | `kal-games` | `KalGames2@7001.mystrator.com` (onglet « KalGames2 ») | 91.197.6.24:22142 | KalGames, KG_Menu, KG_Bingo, KG_ScoreBoards, KLM_Menu |
 | **Bingo + jeux gourmands** (Manhunt...) | `serveur-jeux` | `serveurjeux@7015.mystrator.com` | 91.197.6.65:22470 | KG_BingoGame, KLM_Menu (boussole désactivée) |
 | Kixster SMP (rendu au SMP le 24/09/2026) | `kixster` | `kixster@7003.mystrator.com` | 91.197.6.212:29599 | KLM_Menu (boussole désactivée, menu par `/menu`) |
-| Event : survie classique (depuis le 25/09/2026) | `event` | `kalgames@7021.mystrator.com` | 51.254.174.133:21088 | KLM_Menu (boussole désactivée, `/menu`), KS_Dimensions |
+| Event : survie classique (depuis le 25/09/2026) | `event` | `kalgames@7021.mystrator.com` | 51.254.174.133:21088 | KLM_Menu (boussole désactivée, `/menu`), KS_Dimensions, KS_Enclume, KS_Villageois, KS_Crafts, KS_LootBlocs, KS_LootEntites, KS_LootPeche, KS_LootPotions (cahier des charges : `KS_Event/`) |
 | Serveur de test survie | `Kanvas` (ex `kal-test-dev`, renommé par LeKiwi06 dans `velocity.toml` le 24-25/09/2026 ; destination `kal-test-dev` de la boussole du lobby à mettre à jour) | `Kal-Test-Dev@5038.mystrator.com` | 91.197.6.215:21621 | KaliumCore (projet en pause), KLM_Menu |
 
 Machines Minestrator : **machine 1** = proxy, lobby, Event (ex kal-games), Kixster ; **machine 2** = Kal-Test-Dev ;
@@ -86,7 +86,7 @@ Copie exacte de chaque jar dans `jars-deployes/`.
 | proxy | `KaliumRelay-1.1.1.jar` (déployé le 24/09/2026) | relais confirmé le 24/09/2026 en 1.1.0 ; démarrage 1.1.1 vérifié dans le journal ; reconnexion directe non confirmée |
 | Kanvas (ex Kal-Test-Dev) | `KaliumCore-1.4.0.jar` + `KLM_Menu-2.0.0.jar` (24/09/2026, rôle `backend` par défaut) | non testé (projet en pause ; raccordement au proxy du 24/09 non testé) |
 | Kixster (`kixster`) | remis dans l'état d'avant le Bingo le 24/09/2026 : monde d'origine `Kixster SMP` (ex `Kixster SMP_bak`, dernière sauvegarde 23/09 00:11), plugins SMP du 14/09 + WorldEdit 7.4.6-beta (gardé) + `KLM_Menu-2.0.0.jar` (boussole désactivée, `/menu` = alias de `/servers` dans `commands.yml`) ; tout le Bingo rangé dans `/_removed-bingo-2026-09-24/` et `/plugins/_removed-bingo-2026-09-24/` | non testé |
-| Event (`event`, ancien kal-games) | reconverti en **survie classique** le 25/09/2026 : nouveau monde `world` (généré au premier démarrage, seed aléatoire, difficulté hard) ; ancien hub `Kal-Games` et vieux `world` dans `/_removed-survie-2026-09-25/` ; KalGames, KG_Bingo, KG_ScoreBoards (et tous leurs anciens jars) dans `/plugins/_removed-kalgames-event-2026-09-25/` ; `KLM_Menu-2.0.0.jar` (boussole désactivée, `/menu` = alias de `/servers` dans `commands.yml`) + **`KS_Dimensions-1.0.0.jar`** ; + Floodgate (config et clé du proxy, 25/09/2026) ; PlayerKits2 retiré (`/plugins/_removed-playerkits2-1.23.3/`) ; extension PlaceholderAPI remise dans `plugins/PlaceholderAPI/expansions/` ; plugins tiers du hub gardés (ConditionalEvents, PyxelRegions, WorldGuard, GrimAC, JEIRecipeFix, PlaceholderAPI, ViaVersion / ViaBackwards, LuckPerms, voicechat, WorldEdit) | non testé |
+| Event (`event`, ancien kal-games) | reconverti en **survie classique** le 25/09/2026 : nouveau monde `world` (généré au premier démarrage, seed aléatoire, difficulté hard) ; ancien hub `Kal-Games` et vieux `world` dans `/_removed-survie-2026-09-25/` ; KalGames, KG_Bingo, KG_ScoreBoards (et tous leurs anciens jars) dans `/plugins/_removed-kalgames-event-2026-09-25/` ; `KLM_Menu-2.0.0.jar` (boussole désactivée, `/menu` = alias de `/servers` dans `commands.yml`) + **`KS_Dimensions-1.0.0.jar`** + `KS_Enclume`, `KS_Villageois`, `KS_Crafts`, `KS_LootBlocs`, `KS_LootEntites`, `KS_LootPeche`, `KS_LootPotions` 1.0.0 (25/09/2026, cahier des charges `KS_Event/CAHIER_DES_CHARGES.md`) ; + Floodgate (config et clé du proxy, 25/09/2026) ; PlayerKits2 retiré (`/plugins/_removed-playerkits2-1.23.3/`) ; extension PlaceholderAPI remise dans `plugins/PlaceholderAPI/expansions/` ; plugins tiers du hub gardés (ConditionalEvents, PyxelRegions, WorldGuard, GrimAC, JEIRecipeFix, PlaceholderAPI, ViaVersion / ViaBackwards, LuckPerms, voicechat, WorldEdit) | non testé |
 
 Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne très bien ».
 
@@ -270,3 +270,8 @@ commande) :
   voir « Points ouverts ». Ensuite (même jour) : Floodgate installé (config et clé du proxy), extension
   PlaceholderAPI déplacée dans `expansions/`, PlayerKits2 retiré (`/plugins/_removed-playerkits2-1.23.3/`).
   Restent à vérifier : réglages de hub de ConditionalEvents / PyxelRegions / WorldGuard.
+- **Plugins du serveur Event (soir du 25/09/2026)** : cahier des charges de Maxster33 enregistré dans
+  `KS_Event/CAHIER_DES_CHARGES.md` (demande, réponses, interprétations) ; 7 plugins autonomes créés, compilés et
+  déployés sur Event, non testés : KS_Enclume, KS_Villageois, KS_Crafts, KS_LootBlocs, KS_LootEntites, KS_LootPeche,
+  KS_LootPotions (détail dans leurs JOURNAL.md). KS_Elixirs reporté (décision de Maxster33). Limite connue :
+  4 blocs de cuivre en carré 2×2 donnent probablement le cuivre taillé vanilla (voir KS_Crafts/JOURNAL.md).

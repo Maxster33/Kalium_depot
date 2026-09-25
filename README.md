@@ -17,6 +17,14 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 | `KaliumRelay/` | Relais HTTP entre serveurs | proxy Velocity |
 | `KaliumCore/` | Survie (projet en pause) | Kal-Test-Dev |
 | `KS_Dimensions/` | Menu des opérateurs (`/dimensions`) pour activer / désactiver les portails du Nether et de l'End | event |
+| `KS_Enclume/` | Enclume sans plafond de prix (coût vanilla) | event |
+| `KS_Villageois/` | Villageois et marchands ambulants sans échanges (sauf étiquette `ks_pnj`) | event |
+| `KS_Crafts/` | Crafts du serveur Event (sable rouge, blocs bruts, calcite, froglights, Bedrock Breaker, bloc de verrue...) | event |
+| `KS_LootBlocs/` | Loots des blocs : minerais, feuilles, verrue du Nether | event |
+| `KS_LootEntites/` | Loots des mobs (nerf des fermes AFK) et fioles d'expérience à niveau | event |
+| `KS_LootPeche/` | Pêche sans livres enchantés | event |
+| `KS_LootPotions/` | Potions basiques à ramasser sur les blocs et les mobs | event |
+| `KS_Event/` | Cahier des charges des plugins du serveur Event (pas un plugin) | - |
 
 - Historique détaillé de chaque plugin : `<plugin>/JOURNAL.md`.
 - `jars-deployes/` : copies des jars actuellement en service.

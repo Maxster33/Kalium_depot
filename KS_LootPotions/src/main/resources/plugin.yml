@@ -1,0 +1,6 @@
+name: KS_LootPotions
+version: '${project.version}'
+main: fr.kalium.lootpotions.KSLootPotions
+api-version: '26.2'
+description: Potions basiques a ramasser sur les blocs et les mobs du serveur Event.
+authors: [KaLium]

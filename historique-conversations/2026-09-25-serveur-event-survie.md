@@ -29,3 +29,11 @@
 - Demandé : installer Floodgate, remettre l'extension PlaceholderAPI à sa place, enlever PlayerKits2 (Event).
 - Fait : Floodgate (config et clé du proxy reprises du lobby), extension dans `plugins/PlaceholderAPI/expansions/`,
   PlayerKits2 rangé dans `/plugins/_removed-playerkits2-1.23.3/`. Non testé (Event pas encore démarré).
+
+## Suite : plugins du serveur Event (soir)
+- Demandé : liste de plugins pour la survie Event (mécaniques, crafts, loots), avec la règle « ne rien créer qui ne
+  soit demandé ». Questions groupées puis réponses de Maxster33 : tout est dans `KS_Event/CAHIER_DES_CHARGES.md`.
+- Fait : 7 plugins (KS_Enclume, KS_Villageois, KS_Crafts, KS_LootBlocs, KS_LootEntites, KS_LootPeche,
+  KS_LootPotions), compilés, déployés sur Event, non testés. Élixirs reportés.
+- Reste à faire : démarrer Event et tester chaque plugin ; vérifier le craft du cuivre brut (conflit possible avec
+  le cuivre taillé en carré 2×2) et l'affichage « Trop cher ! » de l'enclume.

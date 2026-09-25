@@ -14,7 +14,7 @@ Principe : **un plugin = un rôle** ; les plugins se parlent au lieu d'être fus
 | `kal-games` | 7001 (ex KalGames2) | Hub des mini-jeux | KG_Instances, KG_Menu, KG_ScoreBoards, KG_Bingo, KG_BoatRace, KG_Parkour, KG_PvpKit, KG_Rush, KLM_Menu, KLM_Hub |
 | `serveur-jeux` | 7015 | Bingo + jeux gourmands (Manhunt...) | KG_BingoGame, KLM_Menu |
 | `kixster` | 7003 | Kixster SMP (rendu au SMP) | KLM_Menu (futur KX_Menu) |
-| `event` | 7021 (ancien kal-games) | Serveur Event : survie classique (depuis le 25/09/2026), préfixe `KS_` | KLM_Menu (sans boussole, `/menu`), KS_Dimensions |
+| `event` | 7021 (ancien kal-games) | Serveur Event : survie classique (depuis le 25/09/2026), préfixe `KS_` | KLM_Menu (sans boussole, `/menu`), KS_Dimensions, KS_Enclume, KS_Villageois, KS_Crafts, KS_LootBlocs, KS_LootEntites, KS_LootPeche, KS_LootPotions ; KS_Elixirs reporté |
 | `kal-test-dev` | 5038 | Test survie (en pause) | KaliumCore, KLM_Menu |
 
 Les anciens noms `Bingo` et `kalgames2` n'existent plus. Tout déploiement pour le hub se fait sur 7001, pour le
