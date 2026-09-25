@@ -9,11 +9,11 @@ depend: [WorldGuard]
 commands:
   plot:
     description: Reserver et gerer ses plots.
-    usage: /<command> reserver|tp|liste|info|editeur
+    usage: /<command> reserver|tp|liste|info|editeur|reset|supprimer
     permission: kvplots.joueur
   kvadmin:
     description: Administration des plots de Kanvas (generation de la grille).
-    usage: /<command> generer [confirmer]
+    usage: /<command> generer [confirmer] | reset <numero> [confirmer] | supprimer <numero> [confirmer]
     permission: kvplots.admin
 
 permissions:
@@ -21,5 +21,5 @@ permissions:
     description: Reserver des plots, s'y teleporter, gerer ses editeurs.
     default: true
   kvplots.admin:
-    description: Generer la grille de plots.
+    description: Generer la grille ; remettre a zero ou supprimer n'importe quel plot (meme valide).
     default: op

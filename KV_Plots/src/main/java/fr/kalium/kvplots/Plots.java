@@ -85,6 +85,11 @@ final class Plots {
         for (Grille.Case c : p.cases()) parCase.put(c, p);
     }
 
+    void retirer(Plot p) {
+        parId.remove(p.id);
+        for (Grille.Case c : p.cases()) parCase.remove(c, p);
+    }
+
     void charger() {
         parId.clear();
         parCase.clear();
@@ -101,7 +106,8 @@ final class Plots {
                 for (String u : s.getStringList("editeurs")) p.editeurs.add(UUID.fromString(u));
                 for (String u : s.getStringList("historique-editeurs")) p.historiqueEditeurs.add(UUID.fromString(u));
                 p.etat = Plot.Etat.valueOf(s.getString("etat", "TRAVAUX"));
-                p.fusionEnCours = s.getBoolean("fusion-en-cours");
+                p.chantier = Plot.Chantier.valueOf(s.getString("chantier",
+                        s.getBoolean("fusion-en-cours") ? "FUSION" : "AUCUN")); // 1.0.0 : fusion-en-cours
                 ajouter(p);
                 prochainId = Math.max(prochainId, p.id + 1);
             } catch (RuntimeException e) {
@@ -123,7 +129,7 @@ final class Plots {
             yml.set(b + "editeurs", p.editeurs.stream().map(UUID::toString).toList());
             yml.set(b + "historique-editeurs", p.historiqueEditeurs.stream().map(UUID::toString).toList());
             yml.set(b + "etat", p.etat.name());
-            yml.set(b + "fusion-en-cours", p.fusionEnCours);
+            yml.set(b + "chantier", p.chantier.name());
         }
         try {
             yml.save(fichier);

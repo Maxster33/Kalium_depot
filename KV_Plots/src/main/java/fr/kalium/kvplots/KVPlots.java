@@ -16,14 +16,16 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * KV_Plots (cahier des charges : KV_Plots/CAHIER_DES_CHARGES.md) - serveur Kanvas, demande de LeKiwi06 (25-26/09/2026).
- * Version 1.0.0 : génération de la grille, réservation (moyen / grand), éditeurs, protection WorldGuard, règles du
- * monde.
+ * 1.0.0 : génération de la grille, réservation (moyen / grand), éditeurs, protection WorldGuard, règles du monde.
+ * 1.1.0 : remise à zéro et suppression d'un plot.
  */
 public final class KVPlots extends JavaPlugin {
 
@@ -34,6 +36,7 @@ public final class KVPlots extends JavaPlugin {
     private Chantier chantier;
     private ModeleTuile tuile;
     private boolean generation;
+    private final Confirmations confirmations = new Confirmations();
 
     @Override
     public void onEnable() {
@@ -52,9 +55,15 @@ public final class KVPlots extends JavaPlugin {
         chargerTuile();
 
         regions.protegerMonde(monde);
-        for (Plot p : plots.tous()) {
-            regions.appliquer(p);
-            if (p.fusionEnCours && tuile != null) fusionner(p, null); // reprise après un arrêt du serveur
+        for (Plot p : List.copyOf(plots.tous())) {
+            if (p.chantier != Plot.Chantier.SUPPRESSION) regions.appliquer(p);
+            if (tuile == null) continue;
+            switch (p.chantier) { // reprise après un arrêt du serveur
+                case FUSION -> fusionner(p, null);
+                case REMISE_A_ZERO -> lancerRemise(p, null);
+                case SUPPRESSION -> lancerSuppression(p, null);
+                default -> { }
+            }
         }
 
         getServer().getPluginManager().registerEvents(new ReglesMonde(this), this);
@@ -77,6 +86,10 @@ public final class KVPlots extends JavaPlugin {
 
     Grille grille() {
         return grille;
+    }
+
+    Confirmations confirmations() {
+        return confirmations;
     }
 
     Plots plots() {
@@ -265,7 +278,7 @@ public final class KVPlots extends JavaPlugin {
         Grille.Case coin = emplacement(joueur, taille);
         if (coin == null) throw new Refus("Il n'y a plus de plot " + taille.nom + " libre.");
         Plot p = plots.creer(taille, coin, joueur.getUniqueId());
-        if (taille == Taille.GRAND) p.fusionEnCours = true;
+        if (taille == Taille.GRAND) p.chantier = Plot.Chantier.FUSION;
         plots.sauver();
         regions.appliquer(p);
         if (taille == Taille.GRAND) {
@@ -290,13 +303,84 @@ public final class KVPlots extends JavaPlugin {
         }
         Iterator<int[]> it = colonnes.iterator();
         chantier.ajouter(new Chantier.Tache(it, (x, z) -> tuile.poserSol(monde, x, z, grille.taille), () -> {
-            p.fusionEnCours = false;
+            p.chantier = Plot.Chantier.AUCUN;
             plots.sauver();
             getLogger().info("Grand plot n°" + p.id + " prêt (routes intérieures retirées).");
             if (joueur != null && joueur.isOnline()) {
                 joueur.sendMessage("§aTon grand plot n°" + p.id + " est prêt !");
                 teleporter(joueur, p);
             }
+        }));
+    }
+
+    // --- Remise à zéro, suppression ---
+
+    /** Colonnes de tout l'intérieur du plot (routes intérieures d'un grand plot comprises), chunk par chunk. */
+    private Iterator<int[]> colonnesDe(Plot p) {
+        int minX = grille.minX(p.colonne), minZ = grille.minZ(p.ligne), cote = grille.cote(p.taille);
+        return parChunks(minX, minZ, minX + cote - 1, minZ + cote - 1);
+    }
+
+    /** Retire les entités du plot (sauf les joueurs), dans les chunks chargés. */
+    private void retirerEntites(Plot p) {
+        int minX = grille.minX(p.colonne), minZ = grille.minZ(p.ligne), cote = grille.cote(p.taille);
+        BoundingBox zone = new BoundingBox(minX, monde.getMinHeight(), minZ, minX + cote, monde.getMaxHeight(), minZ + cote);
+        for (Entity e : monde.getNearbyEntities(zone)) {
+            if (!(e instanceof Player)) e.remove();
+        }
+    }
+
+    /**
+     * Qui peut remettre à zéro / supprimer ce plot : son créateur, sauf si le plot est validé ; le staff (kvplots.admin)
+     * toujours.
+     */
+    void verifierTravaux(Player demandeur, Plot p, String action, String participe) throws Refus {
+        if (tuile == null) throw new Refus("Impossible pour le moment (modèle de terrain absent).");
+        if (p.chantier != Plot.Chantier.AUCUN) throw new Refus("Des travaux sont déjà en cours sur ce plot.");
+        if (demandeur.hasPermission("kvplots.admin")) return;
+        if (!p.createur.equals(demandeur.getUniqueId())) throw new Refus("Seul le créateur du plot peut le " + action + ".");
+        if (p.etat == Plot.Etat.VALIDE) throw new Refus("Un plot validé ne peut être " + participe + " que par le staff.");
+    }
+
+    /** Remet le terrain du plot à l'état vierge ; le plot reste réservé, avec ses éditeurs. */
+    void remettreAZero(Player demandeur, Plot p) throws Refus {
+        verifierTravaux(demandeur, p, "remettre à zéro", "remis à zéro");
+        lancerRemise(p, demandeur);
+    }
+
+    private void lancerRemise(Plot p, Player informe) {
+        p.chantier = Plot.Chantier.REMISE_A_ZERO;
+        plots.sauver();
+        retirerEntites(p);
+        chantier.ajouter(new Chantier.Tache(colonnesDe(p), (x, z) -> grille.caseEn(x, z) != null
+                ? tuile.poserGrille(monde, x, z, grille.origineX, grille.origineZ)
+                : tuile.poserSol(monde, x, z, grille.taille), () -> {
+            retirerEntites(p);
+            p.chantier = Plot.Chantier.AUCUN;
+            plots.sauver();
+            getLogger().info("Plot n°" + p.id + " remis à zéro.");
+            if (informe != null && informe.isOnline()) informe.sendMessage("§aPlot n°" + p.id + " remis à zéro.");
+        }));
+    }
+
+    /** Remet le terrain à l'état vierge et libère le plot (un grand plot redevient 4 plots moyens). */
+    void supprimer(Player demandeur, Plot p) throws Refus {
+        verifierTravaux(demandeur, p, "supprimer", "supprimé");
+        lancerSuppression(p, demandeur);
+    }
+
+    private void lancerSuppression(Plot p, Player informe) {
+        p.chantier = Plot.Chantier.SUPPRESSION;
+        plots.sauver();
+        regions.supprimer(p); // plus personne n'y construit pendant les travaux
+        retirerEntites(p);
+        chantier.ajouter(new Chantier.Tache(colonnesDe(p),
+                (x, z) -> tuile.poserGrille(monde, x, z, grille.origineX, grille.origineZ), () -> {
+            retirerEntites(p);
+            plots.retirer(p);
+            plots.sauver();
+            getLogger().info("Plot n°" + p.id + " supprimé et libéré.");
+            if (informe != null && informe.isOnline()) informe.sendMessage("§aPlot n°" + p.id + " supprimé : la place est libre.");
         }));
     }
 

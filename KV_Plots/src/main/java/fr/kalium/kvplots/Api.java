@@ -21,7 +21,7 @@ final class Api implements KanvasPlots {
 
     private static PlotInfo vue(Plot p) {
         return p == null ? null : new PlotInfo(p.id, p.taille, p.createur, List.copyOf(p.editeurs),
-                p.etat == Plot.Etat.VALIDE, p.fusionEnCours);
+                p.etat == Plot.Etat.VALIDE, p.chantier != Plot.Chantier.AUCUN);
     }
 
     private Plot trouver(int id) throws Refus {
@@ -71,6 +71,16 @@ final class Api implements KanvasPlots {
         Plot p = trouver(id);
         if (!p.peutConstruire(joueur.getUniqueId())) throw new Refus("Ce n'est pas l'un de tes plots.");
         plugin.teleporter(joueur, p);
+    }
+
+    @Override
+    public void remettreAZero(Player joueur, int id) throws Refus {
+        plugin.remettreAZero(joueur, trouver(id));
+    }
+
+    @Override
+    public void supprimer(Player joueur, int id) throws Refus {
+        plugin.supprimer(joueur, trouver(id));
     }
 
     @Override

@@ -53,6 +53,15 @@ public interface KanvasPlots {
     /** Téléporte le joueur au bord de l'un de ses plots (créateur ou éditeur). */
     void teleporter(Player joueur, int id) throws Refus;
 
+    /**
+     * Remet le terrain du plot à l'état vierge (le plot reste réservé). Créateur, sauf plot validé ; staff
+     * (kvplots.admin) toujours. Travaux étalés sur plusieurs ticks.
+     */
+    void remettreAZero(Player joueur, int id) throws Refus;
+
+    /** Efface le plot et libère la place (un grand plot redevient 4 plots moyens). Mêmes droits. */
+    void supprimer(Player joueur, int id) throws Refus;
+
     /** Ajoute un éditeur (seul le créateur du plot peut le faire). */
     void ajouterEditeur(Player createur, int id, UUID editeur) throws Refus;
 

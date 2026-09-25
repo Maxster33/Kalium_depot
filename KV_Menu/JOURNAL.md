@@ -18,9 +18,10 @@ Demande de LeKiwi06 : « une interface au lieu de juste avoir les commandes ».
 - **Accueil** : « Réserver un plot moyen (n/max) », « Réserver un grand plot (n/max) » (avec confirmation : le plot
   libre où l'on se tient, sinon le plus proche du centre), « Mes plots » ; rappel du plot sur lequel on se trouve.
 - **Mes plots** : un bouton par plot (créateur ou éditeur) → **fiche** : créateur, éditeurs, état ; « Se téléporter » ;
-  « Éditeurs » (créateur seulement).
+  « Éditeurs » (créateur seulement) ; « Remettre à zéro » et « Supprimer le plot » avec confirmation (créateur si le
+  plot n'est pas validé, staff toujours).
 - **Éditeurs** : champ « Pseudo du joueur » + « Ajouter l'éditeur saisi » ; « Retirer <pseudo> » avec confirmation.
 - Les refus de KV_Plots (plus de place, pas le créateur...) s'affichent dans un petit message avec « OK ».
-- Dépend de KLM_Menu et KV_Plots (à déployer ensemble).
+- Dépend de KLM_Menu et **KV_Plots 1.1.0** (à déployer ensemble).
 
 **Statut : non testé en jeu, non déployé.**

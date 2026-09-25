@@ -72,6 +72,13 @@ final class Regions {
         enregistrer(rm);
     }
 
+    void supprimer(Plot p) {
+        RegionManager rm = gestionnaire(plugin.monde());
+        if (rm == null) return;
+        rm.removeRegion(PREFIXE + p.id);
+        enregistrer(rm);
+    }
+
     private void enregistrer(RegionManager rm) {
         try {
             rm.saveChanges();

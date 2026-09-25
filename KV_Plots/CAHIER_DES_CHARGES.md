@@ -73,6 +73,8 @@ de plots en créatif. Préfixe `KV_` = Kanvas (voir la charte dans `ARCHITECTURE
   **« Voter »** du menu.
 - **Génération** : première zone de **5 plots dans chaque direction** autour du plot de référence (-107, -2, -57),
   routes recopiées depuis celles qui existent.
+- **Remise à zéro / suppression** (26/09/2026) : `/plot reset` (terrain vierge, plot gardé) et `/plot supprimer`
+  (terrain vierge, place libérée), avec confirmation ; par le créateur sauf plot validé ; le staff toujours.
 - **Grand plot libéré** (remis à zéro) : il **redevient 4 plots moyens** (routes et bordures reconstruites).
 - **Titre / description** : titre de 32 caractères, description de 200, codes couleur autorisés, modifiables à tout
   moment par le créateur.

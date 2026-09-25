@@ -28,7 +28,8 @@ import net.kyori.adventure.text.Component;
  * les commandes »). Hiérarchie des interfaces : KLM_Menu (catalogue) -> KV_Menu -> actions de KV_Plots.
  *
  * - Accueil : réserver un plot moyen / grand, mes plots.
- * - Mes plots : un bouton par plot (créateur ou éditeur) -> fiche du plot : téléportation, éditeurs (créateur).
+ * - Mes plots : un bouton par plot (créateur ou éditeur) -> fiche du plot : téléportation, éditeurs, remise à zéro,
+ *   suppression (créateur).
  * - Ouverture : étoile du Nether (emplacement 4), /kanvas (/kv, /plots) et le catalogue de KLM_Menu (entrée « Kanvas »).
  */
 public final class KvMenu extends JavaPlugin {
@@ -189,6 +190,33 @@ public final class KvMenu extends JavaPlugin {
             boutons.add(gui.button(t("plot.editors-button", "<yellow>Éditeurs"),
                     t("plot.editors-tip", "<gray>Ajouter ou retirer des joueurs qui construisent avec toi."),
                     p -> editeurs(p, id, ici)));
+        }
+        boolean staff = joueur.hasPermission("kvplots.admin");
+        if ((plot.createur().equals(joueur.getUniqueId()) && !plot.valide()) || staff) {
+            boutons.add(gui.button(t("plot.reset", "<gold>Remettre à zéro"),
+                    t("plot.reset-tip", "<gray>Efface tout ce qui est construit. Le plot reste à toi."),
+                    p -> gui.confirm(p, t("plot.reset-title", "<gold><bold>Remettre à zéro le plot n°<id>", "id", id),
+                            t("plot.reset-body", "<gray>Tout ce qui est construit sur ce plot sera effacé. Le plot reste réservé."),
+                            q -> {
+                                try {
+                                    plots.remettreAZero(q, id);
+                                    q.sendMessage(t("plot.reset-started", "<yellow>Remise à zéro du plot n°<id> en cours...", "id", id));
+                                } catch (Refus r) {
+                                    refus(q, r, ici);
+                                }
+                            }, ici::accept)));
+            boutons.add(gui.button(t("plot.delete", "<red>Supprimer le plot"),
+                    t("plot.delete-tip", "<gray>Efface tout et libère la place."),
+                    p -> gui.confirm(p, t("plot.delete-title", "<red><bold>Supprimer le plot n°<id>", "id", id),
+                            t("plot.delete-body", "<gray>Tout ce qui est construit sera effacé et la place sera libérée. Impossible d'annuler."),
+                            q -> {
+                                try {
+                                    plots.supprimer(q, id);
+                                    q.sendMessage(t("plot.delete-started", "<yellow>Suppression du plot n°<id> en cours...", "id", id));
+                                } catch (Refus r) {
+                                    refus(q, r, ici);
+                                }
+                            }, ici::accept)));
         }
         boutons.add(retour(retour));
         gui.open(joueur, t("plot.title", "<gold><bold>Plot n°<id> <gray>(<size>)", "id", id, "size", nomTaille(plot.taille())),

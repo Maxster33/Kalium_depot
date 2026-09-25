@@ -13,6 +13,9 @@ final class Plot {
 
     enum Etat { TRAVAUX, VALIDE }
 
+    /** Travaux sur le terrain en cours (repris au démarrage s'ils ont été interrompus). */
+    enum Chantier { AUCUN, FUSION, REMISE_A_ZERO, SUPPRESSION }
+
     final int id;
     final Taille taille;
     final int colonne, ligne;
@@ -23,8 +26,7 @@ final class Plot {
     /** Tous les éditeurs passés et actuels (un ancien éditeur ne pourra pas voter). */
     final Set<UUID> historiqueEditeurs = new LinkedHashSet<>();
     Etat etat = Etat.TRAVAUX;
-    /** Vrai tant que les routes intérieures d'un grand plot ne sont pas remplacées par du sol. */
-    boolean fusionEnCours;
+    Chantier chantier = Chantier.AUCUN;
 
     Plot(int id, Taille taille, int colonne, int ligne, UUID createur, long creation) {
         this.id = id;

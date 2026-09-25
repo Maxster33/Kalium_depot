@@ -14,7 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-/** /plot reserver|tp|liste|info|editeur (les menus viendront avec KV_Menu). */
+/** /plot reserver|tp|liste|info|editeur|reset|supprimer (les mêmes actions existent dans le menu de KV_Menu). */
 final class CommandePlot implements TabExecutor {
 
     private final KVPlots plugin;
@@ -34,6 +34,8 @@ final class CommandePlot implements TabExecutor {
         s.sendMessage("§e/" + label + " tp [numéro] §7- te téléporter à l'un de tes plots");
         s.sendMessage("§e/" + label + " info §7- le plot où tu te tiens");
         s.sendMessage("§e/" + label + " editeur <ajouter|retirer> <pseudo> §7- sur ton plot");
+        s.sendMessage("§e/" + label + " reset §7- remettre ton plot à zéro (il reste à toi)");
+        s.sendMessage("§e/" + label + " supprimer §7- effacer ton plot et libérer la place");
     }
 
     @Override
@@ -53,6 +55,8 @@ final class CommandePlot implements TabExecutor {
                 case "tp" -> tp(joueur, args);
                 case "info" -> info(joueur);
                 case "editeur", "éditeur" -> editeur(joueur, args);
+                case "reset" -> travaux(joueur, args, false);
+                case "supprimer" -> travaux(joueur, args, true);
                 default -> aide(joueur, label);
             }
         } catch (Refus refus) {
@@ -104,6 +108,34 @@ final class CommandePlot implements TabExecutor {
         return p;
     }
 
+    /** /plot reset|supprimer [confirmer] sur le plot où l'on se tient (créateur ; staff : n'importe quel plot). */
+    private void travaux(Player joueur, String[] args, boolean suppression) throws Refus {
+        Plot p = plotIci(joueur);
+        String action = suppression ? "supprimer" : "reset";
+        boolean confirme = args.length > 1 && args[1].equalsIgnoreCase("confirmer")
+                && plugin.confirmations().confirmer(joueur.getUniqueId(), action, p.id);
+        if (suppression) {
+            plugin.verifierTravaux(joueur, p, "supprimer", "supprimé");
+        } else {
+            plugin.verifierTravaux(joueur, p, "remettre à zéro", "remis à zéro");
+        }
+        if (!confirme) {
+            plugin.confirmations().demander(joueur.getUniqueId(), action, p.id);
+            joueur.sendMessage(suppression
+                    ? "§cSupprimer le plot n°" + p.id + " : tout ce qui y est construit sera effacé et la place libérée."
+                    : "§cRemettre à zéro le plot n°" + p.id + " : tout ce qui y est construit sera effacé (le plot reste à toi).");
+            joueur.sendMessage("§eConfirmer dans la minute : /plot " + action + " confirmer");
+            return;
+        }
+        if (suppression) {
+            plugin.supprimer(joueur, p);
+            joueur.sendMessage("§eSuppression du plot n°" + p.id + " en cours...");
+        } else {
+            plugin.remettreAZero(joueur, p);
+            joueur.sendMessage("§eRemise à zéro du plot n°" + p.id + " en cours...");
+        }
+    }
+
     private void info(Player joueur) throws Refus {
         Plot p = plotIci(joueur);
         joueur.sendMessage("§6Plot n°" + p.id + " §7(" + p.taille.nom + ", "
@@ -137,7 +169,7 @@ final class CommandePlot implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         String debut = args[args.length - 1].toLowerCase();
         List<String> choix = switch (args.length) {
-            case 1 -> List.of("reserver", "liste", "tp", "info", "editeur");
+            case 1 -> List.of("reserver", "liste", "tp", "info", "editeur", "reset", "supprimer");
             case 2 -> switch (args[0].toLowerCase()) {
                 case "reserver", "réserver" -> List.of("moyen", "grand");
                 case "editeur", "éditeur" -> List.of("ajouter", "retirer");

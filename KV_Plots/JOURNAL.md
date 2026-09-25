@@ -4,6 +4,23 @@ Serveur Kanvas (ex Kal-Test-Dev). Cahier des charges : `KV_Plots/CAHIER_DES_CHAR
 de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` télécharge aussi les API WorldGuard
 7.0.19 et WorldEdit 7.4.5 (compilation seulement ; en jeu, ce sont les plugins du serveur qui servent).
 
+## 1.1.0 - remise à zéro et suppression d'un plot (26/09/2026)
+
+Demande de LeKiwi06 : « il y a une commande pour reset ou supprimer son plot ? » ; proposition acceptée.
+- `/plot reset` : le terrain du plot où l'on se tient redevient vierge (intérieur recopié depuis la tuile de référence ;
+  routes intérieures d'un grand plot : sol des plots) ; le plot reste réservé, avec ses éditeurs.
+- `/plot supprimer` : terrain vierge, puis le plot est libéré (sa place aussi). Un grand plot redevient **4 plots
+  moyens** : routes et bordures intérieures reconstruites depuis la tuile. Sa région WorldGuard est retirée dès le
+  début des travaux (plus personne n'y construit).
+- Confirmation dans la minute (`/plot reset confirmer`, `/plot supprimer confirmer`). Droits : le créateur, **sauf plot
+  validé** (réservé au staff, pour ne pas récupérer une place en gardant des points) ; le staff (`kvplots.admin`)
+  toujours, aussi par numéro : `/kvadmin reset|supprimer <numéro> [confirmer]`.
+- Entités du plot retirées (sauf joueurs), au début et à la fin des travaux. Travaux étalés sur plusieurs ticks et
+  repris au redémarrage (`chantier` dans `plots.yml` ; l'ancienne clé `fusion-en-cours` de la 1.0.0 est relue).
+- API : `remettreAZero`, `supprimer` (boutons de KV_Menu).
+
+**Statut : non testé en jeu, non déployé.** À déployer avec KV_Menu 1.0.0 (qui utilise ces nouvelles fonctions).
+
 ## 1.0.0 - génération de la grille, réservation, éditeurs, protection (26/09/2026)
 
 Demande de LeKiwi06 : commencer par la grille de plots, la réservation et la protection.
