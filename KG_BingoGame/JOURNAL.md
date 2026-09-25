@@ -1493,4 +1493,13 @@ vache invulnérable ».
   retirées d'abord : pas de doublons) et **invulnérables** ; toute entité des salles est protégée des dégâts.
   ⚠️ Le modèle actuel a été capturé avant : **recapturer la salle** pour que la vache soit copiée.
 **Déploiement** : seul, sur Serveur Jeux (modèle d'avant dans `_removed-kg_bingogame-0.7.2/`). **Statut : déployé le
-25/09/2026 à 20 h 51, non testé en jeu.**
+25/09/2026 à 20 h 51, testé par LeKiwi06 (recapture : 19 entités copiées ; noms des copies corrigés en 0.7.4).**
+
+## 0.7.4 — nom des entités copiées (25/09/2026)
+
+**Signalé par LeKiwi06** (0.7.3 testée : recapture faite, 19 entités copiées dans les 4 salles, dont 12 cristaux de
+l'End et 7 vaches) : « les vaches ne sont pas bien nommées » (les copies de « Giselle ( Check meuhmeuh ) » n'avaient
+pas le bon nom).
+- À la recréation, le nom personnalisé est relu dans la copie enregistrée (SNBT, `CustomName`) et réappliqué
+  explicitement, ainsi que son affichage permanent (`CustomNameVisible`). Pas besoin de recapturer.
+**Déploiement** : seul, sur Serveur Jeux. **Statut : compilé, non déployé, non testé en jeu.**

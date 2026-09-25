@@ -241,6 +241,21 @@ public final class LobbyTemplateService {
         });
     }
 
+    private static final java.util.regex.Pattern CUSTOM_NAME = java.util.regex.Pattern.compile("CustomName:\"((?:[^\"\\\\]|\\\\.)*)\"");
+
+    /**
+     * 0.7.4 : le nom personnalise est reapplique explicitement a la copie (signale par LeKiwi06 : les copies de la vache
+     * « Giselle » n'avaient pas le bon nom), relu dans la copie enregistree ; affichage permanent recopie aussi.
+     */
+    private static void applyName(org.bukkit.entity.Entity created, String snapshot) {
+        java.util.regex.Matcher matcher = CUSTOM_NAME.matcher(snapshot);
+        if (matcher.find()) {
+            String name = matcher.group(1).replace("\\\"", "\"").replace("\\\\", "\\");
+            created.customName(net.kyori.adventure.text.Component.text(name));
+            created.setCustomNameVisible(snapshot.contains("CustomNameVisible:1b") || snapshot.contains("CustomNameVisible:true"));
+        }
+    }
+
     /** 0.7.3 : entites copiees avec la salle (voir LobbyTemplate.EntityCopy). */
     private static boolean copiable(org.bukkit.entity.Entity entity) {
         return !(entity instanceof org.bukkit.entity.Player) && !(entity instanceof org.bukkit.entity.Item)
@@ -280,6 +295,7 @@ public final class LobbyTemplateService {
                         origin.getBlockZ() + copy.dz(), copy.yaw(), copy.pitch());
                 org.bukkit.entity.Entity created = Bukkit.getEntityFactory().createEntitySnapshot(copy.snapshot()).createEntity(at);
                 created.setInvulnerable(true); // decor de la salle : ne peut pas etre tue (demande de LeKiwi06)
+                applyName(created, copy.snapshot());
                 placed++;
             } catch (RuntimeException e) {
                 plugin.getLogger().warning("[KG_BingoGame] Entité de la salle d'attente non recréée : " + e.getMessage());
