@@ -6,8 +6,8 @@ monde: kanvas
 grille:
   # Coin nord-ouest (x et z les plus petits) de l'interieur constructible du plot (0, 0), bordure non comprise.
   # Le plot (0, 0) sert aussi de centre pour la reservation automatique.
-  origine-x: 0
-  origine-z: 0
+  origine-x: -107
+  origine-z: -57
   # Interieur constructible d'un plot moyen (sans la bordure en bedrock).
   taille-plot: 49
   # Largeur d'une route, bordures en bedrock des deux plots comprises.

@@ -1,17 +1,17 @@
-package fr.kalium.kvplots;
+package fr.kalium.kvplots.api;
 
 /** Tailles de plot (pas de petit plot pour le moment). */
-enum Taille {
+public enum Taille {
     MOYEN("moyen"),
     GRAND("grand");
 
-    final String nom;
+    public final String nom;
 
     Taille(String nom) {
         this.nom = nom;
     }
 
-    static Taille depuis(String texte) {
+    public static Taille depuis(String texte) {
         for (Taille t : values()) {
             if (t.nom.equalsIgnoreCase(texte)) return t;
         }

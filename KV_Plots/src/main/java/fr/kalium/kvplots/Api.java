@@ -1,0 +1,79 @@
+package fr.kalium.kvplots;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+
+import fr.kalium.kvplots.api.KanvasPlots;
+import fr.kalium.kvplots.api.Taille;
+
+/** Implémentation de l'API publiée pour KV_Menu et les autres plugins de Kanvas. */
+final class Api implements KanvasPlots {
+
+    private final KVPlots plugin;
+
+    Api(KVPlots plugin) {
+        this.plugin = plugin;
+    }
+
+    private static PlotInfo vue(Plot p) {
+        return p == null ? null : new PlotInfo(p.id, p.taille, p.createur, List.copyOf(p.editeurs),
+                p.etat == Plot.Etat.VALIDE, p.fusionEnCours);
+    }
+
+    private Plot trouver(int id) throws Refus {
+        Plot p = plugin.plots().parId(id);
+        if (p == null) throw new Refus("Ce plot n'existe plus.");
+        return p;
+    }
+
+    @Override
+    public List<PlotInfo> plotsDe(UUID joueur) {
+        return plugin.plots().duJoueur(joueur).stream().map(Api::vue).toList();
+    }
+
+    @Override
+    public PlotInfo plotEn(Location lieu) {
+        if (lieu == null || !plugin.monde().equals(lieu.getWorld())) return null;
+        return vue(plugin.plotEn(lieu.getBlockX(), lieu.getBlockZ()));
+    }
+
+    @Override
+    public PlotInfo plot(int id) {
+        return vue(plugin.plots().parId(id));
+    }
+
+    @Override
+    public int occupes(UUID joueur, Taille taille) {
+        return plugin.plots().compter(joueur, taille);
+    }
+
+    @Override
+    public int places(UUID joueur, Taille taille) {
+        return plugin.places(joueur, taille);
+    }
+
+    @Override
+    public PlotInfo reserver(Player joueur, Taille taille) throws Refus {
+        return vue(plugin.reserver(joueur, taille));
+    }
+
+    @Override
+    public void teleporter(Player joueur, int id) throws Refus {
+        Plot p = trouver(id);
+        if (!p.peutConstruire(joueur.getUniqueId())) throw new Refus("Ce n'est pas l'un de tes plots.");
+        plugin.teleporter(joueur, p);
+    }
+
+    @Override
+    public void ajouterEditeur(Player createur, int id, UUID editeur) throws Refus {
+        plugin.ajouterEditeur(createur, trouver(id), editeur);
+    }
+
+    @Override
+    public void retirerEditeur(Player createur, int id, UUID editeur) throws Refus {
+        plugin.retirerEditeur(createur, trouver(id), editeur);
+    }
+}

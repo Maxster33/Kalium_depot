@@ -1,10 +1,15 @@
 package fr.kalium.kvplots;
 
+import fr.kalium.kvplots.api.KanvasPlots;
+import fr.kalium.kvplots.api.KanvasPlots.Refus;
+import fr.kalium.kvplots.api.Taille;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
@@ -12,6 +17,7 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -50,6 +56,7 @@ public final class KVPlots extends JavaPlugin {
         }
 
         getServer().getPluginManager().registerEvents(new ReglesMonde(this), this);
+        getServer().getServicesManager().register(KanvasPlots.class, new Api(this), this, ServicePriority.Normal);
         PluginCommand plot = getCommand("plot");
         CommandePlot commande = new CommandePlot(this);
         plot.setExecutor(commande);
@@ -110,8 +117,8 @@ public final class KVPlots extends JavaPlugin {
 
     // --- Réservation ---
 
-    /** Place au plus en même temps pour chaque taille (les déblocages à 100 points viendront plus tard). */
-    int places(Taille t) {
+    /** Places en même temps pour chaque taille (les déblocages à 100 points viendront plus tard). */
+    int places(UUID joueur, Taille t) {
         return t == Taille.GRAND ? getConfig().getInt("limites.grands", 1) : getConfig().getInt("limites.moyens", 1);
     }
 
@@ -170,9 +177,9 @@ public final class KVPlots extends JavaPlugin {
     /** Réserve un plot pour le joueur et l'y téléporte (après les travaux pour un grand plot). */
     Plot reserver(Player joueur, Taille taille) throws Refus {
         int deja = plots.compter(joueur.getUniqueId(), taille);
-        if (deja >= places(taille)) {
+        if (deja >= places(joueur.getUniqueId(), taille)) {
             throw new Refus("Tu as déjà " + deja + " plot" + (deja > 1 ? "s " : " ") + taille.nom
-                    + (deja > 1 ? "s" : "") + " (maximum : " + places(taille) + ").");
+                    + (deja > 1 ? "s" : "") + " (maximum : " + places(joueur.getUniqueId(), taille) + ").");
         }
         if (taille == Taille.GRAND && modeleSol == null) {
             throw new Refus("Les grands plots ne sont pas disponibles pour le moment (modèle de sol absent).");
@@ -215,8 +222,29 @@ public final class KVPlots extends JavaPlugin {
         }));
     }
 
-    void majRegion(Plot p) {
+    void ajouterEditeur(Player createur, Plot p, UUID editeur) throws Refus {
+        verifierCreateur(createur, p, editeur);
+        if (!p.editeurs.add(editeur)) throw new Refus(nom(editeur) + " est déjà éditeur de ce plot.");
+        p.historiqueEditeurs.add(editeur);
+        plots.sauver();
         regions.appliquer(p);
+    }
+
+    void retirerEditeur(Player createur, Plot p, UUID editeur) throws Refus {
+        verifierCreateur(createur, p, editeur);
+        if (!p.editeurs.remove(editeur)) throw new Refus(nom(editeur) + " n'est pas éditeur de ce plot.");
+        plots.sauver();
+        regions.appliquer(p);
+    }
+
+    private static void verifierCreateur(Player createur, Plot p, UUID editeur) throws Refus {
+        if (!p.createur.equals(createur.getUniqueId())) throw new Refus("Seul le créateur du plot gère ses éditeurs.");
+        if (p.createur.equals(editeur)) throw new Refus("Tu es déjà le créateur de ce plot.");
+    }
+
+    static String nom(UUID u) {
+        String n = org.bukkit.Bukkit.getOfflinePlayer(u).getName();
+        return n == null ? "?" : n;
     }
 
     /** Sur la route, au milieu du bord nord du plot, tourné vers le plot. */
@@ -225,12 +253,5 @@ public final class KVPlots extends JavaPlugin {
         int x = grille.minX(p.colonne) + cote / 2, z = grille.minZ(p.ligne) - 3;
         int y = monde.getHighestBlockYAt(x, z) + 1;
         joueur.teleport(new Location(monde, x + 0.5, y, z + 0.5, 0f, 0f));
-    }
-
-    /** Action refusée, avec le message pour le joueur. */
-    static final class Refus extends Exception {
-        Refus(String message) {
-            super(message, null, false, false);
-        }
     }
 }

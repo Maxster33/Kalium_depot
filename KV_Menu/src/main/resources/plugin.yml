@@ -1,0 +1,19 @@
+name: KV_Menu
+version: '${project.version}'
+main: fr.kalium.kvmenu.KvMenu
+api-version: '26.2'
+description: Menus du serveur Kanvas (plots - reserver, mes plots, editeurs), affiches aussi dans le catalogue de KLM_Menu.
+authors: [KaLium]
+depend: [KLM_Menu, KV_Plots]
+
+commands:
+  kanvas:
+    description: Ouvre le menu des plots de Kanvas.
+    aliases: [kv, plots]
+    usage: /<command>
+    permission: kvmenu.joueur
+
+permissions:
+  kvmenu.joueur:
+    description: Ouvrir le menu de Kanvas.
+    default: true

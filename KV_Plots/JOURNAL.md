@@ -8,9 +8,9 @@ de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` 
 
 Demande de LeKiwi06 : commencer par la grille de plots, la réservation et la protection.
 - **Grille** (`config.yml`, section `grille`) : intérieur de 49 x 49, route de 9 (bordures en bedrock comprises), soit
-  un pas de 58. `origine-x` / `origine-z` = coin nord-ouest de l'intérieur du plot (0, 0) ; `colonne-min/max`,
-  `ligne-min/max` = plots déjà construits dans le monde. **À régler avant le premier démarrage** (valeurs par défaut
-  provisoires).
+  un pas de 58. `origine-x` / `origine-z` = coin nord-ouest de l'intérieur du plot (0, 0) : **-107 / -57** (relevé par LeKiwi06 ; sol
+  à y = -2, le dessous est constructible aussi). `colonne-min/max`, `ligne-min/max` = plots déjà construits dans le
+  monde : **à régler avant le premier démarrage** (-5 à 5 provisoire).
 - **Réservation** : `/plot reserver <moyen|grand>` : le plot libre où l'on se tient (grand : un groupe de 2 x 2 plots
   libres qui le contient, le plus proche du joueur), sinon le plus proche du plot (0, 0). 1 moyen + 1 grand au plus
   (`limites`). Téléportation sur la route, au milieu du bord nord du plot.
@@ -26,6 +26,8 @@ Demande de LeKiwi06 : commencer par la grille de plots, la réservation et la pr
 - **Règles du monde** : créatif + vol à l'arrivée (un tick après, pour passer après KLM_Menu) ; pas de TNT (pose, wagon,
   allumage), aucune explosion ; rien ne brûle (propagation, lave, foudre) ; les liquides coulent mais ne sortent pas
   de leur plot ; redstone désactivée (courant forcé à 0, pistons et distributeurs bloqués).
+- **API** pour KV_Menu : `fr.kalium.kvplots.api.KanvasPlots` (registre de services de Paper) : plots d'un joueur,
+  plot à un endroit, places, réserver, téléporter, ajouter / retirer un éditeur.
 - Données : `plots.yml` (plots, éditeurs, historique, état).
 - Techniquement nécessaire, non demandé explicitement : le plugin charge lui-même le monde `kanvas` s'il n'est pas le
   monde principal du serveur.

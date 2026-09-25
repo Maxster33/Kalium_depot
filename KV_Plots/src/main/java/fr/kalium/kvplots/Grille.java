@@ -1,5 +1,7 @@
 package fr.kalium.kvplots;
 
+import fr.kalium.kvplots.api.Taille;
+
 /**
  * Géométrie de la grille de plots. Une case = l'intérieur d'un plot moyen (taille x taille), suivie d'une route
  * (bordures en bedrock comprises) : la grille se répète tous les « pas » = taille + route blocs.

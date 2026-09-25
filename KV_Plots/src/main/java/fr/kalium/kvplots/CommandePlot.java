@@ -1,5 +1,8 @@
 package fr.kalium.kvplots;
 
+import fr.kalium.kvplots.api.KanvasPlots.Refus;
+import fr.kalium.kvplots.api.Taille;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,8 +24,7 @@ final class CommandePlot implements TabExecutor {
     }
 
     private static String nom(UUID u) {
-        String n = Bukkit.getOfflinePlayer(u).getName();
-        return n == null ? "?" : n;
+        return KVPlots.nom(u);
     }
 
     private void aide(CommandSender s, String label) {
@@ -53,15 +55,15 @@ final class CommandePlot implements TabExecutor {
                 case "editeur", "éditeur" -> editeur(joueur, args);
                 default -> aide(joueur, label);
             }
-        } catch (KVPlots.Refus refus) {
+        } catch (Refus refus) {
             joueur.sendMessage("§c" + refus.getMessage());
         }
         return true;
     }
 
-    private void reserver(Player joueur, String[] args) throws KVPlots.Refus {
+    private void reserver(Player joueur, String[] args) throws Refus {
         Taille taille = args.length > 1 ? Taille.depuis(args[1]) : null;
-        if (taille == null) throw new KVPlots.Refus("Précise la taille : /plot reserver <moyen|grand>");
+        if (taille == null) throw new Refus("Précise la taille : /plot reserver <moyen|grand>");
         Plot p = plugin.reserver(joueur, taille);
         joueur.sendMessage("§aPlot " + taille.nom + " n°" + p.id + " réservé !");
     }
@@ -80,9 +82,9 @@ final class CommandePlot implements TabExecutor {
         }
     }
 
-    private void tp(Player joueur, String[] args) throws KVPlots.Refus {
+    private void tp(Player joueur, String[] args) throws Refus {
         List<Plot> liste = plugin.plots().duJoueur(joueur.getUniqueId());
-        if (liste.isEmpty()) throw new KVPlots.Refus("Tu n'as aucun plot.");
+        if (liste.isEmpty()) throw new Refus("Tu n'as aucun plot.");
         int n = 1;
         if (args.length > 1) {
             try {
@@ -91,18 +93,18 @@ final class CommandePlot implements TabExecutor {
                 n = 0;
             }
         }
-        if (n < 1 || n > liste.size()) throw new KVPlots.Refus("Numéro entre 1 et " + liste.size() + " (voir /plot liste).");
+        if (n < 1 || n > liste.size()) throw new Refus("Numéro entre 1 et " + liste.size() + " (voir /plot liste).");
         plugin.teleporter(joueur, liste.get(n - 1));
     }
 
-    private Plot plotIci(Player joueur) throws KVPlots.Refus {
-        if (!joueur.getWorld().equals(plugin.monde())) throw new KVPlots.Refus("Tu n'es pas dans le monde des plots.");
+    private Plot plotIci(Player joueur) throws Refus {
+        if (!joueur.getWorld().equals(plugin.monde())) throw new Refus("Tu n'es pas dans le monde des plots.");
         Plot p = plugin.plotEn(joueur.getLocation().getBlockX(), joueur.getLocation().getBlockZ());
-        if (p == null) throw new KVPlots.Refus("Tu n'es sur aucun plot réservé.");
+        if (p == null) throw new Refus("Tu n'es sur aucun plot réservé.");
         return p;
     }
 
-    private void info(Player joueur) throws KVPlots.Refus {
+    private void info(Player joueur) throws Refus {
         Plot p = plotIci(joueur);
         joueur.sendMessage("§6Plot n°" + p.id + " §7(" + p.taille.nom + ", "
                 + (p.etat == Plot.Etat.VALIDE ? "validé" : "en travaux") + ")");
@@ -111,31 +113,24 @@ final class CommandePlot implements TabExecutor {
                 : p.editeurs.stream().map(CommandePlot::nom).collect(Collectors.joining(", "))));
     }
 
-    private void editeur(Player joueur, String[] args) throws KVPlots.Refus {
-        if (args.length < 3) throw new KVPlots.Refus("/plot editeur <ajouter|retirer> <pseudo>");
+    private void editeur(Player joueur, String[] args) throws Refus {
+        if (args.length < 3) throw new Refus("/plot editeur <ajouter|retirer> <pseudo>");
         Plot p = plotIci(joueur);
-        if (!p.createur.equals(joueur.getUniqueId())) {
-            throw new KVPlots.Refus("Seul le créateur du plot gère ses éditeurs.");
-        }
         OfflinePlayer cible = Bukkit.getPlayerExact(args[2]);
         if (cible == null) cible = Bukkit.getOfflinePlayerIfCached(args[2]);
-        if (cible == null) throw new KVPlots.Refus("Joueur inconnu : " + args[2] + " (il doit s'être déjà connecté).");
+        if (cible == null) throw new Refus("Joueur inconnu : " + args[2] + " (il doit s'être déjà connecté).");
         UUID u = cible.getUniqueId();
-        if (u.equals(p.createur)) throw new KVPlots.Refus("Tu es déjà le créateur de ce plot.");
         switch (args[1].toLowerCase()) {
             case "ajouter" -> {
-                if (!p.editeurs.add(u)) throw new KVPlots.Refus(nom(u) + " est déjà éditeur de ce plot.");
-                p.historiqueEditeurs.add(u);
+                plugin.ajouterEditeur(joueur, p, u);
                 joueur.sendMessage("§a" + nom(u) + " est maintenant éditeur du plot n°" + p.id + ".");
             }
             case "retirer" -> {
-                if (!p.editeurs.remove(u)) throw new KVPlots.Refus(nom(u) + " n'est pas éditeur de ce plot.");
+                plugin.retirerEditeur(joueur, p, u);
                 joueur.sendMessage("§a" + nom(u) + " n'est plus éditeur du plot n°" + p.id + ".");
             }
-            default -> throw new KVPlots.Refus("/plot editeur <ajouter|retirer> <pseudo>");
+            default -> throw new Refus("/plot editeur <ajouter|retirer> <pseudo>");
         }
-        plugin.plots().sauver();
-        plugin.majRegion(p);
     }
 
     @Override

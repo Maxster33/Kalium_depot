@@ -1,5 +1,7 @@
 package fr.kalium.kvplots;
 
+import fr.kalium.kvplots.api.Taille;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
