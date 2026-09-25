@@ -217,3 +217,53 @@ autoriser `Textinputhost` (clavier tactile Windows) si des clics échouent.
 - Erreurs de Claude, corrigées : commits incomplets (étape B du Bingo, journaux de KG_Menu), horodatages en UTC,
   journaux de serveur posés un moment dans le dossier du dépôt / dans Documents, deux dossiers de Kal-test-dev
   listés par erreur, ancien nom KaliumMenu non recherché avant le renommage (boussole du hub).
+
+### 2026-09-24 — Maxster33
+
+**Dépôt** : import du bundle `Kalium-depot.bundle` sur `Maxster33/Kalium_depot` (main + 5 étiquettes), dossier
+`historique-conversations/` créé.
+
+**Raccordement de nouveaux serveurs au proxy (étape 1 de la migration)** - fait par Claude via WinSCP, sauvegardes
+dans `_removed-config-2026-09-24/` (racine de chaque serveur) et `plugins/_removed-klm_menu-2.0.0/`,
+`plugins/_removed-voicechat-2.6.23/` (lobby) :
+- Proxy : `kalgames2`, `serveur-jeux`, `kal-test-dev` ajoutés dans `velocity.toml` (le renommage `Kixster` →
+  `Bingo` fait entre-temps par LeKiwi06 est conservé).
+- KalGames2 et Serveur Jeux (Paper neufs) : transfert Velocity activé (`paper-global.yml`), `online-mode=false`,
+  liste blanche désactivée ; plugins communs du lobby **avec leurs configurations** (Floodgate + clé du proxy,
+  BedrockSkinRestorer, VelocityCommandForward, LuckPerms (base H2 du lobby copiée), voicechat, WorldEdit, WorldGuard,
+  ConditionalEvents, PyxelRegions) + KLM_Menu 2.0.0 ; voicechat : ports 43374 / 43131.
+- Kal-Test-Dev : transfert Velocity activé (il était en `online-mode=false` SANS proxy : tout le monde pouvait s'y
+  connecter sous n'importe quel pseudo), clé Floodgate remplacée par celle du proxy, KLM_Menu 2.0.0, voicechat 45595.
+- Lobby : KLM_Menu, 3 nouvelles destinations (désactivées, à activer en jeu) ; voicechat : port 24454 → 43841.
+- Non fait : voicechat de Kixster / kal-games / proxy ; redémarrages (humain).
+- Erreurs de Claude : deux valeurs secrètes (secret Velocity, `management-server-secret`) affichées dans la
+  conversation pendant une comparaison de fichiers (jamais publiées) ; un jar ouvert par erreur dans l'éditeur de
+  WinSCP, refermé sans enregistrer.
+
+**Migration complète (après-midi du 24/09/2026)** - LeKiwi06 avait libéré KG_Bingo / KG_BingoGame :
+- kal-games et Kixster arrêtés par Maxster33, **copiés en entier** (912 Mo et 791 Mo, dossiers cachés `.paper`,
+  `.cache`, `.ai-backups` compris) sur KalGames2 et Serveur Jeux ; ancien contenu des nouveaux serveurs dans
+  `_removed-avant-migration-2026-09-24/`. Vérifié par comparaison fichier par fichier (seules différences : les
+  réglages ci-dessous).
+- Réglages : ports de jeu et voicechat des nouveaux serveurs, KG_Bingo `bingo.server-name: serveur-jeux`,
+  KG_BingoGame `network.self-server-name: "serveur-jeux"` (clé ajoutée). **Aucun changement de code** : KaliumRelay
+  ne connaît aucun nom de serveur (il relaie ceux que les plugins lui donnent), KLM_Menu des serveurs de jeu renvoie
+  seulement au lobby, et `kal-games` reste le nom du hub pour KG_BingoGame.
+- Proxy : `kal-games` → KalGames2, `event` → ancien kal-games, `kixster` → Kixster, `serveur-jeux` ; `Bingo` et
+  `kalgames2` supprimés. Lobby : destinations KLM_Menu `kixster` (désactivée), `kal-games`, `serveur-jeux`,
+  `kal-test-dev`, `event` (désactivée).
+- KG_BingoGame n'était plus actif sur Kixster (0.5.0 rangée à 11:57) : 0.5.0 réinstallée sur Serveur Jeux.
+- Ajout de Floodgate, BedrockSkinRestorer, VelocityCommandForward sur les 2 nouveaux serveurs (absents des originaux).
+- PC de Maxster33 : Java 27 installé, `telecharger-outils.sh` fait, compilation vérifiée (KaliumRelay). Sous Git Bash,
+  Java 27 n'est pas dans le PATH tant que Git Bash n'a pas été relancé : `export PATH="/c/Program Files/Java/jdk-27/bin:$PATH"`.
+- Travail désormais piloté par WinSCP.com + scripts (guide du Claude de LeKiwi06), plus par captures d'écran.
+- **Correctifs et nettoyage (fin d'après-midi du 24/09/2026)** : KalGames2 : `PlaceholderAPIScoreboardObjectivesPlaceholder.jar`
+  (extension PlaceholderAPI, pas un plugin) déplacé dans `plugins/PlaceholderAPI/expansions/`. Serveur Jeux : voicechat
+  2.6.23 rangé (2.6.24 gardé), AnvilUnlocker retiré (sans ProtocolLib, inutile au Bingo). Kixster rendu au SMP : monde
+  d'origine restauré, `bukkit.yml` sans générateur Bingo, KG_BingoGame + anciens `_removed-kalbingo/kg_bingogame` +
+  mondes ratés (`_failed_v0.1.3`, `_crashed_0.1.4`) + monde vide du Bingo (avec `bingo_lobby`) + fichier `Depot`
+  (journal envoyé par erreur à la place d'un jar le 24/09 à 12:05) rangés dans `_removed-bingo-2026-09-24/` ;
+  voicechat 2.6.24 rangé ; WorldEdit gardé ; `generate-structures=false` laissé (décisions de Maxster33).
+- **Migration confirmée par Maxster33 le 24/09/2026** (« tout a l'air de fonctionner correctement ») après redémarrage ; journaux de démarrage de KalGames2 et Serveur Jeux : Paper 26.2-122, seules erreurs = celles déjà présentes sur les originaux (jar `PlaceholderAPIScoreboardObjectivesPlaceholder.jar` illisible sur le hub ; 2 voicechat et AnvilUnlocker sans ProtocolLib sur le Bingo), non corrigées (pas demandé).
+- À faire : nettoyage de Kixster (SMP) et
+  reconversion d'Event ; KG_BoatRace (LeKiwi06) à déployer sur KalGames2.

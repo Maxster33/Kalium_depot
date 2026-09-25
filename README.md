@@ -16,6 +16,7 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 | `KLM_Menu/` | Interface globale : navigation entre serveurs, catalogue des interfaces des plugins, boîte à outils des menus (anciennement KaliumMenu) | chaque serveur Paper |
 | `KaliumRelay/` | Relais HTTP entre serveurs | proxy Velocity |
 | `KaliumCore/` | Survie (projet en pause) | Kal-Test-Dev |
+| `KS_Dimensions/` | Menu des opérateurs (`/dimensions`) pour activer / désactiver les portails du Nether et de l'End | event |
 
 - Historique détaillé de chaque plugin : `<plugin>/JOURNAL.md`.
 - `jars-deployes/` : copies des jars actuellement en service.

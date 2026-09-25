@@ -14,7 +14,7 @@ Principe : **un plugin = un rôle** ; les plugins se parlent au lieu d'être fus
 | `kal-games` | 7001 (ex KalGames2) | Hub des mini-jeux | KG_Instances, KG_Menu, KG_ScoreBoards, KG_Bingo, KG_BoatRace, KG_Parkour, KG_PvpKit, KG_Rush, KLM_Menu, KLM_Hub |
 | `serveur-jeux` | 7015 | Bingo + jeux gourmands (Manhunt...) | KG_BingoGame, KLM_Menu |
 | `kixster` | 7003 | Kixster SMP (rendu au SMP) | KLM_Menu (futur KX_Menu) |
-| `event` | 7021 (ancien kal-games) | Serveur Event, à reconvertir | à définir |
+| `event` | 7021 (ancien kal-games) | Serveur Event : survie classique (depuis le 25/09/2026), préfixe `KS_` | KLM_Menu (sans boussole, `/menu`), KS_Dimensions |
 | `kal-test-dev` | 5038 | Test survie (en pause) | KaliumCore, KLM_Menu |
 
 Les anciens noms `Bingo` et `kalgames2` n'existent plus. Tout déploiement pour le hub se fait sur 7001, pour le
@@ -77,7 +77,7 @@ KG_Menu et KG_ScoreBoards.
 |---|---|---|
 | `KLM_` | Réseau entier (proxy ou chaque serveur Paper) | KLM_Menu, KLM_Hub, KLM_Relay |
 | `KG_` | Serveur des mini-jeux (Kal-Games) | KG_Instances, KG_Menu, KG_ScoreBoards, KG_BoatRace, KG_Parkour |
-| `<XX>_` | Serveur précis, un préfixe de 2 lettres par serveur | KX_Menu, SK_Menu, KV_Menu (futurs) |
+| `<XX>_` | Serveur précis, un préfixe de 2 lettres par serveur (`KS_` = serveur Event, choisi par Maxster33 le 25/09/2026) | KS_Dimensions ; KX_Menu, SK_Menu, KV_Menu (futurs) |
 
 - Un plugin = un rôle. Le menu d'un serveur s'appelle toujours `<préfixe>_Menu`.
 - Le dossier du dépôt, le jar (`<Nom>-<version>.jar`), le nom du plugin et son dossier de données portent le même nom.
