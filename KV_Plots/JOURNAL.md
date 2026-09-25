@@ -53,5 +53,6 @@ Limites connues :
   anti-crash (config de FAWE).
 - Désactiver le « mode survie forcé » de KLM_Menu sur Kanvas.
 
-**Déployé sur Kanvas le 26/09/2026 (01:43, sans KV_Menu), en attente de redémarrage. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 26/09/2026 (01:43, sans KV_Menu), **
+**Statut : testé et confirmé par LeKiwi06 le 26/09/2026 (« tout fonctionne bien »).**
 Réglage : `monde: Kanvas` (majuscule : le dossier du monde et `level-name` s'appellent `Kanvas`).
