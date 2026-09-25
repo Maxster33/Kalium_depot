@@ -754,3 +754,17 @@ avec une vraie interface, et régler chaque checkpoint (temps ajouté, difficult
   Parcours les utilisera), enregistrés dans `arenas.yml` sous `point-settings.<liste>` (un dictionnaire par point,
   dans l'ordre), et **déplacés avec leur point** lors d'une insertion ou d'une suppression.
 **Déploiement** : avec KG_BoatRace 1.1.0 (KG_BoatRace 1.0.0 reste compatible). **Statut : déployé sur Kal-Games le 24/09/2026 à 20 h 07 (1.17.0 et arenas.yml dans `_removed-kalgames-1.17.0/`), testé et confirmé par LeKiwi06 le 24/09/2026 : 7 checkpoints posés avec l'éditeur sur la course, compteur OK.**
+
+## 1.19.0 — plus de limite de parties privées ; chaque attribution de points enregistrée (25/09/2026)
+
+**Signalé par LeKiwi06** : « sur la course de bateau les points ne sont pas comptabilisés » (.PatientLime2170 : record
+battu et points non pris en compte). Cause : la limite de **5 parties privées classées par jour et par jeu**
+(`stats.private-daily-limit`), dont la suppression avait été décidée le 24/09/2026 mais pas encore faite : à partir
+de la 6e partie privée de la journée, ni points ni records ne comptaient.
+- **Limite supprimée** pour tous les jeux (ancienne clé ignorée) : toute partie classée compte, publique ou privée,
+  solo compris. Seuls les opérateurs restent exclus (`stats.exclude-operators`).
+- **Demande de LeKiwi06** : pouvoir vérifier les parties des 7 derniers jours. Chaque match reçoit un identifiant
+  (`matchId`) et **chaque attribution** de points (PvP Kit, Parcours, Rush) et chaque temps de parcours est
+  enregistrée dans le journal de KG_ScoreBoards (`points` / `time`), **comptée ou non**, avec la raison
+  (`operateur`, `partie-non-classee`). Les jeux appellent toujours `ScoreBridge.award(partie, joueur, points)`.
+**Déploiement** : avec KG_ScoreBoards 1.5.0 (commande de vérification). **Statut : compilé, non déployé, non testé.**

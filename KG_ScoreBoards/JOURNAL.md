@@ -73,3 +73,18 @@ claires et structurées.
   million, puis « M » / « Md » avec 3 décimales au plus : 3 ; 12,5 ; 1234,56 ; 12345,7 ; 123456 ; 1,235 M ; 2,5 Md.
   (Pas de « K » : sous un million, 6 chiffres suffisent - à changer si LeKiwi06 préfère 12,35 K.)
 **Déploiement** : avec KG_BoatRace 1.3.0. **Statut : déployé sur Kal-Games le 24/09/2026 à 21 h 14, points décimaux crédités en course (testé).**
+
+## 1.5.0 — vérification des parties des derniers jours (25/09/2026)
+
+**Demande de LeKiwi06** : « que la façon dont tu as récupéré les games des dernières 24 h puisse vérifier les games des
+7 derniers jours », puis « oui, mets en place cette sécurité ».
+- `GameAudit` + commande **`/classements verifier [jours]`** (7 par défaut, 62 au plus ; permission
+  `kgscoreboards.audit`, opérateurs) : relit le journal des parties et liste ce qui n'a pas été compté : points et
+  temps (KalGames 1.19.0+, `counted: false`), meilleur tour de chaque course de bateau non classée, points (cumul)
+  d'une course de bateau non classée. Les opérateurs sont écartés. Chaque élément a un identifiant court.
+- **`/classements crediter <id|tout> [jours]`** : ajoute les points / enregistre le temps ou le tour dans les
+  classements (général et du mois), puis écrit un événement `credit` dans le journal : un élément crédité n'est plus
+  jamais proposé (pas de double crédit).
+- Testé hors serveur sur le journal réel : retrouve les 195 + 46,5 points et le tour de 37,2 s de .PatientLime2170
+  (courses non classées à cause de l'ancienne limite), et le meilleur tour de LeKiwi06 du 24/09 à 20 h 55.
+**Déploiement** : avec KalGames 1.19.0. **Statut : compilé, non déployé, non testé en jeu.**

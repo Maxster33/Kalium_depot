@@ -6,3 +6,15 @@ description: Classements des mini-jeux (points, meilleurs temps, archives mensue
 authors: [KaLium]
 # 1.1.0 : boite a outils des menus et catalogue des interfaces.
 depend: [KLM_Menu, KG_Menu]
+
+# 1.5.0 : verification des parties des derniers jours et credit des points / temps non comptes (operateurs).
+commands:
+  classements:
+    description: Classements - verifier les parties des derniers jours et crediter ce qui n'a pas ete compte.
+    usage: /<command> <verifier [jours]|crediter <id|tout> [jours]>
+    permission: kgscoreboards.audit
+
+permissions:
+  kgscoreboards.audit:
+    description: Verifier les parties des derniers jours et crediter les points non comptes.
+    default: op

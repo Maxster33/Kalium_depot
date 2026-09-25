@@ -375,9 +375,10 @@ public final class RaceInstance extends GameInstance {
             racer.next++;
             racer.segmentStart = System.currentTimeMillis();
             racer.noticeUntil = racer.segmentStart + 1500;
-            int points = ranked(player) ? Math.max(0, minigame().getInt("points-checkpoint", boats ? 0 : 1)) : 0;
-            if (points > 0) {
-                plugin.scores().award(player, minigame(), points, true);
+            int points = Math.max(0, minigame().getInt("points-checkpoint", boats ? 0 : 1));
+            // 1.19.0 : attribution toujours transmise (journal), comptee ou non selon la partie et le joueur.
+            if (!plugin.scores().award(this, player, points)) {
+                points = 0;
             }
             player.sendActionBar(points > 0
                     ? t("race.checkpoint-points", "<green>Point de contrôle <white><n>/<total></white> <gold>+<points> pt(s)",
@@ -518,12 +519,11 @@ public final class RaceInstance extends GameInstance {
         broadcast(t("race.finished", "<aqua><name></aqua> <green>termine <white>n°<rank></white> en <white><time></white>.",
                 "name", player.getName(), "rank", racer.rank, "time", formatTime(racer.finishMillis)));
         // Course de bateau : ce sont les temps sur 1 tour (enregistres a chaque tour) qui sont classes.
-        if (!boats && plugin.scores().recordTime(player, minigame(), racer.finishMillis, ranked(player))) {
+        if (!boats && plugin.scores().recordTime(this, player, racer.finishMillis)) {
             player.sendMessage(plugin.prefix().append(t("race.record", "<light_purple>Nouveau record personnel : <white><time></white> !",
                     "time", formatTime(racer.finishMillis))));
         }
-        if (points > 0 && ranked(player)) {
-            plugin.scores().award(player, minigame(), points, true);
+        if (plugin.scores().award(this, player, points)) {
             player.sendMessage(plugin.prefix().append(t("race.points", "<gold>+<points> point(s)", "points", points)));
         }
         player.showTitle(net.kyori.adventure.title.Title.title(
@@ -675,9 +675,8 @@ public final class RaceInstance extends GameInstance {
             racer.rank = position;
             Player player = Bukkit.getPlayer(entry.getKey());
             if (player != null) {
-                int points = ranked(player) ? Math.max(0, minigame().getInt("points-win", 3) - (racer.rank - 1)) : 0;
-                if (points > 0) {
-                    plugin.scores().award(player, minigame(), points, true);
+                int points = Math.max(0, minigame().getInt("points-win", 3) - (racer.rank - 1));
+                if (plugin.scores().award(this, player, points)) {
                     player.sendMessage(plugin.prefix().append(t("race.points", "<gold>+<points> point(s)", "points", points)));
                 }
             }

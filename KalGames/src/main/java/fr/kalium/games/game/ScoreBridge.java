@@ -52,15 +52,58 @@ public final class ScoreBridge {
      * transmis au datapack. ranked = false : la partie ne compte pas (entrainement...).
      */
     public void award(Player player, Minigame minigame, int points, boolean ranked) {
-        if (points <= 0 || !ranked || excluded(player)) {
-            return;
+        award(player, minigame, points, ranked, null);
+    }
+
+    /**
+     * 1.19.0 : version reliee a une partie (identifiant de match dans le journal). Renvoie true si les points ont ete
+     * comptes. Chaque attribution, comptee ou non, est enregistree dans le journal de KG_ScoreBoards (evenement
+     * « points », avec la raison si elle n'est pas comptee) : la commande /classements verifier de KG_ScoreBoards
+     * retrouve ainsi les points non comptes des derniers jours et permet de les crediter.
+     */
+    public boolean award(GameInstance game, Player player, int points) {
+        return award(player, game.minigame(), points, game.ranked(player), game);
+    }
+
+    private boolean award(Player player, Minigame minigame, int points, boolean ranked, GameInstance game) {
+        if (points <= 0) {
+            return false;
+        }
+        String reason = excluded(player) ? "operateur" : !ranked ? "partie-non-classee" : null;
+        log(minigame, "points", player, game, reason, "points", points);
+        if (reason != null) {
+            return false;
         }
         plugin.stats().addPoints(minigame.id(), player.getUniqueId(), player.getName(), points);
         plugin.ranking().boards().refreshSoon();
         if (!plugin.getConfig().getBoolean("scoring.bridge.enabled", true)) {
-            return;
+            return true; // comptes ; passerelle vers le datapack desactivee
         }
         run(plugin.getConfig().getStringList("scoring.bridge.win-commands"), player.getName(), points, minigame);
+        return true;
+    }
+
+    /** 1.19.0 : evenement du journal des parties de KG_ScoreBoards (voir award). */
+    private void log(Minigame minigame, String type, Player player, GameInstance game, String reason, String valueKey, Object value) {
+        java.util.Map<String, Object> fields = new java.util.LinkedHashMap<>();
+        fields.put("match", game == null ? null : game.matchId());
+        fields.put("arena", game == null ? null : game.arena().id());
+        fields.put("public", game == null ? null : game.isPublic());
+        fields.put("player", player.getUniqueId().toString());
+        fields.put("name", player.getName());
+        fields.put("platform", player.getUniqueId().getMostSignificantBits() == 0 ? "bedrock" : "java");
+        fields.put(valueKey, value);
+        fields.put("counted", reason == null);
+        fields.put("reason", reason);
+        plugin.ranking().log(minigame.id(), type, fields);
+    }
+
+    /** 1.19.0 : temps d'une course reliee a une partie, enregistre dans le journal (evenement « time »). */
+    public boolean recordTime(GameInstance game, Player player, long millis) {
+        boolean ranked = game.ranked(player);
+        String reason = excluded(player) ? "operateur" : !ranked ? "partie-non-classee" : null;
+        log(game.minigame(), "time", player, game, reason, "millis", millis);
+        return recordTime(player, game.minigame(), millis, ranked);
     }
 
     /** Temps d'une course : garde le meilleur temps du joueur. Renvoie true si c'est son record personnel. */

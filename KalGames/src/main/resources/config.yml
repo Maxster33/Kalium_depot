@@ -99,9 +99,7 @@ scoring:
 stats:
   # Les parties privees comptent pour les classements et le datapack.
   count-private-games: true
-  # Parties privees : nombre maximum de parties par jour, par joueur et par jeu, dont les points comptent
-  # pour les classements (0 = pas de limite). Le jour change a minuit dans le fuseau ci-dessus.
-  private-daily-limit: 5
+  # 1.19.0 : plus de limite de parties privees classees par jour (ancienne cle private-daily-limit ignoree).
   # Les points et temps des operateurs (OP) ne comptent pas pour les classements.
   exclude-operators: true
 

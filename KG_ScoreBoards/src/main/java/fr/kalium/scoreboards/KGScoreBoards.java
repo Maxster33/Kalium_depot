@@ -128,7 +128,101 @@ public final class KGScoreBoards extends JavaPlugin {
                         (p, back) -> openList(p, true, back)));
             }
         }, this, org.bukkit.plugin.ServicePriority.Normal);
+        // 1.5.0 : /classements verifier | crediter (voir GameAudit).
+        org.bukkit.command.PluginCommand audit = getCommand("classements");
+        if (audit != null) {
+            audit.setExecutor(this::onAudit);
+        }
         getLogger().info("KG_ScoreBoards actif.");
+    }
+
+    // ------------------------------------------------------------------ 1.5.0 : verification des parties
+
+    private fr.kalium.scoreboards.data.GameAudit audit() {
+        return new fr.kalium.scoreboards.data.GameAudit(getDataFolder(), stats.zone(),
+                uuid -> Bukkit.getOfflinePlayer(uuid).isOp() && getConfig().getBoolean("stats.exclude-operators", true));
+    }
+
+    private boolean onAudit(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+        if (args.length == 0 || !(args[0].equalsIgnoreCase("verifier") || args[0].equalsIgnoreCase("crediter"))) {
+            sender.sendMessage("/" + label + " verifier [jours]  - liste ce qui n'a pas ete compte (7 jours par defaut)");
+            sender.sendMessage("/" + label + " crediter <id|tout> [jours]  - credite un element (ou tous) de la liste");
+            return true;
+        }
+        boolean credit = args[0].equalsIgnoreCase("crediter");
+        if (credit && args.length < 2) {
+            sender.sendMessage("Precisez l'identifiant (voir /" + label + " verifier) ou « tout ».");
+            return true;
+        }
+        int days = 7;
+        String daysText = credit ? (args.length > 2 ? args[2] : null) : (args.length > 1 ? args[1] : null);
+        if (daysText != null) {
+            try {
+                days = Math.max(1, Math.min(62, Integer.parseInt(daysText)));
+            } catch (NumberFormatException e) {
+                sender.sendMessage("Nombre de jours invalide : " + daysText);
+                return true;
+            }
+        }
+        int span = days;
+        String target = credit ? args[1] : null;
+        fr.kalium.scoreboards.data.GameAudit audit = audit();
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            List<fr.kalium.scoreboards.data.GameAudit.Missing> missing;
+            try {
+                missing = audit.scan(span);
+            } catch (java.io.IOException e) {
+                Bukkit.getScheduler().runTask(this, () -> sender.sendMessage("Lecture du journal impossible : " + e.getMessage()));
+                return;
+            }
+            Bukkit.getScheduler().runTask(this, () -> {
+                if (!credit) {
+                    showAudit(sender, missing, span, label);
+                } else {
+                    creditAudit(sender, missing, target);
+                }
+            });
+        });
+        return true;
+    }
+
+    private void showAudit(CommandSender sender, List<fr.kalium.scoreboards.data.GameAudit.Missing> missing, int days, String label) {
+        if (missing.isEmpty()) {
+            sender.sendMessage("Rien de non compte sur les " + days + " derniers jours.");
+            return;
+        }
+        sender.sendMessage("Non compte sur les " + days + " derniers jours : " + missing.size() + " element(s).");
+        java.time.format.DateTimeFormatter format = java.time.format.DateTimeFormatter.ofPattern("dd/MM HH:mm");
+        for (fr.kalium.scoreboards.data.GameAudit.Missing m : missing) {
+            String value = m.kind().equals("points") ? fr.kalium.scoreboards.data.StatsService.formatPoints(m.value()) + " pts"
+                    : fr.kalium.scoreboards.data.StatsService.formatTime((long) m.value());
+            sender.sendMessage(" [" + m.id() + "] " + m.at().format(format) + " " + m.game() + " " + m.name() + " : " + m.kind()
+                    + " " + value + " (" + m.reason() + ")");
+        }
+        sender.sendMessage("Pour crediter : /" + label + " crediter <id> ou /" + label + " crediter tout");
+    }
+
+    private void creditAudit(CommandSender sender, List<fr.kalium.scoreboards.data.GameAudit.Missing> missing, String target) {
+        int count = 0;
+        for (fr.kalium.scoreboards.data.GameAudit.Missing m : missing) {
+            if (!target.equalsIgnoreCase("tout") && !target.equalsIgnoreCase(m.id())) {
+                continue;
+            }
+            String name = m.name() == null ? "?" : m.name();
+            switch (m.kind()) {
+                case "points" -> stats.addPoints(m.game(), m.player(), name, m.value());
+                case "temps" -> stats.recordTime(m.game(), m.player(), name, (long) m.value());
+                case "tour" -> stats.recordLap(m.game(), m.player(), name, (long) m.value());
+                default -> {
+                    continue;
+                }
+            }
+            log(m.game(), "credit", fr.kalium.scoreboards.data.GameAudit.creditFields(m, sender.getName()));
+            count++;
+        }
+        boards.refreshSoon();
+        sender.sendMessage(count == 0 ? "Aucun element correspondant (voir /classements verifier)."
+                : count + " element(s) credite(s) dans les classements (general et du mois).");
     }
 
     @Override

@@ -805,7 +805,7 @@ public final class RushInstance extends GameInstance {
                 continue;
             }
             names.add(player.getName());
-            plugin.scores().award(player, minigame(), points, ranked(player));
+            plugin.scores().award(this, player, points);
         }
         broadcast(t("rush.win", "<green>Victoire de l'équipe <team> ! <gray>(<names>) <gold>+<points> point(s)</gold> chacun.",
                 "team", RushItems.teamName(winner), "names", String.join(", ", names), "points", points));

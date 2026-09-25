@@ -73,8 +73,6 @@ public abstract class GameInstance {
      * mode spectateur (vol libre) jusqu'a la fin du match, comme les vrais spectateurs.
      */
     protected final Set<UUID> matchSpectators = new LinkedHashSet<>();
-    /** Partie privee : joueurs dont les points comptent pour le classement (limite de parties par jour). */
-    private final Set<UUID> countedPrivate = new java.util.HashSet<>();
     protected UUID host;
     protected String code = "";
     protected boolean listed;
@@ -253,14 +251,22 @@ public abstract class GameInstance {
         if (!ranked() || plugin.scores().excluded(player)) {
             return false;
         }
-        return publicGame || countedPrivate.contains(player.getUniqueId());
+        // 1.19.0 : plus de limite de parties privees classees par jour (decision de LeKiwi06 du 24/09/2026, obsolete
+        // avec les nouveaux baremes) : toute partie classee compte, publique ou privee, solo compris.
+        return true;
     }
 
     /** Appele au lancement de chaque match : compte les parties privees du jour et previent les joueurs concernes. */
+    /** 1.19.0 : identifiant unique du match en cours (journal de KG_ScoreBoards). */
+    private String matchId = java.util.UUID.randomUUID().toString();
+
+    public String matchId() {
+        return matchId;
+    }
+
     private void prepareRanking() {
-        countedPrivate.clear();
+        matchId = java.util.UUID.randomUUID().toString();
         boolean ranked = ranked();
-        int limit = plugin.getConfig().getInt("stats.private-daily-limit", 5);
         for (UUID uuid : participants) {
             Player player = Bukkit.getPlayer(uuid);
             if (player == null) {
@@ -270,22 +276,6 @@ public abstract class GameInstance {
                 player.sendMessage(plugin.prefix().append(t("rank.op-notice",
                         "<gray>Mode opérateur : vos points et temps <white>ne comptent pas</white> pour le classement.")));
                 continue;
-            }
-            if (publicGame || !ranked) {
-                continue;
-            }
-            int n = plugin.stats().claimPrivateGame(minigame.id(), uuid, limit);
-            if (n < 0) {
-                countedPrivate.remove(uuid);
-                player.sendMessage(plugin.prefix().append(t("rank.private-limit",
-                        "<yellow>Limite atteinte : vous avez déjà joué <n> parties privées classées aujourd'hui à ce jeu. Vos points et temps <white>ne compteront pas</white> pour le classement dans cette partie.",
-                        "n", limit)));
-            } else {
-                countedPrivate.add(uuid);
-                if (limit > 0) {
-                    player.sendMessage(plugin.prefix().append(t("rank.private-count",
-                            "<gray>Partie privée classée <white><n>/<limit></white> aujourd'hui à ce jeu.", "n", n, "limit", limit)));
-                }
             }
         }
     }

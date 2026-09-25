@@ -684,7 +684,7 @@ public final class PvpInstance extends GameInstance {
                     continue;
                 }
                 names.add(player.getName());
-                plugin.scores().award(player, minigame(), points, ranked(player));
+                plugin.scores().award(this, player, points);
             }
             Collections.sort(names);
             broadcast(t(rounds > 1 ? "pvp.round-win" : "pvp.win",
