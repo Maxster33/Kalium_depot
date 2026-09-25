@@ -16,11 +16,14 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_Dimensions — Maxster33 — depuis le 2026-09-25 18:51 — nouveau plugin (serveur Event) : /dimensions (opérateurs), menu pour activer / désactiver les portails du Nether et de l'End
+- Serveur Event (hors plugins) — Maxster33 — depuis le 2026-09-25 18:51 — reconversion en survie classique : nouvelle map, retrait des plugins KalGames, KLM_Menu sans boussole (/menu)
 
 
 
 ## Requis parfois
 
+- KalGames, KG_Bingo, KG_ScoreBoards, KLM_Menu — Maxster33 — depuis le 2026-09-25 18:51 — retirés (ou config KLM_Menu) sur le serveur Event uniquement, aucun changement de code ; ne pas redéployer sur Event
 
 
 ## Demandes
