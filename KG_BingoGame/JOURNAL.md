@@ -1503,3 +1503,18 @@ pas le bon nom).
 - À la recréation, le nom personnalisé est relu dans la copie enregistrée (SNBT, `CustomName`) et réappliqué
   explicitement, ainsi que son affichage permanent (`CustomNameVisible`). Pas besoin de recapturer.
 **Déploiement** : seul, sur Serveur Jeux. **Statut : compilé, non déployé, non testé en jeu.**
+
+## 0.7.5 — positions de capture de la salle d'attente conservées (25/09/2026)
+
+**Demandé par LeKiwi06** : « note bien les coordonnées de la dernière recapture pour éviter de les perdre au restart ».
+- Les coins et le point d'apparition ne sont plus gardés en mémoire par joueur : ce sont les derniers définis (par
+  n'importe quel opérateur), enregistrés dans `plugins/KG_BingoGame/lobby_capture.yml` à chaque pos1/pos2/spawn et
+  rechargés au démarrage. `/bingoadmin lobby capture` suffit après un redémarrage, y compris depuis la console.
+- `/bingoadmin lobby info` affiche aussi les trois positions (marche depuis la console). Chaque définition et chaque
+  capture écrit les coordonnées dans la console.
+- Positions de la capture du 25/09 à 20 h 57, retrouvées à partir des 12 cristaux de l'End (position dans le modèle
+  comparée à leur position dans le monde, résultat identique pour les 12) : monde `bingo_lobby`, coin 1 `-70 62 -13`,
+  coin 2 `-8 108 67` (63x47x81), apparition `-14.63 78.94 3.48` (orientation 150.6 / 27.1). Elles seront déposées dans
+  `lobby_capture.yml` au déploiement.
+- Inclut 0.7.4.
+**Déploiement** : seul, sur Serveur Jeux. **Statut : compilé, non déployé, non testé en jeu.**

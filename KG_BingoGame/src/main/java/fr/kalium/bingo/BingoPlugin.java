@@ -261,7 +261,7 @@ public class BingoPlugin extends JavaPlugin {
         PartyCanceller partyCanceller = new PartyCanceller(partyManager, lobbySlots, assignmentService,
                 instanceWorldPreparer, partyStatusNotifier, partyCountdownService);
 
-        LobbyCaptureService lobbyCaptureService = new LobbyCaptureService(lobbyTemplateService, lobbySlots);
+        LobbyCaptureService lobbyCaptureService = new LobbyCaptureService(lobbyTemplateService, lobbySlots, getDataFolder(), getLogger());
 
         var adminCommand = new BingoAdminCommand(lobbyCaptureService, partyStarter, gameManager, objectiveLibrary);
         getCommand("bingoadmin").setExecutor(adminCommand);

@@ -71,8 +71,17 @@ public class BingoAdminCommand implements CommandExecutor {
             sender.sendMessage("§7Astuce : /menu propose un menu graphique équivalent pour la salle d'attente.");
             return true;
         }
+        // 0.7.5 : capture et info possibles depuis la console (positions enregistrees, voir LobbyCaptureService).
+        if (args[1].equalsIgnoreCase("capture")) {
+            lobbyCaptureService.capture(sender);
+            return true;
+        }
+        if (args[1].equalsIgnoreCase("info")) {
+            lobbyCaptureService.sendInfo(sender);
+            return true;
+        }
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cCommande reservee aux joueurs (necessite une position).");
+            sender.sendMessage("§cCommande réservée aux joueurs (nécessite une position) : seuls capture et info marchent depuis la console.");
             return true;
         }
 
