@@ -16,12 +16,14 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KV_Plots — LeKiwi06 — depuis le 2026-09-26 00:30 — création (grille de plots, réservation, protection) ; cahier des charges complété
+- KV_Plots — LeKiwi06 — depuis le 2026-09-26 00:30 — création (grille de plots, réservation, protection) ; cahier des charges complété ; API pour KV_Menu
+- KV_Menu — LeKiwi06 — depuis le 2026-09-26 00:50 — création (interface des plots de Kanvas)
 
 
 
 ## Requis parfois
 
+- KLM_Menu — LeKiwi06 — depuis le 2026-09-26 00:50 — compilation de KV_Menu contre sa boîte à outils (aucune modification)
 
 
 ## Demandes
