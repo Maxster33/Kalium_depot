@@ -156,8 +156,8 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
 - Éléments inutilisés, à supprimer lors d'une prochaine version (commentaires et journaux obsolètes déjà corrigés
   le 24/09/2026, dans les versions non déployées) : `bingo.max-party-size` dans KG_Bingo.
 - **Secret de transfert Velocity** (`forwarding.secret`) : affiché par erreur dans une conversation Claude le
-  24/09/2026 (jamais publié dans le dépôt) : **à changer** (proxy + panneau Minestrator de chaque serveur, puis
-  redémarrages).
+  24/09/2026. Vérifié le 25/09/2026 : absent du dépôt et de tout son historique. Décision de LeKiwi06 : pas de
+  changement tant qu'il n'est pas publié sur GitHub.
 - **Jeton du relais** : l'ancien jeton, publié dans le dépôt public, a été remplacé le 24/09/2026 sur les 3
   serveurs ; le nouveau n'est écrit que sur les serveurs. Plus aucun jeton dans le code (KaliumRelay 1.1.1).
 - Vus dans les journaux, non touchés (pas demandé) : proxy `geyserupdater-spigot.jar` (plugin Spigot sur
@@ -242,7 +242,6 @@ Format : `### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici 
   revente contre de l'argent réel, traçabilité des objets de valeur).
 
 **À faire / à savoir**
-- **Changer le secret de transfert Velocity** (exposé dans la conversation, voir « Points ouverts »).
 - Capturer la nouvelle salle d'attente du Bingo ; tester Nether / End de la 0.6.0 et 2 parties simultanées.
 - Suite de KG_BoatRace (étapes 4, 5, 6) puis KG_Parkour.
 - Erreurs de Claude, corrigées : un journal envoyé à la place d'un jar (chemin avec espaces, contourné par des

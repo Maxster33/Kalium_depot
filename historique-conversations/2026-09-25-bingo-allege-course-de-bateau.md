@@ -27,5 +27,5 @@
 - Points décimaux : affichage sans « K » sous un million (6 chiffres), « M » / « Md » ensuite.
 
 ## Reste à faire
-- Changer le secret de transfert Velocity ; capturer la nouvelle salle d'attente du Bingo.
+- Capturer la nouvelle salle d'attente du Bingo (secret Velocity : gardé, décision de LeKiwi06, absent du dépôt).
 - KG_BoatRace étapes 4, 5, 6 ; KG_Parkour ; architecture cible.
