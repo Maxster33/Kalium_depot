@@ -1539,8 +1539,8 @@ ServerLoadEvent), donc jamais chargé.
 - Les positions sont maintenant chargées au premier usage (menu, `/bingoadmin lobby ...`, capture), une fois le monde
   prêt. `lobby_capture.yml` n'avait pas été modifié (toujours celui déposé à 21 h 18).
 - Inclut 0.7.6 (barrières non recopiées).
-**Déploiement** : seul, sur Serveur Jeux, le 25/09/2026 à 21 h 23 (0.7.5 et 0.7.6 dans leurs `_removed-…`).
-**Statut : déployé, non testé en jeu.**
+**Déploiement** : seul, sur Serveur Jeux, le 25/09/2026 à 21 h 23 (0.7.5 et 0.7.6 dans leurs `_removed-…`), remplacée
+par 0.7.8 à 21 h 31 (`_removed-kg_bingogame-0.7.7`). **Statut : non testée en jeu (tests à faire avec 0.7.8).**
 
 ## 0.7.8 — XP retirée entre les parties, convertie en points bonus (25/09/2026)
 
@@ -1557,4 +1557,5 @@ Mise en œuvre :
   (PlayerResetService.reset / remise à zéro différée).
 - Résumé de fin : « Équipe A : 42 pts (… + 1,5 XP) », solo « Pseudo 12 (dont 0,8 XP) » ; idem dans le menu du
   résumé (SummaryMenu) et dans la console.
-**Déploiement** : seul, sur Serveur Jeux. **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : seul, sur Serveur Jeux, le 25/09/2026 à 21 h 31 (inclut 0.7.4 à 0.7.7). **Statut : déployé, non testé
+en jeu.**

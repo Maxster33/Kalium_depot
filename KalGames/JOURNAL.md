@@ -777,4 +777,5 @@ joueur quand il les passe ». Le retour au point de contrôle reprenait l'orient
   (yaw et pitch) de la caméra du joueur à ce moment. Vaut pour toutes les courses de RaceInstance (Parcours et
   courses de bateaux de KalGames). Le départ garde l'orientation de l'arène.
 - Correctif mis dans KalGames en attendant le futur KG_Parkour (demande de LeKiwi06).
-**Déploiement** : seul, sur kal-games. **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : seul, sur kal-games, le 25/09/2026 à 21 h 31 (`_removed-kalgames-1.19.0`). **Statut : déployé, non
+testé en jeu.**
