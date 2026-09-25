@@ -1448,3 +1448,16 @@ achievements de nos coéquipiers et adversaires ».
   (coéquipiers et adversaires, pas ceux qui ont abandonné) ; celle d'un joueur hors partie (salle d'attente, après une
   partie) seulement aux joueurs hors partie. Le succès est toujours obtenu normalement.
 **Déploiement** : seul, sur Serveur Jeux (7015). **Statut : compilé, non déployé, non testé en jeu.**
+
+## 0.7.1 — correctif : préparation des maps bloquée à 0 % (25/09/2026)
+
+**Signalé par LeKiwi06** : « la partie restait à 0 % de préparation ».
+- Cause (journal du 25/09, 16 h 18-16 h 20) : une partie annulée pendant sa préparation (tous les joueurs partis) a
+  vu ses maps supprimées alors que des chunks étaient en cours de génération ; ces demandes ne se terminaient jamais
+  et le compteur « chunks en cours », commun à tout le serveur (0.6.0), restait bloqué au maximum : plus aucun terrain
+  n'avançait, la partie suivante restait à 0 %. Bug présent depuis la 0.6.0.
+- Correctif : chaque terrain compte ses propres demandes en cours ; celles d'une map supprimée ne comptent plus.
+- Rappel : la préparation démarre dès que le créateur arrive sur Serveur Jeux (quelques secondes après la création
+  sur le hub) ; la vitesse dépend de `instances.pregeneration-chunks-per-second` (20) et
+  `instances.pregeneration-stagger-seconds` (10), pas de `lobby.blocks-per-tick` (salle d'attente).
+**Déploiement** : seul, sur Serveur Jeux (7015). **Statut : compilé, non déployé, non testé en jeu.**

@@ -82,7 +82,6 @@ public final class InstanceWorldPreparer {
     private long tick;
     private long nextCreationTick;
     private double chunkCredit;
-    private int chunksInFlight;
 
     public InstanceWorldPreparer(JavaPlugin plugin, Logger logger, InstanceWorldManager worldManager,
                                   String worldNamePrefix, Duration stagger, int radiusBlocks,
@@ -238,9 +237,24 @@ public final class InstanceWorldPreparer {
     }
 
     /** Demande de nouveaux chunks dans la limite du debit et du nombre de chunks en cours (voir en-tete). */
+    /**
+     * 0.7.1 : chunks en cours = somme des demandes en attente des terrains ENCORE actifs. En 0.6.0 / 0.7.0 c'etait un
+     * compteur global : les demandes d'une map supprimee en cours de route (partie annulee) ne se terminaient jamais
+     * et bloquaient ce compteur au maximum : plus aucun terrain n'avancait (partie bloquee a 0 %, 25/09/2026).
+     */
+    private int chunksInFlight() {
+        int total = 0;
+        for (ChunkJob job : jobs) {
+            if (!job.stopped) {
+                total += job.pending;
+            }
+        }
+        return total;
+    }
+
     private void pumpChunks() {
         chunkCredit = Math.min(chunkCredit + chunksPerTick, Math.max(1.0, chunksPerTick));
-        while (chunkCredit >= 1.0 && chunksInFlight < maxChunksInFlight) {
+        while (chunkCredit >= 1.0 && chunksInFlight() < maxChunksInFlight) {
             ChunkJob job = nextJob();
             if (job == null) {
                 return;
@@ -271,6 +285,8 @@ public final class InstanceWorldPreparer {
         private final int total;
         private final long startedAt = System.currentTimeMillis();
         private int done;
+        /** Demandes de chunks envoyees et pas encore terminees. */
+        private int pending;
         private boolean stopped;
 
         ChunkJob(World world, String gameId, Deque<int[]> queue, boolean overworld) {
@@ -295,7 +311,7 @@ public final class InstanceWorldPreparer {
 
         void requestNext() {
             int[] chunk = queue.poll();
-            chunksInFlight++;
+            pending++;
             world.getChunkAtAsync(chunk[0], chunk[1], true).whenComplete((c, error) -> {
                 if (Bukkit.isPrimaryThread()) {
                     onChunkDone();
@@ -306,7 +322,7 @@ public final class InstanceWorldPreparer {
         }
 
         private void onChunkDone() {
-            chunksInFlight--;
+            pending--;
             done++;
             if (!stopped && done == total) {
                 if (overworld) {
