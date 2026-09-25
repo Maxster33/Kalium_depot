@@ -1502,7 +1502,7 @@ l'End et 7 vaches) : « les vaches ne sont pas bien nommées » (les copies de �
 pas le bon nom).
 - À la recréation, le nom personnalisé est relu dans la copie enregistrée (SNBT, `CustomName`) et réappliqué
   explicitement, ainsi que son affichage permanent (`CustomNameVisible`). Pas besoin de recapturer.
-**Déploiement** : seul, sur Serveur Jeux. **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : seul, sur Serveur Jeux. **Statut : déployée avec 0.7.5 le 25/09/2026 à 21 h 18, non testée en jeu.**
 
 ## 0.7.5 — positions de capture de la salle d'attente conservées (25/09/2026)
 
