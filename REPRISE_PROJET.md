@@ -250,6 +250,29 @@ Format : `### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici 
   scripts WinSCP) ; secret Velocity affiché pendant une vérification ; méthode supprimée par erreur lors d'une
   modification (vue à la compilation).
 
+### 2026-09-25 (soir) — LeKiwi06
+
+*(Session du 25/09/2026 après-midi et soir. Fin de session : réservations KG_BingoGame et KalGames libérées.)*
+
+**Déployé et testé (« tout est bon »)**
+- KalGames 1.19.0 + KG_ScoreBoards 1.5.0 : plus de limite de parties privées, chaque attribution de points journalisée,
+  `/classements verifier [jours]` et `/classements crediter` (points de course non comptés recrédités).
+- KalGames 1.19.1 : aux points de contrôle (Parcours et courses), le retour garde l'orientation de la caméra du joueur
+  au moment du passage (correctif mis dans KalGames en attendant KG_Parkour).
+- KG_BingoGame 0.7.2 → 0.7.8 : préparation des maps débloquée (plus de blocage à 0 %), succès limités à la partie ;
+  salle d'attente invincible, nether star bloquée, plaques de pression, entités recopiées (invulnérables, avec leur
+  nom), barrières non recopiées ; positions de capture gardées dans `plugins/KG_BingoGame/lobby_capture.yml`
+  (`/bingoadmin lobby capture` et `info` marchent aussi depuis la console) ; XP remise à zéro au lancement et en fin de
+  partie, convertie en bonus (0,1 point par niveau, solo et équipe, sans cumul ni multiplicateur).
+- Salle d'attente du Bingo (monde `bingo_lobby`) : coin 1 `-69 63 -14`, coin 2 `-5 108 67`, apparition
+  `-13.49 79 2.77`.
+
+**À faire / à savoir**
+- KG_Parkour à créer (cahier des charges dans le dépôt) ; suite de KG_BoatRace (étapes 4, 5, 6).
+- Kanvas : cahier `KV_Plots/CAHIER_DES_CHARGES.md` en local chez LeKiwi06 (non poussé), questions restantes, tri des
+  plugins, zone Build Battle à sauvegarder.
+- Bingo : tester Nether / End et 2 parties simultanées.
+
 ### 2026-09-25 — Maxster33
 
 **Serveur Event reconverti en survie classique** (demande de Maxster33, faite par son Claude, WinSCP en ligne de
