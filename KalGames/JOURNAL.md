@@ -767,4 +767,4 @@ de la 6e partie privée de la journée, ni points ni records ne comptaient.
   (`matchId`) et **chaque attribution** de points (PvP Kit, Parcours, Rush) et chaque temps de parcours est
   enregistrée dans le journal de KG_ScoreBoards (`points` / `time`), **comptée ou non**, avec la raison
   (`operateur`, `partie-non-classee`). Les jeux appellent toujours `ScoreBridge.award(partie, joueur, points)`.
-**Déploiement** : avec KG_ScoreBoards 1.5.0 (commande de vérification). **Statut : compilé, non déployé, non testé.**
+**Déploiement** : avec KG_ScoreBoards 1.5.0 (commande de vérification). **Statut : déployé le 25/09/2026 à 20 h 37, testé et confirmé par LeKiwi06 le 25/09/2026.**

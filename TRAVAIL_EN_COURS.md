@@ -16,8 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KG_ScoreBoards — LeKiwi06 — depuis le 2026-09-25 20:30 — vérification des 7 derniers jours (points non comptés) et crédit des oublis
-- KalGames — LeKiwi06 — depuis le 2026-09-25 19:20 — suppression de la limite de 5 parties privées par jour ; toutes les attributions de points enregistrées dans le journal
 
 
 

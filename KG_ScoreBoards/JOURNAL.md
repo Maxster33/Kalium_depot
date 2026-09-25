@@ -87,4 +87,4 @@ claires et structurées.
   jamais proposé (pas de double crédit).
 - Testé hors serveur sur le journal réel : retrouve les 195 + 46,5 points et le tour de 37,2 s de .PatientLime2170
   (courses non classées à cause de l'ancienne limite), et le meilleur tour de LeKiwi06 du 24/09 à 20 h 55.
-**Déploiement** : avec KalGames 1.19.0. **Statut : compilé, non déployé, non testé en jeu.**
+**Déploiement** : avec KalGames 1.19.0. **Statut : déployé le 25/09/2026 à 20 h 37 (stats.yml d'avant dans `_removed-kg_scoreboards-1.4.0/`), testé et confirmé par LeKiwi06 le 25/09/2026 : oublis de .PatientLime2170 crédités avec `/classements crediter`, scores à jour.**
