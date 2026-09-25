@@ -1,0 +1,6 @@
+name: KS_LootEntites
+version: '${project.version}'
+main: fr.kalium.lootentites.KSLootEntites
+api-version: '26.2'
+description: Loots des mobs du serveur Event (golem, pigmen, sorciere, calmars, wither squelette, chair putrefiee, endermite, warden).
+authors: [KaLium]

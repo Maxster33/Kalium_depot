@@ -16,8 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_LootBlocs — Maxster33 — depuis le 2026-09-25 21:22 — nouveau plugin (serveur Event), voir KS_Event/CAHIER_DES_CHARGES.md
-- KS_LootEntites — Maxster33 — depuis le 2026-09-25 21:22 — nouveau plugin (serveur Event), voir KS_Event/CAHIER_DES_CHARGES.md
+- KS_LootPotions — Maxster33 — depuis le 2026-09-25 21:27 — nouveau plugin (serveur Event), voir KS_Event/CAHIER_DES_CHARGES.md
 - KG_BingoGame — LeKiwi06 — depuis le 2026-09-25 20:45 — salle d'attente : invincibilité, nether star bloquée, plaques de pression, entités recopiées
 
 
