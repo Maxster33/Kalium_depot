@@ -1,0 +1,6 @@
+name: KS_Villageois
+version: '${project.version}'
+main: fr.kalium.villageois.KSVillageois
+api-version: '26.2'
+description: Villageois et marchands ambulants sans echanges (sauf les PNJ portant l'etiquette ks_pnj).
+authors: [KaLium]

@@ -1,0 +1,6 @@
+name: KS_Enclume
+version: '${project.version}'
+main: fr.kalium.enclume.KSEnclume
+api-version: '26.2'
+description: Enclume sans plafond de prix (cout calcule comme en vanilla, plus de "Trop cher !").
+authors: [KaLium]
