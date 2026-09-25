@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- Serveur Event (hors plugins) — Maxster33 — depuis le 2026-09-25 19:05 — Floodgate installé, extension PlaceholderAPI remise à sa place, PlayerKits2 retiré
 
 
 
