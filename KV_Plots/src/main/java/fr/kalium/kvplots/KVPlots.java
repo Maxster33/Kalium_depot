@@ -22,7 +22,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * KV_Plots (cahier des charges : KV_Plots/CAHIER_DES_CHARGES.md) - serveur Kanvas, demande de LeKiwi06 (25-26/09/2026).
- * Version 1.0.0 : grille de plots, réservation (moyen / grand), éditeurs, protection WorldGuard, règles du monde.
+ * Version 1.0.0 : génération de la grille, réservation (moyen / grand), éditeurs, protection WorldGuard, règles du
+ * monde.
  */
 public final class KVPlots extends JavaPlugin {
 
@@ -31,7 +32,8 @@ public final class KVPlots extends JavaPlugin {
     private Plots plots;
     private Regions regions;
     private Chantier chantier;
-    private ModeleSol modeleSol;
+    private ModeleTuile tuile;
+    private boolean generation;
 
     @Override
     public void onEnable() {
@@ -47,12 +49,12 @@ public final class KVPlots extends JavaPlugin {
         plots.charger();
         regions = new Regions(this);
         chantier = new Chantier(this);
-        chargerModeleSol();
+        chargerTuile();
 
         regions.protegerMonde(monde);
         for (Plot p : plots.tous()) {
             regions.appliquer(p);
-            if (p.fusionEnCours && modeleSol != null) fusionner(p, null); // reprise après un arrêt du serveur
+            if (p.fusionEnCours && tuile != null) fusionner(p, null); // reprise après un arrêt du serveur
         }
 
         getServer().getPluginManager().registerEvents(new ReglesMonde(this), this);
@@ -61,6 +63,7 @@ public final class KVPlots extends JavaPlugin {
         CommandePlot commande = new CommandePlot(this);
         plot.setExecutor(commande);
         plot.setTabCompleter(commande);
+        getCommand("kvadmin").setExecutor(new CommandeAdmin(this));
     }
 
     @Override
@@ -80,28 +83,103 @@ public final class KVPlots extends JavaPlugin {
         return plots;
     }
 
-    ModeleSol modeleSol() {
-        return modeleSol;
+    ModeleTuile tuile() {
+        return tuile;
     }
 
-    /** Relevé au centre du plot (0, 0) au premier démarrage, tant que ce plot n'est pas réservé (donc vierge). */
-    private void chargerModeleSol() {
-        File fichier = new File(getDataFolder(), "modele-sol.yml");
-        modeleSol = ModeleSol.charger(fichier);
-        if (modeleSol != null) return;
-        Grille.Case origine = new Grille.Case(0, 0);
-        if (!plots.libre(origine)) {
-            getLogger().severe("modele-sol.yml absent et plot (0, 0) déjà réservé : grands plots impossibles.");
+    private File fichierTuile() {
+        return new File(getDataFolder(), "modele-tuile.yml");
+    }
+
+    /** Relevée autour du plot (0, 0) au premier démarrage, tant que ce plot n'est pas réservé (donc vierge). */
+    private void chargerTuile() {
+        tuile = ModeleTuile.charger(fichierTuile(), grille.pas);
+        if (tuile != null) return;
+        if (!plots.libre(new Grille.Case(0, 0))) {
+            getLogger().severe("modele-tuile.yml absent et plot (0, 0) déjà réservé : génération et grands plots impossibles.");
             return;
         }
-        int centre = grille.taille / 2;
-        modeleSol = ModeleSol.relever(monde, grille.origineX + centre, grille.origineZ + centre);
+        tuile = ModeleTuile.relever(monde, grille.origineX, grille.origineZ, grille.pas);
         try {
-            modeleSol.sauver(fichier);
-            getLogger().info("Modèle de sol relevé au centre du plot (0, 0) et enregistré dans modele-sol.yml.");
+            tuile.sauver(fichierTuile());
+            getLogger().info("Tuile de référence relevée autour du plot (0, 0) et enregistrée dans modele-tuile.yml.");
         } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Impossible d'enregistrer modele-sol.yml", e);
+            getLogger().log(Level.SEVERE, "Impossible d'enregistrer modele-tuile.yml", e);
         }
+    }
+
+    // --- Génération de la grille ---
+
+    /** Zone générée : les plots de la grille configurée et les routes tout autour. {minX, minZ, maxX, maxZ} */
+    int[] zoneGrille() {
+        return new int[] {grille.minX(grille.colonneMin) - grille.route, grille.minZ(grille.ligneMin) - grille.route,
+                grille.minX(grille.colonneMax) + grille.pas - 1, grille.minZ(grille.ligneMax) + grille.pas - 1};
+    }
+
+    boolean generationEnCours() {
+        return generation;
+    }
+
+    /**
+     * Recopie la tuile de référence sur toute la zone de la grille (plots vierges, routes, bordures). Les plots
+     * réservés ne sont pas touchés. Avance chunk par chunk.
+     */
+    void generer(Runnable fin) {
+        int[] z0 = zoneGrille();
+        generation = true;
+        long total = (long) (z0[2] - z0[0] + 1) * (z0[3] - z0[1] + 1);
+        long[] faites = {0};
+        int[] palier = {0};
+        Iterator<int[]> colonnes = parChunks(z0[0], z0[1], z0[2], z0[3]);
+        chantier.ajouter(new Chantier.Tache(colonnes, (x, z) -> {
+            faites[0]++;
+            int pourcent = (int) (faites[0] * 100 / total);
+            if (pourcent / 10 > palier[0]) {
+                palier[0] = pourcent / 10;
+                getLogger().info("Génération de la grille : " + pourcent + " %");
+            }
+            return plotEn(x, z) != null ? 1 : tuile.poserGrille(monde, x, z, grille.origineX, grille.origineZ);
+        }, () -> {
+            generation = false;
+            getLogger().info("Génération de la grille terminée.");
+            fin.run();
+        }));
+    }
+
+    /** Colonnes d'un rectangle, chunk par chunk (moins de chunks chargés à la fois). */
+    private static Iterator<int[]> parChunks(int minX, int minZ, int maxX, int maxZ) {
+        return new Iterator<>() {
+            int cx = minX >> 4, cz = minZ >> 4, i = 0;
+            int[] suivant = chercher();
+
+            private int[] chercher() {
+                while (cx <= maxX >> 4) {
+                    while (i < 256) {
+                        int x = (cx << 4) + (i >> 4), z = (cz << 4) + (i & 15);
+                        i++;
+                        if (x >= minX && x <= maxX && z >= minZ && z <= maxZ) return new int[] {x, z};
+                    }
+                    i = 0;
+                    if (++cz > maxZ >> 4) {
+                        cz = minZ >> 4;
+                        cx++;
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return suivant != null;
+            }
+
+            @Override
+            public int[] next() {
+                int[] r = suivant;
+                suivant = chercher();
+                return r;
+            }
+        };
     }
 
     boolean contient(Plot p, int x, int z) {
@@ -181,8 +259,8 @@ public final class KVPlots extends JavaPlugin {
             throw new Refus("Tu as déjà " + deja + " plot" + (deja > 1 ? "s " : " ") + taille.nom
                     + (deja > 1 ? "s" : "") + " (maximum : " + places(joueur.getUniqueId(), taille) + ").");
         }
-        if (taille == Taille.GRAND && modeleSol == null) {
-            throw new Refus("Les grands plots ne sont pas disponibles pour le moment (modèle de sol absent).");
+        if (taille == Taille.GRAND && tuile == null) {
+            throw new Refus("Les grands plots ne sont pas disponibles pour le moment (modèle de terrain absent).");
         }
         Grille.Case coin = emplacement(joueur, taille);
         if (coin == null) throw new Refus("Il n'y a plus de plot " + taille.nom + " libre.");
@@ -211,7 +289,7 @@ public final class KVPlots extends JavaPlugin {
             }
         }
         Iterator<int[]> it = colonnes.iterator();
-        chantier.ajouter(new Chantier.Tache(it, () -> {
+        chantier.ajouter(new Chantier.Tache(it, (x, z) -> tuile.poserSol(monde, x, z, grille.taille), () -> {
             p.fusionEnCours = false;
             plots.sauver();
             getLogger().info("Grand plot n°" + p.id + " prêt (routes intérieures retirées).");

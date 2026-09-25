@@ -29,7 +29,7 @@ import net.kyori.adventure.text.Component;
  *
  * - Accueil : réserver un plot moyen / grand, mes plots.
  * - Mes plots : un bouton par plot (créateur ou éditeur) -> fiche du plot : téléportation, éditeurs (créateur).
- * - Ouverture : /kanvas (/kv, /plots) et le catalogue de KLM_Menu (entrée « Kanvas »).
+ * - Ouverture : étoile du Nether (emplacement 4), /kanvas (/kv, /plots) et le catalogue de KLM_Menu (entrée « Kanvas »).
  */
 public final class KvMenu extends JavaPlugin {
 
@@ -53,7 +53,12 @@ public final class KvMenu extends JavaPlugin {
                         t("klm.home", "<gold><bold>Kanvas"), t("klm.home-tip", "<gray>Plots de construction : réserver, mes plots, éditeurs."),
                         this::accueil),
                 this, ServicePriority.Normal);
+        getServer().getPluginManager().registerEvents(new ObjetMenu(this, lang, p -> accueil(p, null)), this);
         lang.saveIfNeeded();
+    }
+
+    KanvasPlots plots() {
+        return plots;
     }
 
     @Override

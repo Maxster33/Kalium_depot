@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 /**
@@ -25,6 +26,9 @@ public interface KanvasPlots {
             super(message, null, false, false);
         }
     }
+
+    /** Monde des plots. */
+    World monde();
 
     /** Plots dont le joueur est créateur ou éditeur, triés par numéro. */
     List<PlotInfo> plotsDe(UUID joueur);

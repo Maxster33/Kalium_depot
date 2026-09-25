@@ -13,8 +13,13 @@ import org.bukkit.scheduler.BukkitTask;
  */
 final class Chantier {
 
-    /** Une tâche : des colonnes (x, z) à poser avec le modèle de sol, puis une action de fin. */
-    record Tache(Iterator<int[]> colonnes, Runnable fin) {}
+    /** Travail sur une colonne (x, z) ; renvoie le nombre de blocs examinés. */
+    interface Poseur {
+        int poser(int x, int z);
+    }
+
+    /** Une tâche : des colonnes (x, z) à traiter, puis une action de fin. */
+    record Tache(Iterator<int[]> colonnes, Poseur poseur, Runnable fin) {}
 
     private final KVPlots plugin;
     private final Deque<Tache> taches = new ArrayDeque<>();
@@ -29,8 +34,11 @@ final class Chantier {
         if (boucle == null) boucle = plugin.getServer().getScheduler().runTaskTimer(plugin, this::tick, 1L, 1L);
     }
 
+    boolean occupe() {
+        return !taches.isEmpty();
+    }
+
     private void tick() {
-        ModeleSol modele = plugin.modeleSol();
         int budget = plugin.getConfig().getInt("blocs-par-tick", 20000);
         while (budget > 0 && !taches.isEmpty()) {
             Tache t = taches.peek();
@@ -44,8 +52,7 @@ final class Chantier {
                 continue;
             }
             int[] xz = t.colonnes().next();
-            modele.poser(plugin.monde(), xz[0], xz[1]);
-            budget -= modele.hauteur();
+            budget -= Math.max(1, t.poseur().poser(xz[0], xz[1]));
         }
         if (taches.isEmpty()) {
             boucle.cancel();

@@ -8,7 +8,13 @@ actions de **KV_Plots** (par son API `fr.kalium.kvplots.api.KanvasPlots`). Menus
 ## 1.0.0 - création (26/09/2026)
 
 Demande de LeKiwi06 : « une interface au lieu de juste avoir les commandes ».
-- Ouverture : `/kanvas` (alias `/kv`, `/plots`) et le catalogue de KLM_Menu.
+- Ouverture : **étoile du Nether** en emplacement 4 (`hub-item.slot` / `hub-item.material`), `/kanvas` (alias `/kv`,
+  `/plots`) et le catalogue de KLM_Menu. L'étoile est donnée dans le monde des plots (arrivée, changement de monde,
+  réapparition), verrouillée (ni jetée, ni déplacée, ni clonée), et remise à sa place toutes les 2 s (en créatif, le
+  client peut modifier l'inventaire sans passer par les clics habituels) ; l'objet qui occupait l'emplacement est
+  rangé ailleurs dans l'inventaire (jeté au sol si l'inventaire est plein). Retirée hors du monde des plots.
+  Plus tard (votes) : remplacée par les terracottas dans les plots validés pas encore notés ; bouton « Voter » dans le
+  menu pour un plot déjà noté.
 - **Accueil** : « Réserver un plot moyen (n/max) », « Réserver un grand plot (n/max) » (avec confirmation : le plot
   libre où l'on se tient, sinon le plus proche du centre), « Mes plots » ; rappel du plot sur lequel on se trouve.
 - **Mes plots** : un bouton par plot (créateur ou éditeur) → **fiche** : créateur, éditeurs, état ; « Se téléporter » ;

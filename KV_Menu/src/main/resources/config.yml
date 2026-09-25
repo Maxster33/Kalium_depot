@@ -5,6 +5,12 @@
 #  Ce fichier n'est copie qu'a la premiere installation : une nouvelle cle doit etre ajoutee a la main.
 # ============================================================
 
+# Objet qui ouvre le menu de Kanvas (donne dans le monde des plots, verrouille).
+hub-item:
+  # Emplacement de la barre d'objets, de 0 (gauche) a 8 (droite).
+  slot: 4
+  material: NETHER_STAR
+
 gui:
   # Largeur des boutons des menus (100 a 400).
   button-width: 240

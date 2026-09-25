@@ -11,8 +11,15 @@ commands:
     description: Reserver et gerer ses plots.
     usage: /<command> reserver|tp|liste|info|editeur
     permission: kvplots.joueur
+  kvadmin:
+    description: Administration des plots de Kanvas (generation de la grille).
+    usage: /<command> generer [confirmer]
+    permission: kvplots.admin
 
 permissions:
   kvplots.joueur:
     description: Reserver des plots, s'y teleporter, gerer ses editeurs.
     default: true
+  kvplots.admin:
+    description: Generer la grille de plots.
+    default: op

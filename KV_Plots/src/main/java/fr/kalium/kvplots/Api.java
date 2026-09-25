@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import fr.kalium.kvplots.api.KanvasPlots;
@@ -27,6 +28,11 @@ final class Api implements KanvasPlots {
         Plot p = plugin.plots().parId(id);
         if (p == null) throw new Refus("Ce plot n'existe plus.");
         return p;
+    }
+
+    @Override
+    public World monde() {
+        return plugin.monde();
     }
 
     @Override

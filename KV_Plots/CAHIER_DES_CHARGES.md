@@ -68,6 +68,11 @@ de plots en créatif. Préfixe `KV_` = Kanvas (voir la charte dans `ARCHITECTURE
   l'**interface admin de `KV_Menu`**. Actions du staff : classer le signalement, dévalider le plot, le remettre à zéro.
 - **Réserver un plot** : sur un plot libre, le joueur prend celui où il se tient (pour un grand : un groupe de 2 x 2
   plots libres qui le contient) ; ailleurs, le plot libre le plus proche du centre de la grille.
+- **Menu** : `KV_Menu`, ouvert par une **étoile du Nether en emplacement 4**. Dans un plot validé pas encore noté,
+  les terracottas (cases 3 à 7) la remplacent automatiquement ; dans un plot déjà noté, on revote par le bouton
+  **« Voter »** du menu.
+- **Génération** : première zone de **5 plots dans chaque direction** autour du plot de référence (-107, -2, -57),
+  routes recopiées depuis celles qui existent.
 - **Grand plot libéré** (remis à zéro) : il **redevient 4 plots moyens** (routes et bordures reconstruites).
 - **Titre / description** : titre de 32 caractères, description de 200, codes couleur autorisés, modifiables à tout
   moment par le créateur.
