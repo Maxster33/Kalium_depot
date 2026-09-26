@@ -61,6 +61,8 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
     private Lang lang;
     private Gui gui;
     private Landings landings;
+    /** 1.2.0 : effets de zone (voir RegionEffects). */
+    private final RegionEffects regionEffects = new RegionEffects(this);
     private double pushStrength;
     private long cooldownMs;
 
@@ -94,6 +96,8 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
                 lang.c("catalog.landings-description", "<gray>Où arrivent les joueurs envoyés sur un autre serveur, "
                         + "et ceux qui arrivent ici."),
                 landings::openMenu), this, ServicePriority.Normal);
+        // 1.2.0 : effets de zone, verifies toutes les secondes.
+        getServer().getScheduler().runTaskTimer(this, regionEffects::tick, 20L, 20L);
         // Verification des regions une fois tous les mondes et WorldGuard prets.
         getServer().getScheduler().runTask(this, this::checkRegions);
         lang.saveIfNeeded();
@@ -132,6 +136,7 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
         }
         int count = portals.values().stream().mapToInt(Map::size).sum();
         getLogger().info(count + " portail(s) chargé(s).");
+        regionEffects.load();
     }
 
     private void checkRegions() {

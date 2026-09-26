@@ -60,3 +60,17 @@ landings: {}
 # sans KLM_Portal, destination sans point de chute). mode: derniere-position | coordonnees (+ x, y, z...).
 default-arrival:
   mode: derniere-position
+
+# ============================================================
+#  Effets de zone (1.2.0) : tant qu'un joueur est dans la region WorldGuard, il a ces effets (duree infinie,
+#  sans particules) ; ils lui sont retires en sortant. Niveau = meme valeur que /effect give (0 = niveau I).
+#  Noms des effets : ceux de Minecraft (speed, jump_boost, night_vision, ...). Applique avec /klmportal reload.
+# ============================================================
+# Exemple :
+# region-effects:
+#   lobby:
+#     world: Lobby Kalium
+#     effects:
+#       speed: 6
+#       jump_boost: 2
+region-effects: {}

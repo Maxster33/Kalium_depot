@@ -76,4 +76,21 @@ plugins (Bingo, KalGames) ne passent pas par KLM_Menu et n'ont donc pas de consi
 `config.yml` dans `/plugins/_removed-klm_portal-1.0.0/`. Nouveau `config.yml` du lobby : les 4 portails de LeKiwi06,
 `server-name: lobby`, `default-arrival` = centre `7.5 67 39.5` du monde `Lobby Kalium` (repris de l'événement
 `center_lobby` de ConditionalEvents). **`relay-token` encore vide** : à remplir par LeKiwi06 (sinon seuls les points
-de chute « arrivée sur ce serveur » fonctionnent). **Statut : non testé en jeu.**
+de chute « arrivée sur ce serveur » fonctionnent). **Arrivée au centre du lobby testée et confirmée par LeKiwi06 le
+26/09/2026** ; points de chute vers d'autres serveurs non testés.
+
+## 1.2.0 — effets de zone (26/09/2026)
+
+**Demande de LeKiwi06** : « rajoute le speed et le jump boost pour tous dans la région lobby » (ConditionalEvents les
+donnait à la connexion, avec la vision nocturne : non reprise, pas demandée). Placé dans KLM_Portal (déjà dépendant
+de WorldGuard, déjà réservé) : choix de Claude, signalé.
+
+- `region-effects:` dans `config.yml` : par région WorldGuard (`world` + `effects: {nom: niveau}`), niveau comme
+  `/effect give` (0 = niveau I). Pour le lobby : région `lobby` (toute la zone, -55 -64 -23 → 69 319 101) du monde
+  `Lobby Kalium`, `speed: 6` et `jump_boost: 2` (mêmes valeurs que ConditionalEvents).
+- Vérifié toutes les secondes : dans la région, effet de durée infinie, sans particules (icône visible) ; hors de
+  toute région qui le donne, un effet **de durée infinie** d'un type géré est retiré (les potions bues, à durée
+  limitée, ne sont jamais touchées). Sans mémoire : marche aussi après un redémarrage ou une région retirée.
+- Rechargement : `/klmportal reload`.
+
+**Statut : compilé, non déployé, non testé.**
