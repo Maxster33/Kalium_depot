@@ -235,44 +235,41 @@ Format : `### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici 
 
 ### 2026-09-26 — LeKiwi06
 
-*(Session de la nuit du 26/09/2026, de 0 h à 5 h 30. Fin de session : réservations KV_Plots, KV_Menu, KG_Parkour,
-KalGames, KG_BingoGame, KG_Bingo, KLM_Menu et KG_ScoreBoards libérées.)*
+*(Session de la nuit du 26/09/2026, de 0 h à 6 h 45. Fin de session : toutes les réservations libérées.)*
 
-**Kanvas (serveur de plots en créatif) : tout testé et confirmé par LeKiwi06 (« tout fonctionne »)**
-- Cahier des charges complété (`KV_Plots/CAHIER_DES_CHARGES.md`) ; monde `New World (2)` renommé `Kanvas` (monde
-  principal, majuscule) ; grille de 121 plots générée (plot de référence : coin -107 / -57, plots 49 x 49, routes 9).
-- KV_Plots 1.0.0 → 1.4.0 et KV_Menu 1.0.0 → 1.3.0 : réservation (moyen / grand), éditeurs, protection WorldGuard,
-  remise à zéro / suppression, créatif gardé en repassant joueur (KLM_Menu remettait en survie), validation, votes
-  aux terracottas (inventaire mis de côté), déblocage à 100 points, titre / description, tableau sur le côté, visites
-  (hasard, têtes des joueurs, liste), signalements (poudre de blaze, écrans du staff), concours de build (phases
-  construction / votes / terminé, gestion par le staff). Étoile du Nether en case 4 (menu), rangée avec la boussole
-  sur son plot en travaux.
-- FAWE : la variante Bukkit ne marchait pas sur Paper 26.2 → **variante Paper** ; limites réduites ; permissions du
-  groupe `default` (LuckPerms) ; baguette de navigation de WorldEdit = vide de structure (la boussole de KLM_Menu la
-  déclenchait). Testé : FAWE en joueur seulement dans son plot.
-- Tri des plugins de Kanvas : KaliumCore, PlayerKits2, GrimAC, ConditionalEvents, JEIRecipeFix, Geyser-Spigot,
-  PyxelRegions et l'extension PlaceholderAPI inutilisée rangés dans `_removed-…`.
+**Kanvas (serveur de plots en créatif) : testé et confirmé par LeKiwi06**
+- Cahier des charges complété (`KV_Plots/CAHIER_DES_CHARGES.md`) ; monde `New World (2)` renommé `Kanvas` ; grille de
+  121 plots générée (plot de référence : coin -107 / -57, plots 49 x 49, routes 9).
+- KV_Plots 1.4.0 et KV_Menu 1.3.0 : réservation (moyen / grand), éditeurs, protection WorldGuard, remise à zéro /
+  suppression, créatif gardé, validation, votes aux terracottas, déblocage à 100 points, titre / description, tableau
+  sur le côté, visites, signalements, concours de build ; étoile du Nether (menu) en case 4.
+- FAWE Paper (la variante Bukkit ne marchait pas), limites, permissions LuckPerms du groupe `default`, baguette de
+  navigation = vide de structure ; tri des plugins de Kanvas.
 
-**Kal-Games / Serveur Jeux : déployés, non testés**
-- KG_Parkour 1.0.0 + KalGames 1.20.0 : le Parcours sort de KalGames tel quel (orientation des checkpoints gardée).
-- Équilibrage des barèmes (`EQUILIBRAGE_POINTS.md`, mesures sur les vraies parties) : KG_BingoGame 0.8.0 (barème
-  doublé, résultats envoyés au hub) + KG_Bingo 1.5.0 (points du Bingo crédités dans les classements, classement
-  « bingo »).
+**Kal-Games / Serveur Jeux**
+- Testés : KG_Parkour 1.0.0 + KalGames 1.20.0 (le Parcours sort de KalGames) ; KG_BingoGame 0.8.0 + KG_Bingo 1.5.0
+  (barème du Bingo doublé, points du Bingo dans les classements).
+- **KG_BingoGame 0.8.2 déployé, non testé** : bonus du 1er = moitié des points de base ; partie à 4 équipes (joueurs
+  non téléportés : reconnexion et joueurs sans équipe ; barre d'action courte à partir de 3 équipes) ; icônes de la
+  carte (blocs en 3D comme dans l'inventaire, tout en 22 pixels) ; 7 objets courants du Nether passés en Normal
+  (`objectives.yml` du serveur remplacé).
+- Nettoyage : nouvelle règle (`REGLES.md` 4.3 : `_removed-…` supprimables à 3 versions ou plus de la version en
+  service, suppression par l'humain) ; 85 dossiers supprimés par LeKiwi06 avec des scripts WinSCP préparés par Claude.
 
-**À faire / à savoir**
-- Tester : Parcours (partie publique, entraînement), course de bateau, Bingo (points doublés, puis crédités dans le
-  classement « Bingo » du hub dans la minute qui suit la fin de partie ; message « points crédités » dans la console
-  du hub).
-- Équilibrage : barème du Parcours (jouer quelques parties « à fond » pour mesurer), PvP Kit, Rush, recalcul du passé
-  (dont les anciennes parties de Bingo, jamais créditées).
-- Sauvegardes des mondes : à voir (voir « Points ouverts »).
-- Dossiers `_removed-…` : règle des 3 versions (`REGLES.md` 4.3) ; 48 dossiers supprimés le 26/09/2026 par LeKiwi06
-  (script préparé par Claude), puis 37 dossiers d'anciens plugins plus en service (KalBingo 0.1.x, KaliumCore,
-  KaliumMenu, AnvilUnlocker, `kalgames-kaliummenu`, `kg_bingogame-0.5.0-b`). Gardés volontairement : plugins retirés
-  de Kanvas le 26/09 (quelques jours), dossiers de l'Event (Maxster33), grosses sauvegardes datées à la racine
-  (`_removed-avant-migration-2026-09-24` sur Kal-Games et Serveur Jeux, `_removed-bingo-2026-09-24` sur Kixster,
-  `_removed-survie-2026-09-25` sur Event, `_removed-paper-26.3`, `_removed-config-2026-09-24`) tant que les
-  sauvegardes des mondes ne sont pas réglées.
+**À faire plus tard** (demande de LeKiwi06, 26/09/2026)
+- **Tester KG_BingoGame 0.8.2** : icônes de la carte (1 à 2 min de préparation au premier démarrage), bonus du 1er,
+  Nether en Normal, partie à 3-4 équipes (barre d'action, joueur sans équipe placé, reconnexion pendant la
+  préparation).
+- **Équilibrage des barèmes** (`EQUILIBRAGE_POINTS.md`) : barème du Parcours (jouer quelques parties « à fond » pour
+  mesurer), PvP Kit, Rush, recalcul du passé (dont les anciennes parties de Bingo, jamais créditées).
+- **Kanvas** : limites d'entités et mobs sans IA ; agrandissement moyen → grand (et « dupliquer en version grande ») ;
+  classements KV_ScoreBoards (solo / duo / équipe, général et du mois) ; extension automatique du monde.
+- **KG_Parkour** (cahier des charges) : chrono allongé à chaque checkpoint, barème, contre-la-montre avec fantôme,
+  anti-collision.
+- **Sauvegardes des mondes** (voir « Points ouverts »).
+- Dossiers gardés volontairement : plugins retirés de Kanvas le 26/09 (à supprimer dans quelques jours), dossiers de
+  l'Event (voir avec Maxster33), grosses sauvegardes datées (tant que les sauvegardes des mondes ne sont pas réglées) ;
+  dossier `plugins/KG_BingoGame/icons/26.2-3d/` sur Serveur Jeux (plus lu depuis 0.8.2).
 
 ### 2026-09-25 (soir) — LeKiwi06
 
