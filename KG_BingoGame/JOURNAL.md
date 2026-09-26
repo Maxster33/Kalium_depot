@@ -1576,7 +1576,7 @@ classements.
 - Tous les joueurs du résumé sont envoyés, abandons compris (leurs points propres, comme dans le résumé).
 **Déploiement** : avec **KG_Bingo 1.5.0** (hub), sur Serveur Jeux le 26/09/2026 à 5 h 23 (`_removed-kg_bingogame-0.7.8/`). **Statut : testé et confirmé par LeKiwi06 le 26/09/2026.**
 
-## 0.8.1 — bonus du 1er = moitié des points de base ; partie à 4 équipes (26/09/2026)
+## 0.8.1 — bonus du 1er ; partie à 4 équipes ; icônes de la carte en 3D ; Nether (26/09/2026)
 
 **Demande de LeKiwi06** : « le bonus pour avoir un item en 1er est la moitié des points de base de l'item (avant ce
 n'était pas exactement 50 % et les faciles n'en avaient pas) ».
@@ -1595,5 +1595,24 @@ Autres corrections (même version), **partie à 4 équipes buggée** (LeKiwi06) 
 - Barre d'action illisible à 4 équipes : **à partir de 3 équipes**, format court demandé par LeKiwi06 :
   « ⏱ 45m12s | A:42pts·1/3 | B:30pts·0/3 | C:18pts·0/3 | D:7pts·0/3 » (blackout : sans « ·n/m »). La barre d'action de
   Minecraft n'a qu'une ligne (un retour à la ligne y est ignoré). 1 et 2 équipes : format inchangé.
+- **Icônes de la carte** (LeKiwi06 : piston collant = piston, juke-box = bloc musical, bois, lits réduits à
+  l'oreiller, enclume et longue-vue méconnaissables ; « vérifie si d'autres exemples existent ») : les 200 icônes
+  comparées (6 paires identiques au pixel près : piston / piston collant, juke-box / bloc musical, verre / vitre,
+  planches / barrière en chêne, pierre / bouton en pierre, pomme dorée / pomme dorée enchantée).
+  - Nouveau `ModelRenderer` : les objets dont le modèle a des « elements » (tous les blocs, enclume, barrière,
+    bouton, lit en deux parties...) sont dessinés **en 3D comme dans l'inventaire** (dessus + faces nord et est
+    ombrées, tampon de profondeur, rendu à 3 fois la taille puis réduit). Dessus du piston collant, du juke-box, cernes
+    des bûches visibles ; lit entier ; formes de l'enclume, de la barrière, du bouton.
+  - Longue-vue : modèle d'inventaire (« gui ») pris avant le modèle tenu en main.
+  - Pomme dorée enchantée : lueur violette.
+  - Icônes refaites dans `icons/<version>-3d/` (les anciennes, dans `icons/<version>/`, ne sont plus lues) : au
+    premier démarrage, le jeu est retéléchargé chez Mojang (~40 Mo, comme en 0.4.0) pour les fabriquer.
+  - Vérifié hors serveur avec le code du plugin et le client officiel 26.2 : 200 icônes sur 200, plus aucune paire
+    identique. Restent proches (vraies icônes du jeu) : torche / levier ; bois très proches à cause des couleurs
+    limitées de la carte.
+- **Objets du Nether** (LeKiwi06 : « rangés difficiles pour rien ») : quartz, poudre lumineuse, sable des âmes,
+  basalte, roche noire, tige biscornue, champignon carmin passés de Difficile à **Normal** dans `objectives.yml` (57
+  normaux, 18 difficiles). **Le fichier du serveur (`plugins/KG_BingoGame/objectives.yml`) est à remplacer au
+  déploiement** (il n'est copié du jar qu'à la première installation), puis `/bingoadmin grid reload` ou redémarrage.
 **Statut : non testé en jeu, non déployé.**
 

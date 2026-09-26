@@ -2,7 +2,9 @@
 #  KG_BingoGame - liste des objectifs utilisables pour generer les grilles
 # ============================================================
 #
-# Liste VALIDEE par LeKiwi06 le 24/09/2026 : 100 faciles, 50 normaux, 25 difficiles, 25 extremes
+# Liste VALIDEE par LeKiwi06 le 24/09/2026 : 100 faciles, 50 normaux, 25 difficiles, 25 extremes ;
+# 26/09/2026 (LeKiwi06) : 7 objets courants du Nether passes de difficile a normal (quartz, poudre lumineuse,
+# sable des ames, basalte, roche noire, tige biscornue, champignon carmin) -> 57 normaux, 18 difficiles
 # (tous les identifiants verifies dans Paper 26.2).
 #
 # Ce fichier est charge depuis le dossier de donnees du plugin (pas depuis le .jar) : il peut
@@ -12,7 +14,7 @@
 # Format de chaque entree :
 #   material   : identifiant d'item Minecraft (voir la liste des Material Bukkit/Paper), ex: DIAMOND
 #   quantity   : quantite requise pour valider la case (optionnel, defaut 1)
-#   difficulty : EASY (1 pt) | MEDIUM (3 pts) | HARD (5 pts) | EXTREME (10 pts)
+#   difficulty : EASY (2 pts) | MEDIUM (6 pts) | HARD (10 pts) | EXTREME (20 pts)  (bareme 0.8.0)
 #                (couleurs : bleu = EASY, jaune = MEDIUM, orange = HARD, rouge = EXTREME)
 #   condition  : condition particuliere de validation, texte libre (optionnel - affichee dans le
 #                menu Objectifs mais NON verifiee : la validation automatique ne regarde que
@@ -492,10 +494,10 @@ objectives:
     difficulty: HARD
   - material: QUARTZ   # Quartz du Nether
     quantity: 8
-    difficulty: HARD
+    difficulty: MEDIUM
   - material: GLOWSTONE_DUST   # Poudre lumineuse
     quantity: 8
-    difficulty: HARD
+    difficulty: MEDIUM
   - material: MAGMA_CREAM   # Crème de magma
     quantity: 1
     difficulty: HARD
@@ -507,19 +509,19 @@ objectives:
     difficulty: HARD
   - material: SOUL_SAND   # Sable des âmes
     quantity: 8
-    difficulty: HARD
+    difficulty: MEDIUM
   - material: BASALT   # Basalte
     quantity: 16
-    difficulty: HARD
+    difficulty: MEDIUM
   - material: BLACKSTONE   # Roche noire
     quantity: 16
-    difficulty: HARD
+    difficulty: MEDIUM
   - material: WARPED_STEM   # Tige biscornue
     quantity: 8
-    difficulty: HARD
+    difficulty: MEDIUM
   - material: CRIMSON_FUNGUS   # Champignon carmin
     quantity: 2
-    difficulty: HARD
+    difficulty: MEDIUM
   - material: GHAST_TEAR   # Larme de Ghast
     quantity: 1
     difficulty: HARD

@@ -22,6 +22,9 @@ import java.util.zip.ZipFile;
  * LeKiwi06 : "prends les textures vanilla du jeu"). Aucune image n'est mise dans le depot (public) : elles sont lues
  * sur le serveur depuis le jeu telecharge chez Mojang (voir IconLibrary).
  *
+ * 0.8.1 : objets dont le modele a des « elements » (blocs, enclume, levier, lit...) dessines en 3D comme dans
+ * l'inventaire (voir ModelRenderer) ; pomme doree enchantee avec sa lueur ; longue-vue : icone d'inventaire.
+ *
  * Methode : modele de l'objet (assets/minecraft/items/&lt;id&gt;.json -&gt; models/...), en remontant les "parent" ;
  * objet plat : couches layer0 (+ layer1 superposee) ; bloc : une face (all, side, front...). Images animees : 1re image.
  * Quelques textures grises sont teintees comme en jeu (feuilles, nenuphar, cuir). Objets rendus en 3D sans texture
@@ -43,6 +46,11 @@ public final class IconResolver {
         if (special != null) {
             return special;
         }
+        // 0.8.1 : objets dont le modele est en 3D (blocs, enclume, levier, lit...) dessines comme dans l'inventaire.
+        BufferedImage threeD = render3d(id);
+        if (threeD != null) {
+            return id.equals("enchanted_golden_apple") ? glint(threeD) : threeD;
+        }
         String model = modelOf(id);
         if (model == null) {
             return null;
@@ -63,7 +71,7 @@ public final class IconResolver {
                     g.dispose();
                 }
             }
-            return base;
+            return id.equals("enchanted_golden_apple") ? glint(base) : base;
         }
         if (id.endsWith("_bed") && textures.containsKey("up")) {
             return texture(ref(textures, "up")); // dessus du lit (oreiller) plutot que les planches
@@ -170,7 +178,9 @@ public final class IconResolver {
             if (model != null && model.isJsonPrimitive() && object.get("type") == null) {
                 return model.getAsString();
             }
-            for (String key : List.of("model", "fallback", "on_false", "on_true", "cases", "entries", "base")) {
+            // 0.8.1 : les cas (dont l'affichage en inventaire, « gui ») avant le cas par defaut (longue-vue : sinon le
+            // modele tenu en main etait pris).
+            for (String key : List.of("model", "cases", "entries", "on_false", "on_true", "base", "fallback")) {
                 String found = firstModel(object.get(key));
                 if (found != null) {
                     return found;
@@ -197,6 +207,129 @@ public final class IconResolver {
 
     private static String str(JsonElement element) {
         return element != null && element.isJsonPrimitive() ? element.getAsString() : null;
+    }
+
+    // ------------------------------------------------------------------ 0.8.1 : rendu 3D
+
+    /** Modeles de l'objet avec leur decalage (en seiziemes de bloc) : plusieurs pour un modele compose (lit). */
+    private List<Object[]> modelsOf(String id) throws IOException {
+        List<Object[]> out = new java.util.ArrayList<>();
+        JsonObject def = json("assets/minecraft/items/" + id + ".json");
+        JsonElement root = def == null ? null : def.get("model");
+        if (root != null && root.isJsonObject() && "minecraft:composite".equals(str(root.getAsJsonObject().get("type")))) {
+            for (JsonElement part : root.getAsJsonObject().getAsJsonArray("models")) {
+                String model = firstModel(part);
+                double[] offset = {0, 0, 0};
+                JsonObject tr = part.isJsonObject() ? part.getAsJsonObject().getAsJsonObject("transformation") : null;
+                if (tr != null && tr.has("translation")) {
+                    var t = tr.getAsJsonArray("translation");
+                    offset = new double[] {t.get(0).getAsDouble() * 16, t.get(1).getAsDouble() * 16, t.get(2).getAsDouble() * 16};
+                }
+                if (model != null) {
+                    out.add(new Object[] {model, offset});
+                }
+            }
+            return out;
+        }
+        String model = modelOf(id);
+        if (model != null) {
+            out.add(new Object[] {model, new double[] {0, 0, 0}});
+        }
+        return out;
+    }
+
+    /** Premier « elements » du modele ou de ses parents, ou null (objet plat, modele interne...). */
+    private com.google.gson.JsonArray elementsOf(String model, int depth) throws IOException {
+        if (depth > 12 || model == null || model.startsWith("builtin/")) {
+            return null;
+        }
+        JsonObject json = json("assets/minecraft/models/" + stripNamespace(model) + ".json");
+        if (json == null) {
+            return null;
+        }
+        if (json.has("elements")) {
+            return json.getAsJsonArray("elements");
+        }
+        return elementsOf(str(json.get("parent")), depth + 1);
+    }
+
+    private BufferedImage render3d(String id) throws IOException {
+        ModelRenderer renderer = new ModelRenderer();
+        for (Object[] entry : modelsOf(id)) {
+            String model = (String) entry[0];
+            double[] offset = (double[]) entry[1];
+            com.google.gson.JsonArray elements = elementsOf(model, 0);
+            if (elements == null) {
+                return null; // objet plat : icone 2D habituelle
+            }
+            Map<String, String> textures = new HashMap<>();
+            collectTextures(model, textures, 0);
+            for (JsonElement el : elements) {
+                JsonObject e = el.getAsJsonObject();
+                double[] from = vec(e.getAsJsonArray("from"));
+                double[] to = vec(e.getAsJsonArray("to"));
+                JsonObject rot = e.getAsJsonObject("rotation");
+                JsonObject faces = e.getAsJsonObject("faces");
+                if (faces == null) {
+                    continue;
+                }
+                for (Map.Entry<String, JsonElement> fe : faces.entrySet()) {
+                    String dir = fe.getKey();
+                    JsonObject face = fe.getValue().getAsJsonObject();
+                    String key = str(face.get("texture"));
+                    String path = key == null ? null : key.startsWith("#") ? ref(textures, key.substring(1)) : key;
+                    BufferedImage tex = texture(path);
+                    if (tex == null) {
+                        continue;
+                    }
+                    if (face.has("tintindex")) {
+                        tex = tint(id, tex, false);
+                    }
+                    double[][] corners = ModelRenderer.corners(dir, from, to);
+                    if (corners == null) {
+                        continue;
+                    }
+                    double[] uv = face.has("uv") ? vec4(face.getAsJsonArray("uv")) : ModelRenderer.defaultUv(dir, from, to);
+                    int turns = face.has("rotation") ? (face.get("rotation").getAsInt() / 90) & 3 : 0;
+                    double[][] placed = new double[4][];
+                    for (int i = 0; i < 4; i++) {
+                        double[] c = corners[(i + 4 - turns) % 4];
+                        if (rot != null && rot.has("origin") && rot.has("axis") && rot.has("angle")) {
+                            c = ModelRenderer.rotate(c, vec(rot.getAsJsonArray("origin")), str(rot.get("axis")),
+                                    rot.get("angle").getAsDouble());
+                        }
+                        placed[i] = new double[] {c[0] + offset[0], c[1] + offset[1], c[2] + offset[2]};
+                    }
+                    renderer.add(new ModelRenderer.Face(placed, tex, uv[0], uv[1], uv[2], uv[3], ModelRenderer.shade(dir)));
+                }
+            }
+        }
+        return renderer.isEmpty() ? null : renderer.render();
+    }
+
+    private static double[] vec(com.google.gson.JsonArray a) {
+        return new double[] {a.get(0).getAsDouble(), a.get(1).getAsDouble(), a.get(2).getAsDouble()};
+    }
+
+    private static double[] vec4(com.google.gson.JsonArray a) {
+        return new double[] {a.get(0).getAsDouble(), a.get(1).getAsDouble(), a.get(2).getAsDouble(), a.get(3).getAsDouble()};
+    }
+
+    /** Lueur violette des objets enchantes (pomme doree enchantee). */
+    private static BufferedImage glint(BufferedImage image) {
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int argb = image.getRGB(x, y);
+                if ((argb >>> 24) < 128) {
+                    continue;
+                }
+                int r = (((argb >> 16) & 0xFF) * 6 + 0xB0 * 4) / 10;
+                int g = (((argb >> 8) & 0xFF) * 6 + 0x50 * 4) / 10;
+                int b = ((argb & 0xFF) * 6 + 0xFF * 4) / 10;
+                image.setRGB(x, y, (argb & 0xFF000000) | (r << 16) | (g << 8) | b);
+            }
+        }
+        return image;
     }
 
     /** Textures du modele et de ses parents (celles de l'enfant priment). */
