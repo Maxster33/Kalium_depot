@@ -123,6 +123,12 @@ mot de passe : sessions enregistrées, ou mot de passe tapé par l'humain.
    anciens) ; leur suppression définitive reste faite par l'humain. Attention : le dépôt n'existe que depuis le
    23/09/2026, les versions plus anciennes n'existent QUE dans ces dossiers ; si on veut les garder, les télécharger
    sur un PC avant de les supprimer.
+
+   **Nouvelle règle (LeKiwi06, 26/09/2026)** : un dossier `_removed-<plugin>-<version>` peut être supprimé dès qu'il
+   est **3 versions ou plus derrière la version en service** (ex. en service 0.8.2 : 0.8.1 et 0.8.0 gardés, 0.7.8 et
+   plus anciens supprimables). La suppression reste faite par l'humain : Claude ne supprime jamais de fichier
+   définitivement ; à chaque déploiement, il donne la liste des dossiers supprimables et peut préparer un script
+   WinSCP que l'humain lance lui-même.
 4. Ne jamais taper d'accents dans l'éditeur intégré de WinSCP (texte corrompu) : un texte accentué se change
    dans le code source, puis on recompile.
 5. Claude ne redémarre jamais un serveur : c'est l'humain qui le fait.
