@@ -22,7 +22,7 @@ liste à explorer soi-même) ; titre et description des plots.
 - « Mes plots » affiche le titre des plots.
 - Nécessite **KV_Plots 1.3.0** (à déployer ensemble).
 
-**Statut : non testé en jeu, non déployé.**
+**Déployé sur Kanvas le 26/09/2026 (02:58) avec KV_Plots 1.3.0. Statut : non testé en jeu.**
 
 ## 1.1.0 - votes et validation (26/09/2026)
 

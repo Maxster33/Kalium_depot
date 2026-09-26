@@ -16,7 +16,7 @@ Cahier des charges : « chaque plot peut avoir un titre et une description (lore
   noté par le joueur), `visiter` (téléportation au bord de n'importe quel plot), `definirLore` ; `PlotInfo` avec
   titre et description.
 
-**Statut : non testé en jeu, non déployé.** À déployer avec KV_Menu 1.2.0.
+**Déployé sur Kanvas le 26/09/2026 (02:58) avec KV_Menu 1.2.0. Statut : non testé en jeu.**
 
 ## 1.2.0 - validation, votes, déblocage d'une 2e place (26/09/2026)
 
