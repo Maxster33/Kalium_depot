@@ -71,6 +71,8 @@ de plots en créatif. Préfixe `KV_` = Kanvas (voir la charte dans `ARCHITECTURE
 - **Menu** : `KV_Menu`, ouvert par une **étoile du Nether en emplacement 4**. Dans un plot validé pas encore noté,
   les terracottas (cases 3 à 7) la remplacent automatiquement ; dans un plot déjà noté, on revote par le bouton
   **« Voter »** du menu.
+- **Construire à l'aise** : sur son plot en travaux (créateur ou éditeur), l'étoile et la boussole quittent la barre
+  d'objets (rangées dans l'inventaire) et reviennent en sortant du plot.
 - **Génération** : première zone de **5 plots dans chaque direction** autour du plot de référence (-107, -2, -57),
   routes recopiées depuis celles qui existent.
 - **Remise à zéro / suppression** (26/09/2026) : `/plot reset` (terrain vierge, plot gardé) et `/plot supprimer`

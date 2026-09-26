@@ -12,6 +12,14 @@ actions de **KV_Plots** (par son API `fr.kalium.kvplots.api.KanvasPlots`). Menus
 - Fiche d'un plot : points, nombre de votes, moyenne ; **« Valider le plot »** / **« Rouvrir le plot »** avec
   confirmation (créateur).
 - L'étoile du Nether n'est plus remise en place pendant un vote (inventaire remplacé par les terracottas de KV_Plots).
+- Demande de LeKiwi06 : « la boussole et la nether star ne soient pas dans la hotbar quand on est dans un plot à nous
+  qui n'est pas encore validé, pour pouvoir build plus facilement ». Sur un plot en travaux dont on est créateur ou
+  éditeur, l'étoile est rangée en case 35 et la boussole de KLM_Menu en case 36 (dernière rangée de l'inventaire,
+  hors barre d'objets ; ce qui s'y trouvait prend leur place dans la barre) ; en sortant du plot, elles reviennent
+  à leur emplacement (étoile : `hub-item.slot` ; boussole : `compass.slot` de KLM_Menu), par échange. Rangées et non
+  retirées : KLM_Menu 2.0.0 (Kanvas) ne redonne la boussole qu'à l'arrivée, et seulement si elle n'est nulle part.
+  Vérifié à chaque changement de bloc (entrée / sortie de plot) et toutes les 2 s. Le menu reste accessible par
+  `/kanvas`.
 - Nécessite **KV_Plots 1.2.0** (à déployer ensemble).
 
 **Statut : non testé en jeu, non déployé.**
