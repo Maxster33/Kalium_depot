@@ -82,8 +82,12 @@ Limites connues :
   anti-crash (config de FAWE) :
   `region-restrictions: true` / `mode: MEMBER` déjà en place ; limites `limits.default` réduites le 26/09/2026
   (max-changes 1 000 000, max-checks 2 000 000, max-radius 50, max-brush-radius 20, max-entities 25,
-  max-blockstates 500, max-history-mb 50) ; FAWE Paper à la place de la variante Bukkit. Reste : permissions des
-  joueurs dans LuckPerms (groupe `default`).
+  max-blockstates 500, max-history-mb 50) ; FAWE Paper à la place de la variante Bukkit. Permissions des joueurs
+  données dans LuckPerms (groupe `default` : `fawe.worldguard`, `worldedit.wand`, `worldedit.selection.*`,
+  `worldedit.region.*`, `worldedit.clipboard.*`, `worldedit.history.*`, `worldedit.generation.*`, `worldedit.brush.*`).
+  `worldedit-config.yml` : `navigation-wand.item` = `minecraft:structure_void` (la boussole de KLM_Menu déclenchait
+  `/jumpto` / `/thru` pour les opérateurs). **Testé et confirmé par LeKiwi06 le 26/09/2026** : FAWE en joueur
+  seulement dans son plot, sélection à cheval sur la bordure limitée au côté plot.
 - Désactiver le « mode survie forcé » de KLM_Menu sur Kanvas.
 
 **Déployé sur Kanvas le 26/09/2026 (01:43, sans KV_Menu), **
