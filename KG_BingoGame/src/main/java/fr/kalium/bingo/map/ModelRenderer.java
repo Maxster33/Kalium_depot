@@ -21,7 +21,8 @@ final class ModelRenderer {
     }
 
     private static final int SS = 3; // sur-echantillonnage
-    private static final int OUT = 16;
+    /** 0.8.2 : 22 pixels (cases de 24 sur une grille 5 x 5) au lieu de 16, plus de details (LeKiwi06). */
+    static final int OUT = 22;
 
     private final List<Face> faces = new ArrayList<>();
 
@@ -43,7 +44,9 @@ final class ModelRenderer {
      * largeur d'une face (0.8.1 : 1 fois au depart, les blocs paraissaient ecrases - LeKiwi06).
      */
     private static double sy(double[] p) {
-        return -p[1] * 0.6124 - ((16 - p[0]) + p[2]) * 0.25;
+        // 0.8.2 : dessus un peu moins haut que la vue du jeu (0,2 au lieu de 0,25) : les cotes, qui font reconnaitre
+        // obsidienne, bibliotheque, TNT..., prennent plus de place (LeKiwi06 : « encore trop ecrase en hauteur »).
+        return -p[1] * 0.6124 - ((16 - p[0]) + p[2]) * 0.2;
     }
 
     private static double depth(double[] p) {

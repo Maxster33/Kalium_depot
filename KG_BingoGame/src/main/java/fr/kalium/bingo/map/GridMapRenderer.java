@@ -91,7 +91,7 @@ public final class GridMapRenderer extends MapRenderer {
                 int y0 = origin + 1 + row * (cell + 1);
                 drawBackground(canvas, index, x0, y0, cell);
                 Objective objective = grid.getCells().get(index).getObjective();
-                drawIcon(canvas, objective, x0 + (cell - 16) / 2, y0 + (cell - 16) / 2);
+                drawIcon(canvas, objective, x0, y0, cell);
                 if (objective.quantity() > 1) {
                     drawQuantity(canvas, String.valueOf(objective.quantity()), x0 + cell - 2, y0 + cell - 2);
                 }
@@ -124,17 +124,20 @@ public final class GridMapRenderer extends MapRenderer {
         }
     }
 
-    private void drawIcon(MapCanvas canvas, Objective objective, int x0, int y0) {
+    private void drawIcon(MapCanvas canvas, Objective objective, int cx, int cy, int cell) {
         BufferedImage image = icons.apply(objective.material());
         if (image == null) {
-            drawOutlined(canvas, "?", x0 + 5, y0 + 4, UNKNOWN);
+            drawOutlined(canvas, "?", cx + (cell - 16) / 2 + 5, cy + (cell - 16) / 2 + 4, UNKNOWN);
             return;
         }
+        // 0.8.2 : icone centree selon sa taille (blocs en 3D : 22 pixels ; objets plats : 16).
+        int w = Math.min(cell, image.getWidth()), h = Math.min(cell, image.getHeight());
+        int x0 = cx + (cell - w) / 2, y0 = cy + (cell - h) / 2;
         // 0.4.1 - demande de LeKiwi06 : "met un contour gris fonce pour les items de couleur blanche pour qu'ils
         // ressortent mieux" (sucre, poudre d'os, laine blanche, papier... sur le fond blanc).
         if (light.computeIfAbsent(objective.material(), m -> isLight(image))) {
-            for (int x = -1; x <= 16; x++) {
-                for (int y = -1; y <= 16; y++) {
+            for (int x = -1; x <= w; x++) {
+                for (int y = -1; y <= h; y++) {
                     if (!opaque(image, x, y) && (opaque(image, x - 1, y) || opaque(image, x + 1, y)
                             || opaque(image, x, y - 1) || opaque(image, x, y + 1))) {
                         set(canvas, x0 + x, y0 + y, OUTLINE);
@@ -142,8 +145,8 @@ public final class GridMapRenderer extends MapRenderer {
                 }
             }
         }
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 16; y++) {
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
                 int argb = image.getRGB(x, y);
                 if ((argb >>> 24) >= 128) {
                     canvas.setPixelColor(x0 + x, y0 + y, new Color(argb, false));
@@ -153,15 +156,15 @@ public final class GridMapRenderer extends MapRenderer {
     }
 
     private static boolean opaque(BufferedImage image, int x, int y) {
-        return x >= 0 && y >= 0 && x < 16 && y < 16 && (image.getRGB(x, y) >>> 24) >= 128;
+        return x >= 0 && y >= 0 && x < image.getWidth() && y < image.getHeight() && (image.getRGB(x, y) >>> 24) >= 128;
     }
 
     /** Objet "blanc" : au moins la moitie de ses pixels visibles sont blancs ou gris tres clair. */
     static boolean isLight(BufferedImage image) {
         int visible = 0;
         int bright = 0;
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 16; y++) {
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
                 int argb = image.getRGB(x, y);
                 if ((argb >>> 24) < 128) {
                     continue;

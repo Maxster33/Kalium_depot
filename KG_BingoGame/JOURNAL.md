@@ -1624,6 +1624,10 @@ simplement les logos des items ? ».
 - Le jeu n'a pas d'image plate pour les blocs (il les dessine en 3D dans l'inventaire) : le rendu 3D reste la seule
   façon de les montrer comme en jeu. Proportions de la vue d'inventaire corrigées : une arête verticale = 1,22 fois
   la largeur d'une face (vue inclinée de 30°), au lieu de 1 fois.
-- Icônes refaites dans `icons/<version>-3d2/` (celles de la 0.8.1, dans `-3d/`, ne sont plus lues : dossier à supprimer
-  par l'humain) ; le jeu est retéléchargé une fois chez Mojang au premier démarrage.
+- Puis (LeKiwi06 : « on ne peut pas les détailler un peu plus ? encore trop écrasé en hauteur pour obsidienne,
+  bibliothèque, TNT ») : blocs dessinés **en 22 pixels** (cases de 24 sur une grille 5 x 5) au lieu de 16, et dessus un
+  peu moins haut que la vue du jeu (les côtés, qui font reconnaître ces blocs, prennent plus de place). La carte centre
+  chaque icône selon sa taille ; les objets plats restent en 16 pixels (leur taille d'origine, pour rester nets).
+- Icônes refaites dans `icons/<version>-3d22/` (celles de la 0.8.1, dans `-3d/`, ne sont plus lues : dossier à
+  supprimer par l'humain) ; le jeu est retéléchargé une fois chez Mojang au premier démarrage.
 **Statut : non testé en jeu, non déployé.**
