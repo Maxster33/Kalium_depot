@@ -222,6 +222,20 @@ public final class BingoPartyManager {
      * bloquer le thread principal. Silencieux si relay-url n'est pas configure.
      */
     public void pollClosedParties() {
+        // 1.5.1 : une partie encore listee apres bingo.listed-party-expiry-minutes (30 par defaut, 0 = jamais) est
+        // retiree de la liste : si le serveur Bingo redemarre pendant qu'elle est en salle d'attente, il ne previent
+        // jamais de sa fermeture et elle restait listee pour toujours (LeKiwi06, 26/09/2026).
+        long expiryMinutes = plugin.getConfig().getLong("bingo.listed-party-expiry-minutes", 30);
+        if (expiryMinutes > 0) {
+            java.time.Instant limit = java.time.Instant.now().minus(Duration.ofMinutes(expiryMinutes));
+            for (BingoParty party : List.copyOf(byGameId.values())) {
+                if (party.createdAt().isBefore(limit)) {
+                    plugin.getLogger().info("[Bingo] Partie " + party.code() + " retirée de la liste (plus de "
+                            + expiryMinutes + " min sans démarrer).");
+                    remove(party.gameId());
+                }
+            }
+        }
         String url = plugin.getConfig().getString("bingo.relay-url", "");
         if (url == null || url.isBlank() || byGameId.isEmpty()) {
             return;

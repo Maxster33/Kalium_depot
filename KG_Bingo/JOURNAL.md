@@ -80,3 +80,13 @@ l'équilibrage des barèmes (`EQUILIBRAGE_POINTS.md`).
   points restent dans le journal de Serveur Jeux.
 **Déploiement** : avec **KG_BingoGame 0.8.0** (Serveur Jeux), sur Kal-Games le 26/09/2026 à 5 h 23 (`_removed-kg_bingo-1.4.0/`). **Statut : testé et confirmé par LeKiwi06 le 26/09/2026.**
 
+## 1.5.1 — parties restées dans la liste (26/09/2026)
+
+**Signalé par LeKiwi06** : « des parties ne se sont pas supprimées de l'interface du Bingo sur Kal-Games ».
+- Cause : une partie ne quittait la liste du hub que sur le signal de fermeture de Serveur Jeux (démarrée ou annulée),
+  sans aucune expiration. Si Serveur Jeux redémarre pendant qu'elle est en salle d'attente (plusieurs déploiements dans
+  la nuit du 26/09), le signal ne vient jamais et la partie restait listée pour toujours (jusqu'au redémarrage du hub).
+- Correctif : une partie encore listée après **`bingo.listed-party-expiry-minutes`** (30 par défaut, 0 = jamais ;
+  valeur par défaut dans le code, clé facultative) est retirée de la liste (message dans la console).
+**Statut : non testé en jeu, non déployé.**
+
