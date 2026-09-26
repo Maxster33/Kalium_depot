@@ -22,7 +22,7 @@ actions de **KV_Plots** (par son API `fr.kalium.kvplots.api.KanvasPlots`). Menus
   `/kanvas`.
 - Nécessite **KV_Plots 1.2.0** (à déployer ensemble).
 
-**Déployé sur Kanvas le 26/09/2026 (02:37) avec KV_Plots 1.2.0. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 26/09/2026 (02:37) avec KV_Plots 1.2.0. Statut : testé et confirmé par LeKiwi06 le 26/09/2026 (« tout fonctionne »).**
 
 ## 1.0.0 - création (26/09/2026)
 
@@ -43,4 +43,4 @@ Demande de LeKiwi06 : « une interface au lieu de juste avoir les commandes ».
 - Les refus de KV_Plots (plus de place, pas le créateur...) s'affichent dans un petit message avec « OK ».
 - Dépend de KLM_Menu et **KV_Plots 1.1.0** (à déployer ensemble).
 
-**Déployé sur Kanvas le 26/09/2026 (02:02) avec KV_Plots 1.1.0. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 26/09/2026 (02:02) avec KV_Plots 1.1.0. Statut : testé et confirmé par LeKiwi06 le 26/09/2026 (« tout fonctionne »).**

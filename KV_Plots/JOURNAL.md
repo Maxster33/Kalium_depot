@@ -27,7 +27,7 @@ encore testés (empilement demandé explicitement).
 - API : `valider`, `rouvrir`, `peutVoter`, `note`, `voter`, `enVote` ; `PlotInfo` avec points, votes, moyenne.
 - Pas encore : poudre de blaze de signalement (avec les signalements), titre / description, classements.
 
-**Déployé sur Kanvas le 26/09/2026 (02:37) avec KV_Menu 1.1.0. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 26/09/2026 (02:37) avec KV_Menu 1.1.0. Statut : testé et confirmé par LeKiwi06 le 26/09/2026 (« tout fonctionne »).**
 
 ## 1.1.1 - on reste en créatif sur Kanvas (26/09/2026)
 
@@ -39,7 +39,7 @@ sur ce serveur précis ». Cause : KLM_Menu remet toujours en survie au passage 
   modifié (plugin commun au réseau).
 - Limite : le message de KLM_Menu au passage en joueur reste celui de KLM_Menu.
 
-**Déployé sur Kanvas le 26/09/2026 (02:10). Statut : non testé en jeu.**
+**Déployé sur Kanvas le 26/09/2026 (02:10). Statut : testé et confirmé par LeKiwi06 le 26/09/2026 (« tout fonctionne »).**
 
 ## 1.1.0 - remise à zéro et suppression d'un plot (26/09/2026)
 
@@ -56,7 +56,7 @@ Demande de LeKiwi06 : « il y a une commande pour reset ou supprimer son plot ? 
   repris au redémarrage (`chantier` dans `plots.yml` ; l'ancienne clé `fusion-en-cours` de la 1.0.0 est relue).
 - API : `remettreAZero`, `supprimer` (boutons de KV_Menu).
 
-**Déployé sur Kanvas le 26/09/2026 (02:02) avec KV_Menu 1.0.0. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 26/09/2026 (02:02) avec KV_Menu 1.0.0. Statut : testé et confirmé par LeKiwi06 le 26/09/2026 (« tout fonctionne »).**
 
 ## 1.0.0 - génération de la grille, réservation, éditeurs, protection (26/09/2026)
 
