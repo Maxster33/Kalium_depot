@@ -43,7 +43,8 @@ import net.kyori.adventure.text.format.TextDecoration;
 /**
  * Mode vote : en entrant dans un plot validé qu'il n'a pas encore noté (et dont il n'est ni créateur ni éditeur, même
  * ancien), le joueur voit son inventaire mis de côté et reçoit les 5 terracottas sur les cases 3 à 7 de la barre
- * d'objets (rouge 1 ... vert foncé 5). Clic avec une terracotta = vote. Son inventaire lui est rendu dès qu'il vote,
+ * d'objets (rouge 1 ... vert foncé 5), et une poudre de blaze en case 9 pour signaler le plot (menu de KV_Menu). Clic
+ * avec une terracotta = vote. Son inventaire lui est rendu dès qu'il vote,
  * sort du plot, change de monde ou se déconnecte. L'inventaire mis de côté est aussi écrit sur le disque
  * (inventaires/<uuid>.yml) pour être rendu à la connexion suivante si le serveur s'arrête entre-temps.
  */
@@ -55,9 +56,11 @@ final class ModeVote implements Listener {
             NamedTextColor.YELLOW, NamedTextColor.GREEN, NamedTextColor.DARK_GREEN};
     /** Cases 3 à 7 de la barre d'objets (indices 2 à 6). */
     private static final int PREMIERE_CASE = 2;
+    /** Case 9 : poudre de blaze pour signaler le plot (le menu de signalement est ouvert par KV_Menu). */
+    private static final int CASE_SIGNALEMENT = 8;
 
     private final KVPlots plugin;
-    private final NamespacedKey cleNote;
+    private final NamespacedKey cleNote, cleSignaler;
     private final File dossier;
     /** Joueur en mode vote -> plot noté. */
     private final Map<UUID, Integer> enVote = new HashMap<>();
@@ -65,6 +68,7 @@ final class ModeVote implements Listener {
     ModeVote(KVPlots plugin) {
         this.plugin = plugin;
         this.cleNote = new NamespacedKey(plugin, "note");
+        this.cleSignaler = new NamespacedKey(plugin, "signaler");
         this.dossier = new File(plugin.getDataFolder(), "inventaires");
     }
 
@@ -82,6 +86,29 @@ final class ModeVote implements Listener {
         meta.getPersistentDataContainer().set(cleNote, PersistentDataType.INTEGER, note);
         item.setItemMeta(meta);
         return item;
+    }
+
+    private ItemStack poudreSignalement() {
+        ItemStack item = new ItemStack(Material.BLAZE_POWDER);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(Component.text("Signaler ce plot", NamedTextColor.RED, TextDecoration.BOLD)
+                .decoration(TextDecoration.ITALIC, false));
+        meta.lore(List.of(Component.text("Clic : signaler un problème au staff.", NamedTextColor.GRAY)
+                .decoration(TextDecoration.ITALIC, false)));
+        meta.getPersistentDataContainer().set(cleSignaler, PersistentDataType.BYTE, (byte) 1);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    boolean estSignalement(ItemStack item) {
+        return item != null && item.hasItemMeta()
+                && item.getItemMeta().getPersistentDataContainer().has(cleSignaler, PersistentDataType.BYTE);
+    }
+
+    /** Plot en cours de notation par ce joueur (0 = pas en mode vote). */
+    int plotEnVote(Player joueur) {
+        Integer id = enVote.get(joueur.getUniqueId());
+        return id == null ? 0 : id;
     }
 
     private int note(ItemStack item) {
@@ -128,6 +155,7 @@ final class ModeVote implements Listener {
         PlayerInventory inv = joueur.getInventory();
         inv.clear();
         for (int note = 1; note <= 5; note++) inv.setItem(PREMIERE_CASE + note - 1, terracotta(note));
+        inv.setItem(CASE_SIGNALEMENT, poudreSignalement());
         joueur.setItemOnCursor(null);
         enVote.put(joueur.getUniqueId(), p.id);
         annoncer(joueur, p);
@@ -180,7 +208,7 @@ final class ModeVote implements Listener {
         PlayerInventory inv = joueur.getInventory();
         if (!f.exists()) {
             for (int i = 0; i < inv.getSize(); i++) {
-                if (note(inv.getItem(i)) > 0) inv.setItem(i, null);
+                if (note(inv.getItem(i)) > 0 || estSignalement(inv.getItem(i))) inv.setItem(i, null);
             }
             return;
         }

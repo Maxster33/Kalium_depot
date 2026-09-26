@@ -1,5 +1,8 @@
 package fr.kalium.kvmenu;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -10,12 +13,19 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.kalium.kvplots.api.KanvasPlots;
 import fr.kalium.kvplots.api.KanvasPlots.PlotInfo;
 import fr.kalium.kvplots.api.KanvasPlots.Refus;
+import fr.kalium.kvplots.api.KanvasPlots.SignalementInfo;
 import fr.kalium.kvplots.api.Taille;
 import fr.kalium.menu.api.Gui;
 import fr.kalium.menu.api.Lang;
@@ -32,6 +42,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
  *   mes plots.
  * 1.1.0 : votes, validation / réouverture, points dans la fiche ; l'étoile laisse la place aux terracottas.
  * 1.2.0 : visites (au hasard, par joueur avec les têtes, liste de tous les plots), titre et description.
+ * 1.3.0 : signalements (formulaire, poudre de blaze du mode vote, écrans du staff).
  * - Mes plots : un bouton par plot (créateur ou éditeur) -> fiche du plot : téléportation, éditeurs, remise à zéro,
  *   suppression (créateur).
  * - Ouverture : étoile du Nether (emplacement 4), /kanvas (/kv, /plots) et le catalogue de KLM_Menu (entrée « Kanvas »).
@@ -62,6 +73,13 @@ public final class KvMenu extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ObjetMenu(this, lang, p -> accueil(p, null)), this);
         tetes = new TetesJoueurs(plots, lang, this::plotsJoueur);
         getServer().getPluginManager().registerEvents(tetes, this);
+        getServer().getPluginManager().registerEvents(new PoudreSignalement(), this);
+        getServer().getServicesManager().register(MenuSection.class,
+                MenuSection.of(this, "kanvas-signalements", MenuSection.Audience.ADMINS,
+                        t("klm.reports", "<light_purple>Kanvas : signalements"),
+                        t("klm.reports-tip", "<gray>Plots signalés par les joueurs : détail et actions."),
+                        (p, back) -> adminSignalements(p, false, 0, back)),
+                this, ServicePriority.Normal);
         lang.saveIfNeeded();
     }
 
@@ -129,6 +147,10 @@ public final class KvMenu extends JavaPlugin {
         }
         boutons.add(gui.button(t("home.visit", "<aqua>Visiter les plots"),
                 t("home.visit-tip", "<gray>Au hasard, par joueur, ou toute la liste."), p -> visites(p, ici)));
+        if (staff(joueur)) {
+            boutons.add(gui.button(t("home.reports", "<light_purple>Signalements <gray>(<n> à traiter)", "n", plots.signalements(false).size()),
+                    t("home.reports-tip", "<gray>Réservé au staff."), p -> adminSignalements(p, false, 0, ici)));
+        }
         PlotInfo sous = plots.plotEn(joueur.getLocation());
         if (sous != null && plots.peutVoter(u, sous.id())) {
             int note = plots.note(u, sous.id());
@@ -190,6 +212,146 @@ public final class KvMenu extends JavaPlugin {
                                 : t("vote.current", "<gray>Ta note actuelle : <white><note>/5 <gray>(un nouveau vote la remplace).",
                                         "note", actuelle)),
                 List.of(), boutons, null, 5);
+    }
+
+    // ------------------------------------------------------------------ signalements
+
+    private static final int SIGNALEMENTS_PAR_PAGE = 15;
+    private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+            .withZone(ZoneId.of("Europe/Paris"));
+
+    private boolean staff(Player joueur) {
+        return joueur.hasPermission("kvplots.admin");
+    }
+
+    /** Formulaire de signalement : raisons à cocher, « Autre » en texte libre. retour null = « Fermer ». */
+    private void signaler(Player joueur, int id, Consumer<Player> retour) {
+        PlotInfo plot = plots.plot(id);
+        if (plot == null || !plots.peutSignaler(joueur.getUniqueId(), id)) {
+            if (retour != null) retour.accept(joueur);
+            return;
+        }
+        List<String> raisons = plots.raisonsSignalement();
+        List<io.papermc.paper.registry.data.dialog.input.DialogInput> champs = new ArrayList<>();
+        for (int i = 0; i < raisons.size(); i++) champs.add(gui.toggle("r" + i, Component.text(raisons.get(i)), false));
+        champs.add(gui.text("autre", t("report.other", "Autre (précise)"), "", 200));
+        List<ActionButton> boutons = new ArrayList<>();
+        boutons.add(gui.form(t("report.send", "<red><bold>Envoyer le signalement"), null, (p, vue) -> {
+            List<String> choisies = new ArrayList<>();
+            for (int i = 0; i < raisons.size(); i++) {
+                if (Boolean.TRUE.equals(vue.getBoolean("r" + i))) choisies.add(raisons.get(i));
+            }
+            try {
+                plots.signaler(p, id, choisies, vue.getText("autre"));
+                gui.notice(p, t("report.done-title", "<green><bold>Merci !"),
+                        t("report.done", "<gray>Ton signalement a été envoyé au staff."), q -> {
+                            if (retour != null) retour.accept(q);
+                        });
+            } catch (Refus r) {
+                refus(p, r, q -> signaler(q, id, retour));
+            }
+        }));
+        if (retour != null) boutons.add(retour(retour));
+        gui.open(joueur, t("report.title", "<red><bold>Signaler le plot n°<id>", "id", id),
+                List.of(t("report.body", "<gray>Plot de <white><owner><gray>. Coche les raisons, ou précise dans « Autre ».",
+                        "owner", nom(plot.createur()))),
+                champs, boutons, null, 1);
+    }
+
+    /** Staff : signalements non traités (ou classés), par pages. */
+    private void adminSignalements(Player joueur, boolean classes, int page, Consumer<Player> retour) {
+        if (!staff(joueur)) return;
+        List<SignalementInfo> liste = plots.signalements(classes);
+        int pages = Math.max(1, (liste.size() + SIGNALEMENTS_PAR_PAGE - 1) / SIGNALEMENTS_PAR_PAGE);
+        int n = Math.max(0, Math.min(page, pages - 1));
+        Consumer<Player> ici = p -> adminSignalements(p, classes, n, retour);
+        List<ActionButton> boutons = new ArrayList<>();
+        for (int i = n * SIGNALEMENTS_PAR_PAGE; i < Math.min(liste.size(), (n + 1) * SIGNALEMENTS_PAR_PAGE); i++) {
+            SignalementInfo s = liste.get(i);
+            boutons.add(gui.button(t("admin.item", "<yellow>n°<id> <gray>· plot n°<plot> · <author> · <date>", "id", s.id(),
+                            "plot", s.plot(), "author", nom(s.auteur()), "date", DATE.format(Instant.ofEpochMilli(s.date()))),
+                    Component.text(String.join(", ", s.raisons()) + (s.autre().isEmpty() ? "" : " « " + s.autre() + " »")),
+                    p -> adminDetail(p, s.id(), ici)));
+        }
+        if (n > 0) boutons.add(gui.button(t("list.previous", "<yellow>Page précédente"), null, p -> adminSignalements(p, classes, n - 1, retour)));
+        if (n < pages - 1) boutons.add(gui.button(t("list.next", "<yellow>Page suivante"), null, p -> adminSignalements(p, classes, n + 1, retour)));
+        boutons.add(gui.button(classes ? t("admin.show-open", "<aqua>Voir les signalements à traiter")
+                : t("admin.show-closed", "<aqua>Voir les signalements classés"), null, p -> adminSignalements(p, !classes, 0, retour)));
+        if (retour != null) boutons.add(retour(retour));
+        gui.open(joueur, classes ? t("admin.title-closed", "<light_purple><bold>Signalements classés")
+                        : t("admin.title", "<light_purple><bold>Signalements à traiter <gray>(<n>)", "n", liste.size()),
+                List.of(liste.isEmpty() ? t("admin.empty", "<gray>Aucun signalement.")
+                        : t("admin.body", "<gray>Clique sur un signalement pour le détail et les actions.")),
+                List.of(), boutons, null, 1);
+    }
+
+    /** Staff : détail d'un signalement et actions (téléportation, fiche, classer, dévalider, remettre à zéro). */
+    private void adminDetail(Player joueur, int sid, Consumer<Player> retour) {
+        SignalementInfo s = plots.signalement(sid);
+        if (s == null || !staff(joueur)) {
+            retour.accept(joueur);
+            return;
+        }
+        Consumer<Player> ici = p -> adminDetail(p, sid, retour);
+        PlotInfo plot = plots.plot(s.plot());
+        List<Component> corps = new ArrayList<>();
+        corps.add(plot == null ? t("admin.plot-gone", "<gray>Plot n°<plot> : <red>supprimé", "plot", s.plot())
+                : t("admin.plot", "<gray>Plot n°<plot> de <white><owner> <gray>(<state>)", "plot", s.plot(),
+                        "owner", nom(plot.createur()), "state", plot.valide() ? "validé" : "en travaux"));
+        corps.add(t("admin.author", "<gray>Signalé par <white><author> <gray>le <date>", "author", nom(s.auteur()),
+                "date", DATE.format(Instant.ofEpochMilli(s.date()))));
+        if (!s.raisons().isEmpty()) corps.add(t("admin.reasons", "<gray>Raisons : <white><reasons>", "reasons", String.join(", ", s.raisons())));
+        if (!s.autre().isEmpty()) corps.add(t("admin.other", "<gray>Autre : <white><text>", "text", s.autre()));
+        if (s.classe()) {
+            corps.add(t("admin.closed", "<green>Classé par <by> : <action>", "by", s.traitePar() == null ? "?" : nom(s.traitePar()),
+                    "action", s.action()));
+        }
+        List<ActionButton> boutons = new ArrayList<>();
+        if (plot != null) {
+            boutons.add(gui.button(t("admin.tp", "<aqua>Se téléporter au plot"), null, p -> {
+                try {
+                    plots.visiter(p, s.plot());
+                } catch (Refus r) {
+                    refus(p, r, ici);
+                }
+            }));
+            boutons.add(gui.button(t("admin.sheet", "<yellow>Fiche du plot"), null, p -> fiche(p, s.plot(), ici)));
+        }
+        if (!s.classe()) {
+            boutons.add(gui.button(t("admin.dismiss", "<gray>Classer sans suite"), null, p -> traiter(p, sid, "aucune action", null, ici, retour)));
+            if (plot != null && plot.valide()) {
+                boutons.add(gui.button(t("admin.unvalidate", "<gold>Dévalider le plot"),
+                        t("admin.unvalidate-tip", "<gray>Il repasse en travaux (votes gardés) ; le signalement est classé."),
+                        p -> gui.confirm(p, t("admin.unvalidate-title", "<gold><bold>Dévalider le plot n°<plot>", "plot", s.plot()),
+                                t("admin.unvalidate-body", "<gray>Le plot repasse en travaux : son créateur pourra le modifier et le revalider."),
+                                q -> traiter(q, sid, "plot dévalidé", () -> plots.devalider(q, s.plot()), ici, retour), ici::accept)));
+            }
+            if (plot != null) {
+                boutons.add(gui.button(t("admin.reset", "<red>Remettre le plot à zéro"),
+                        t("admin.reset-tip", "<gray>Efface tout ce qui y est construit ; le signalement est classé."),
+                        p -> gui.confirm(p, t("admin.reset-title", "<red><bold>Remettre à zéro le plot n°<plot>", "plot", s.plot()),
+                                t("admin.reset-body", "<gray>Tout ce qui est construit sur ce plot sera effacé. Impossible d'annuler."),
+                                q -> traiter(q, sid, "plot remis à zéro", () -> plots.remettreAZero(q, s.plot()), ici, retour), ici::accept)));
+            }
+        }
+        boutons.add(retour(retour));
+        gui.open(joueur, t("admin.detail-title", "<light_purple><bold>Signalement n°<id>", "id", sid), corps, List.of(), boutons, null, 1);
+    }
+
+    private interface ActionStaff {
+        void faire() throws Refus;
+    }
+
+    /** Fait l'action (si besoin), classe le signalement, puis revient à la liste. */
+    private void traiter(Player staff, int sid, String nomAction, ActionStaff action, Consumer<Player> ici, Consumer<Player> liste) {
+        try {
+            if (action != null) action.faire();
+            plots.classer(staff, sid, nomAction);
+            staff.sendMessage(t("admin.done", "<green>Signalement n°<id> classé (<action>).", "id", sid, "action", nomAction));
+            liste.accept(staff);
+        } catch (Refus r) {
+            refus(staff, r, ici);
+        }
     }
 
     // ------------------------------------------------------------------ visites
@@ -331,6 +493,10 @@ public final class KvMenu extends JavaPlugin {
                 "votes", plot.votes(), "avg", plot.votes() == 0 ? ""
                         : String.format(java.util.Locale.FRANCE, ", moyenne %.1f/5", plot.moyenne())));
         List<ActionButton> boutons = new ArrayList<>();
+        if (plots.peutSignaler(joueur.getUniqueId(), id)) {
+            boutons.add(gui.button(t("plot.report", "<red>Signaler ce plot"),
+                    t("plot.report-tip", "<gray>Prévenir le staff d'un problème."), p -> signaler(p, id, ici)));
+        }
         if (plots.peutVoter(joueur.getUniqueId(), id)) {
             int note = plots.note(joueur.getUniqueId(), id);
             boutons.add(gui.button(note == 0 ? t("plot.vote", "<gold><bold>Noter ce plot")
@@ -456,5 +622,16 @@ public final class KvMenu extends JavaPlugin {
                         : t("editors.body", "<gray>Les éditeurs construisent avec toi. Ils ne pourront pas voter pour ce plot.")),
                 List.of(gui.text("pseudo", t("editors.field", "Pseudo du joueur"), "", 16)),
                 boutons, null, 1);
+    }
+
+    /** Poudre de blaze du mode vote (KV_Plots) : ouvre le formulaire de signalement du plot noté. */
+    private final class PoudreSignalement implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR)
+        public void onInteract(PlayerInteractEvent e) {
+            if (e.getHand() != EquipmentSlot.HAND || e.getAction() == Action.PHYSICAL
+                    || !plots.estObjetSignalement(e.getItem())) return;
+            int id = plots.plotEnVote(e.getPlayer());
+            if (id != 0) signaler(e.getPlayer(), id, null);
+        }
     }
 }

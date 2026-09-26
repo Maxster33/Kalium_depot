@@ -5,6 +5,21 @@ actions de **KV_Plots** (par son API `fr.kalium.kvplots.api.KanvasPlots`). Menus
 (boîte à outils `Gui` / `Lang` de KLM_Menu), textes modifiables dans `lang.yml`. Cahier des charges :
 `KV_Plots/CAHIER_DES_CHARGES.md`.
 
+## 1.3.0 - signalements (26/09/2026)
+
+- **Formulaire de signalement** : cases à cocher (contenu inapproprié, copie d'un autre build, plot vide ou bâclé,
+  triche aux votes) + champ « Autre (précise) » ; ouvert par la **poudre de blaze** du mode vote ou par le bouton
+  **« Signaler ce plot »** de la fiche (plots dont on n'est ni créateur ni éditeur). Message « Merci ! » après envoi.
+- **Staff** (`kvplots.admin`) : bouton **« Signalements (n à traiter) »** à l'accueil, et entrée **« Kanvas :
+  signalements »** dans le catalogue de KLM_Menu (rangée admin). Liste par pages de 15 (n°, plot, auteur, date ;
+  raisons en info-bulle), bascule « à traiter » / « classés ». Détail : plot et créateur, auteur, date, raisons,
+  texte, qui l'a classé et l'action ; boutons **« Se téléporter au plot »**, **« Fiche du plot »**, **« Classer sans
+  suite »**, **« Dévalider le plot »** (plot validé) et **« Remettre le plot à zéro »**, avec confirmation ; ces
+  deux actions classent aussi le signalement.
+- Nécessite **KV_Plots 1.4.0** (à déployer ensemble).
+
+**Statut : non testé en jeu, non déployé.**
+
 ## 1.2.0 - visites, titre et description (26/09/2026)
 
 Cahier des charges : menu des visites (au hasard vers un plot pas encore noté ; liste des joueurs avec leurs têtes ;

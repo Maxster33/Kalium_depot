@@ -21,5 +21,5 @@ permissions:
     description: Reserver des plots, s'y teleporter, gerer ses editeurs.
     default: true
   kvplots.admin:
-    description: Generer la grille ; remettre a zero ou supprimer n'importe quel plot (meme valide).
+    description: Staff - generer la grille ; remettre a zero, supprimer, devalider n'importe quel plot ; traiter les signalements.
     default: op

@@ -29,13 +29,15 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 1.0.0 : génération de la grille, réservation (moyen / grand), éditeurs, protection WorldGuard, règles du monde.
  * 1.1.0 : remise à zéro et suppression d'un plot. 1.1.1 : les joueurs restent en créatif.
  * 1.2.0 : validation, votes (terracottas), déblocage d'une 2e place à 100 points.
- * 1.3.0 : titre et description, visites (API pour le menu des visites de KV_Menu).
+ * 1.3.0 : titre et description, visites (API pour le menu des visites de KV_Menu). 1.3.1 : tableau sur le côté.
+ * 1.4.0 : signalements (poudre de blaze, raisons, fichier, traitement par le staff dans KV_Menu).
  */
 public final class KVPlots extends JavaPlugin {
 
     private World monde;
     private Grille grille;
     private Plots plots;
+    private Signalements signalements;
     private Regions regions;
     private Chantier chantier;
     private ModeleTuile tuile;
@@ -55,6 +57,8 @@ public final class KVPlots extends JavaPlugin {
                 getConfig().getInt("grille.ligne-min", -5), getConfig().getInt("grille.ligne-max", 5));
         plots = new Plots(this);
         plots.charger();
+        signalements = new Signalements(this);
+        signalements.charger();
         regions = new Regions(this);
         chantier = new Chantier(this);
         chargerTuile();
@@ -410,6 +414,62 @@ public final class KVPlots extends JavaPlugin {
 
     ModeVote modeVote() {
         return modeVote;
+    }
+
+    // --- Signalements ---
+
+    /** Raisons proposées (plus une case « Autre » avec texte libre). */
+    static final List<String> RAISONS = List.of("Contenu inapproprié", "Copie d'un autre build", "Plot vide ou bâclé",
+            "Triche aux votes");
+
+    Signalements signalements() {
+        return signalements;
+    }
+
+    /** Un joueur signale un plot dont il n'est ni créateur ni éditeur (un seul signalement non traité par plot). */
+    Signalements.Signalement signaler(Player joueur, Plot p, List<String> raisons, String autre) throws Refus {
+        UUID u = joueur.getUniqueId();
+        if (!p.estExterieur(u)) throw new Refus("Tu ne peux pas signaler un plot dont tu es (ou as été) créateur ou éditeur.");
+        List<String> choisies = new ArrayList<>();
+        for (String r : raisons) {
+            if (RAISONS.contains(r) && !choisies.contains(r)) choisies.add(r);
+        }
+        autre = autre == null ? "" : autre.strip();
+        if (autre.length() > 200) autre = autre.substring(0, 200);
+        if (choisies.isEmpty() && autre.isEmpty()) throw new Refus("Coche au moins une raison, ou écris-la dans « Autre ».");
+        if (signalements.ouvert(u, p.id) != null) {
+            throw new Refus("Tu as déjà signalé ce plot : le staff n'a pas encore traité ton signalement.");
+        }
+        Signalements.Signalement s = signalements.ajouter(p.id, u, choisies, autre);
+        String resume = "Signalement n°" + s.id + " : plot n°" + p.id + " de " + nom(p.createur) + ", par " + joueur.getName()
+                + " (" + String.join(", ", choisies) + (autre.isEmpty() ? "" : (choisies.isEmpty() ? "" : ", ") + "« " + autre + " »") + ")";
+        getLogger().info(resume);
+        for (Player staff : getServer().getOnlinePlayers()) {
+            if (staff.hasPermission("kvplots.admin")) staff.sendMessage("§c[Kanvas] §f" + resume + " §7- menu Kanvas > Signalements");
+        }
+        return s;
+    }
+
+    /** Le staff classe un signalement (traité), en notant l'action faite. */
+    void classer(Player staff, Signalements.Signalement s, String action) throws Refus {
+        if (!staff.hasPermission("kvplots.admin")) throw new Refus("Réservé au staff.");
+        if (s.classe) throw new Refus("Ce signalement est déjà classé.");
+        s.classe = true;
+        s.traitePar = staff.getUniqueId();
+        s.action = action;
+        signalements.sauver();
+    }
+
+    /** Le staff dévalide un plot : il repasse en travaux (même sans place libre) ; ses votes sont gardés. */
+    void devalider(Player staff, Plot p) throws Refus {
+        if (!staff.hasPermission("kvplots.admin")) throw new Refus("Réservé au staff.");
+        if (p.etat != Plot.Etat.VALIDE) throw new Refus("Ce plot n'est pas validé.");
+        if (p.chantier != Plot.Chantier.AUCUN) throw new Refus("Des travaux sont en cours sur ce plot.");
+        p.etat = Plot.Etat.TRAVAUX;
+        plots.sauver();
+        regions.appliquer(p);
+        modeVote.rafraichir();
+        getLogger().info("Plot n°" + p.id + " dévalidé par " + staff.getName() + ".");
     }
 
     // --- Remise à zéro, suppression ---

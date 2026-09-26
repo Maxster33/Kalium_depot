@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import fr.kalium.kvplots.api.KanvasPlots;
 import fr.kalium.kvplots.api.Taille;
@@ -144,6 +145,59 @@ final class Api implements KanvasPlots {
     @Override
     public boolean enVote(Player joueur) {
         return plugin.modeVote().enVote(joueur);
+    }
+
+    private static SignalementInfo vue(Signalements.Signalement s) {
+        return s == null ? null : new SignalementInfo(s.id, s.plot, s.auteur, List.copyOf(s.raisons), s.autre, s.date,
+                s.classe, s.traitePar, s.action);
+    }
+
+    @Override
+    public List<String> raisonsSignalement() {
+        return KVPlots.RAISONS;
+    }
+
+    @Override
+    public boolean peutSignaler(UUID joueur, int id) {
+        Plot p = plugin.plots().parId(id);
+        return p != null && p.estExterieur(joueur);
+    }
+
+    @Override
+    public SignalementInfo signaler(Player joueur, int id, List<String> raisons, String autre) throws Refus {
+        return vue(plugin.signaler(joueur, trouver(id), raisons, autre));
+    }
+
+    @Override
+    public boolean estObjetSignalement(ItemStack item) {
+        return plugin.modeVote().estSignalement(item);
+    }
+
+    @Override
+    public int plotEnVote(Player joueur) {
+        return plugin.modeVote().plotEnVote(joueur);
+    }
+
+    @Override
+    public List<SignalementInfo> signalements(boolean classes) {
+        return plugin.signalements().liste(classes).stream().map(Api::vue).toList();
+    }
+
+    @Override
+    public SignalementInfo signalement(int id) {
+        return vue(plugin.signalements().parId(id));
+    }
+
+    @Override
+    public void classer(Player staff, int signalement, String action) throws Refus {
+        Signalements.Signalement s = plugin.signalements().parId(signalement);
+        if (s == null) throw new Refus("Ce signalement n'existe pas.");
+        plugin.classer(staff, s, action);
+    }
+
+    @Override
+    public void devalider(Player staff, int id) throws Refus {
+        plugin.devalider(staff, trouver(id));
     }
 
     @Override

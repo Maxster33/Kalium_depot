@@ -4,6 +4,24 @@ Serveur Kanvas (ex Kal-Test-Dev). Cahier des charges : `KV_Plots/CAHIER_DES_CHAR
 de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` télécharge aussi les API WorldGuard
 7.0.19 et WorldEdit 7.4.5 (compilation seulement ; en jeu, ce sont les plugins du serveur qui servent).
 
+## 1.4.0 - signalements (26/09/2026)
+
+Cahier des charges : « raisons à cocher : contenu inapproprié, copie d'un autre build, plot vide ou bâclé, triche aux
+votes, Autre (texte libre). Message en jeu au staff connecté + sauvegarde dans un fichier, consultables dans
+l'interface admin de KV_Menu. Actions du staff : classer le signalement, dévalider le plot, le remettre à zéro. »
+- **Mode vote** : une **poudre de blaze** « Signaler ce plot » en case 9, à côté des terracottas (le formulaire est
+  ouvert par KV_Menu).
+- **Signaler** : tout joueur qui n'est ni créateur ni éditeur (même ancien) du plot, plot validé ou non ; au moins
+  une raison cochée ou « Autre » rempli (200 caractères) ; un seul signalement **non traité** par joueur et par plot.
+  Message au staff connecté (`kvplots.admin`) et dans la console ; enregistré dans **`signalements.yml`** (plot,
+  auteur, raisons, texte, date, classé, traité par, action).
+- **Staff** : classer (avec l'action faite), **dévalider** un plot (il repasse en travaux même sans place libre chez
+  son créateur ; votes gardés), remettre à zéro (fonction existante).
+- API : `raisonsSignalement`, `peutSignaler`, `signaler`, `estObjetSignalement`, `plotEnVote`, `signalements`,
+  `signalement`, `classer`, `devalider` ; `SignalementInfo`.
+
+**Statut : non testé en jeu, non déployé.** À déployer avec KV_Menu 1.3.0.
+
 ## 1.3.1 - informations du plot dans un tableau sur le côté (26/09/2026)
 
 Demande de LeKiwi06 : « que le title soit remplacé par un affichage en sidebar, pour qu'on puisse voir les infos du
