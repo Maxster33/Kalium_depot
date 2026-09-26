@@ -30,5 +30,9 @@
 - Suppressions : faites par l'humain (Claude ne supprime jamais de fichier) ; gardés : plugins retirés de Kanvas le
   26/09, dossiers de l'Event (Maxster33), grosses sauvegardes datées.
 
+## Ajout en fin de session
+- « Des parties ne se sont pas supprimées de l'interface du Bingo sur Kal-Games » : KG_Bingo 1.5.1 (partie listée plus
+  de 30 min retirée ; cause : redémarrages de Serveur Jeux pendant des salles d'attente), déployée à 6 h 56.
+
 ## Reste à faire
 Voir « À faire plus tard » dans le compte rendu du 2026-09-26 de `REPRISE_PROJET.md`.

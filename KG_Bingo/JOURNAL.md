@@ -88,5 +88,5 @@ l'équilibrage des barèmes (`EQUILIBRAGE_POINTS.md`).
   la nuit du 26/09), le signal ne vient jamais et la partie restait listée pour toujours (jusqu'au redémarrage du hub).
 - Correctif : une partie encore listée après **`bingo.listed-party-expiry-minutes`** (30 par défaut, 0 = jamais ;
   valeur par défaut dans le code, clé facultative) est retirée de la liste (message dans la console).
-**Statut : non testé en jeu, non déployé.**
+**Déployé sur Kal-Games le 26/09/2026 à 6 h 56** (1.5.0 dans `_removed-kg_bingo-1.5.0/`). **Statut : non testé en jeu.**
 
