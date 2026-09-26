@@ -17,7 +17,7 @@ tchat ».
 - La description reste écrite dans le chat en entrant dans le plot ; plus de titre au centre de l'écran.
 - Limite : un tableau par joueur ; si un autre plugin affichait déjà une sidebar, elle est remplacée dans les plots.
 
-**Déployé sur Kanvas le 26/09/2026 (03:24). Statut : non testé en jeu.**
+**Déployé sur Kanvas le 26/09/2026 (03:24). Statut : testé et confirmé par LeKiwi06 le 26/09/2026 (« tout est bon »).**
 
 ## 1.3.0 - titre, description, visites (26/09/2026)
 
@@ -31,7 +31,7 @@ Cahier des charges : « chaque plot peut avoir un titre et une description (lore
   noté par le joueur), `visiter` (téléportation au bord de n'importe quel plot), `definirLore` ; `PlotInfo` avec
   titre et description.
 
-**Déployé sur Kanvas le 26/09/2026 (02:58) avec KV_Menu 1.2.0. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 26/09/2026 (02:58) avec KV_Menu 1.2.0. Statut : testé et confirmé par LeKiwi06 le 26/09/2026 (« tout est bon »).**
 
 ## 1.2.0 - validation, votes, déblocage d'une 2e place (26/09/2026)
 
