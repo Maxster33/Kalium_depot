@@ -119,6 +119,12 @@ public final class PartyStarter {
                     + " %) : la partie démarrera automatiquement dès qu'elles seront prêtes.");
         }
 
+        // 0.8.1 : joueurs connectes sans equipe (ils restaient dans la salle d'attente au lancement - bug d'une partie
+        // a 4 equipes, LeKiwi06 26/09/2026) : places dans l'equipe la moins remplie parmi celles deja formees (pas de
+        // nouvelle equipe : le nombre de maps preparees reste le bon).
+        assignUnteamed(party);
+        teams = party.teamsForGameCreation();
+
         BingoGame game;
         try {
             game = gameManager.createGame(party.getGameId(), party.getSeed(), party.getDuration(), teams);
@@ -180,6 +186,34 @@ public final class PartyStarter {
         // etait deja en cours pour ce gameId.
         countdownService.cancel(gameId);
         return Result.immediate(game);
+    }
+
+    private void assignUnteamed(BingoParty party) {
+        java.util.TreeSet<Integer> formed = new java.util.TreeSet<>();
+        for (UUID playerId : party.getConnected()) {
+            Integer team = party.teamOf(playerId);
+            if (team != null) {
+                formed.add(team);
+            }
+        }
+        if (formed.isEmpty()) {
+            return;
+        }
+        for (UUID playerId : List.copyOf(party.getConnected())) {
+            Player player = Bukkit.getPlayer(playerId);
+            if (party.teamOf(playerId) != null || player == null || !player.isOnline()) {
+                continue;
+            }
+            int best = formed.first();
+            for (int team : formed) {
+                if (party.teamSize(team) < party.teamSize(best)) {
+                    best = team;
+                }
+            }
+            party.setTeam(playerId, best);
+            player.sendMessage("§eTu n'avais pas choisi d'équipe : tu rejoins l'équipe " + TeamStyle.letter(best) + ".");
+            logger.info("[KG_BingoGame] " + player.getName() + " sans équipe au lancement : placé dans l'équipe " + best + ".");
+        }
     }
 
     private static String formatSeconds(Duration duration) {

@@ -48,6 +48,20 @@ public final class GameHudService {
         boolean blackout = game.getSettings().isBlackout();
         Component message = Component.text(blackout ? "Blackout " + format(game.getElapsed()) : format(game.getRemaining()),
                 NamedTextColor.AQUA);
+        // 0.8.1 : a partir de 3 equipes, format court (la ligne etait illisible a 4 equipes - LeKiwi06, 26/09/2026) :
+        // « ⏱ 45m12s | A:42pts·1/3 | B:30pts·0/3 | C:18pts·0/3 | D:7pts·0/3 » (la barre d'action n'a qu'une ligne).
+        if (game.getInstances().size() >= 3) {
+            for (BingoInstance instance : game.getInstances()) {
+                int team = instance.getTeam().getTeamNumber();
+                message = message.append(Component.text(" | ", NamedTextColor.DARK_GRAY))
+                        .append(Component.text(TeamStyle.letter(team) + ":", TeamStyle.color(team)))
+                        .append(Component.text(fr.kalium.bingo.score.ScoreEngine.format(game.score(team)) + "pts", NamedTextColor.WHITE))
+                        .append(blackout || game.getScoreEngine() == null ? Component.empty()
+                                : Component.text("·" + game.getScoreEngine().bingoCount(team) + "/" + game.getSettings().bingosRequired(),
+                                NamedTextColor.GRAY));
+            }
+            return message;
+        }
         for (BingoInstance instance : game.getInstances()) {
             int team = instance.getTeam().getTeamNumber();
             message = message.append(Component.text("  |  ", NamedTextColor.DARK_GRAY))

@@ -1576,11 +1576,24 @@ classements.
 - Tous les joueurs du résumé sont envoyés, abandons compris (leurs points propres, comme dans le résumé).
 **Déploiement** : avec **KG_Bingo 1.5.0** (hub), sur Serveur Jeux le 26/09/2026 à 5 h 23 (`_removed-kg_bingogame-0.7.8/`). **Statut : testé et confirmé par LeKiwi06 le 26/09/2026.**
 
-## 0.8.1 — bonus du 1er = moitié des points de base (26/09/2026)
+## 0.8.1 — bonus du 1er = moitié des points de base ; partie à 4 équipes (26/09/2026)
 
 **Demande de LeKiwi06** : « le bonus pour avoir un item en 1er est la moitié des points de base de l'item (avant ce
 n'était pas exactement 50 % et les faciles n'en avaient pas) ».
 - `Difficulty` : bonus de la 1re équipe 1 / 3 / 5 / 10 pour des objectifs à 2 / 6 / 10 / 20 (était 0 / 2 / 4 / 6).
   Le reste du barème est inchangé (bonus de victoire 2 / 4 / 6 / 10, coefficients des bingos...).
-**Statut : non testé en jeu, non déployé.** (D'autres corrections du Bingo suivent dans la même session.)
+Autres corrections (même version), **partie à 4 équipes buggée** (LeKiwi06) :
+- « Des gens ne sont pas TP » au lancement. Deux causes trouvées (journal de la partie du 25/09 à 22 h 45 : 12 mondes
+  préparés en 4 min, Maaxster déconnecté la seconde où la dernière map était prête, revenu dans la salle d'attente et
+  resté là) :
+  1. un joueur d'une partie en cours qui se reconnecte n'était **pas téléporté** (le code supposait qu'il était déjà
+     sur sa map) : s'il n'est pas sur sa map (Nether et End compris), il y est maintenant envoyé comme au lancement
+     (téléportation, point de réapparition, XP remise à zéro, kit de départ, papier « Objectifs », survie) ;
+  2. un joueur connecté **sans équipe** au lancement n'était mis dans aucune équipe et restait dans la salle
+     d'attente : il est placé dans l'équipe la moins remplie parmi celles déjà formées (pas de nouvelle équipe, le
+     nombre de maps préparées reste juste), avec un message.
+- Barre d'action illisible à 4 équipes : **à partir de 3 équipes**, format court demandé par LeKiwi06 :
+  « ⏱ 45m12s | A:42pts·1/3 | B:30pts·0/3 | C:18pts·0/3 | D:7pts·0/3 » (blackout : sans « ·n/m »). La barre d'action de
+  Minecraft n'a qu'une ligne (un retour à la ligne y est ignoré). 1 et 2 équipes : format inchangé.
+**Statut : non testé en jeu, non déployé.**
 

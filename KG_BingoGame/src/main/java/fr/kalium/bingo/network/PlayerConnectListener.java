@@ -75,6 +75,26 @@ public final class PlayerConnectListener implements Listener {
             BingoInstance instance = activeGame.get().findInstanceOf(playerId).orElseThrow();
             gameManager.onPlayerReconnect(playerId);
             instance.setPlayerConnected(playerId, true);
+            // 0.8.1 : joueur hors ligne au lancement (jamais arrive sur sa map : il revient dans la salle d'attente et
+            // y restait - bug d'une partie a 4 equipes, LeKiwi06 26/09/2026) : il y est envoye maintenant, comme au
+            // lancement (PartyStarter). Sa map comprend son Nether et son End (belongsTo).
+            if (!GameManager.belongsTo(player.getWorld(), instance)) {
+                BingoGame game = activeGame.get();
+                org.bukkit.Location spawn = instance.getSpawnLocation();
+                org.bukkit.Bukkit.getScheduler().runTask(org.bukkit.plugin.java.JavaPlugin.getProvidingPlugin(getClass()), () -> {
+                    if (!player.isOnline()) {
+                        return;
+                    }
+                    player.teleport(spawn);
+                    player.setGameMode(org.bukkit.GameMode.SURVIVAL);
+                    playerReset.setGameSpawn(player, spawn);
+                    playerReset.resetExperience(player);
+                    fr.kalium.bingo.game.StarterKit.prepare(player);
+                    gameItems.give(player);
+                    player.sendMessage("§6Partie lancée : §e" + game.getSettings().describe());
+                });
+                return;
+            }
             // Joueur hors ligne au lancement : son point de spawn n'a pas pu etre pose a ce
             // moment-la (voir PartyStarter) - on s'en assure ici. Un lit deja pose sur SA map est
             // conserve (on ne remplace que si le spawn actuel n'est pas sur cette map).
