@@ -72,7 +72,8 @@ Limites : les coordonnées d'un autre serveur se relèvent là-bas (F3) puis se 
 serveur n'agit que si KLM_Portal 1.1.0 (et donc KLM_Menu 2.3.0) y est installé ; les envois faits par d'autres
 plugins (Bingo, KalGames) ne passent pas par KLM_Menu et n'ont donc pas de consigne (`default-arrival` s'applique).
 
-Config préparée pour le lobby (4 portails de LeKiwi06, `server-name: lobby`, `default-arrival` = centre
-`7.5 67 39.5` du monde `Lobby Kalium`, repris de l'événement `center_lobby` de ConditionalEvents) : dans les
-Téléchargements de LeKiwi06 (`klm_portal_lobby/`), `relay-token` à remplir. **Statut : compilé, non déployé (déploiement
-refusé par le contrôle des permissions de Claude, le lobby étant probablement allumé), non testé.**
+**Déployé sur le lobby le 26/09/2026 19:37** (serveur éteint, accord de LeKiwi06), avec KLM_Menu 2.3.0 ; 1.0.0 et son
+`config.yml` dans `/plugins/_removed-klm_portal-1.0.0/`. Nouveau `config.yml` du lobby : les 4 portails de LeKiwi06,
+`server-name: lobby`, `default-arrival` = centre `7.5 67 39.5` du monde `Lobby Kalium` (repris de l'événement
+`center_lobby` de ConditionalEvents). **`relay-token` encore vide** : à remplir par LeKiwi06 (sinon seuls les points
+de chute « arrivée sur ce serveur » fonctionnent). **Statut : non testé en jeu.**
