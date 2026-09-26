@@ -1614,5 +1614,6 @@ Autres corrections (même version), **partie à 4 équipes buggée** (LeKiwi06) 
   basalte, roche noire, tige biscornue, champignon carmin passés de Difficile à **Normal** dans `objectives.yml` (57
   normaux, 18 difficiles). **Le fichier du serveur (`plugins/KG_BingoGame/objectives.yml`) est à remplacer au
   déploiement** (il n'est copié du jar qu'à la première installation), puis `/bingoadmin grid reload` ou redémarrage.
-**Statut : non testé en jeu, non déployé.**
+**Déployé sur Serveur Jeux le 26/09/2026 à 6 h 15** (0.8.0 et l'ancien `objectives.yml` dans `_removed-kg_bingogame-0.8.0/` ; nouveau
+`objectives.yml` envoyé). **Statut : non testé en jeu.**
 
