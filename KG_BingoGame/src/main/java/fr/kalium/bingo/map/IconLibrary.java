@@ -76,7 +76,7 @@ public final class IconLibrary {
         String version = Bukkit.getMinecraftVersion();
         // 0.8.1 : « -3d » = icones refaites avec le rendu 3D des blocs (les anciennes, dans icons/<version>/, ne sont
         // plus lues).
-        Path dir = plugin.getDataFolder().toPath().resolve("icons").resolve(version + "-3d");
+        Path dir = plugin.getDataFolder().toPath().resolve("icons").resolve(version + "-3d2"); // 0.8.2 : proportions corrigees
         Path done = dir.resolve(".complet");
         if (!Files.exists(done)) {
             prepare(version, dir);

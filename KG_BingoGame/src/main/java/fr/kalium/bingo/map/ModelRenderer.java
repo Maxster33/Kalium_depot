@@ -38,8 +38,12 @@ final class ModelRenderer {
         return (p[0] - 16) * 0.5 + p[2] * 0.5;
     }
 
+    /**
+     * Vue de l'inventaire du jeu (inclinaison de 30 degres) : une arete verticale mesure cos 30 / cos 45 = 1,22 fois la
+     * largeur d'une face (0.8.1 : 1 fois au depart, les blocs paraissaient ecrases - LeKiwi06).
+     */
     private static double sy(double[] p) {
-        return -p[1] * 0.5 - ((16 - p[0]) + p[2]) * 0.25;
+        return -p[1] * 0.6124 - ((16 - p[0]) + p[2]) * 0.25;
     }
 
     private static double depth(double[] p) {

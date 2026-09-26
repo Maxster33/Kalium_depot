@@ -1617,3 +1617,13 @@ Autres corrections (même version), **partie à 4 équipes buggée** (LeKiwi06) 
 **Déployé sur Serveur Jeux le 26/09/2026 à 6 h 15** (0.8.0 et l'ancien `objectives.yml` dans `_removed-kg_bingogame-0.8.0/` ; nouveau
 `objectives.yml` envoyé). **Statut : non testé en jeu.**
 
+## 0.8.2 — icônes des blocs aux bonnes proportions (26/09/2026)
+
+**Retour de LeKiwi06 en jeu** (capture de la carte) : « les blocs ont l'air compressés, tu ne peux pas utiliser
+simplement les logos des items ? ».
+- Le jeu n'a pas d'image plate pour les blocs (il les dessine en 3D dans l'inventaire) : le rendu 3D reste la seule
+  façon de les montrer comme en jeu. Proportions de la vue d'inventaire corrigées : une arête verticale = 1,22 fois
+  la largeur d'une face (vue inclinée de 30°), au lieu de 1 fois.
+- Icônes refaites dans `icons/<version>-3d2/` (celles de la 0.8.1, dans `-3d/`, ne sont plus lues : dossier à supprimer
+  par l'humain) ; le jeu est retéléchargé une fois chez Mojang au premier démarrage.
+**Statut : non testé en jeu, non déployé.**
