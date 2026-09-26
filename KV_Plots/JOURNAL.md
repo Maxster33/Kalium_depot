@@ -4,6 +4,21 @@ Serveur Kanvas (ex Kal-Test-Dev). Cahier des charges : `KV_Plots/CAHIER_DES_CHAR
 de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` télécharge aussi les API WorldGuard
 7.0.19 et WorldEdit 7.4.5 (compilation seulement ; en jeu, ce sont les plugins du serveur qui servent).
 
+## 1.3.1 - informations du plot dans un tableau sur le côté (26/09/2026)
+
+Demande de LeKiwi06 : « que le title soit remplacé par un affichage en sidebar, pour qu'on puisse voir les infos du
+plot (créateur, éditeurs, note donnée et note globale, titre, etc.) ; seule la description doit être écrite dans le
+tchat ».
+- Dans un plot : tableau sur le côté de l'écran (sidebar, sans les chiffres à droite). En-tête = titre du plot (ou
+  « Plot n°X ») ; lignes : « Plot n°X · taille », créateur, éditeurs (3 au plus, puis « + N autre(s) »), état
+  (validé / en travaux / travaux en cours), note globale (moyenne /5), votes, points, « Ta note » (n/5, « pas
+  encore » ou « ton plot »). Mis à jour toutes les 2 s et à chaque changement de plot.
+- Sur les routes ou hors du monde des plots : le tableau disparaît (le tableau que le joueur avait avant est remis).
+- La description reste écrite dans le chat en entrant dans le plot ; plus de titre au centre de l'écran.
+- Limite : un tableau par joueur ; si un autre plugin affichait déjà une sidebar, elle est remplacée dans les plots.
+
+**Statut : non testé en jeu, non déployé.**
+
 ## 1.3.0 - titre, description, visites (26/09/2026)
 
 Cahier des charges : « chaque plot peut avoir un titre et une description (lore) » ; menu des visites (KV_Menu).
@@ -11,7 +26,7 @@ Cahier des charges : « chaque plot peut avoir un titre et une description (lore
   créateur, à tout moment (même plot validé) : `/plot titre <texte>`, `/plot description <texte>` (vide = retirer),
   ou le formulaire de KV_Menu. Enregistrés dans `plots.yml` (`titre`, `description`).
 - **Entrée dans un plot** : titre (ou « Plot n°X ») et « par <créateur> » (« (en travaux) » si non validé) à l'écran,
-  description dans le chat. Rien sur les routes. `/plot info` les affiche aussi.
+  description dans le chat (remplacé en 1.3.1 par le tableau sur le côté). Rien sur les routes. `/plot info` les affiche aussi.
 - **Visites** (API) : `tousLesPlots`, `plotsDuCreateur`, `hasardANoter` (plot validé au hasard, notable et pas encore
   noté par le joueur), `visiter` (téléportation au bord de n'importe quel plot), `definirLore` ; `PlotInfo` avec
   titre et description.
