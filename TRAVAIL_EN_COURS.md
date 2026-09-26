@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KG_BingoGame — LeKiwi06 — depuis le 2026-09-26 05:50 — corrections du Bingo (bonus du 1er = moitié des points de base, autres bugs à venir)
 
 
 

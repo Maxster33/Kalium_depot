@@ -15,10 +15,11 @@ public enum Difficulty {
     // ajoutes AVANT les coefficients des bingos (voir fr.kalium.bingo.score.ScoreEngine).
     // 0.8.0 : bareme double (equilibrage des jeux, LeKiwi06 26/09/2026 : 30 min a fond = autant de points qu'a la
     // course de bateau ; mesure : le Bingo rapportait environ 2 fois moins).
-    EASY("Facile", 2, 0, 2),
-    MEDIUM("Normal", 6, 2, 4),
-    HARD("Difficile", 10, 4, 6),
-    EXTREME("Extrême", 20, 6, 10);
+    // 0.8.1 : bonus de la 1re equipe = exactement la moitie des points de base, faciles compris (LeKiwi06, 26/09/2026).
+    EASY("Facile", 2, 1, 2),
+    MEDIUM("Normal", 6, 3, 4),
+    HARD("Difficile", 10, 5, 6),
+    EXTREME("Extrême", 20, 10, 10);
 
     private final String label;
     private final int points;
