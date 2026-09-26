@@ -127,6 +127,13 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
 
 ## Points ouverts / limites connues (rien de bloquant)
 
+- **Sauvegardes des mondes : à voir plus tard (LeKiwi06, 26/09/2026)**. Aucune sauvegarde automatique connue (seulement
+  des copies manuelles, ex. `Kixster SMP_bak`). Pistes : 1) vérifier dans le panneau web Minestrator si chaque serveur
+  a des sauvegardes (non vérifié, Claude n'y a pas accès) ; 2) sauvegarde manuelle des mondes sur le PC par WinSCP
+  (hors du dépôt, serveur arrêté ou après `save-all` ; relever d'abord la taille des mondes) ; 3) plugin de
+  sauvegarde sur chaque serveur (place disque à vérifier). À savoir : la génération de la grille de Kanvas
+  (26/09/2026) a remplacé la zone x -406 à 240 / z -356 à 290 sans sauvegarde préalable ; la zone Build Battle
+  (« à sauvegarder ») n'a pas été sauvegardée avant, vérifier si elle y était.
 - **Serveur Event (25/09/2026)** : ConditionalEvents, PyxelRegions et WorldGuard gardent leurs réglages du hub (événements,
   régions de l'ancien monde) : à vérifier pour la survie. Floodgate installé, extension PlaceholderAPI déplacée,
   PlayerKits2 retiré (demande de Maxster33, 25/09/2026).
