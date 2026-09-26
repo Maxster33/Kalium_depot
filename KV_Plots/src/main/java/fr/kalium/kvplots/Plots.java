@@ -66,10 +66,11 @@ final class Plots {
         return liste;
     }
 
+    /** Plots de cette taille en travaux (non validés) créés par ce joueur : ce sont eux qui occupent ses places. */
     int compter(UUID createur, Taille taille) {
         int n = 0;
         for (Plot p : parId.values()) {
-            if (p.createur.equals(createur) && p.taille == taille) n++;
+            if (p.createur.equals(createur) && p.taille == taille && p.etat == Plot.Etat.TRAVAUX) n++;
         }
         return n;
     }
@@ -106,6 +107,13 @@ final class Plots {
                 for (String u : s.getStringList("editeurs")) p.editeurs.add(UUID.fromString(u));
                 for (String u : s.getStringList("historique-editeurs")) p.historiqueEditeurs.add(UUID.fromString(u));
                 p.etat = Plot.Etat.valueOf(s.getString("etat", "TRAVAUX"));
+                ConfigurationSection votes = s.getConfigurationSection("votes");
+                if (votes != null) {
+                    for (String u : votes.getKeys(false)) {
+                        String[] v = votes.getString(u, "").split(";");
+                        p.votes.put(UUID.fromString(u), new Plot.Vote(Integer.parseInt(v[0]), Long.parseLong(v[1])));
+                    }
+                }
                 p.chantier = Plot.Chantier.valueOf(s.getString("chantier",
                         s.getBoolean("fusion-en-cours") ? "FUSION" : "AUCUN")); // 1.0.0 : fusion-en-cours
                 ajouter(p);
@@ -130,6 +138,9 @@ final class Plots {
             yml.set(b + "historique-editeurs", p.historiqueEditeurs.stream().map(UUID::toString).toList());
             yml.set(b + "etat", p.etat.name());
             yml.set(b + "chantier", p.chantier.name());
+            for (var v : p.votes.entrySet()) {
+                yml.set(b + "votes." + v.getKey(), v.getValue().note() + ";" + v.getValue().heure());
+            }
         }
         try {
             yml.save(fichier);

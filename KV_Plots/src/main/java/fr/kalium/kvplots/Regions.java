@@ -62,11 +62,14 @@ final class Regions {
                 BlockVector3.at(minX, monde.getMinHeight(), minZ),
                 BlockVector3.at(minX + cote - 1, monde.getMaxHeight() - 1, minZ + cote - 1));
         region.setPriority(10);
+        // Plot validé = figé : ni propriétaire ni membre, personne n'y construit (FAWE compris), sauf les opérateurs.
         DefaultDomain proprietaires = new DefaultDomain();
-        proprietaires.addPlayer(p.createur);
-        region.setOwners(proprietaires);
         DefaultDomain membres = new DefaultDomain();
-        for (UUID u : p.editeurs) membres.addPlayer(u);
+        if (p.etat != Plot.Etat.VALIDE) {
+            proprietaires.addPlayer(p.createur);
+            for (UUID u : p.editeurs) membres.addPlayer(u);
+        }
+        region.setOwners(proprietaires);
         region.setMembers(membres);
         rm.addRegion(region); // remplace la région de même nom
         enregistrer(rm);

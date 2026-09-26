@@ -20,9 +20,13 @@ grille:
   ligne-max: 5
 
 limites:
-  # Places au depart (le 2e moyen et le 2e grand se debloqueront a 100 points, plus tard).
+  # Plots en travaux en meme temps, au depart (un plot valide libere sa place).
   moyens: 1
   grands: 1
+  # Un plot qui atteint ce total de points debloque une place de plus de sa taille...
+  points-deblocage: 100
+  # ...dans la limite de ce nombre de places par taille.
+  maximum: 2
 
 # Travaux sur le terrain (fusion des 4 plots d'un grand plot) : blocs modifies au plus par tick.
 blocs-par-tick: 20000

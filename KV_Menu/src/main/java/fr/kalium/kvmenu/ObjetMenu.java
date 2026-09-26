@@ -32,7 +32,7 @@ import net.kyori.adventure.text.format.TextDecoration;
  * Objet du menu de Kanvas (étoile du Nether, emplacement 4 par défaut) : clic droit = menu de Kanvas. Donné à l'arrivée
  * dans le monde des plots, verrouillé (pas de déplacement, pas de jet), remis à sa place toutes les 2 secondes : en
  * créatif, le client peut modifier l'inventaire sans passer par les clics habituels.
- * Plus tard (votes), il laissera sa place aux terracottas dans les plots validés que le joueur n'a pas encore notés.
+ * Pendant un vote (KV_Plots), il laisse sa place aux terracottas : l'inventaire est mis de côté puis rendu par KV_Plots.
  */
 final class ObjetMenu implements Listener {
 
@@ -83,6 +83,7 @@ final class ObjetMenu implements Listener {
      * Ailleurs : l'objet est retiré.
      */
     void verifier(Player p) {
+        if (plugin.plots().enVote(p)) return; // inventaire remplacé par les terracottas (KV_Plots)
         PlayerInventory inv = p.getInventory();
         boolean ici = ici(p);
         int slot = emplacement();

@@ -18,7 +18,8 @@ import org.bukkit.entity.Player;
 public interface KanvasPlots {
 
     /** Vue d'un plot (copie : ne change pas si le plot change ensuite). */
-    record PlotInfo(int id, Taille taille, UUID createur, List<UUID> editeurs, boolean valide, boolean enPreparation) {}
+    record PlotInfo(int id, Taille taille, UUID createur, List<UUID> editeurs, boolean valide, boolean enPreparation,
+                    int points, int votes, double moyenne) {}
 
     /** Action refusée ; le message est prêt à être montré au joueur. */
     final class Refus extends Exception {
@@ -61,6 +62,24 @@ public interface KanvasPlots {
 
     /** Efface le plot et libère la place (un grand plot redevient 4 plots moyens). Mêmes droits. */
     void supprimer(Player joueur, int id) throws Refus;
+
+    /** Fige le plot (créateur seulement) : il devient votable et libère sa place. */
+    void valider(Player joueur, int id) throws Refus;
+
+    /** Rouvre un plot validé (créateur seulement, avec une place libre de la même taille) ; les votes sont gardés. */
+    void rouvrir(Player joueur, int id) throws Refus;
+
+    /** Le joueur peut-il noter ce plot (validé, et ni créateur ni éditeur, même ancien) ? */
+    boolean peutVoter(UUID joueur, int id);
+
+    /** Note donnée par le joueur à ce plot (1 à 5), ou 0 s'il ne l'a pas noté. */
+    int note(UUID joueur, int id);
+
+    /** Vote de 1 à 5 ; remplace l'ancien vote du joueur sur ce plot. */
+    void voter(Player joueur, int id, int note) throws Refus;
+
+    /** Le joueur est-il en train de noter un plot (inventaire remplacé par les terracottas) ? */
+    boolean enVote(Player joueur);
 
     /** Ajoute un éditeur (seul le créateur du plot peut le faire). */
     void ajouterEditeur(Player createur, int id, UUID editeur) throws Refus;

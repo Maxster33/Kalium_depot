@@ -5,6 +5,17 @@ actions de **KV_Plots** (par son API `fr.kalium.kvplots.api.KanvasPlots`). Menus
 (boîte à outils `Gui` / `Lang` de KLM_Menu), textes modifiables dans `lang.yml`. Cahier des charges :
 `KV_Plots/CAHIER_DES_CHARGES.md`.
 
+## 1.1.0 - votes et validation (26/09/2026)
+
+- Accueil : **« Voter pour ce plot »** (avec « ta note : n/5 » si déjà noté) quand on se trouve sur un plot qu'on
+  peut noter → 5 boutons de 1/5 (rouge) à 5/5 (vert foncé) ; un nouveau vote remplace l'ancien.
+- Fiche d'un plot : points, nombre de votes, moyenne ; **« Valider le plot »** / **« Rouvrir le plot »** avec
+  confirmation (créateur).
+- L'étoile du Nether n'est plus remise en place pendant un vote (inventaire remplacé par les terracottas de KV_Plots).
+- Nécessite **KV_Plots 1.2.0** (à déployer ensemble).
+
+**Statut : non testé en jeu, non déployé.**
+
 ## 1.0.0 - création (26/09/2026)
 
 Demande de LeKiwi06 : « une interface au lieu de juste avoir les commandes ».

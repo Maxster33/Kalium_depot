@@ -25,7 +25,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * KV_Plots (cahier des charges : KV_Plots/CAHIER_DES_CHARGES.md) - serveur Kanvas, demande de LeKiwi06 (25-26/09/2026).
  * 1.0.0 : génération de la grille, réservation (moyen / grand), éditeurs, protection WorldGuard, règles du monde.
- * 1.1.0 : remise à zéro et suppression d'un plot.
+ * 1.1.0 : remise à zéro et suppression d'un plot. 1.1.1 : les joueurs restent en créatif.
+ * 1.2.0 : validation, votes (terracottas), déblocage d'une 2e place à 100 points.
  */
 public final class KVPlots extends JavaPlugin {
 
@@ -37,6 +38,7 @@ public final class KVPlots extends JavaPlugin {
     private ModeleTuile tuile;
     private boolean generation;
     private final Confirmations confirmations = new Confirmations();
+    private ModeVote modeVote;
 
     @Override
     public void onEnable() {
@@ -67,6 +69,8 @@ public final class KVPlots extends JavaPlugin {
         }
 
         getServer().getPluginManager().registerEvents(new ReglesMonde(this), this);
+        modeVote = new ModeVote(this);
+        getServer().getPluginManager().registerEvents(modeVote, this);
         getServer().getServicesManager().register(KanvasPlots.class, new Api(this), this, ServicePriority.Normal);
         PluginCommand plot = getCommand("plot");
         CommandePlot commande = new CommandePlot(this);
@@ -77,6 +81,7 @@ public final class KVPlots extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (modeVote != null) modeVote.toutRendre();
         if (plots != null) plots.sauver();
     }
 
@@ -208,9 +213,18 @@ public final class KVPlots extends JavaPlugin {
 
     // --- Réservation ---
 
-    /** Places en même temps pour chaque taille (les déblocages à 100 points viendront plus tard). */
+    /**
+     * Plots de cette taille en travaux en même temps : 1 au départ, +1 dès qu'un plot de cette taille du joueur atteint
+     * 100 points cumulés (au plus 2).
+     */
     int places(UUID joueur, Taille t) {
-        return t == Taille.GRAND ? getConfig().getInt("limites.grands", 1) : getConfig().getInt("limites.moyens", 1);
+        int base = t == Taille.GRAND ? getConfig().getInt("limites.grands", 1) : getConfig().getInt("limites.moyens", 1);
+        int seuil = getConfig().getInt("limites.points-deblocage", 100);
+        boolean debloque = false;
+        for (Plot p : plots.duCreateur(joueur)) {
+            if (p.taille == t && p.points() >= seuil) debloque = true;
+        }
+        return Math.min(getConfig().getInt("limites.maximum", 2), base + (debloque ? 1 : 0));
     }
 
     private boolean groupeLibre(Grille.Case coin) {
@@ -313,6 +327,53 @@ public final class KVPlots extends JavaPlugin {
         }));
     }
 
+    // --- Validation, votes ---
+
+    /** Le créateur fige son plot : il devient votable et libère sa place. */
+    void valider(Player joueur, Plot p) throws Refus {
+        if (!p.createur.equals(joueur.getUniqueId())) throw new Refus("Seul le créateur du plot peut le valider.");
+        if (p.etat == Plot.Etat.VALIDE) throw new Refus("Ce plot est déjà validé.");
+        if (p.chantier != Plot.Chantier.AUCUN) throw new Refus("Des travaux sont en cours sur ce plot.");
+        p.etat = Plot.Etat.VALIDE;
+        plots.sauver();
+        regions.appliquer(p);
+        modeVote.rafraichir();
+        getLogger().info("Plot n°" + p.id + " validé par " + joueur.getName() + ".");
+    }
+
+    /** Le créateur rouvre son plot validé : il lui faut une place libre de la même taille ; les votes sont gardés. */
+    void rouvrir(Player joueur, Plot p) throws Refus {
+        if (!p.createur.equals(joueur.getUniqueId())) throw new Refus("Seul le créateur du plot peut le rouvrir.");
+        if (p.etat != Plot.Etat.VALIDE) throw new Refus("Ce plot n'est pas validé.");
+        if (p.chantier != Plot.Chantier.AUCUN) throw new Refus("Des travaux sont en cours sur ce plot.");
+        UUID u = joueur.getUniqueId();
+        if (plots.compter(u, p.taille) >= places(u, p.taille)) {
+            throw new Refus("Il te faut une place " + p.taille.nom + " libre pour rouvrir ce plot : valide ou supprime d'abord"
+                    + " un de tes plots " + p.taille.nom + "s en travaux.");
+        }
+        p.etat = Plot.Etat.TRAVAUX;
+        plots.sauver();
+        regions.appliquer(p);
+        modeVote.rafraichir();
+        getLogger().info("Plot n°" + p.id + " rouvert par " + joueur.getName() + ".");
+    }
+
+    /** Vote de 1 à 5 ; un nouveau vote du même joueur remplace l'ancien. */
+    void voter(Player joueur, Plot p, int note) throws Refus {
+        if (note < 1 || note > 5) throw new Refus("La note va de 1 à 5.");
+        UUID u = joueur.getUniqueId();
+        if (!p.estExterieur(u)) throw new Refus("Tu ne peux pas noter un plot dont tu es (ou as été) créateur ou éditeur.");
+        if (p.etat != Plot.Etat.VALIDE || p.chantier != Plot.Chantier.AUCUN) {
+            throw new Refus("Ce plot n'est pas validé : on ne peut pas le noter pour le moment.");
+        }
+        p.votes.put(u, new Plot.Vote(note, System.currentTimeMillis()));
+        plots.sauver();
+    }
+
+    ModeVote modeVote() {
+        return modeVote;
+    }
+
     // --- Remise à zéro, suppression ---
 
     /** Colonnes de tout l'intérieur du plot (routes intérieures d'un grand plot comprises), chunk par chunk. */
@@ -351,6 +412,7 @@ public final class KVPlots extends JavaPlugin {
     private void lancerRemise(Plot p, Player informe) {
         p.chantier = Plot.Chantier.REMISE_A_ZERO;
         plots.sauver();
+        if (modeVote != null) modeVote.rafraichir();
         retirerEntites(p);
         chantier.ajouter(new Chantier.Tache(colonnesDe(p), (x, z) -> grille.caseEn(x, z) != null
                 ? tuile.poserGrille(monde, x, z, grille.origineX, grille.origineZ)
@@ -358,6 +420,7 @@ public final class KVPlots extends JavaPlugin {
             retirerEntites(p);
             p.chantier = Plot.Chantier.AUCUN;
             plots.sauver();
+            modeVote.rafraichir();
             getLogger().info("Plot n°" + p.id + " remis à zéro.");
             if (informe != null && informe.isOnline()) informe.sendMessage("§aPlot n°" + p.id + " remis à zéro.");
         }));
@@ -372,6 +435,7 @@ public final class KVPlots extends JavaPlugin {
     private void lancerSuppression(Plot p, Player informe) {
         p.chantier = Plot.Chantier.SUPPRESSION;
         plots.sauver();
+        if (modeVote != null) modeVote.rafraichir();
         regions.supprimer(p); // plus personne n'y construit pendant les travaux
         retirerEntites(p);
         chantier.ajouter(new Chantier.Tache(colonnesDe(p),
@@ -390,6 +454,7 @@ public final class KVPlots extends JavaPlugin {
         p.historiqueEditeurs.add(editeur);
         plots.sauver();
         regions.appliquer(p);
+        modeVote.rafraichir();
     }
 
     void retirerEditeur(Player createur, Plot p, UUID editeur) throws Refus {

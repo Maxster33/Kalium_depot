@@ -34,6 +34,8 @@ final class CommandePlot implements TabExecutor {
         s.sendMessage("§e/" + label + " tp [numéro] §7- te téléporter à l'un de tes plots");
         s.sendMessage("§e/" + label + " info §7- le plot où tu te tiens");
         s.sendMessage("§e/" + label + " editeur <ajouter|retirer> <pseudo> §7- sur ton plot");
+        s.sendMessage("§e/" + label + " valider §7- figer ton plot fini : il pourra être noté, sa place se libère");
+        s.sendMessage("§e/" + label + " rouvrir §7- rouvrir ton plot validé (il faut une place libre)");
         s.sendMessage("§e/" + label + " reset §7- remettre ton plot à zéro (il reste à toi)");
         s.sendMessage("§e/" + label + " supprimer §7- effacer ton plot et libérer la place");
     }
@@ -55,6 +57,8 @@ final class CommandePlot implements TabExecutor {
                 case "tp" -> tp(joueur, args);
                 case "info" -> info(joueur);
                 case "editeur", "éditeur" -> editeur(joueur, args);
+                case "valider" -> etat(joueur, args, true);
+                case "rouvrir" -> etat(joueur, args, false);
                 case "reset" -> travaux(joueur, args, false);
                 case "supprimer" -> travaux(joueur, args, true);
                 default -> aide(joueur, label);
@@ -136,11 +140,37 @@ final class CommandePlot implements TabExecutor {
         }
     }
 
+    /** /plot valider|rouvrir [confirmer] sur le plot où l'on se tient (créateur). */
+    private void etat(Player joueur, String[] args, boolean valider) throws Refus {
+        Plot p = plotIci(joueur);
+        String action = valider ? "valider" : "rouvrir";
+        boolean confirme = args.length > 1 && args[1].equalsIgnoreCase("confirmer")
+                && plugin.confirmations().confirmer(joueur.getUniqueId(), action, p.id);
+        if (!confirme) {
+            if (!p.createur.equals(joueur.getUniqueId())) throw new Refus("Seul le créateur du plot peut le " + action + ".");
+            plugin.confirmations().demander(joueur.getUniqueId(), action, p.id);
+            joueur.sendMessage(valider
+                    ? "§eValider le plot n°" + p.id + " : il sera figé (plus aucune modification) et pourra être noté ; sa place se libère."
+                    : "§eRouvrir le plot n°" + p.id + " : il reprend une place " + p.taille.nom + " ; ses votes sont gardés, on pourra revoter une fois revalidé.");
+            joueur.sendMessage("§eConfirmer dans la minute : /plot " + action + " confirmer");
+            return;
+        }
+        if (valider) {
+            plugin.valider(joueur, p);
+            joueur.sendMessage("§aPlot n°" + p.id + " validé : il peut maintenant être noté !");
+        } else {
+            plugin.rouvrir(joueur, p);
+            joueur.sendMessage("§aPlot n°" + p.id + " rouvert : tu peux de nouveau y construire.");
+        }
+    }
+
     private void info(Player joueur) throws Refus {
         Plot p = plotIci(joueur);
         joueur.sendMessage("§6Plot n°" + p.id + " §7(" + p.taille.nom + ", "
                 + (p.etat == Plot.Etat.VALIDE ? "validé" : "en travaux") + ")");
         joueur.sendMessage("§eCréateur : §f" + nom(p.createur));
+        joueur.sendMessage("§ePoints : §f" + p.points() + " §7(" + p.votes.size() + " vote" + (p.votes.size() > 1 ? "s" : "")
+                + (p.votes.isEmpty() ? "" : ", moyenne " + String.format(java.util.Locale.FRANCE, "%.1f", p.moyenne()) + "/5") + ")");
         joueur.sendMessage("§eÉditeurs : §f" + (p.editeurs.isEmpty() ? "aucun"
                 : p.editeurs.stream().map(CommandePlot::nom).collect(Collectors.joining(", "))));
     }
@@ -169,7 +199,7 @@ final class CommandePlot implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         String debut = args[args.length - 1].toLowerCase();
         List<String> choix = switch (args.length) {
-            case 1 -> List.of("reserver", "liste", "tp", "info", "editeur", "reset", "supprimer");
+            case 1 -> List.of("reserver", "liste", "tp", "info", "editeur", "valider", "rouvrir", "reset", "supprimer");
             case 2 -> switch (args[0].toLowerCase()) {
                 case "reserver", "réserver" -> List.of("moyen", "grand");
                 case "editeur", "éditeur" -> List.of("ajouter", "retirer");

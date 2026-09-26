@@ -27,7 +27,9 @@ import net.kyori.adventure.text.Component;
  * KV_Menu (1.0.0) : menus du serveur Kanvas (demande de LeKiwi06, 26/09/2026 : « une interface au lieu de juste avoir
  * les commandes »). Hiérarchie des interfaces : KLM_Menu (catalogue) -> KV_Menu -> actions de KV_Plots.
  *
- * - Accueil : réserver un plot moyen / grand, mes plots.
+ * - Accueil : voter pour le plot où l'on se trouve (s'il est noté ou notable), réserver un plot moyen / grand,
+ *   mes plots.
+ * 1.1.0 : votes, validation / réouverture, points dans la fiche ; l'étoile laisse la place aux terracottas.
  * - Mes plots : un bouton par plot (créateur ou éditeur) -> fiche du plot : téléportation, éditeurs, remise à zéro,
  *   suppression (créateur).
  * - Ouverture : étoile du Nether (emplacement 4), /kanvas (/kv, /plots) et le catalogue de KLM_Menu (entrée « Kanvas »).
@@ -118,12 +120,18 @@ public final class KvMenu extends JavaPlugin {
         List<PlotInfo> mes = plots.plotsDe(u);
         if (!mes.isEmpty()) {
             boutons.add(gui.button(t("home.my-plots", "<gold>Mes plots <gray>(<n>)", "n", mes.size()),
-                    t("home.my-plots-tip", "<gray>Téléportation, éditeurs."), p -> mesPlots(p, ici)));
+                    t("home.my-plots-tip", "<gray>Téléportation, éditeurs, validation."), p -> mesPlots(p, ici)));
+        }
+        PlotInfo sous = plots.plotEn(joueur.getLocation());
+        if (sous != null && plots.peutVoter(u, sous.id())) {
+            int note = plots.note(u, sous.id());
+            boutons.add(0, gui.button(note == 0 ? t("home.vote", "<gold><bold>Voter pour ce plot")
+                            : t("home.revote", "<gold><bold>Voter pour ce plot <gray>(ta note : <note>/5)", "note", note),
+                    t("home.vote-tip", "<gray>Note le plot où tu te trouves, de 1 à 5."), p -> vote(p, sous.id(), ici)));
         }
         if (back != null) boutons.add(retour(back));
         List<Component> corps = new ArrayList<>();
         corps.add(t("home.body", "<gray>Construis en créatif sur tes plots, seul ou avec des éditeurs."));
-        PlotInfo sous = plots.plotEn(joueur.getLocation());
         if (sous != null) {
             corps.add(t("home.here", "<gray>Tu es sur le plot n°<id> de <owner>.", "id", sous.id(), "owner", nom(sous.createur())));
         }
@@ -143,6 +151,38 @@ public final class KvMenu extends JavaPlugin {
                     }
                 },
                 retour::accept);
+    }
+
+    // ------------------------------------------------------------------ vote
+
+    /** Noter (ou renoter) le plot : 5 boutons, de 1 (rouge) à 5 (vert foncé). */
+    private void vote(Player joueur, int id, Consumer<Player> retour) {
+        PlotInfo plot = plots.plot(id);
+        if (plot == null || !plots.peutVoter(joueur.getUniqueId(), id)) {
+            retour.accept(joueur);
+            return;
+        }
+        String[] couleurs = {"<red>", "<gold>", "<yellow>", "<green>", "<dark_green>"};
+        List<ActionButton> boutons = new ArrayList<>();
+        for (int n = 1; n <= 5; n++) {
+            int note = n;
+            boutons.add(gui.button(t("vote.button-" + n, couleurs[n - 1] + "<bold>" + n + "/5"), null, p -> {
+                try {
+                    plots.voter(p, id, note);
+                    p.sendMessage(t("vote.done", "<green>Tu as donné <note>/5 au plot n°<id>.", "note", note, "id", id));
+                } catch (Refus r) {
+                    refus(p, r, retour);
+                }
+            }));
+        }
+        boutons.add(retour(retour));
+        int actuelle = plots.note(joueur.getUniqueId(), id);
+        gui.open(joueur, t("vote.title", "<gold><bold>Noter le plot n°<id>", "id", id),
+                List.of(t("vote.owner", "<gray>Plot de <white><owner>", "owner", nom(plot.createur())),
+                        actuelle == 0 ? t("vote.none", "<gray>Tu ne l'as pas encore noté.")
+                                : t("vote.current", "<gray>Ta note actuelle : <white><note>/5 <gray>(un nouveau vote la remplace).",
+                                        "note", actuelle)),
+                List.of(), boutons, null, 5);
     }
 
     // ------------------------------------------------------------------ mes plots
@@ -178,6 +218,9 @@ public final class KvMenu extends JavaPlugin {
         corps.add(plot.enPreparation() ? t("plot.state-preparing", "<gray>État : <yellow>en préparation")
                 : plot.valide() ? t("plot.state-validated", "<gray>État : <green>validé")
                 : t("plot.state-building", "<gray>État : <white>en travaux"));
+        corps.add(t("plot.points", "<gray>Points : <white><points> <gray>(<votes> vote(s)<avg>)", "points", plot.points(),
+                "votes", plot.votes(), "avg", plot.votes() == 0 ? ""
+                        : String.format(java.util.Locale.FRANCE, ", moyenne %.1f/5", plot.moyenne())));
         List<ActionButton> boutons = new ArrayList<>();
         boutons.add(gui.button(t("plot.tp", "<aqua>Se téléporter"), null, p -> {
             try {
@@ -190,6 +233,35 @@ public final class KvMenu extends JavaPlugin {
             boutons.add(gui.button(t("plot.editors-button", "<yellow>Éditeurs"),
                     t("plot.editors-tip", "<gray>Ajouter ou retirer des joueurs qui construisent avec toi."),
                     p -> editeurs(p, id, ici)));
+        }
+        if (plot.createur().equals(joueur.getUniqueId()) && !plot.enPreparation()) {
+            if (!plot.valide()) {
+                boutons.add(gui.button(t("plot.validate", "<green>Valider le plot"),
+                        t("plot.validate-tip", "<gray>Plot fini : il est figé, peut être noté, et sa place se libère."),
+                        p -> gui.confirm(p, t("plot.validate-title", "<green><bold>Valider le plot n°<id>", "id", id),
+                                t("plot.validate-body", "<gray>Le plot sera figé (plus aucune modification) et les autres joueurs pourront le noter. Sa place se libère ; tu pourras le rouvrir plus tard s'il te reste une place."),
+                                q -> {
+                                    try {
+                                        plots.valider(q, id);
+                                        q.sendMessage(t("plot.validate-done", "<green>Plot n°<id> validé : il peut maintenant être noté !", "id", id));
+                                    } catch (Refus r) {
+                                        refus(q, r, ici);
+                                    }
+                                }, ici::accept)));
+            } else {
+                boutons.add(gui.button(t("plot.reopen", "<yellow>Rouvrir le plot"),
+                        t("plot.reopen-tip", "<gray>Pour le modifier : il reprend une place. Les votes sont gardés."),
+                        p -> gui.confirm(p, t("plot.reopen-title", "<yellow><bold>Rouvrir le plot n°<id>", "id", id),
+                                t("plot.reopen-body", "<gray>Le plot reprend une place <size>. Ses votes sont gardés ; il ne pourra pas être noté avant d'être revalidé.", "size", nomTaille(plot.taille())),
+                                q -> {
+                                    try {
+                                        plots.rouvrir(q, id);
+                                        q.sendMessage(t("plot.reopen-done", "<green>Plot n°<id> rouvert : tu peux de nouveau y construire.", "id", id));
+                                    } catch (Refus r) {
+                                        refus(q, r, ici);
+                                    }
+                                }, ici::accept)));
+            }
         }
         boolean staff = joueur.hasPermission("kvplots.admin");
         if ((plot.createur().equals(joueur.getUniqueId()) && !plot.valide()) || staff) {

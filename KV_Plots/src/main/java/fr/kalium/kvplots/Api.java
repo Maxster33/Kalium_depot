@@ -21,7 +21,7 @@ final class Api implements KanvasPlots {
 
     private static PlotInfo vue(Plot p) {
         return p == null ? null : new PlotInfo(p.id, p.taille, p.createur, List.copyOf(p.editeurs),
-                p.etat == Plot.Etat.VALIDE, p.chantier != Plot.Chantier.AUCUN);
+                p.etat == Plot.Etat.VALIDE, p.chantier != Plot.Chantier.AUCUN, p.points(), p.votes.size(), p.moyenne());
     }
 
     private Plot trouver(int id) throws Refus {
@@ -81,6 +81,41 @@ final class Api implements KanvasPlots {
     @Override
     public void supprimer(Player joueur, int id) throws Refus {
         plugin.supprimer(joueur, trouver(id));
+    }
+
+    @Override
+    public void valider(Player joueur, int id) throws Refus {
+        plugin.valider(joueur, trouver(id));
+    }
+
+    @Override
+    public void rouvrir(Player joueur, int id) throws Refus {
+        plugin.rouvrir(joueur, trouver(id));
+    }
+
+    @Override
+    public boolean peutVoter(UUID joueur, int id) {
+        Plot p = plugin.plots().parId(id);
+        return p != null && p.votable(joueur);
+    }
+
+    @Override
+    public int note(UUID joueur, int id) {
+        Plot p = plugin.plots().parId(id);
+        Plot.Vote v = p == null ? null : p.votes.get(joueur);
+        return v == null ? 0 : v.note();
+    }
+
+    @Override
+    public void voter(Player joueur, int id, int note) throws Refus {
+        Plot p = trouver(id);
+        plugin.voter(joueur, p, note);
+        plugin.modeVote().verifier(joueur);
+    }
+
+    @Override
+    public boolean enVote(Player joueur) {
+        return plugin.modeVote().enVote(joueur);
     }
 
     @Override

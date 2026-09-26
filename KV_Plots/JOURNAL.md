@@ -4,6 +4,31 @@ Serveur Kanvas (ex Kal-Test-Dev). Cahier des charges : `KV_Plots/CAHIER_DES_CHAR
 de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` télécharge aussi les API WorldGuard
 7.0.19 et WorldEdit 7.4.5 (compilation seulement ; en jeu, ce sont les plugins du serveur qui servent).
 
+## 1.2.0 - validation, votes, déblocage d'une 2e place (26/09/2026)
+
+Demande de LeKiwi06 (cahier des charges, K4 à K7) ; « go » donné alors que 1.1.1 et KV_Menu 1.0.0 n'étaient pas
+encore testés (empilement demandé explicitement).
+- **Validation** : `/plot valider [confirmer]` (créateur ; bouton dans KV_Menu). Le plot est **figé** : sa région
+  WorldGuard n'a plus ni propriétaire ni membre (personne n'y construit, FAWE compris, sauf les opérateurs). Un plot
+  validé **libère sa place** : les places ne comptent que les plots en travaux.
+- **Réouverture** : `/plot rouvrir [confirmer]` (créateur seulement, avec une place libre de la même taille). Les votes
+  sont **gardés** ; le plot n'est pas notable pendant les travaux ; une fois revalidé, chacun peut revoter.
+- **Votes** : en entrant dans un plot validé qu'il n'a pas encore noté (et dont il n'est ni créateur ni éditeur, même
+  ancien), le joueur passe en **mode vote** : inventaire mis de côté (mémoire + `inventaires/<uuid>.yml`), 5
+  terracottas sur les cases 3 à 7 (rouge 1, orange 2, jaune 3, vert clair 4, vert foncé 5 ; l'étoile de KV_Menu
+  disparaît). Un clic avec une terracotta = vote ; l'inventaire est rendu dès qu'il vote, sort du plot, change de monde
+  ou se déconnecte (et à la connexion suivante si le serveur s'est arrêté entre-temps). En mode vote, l'inventaire est
+  figé (clics, créatif, jet, ramassage, échange de main annulés). Plot déjà noté : bouton « Voter » du menu ; un
+  nouveau vote **remplace** l'ancien (K7). Votes enregistrés avec leur date (classement du mois).
+- **Points** = somme des notes ; moyenne affichée (`/plot info`, fiche du menu).
+- **Déblocage** : un plot qui atteint **100 points** (`limites.points-deblocage`) donne une place de plus de sa taille
+  (`limites.maximum` : 2). Nouvelles clés de `config.yml` avec valeur par défaut dans le code (inutile de les ajouter
+  au fichier du serveur).
+- API : `valider`, `rouvrir`, `peutVoter`, `note`, `voter`, `enVote` ; `PlotInfo` avec points, votes, moyenne.
+- Pas encore : poudre de blaze de signalement (avec les signalements), titre / description, classements.
+
+**Statut : non testé en jeu, non déployé.** À déployer avec KV_Menu 1.1.0.
+
 ## 1.1.1 - on reste en créatif sur Kanvas (26/09/2026)
 
 Demande de LeKiwi06 : « quand je passe de opérateur à joueur sur Kanvas ça me met en survie, c'est pas censé le faire
