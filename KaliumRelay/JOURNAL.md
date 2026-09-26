@@ -247,5 +247,6 @@ historiques.
 - Pour ajouter un admin : modifier `admins=` dans `plugins/kaliumrelay/relay.properties` sur le proxy, puis
   redémarrer le proxy.
 - Compilation : adventure-api / adventure-key / brigadier ajoutés au classpath (déjà dans `outils-build/libs`).
-**Déployé sur le proxy le 26/09/2026 à 7 h 21** (1.1.1 dans `_removed-kaliumrelay-1.1.1/`). **Statut : non testé en jeu.**
+**Déployé sur le proxy le 26/09/2026 à 7 h 21** (1.1.1 dans `_removed-kaliumrelay-1.1.1/`). **Statut : testé et confirmé par LeKiwi06 le
+26/09/2026 (« /server est bien fix »).**
 

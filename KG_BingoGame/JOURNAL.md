@@ -1633,4 +1633,5 @@ simplement les logos des items ? ».
 - Icônes refaites dans `icons/<version>-22px/` (celles de la 0.8.1, dans `-3d/`, ne sont plus lues : dossier à
   supprimer par l'humain) ; le jeu est retéléchargé une fois chez Mojang au premier démarrage.
 **Déployé sur Serveur Jeux le 26/09/2026 à 6 h 27** (0.8.1 dans `_removed-kg_bingogame-0.8.1/`). Aperçu validé par LeKiwi06
-(« c'est beaucoup mieux comme ça »). **Statut : non testé en jeu.**
+(« c'est beaucoup mieux comme ça »). **Statut : icônes de la carte testées et confirmées par LeKiwi06 le 26/09/2026 ;
+reste à tester en jeu : bonus du 1er, Nether en Normal, partie à 3-4 équipes (0.8.1).**
