@@ -267,3 +267,40 @@ dans `_removed-config-2026-09-24/` (racine de chaque serveur) et `plugins/_remov
 - **Migration confirmée par Maxster33 le 24/09/2026** (« tout a l'air de fonctionner correctement ») après redémarrage ; journaux de démarrage de KalGames2 et Serveur Jeux : Paper 26.2-122, seules erreurs = celles déjà présentes sur les originaux (jar `PlaceholderAPIScoreboardObjectivesPlaceholder.jar` illisible sur le hub ; 2 voicechat et AnvilUnlocker sans ProtocolLib sur le Bingo), non corrigées (pas demandé).
 - À faire : nettoyage de Kixster (SMP) et
   reconversion d'Event ; KG_BoatRace (LeKiwi06) à déployer sur KalGames2.
+
+---
+
+### 2026-09-25 — LeKiwi06
+
+*(Session du 24/09/2026 fin d'après-midi au 25/09/2026 midi. Fin de session : réservations libérées.)*
+
+**Déploiements et vérifications**
+- KG_BingoGame 0.6.0 (génération des maps étalée) déployée sur Serveur Jeux, testée : « plus aucun lag à la
+  génération » ; lot KG_Menu 1.0.0 / KLM_Menu 2.1.0 / KalGames 1.16.0 / KG_Bingo 1.3.0 / KG_ScoreBoards 1.2.0 déployé
+  sur Kal-Games et testé (Java et Bedrock). Vérifié après la migration de Maxster33 : `velocity.toml`, transfert
+  Velocity actif et secret identique sur les 6 serveurs, noms `serveur-jeux` dans les configs du Bingo.
+- `kal-test-dev` renommé `Kanvas` dans Velocity par LeKiwi06 (destination de la boussole du lobby à mettre à jour).
+
+**Course de bateau : KG_BoatRace (nouveau plugin, 1.0.0 → 1.4.1)**
+- KalGames 1.17.0 : types de mini-jeux ouverts aux plugins de jeu (moteur, réglages, classement, options) ; la course
+  sort dans KG_BoatRace sans rien reconfigurer. KalGames 1.18.0 : éditeur de listes de points (checkpoints : insérer,
+  remplacer, supprimer, pages) et réglages par point (pour le Parkour).
+- KG_BoatRace : vitesse en km/h, seuil de 45 s pour les meilleurs temps, classement en direct (tableau latéral
+  personnel avec meilleur tour et « Ton record »), écarts à chaque checkpoint, barème de points (tours, tours propres,
+  séries, chrono, tour en tête, Grand Prix, cumul crédité), hors-piste (sous le joueur + contact qui ralentit),
+  anti-collision Java et Bedrock (copies sans collision). Tout testé en jeu, avec des joueurs Bedrock.
+- KG_ScoreBoards 1.3.0 / 1.4.0 : journal des parties (`journal/<mois>/<mini-jeu>.jsonl`, pour le bot Discord) et
+  points décimaux.
+
+**Décisions**
+- Cahiers des charges KG_BoatRace et KG_Parkour, architecture cible et charte du réseau : voir les fichiers du dépôt.
+- Ordre : d'abord les jeux les plus joués (course, Parkour, PvP Kit), le Rush plus tard.
+- GrimAC fait l'anti-triche « dur » ; le futur KG_AntiCheat analysera les données (gains, minerais, échanges,
+  revente contre de l'argent réel, traçabilité des objets de valeur).
+
+**À faire / à savoir**
+- Capturer la nouvelle salle d'attente du Bingo ; tester Nether / End de la 0.6.0 et 2 parties simultanées.
+- Suite de KG_BoatRace (étapes 4, 5, 6) puis KG_Parkour.
+- Erreurs de Claude, corrigées : un journal envoyé à la place d'un jar (chemin avec espaces, contourné par des
+  scripts WinSCP) ; secret Velocity affiché pendant une vérification ; méthode supprimée par erreur lors d'une
+  modification (vue à la compilation).

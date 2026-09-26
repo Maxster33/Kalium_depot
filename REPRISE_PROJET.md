@@ -80,8 +80,8 @@ Copie exacte de chaque jar dans `jars-deployes/`.
 
 | Serveur | Jar | Test en jeu |
 |---|---|---|
-| **Serveur Jeux** (`serveur-jeux`, Bingo) | copie complète de Kixster du 24/09/2026 + **`KG_BingoGame-0.7.8.jar`** (25/09/2026 : succès limités à la partie, XP remise à zéro et convertie en points bonus (0,1/niveau), préparation des maps corrigée et 3 fois plus rapide, salle d'attente protégée avec entités recopiées et sans barrières, positions de capture gardées dans `plugins/KG_BingoGame/lobby_capture.yml` ; versions précédentes dans les `_removed-kg_bingogame-…`) + `KLM_Menu-2.0.0.jar` (boussole désactivée) + Floodgate, BedrockSkinRestorer, VelocityCommandForward. Config : `network.self-server-name: "serveur-jeux"`, `network.kal-games-server-name: "kal-games"`, `lobby.max-size: 256`, `lobby.blocks-per-tick: 10000`, `instances.pregeneration-radius-blocks: 150`, `pregeneration-stagger-seconds: 5`, `pregeneration-chunks-per-second: 40` (25/09/2026) | 0.6.0 testée et confirmée par LeKiwi06 le 24/09/2026 (préparation des maps fluide, partie complète, Bedrock) ; à confirmer : Nether / End, 2 parties simultanées |
-| **Kal-Games** (`kal-games`, hub, machine 7001, ex KalGames2) | copie complète de kal-games du 24/09/2026, puis (LeKiwi06) : **`KalGames-1.20.0.jar`** (26/09/2026 04:41 : Parcours sorti dans KG_Parkour ; 1.19.1 et copies de config.yml, minigames.yml, arenas.yml dans `_removed-kalgames-1.19.1/`) + **`KG_Parkour-1.0.0.jar`** (Parcours sorti de KalGames, tel quel ; non testés) + **`KG_BoatRace-1.4.1.jar`** (course de bateau sortie de KalGames) + **`KG_ScoreBoards-1.5.0.jar`** (journal des parties, points décimaux, `/classements verifier` et `crediter`) + `KG_Menu-1.0.0.jar` + `KLM_Menu-2.1.0.jar` + `KG_Bingo-1.4.0.jar` (`bingo.server-name: serveur-jeux` ; pseudo de l'hôte corrigé dans la liste) ; anciens jars et configs dans les `_removed-…` de chaque plugin ; + Floodgate, BedrockSkinRestorer, VelocityCommandForward, GrimAC | testé et confirmé par LeKiwi06 les 24 et 25/09/2026 (menus, boussole, course de bateau : checkpoints, km/h, classement en direct, écarts, barème, hors-piste, anti-collision Java et Bedrock ; Parkour, classements, Bingo) ; non testé : Rush, capture d'arène |
+| **Serveur Jeux** (`serveur-jeux`, Bingo) | copie complète de Kixster du 24/09/2026 + **`KG_BingoGame-0.8.0.jar`** (26/09/2026 05:23 : barème doublé, résultats envoyés au hub pour les classements ; non testé ; 0.7.8 dans `_removed-kg_bingogame-0.7.8/`) ; 0.7.8 (25/09/2026 : succès limités à la partie, XP remise à zéro et convertie en points bonus (0,1/niveau), préparation des maps corrigée et 3 fois plus rapide, salle d'attente protégée avec entités recopiées et sans barrières, positions de capture gardées dans `plugins/KG_BingoGame/lobby_capture.yml` ; versions précédentes dans les `_removed-kg_bingogame-…`) + `KLM_Menu-2.0.0.jar` (boussole désactivée) + Floodgate, BedrockSkinRestorer, VelocityCommandForward. Config : `network.self-server-name: "serveur-jeux"`, `network.kal-games-server-name: "kal-games"`, `lobby.max-size: 256`, `lobby.blocks-per-tick: 10000`, `instances.pregeneration-radius-blocks: 150`, `pregeneration-stagger-seconds: 5`, `pregeneration-chunks-per-second: 40` (25/09/2026) | 0.6.0 testée et confirmée par LeKiwi06 le 24/09/2026 (préparation des maps fluide, partie complète, Bedrock) ; à confirmer : Nether / End, 2 parties simultanées |
+| **Kal-Games** (`kal-games`, hub, machine 7001, ex KalGames2) | copie complète de kal-games du 24/09/2026, puis (LeKiwi06) : **`KalGames-1.20.0.jar`** (26/09/2026 04:41 : Parcours sorti dans KG_Parkour ; 1.19.1 et copies de config.yml, minigames.yml, arenas.yml dans `_removed-kalgames-1.19.1/`) + **`KG_Parkour-1.0.0.jar`** (Parcours sorti de KalGames, tel quel ; non testés) + **`KG_BoatRace-1.4.1.jar`** (course de bateau sortie de KalGames) + **`KG_ScoreBoards-1.5.0.jar`** (journal des parties, points décimaux, `/classements verifier` et `crediter`) + `KG_Menu-1.0.0.jar` + `KLM_Menu-2.1.0.jar` + `KG_Bingo-1.5.0.jar` (26/09/2026 05:23 : points du Bingo dans les classements ; non testé ; 1.4.0 dans `_removed-kg_bingo-1.4.0/` ; `bingo.server-name: serveur-jeux` ; pseudo de l'hôte corrigé dans la liste) ; anciens jars et configs dans les `_removed-…` de chaque plugin ; + Floodgate, BedrockSkinRestorer, VelocityCommandForward, GrimAC | testé et confirmé par LeKiwi06 les 24 et 25/09/2026 (menus, boussole, course de bateau : checkpoints, km/h, classement en direct, écarts, barème, hors-piste, anti-collision Java et Bedrock ; Parkour, classements, Bingo) ; non testé : Rush, capture d'arène |
 | lobby | `KLM_Menu-2.0.0.jar` (destinations au 24/09/2026 : `kixster` (désactivée), `kal-games`, `serveur-jeux`, `kal-test-dev`, `event` (désactivée) ; activer / désactiver en jeu : menu > Paramètres) | non testé (catalogue « Interfaces » ; nouvelles destinations) |
 | proxy | `KaliumRelay-1.1.1.jar` (déployé le 24/09/2026) | relais confirmé le 24/09/2026 en 1.1.0 ; démarrage 1.1.1 vérifié dans le journal ; reconnexion directe non confirmée |
 | Kanvas (ex Kal-Test-Dev) | `KV_Plots-1.4.0.jar` + `KV_Menu-1.3.0.jar` (26/09/2026 03:45, LeKiwi06 ; signalements, concours de build) ; `KLM_Menu-2.0.0.jar` (24/09/2026) ; FastAsyncWorldEdit **Paper** 2.15.4 (la variante Bukkit ne fonctionnait pas sur Paper 26.2 ; limites `limits.default` réduites, baguette de navigation = vide de structure ; originaux dans `_removed-fastasyncworldedit-config-2026-09-26/`) ; WorldGuard 7.0.19 ; LuckPerms (groupe `default` : permissions FAWE), PlaceholderAPI, ViaVersion / ViaBackwards, floodgate, voicechat 2.6.23 ; monde principal `Kanvas` (`level-name=Kanvas`). **Tri du 26/09/2026** : KaliumCore 1.4.0, PlayerKits2, GrimAC, ConditionalEvents, JEIRecipeFix, Geyser-Spigot, PyxelRegions rangés dans `plugins/_removed-<plugin>-<version>/` (dossiers de données laissés en place). Dossiers `_removed-…` en trop (plus de 2 par plugin), à supprimer par l'humain : `_removed-kv_plots-1.0.0`, `-1.1.0`, `-1.1.1`, `-1.2.0`, `-1.3.0`, `_removed-kv_menu-1.0.0`, `_removed-kaliumcore-1.0.0`, `-1.1.0`, `-1.1.1`, `-1.1.2`, `-1.2.1`, `-1.3.0`. `PlaceholderAPIScoreboardObjectivesPlaceholder.jar` (extension PlaceholderAPI qui ne se chargeait pas, inutilisée) rangé dans `_removed-placeholderapi-scoreboard/` le 26/09/2026 (accord de LeKiwi06) | KV_Plots 1.0.0 à 1.2.0, KV_Menu 1.0.0 et 1.1.0, FAWE : testés et confirmés par LeKiwi06 le 26/09/2026 ; KV_Plots 1.3.0 / 1.3.1 (titre, description, visites, tableau sur le côté) et KV_Menu 1.2.0 testés et confirmés par LeKiwi06 le 26/09/2026 ; tri des plugins vérifié (plus d'erreur au démarrage) ; KV_Plots 1.4.0 et KV_Menu 1.3.0 (signalements, concours de build) testés et confirmés par LeKiwi06 le 26/09/2026 |
@@ -92,7 +92,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-Aucune (25/09/2026 : tout ce qui est compilé est déployé, voir le tableau ci-dessus).
+Aucune (26/09/2026 : tout ce qui est compilé est déployé, voir le tableau ci-dessus).
 
 ## Chantiers en cours
 
@@ -104,17 +104,28 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
   angle et vitesse), **5** (mode Grand Prix mis en avant en public et en privé ; le bonus x1,5 des 40 tours existe
   déjà), **6** (fantôme du meilleur tour et contre-la-montre solo) ; mesurer l'écart Java / Bedrock avec les données
   du journal ; précision des temps au dixième (interpolation possible).
-- **KG_Parkour** (cahier des charges : `KG_Parkour/CAHIER_DES_CHARGES.md`) : à sortir de KalGames (comme la course),
-  chrono rechargé à chaque checkpoint, barème (difficulté, 1er à valider, first try), réglages par checkpoint
-  (l'éditeur de KalGames 1.18.0 est prêt : `PointSpec.withPointSettings`), contre-la-montre solo avec fantôme
-  (Mannequin), anti-collision entre joueurs. Limite des parties privées par jour : supprimée (KalGames 1.19.0).
+- **KG_Parkour** (cahier des charges : `KG_Parkour/CAHIER_DES_CHARGES.md`) : **étape 0 faite** le 26/09/2026
+  (KG_Parkour 1.0.0 + KalGames 1.20.0 : le Parcours sort de KalGames tel quel ; déployés sur Kal-Games, **non testés**).
+  Restent : chrono rechargé à chaque checkpoint, barème (difficulté, 1er à valider, first try) calé sur la course de
+  bateau (voir `EQUILIBRAGE_POINTS.md`), réglages par checkpoint (`PointSpec.withPointSettings`), contre-la-montre
+  solo avec fantôme (Mannequin), anti-collision entre joueurs.
+- **Équilibrage des barèmes** (`EQUILIBRAGE_POINTS.md`, 26/09/2026) : 30 min à fond = autant de points dans chaque
+  jeu, référence = course de bateau (~135 / 30 min). Bingo fait (barème doublé + classements, non testé). Restent :
+  Parcours (nouveau barème, parties « à fond » de LeKiwi06 pour mesurer), PvP Kit, Rush, recalcul du passé.
+- **Kanvas** (serveur de plots en créatif, cahiers : `KV_Plots/CAHIER_DES_CHARGES.md`) : KV_Plots 1.4.0 et KV_Menu
+  1.3.0 en service et testés (grille, réservation, éditeurs, protection WorldGuard + FAWE, remise à zéro / suppression,
+  validation, votes aux terracottas, déblocages, titre / description, tableau sur le côté, visites, signalements,
+  concours de build). Restent : limites d'entités et mobs sans IA, agrandissement moyen → grand (et « dupliquer en
+  version grande »), classements KV_ScoreBoards (solo / duo / équipe, général et du mois), extension automatique du
+  monde.
 - **Architecture** : KalGames à répartir entre KG_Instances (moteur des parties : déjà ouvert aux plugins de jeu
   depuis KalGames 1.17.0), KLM_Hub + WorldGuard, KG_Menu et KG_ScoreBoards ; puis PvP Kit et Rush en plugins.
   Renommage KaliumRelay → KLM_Relay (voir la charte). Plus tard : menus inter-serveurs, KG_AntiCheat (avec GrimAC).
 - **KG_ScoreBoards** : journal des parties (1.3.0), points décimaux (1.4.0) et vérification / crédit des parties des
-  derniers jours (1.5.0 : `/classements verifier [jours]`, `/classements crediter <id|tout>`) faits. Restent l'étape B du Bingo
-  (classements solo / duo / trio / squad + blackout, fiche de chaque partie) et l'étape C (résultats du Bingo via
-  le relais), l'affichage en jeu des données du journal (graphiques).
+  derniers jours (1.5.0 : `/classements verifier [jours]`, `/classements crediter <id|tout>`) faits. Étape C (résultats du Bingo via
+  le relais) faite le 26/09/2026 (KG_BingoGame 0.8.0 + KG_Bingo 1.5.0 : classement « bingo », non testé). Restent
+  l'étape B du Bingo (classements solo / duo / trio / squad + blackout, fiche de chaque partie), l'affichage en jeu
+  des données du journal (graphiques).
 - **Interfaces** : KG_Menu 1.0.0 et KLM_Menu 2.1.0 en service sur Kal-Games. Phase 2 : accès des opérateurs aux
   interfaces des autres serveurs (voir la charte).
 - **Bingo** : pseudo de l'hôte dans la liste des parties corrigé (KG_Bingo 1.4.0) ; nouvelle salle d'attente capturée
@@ -222,40 +233,41 @@ une recherche, pas une navigation ; autoriser `Textinputhost` (clavier tactile W
 Format : `### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici ; les précédents vont dans
 `archive_reprise.md`.
 
-### 2026-09-25 — LeKiwi06
+### 2026-09-26 — LeKiwi06
 
-*(Session du 24/09/2026 fin d'après-midi au 25/09/2026 midi. Fin de session : réservations libérées.)*
+*(Session de la nuit du 26/09/2026, de 0 h à 5 h 30. Fin de session : réservations KV_Plots, KV_Menu, KG_Parkour,
+KalGames, KG_BingoGame, KG_Bingo, KLM_Menu et KG_ScoreBoards libérées.)*
 
-**Déploiements et vérifications**
-- KG_BingoGame 0.6.0 (génération des maps étalée) déployée sur Serveur Jeux, testée : « plus aucun lag à la
-  génération » ; lot KG_Menu 1.0.0 / KLM_Menu 2.1.0 / KalGames 1.16.0 / KG_Bingo 1.3.0 / KG_ScoreBoards 1.2.0 déployé
-  sur Kal-Games et testé (Java et Bedrock). Vérifié après la migration de Maxster33 : `velocity.toml`, transfert
-  Velocity actif et secret identique sur les 6 serveurs, noms `serveur-jeux` dans les configs du Bingo.
-- `kal-test-dev` renommé `Kanvas` dans Velocity par LeKiwi06 (destination de la boussole du lobby à mettre à jour).
+**Kanvas (serveur de plots en créatif) : tout testé et confirmé par LeKiwi06 (« tout fonctionne »)**
+- Cahier des charges complété (`KV_Plots/CAHIER_DES_CHARGES.md`) ; monde `New World (2)` renommé `Kanvas` (monde
+  principal, majuscule) ; grille de 121 plots générée (plot de référence : coin -107 / -57, plots 49 x 49, routes 9).
+- KV_Plots 1.0.0 → 1.4.0 et KV_Menu 1.0.0 → 1.3.0 : réservation (moyen / grand), éditeurs, protection WorldGuard,
+  remise à zéro / suppression, créatif gardé en repassant joueur (KLM_Menu remettait en survie), validation, votes
+  aux terracottas (inventaire mis de côté), déblocage à 100 points, titre / description, tableau sur le côté, visites
+  (hasard, têtes des joueurs, liste), signalements (poudre de blaze, écrans du staff), concours de build (phases
+  construction / votes / terminé, gestion par le staff). Étoile du Nether en case 4 (menu), rangée avec la boussole
+  sur son plot en travaux.
+- FAWE : la variante Bukkit ne marchait pas sur Paper 26.2 → **variante Paper** ; limites réduites ; permissions du
+  groupe `default` (LuckPerms) ; baguette de navigation de WorldEdit = vide de structure (la boussole de KLM_Menu la
+  déclenchait). Testé : FAWE en joueur seulement dans son plot.
+- Tri des plugins de Kanvas : KaliumCore, PlayerKits2, GrimAC, ConditionalEvents, JEIRecipeFix, Geyser-Spigot,
+  PyxelRegions et l'extension PlaceholderAPI inutilisée rangés dans `_removed-…`.
 
-**Course de bateau : KG_BoatRace (nouveau plugin, 1.0.0 → 1.4.1)**
-- KalGames 1.17.0 : types de mini-jeux ouverts aux plugins de jeu (moteur, réglages, classement, options) ; la course
-  sort dans KG_BoatRace sans rien reconfigurer. KalGames 1.18.0 : éditeur de listes de points (checkpoints : insérer,
-  remplacer, supprimer, pages) et réglages par point (pour le Parkour).
-- KG_BoatRace : vitesse en km/h, seuil de 45 s pour les meilleurs temps, classement en direct (tableau latéral
-  personnel avec meilleur tour et « Ton record »), écarts à chaque checkpoint, barème de points (tours, tours propres,
-  séries, chrono, tour en tête, Grand Prix, cumul crédité), hors-piste (sous le joueur + contact qui ralentit),
-  anti-collision Java et Bedrock (copies sans collision). Tout testé en jeu, avec des joueurs Bedrock.
-- KG_ScoreBoards 1.3.0 / 1.4.0 : journal des parties (`journal/<mois>/<mini-jeu>.jsonl`, pour le bot Discord) et
-  points décimaux.
-
-**Décisions**
-- Cahiers des charges KG_BoatRace et KG_Parkour, architecture cible et charte du réseau : voir les fichiers du dépôt.
-- Ordre : d'abord les jeux les plus joués (course, Parkour, PvP Kit), le Rush plus tard.
-- GrimAC fait l'anti-triche « dur » ; le futur KG_AntiCheat analysera les données (gains, minerais, échanges,
-  revente contre de l'argent réel, traçabilité des objets de valeur).
+**Kal-Games / Serveur Jeux : déployés, non testés**
+- KG_Parkour 1.0.0 + KalGames 1.20.0 : le Parcours sort de KalGames tel quel (orientation des checkpoints gardée).
+- Équilibrage des barèmes (`EQUILIBRAGE_POINTS.md`, mesures sur les vraies parties) : KG_BingoGame 0.8.0 (barème
+  doublé, résultats envoyés au hub) + KG_Bingo 1.5.0 (points du Bingo crédités dans les classements, classement
+  « bingo »).
 
 **À faire / à savoir**
-- Capturer la nouvelle salle d'attente du Bingo ; tester Nether / End de la 0.6.0 et 2 parties simultanées.
-- Suite de KG_BoatRace (étapes 4, 5, 6) puis KG_Parkour.
-- Erreurs de Claude, corrigées : un journal envoyé à la place d'un jar (chemin avec espaces, contourné par des
-  scripts WinSCP) ; secret Velocity affiché pendant une vérification ; méthode supprimée par erreur lors d'une
-  modification (vue à la compilation).
+- Tester : Parcours (partie publique, entraînement), course de bateau, Bingo (points doublés, puis crédités dans le
+  classement « Bingo » du hub dans la minute qui suit la fin de partie ; message « points crédités » dans la console
+  du hub).
+- Équilibrage : barème du Parcours (jouer quelques parties « à fond » pour mesurer), PvP Kit, Rush, recalcul du passé
+  (dont les anciennes parties de Bingo, jamais créditées).
+- Sauvegardes des mondes : à voir (voir « Points ouverts »).
+- Supprimer les dossiers `_removed-…` en trop (listes dans ce fichier et dans `KalGames/JOURNAL.md`) : c'est à
+  l'humain de le faire.
 
 ### 2026-09-25 (soir) — LeKiwi06
 
