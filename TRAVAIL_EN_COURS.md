@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KLM_Menu — LeKiwi06 — depuis le 2026-09-26 07:15 — noms des serveurs à mettre à jour (Kanvas...)
 
 
 
