@@ -4,6 +4,18 @@ Serveur Kanvas (ex Kal-Test-Dev). Cahier des charges : `KV_Plots/CAHIER_DES_CHAR
 de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` télécharge aussi les API WorldGuard
 7.0.19 et WorldEdit 7.4.5 (compilation seulement ; en jeu, ce sont les plugins du serveur qui servent).
 
+## 1.1.1 - on reste en créatif sur Kanvas (26/09/2026)
+
+Demande de LeKiwi06 : « quand je passe de opérateur à joueur sur Kanvas ça me met en survie, c'est pas censé le faire
+sur ce serveur précis ». Cause : KLM_Menu remet toujours en survie au passage opérateur → joueur (écrit en dur dans
+`toggleOperator`, sans réglage).
+- Dans le monde des plots, un changement de mode de jeu vers autre chose que le créatif est annulé pour les joueurs
+  non opérateurs (le vol est remis un tick après). Les opérateurs changent de mode librement. KLM_Menu n'est pas
+  modifié (plugin commun au réseau).
+- Limite : le message de KLM_Menu au passage en joueur reste celui de KLM_Menu.
+
+**Déployé sur Kanvas le 26/09/2026 (02:10). Statut : non testé en jeu.**
+
 ## 1.1.0 - remise à zéro et suppression d'un plot (26/09/2026)
 
 Demande de LeKiwi06 : « il y a une commande pour reset ou supprimer son plot ? » ; proposition acceptée.

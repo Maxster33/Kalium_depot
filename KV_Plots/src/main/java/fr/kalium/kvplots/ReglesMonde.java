@@ -22,6 +22,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
@@ -67,6 +68,18 @@ final class ReglesMonde implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onRespawn(PlayerRespawnEvent e) {
         creatifPlusTard(e.getPlayer());
+    }
+
+    /**
+     * Hors opérateurs, on reste en créatif dans le monde des plots : KLM_Menu remet en survie quand un opérateur
+     * « repasse joueur », ce qui ne doit pas arriver sur Kanvas (demande de LeKiwi06, 26/09/2026).
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onGameMode(PlayerGameModeChangeEvent e) {
+        Player joueur = e.getPlayer();
+        if (!joueur.getWorld().equals(plugin.monde()) || joueur.isOp() || e.getNewGameMode() == GameMode.CREATIVE) return;
+        e.setCancelled(true);
+        creatifPlusTard(joueur); // le vol peut avoir été retiré entre-temps
     }
 
     // --- Pas de TNT ni d'explosion ---
