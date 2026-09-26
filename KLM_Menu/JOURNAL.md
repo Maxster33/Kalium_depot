@@ -67,4 +67,8 @@ destination `kal-test-dev` (« Kal-Test-Dev », serveur de test) n'existait plus
 construis, fais noter tes builds. »). Autres noms vérifiés, à jour. Original dans
 `plugins/_removed-klm_menu-config-2026-09-26/config.yml` du lobby. S'applique avec `/kaliummenu reload` (opérateur).
 La configuration par défaut du dépôt ne contenait pas `kal-test-dev`.
+**Erreur de Claude, corrigée** : la première version de la description contenait « créatif : construis » sans
+guillemets ; en YAML, « : » suivi d'un espace est invalide hors guillemets : après `/kaliummenu reload`, le fichier n'a
+pas pu être lu et le menu ne proposait plus que le lobby. Description mise entre guillemets, fichier vérifié avec
+snakeyaml avant envoi (5 destinations), renvoyé. À retenir : toujours vérifier un config.yml modifié avant de l'envoyer.
 
