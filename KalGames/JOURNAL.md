@@ -799,4 +799,4 @@ côté, sans perte). KG_BoatRace 1.4.1, KG_Bingo, KG_Menu, KG_ScoreBoards recomp
 nouvelle. Déployé sur Kal-Games (7001) le 26/09/2026 à 4 h 41 avec KG_Parkour 1.0.0 (1.19.1 et copies de config.yml,
 minigames.yml, arenas.yml dans `_removed-kalgames-1.19.1/`). Dossiers `_removed-kalgames-…` en trop (plus de 2) à
 supprimer par l'humain : 1.9.5, 1.10.0 à 1.10.7, 1.11.0, 1.12.0 à 1.12.3, 1.13.0, 1.14.0, 1.15.0, 1.15.1, 1.16.0,
-1.17.0, 1.18.0 (versions d'avant le dépôt : à télécharger avant si on veut les garder). **Statut : non testé en jeu.**
+1.17.0, 1.18.0 (versions d'avant le dépôt : à télécharger avant si on veut les garder). **Statut : testé et confirmé par LeKiwi06 le 26/09/2026.**

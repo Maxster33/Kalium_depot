@@ -1574,5 +1574,5 @@ classements.
   republiés toutes les minutes pendant 6 h ; gardés dans `results-outbox.yml` (survivent à un redémarrage). KG_Bingo
   1.5.0 les lit et les crédite une seule fois dans les classements.
 - Tous les joueurs du résumé sont envoyés, abandons compris (leurs points propres, comme dans le résumé).
-**Déploiement** : avec **KG_Bingo 1.5.0** (hub), sur Serveur Jeux le 26/09/2026 à 5 h 23 (`_removed-kg_bingogame-0.7.8/`). **Statut : non testé en jeu.**
+**Déploiement** : avec **KG_Bingo 1.5.0** (hub), sur Serveur Jeux le 26/09/2026 à 5 h 23 (`_removed-kg_bingogame-0.7.8/`). **Statut : testé et confirmé par LeKiwi06 le 26/09/2026.**
 

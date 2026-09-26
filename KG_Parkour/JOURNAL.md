@@ -21,4 +21,4 @@ dans ce plugin séparé, comme KG_BoatRace ; étape 0, sans changement de règle
 - Les nouvelles règles du cahier des charges (chrono qui s'allonge à chaque point de contrôle, barème, contre-la-montre,
   fantôme...) viendront dans les versions suivantes, étape par étape.
 
-**Déploiement** : avec KalGames 1.20.0, sur Kal-Games (7001), le 26/09/2026 à 4 h 41. **Statut : non testé en jeu.**
+**Déploiement** : avec KalGames 1.20.0, sur Kal-Games (7001), le 26/09/2026 à 4 h 41. **Statut : testé et confirmé par LeKiwi06 le 26/09/2026.**

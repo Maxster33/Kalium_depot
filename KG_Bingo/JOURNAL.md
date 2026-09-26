@@ -78,5 +78,5 @@ l'équilibrage des barèmes (`EQUILIBRAGE_POINTS.md`).
 - Dépend aussi de KG_ScoreBoards (plugin.yml).
 - Limite : une partie démarrée pendant que le hub était arrêté n'est pas notée (pas de résultats crédités) ; ses
   points restent dans le journal de Serveur Jeux.
-**Déploiement** : avec **KG_BingoGame 0.8.0** (Serveur Jeux), sur Kal-Games le 26/09/2026 à 5 h 23 (`_removed-kg_bingo-1.4.0/`). **Statut : non testé en jeu.**
+**Déploiement** : avec **KG_BingoGame 0.8.0** (Serveur Jeux), sur Kal-Games le 26/09/2026 à 5 h 23 (`_removed-kg_bingo-1.4.0/`). **Statut : testé et confirmé par LeKiwi06 le 26/09/2026.**
 

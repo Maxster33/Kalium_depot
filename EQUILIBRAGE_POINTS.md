@@ -24,7 +24,7 @@ partie de Bingo préparation comprise), sans l'attente entre les parties.
 1. **Bingo** (fait le 26/09/2026, KG_BingoGame 0.8.0 + KG_Bingo 1.5.0) : barème **doublé** (objectifs 2 / 6 / 10 / 20,
    bonus du 1er 0 / 2 / 4 / 6, bonus de victoire 2 / 4 / 6 / 10 ; coefficients des bingos, multiplicateur de vitesse du
    blackout et bonus d'XP inchangés) ; **points du Bingo crédités dans les classements** (classement « bingo », général
-   et du mois). Attendu : gagnant ~140 / 30 min. Déployés le 26/09/2026 à 5 h 23, à vérifier sur de vraies parties.
+   et du mois). Attendu : gagnant ~140 / 30 min. Déployés le 26/09/2026 à 5 h 23, testés et confirmés par LeKiwi06 le 26/09/2026 ; rythme réel à revérifier sur de vraies parties.
 2. **Parcours** : coder le barème du cahier des charges (`KG_Parkour/CAHIER_DES_CHARGES.md` : chrono allongé à chaque
    checkpoint, 1 / 3 / 5 points selon la difficulté, bonus du 1er, first try ×2, paliers de temps), puis caler les
    valeurs sur ~135 / 30 min. **Il faut des parties « à fond » de LeKiwi06** pour mesurer (temps par checkpoint).
