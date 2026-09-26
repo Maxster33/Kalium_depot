@@ -17,7 +17,7 @@ tchat ».
 - La description reste écrite dans le chat en entrant dans le plot ; plus de titre au centre de l'écran.
 - Limite : un tableau par joueur ; si un autre plugin affichait déjà une sidebar, elle est remplacée dans les plots.
 
-**Statut : non testé en jeu, non déployé.**
+**Déployé sur Kanvas le 26/09/2026 (03:24). Statut : non testé en jeu.**
 
 ## 1.3.0 - titre, description, visites (26/09/2026)
 
