@@ -36,6 +36,8 @@ final class CommandePlot implements TabExecutor {
         s.sendMessage("§e/" + label + " editeur <ajouter|retirer> <pseudo> §7- sur ton plot");
         s.sendMessage("§e/" + label + " valider §7- figer ton plot fini : il pourra être noté, sa place se libère");
         s.sendMessage("§e/" + label + " rouvrir §7- rouvrir ton plot validé (il faut une place libre)");
+        s.sendMessage("§e/" + label + " titre <texte> §7- titre de ton plot (32 caractères, couleurs avec &)");
+        s.sendMessage("§e/" + label + " description <texte> §7- description de ton plot (200 caractères)");
         s.sendMessage("§e/" + label + " reset §7- remettre ton plot à zéro (il reste à toi)");
         s.sendMessage("§e/" + label + " supprimer §7- effacer ton plot et libérer la place");
     }
@@ -57,6 +59,8 @@ final class CommandePlot implements TabExecutor {
                 case "tp" -> tp(joueur, args);
                 case "info" -> info(joueur);
                 case "editeur", "éditeur" -> editeur(joueur, args);
+                case "titre" -> lore(joueur, args, true);
+                case "description" -> lore(joueur, args, false);
                 case "valider" -> etat(joueur, args, true);
                 case "rouvrir" -> etat(joueur, args, false);
                 case "reset" -> travaux(joueur, args, false);
@@ -164,8 +168,19 @@ final class CommandePlot implements TabExecutor {
         }
     }
 
+    /** /plot titre|description <texte> (vide = retirer) sur son plot. */
+    private void lore(Player joueur, String[] args, boolean titre) throws Refus {
+        Plot p = plotIci(joueur);
+        String texte = String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length));
+        plugin.definirLore(joueur, p, titre ? texte : p.titre, titre ? p.description : texte);
+        joueur.sendMessage(texte.isBlank() ? "§a" + (titre ? "Titre retiré." : "Description retirée.")
+                : "§a" + (titre ? "Titre" : "Description") + " du plot n°" + p.id + " enregistré" + (titre ? "" : "e") + ".");
+    }
+
     private void info(Player joueur) throws Refus {
         Plot p = plotIci(joueur);
+        if (!p.titre.isEmpty()) joueur.sendMessage(EntreePlot.texte(p.titre));
+        if (!p.description.isEmpty()) joueur.sendMessage(EntreePlot.texte("&7« " + p.description + "&7 »"));
         joueur.sendMessage("§6Plot n°" + p.id + " §7(" + p.taille.nom + ", "
                 + (p.etat == Plot.Etat.VALIDE ? "validé" : "en travaux") + ")");
         joueur.sendMessage("§eCréateur : §f" + nom(p.createur));
@@ -199,7 +214,7 @@ final class CommandePlot implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         String debut = args[args.length - 1].toLowerCase();
         List<String> choix = switch (args.length) {
-            case 1 -> List.of("reserver", "liste", "tp", "info", "editeur", "valider", "rouvrir", "reset", "supprimer");
+            case 1 -> List.of("reserver", "liste", "tp", "info", "editeur", "titre", "description", "valider", "rouvrir", "reset", "supprimer");
             case 2 -> switch (args[0].toLowerCase()) {
                 case "reserver", "réserver" -> List.of("moyen", "grand");
                 case "editeur", "éditeur" -> List.of("ajouter", "retirer");

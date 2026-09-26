@@ -22,6 +22,7 @@ import fr.kalium.menu.api.Lang;
 import fr.kalium.menu.api.MenuSection;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 /**
  * KV_Menu (1.0.0) : menus du serveur Kanvas (demande de LeKiwi06, 26/09/2026 : « une interface au lieu de juste avoir
@@ -30,6 +31,7 @@ import net.kyori.adventure.text.Component;
  * - Accueil : voter pour le plot où l'on se trouve (s'il est noté ou notable), réserver un plot moyen / grand,
  *   mes plots.
  * 1.1.0 : votes, validation / réouverture, points dans la fiche ; l'étoile laisse la place aux terracottas.
+ * 1.2.0 : visites (au hasard, par joueur avec les têtes, liste de tous les plots), titre et description.
  * - Mes plots : un bouton par plot (créateur ou éditeur) -> fiche du plot : téléportation, éditeurs, remise à zéro,
  *   suppression (créateur).
  * - Ouverture : étoile du Nether (emplacement 4), /kanvas (/kv, /plots) et le catalogue de KLM_Menu (entrée « Kanvas »).
@@ -39,6 +41,7 @@ public final class KvMenu extends JavaPlugin {
     private Lang lang;
     private Gui gui;
     private KanvasPlots plots;
+    private TetesJoueurs tetes;
 
     @Override
     public void onEnable() {
@@ -57,6 +60,8 @@ public final class KvMenu extends JavaPlugin {
                         this::accueil),
                 this, ServicePriority.Normal);
         getServer().getPluginManager().registerEvents(new ObjetMenu(this, lang, p -> accueil(p, null)), this);
+        tetes = new TetesJoueurs(plots, lang, this::plotsJoueur);
+        getServer().getPluginManager().registerEvents(tetes, this);
         lang.saveIfNeeded();
     }
 
@@ -122,6 +127,8 @@ public final class KvMenu extends JavaPlugin {
             boutons.add(gui.button(t("home.my-plots", "<gold>Mes plots <gray>(<n>)", "n", mes.size()),
                     t("home.my-plots-tip", "<gray>Téléportation, éditeurs, validation."), p -> mesPlots(p, ici)));
         }
+        boutons.add(gui.button(t("home.visit", "<aqua>Visiter les plots"),
+                t("home.visit-tip", "<gray>Au hasard, par joueur, ou toute la liste."), p -> visites(p, ici)));
         PlotInfo sous = plots.plotEn(joueur.getLocation());
         if (sous != null && plots.peutVoter(u, sous.id())) {
             int note = plots.note(u, sous.id());
@@ -185,18 +192,118 @@ public final class KvMenu extends JavaPlugin {
                 List.of(), boutons, null, 5);
     }
 
+    // ------------------------------------------------------------------ visites
+
+    private static final int PLOTS_PAR_PAGE = 20;
+
+    /** Texte d'un joueur avec les codes couleur « & ». */
+    private static Component lore(String brut) {
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(brut == null ? "" : brut);
+    }
+
+    /** « Titre » ou « Plot n°X », puis taille, créateur, état et points. */
+    private Component libellePlot(PlotInfo plot) {
+        Component nomPlot = plot.titre().isEmpty() ? t("list.untitled", "<yellow>Plot n°<id>", "id", plot.id())
+                : lore(plot.titre()).append(t("list.number", " <dark_gray>n°<id>", "id", plot.id()));
+        return nomPlot.append(t("list.details", " <gray>(<size>, <owner>, <state>)",
+                "size", nomTaille(plot.taille()), "owner", nom(plot.createur()),
+                "state", plot.valide() ? t("list.validated", "<green><points> pts", "points", plot.points())
+                        : t("list.building", "<white>en travaux")));
+    }
+
+    private void visites(Player joueur, Consumer<Player> retour) {
+        Consumer<Player> ici = p -> visites(p, retour);
+        List<ActionButton> boutons = new ArrayList<>();
+        boutons.add(gui.button(t("visit.random", "<gold><bold>Au hasard : un plot à noter"),
+                t("visit.random-tip", "<gray>Un plot validé que tu n'as pas encore noté."), p -> {
+                    PlotInfo plot = plots.hasardANoter(p.getUniqueId());
+                    if (plot == null) {
+                        gui.notice(p, t("visit.random-none-title", "<gold><bold>Bravo !"),
+                                t("visit.random-none", "<gray>Tu as déjà noté tous les plots validés que tu peux noter."), ici::accept);
+                        return;
+                    }
+                    try {
+                        plots.visiter(p, plot.id());
+                    } catch (Refus r) {
+                        refus(p, r, ici);
+                    }
+                }));
+        boutons.add(gui.button(t("visit.players", "<yellow>Par joueur"),
+                t("visit.players-tip", "<gray>Les têtes des joueurs : clique pour voir leurs plots."), p -> tetes.ouvrir(p, 0, ici)));
+        boutons.add(gui.button(t("visit.all", "<yellow>Tous les plots"),
+                t("visit.all-tip", "<gray>Explore la liste de tous les plots."), p -> tousLesPlots(p, 0, ici)));
+        boutons.add(retour(retour));
+        gui.open(joueur, t("visit.title", "<gold><bold>Visiter les plots"),
+                List.of(t("visit.body", "<gray>Découvre les constructions des autres joueurs et note-les.")), List.of(), boutons, null, 1);
+    }
+
+    /** Plots d'un joueur (depuis les têtes). */
+    private void plotsJoueur(Player joueur, UUID createur, Consumer<Player> retour) {
+        Consumer<Player> ici = p -> plotsJoueur(p, createur, retour);
+        List<ActionButton> boutons = new ArrayList<>();
+        for (PlotInfo plot : plots.plotsDuCreateur(createur)) {
+            boutons.add(gui.button(libellePlot(plot), plot.description().isEmpty() ? null : lore(plot.description()),
+                    p -> fiche(p, plot.id(), ici)));
+        }
+        boutons.add(retour(retour));
+        gui.open(joueur, t("player.title", "<gold><bold>Plots de <name>", "name", nom(createur)),
+                List.of(), List.of(), boutons, null, 1);
+    }
+
+    /** Tous les plots, par pages de 20. */
+    private void tousLesPlots(Player joueur, int page, Consumer<Player> retour) {
+        List<PlotInfo> tous = plots.tousLesPlots();
+        int pages = Math.max(1, (tous.size() + PLOTS_PAR_PAGE - 1) / PLOTS_PAR_PAGE);
+        int n = Math.max(0, Math.min(page, pages - 1));
+        Consumer<Player> ici = p -> tousLesPlots(p, n, retour);
+        List<ActionButton> boutons = new ArrayList<>();
+        for (int i = n * PLOTS_PAR_PAGE; i < Math.min(tous.size(), (n + 1) * PLOTS_PAR_PAGE); i++) {
+            PlotInfo plot = tous.get(i);
+            boutons.add(gui.button(libellePlot(plot), plot.description().isEmpty() ? null : lore(plot.description()),
+                    p -> fiche(p, plot.id(), ici)));
+        }
+        if (n > 0) boutons.add(gui.button(t("list.previous", "<yellow>Page précédente"), null, p -> tousLesPlots(p, n - 1, retour)));
+        if (n < pages - 1) boutons.add(gui.button(t("list.next", "<yellow>Page suivante"), null, p -> tousLesPlots(p, n + 1, retour)));
+        boutons.add(retour(retour));
+        gui.open(joueur, t("list.title", "<gold><bold>Tous les plots <gray>(<page>/<pages>)", "page", n + 1, "pages", pages),
+                List.of(tous.isEmpty() ? t("list.empty", "<gray>Aucun plot pour le moment.")
+                        : t("list.body", "<gray><n> plot(s). Clique sur un plot pour sa fiche.", "n", tous.size())),
+                List.of(), boutons, null, 1);
+    }
+
+    /** Titre et description (créateur) : deux champs, vides = retirés. */
+    private void formulaireLore(Player joueur, int id, Consumer<Player> retour) {
+        PlotInfo plot = plots.plot(id);
+        if (plot == null) {
+            retour.accept(joueur);
+            return;
+        }
+        List<ActionButton> boutons = new ArrayList<>();
+        boutons.add(gui.form(t("lore.save", "<green>Enregistrer"), null, (p, vue) -> {
+            try {
+                plots.definirLore(p, id, vue.getText("titre"), vue.getText("description"));
+                retour.accept(p);
+            } catch (Refus r) {
+                refus(p, r, q -> formulaireLore(q, id, retour));
+            }
+        }));
+        boutons.add(retour(retour));
+        gui.open(joueur, t("lore.title", "<gold><bold>Titre et description du plot n°<id>", "id", id),
+                List.of(t("lore.body", "<gray>Couleurs avec & (ex. &6doré, &bbleu). Titre : <tmax> caractères, description : <dmax>. Laisse vide pour retirer.",
+                        "tmax", KanvasPlots.TITRE_MAX, "dmax", KanvasPlots.DESCRIPTION_MAX)),
+                List.of(gui.text("titre", t("lore.field-title", "Titre"), plot.titre(), KanvasPlots.TITRE_MAX * 3),
+                        gui.text("description", t("lore.field-description", "Description"), plot.description(),
+                                KanvasPlots.DESCRIPTION_MAX * 3)),
+                boutons, null, 1);
+    }
+
     // ------------------------------------------------------------------ mes plots
 
     private void mesPlots(Player joueur, Consumer<Player> retour) {
         Consumer<Player> ici = p -> mesPlots(p, retour);
         List<ActionButton> boutons = new ArrayList<>();
         for (PlotInfo plot : plots.plotsDe(joueur.getUniqueId())) {
-            boolean createur = plot.createur().equals(joueur.getUniqueId());
-            Component libelle = createur
-                    ? t("my.plot", "<yellow>Plot n°<id> <gray>(<size>)", "id", plot.id(), "size", nomTaille(plot.taille()))
-                    : t("my.plot-editor", "<yellow>Plot n°<id> <gray>(<size>, plot de <owner>)",
-                            "id", plot.id(), "size", nomTaille(plot.taille()), "owner", nom(plot.createur()));
-            boutons.add(gui.button(libelle, null, p -> fiche(p, plot.id(), ici)));
+            boutons.add(gui.button(libellePlot(plot), null, p -> fiche(p, plot.id(), ici)));
         }
         boutons.add(retour(retour));
         gui.open(joueur, t("my.title", "<gold><bold>Mes plots"),
@@ -211,6 +318,8 @@ public final class KvMenu extends JavaPlugin {
         }
         Consumer<Player> ici = p -> fiche(p, id, retour);
         List<Component> corps = new ArrayList<>();
+        if (!plot.titre().isEmpty()) corps.add(lore(plot.titre()));
+        if (!plot.description().isEmpty()) corps.add(t("plot.description", "<gray>« <text><gray> »", "text", lore(plot.description())));
         corps.add(t("plot.owner", "<gray>Créateur : <white><owner>", "owner", nom(plot.createur())));
         corps.add(plot.editeurs().isEmpty() ? t("plot.no-editors", "<gray>Éditeurs : <white>aucun")
                 : t("plot.editors", "<gray>Éditeurs : <white><names>", "names",
@@ -222,14 +331,21 @@ public final class KvMenu extends JavaPlugin {
                 "votes", plot.votes(), "avg", plot.votes() == 0 ? ""
                         : String.format(java.util.Locale.FRANCE, ", moyenne %.1f/5", plot.moyenne())));
         List<ActionButton> boutons = new ArrayList<>();
+        if (plots.peutVoter(joueur.getUniqueId(), id)) {
+            int note = plots.note(joueur.getUniqueId(), id);
+            boutons.add(gui.button(note == 0 ? t("plot.vote", "<gold><bold>Noter ce plot")
+                    : t("plot.revote", "<gold><bold>Noter ce plot <gray>(ta note : <note>/5)", "note", note), null, p -> vote(p, id, ici)));
+        }
         boutons.add(gui.button(t("plot.tp", "<aqua>Se téléporter"), null, p -> {
             try {
-                plots.teleporter(p, id);
+                plots.visiter(p, id);
             } catch (Refus r) {
                 refus(p, r, ici);
             }
         }));
         if (plot.createur().equals(joueur.getUniqueId())) {
+            boutons.add(gui.button(t("plot.lore-button", "<yellow>Titre et description"),
+                    t("plot.lore-tip", "<gray>Donne un nom et une histoire à ta construction."), p -> formulaireLore(p, id, ici)));
             boutons.add(gui.button(t("plot.editors-button", "<yellow>Éditeurs"),
                     t("plot.editors-tip", "<gray>Ajouter ou retirer des joueurs qui construisent avec toi."),
                     p -> editeurs(p, id, ici)));

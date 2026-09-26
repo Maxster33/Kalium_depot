@@ -4,6 +4,20 @@ Serveur Kanvas (ex Kal-Test-Dev). Cahier des charges : `KV_Plots/CAHIER_DES_CHAR
 de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` télécharge aussi les API WorldGuard
 7.0.19 et WorldEdit 7.4.5 (compilation seulement ; en jeu, ce sont les plugins du serveur qui servent).
 
+## 1.3.0 - titre, description, visites (26/09/2026)
+
+Cahier des charges : « chaque plot peut avoir un titre et une description (lore) » ; menu des visites (KV_Menu).
+- **Titre** (32 caractères) et **description** (200 caractères), codes couleur `&` autorisés (non comptés), par le
+  créateur, à tout moment (même plot validé) : `/plot titre <texte>`, `/plot description <texte>` (vide = retirer),
+  ou le formulaire de KV_Menu. Enregistrés dans `plots.yml` (`titre`, `description`).
+- **Entrée dans un plot** : titre (ou « Plot n°X ») et « par <créateur> » (« (en travaux) » si non validé) à l'écran,
+  description dans le chat. Rien sur les routes. `/plot info` les affiche aussi.
+- **Visites** (API) : `tousLesPlots`, `plotsDuCreateur`, `hasardANoter` (plot validé au hasard, notable et pas encore
+  noté par le joueur), `visiter` (téléportation au bord de n'importe quel plot), `definirLore` ; `PlotInfo` avec
+  titre et description.
+
+**Statut : non testé en jeu, non déployé.** À déployer avec KV_Menu 1.2.0.
+
 ## 1.2.0 - validation, votes, déblocage d'une 2e place (26/09/2026)
 
 Demande de LeKiwi06 (cahier des charges, K4 à K7) ; « go » donné alors que 1.1.1 et KV_Menu 1.0.0 n'étaient pas

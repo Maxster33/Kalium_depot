@@ -19,6 +19,8 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
+
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,6 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 1.0.0 : génération de la grille, réservation (moyen / grand), éditeurs, protection WorldGuard, règles du monde.
  * 1.1.0 : remise à zéro et suppression d'un plot. 1.1.1 : les joueurs restent en créatif.
  * 1.2.0 : validation, votes (terracottas), déblocage d'une 2e place à 100 points.
+ * 1.3.0 : titre et description, visites (API pour le menu des visites de KV_Menu).
  */
 public final class KVPlots extends JavaPlugin {
 
@@ -69,6 +72,7 @@ public final class KVPlots extends JavaPlugin {
         }
 
         getServer().getPluginManager().registerEvents(new ReglesMonde(this), this);
+        getServer().getPluginManager().registerEvents(new EntreePlot(this), this);
         modeVote = new ModeVote(this);
         getServer().getPluginManager().registerEvents(modeVote, this);
         getServer().getServicesManager().register(KanvasPlots.class, new Api(this), this, ServicePriority.Normal);
@@ -325,6 +329,40 @@ public final class KVPlots extends JavaPlugin {
                 teleporter(joueur, p);
             }
         }));
+    }
+
+    // --- Titre, description, visites ---
+
+    static final int TITRE_MAX = 32, DESCRIPTION_MAX = 200;
+
+    /** Vérifie la longueur (caractères visibles, codes couleur « & » non comptés). */
+    private static String nettoyer(String texte, int max, String quoi) throws Refus {
+        texte = texte == null ? "" : texte.strip();
+        int visibles = PlainTextComponentSerializer.plainText().serialize(EntreePlot.texte(texte)).length();
+        if (visibles > max || texte.length() > max * 3) {
+            throw new Refus(quoi + " : " + visibles
+                    + " caractères (maximum " + max + ").");
+        }
+        return texte;
+    }
+
+    /** Titre et description (vides = retirés), par le créateur, à tout moment (même plot validé). */
+    void definirLore(Player joueur, Plot p, String titre, String description) throws Refus {
+        if (!p.createur.equals(joueur.getUniqueId())) throw new Refus("Seul le créateur du plot choisit son titre et sa description.");
+        String t = nettoyer(titre, TITRE_MAX, "Titre trop long");
+        String d = nettoyer(description, DESCRIPTION_MAX, "Description trop longue");
+        p.titre = t;
+        p.description = d;
+        plots.sauver();
+    }
+
+    /** Plot validé au hasard que le joueur peut noter et n'a pas encore noté, ou null. */
+    Plot hasardANoter(UUID joueur) {
+        List<Plot> choix = new ArrayList<>();
+        for (Plot p : plots.tous()) {
+            if (p.votable(joueur) && !p.votes.containsKey(joueur)) choix.add(p);
+        }
+        return choix.isEmpty() ? null : choix.get(java.util.concurrent.ThreadLocalRandom.current().nextInt(choix.size()));
     }
 
     // --- Validation, votes ---

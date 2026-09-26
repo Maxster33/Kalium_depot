@@ -5,6 +5,25 @@ actions de **KV_Plots** (par son API `fr.kalium.kvplots.api.KanvasPlots`). Menus
 (boîte à outils `Gui` / `Lang` de KLM_Menu), textes modifiables dans `lang.yml`. Cahier des charges :
 `KV_Plots/CAHIER_DES_CHARGES.md`.
 
+## 1.2.0 - visites, titre et description (26/09/2026)
+
+Cahier des charges : menu des visites (au hasard vers un plot pas encore noté ; liste des joueurs avec leurs têtes ;
+liste à explorer soi-même) ; titre et description des plots.
+- Accueil : **« Visiter les plots »** →
+  - **« Au hasard : un plot à noter »** : téléportation vers un plot validé que le joueur n'a pas encore noté (message
+    « Bravo ! » s'il n'en reste aucun) ;
+  - **« Par joueur »** : **coffre** avec la tête de chaque joueur qui a au moins un plot (plots, validés, points dans
+    l'info-bulle ; 45 par page, flèches, « Retour ») → clic = liste de ses plots. Coffre et non dialogue : on ne peut
+    pas cliquer sur des têtes dans un dialogue ;
+  - **« Tous les plots »** : liste par pages de 20 (titre ou « Plot n°X », taille, créateur, points ou « en
+    travaux » ; description en info-bulle).
+- **Fiche d'un plot** ouverte à tous : titre, description, créateur, éditeurs, état, points ; « Noter ce plot » (si
+  notable) ; « Se téléporter » (n'importe quel plot) ; créateur : **« Titre et description »** (formulaire, codes `&`).
+- « Mes plots » affiche le titre des plots.
+- Nécessite **KV_Plots 1.3.0** (à déployer ensemble).
+
+**Statut : non testé en jeu, non déployé.**
+
 ## 1.1.0 - votes et validation (26/09/2026)
 
 - Accueil : **« Voter pour ce plot »** (avec « ta note : n/5 » si déjà noté) quand on se trouve sur un plot qu'on

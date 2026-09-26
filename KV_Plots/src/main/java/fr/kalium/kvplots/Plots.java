@@ -114,6 +114,8 @@ final class Plots {
                         p.votes.put(UUID.fromString(u), new Plot.Vote(Integer.parseInt(v[0]), Long.parseLong(v[1])));
                     }
                 }
+                p.titre = s.getString("titre", "");
+                p.description = s.getString("description", "");
                 p.chantier = Plot.Chantier.valueOf(s.getString("chantier",
                         s.getBoolean("fusion-en-cours") ? "FUSION" : "AUCUN")); // 1.0.0 : fusion-en-cours
                 ajouter(p);
@@ -138,6 +140,8 @@ final class Plots {
             yml.set(b + "historique-editeurs", p.historiqueEditeurs.stream().map(UUID::toString).toList());
             yml.set(b + "etat", p.etat.name());
             yml.set(b + "chantier", p.chantier.name());
+            if (!p.titre.isEmpty()) yml.set(b + "titre", p.titre);
+            if (!p.description.isEmpty()) yml.set(b + "description", p.description);
             for (var v : p.votes.entrySet()) {
                 yml.set(b + "votes." + v.getKey(), v.getValue().note() + ";" + v.getValue().heure());
             }

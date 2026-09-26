@@ -9,7 +9,7 @@ depend: [WorldGuard]
 commands:
   plot:
     description: Reserver et gerer ses plots.
-    usage: /<command> reserver|tp|liste|info|editeur|valider|rouvrir|reset|supprimer
+    usage: /<command> reserver|tp|liste|info|editeur|titre|description|valider|rouvrir|reset|supprimer
     permission: kvplots.joueur
   kvadmin:
     description: Administration des plots de Kanvas (generation de la grille).

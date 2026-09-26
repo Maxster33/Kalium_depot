@@ -21,7 +21,8 @@ final class Api implements KanvasPlots {
 
     private static PlotInfo vue(Plot p) {
         return p == null ? null : new PlotInfo(p.id, p.taille, p.createur, List.copyOf(p.editeurs),
-                p.etat == Plot.Etat.VALIDE, p.chantier != Plot.Chantier.AUCUN, p.points(), p.votes.size(), p.moyenne());
+                p.etat == Plot.Etat.VALIDE, p.chantier != Plot.Chantier.AUCUN, p.points(), p.votes.size(), p.moyenne(),
+                p.titre, p.description);
     }
 
     private Plot trouver(int id) throws Refus {
@@ -33,6 +34,33 @@ final class Api implements KanvasPlots {
     @Override
     public World monde() {
         return plugin.monde();
+    }
+
+    @Override
+    public List<PlotInfo> tousLesPlots() {
+        return plugin.plots().tous().stream().sorted(java.util.Comparator.comparingInt(p -> p.id)).map(Api::vue).toList();
+    }
+
+    @Override
+    public List<PlotInfo> plotsDuCreateur(UUID joueur) {
+        return plugin.plots().duCreateur(joueur).stream().map(Api::vue).toList();
+    }
+
+    @Override
+    public PlotInfo hasardANoter(UUID joueur) {
+        return vue(plugin.hasardANoter(joueur));
+    }
+
+    @Override
+    public void visiter(Player joueur, int id) throws Refus {
+        Plot p = trouver(id);
+        if (p.chantier == Plot.Chantier.SUPPRESSION) throw new Refus("Ce plot est en cours de suppression.");
+        plugin.teleporter(joueur, p);
+    }
+
+    @Override
+    public void definirLore(Player joueur, int id, String titre, String description) throws Refus {
+        plugin.definirLore(joueur, trouver(id), titre, description);
     }
 
     @Override

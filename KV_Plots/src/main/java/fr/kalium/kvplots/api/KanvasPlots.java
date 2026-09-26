@@ -19,7 +19,10 @@ public interface KanvasPlots {
 
     /** Vue d'un plot (copie : ne change pas si le plot change ensuite). */
     record PlotInfo(int id, Taille taille, UUID createur, List<UUID> editeurs, boolean valide, boolean enPreparation,
-                    int points, int votes, double moyenne) {}
+                    int points, int votes, double moyenne, String titre, String description) {}
+
+    /** Longueurs maximales (caractères visibles ; codes couleur « & » non comptés). */
+    int TITRE_MAX = 32, DESCRIPTION_MAX = 200;
 
     /** Action refusée ; le message est prêt à être montré au joueur. */
     final class Refus extends Exception {
@@ -30,6 +33,21 @@ public interface KanvasPlots {
 
     /** Monde des plots. */
     World monde();
+
+    /** Tous les plots réservés, triés par numéro. */
+    List<PlotInfo> tousLesPlots();
+
+    /** Plots créés par ce joueur, triés par numéro. */
+    List<PlotInfo> plotsDuCreateur(UUID joueur);
+
+    /** Plot validé au hasard que le joueur peut noter et n'a pas encore noté, ou null. */
+    PlotInfo hasardANoter(UUID joueur);
+
+    /** Téléporte le joueur au bord de n'importe quel plot (visite). */
+    void visiter(Player joueur, int id) throws Refus;
+
+    /** Titre et description (vides = retirés) ; créateur seulement, à tout moment. */
+    void definirLore(Player joueur, int id, String titre, String description) throws Refus;
 
     /** Plots dont le joueur est créateur ou éditeur, triés par numéro. */
     List<PlotInfo> plotsDe(UUID joueur);

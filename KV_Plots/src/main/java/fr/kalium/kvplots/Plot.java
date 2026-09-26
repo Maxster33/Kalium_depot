@@ -32,6 +32,8 @@ final class Plot {
     final Set<UUID> historiqueEditeurs = new LinkedHashSet<>();
     /** Un vote par joueur : revoter remplace l'ancien vote. Gardés quand le plot est rouvert. */
     final Map<UUID, Vote> votes = new LinkedHashMap<>();
+    /** Titre et description donnés par le créateur (codes couleur « & » ; vides = aucun). */
+    String titre = "", description = "";
     Etat etat = Etat.TRAVAUX;
     Chantier chantier = Chantier.AUCUN;
 
