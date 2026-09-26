@@ -20,6 +20,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KV_Menu — LeKiwi06 — depuis le 2026-09-26 00:50 — création (interface des plots de Kanvas)
 - KG_Parkour — LeKiwi06 — depuis le 2026-09-26 04:30 — création : le Parcours sort de KalGames (étape 0, tel quel)
 - KalGames — LeKiwi06 — depuis le 2026-09-26 04:30 — retrait du Parcours (enregistré par KG_Parkour)
+- KG_BingoGame — LeKiwi06 — depuis le 2026-09-26 05:30 — barème doublé, résultats envoyés au hub (classements)
+- KG_Bingo — LeKiwi06 — depuis le 2026-09-26 05:30 — points du Bingo crédités dans les classements (KG_ScoreBoards)
 
 
 
