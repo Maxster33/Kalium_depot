@@ -66,8 +66,21 @@ final class EntreePlot implements Listener {
     private List<Component> lignes(Player joueur, Plot p) {
         UUID u = joueur.getUniqueId();
         List<Component> l = new ArrayList<>();
+        Concours.Un c = plugin.concours().actuel();
+        if (c != null) {
+            l.add(Component.text("Concours de build : ", NamedTextColor.LIGHT_PURPLE).append(texte(c.theme)));
+            long reste = (c.phase == fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.EN_COURS ? c.fin : c.finVotes)
+                    - System.currentTimeMillis();
+            l.add(Component.text(c.phase == fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.EN_COURS ? "Fin dans : " : "Votes : fin dans ",
+                    NamedTextColor.GRAY).append(blanc(Concours.duree(reste))));
+        }
         l.add(Component.empty());
         l.add(Component.text("Plot n°" + p.id + " · " + p.taille.nom, NamedTextColor.GOLD));
+        if (p.concours != 0) {
+            Concours.Un du = plugin.concours().parId(p.concours);
+            l.add(Component.text(du != null && du.actif() ? "Plot du concours" : "Ancien concours"
+                    + (du == null ? "" : " : " + du.theme), NamedTextColor.LIGHT_PURPLE));
+        }
         l.add(ligne("Créateur : ", blanc(KVPlots.nom(p.createur))));
         if (p.editeurs.isEmpty()) {
             l.add(ligne("Éditeurs : ", blanc("aucun")));

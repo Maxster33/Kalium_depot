@@ -4,7 +4,7 @@ Serveur Kanvas (ex Kal-Test-Dev). Cahier des charges : `KV_Plots/CAHIER_DES_CHAR
 de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` télécharge aussi les API WorldGuard
 7.0.19 et WorldEdit 7.4.5 (compilation seulement ; en jeu, ce sont les plugins du serveur qui servent).
 
-## 1.4.0 - signalements (26/09/2026)
+## 1.4.0 - signalements, concours de build (26/09/2026)
 
 Cahier des charges : « raisons à cocher : contenu inapproprié, copie d'un autre build, plot vide ou bâclé, triche aux
 votes, Autre (texte libre). Message en jeu au staff connecté + sauvegarde dans un fichier, consultables dans
@@ -19,6 +19,25 @@ l'interface admin de KV_Menu. Actions du staff : classer le signalement, dévali
   son créateur ; votes gardés), remettre à zéro (fonction existante).
 - API : `raisonsSignalement`, `peutSignaler`, `signaler`, `estObjetSignalement`, `plotEnVote`, `signalements`,
   `signalement`, `classer`, `devalider` ; `SignalementInfo`.
+
+Ajouté dans la même version (pas encore déployée), demande de LeKiwi06 : **concours de build**.
+- **Un concours à la fois** (`concours.yml`) : thème, taille des plots (moyen ou grand, choisie par le staff), fin de
+  la construction, durée des votes. Phases : **en cours** (participation, construction) → à la date de fin, **votes**
+  (plots du concours figés et notables avec les terracottas, pendant la durée des votes) → **terminé** (votes clos,
+  classement annoncé : total des points puis moyenne ; plots **gardés à part**, « anciens concours ») ; **annulé** par
+  le staff (plots supprimés). Passages automatiques vérifiés toutes les 20 s ; annonces dans le chat.
+- **Participer** : un plot en plus, **hors limites** (ne prend pas de place, ne compte pas pour les déblocages), de la
+  taille du concours (le libre où l'on se tient, sinon le plus proche du centre) ; éditeurs possibles. Un seul plot
+  par joueur et par concours. **Annuler sa participation** (pendant la construction) supprime le plot. Valider /
+  rouvrir / supprimer un plot du concours : refusé (géré par le concours) ; remise à zéro possible.
+- **Tableau sur le côté** : pendant un concours, « Concours de build : <thème> » et « Fin dans : … » (ou « Votes : fin
+  dans … ») sur tous les plots ; « Plot du concours » / « Ancien concours : <thème> » sur les plots concernés.
+- **Staff** : lancer, modifier (thème, fin, durée ou fin des votes), terminer la construction maintenant, clore les
+  votes maintenant, annuler le concours, exclure un plot (supprimé).
+- `plots.yml` : clé `concours` sur les plots du concours. API : `concoursActuel`, `anciensConcours`, `concours`,
+  `plotsDuConcours`, `participation`, `participer`, `annulerParticipation`, `duree`, `lancerConcours`,
+  `modifierConcours`, `terminerConcours`, `cloreVotes`, `annulerConcours`, `exclureDuConcours` ; `ConcoursInfo`,
+  `PhaseConcours` ; `PlotInfo.concours`.
 
 **Statut : non testé en jeu, non déployé.** À déployer avec KV_Menu 1.3.0.
 

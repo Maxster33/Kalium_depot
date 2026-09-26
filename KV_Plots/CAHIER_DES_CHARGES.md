@@ -93,6 +93,18 @@ de plots en créatif. Préfixe `KV_` = Kanvas (voir la charte dans `ARCHITECTURE
 - **Lore** : chaque plot peut avoir un **titre** et une **description**, définis par le créateur (affichés à l'entrée du
   plot, dans les menus de visite et les classements).
 
+## Concours de build (demande de LeKiwi06, 26/09/2026)
+
+- Menu de l'étoile > « Concours de build ». Joueurs : « Participer » (un plot en plus pour la durée du concours),
+  « Fin dans : » jours / heures / minutes, « Participants » (voir leurs plots), « Annuler ma participation » (supprime
+  le plot, avec confirmation). Tableau sur le côté : « Concours de build : <thème> ». Staff : configurer le concours
+  et modérer ses plots.
+- Décisions : gagnant désigné par les **votes des joueurs après la fin** (plots figés, phase de votes) ; ensuite les
+  plots sont **gardés à part** (anciens concours, hors classements normaux) ; **taille choisie par le staff** pour
+  chaque concours ; plots **visitables pendant le concours**.
+- Choix par défaut (Claude, à ajuster si besoin) : un seul concours à la fois ; le plot du concours ne prend pas de
+  place et ne compte pas pour les déblocages ; éditeurs autorisés ; classement au total des points puis à la moyenne.
+
 ## Architecture proposée (à valider)
 
 - Plugin `KV_Plots` : monde de plots, réservation, éditeurs, validation, votes, déblocages, agrandissement,

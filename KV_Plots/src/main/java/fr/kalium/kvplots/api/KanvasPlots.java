@@ -20,7 +20,14 @@ public interface KanvasPlots {
 
     /** Vue d'un plot (copie : ne change pas si le plot change ensuite). */
     record PlotInfo(int id, Taille taille, UUID createur, List<UUID> editeurs, boolean valide, boolean enPreparation,
-                    int points, int votes, double moyenne, String titre, String description) {}
+                    int points, int votes, double moyenne, String titre, String description, int concours) {}
+
+    /** Phases d'un concours de build. */
+    enum PhaseConcours { EN_COURS, VOTES, TERMINE, ANNULE }
+
+    /** Concours : fin = fin de la construction ; finVotes = fin des votes (0 avant la phase de votes). */
+    record ConcoursInfo(int id, String theme, Taille taille, PhaseConcours phase, long debut, long fin, long dureeVotes,
+                        long finVotes, int participants) {}
 
     /** Signalement d'un plot ; classé = traité par le staff (action faite). */
     record SignalementInfo(int id, int plot, UUID auteur, List<String> raisons, String autre, long date, boolean classe,
@@ -103,6 +110,50 @@ public interface KanvasPlots {
 
     /** Le joueur est-il en train de noter un plot (inventaire remplacé par les terracottas) ? */
     boolean enVote(Player joueur);
+
+    // --- Concours de build ---
+
+    /** Concours en cours ou en votes, ou null. */
+    ConcoursInfo concoursActuel();
+
+    /** Concours terminés, du plus récent au plus ancien. */
+    List<ConcoursInfo> anciensConcours();
+
+    ConcoursInfo concours(int id);
+
+    /** Plots d'un concours ; classés (points puis moyenne) une fois les votes ouverts, sinon par numéro. */
+    List<PlotInfo> plotsDuConcours(int id);
+
+    /** Plot du joueur (créateur) dans le concours actif, ou null. */
+    PlotInfo participation(UUID joueur);
+
+    /** Participer : un plot en plus (hors limites) de la taille du concours, téléportation. */
+    PlotInfo participer(Player joueur) throws Refus;
+
+    /** Annuler sa participation pendant le concours : le plot est supprimé. */
+    void annulerParticipation(Player joueur) throws Refus;
+
+    /** « 2 j 3 h 10 min ». */
+    String duree(long millisecondes);
+
+    /** Staff : lance un concours (durées en millisecondes). */
+    ConcoursInfo lancerConcours(Player staff, String theme, Taille taille, long duree, long dureeVotes) throws Refus;
+
+    /** Staff : thème (vide = inchangé), fin dans « duree » (pendant la construction), durée des votes (ou fin des votes
+     *  pendant les votes) ; une durée de 0 = inchangée. */
+    void modifierConcours(Player staff, String theme, long duree, long dureeVotes) throws Refus;
+
+    /** Staff : fin de la construction maintenant (les votes s'ouvrent). */
+    void terminerConcours(Player staff) throws Refus;
+
+    /** Staff : fin des votes maintenant (classement). */
+    void cloreVotes(Player staff) throws Refus;
+
+    /** Staff : annule le concours actif (ses plots sont supprimés). */
+    void annulerConcours(Player staff) throws Refus;
+
+    /** Staff : exclut un plot du concours actif (il est supprimé). */
+    void exclureDuConcours(Player staff, int id) throws Refus;
 
     // --- Signalements ---
 

@@ -34,6 +34,10 @@ final class Plot {
     final Map<UUID, Vote> votes = new LinkedHashMap<>();
     /** Titre et description donnés par le créateur (codes couleur « & » ; vides = aucun). */
     String titre = "", description = "";
+    /** Concours de build auquel ce plot participe (0 = plot normal). */
+    int concours;
+    /** Plot d'un concours terminé ou annulé : plus de votes (mis à jour par le gestionnaire des concours). */
+    boolean votesFermes;
     Etat etat = Etat.TRAVAUX;
     Chantier chantier = Chantier.AUCUN;
 
@@ -66,7 +70,7 @@ final class Plot {
 
     /** Plot validé, sans travaux en cours, et joueur extérieur au plot. */
     boolean votable(UUID joueur) {
-        return etat == Etat.VALIDE && chantier == Chantier.AUCUN && estExterieur(joueur);
+        return etat == Etat.VALIDE && chantier == Chantier.AUCUN && !votesFermes && estExterieur(joueur);
     }
 
     int points() {

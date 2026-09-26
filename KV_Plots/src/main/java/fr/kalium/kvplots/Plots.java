@@ -70,7 +70,7 @@ final class Plots {
     int compter(UUID createur, Taille taille) {
         int n = 0;
         for (Plot p : parId.values()) {
-            if (p.createur.equals(createur) && p.taille == taille && p.etat == Plot.Etat.TRAVAUX) n++;
+            if (p.createur.equals(createur) && p.taille == taille && p.etat == Plot.Etat.TRAVAUX && p.concours == 0) n++;
         }
         return n;
     }
@@ -114,6 +114,7 @@ final class Plots {
                         p.votes.put(UUID.fromString(u), new Plot.Vote(Integer.parseInt(v[0]), Long.parseLong(v[1])));
                     }
                 }
+                p.concours = s.getInt("concours", 0);
                 p.titre = s.getString("titre", "");
                 p.description = s.getString("description", "");
                 p.chantier = Plot.Chantier.valueOf(s.getString("chantier",
@@ -140,6 +141,7 @@ final class Plots {
             yml.set(b + "historique-editeurs", p.historiqueEditeurs.stream().map(UUID::toString).toList());
             yml.set(b + "etat", p.etat.name());
             yml.set(b + "chantier", p.chantier.name());
+            if (p.concours != 0) yml.set(b + "concours", p.concours);
             if (!p.titre.isEmpty()) yml.set(b + "titre", p.titre);
             if (!p.description.isEmpty()) yml.set(b + "description", p.description);
             for (var v : p.votes.entrySet()) {

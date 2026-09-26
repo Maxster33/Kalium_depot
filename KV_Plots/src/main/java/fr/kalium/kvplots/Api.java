@@ -23,7 +23,7 @@ final class Api implements KanvasPlots {
     private static PlotInfo vue(Plot p) {
         return p == null ? null : new PlotInfo(p.id, p.taille, p.createur, List.copyOf(p.editeurs),
                 p.etat == Plot.Etat.VALIDE, p.chantier != Plot.Chantier.AUCUN, p.points(), p.votes.size(), p.moyenne(),
-                p.titre, p.description);
+                p.titre, p.description, p.concours);
     }
 
     private Plot trouver(int id) throws Refus {
@@ -145,6 +145,84 @@ final class Api implements KanvasPlots {
     @Override
     public boolean enVote(Player joueur) {
         return plugin.modeVote().enVote(joueur);
+    }
+
+    private ConcoursInfo vue(Concours.Un c) {
+        return c == null ? null : new ConcoursInfo(c.id, c.theme, c.taille, c.phase, c.debut, c.fin, c.dureeVotes,
+                c.finVotes, plugin.plotsDuConcours(c.id).size());
+    }
+
+    @Override
+    public ConcoursInfo concoursActuel() {
+        return vue(plugin.concours().actuel());
+    }
+
+    @Override
+    public List<ConcoursInfo> anciensConcours() {
+        return plugin.concours().termines().stream().map(this::vue).toList();
+    }
+
+    @Override
+    public ConcoursInfo concours(int id) {
+        return vue(plugin.concours().parId(id));
+    }
+
+    @Override
+    public List<PlotInfo> plotsDuConcours(int id) {
+        List<Plot> l = plugin.plotsDuConcours(id);
+        Concours.Un c = plugin.concours().parId(id);
+        if (c != null && c.phase != PhaseConcours.EN_COURS) l.sort(KVPlots.ORDRE_CLASSEMENT);
+        return l.stream().map(Api::vue).toList();
+    }
+
+    @Override
+    public PlotInfo participation(UUID joueur) {
+        return vue(plugin.participation(joueur));
+    }
+
+    @Override
+    public PlotInfo participer(Player joueur) throws Refus {
+        return vue(plugin.participer(joueur));
+    }
+
+    @Override
+    public void annulerParticipation(Player joueur) throws Refus {
+        plugin.annulerParticipation(joueur);
+    }
+
+    @Override
+    public String duree(long millisecondes) {
+        return Concours.duree(millisecondes);
+    }
+
+    @Override
+    public ConcoursInfo lancerConcours(Player staff, String theme, Taille taille, long duree, long dureeVotes) throws Refus {
+        return vue(plugin.lancerConcours(staff, theme, taille, duree, dureeVotes));
+    }
+
+    @Override
+    public void modifierConcours(Player staff, String theme, long duree, long dureeVotes) throws Refus {
+        plugin.modifierConcours(staff, theme, duree, dureeVotes);
+    }
+
+    @Override
+    public void terminerConcours(Player staff) throws Refus {
+        plugin.terminerConcours(staff);
+    }
+
+    @Override
+    public void cloreVotes(Player staff) throws Refus {
+        plugin.cloreVotes(staff);
+    }
+
+    @Override
+    public void annulerConcours(Player staff) throws Refus {
+        plugin.annulerConcours(staff);
+    }
+
+    @Override
+    public void exclureDuConcours(Player staff, int id) throws Refus {
+        plugin.exclure(staff, trouver(id));
     }
 
     private static SignalementInfo vue(Signalements.Signalement s) {

@@ -23,6 +23,8 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.kalium.kvplots.api.KanvasPlots;
+import fr.kalium.kvplots.api.KanvasPlots.ConcoursInfo;
+import fr.kalium.kvplots.api.KanvasPlots.PhaseConcours;
 import fr.kalium.kvplots.api.KanvasPlots.PlotInfo;
 import fr.kalium.kvplots.api.KanvasPlots.Refus;
 import fr.kalium.kvplots.api.KanvasPlots.SignalementInfo;
@@ -42,7 +44,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
  *   mes plots.
  * 1.1.0 : votes, validation / réouverture, points dans la fiche ; l'étoile laisse la place aux terracottas.
  * 1.2.0 : visites (au hasard, par joueur avec les têtes, liste de tous les plots), titre et description.
- * 1.3.0 : signalements (formulaire, poudre de blaze du mode vote, écrans du staff).
+ * 1.3.0 : signalements (formulaire, poudre de blaze du mode vote, écrans du staff) ; concours de build.
  * - Mes plots : un bouton par plot (créateur ou éditeur) -> fiche du plot : téléportation, éditeurs, remise à zéro,
  *   suppression (créateur).
  * - Ouverture : étoile du Nether (emplacement 4), /kanvas (/kv, /plots) et le catalogue de KLM_Menu (entrée « Kanvas »).
@@ -74,6 +76,12 @@ public final class KvMenu extends JavaPlugin {
         tetes = new TetesJoueurs(plots, lang, this::plotsJoueur);
         getServer().getPluginManager().registerEvents(tetes, this);
         getServer().getPluginManager().registerEvents(new PoudreSignalement(), this);
+        getServer().getServicesManager().register(MenuSection.class,
+                MenuSection.of(this, "kanvas-concours", MenuSection.Audience.ADMINS,
+                        t("klm.contest", "<light_purple>Kanvas : concours de build"),
+                        t("klm.contest-tip", "<gray>Lancer, modifier, modérer le concours de build."),
+                        this::gererConcours),
+                this, ServicePriority.Normal);
         getServer().getServicesManager().register(MenuSection.class,
                 MenuSection.of(this, "kanvas-signalements", MenuSection.Audience.ADMINS,
                         t("klm.reports", "<light_purple>Kanvas : signalements"),
@@ -145,6 +153,10 @@ public final class KvMenu extends JavaPlugin {
             boutons.add(gui.button(t("home.my-plots", "<gold>Mes plots <gray>(<n>)", "n", mes.size()),
                     t("home.my-plots-tip", "<gray>Téléportation, éditeurs, validation."), p -> mesPlots(p, ici)));
         }
+        ConcoursInfo enCours = plots.concoursActuel();
+        boutons.add(gui.button(enCours == null ? t("home.contest", "<light_purple>Concours de build")
+                        : t("home.contest-on", "<light_purple><bold>Concours de build <gray>: <theme>", "theme", lore(enCours.theme())),
+                t("home.contest-tip", "<gray>Participer, voir les participants, anciens concours."), p -> concours(p, ici)));
         boutons.add(gui.button(t("home.visit", "<aqua>Visiter les plots"),
                 t("home.visit-tip", "<gray>Au hasard, par joueur, ou toute la liste."), p -> visites(p, ici)));
         if (staff(joueur)) {
@@ -212,6 +224,271 @@ public final class KvMenu extends JavaPlugin {
                                 : t("vote.current", "<gray>Ta note actuelle : <white><note>/5 <gray>(un nouveau vote la remplace).",
                                         "note", actuelle)),
                 List.of(), boutons, null, 5);
+    }
+
+    // ------------------------------------------------------------------ concours de build
+
+    private static final long HEURE = 3_600_000L, JOUR = 24 * HEURE;
+
+    private Component phase(ConcoursInfo c) {
+        return switch (c.phase()) {
+            case EN_COURS -> t("contest.phase-building", "<green>construction en cours");
+            case VOTES -> t("contest.phase-votes", "<gold>votes en cours");
+            case TERMINE -> t("contest.phase-done", "<gray>terminé");
+            case ANNULE -> t("contest.phase-cancelled", "<red>annulé");
+        };
+    }
+
+    /** Menu du concours (joueurs), et « Gérer le concours » pour le staff. */
+    private void concours(Player joueur, Consumer<Player> retour) {
+        Consumer<Player> ici = p -> concours(p, retour);
+        ConcoursInfo c = plots.concoursActuel();
+        List<Component> corps = new ArrayList<>();
+        List<ActionButton> boutons = new ArrayList<>();
+        if (c == null) {
+            corps.add(t("contest.none", "<gray>Aucun concours de build pour le moment. Reviens bientôt !"));
+        } else {
+            corps.add(t("contest.theme", "<gray>Thème : <white><theme>", "theme", lore(c.theme())));
+            corps.add(t("contest.size", "<gray>Plots : <white><size>", "size", nomTaille(c.taille())));
+            corps.add(t("contest.state", "<gray>État : <state>", "state", phase(c)));
+            long reste = (c.phase() == PhaseConcours.EN_COURS ? c.fin() : c.finVotes()) - System.currentTimeMillis();
+            corps.add(c.phase() == PhaseConcours.EN_COURS
+                    ? t("contest.ends", "<gray>Fin dans : <white><time>", "time", plots.duree(reste))
+                    : t("contest.votes-end", "<gray>Fin des votes dans : <white><time>", "time", plots.duree(reste)));
+            corps.add(t("contest.count", "<gray>Participants : <white><n>", "n", c.participants()));
+            PlotInfo mien = plots.participation(joueur.getUniqueId());
+            if (mien == null && c.phase() == PhaseConcours.EN_COURS) {
+                boutons.add(gui.button(t("contest.join", "<green><bold>Participer"),
+                        t("contest.join-tip", "<gray>Un plot <size> en plus, pour la durée du concours.", "size", nomTaille(c.taille())),
+                        p -> gui.confirm(p, t("contest.join-title", "<green><bold>Participer au concours"),
+                                t("contest.join-body", "<gray>Tu reçois un plot <size> en plus (il ne prend pas de place) pour construire sur le thème « <theme> ». Tu seras téléporté dessus.",
+                                        "size", nomTaille(c.taille()), "theme", lore(c.theme())),
+                                q -> {
+                                    try {
+                                        PlotInfo plot = plots.participer(q);
+                                        q.sendMessage(t("contest.joined", "<green>Tu participes au concours ! Ton plot : n°<id>.", "id", plot.id()));
+                                    } catch (Refus r) {
+                                        refus(q, r, ici);
+                                    }
+                                }, ici::accept)));
+            }
+            if (mien != null) {
+                boutons.add(gui.button(t("contest.my-plot", "<aqua>Mon plot du concours <gray>(n°<id>)", "id", mien.id()), null, p -> {
+                    try {
+                        plots.visiter(p, mien.id());
+                    } catch (Refus r) {
+                        refus(p, r, ici);
+                    }
+                }));
+                if (c.phase() == PhaseConcours.EN_COURS) {
+                    boutons.add(gui.button(t("contest.leave", "<red>Annuler ma participation"), null,
+                            p -> gui.confirm(p, t("contest.leave-title", "<red><bold>Retirer ta participation"),
+                                    t("contest.leave-body", "<gray>Êtes-vous sûr de vouloir retirer votre participation ? Cela supprimera votre plot."),
+                                    q -> {
+                                        try {
+                                            plots.annulerParticipation(q);
+                                            q.sendMessage(t("contest.left", "<yellow>Participation retirée : ton plot du concours est supprimé."));
+                                        } catch (Refus r) {
+                                            refus(q, r, ici);
+                                        }
+                                    }, ici::accept)));
+                }
+            }
+            boutons.add(gui.button(t("contest.participants", "<yellow>Participants <gray>(<n>)", "n", c.participants()),
+                    t("contest.participants-tip", "<gray>Voir leurs plots et s'y téléporter."), p -> participants(p, c.id(), ici)));
+        }
+        if (!plots.anciensConcours().isEmpty()) {
+            boutons.add(gui.button(t("contest.past", "<gray>Anciens concours"), null, p -> anciensConcours(p, ici)));
+        }
+        if (staff(joueur)) {
+            boutons.add(gui.button(t("contest.manage", "<light_purple>Gérer le concours"), t("home.reports-tip", "<gray>Réservé au staff."),
+                    p -> gererConcours(p, ici)));
+        }
+        boutons.add(retour(retour));
+        gui.open(joueur, t("contest.title", "<light_purple><bold>Concours de build"), corps, List.of(), boutons, null, 1);
+    }
+
+    /** Plots d'un concours ; classés (1., 2., ...) une fois les votes ouverts. */
+    private void participants(Player joueur, int id, Consumer<Player> retour) {
+        ConcoursInfo c = plots.concours(id);
+        if (c == null) {
+            retour.accept(joueur);
+            return;
+        }
+        Consumer<Player> ici = p -> participants(p, id, retour);
+        boolean classe = c.phase() != PhaseConcours.EN_COURS;
+        List<PlotInfo> liste = plots.plotsDuConcours(id);
+        List<ActionButton> boutons = new ArrayList<>();
+        for (int i = 0; i < liste.size(); i++) {
+            PlotInfo plot = liste.get(i);
+            Component libelle = classe ? t("contest.rank", "<gold><rank>. ", "rank", i + 1).append(libellePlot(plot)) : libellePlot(plot);
+            boutons.add(gui.button(libelle, plot.description().isEmpty() ? null : lore(plot.description()), p -> fiche(p, plot.id(), ici)));
+        }
+        boutons.add(retour(retour));
+        gui.open(joueur, t("contest.participants-title", "<light_purple><bold>Concours : <theme>", "theme", lore(c.theme())),
+                List.of(liste.isEmpty() ? t("contest.no-participant", "<gray>Aucun participant pour le moment.")
+                        : classe ? t("contest.ranking", "<gray>Classement : total des points, puis moyenne.")
+                        : t("contest.participants-body", "<gray>Clique sur un plot pour sa fiche et t'y téléporter.")),
+                List.of(), boutons, null, 1);
+    }
+
+    private void anciensConcours(Player joueur, Consumer<Player> retour) {
+        Consumer<Player> ici = p -> anciensConcours(p, retour);
+        List<ActionButton> boutons = new ArrayList<>();
+        for (ConcoursInfo c : plots.anciensConcours()) {
+            List<PlotInfo> classement = plots.plotsDuConcours(c.id());
+            Component vainqueur = classement.isEmpty() ? t("contest.past-nobody", "<gray>aucun participant")
+                    : t("contest.past-winner", "<gray>vainqueur : <white><name>", "name", nom(classement.get(0).createur()));
+            boutons.add(gui.button(lore(c.theme()).append(t("contest.past-details", " <gray>(<date>, <n> participant(s), ",
+                            "date", DATE.format(Instant.ofEpochMilli(c.debut())), "n", c.participants())).append(vainqueur)
+                            .append(Component.text(")")), null, p -> participants(p, c.id(), ici)));
+        }
+        boutons.add(retour(retour));
+        gui.open(joueur, t("contest.past-title", "<light_purple><bold>Anciens concours"), List.of(), List.of(), boutons, null, 1);
+    }
+
+    // --- staff ---
+
+    private List<io.papermc.paper.registry.data.dialog.input.DialogInput> champsDuree(String cle, Component libelle,
+                                                                                     int joursMax, int joursInitial, int heuresInitial) {
+        return List.of(gui.number(cle + "_jours", libelle.append(t("contest.days", " : jours")), 0, joursMax, joursInitial, 1),
+                gui.number(cle + "_heures", libelle.append(t("contest.hours", " : heures")), 0, 23, heuresInitial, 1));
+    }
+
+    private static long lireDuree(io.papermc.paper.dialog.DialogResponseView vue, String cle) {
+        Float j = vue.getFloat(cle + "_jours"), h = vue.getFloat(cle + "_heures");
+        return Math.round(j == null ? 0 : j) * JOUR + Math.round(h == null ? 0 : h) * HEURE;
+    }
+
+    private void gererConcours(Player joueur, Consumer<Player> retour) {
+        if (!staff(joueur)) return;
+        Consumer<Player> ici = p -> gererConcours(p, retour);
+        ConcoursInfo c = plots.concoursActuel();
+        List<ActionButton> boutons = new ArrayList<>();
+        if (c == null) {
+            List<io.papermc.paper.registry.data.dialog.input.DialogInput> champs = new ArrayList<>();
+            champs.add(gui.text("theme", t("contest.field-theme", "Thème (couleurs avec &)"), "", 64));
+            champs.add(gui.choice("taille", t("contest.field-size", "Taille des plots"), List.of("MOYEN", "GRAND"),
+                    List.of(t("taille.moyen-label", "Moyen (49 x 49)"), t("taille.grand-label", "Grand (107 x 107)")), "MOYEN"));
+            champs.addAll(champsDuree("duree", t("contest.field-duration", "Durée du concours"), 30, 7, 0));
+            champs.addAll(champsDuree("votes", t("contest.field-votes", "Durée des votes"), 14, 2, 0));
+            boutons.add(gui.form(t("contest.start", "<green><bold>Lancer le concours"), null, (p, vue) -> {
+                try {
+                    plots.lancerConcours(p, vue.getText("theme"), "GRAND".equals(vue.getText("taille")) ? Taille.GRAND : Taille.MOYEN,
+                            lireDuree(vue, "duree"), lireDuree(vue, "votes"));
+                    retour.accept(p);
+                } catch (Refus r) {
+                    refus(p, r, ici);
+                }
+            }));
+            boutons.add(retour(retour));
+            gui.open(joueur, t("contest.new-title", "<light_purple><bold>Nouveau concours de build"),
+                    List.of(t("contest.new-body", "<gray>Le concours s'ouvre dès le lancement ; à la fin, les plots sont figés et les votes s'ouvrent pour la durée choisie.")),
+                    champs, boutons, null, 1);
+            return;
+        }
+        boolean construction = c.phase() == PhaseConcours.EN_COURS;
+        boutons.add(gui.button(t("contest.edit", "<yellow>Modifier"), t("contest.edit-tip", "<gray>Thème, fin du concours, durée des votes."),
+                p -> modifierConcours(p, ici)));
+        boutons.add(gui.button(t("contest.moderate", "<yellow>Modérer les plots <gray>(<n>)", "n", c.participants()), null,
+                p -> modererConcours(p, c.id(), ici)));
+        if (construction) {
+            boutons.add(gui.button(t("contest.end-now", "<gold>Terminer maintenant (ouvrir les votes)"), null,
+                    p -> gui.confirm(p, t("contest.end-now-title", "<gold><bold>Terminer la construction"),
+                            t("contest.end-now-body", "<gray>Les plots du concours sont figés et les votes s'ouvrent pour <time>.", "time", plots.duree(c.dureeVotes())),
+                            q -> action(q, () -> plots.terminerConcours(q), ici), ici::accept)));
+        } else {
+            boutons.add(gui.button(t("contest.close-votes", "<gold>Clore les votes maintenant"), null,
+                    p -> gui.confirm(p, t("contest.close-votes-title", "<gold><bold>Clore les votes"),
+                            t("contest.close-votes-body", "<gray>Le classement est arrêté et annoncé ; les plots sont gardés dans « Anciens concours »."),
+                            q -> action(q, () -> plots.cloreVotes(q), ici), ici::accept)));
+        }
+        boutons.add(gui.button(t("contest.cancel", "<red>Annuler le concours"), null,
+                p -> gui.confirm(p, t("contest.cancel-title", "<red><bold>Annuler le concours"),
+                        t("contest.cancel-body", "<gray>Tous les plots du concours seront supprimés. Impossible d'annuler."),
+                        q -> action(q, () -> plots.annulerConcours(q), ici), ici::accept)));
+        boutons.add(retour(retour));
+        long reste = (construction ? c.fin() : c.finVotes()) - System.currentTimeMillis();
+        gui.open(joueur, t("contest.manage-title", "<light_purple><bold>Gérer le concours"),
+                List.of(t("contest.theme", "<gray>Thème : <white><theme>", "theme", lore(c.theme())),
+                        t("contest.state", "<gray>État : <state>", "state", phase(c)),
+                        construction ? t("contest.ends", "<gray>Fin dans : <white><time>", "time", plots.duree(reste))
+                                : t("contest.votes-end", "<gray>Fin des votes dans : <white><time>", "time", plots.duree(reste)),
+                        t("contest.count", "<gray>Participants : <white><n>", "n", c.participants())),
+                List.of(), boutons, null, 1);
+    }
+
+    private void action(Player joueur, ActionStaff action, Consumer<Player> ensuite) {
+        try {
+            action.faire();
+            ensuite.accept(joueur);
+        } catch (Refus r) {
+            refus(joueur, r, ensuite);
+        }
+    }
+
+    private void modifierConcours(Player joueur, Consumer<Player> retour) {
+        ConcoursInfo c = plots.concoursActuel();
+        if (c == null || !staff(joueur)) {
+            retour.accept(joueur);
+            return;
+        }
+        boolean construction = c.phase() == PhaseConcours.EN_COURS;
+        List<io.papermc.paper.registry.data.dialog.input.DialogInput> champs = new ArrayList<>();
+        champs.add(gui.text("theme", t("contest.field-theme", "Thème (couleurs avec &)"), c.theme(), 64));
+        if (construction) champs.addAll(champsDuree("duree", t("contest.field-end", "Fin du concours dans (0 = inchangé)"), 30, 0, 0));
+        champs.addAll(champsDuree("votes", construction ? t("contest.field-votes-change", "Durée des votes (0 = inchangée)")
+                : t("contest.field-votes-end", "Fin des votes dans (0 = inchangé)"), 14, 0, 0));
+        List<ActionButton> boutons = new ArrayList<>();
+        boutons.add(gui.form(t("lore.save", "<green>Enregistrer"), null, (p, vue) -> {
+            try {
+                plots.modifierConcours(p, vue.getText("theme"), construction ? lireDuree(vue, "duree") : 0, lireDuree(vue, "votes"));
+                retour.accept(p);
+            } catch (Refus r) {
+                refus(p, r, retour);
+            }
+        }));
+        boutons.add(retour(retour));
+        gui.open(joueur, t("contest.edit-title", "<light_purple><bold>Modifier le concours"), List.of(), champs, boutons, null, 1);
+    }
+
+    private void modererConcours(Player joueur, int id, Consumer<Player> retour) {
+        Consumer<Player> ici = p -> modererConcours(p, id, retour);
+        List<ActionButton> boutons = new ArrayList<>();
+        for (PlotInfo plot : plots.plotsDuConcours(id)) {
+            boutons.add(gui.button(libellePlot(plot), null, p -> modererPlot(p, plot.id(), ici)));
+        }
+        boutons.add(retour(retour));
+        gui.open(joueur, t("contest.moderate-title", "<light_purple><bold>Plots du concours"), List.of(), List.of(), boutons, null, 1);
+    }
+
+    private void modererPlot(Player joueur, int id, Consumer<Player> retour) {
+        PlotInfo plot = plots.plot(id);
+        if (plot == null || !staff(joueur)) {
+            retour.accept(joueur);
+            return;
+        }
+        Consumer<Player> ici = p -> modererPlot(p, id, retour);
+        List<ActionButton> boutons = new ArrayList<>();
+        boutons.add(gui.button(t("admin.tp", "<aqua>Se téléporter au plot"), null, p -> {
+            try {
+                plots.visiter(p, id);
+            } catch (Refus r) {
+                refus(p, r, ici);
+            }
+        }));
+        boutons.add(gui.button(t("admin.sheet", "<yellow>Fiche du plot"), null, p -> fiche(p, id, ici)));
+        boutons.add(gui.button(t("admin.reset", "<red>Remettre le plot à zéro"), null,
+                p -> gui.confirm(p, t("admin.reset-title", "<red><bold>Remettre à zéro le plot n°<plot>", "plot", id),
+                        t("admin.reset-body", "<gray>Tout ce qui est construit sur ce plot sera effacé. Impossible d'annuler."),
+                        q -> action(q, () -> plots.remettreAZero(q, id), retour), ici::accept)));
+        boutons.add(gui.button(t("contest.exclude", "<red>Exclure du concours"), t("contest.exclude-tip", "<gray>Le plot est supprimé."),
+                p -> gui.confirm(p, t("contest.exclude-title", "<red><bold>Exclure le plot n°<plot>", "plot", id),
+                        t("contest.exclude-body", "<gray>Le plot de <owner> est supprimé et retiré du concours. Impossible d'annuler.", "owner", nom(plot.createur())),
+                        q -> action(q, () -> plots.exclureDuConcours(q, id), retour), ici::accept)));
+        boutons.add(retour(retour));
+        gui.open(joueur, t("contest.moderate-plot", "<light_purple><bold>Plot n°<id> du concours", "id", id),
+                List.of(t("plot.owner", "<gray>Créateur : <white><owner>", "owner", nom(plot.createur()))), List.of(), boutons, null, 1);
     }
 
     // ------------------------------------------------------------------ signalements
@@ -516,7 +793,7 @@ public final class KvMenu extends JavaPlugin {
                     t("plot.editors-tip", "<gray>Ajouter ou retirer des joueurs qui construisent avec toi."),
                     p -> editeurs(p, id, ici)));
         }
-        if (plot.createur().equals(joueur.getUniqueId()) && !plot.enPreparation()) {
+        if (plot.createur().equals(joueur.getUniqueId()) && !plot.enPreparation() && plot.concours() == 0) {
             if (!plot.valide()) {
                 boutons.add(gui.button(t("plot.validate", "<green>Valider le plot"),
                         t("plot.validate-tip", "<gray>Plot fini : il est figé, peut être noté, et sa place se libère."),
@@ -559,18 +836,20 @@ public final class KvMenu extends JavaPlugin {
                                     refus(q, r, ici);
                                 }
                             }, ici::accept)));
-            boutons.add(gui.button(t("plot.delete", "<red>Supprimer le plot"),
-                    t("plot.delete-tip", "<gray>Efface tout et libère la place."),
-                    p -> gui.confirm(p, t("plot.delete-title", "<red><bold>Supprimer le plot n°<id>", "id", id),
-                            t("plot.delete-body", "<gray>Tout ce qui est construit sera effacé et la place sera libérée. Impossible d'annuler."),
-                            q -> {
-                                try {
-                                    plots.supprimer(q, id);
-                                    q.sendMessage(t("plot.delete-started", "<yellow>Suppression du plot n°<id> en cours...", "id", id));
-                                } catch (Refus r) {
-                                    refus(q, r, ici);
-                                }
-                            }, ici::accept)));
+            if (plot.concours() == 0 || staff) {
+                boutons.add(gui.button(t("plot.delete", "<red>Supprimer le plot"),
+                        t("plot.delete-tip", "<gray>Efface tout et libère la place."),
+                        p -> gui.confirm(p, t("plot.delete-title", "<red><bold>Supprimer le plot n°<id>", "id", id),
+                                t("plot.delete-body", "<gray>Tout ce qui est construit sera effacé et la place sera libérée. Impossible d'annuler."),
+                                q -> {
+                                    try {
+                                        plots.supprimer(q, id);
+                                        q.sendMessage(t("plot.delete-started", "<yellow>Suppression du plot n°<id> en cours...", "id", id));
+                                    } catch (Refus r) {
+                                        refus(q, r, ici);
+                                    }
+                                }, ici::accept)));
+            }
         }
         boutons.add(retour(retour));
         gui.open(joueur, t("plot.title", "<gold><bold>Plot n°<id> <gray>(<size>)", "id", id, "size", nomTaille(plot.taille())),

@@ -5,7 +5,7 @@ actions de **KV_Plots** (par son API `fr.kalium.kvplots.api.KanvasPlots`). Menus
 (boîte à outils `Gui` / `Lang` de KLM_Menu), textes modifiables dans `lang.yml`. Cahier des charges :
 `KV_Plots/CAHIER_DES_CHARGES.md`.
 
-## 1.3.0 - signalements (26/09/2026)
+## 1.3.0 - signalements, concours de build (26/09/2026)
 
 - **Formulaire de signalement** : cases à cocher (contenu inapproprié, copie d'un autre build, plot vide ou bâclé,
   triche aux votes) + champ « Autre (précise) » ; ouvert par la **poudre de blaze** du mode vote ou par le bouton
@@ -16,6 +16,16 @@ actions de **KV_Plots** (par son API `fr.kalium.kvplots.api.KanvasPlots`). Menus
   texte, qui l'a classé et l'action ; boutons **« Se téléporter au plot »**, **« Fiche du plot »**, **« Classer sans
   suite »**, **« Dévalider le plot »** (plot validé) et **« Remettre le plot à zéro »**, avec confirmation ; ces
   deux actions classent aussi le signalement.
+- **Concours de build** (demande de LeKiwi06) : bouton **« Concours de build »** à l'accueil (avec le thème s'il y en a
+  un). Joueurs : thème, taille, état, **« Fin dans : j / h / min »** (ou fin des votes), nombre de participants ;
+  **« Participer »** (confirmation, téléportation) ; **« Mon plot du concours »** ; **« Annuler ma participation »**
+  (« Êtes-vous sûr de vouloir retirer votre participation ? Cela supprimera votre plot. ») ; **« Participants »**
+  (plots → fiche ; classement 1., 2., … une fois les votes ouverts) ; **« Anciens concours »** (thème, date,
+  participants, vainqueur). Staff : **« Gérer le concours »** (et entrée « Kanvas : concours de build » dans le
+  catalogue de KLM_Menu) : formulaire de lancement (thème, taille, durée en jours / heures, durée des votes),
+  « Modifier », « Modérer les plots » (téléportation, fiche, remise à zéro, exclusion), « Terminer maintenant »,
+  « Clore les votes maintenant », « Annuler le concours », avec confirmations.
+- Fiche d'un plot du concours : pas de « Valider », « Rouvrir » ni « Supprimer » (sauf staff).
 - Nécessite **KV_Plots 1.4.0** (à déployer ensemble).
 
 **Statut : non testé en jeu, non déployé.**
