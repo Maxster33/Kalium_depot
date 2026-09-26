@@ -9,6 +9,9 @@ sur le hub des mini-jeux `kal-games` = machine 7001 (ex KalGames2), comme KG_Boa
 **Étape 0 (faite le 26/09/2026, KG_Parkour 1.0.0 + KalGames 1.20.0)** : le Parcours sort de KalGames tel quel ; les
 règles ci-dessous restent à faire.
 
+**KG_Parkour 1.1.0 (26/09/2026)** : chrono points 1 et 2 (réglages par jeu, pas encore par checkpoint ni par map),
+anti-collision, et en plus (demande de LeKiwi06) adversaires vus sous forme de bottes en cuir colorées à moins de 3 blocs.
+
 ## Chrono et fin de partie
 
 1. Chrono de départ : 30 s. Chaque checkpoint atteint AJOUTE du temps : CP 1 à 6 : +30 s ; CP 7 et suivants : +60 s

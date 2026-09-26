@@ -28,6 +28,11 @@ import java.util.UUID;
  * Parcours (course a pied chronometree avec points de controle), repris TEL QUEL de RaceInstance (KalGames 1.19.1),
  * sans la partie « bateau » (inactive depuis KalGames 1.17.0, la course de bateau etant dans KG_BoatRace). Aucun
  * changement de comportement ; textes : ceux du lang.yml de KalGames (race.*).
+ *
+ * 1.1.0 (demande de LeKiwi06, 26/09/2026 ; cahier des charges, "Chrono et fin de partie" et "Anti-collision") :
+ * chrono qui s'allonge a chaque point de controle (remplace le temps maximum fixe entre deux points), a zero le joueur
+ * "tombe au temps" (spectateur) ; pas de collision entre coureurs ; a moins de 3 blocs, chaque coureur voit ses
+ * adversaires proches sous forme de bottes en cuir colorees (voir ProximityGhosts).
  */
 public final class ParkourInstance extends GameInstance {
 
@@ -44,8 +49,10 @@ public final class ParkourInstance extends GameInstance {
         int rank;
         /** Debut de la course (ou du tour d'entrainement) de ce joueur. */
         long runStart;
-        /** Dernier point de controle atteint (ou depart) : sert au temps maximum. */
+        /** Dernier point de controle atteint (ou depart). */
         long segmentStart;
+        /** 1.1.0 : fin du chrono (le joueur tombe au temps a cet instant) ; 0 = pas de chrono. */
+        long deadline;
         /** Entrainement : meilleur temps de la session, -1 si aucun. */
         long bestRun = -1;
         int runs;
@@ -65,6 +72,8 @@ public final class ParkourInstance extends GameInstance {
     private long startMillis;
     private int graceLeft = -1;
     private int elapsed;
+    /** 1.1.0 : anti-collision et bottes de proximite. */
+    private final ProximityGhosts ghosts = new ProximityGhosts();
 
     public ParkourInstance(KalGames plugin, String id, Minigame minigame, Arena arena, Template template,
                            boolean publicGame, Map<String, Object> options, int slot) {
@@ -179,6 +188,7 @@ public final class ParkourInstance extends GameInstance {
             plugin.hub().resetPlayer(player, GameMode.ADVENTURE);
             player.teleport(spot);
             plugin.hub().giveInGameItems(player, true);
+            ghosts.join(player);
         }
         broadcastTo(participants, t("race.start", "<gold><mode> : <white><n></white> participant(s), <white><laps></white> tour(s).",
                 "mode", "Parcours", "n", racers.size(), "laps", 1));
@@ -198,9 +208,11 @@ public final class ParkourInstance extends GameInstance {
         phase = Phase.RUNNING;
         startMillis = System.currentTimeMillis();
         elapsed = 0;
+        long chrono = training ? 0L : Math.max(0, minigame().getInt("chrono-start-seconds", 30)) * 1000L;
         for (Racer racer : racers.values()) {
             racer.runStart = startMillis;
             racer.segmentStart = startMillis;
+            racer.deadline = chrono > 0 ? startMillis + chrono : 0L;
         }
         title(participants, t("race.go-title", "<green><bold>Partez !"), Component.empty(), 0, 20, 10);
         for (UUID uuid : participants) {
@@ -224,13 +236,15 @@ public final class ParkourInstance extends GameInstance {
 
     @Override
     protected void matchTick() {
+        if (phase == Phase.COUNTDOWN || phase == Phase.RUNNING) {
+            tickGhosts();
+        }
         if (phase != Phase.RUNNING) {
             return;
         }
         int radius = minigame().getInt("checkpoint-radius", 3);
         int configuredVoid = minigame().getInt("void-y", -64);
         int voidY = configuredVoid <= -64 ? minY - 5 : configuredVoid;
-        long timeoutMs = training ? 0L : Math.max(0, minigame().getInt("checkpoint-timeout-seconds", 300)) * 1000L;
         long now = System.currentTimeMillis();
         for (Map.Entry<UUID, Racer> entry : new ArrayList<>(racers.entrySet())) {
             Racer racer = entry.getValue();
@@ -238,7 +252,7 @@ public final class ParkourInstance extends GameInstance {
             if (player == null || racer.finished || racer.out || player.getWorld() != world) {
                 continue;
             }
-            if (timeoutMs > 0 && now - racer.segmentStart >= timeoutMs) {
+            if (racer.deadline > 0 && now >= racer.deadline) {
                 eliminate(player, racer);
                 continue;
             }
@@ -260,14 +274,34 @@ public final class ParkourInstance extends GameInstance {
         }
     }
 
-    /** Temps maximum entre deux points de controle depasse : le joueur perd la course. */
+    /** Coureurs encore en course (bottes de proximite), aussi pendant le compte a rebours. */
+    private void tickGhosts() {
+        int radius = minigame().getInt("ghost-radius", 3);
+        List<Player> runners = new ArrayList<>();
+        if (radius > 0) {
+            for (Map.Entry<UUID, Racer> entry : racers.entrySet()) {
+                Racer racer = entry.getValue();
+                Player player = Bukkit.getPlayer(entry.getKey());
+                if (player != null && !racer.finished && !racer.out && player.getWorld() == world) {
+                    runners.add(player);
+                }
+            }
+        }
+        ghosts.tick(runners, world, radius);
+    }
+
+    /**
+     * 1.1.0 : chrono a zero, le joueur "tombe au temps" (cahier des charges, point 2) : il passe spectateur ; ce n'est
+     * pas un abandon, il a fini sa partie.
+     */
     private void eliminate(Player player, Racer racer) {
         racer.out = true;
-        broadcast(t("race.timeout-broadcast", "<aqua><name></aqua> <red>est éliminé : point de contrôle non atteint à temps.",
+        ghosts.leave(player.getUniqueId());
+        broadcast(t("race.chrono-out-broadcast", "<aqua><name></aqua> <red>tombe au temps.",
                 "name", player.getName()));
         player.showTitle(net.kyori.adventure.title.Title.title(
-                t("race.timeout-title", "<red><bold>Éliminé"),
-                t("race.timeout-sub", "<gray>Temps maximum dépassé entre deux points de contrôle")));
+                t("race.chrono-out-title", "<red><bold>Temps écoulé"),
+                t("race.chrono-out-sub", "<gray>Tu as fini ta partie : regarde les autres coureurs.")));
         player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.8f, 1f);
         player.leaveVehicle();
         becomeMatchSpectator(player);
@@ -284,13 +318,12 @@ public final class ParkourInstance extends GameInstance {
                 training ? "<green>Entraînement <dark_gray>| <gold>⏱ <time> <dark_gray>| <gray>Checkpoint <white><cp>/<total></white>"
                         : "<gold>⏱ <time> <dark_gray>| <gray>Checkpoint <white><cp>/<total></white>",
                 "time", formatTenths(run), "cp", racer.next, "total", checkpoints.size());
-        int timeout = training ? 0 : Math.max(0, minigame().getInt("checkpoint-timeout-seconds", 300));
-        if (timeout <= 0) {
+        if (racer.deadline <= 0) {
             return base;
         }
-        long left = Math.max(0, timeout * 1000L - (now - racer.segmentStart));
-        return base.append(t(left < 60_000L ? "race.status-limit-low" : "race.status-limit",
-                left < 60_000L ? " <dark_gray>| <gray>Limite <red><left></red>" : " <dark_gray>| <gray>Limite <white><left></white>",
+        long left = Math.max(0, racer.deadline - now);
+        return base.append(t(left < 10_000L ? "race.status-chrono-low" : "race.status-chrono",
+                left < 10_000L ? " <dark_gray>| <gray>Chrono <red><left></red>" : " <dark_gray>| <gray>Chrono <white><left></white>",
                 "left", formatClock((left + 999) / 1000)));
     }
 
@@ -301,16 +334,29 @@ public final class ParkourInstance extends GameInstance {
             racer.next++;
             racer.segmentStart = System.currentTimeMillis();
             racer.noticeUntil = racer.segmentStart + 1500;
+            // 1.1.0 : chaque point de controle ajoute du temps au chrono (CP 1 a 6 : +30 s, ensuite +60 s par defaut).
+            long added = 0;
+            if (racer.deadline > 0) {
+                int lateFrom = Math.max(1, minigame().getInt("chrono-late-from-checkpoint", 7));
+                added = Math.max(0, racer.next >= lateFrom
+                        ? minigame().getInt("chrono-add-late-seconds", 60)
+                        : minigame().getInt("chrono-add-seconds", 30));
+                racer.deadline += added * 1000L;
+            }
             int points = Math.max(0, minigame().getInt("points-checkpoint", 1));
             // 1.19.0 (KalGames) : attribution toujours transmise (journal), comptee ou non selon la partie et le joueur.
             if (!plugin.scores().award(this, player, points)) {
                 points = 0;
             }
-            player.sendActionBar(points > 0
+            Component notice = points > 0
                     ? t("race.checkpoint-points", "<green>Point de contrôle <white><n>/<total></white> <gold>+<points> pt(s)",
                             "n", racer.next, "total", checkpoints.size(), "points", points)
                     : t("race.checkpoint", "<green>Point de contrôle <white><n>/<total>",
-                            "n", racer.next, "total", checkpoints.size()));
+                            "n", racer.next, "total", checkpoints.size());
+            if (added > 0) {
+                notice = notice.append(t("race.checkpoint-chrono", " <dark_gray>| <aqua>+<s> s", "s", added));
+            }
+            player.sendActionBar(notice);
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 1.4f);
             return;
         }
@@ -347,6 +393,7 @@ public final class ParkourInstance extends GameInstance {
         plugin.hub().resetPlayer(player, GameMode.ADVENTURE);
         player.teleport(spot);
         plugin.hub().giveInGameItems(player, true);
+        ghosts.join(player);
         if (old == null) {
             player.sendMessage(plugin.prefix().append(t("race.training-welcome",
                     "<green>Entraînement : pas de limite de temps, ni points, ni classement. Chute = retour au dernier point de contrôle ; à l'arrivée vous repartez du début.")));
@@ -411,6 +458,7 @@ public final class ParkourInstance extends GameInstance {
 
     private void racerFinished(Player player, Racer racer) {
         racer.finished = true;
+        ghosts.leave(player.getUniqueId());
         racer.finishMillis = System.currentTimeMillis() - racer.runStart;
         finishOrder.add(player.getUniqueId());
         racer.rank = ++finishedCount;
@@ -529,6 +577,7 @@ public final class ParkourInstance extends GameInstance {
         }
         phase = Phase.ENDING;
         secondsLeft = 6;
+        ghosts.clear();
         List<Map.Entry<UUID, Racer>> unfinished = new ArrayList<>();
         for (Map.Entry<UUID, Racer> entry : racers.entrySet()) {
             if (!entry.getValue().finished) {
@@ -568,7 +617,7 @@ public final class ParkourInstance extends GameInstance {
                 }
             }
             broadcast(racer.out
-                    ? t("race.result-out", "<gray><rank>. <white><name></white> <dark_gray>- <red>éliminé (temps dépassé)",
+                    ? t("race.result-chrono-out", "<gray><rank>. <white><name></white> <dark_gray>- <red>tombé au temps",
                             "rank", position, "name", nameOf(entry.getKey()))
                     : t("race.result-dnf", "<gray><rank>. <white><name></white> <dark_gray>- <red>non arrivé",
                             "rank", position, "name", nameOf(entry.getKey())));
@@ -629,6 +678,7 @@ public final class ParkourInstance extends GameInstance {
     protected void onMemberLeft(UUID uuid, boolean wasParticipant, boolean disconnected) {
         Racer racer = racers.remove(uuid);
         released.remove(uuid);
+        ghosts.leave(uuid);
         finishOrder.remove(uuid);
         if (training) {
             return;
@@ -650,6 +700,7 @@ public final class ParkourInstance extends GameInstance {
 
     @Override
     protected void onMatchReset() {
+        ghosts.clear();
         racers.clear();
         finishOrder.clear();
         finishedCount = 0;
