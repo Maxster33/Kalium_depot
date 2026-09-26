@@ -50,4 +50,6 @@ Limites : Paper ne sait pas rendre un joueur invisible pour une seule personne, 
 caché disparaît aussi de la liste des joueurs (Tab) de celui qui le cache, le temps d'être proche. Bottes et
 anti-collision à tester sur Bedrock. Le délai de grâce de 30 s après le 1er et le temps limite global restent inchangés.
 
-**Déploiement** : seul (aucun changement de KalGames), sur Kal-Games (7001). **Statut : compilé, non déployé, non testé.**
+**Déployé seul sur Kal-Games (7001) le 26/09/2026 20:56** (serveur éteint, accord de LeKiwi06) ; 1.0.0 dans
+`/plugins/_removed-kg_parkour-1.0.0/`. Nouveaux réglages : valeurs par défaut du code tant qu'ils ne sont pas changés
+dans le panneau admin. **Statut : non testé en jeu.**
