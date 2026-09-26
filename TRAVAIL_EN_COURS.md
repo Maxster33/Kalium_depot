@@ -16,6 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KLM_Menu — LeKiwi06 — depuis le 2026-09-26 18:15 — API publique des destinations pour KLM_Portal (2.2.0)
+- KLM_Portal — LeKiwi06 — depuis le 2026-09-26 18:15 — nouveau plugin : portails (régions WorldGuard) liés aux destinations de KLM_Menu
 
 
 
