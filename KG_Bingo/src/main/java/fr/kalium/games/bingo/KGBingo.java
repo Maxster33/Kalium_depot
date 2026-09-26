@@ -21,6 +21,7 @@ public final class KGBingo extends JavaPlugin {
 
     private KalGames kg;
     private BingoPartyManager parties;
+    private BingoResults results;
 
     @Override
     public void onEnable() {
@@ -34,6 +35,8 @@ public final class KGBingo extends JavaPlugin {
         kg = kalGames;
 
         parties = new BingoPartyManager(this);
+        // 1.5.0 : points du Bingo credites dans les classements (resultats lus sur le relais HTTP).
+        results = new BingoResults(this, kg.ranking(), kg.getConfig().getBoolean("stats.exclude-operators", true));
         // Retire de la liste les parties Bingo demarrees/annulees, signal lu sur le relais HTTP (voir
         // BingoPartyManager.pollClosedParties) - toutes les 5 s.
         Bukkit.getScheduler().runTaskTimer(this, parties::pollClosedParties, 100L, 100L);
@@ -89,5 +92,9 @@ public final class KGBingo extends JavaPlugin {
 
     public BingoPartyManager parties() {
         return parties;
+    }
+
+    BingoResults results() {
+        return results;
     }
 }

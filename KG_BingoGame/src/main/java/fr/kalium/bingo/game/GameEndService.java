@@ -75,6 +75,8 @@ public final class GameEndService {
     private static final double XP_POINTS_PER_LEVEL = 0.1;
 
     private final RelayClient relayClient;
+    /** 0.8.0 : resultats envoyes au hub pour les classements. */
+    private final fr.kalium.bingo.network.ResultsOutbox resultsOutbox;
     private final AssignmentService assignmentService;
     private final GamePersistence gamePersistence;
     private final PlayerResetService playerReset;
@@ -104,6 +106,7 @@ public final class GameEndService {
         this.lobbySlots = lobbySlots;
         this.lobbyItems = lobbyItems;
         this.relayClient = relayClient;
+        this.resultsOutbox = new fr.kalium.bingo.network.ResultsOutbox(plugin, relayClient);
         this.assignmentService = assignmentService;
         this.gamePersistence = gamePersistence;
         this.playerReset = playerReset;
@@ -448,7 +451,7 @@ public final class GameEndService {
         // Classement SOLO : memes regles que les equipes (precision de LeKiwi06, 24/09/2026). Victoire : joueurs de
         // l'equipe gagnante en tete, puis les autres par score, ceux qui ont abandonne en dernier ; chacun gagne ses
         // points + ceux de tous les joueurs classes derriere lui. Egalite / nulle : chacun garde ses propres points.
-        record Solo(String name, double points, boolean winnerTeam, boolean abandoned, double xp) {
+        record Solo(String name, double points, boolean winnerTeam, boolean abandoned, double xp, UUID id) {
         }
         List<Solo> soloList = new ArrayList<>();
         for (BingoInstance instance : game.getInstances()) {
@@ -457,7 +460,7 @@ public final class GameEndService {
                 String name = Bukkit.getOfflinePlayer(playerId).getName();
                 soloList.add(new Solo(name != null ? name : playerId.toString().substring(0, 8),
                         engine.soloScore(team, playerId, win && team == winner), win && team == winner,
-                        instance.hasAbandoned(playerId), xpBonus.getOrDefault(playerId, 0.0)));
+                        instance.hasAbandoned(playerId), xpBonus.getOrDefault(playerId, 0.0), playerId));
             }
         }
         soloList.sort((a, b) -> {
@@ -486,6 +489,13 @@ public final class GameEndService {
         }
         summary.add(Component.text((win ? "Classement solo : " : "Points solo : ") + String.join(", ", solos), NamedTextColor.GRAY));
         logger.info(log + " ; solo : " + String.join(", ", solos));
+        // 0.8.0 : points solo finaux (ceux du resume) envoyes au hub pour les classements, une ligne par joueur.
+        StringBuilder results = new StringBuilder();
+        for (Solo solo : soloList) {
+            results.append(solo.id()).append(';').append(solo.name()).append(';')
+                    .append(soloFinal.getOrDefault(solo.name(), 0.0)).append("\n");
+        }
+        resultsOutbox.add(game.getGameId(), results.toString());
 
         // 0.4.0 : resume consultable en salle d'attente post-partie (SummaryMenu).
         List<fr.kalium.bingo.gui.SummaryMenu.TeamLine> teamLines = new ArrayList<>();

@@ -63,3 +63,20 @@ qui l'a créé, il met toujours Maxster » (bug déjà noté dans `REPRISE_PROJE
   (`bingo.party-entry-full`). Nombre d'équipes plus clair, comme prévu dans REPRISE : « 2 équipe(s) de 4 · 3/8
   joueurs » au lieu de « 2x4 équipes · 3/8 ». L'ancienne clé reste dans le `lang.yml` du serveur, inutilisée.
 **Déploiement** : seul, sur Kal-Games (7001). **Statut : déployé le 25/09/2026 à 15 h 16, testé et confirmé par LeKiwi06 le 25/09/2026 (pseudo du créateur, équipes).**
+
+## 1.5.0 — points du Bingo dans les classements (26/09/2026)
+
+**Demande de LeKiwi06** : brancher les points du Bingo sur les classements (KG_ScoreBoards), dans le cadre de
+l'équilibrage des barèmes (`EQUILIBRAGE_POINTS.md`).
+- Nouveau classement **« Bingo »** (id `bingo`, points seulement), général et du mois, fourni à KG_ScoreBoards.
+- `BingoResults` : chaque partie qui quitte la liste d'attente (démarrée ou annulée) est notée « résultats attendus »
+  (`bingo-awaiting.yml`, 24 h) ; le relais HTTP est interrogé toutes les 30 s (clé `bingo-results-<gameId>`, publiée
+  par KG_BingoGame 0.8.0) ; les points solo finaux sont **crédités une seule fois**, puis la partie sort de la liste.
+- Comme les autres jeux : points des opérateurs non comptés (`stats.exclude-operators` de KalGames), chaque
+  attribution écrite dans le journal des parties (`journal/<mois>/bingo.jsonl`, événement « points ») :
+  `/classements verifier` et `crediter` fonctionnent aussi pour le Bingo.
+- Dépend aussi de KG_ScoreBoards (plugin.yml).
+- Limite : une partie démarrée pendant que le hub était arrêté n'est pas notée (pas de résultats crédités) ; ses
+  points restent dans le journal de Serveur Jeux.
+**Déploiement** : avec **KG_BingoGame 0.8.0** (Serveur Jeux). **Statut : non testé en jeu, non déployé.**
+

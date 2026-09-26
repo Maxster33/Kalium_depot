@@ -6,7 +6,7 @@
 
     <groupId>fr.kalium</groupId>
     <artifactId>KG_BingoGame</artifactId>
-    <version>0.7.8</version>
+    <version>0.8.0</version>
     <packaging>jar</packaging>
     <name>KG_BingoGame</name>
 

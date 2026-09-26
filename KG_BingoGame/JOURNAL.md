@@ -1560,3 +1560,19 @@ Mise en œuvre :
 **Déploiement** : seul, sur Serveur Jeux, le 25/09/2026 à 21 h 31 (inclut 0.7.4 à 0.7.7). **Statut : déployé,
 testé et confirmé par LeKiwi06 le 25/09/2026 (« tout est bon »).** Avec elle : noms des entités (0.7.4), positions de capture rechargées (0.7.5/0.7.7), barrières
 retirées (0.7.6).
+
+## 0.8.0 — barème doublé ; résultats envoyés au hub pour les classements (26/09/2026)
+
+**Demande de LeKiwi06** : équilibrer les barèmes des jeux (`EQUILIBRAGE_POINTS.md` : 30 min à fond = autant de points
+qu'à la course de bateau ; mesuré : le Bingo rapportait environ 2 fois moins) ; brancher les points du Bingo sur les
+classements.
+- **Barème doublé** (`Difficulty`) : objectifs 2 / 6 / 10 / 20 (au lieu de 1 / 3 / 5 / 10), bonus de la 1re équipe
+  0 / 2 / 4 / 6, bonus de victoire 2 / 4 / 6 / 10. Coefficients des bingos, multiplicateur de vitesse du blackout et
+  bonus d'XP (0,1 par niveau) inchangés.
+- **Résultats envoyés au hub** (`ResultsOutbox`) : à la fin d'une partie, les points solo finaux (ceux du résumé,
+  une ligne par joueur : uuid;pseudo;points) sont publiés sur le relais HTTP (clé `bingo-results-<gameId>`), puis
+  republiés toutes les minutes pendant 6 h ; gardés dans `results-outbox.yml` (survivent à un redémarrage). KG_Bingo
+  1.5.0 les lit et les crédite une seule fois dans les classements.
+- Tous les joueurs du résumé sont envoyés, abandons compris (leurs points propres, comme dans le résumé).
+**Déploiement** : avec **KG_Bingo 1.5.0** (hub). **Statut : non testé en jeu, non déployé.**
+

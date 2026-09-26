@@ -126,6 +126,33 @@ public final class RelayClient {
      * kal-games l'interroge regulierement pour chacune des parties qu'il liste encore (voir
      * BingoPartyManager.pollClosedParties cote KalGames). Bloquant - thread asynchrone uniquement.
      */
+    /**
+     * 0.8.0 : publie les resultats d'une partie terminee (cle « bingo-results-&lt;gameId&gt; ») pour les classements du
+     * hub - voir ResultsOutbox. Bloquant - thread asynchrone uniquement.
+     */
+    public void postResults(String gameId, String body) {
+        String url = plugin.getConfig().getString("network.relay-url", "");
+        if (url == null || url.isBlank()) {
+            return;
+        }
+        String token = plugin.getConfig().getString("network.relay-token", "");
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url + "/assignment/bingo-results-" + gameId))
+                    .header("X-Kalium-Relay-Token", token)
+                    .timeout(Duration.ofSeconds(5))
+                    .POST(HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8))
+                    .build();
+            http.send(request, HttpResponse.BodyHandlers.discarding());
+        } catch (IOException | InterruptedException e) {
+            if (Thread.currentThread().isInterrupted()) {
+                Thread.currentThread().interrupt();
+            }
+            plugin.getLogger().warning("[KG_BingoGame] Impossible de publier les resultats de la partie '" + gameId
+                    + "' sur le relais : " + e.getMessage());
+        }
+    }
+
     public void postPartyClosed(String gameId) {
         String url = plugin.getConfig().getString("network.relay-url", "");
         if (url == null || url.isBlank()) {

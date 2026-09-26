@@ -253,6 +253,10 @@ public final class BingoPartyManager {
         if (party == null) {
             return;
         }
+        // 1.5.0 : partie demarree (ou annulee) -> ses resultats sont attendus pour les classements.
+        if (plugin.results() != null) {
+            plugin.results().await(gameId);
+        }
         byCode.remove(party.code());
         for (UUID uuid : party.roster()) {
             byPlayer.remove(uuid);
