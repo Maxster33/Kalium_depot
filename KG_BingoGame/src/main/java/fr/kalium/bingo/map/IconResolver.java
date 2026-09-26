@@ -42,6 +42,22 @@ public final class IconResolver {
 
     /** @param id identifiant de l'objet sans espace de noms (ex. "oak_log") ; null si introuvable. */
     public BufferedImage resolve(String id) throws IOException {
+        BufferedImage image = resolveAny(id);
+        if (image == null || image.getWidth() == ModelRenderer.OUT) {
+            return image;
+        }
+        // 0.8.2 : objets plats agrandis a la taille des blocs en 3D (LeKiwi06 : « les items sont un peu petits a cote »),
+        // au plus proche voisin pour garder les pixels nets.
+        BufferedImage big = new BufferedImage(ModelRenderer.OUT, ModelRenderer.OUT, BufferedImage.TYPE_INT_ARGB);
+        for (int y = 0; y < ModelRenderer.OUT; y++) {
+            for (int x = 0; x < ModelRenderer.OUT; x++) {
+                big.setRGB(x, y, image.getRGB(x * image.getWidth() / ModelRenderer.OUT, y * image.getHeight() / ModelRenderer.OUT));
+            }
+        }
+        return big;
+    }
+
+    private BufferedImage resolveAny(String id) throws IOException {
         BufferedImage special = special(id);
         if (special != null) {
             return special;

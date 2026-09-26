@@ -1627,7 +1627,9 @@ simplement les logos des items ? ».
 - Puis (LeKiwi06 : « on ne peut pas les détailler un peu plus ? encore trop écrasé en hauteur pour obsidienne,
   bibliothèque, TNT ») : blocs dessinés **en 22 pixels** (cases de 24 sur une grille 5 x 5) au lieu de 16, et dessus un
   peu moins haut que la vue du jeu (les côtés, qui font reconnaître ces blocs, prennent plus de place). La carte centre
-  chaque icône selon sa taille ; les objets plats restent en 16 pixels (leur taille d'origine, pour rester nets).
-- Icônes refaites dans `icons/<version>-3d22/` (celles de la 0.8.1, dans `-3d/`, ne sont plus lues : dossier à
+  chaque icône selon sa taille.
+- Puis (LeKiwi06 : « les items sont un peu petits à côté ») : objets plats agrandis aussi à 22 pixels (plus proche
+  voisin : pixels nets, quelques rangées doublées).
+- Icônes refaites dans `icons/<version>-22px/` (celles de la 0.8.1, dans `-3d/`, ne sont plus lues : dossier à
   supprimer par l'humain) ; le jeu est retéléchargé une fois chez Mojang au premier démarrage.
 **Statut : non testé en jeu, non déployé.**
