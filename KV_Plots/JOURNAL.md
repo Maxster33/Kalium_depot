@@ -27,7 +27,7 @@ encore testés (empilement demandé explicitement).
 - API : `valider`, `rouvrir`, `peutVoter`, `note`, `voter`, `enVote` ; `PlotInfo` avec points, votes, moyenne.
 - Pas encore : poudre de blaze de signalement (avec les signalements), titre / description, classements.
 
-**Statut : non testé en jeu, non déployé.** À déployer avec KV_Menu 1.1.0.
+**Déployé sur Kanvas le 26/09/2026 (02:37) avec KV_Menu 1.1.0. Statut : non testé en jeu.**
 
 ## 1.1.1 - on reste en créatif sur Kanvas (26/09/2026)
 
