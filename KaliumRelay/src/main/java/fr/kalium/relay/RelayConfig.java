@@ -26,12 +26,32 @@ final class RelayConfig {
     // (bingo.relay-token) et KalBingo (network.relay-token) sur les serveurs. Il n'est jamais affiche dans la
     // console.
 
+    /** 1.2.0 : joueurs autorises a utiliser /server (pseudos ou UUID, en minuscules). */
+    private static final String DEFAULT_ADMINS = "LeKiwi06,Maaxster";
+
     private final int port;
     private final String token;
+    private final java.util.Set<String> admins;
 
-    private RelayConfig(int port, String token) {
+    private RelayConfig(int port, String token, java.util.Set<String> admins) {
         this.port = port;
         this.token = token;
+        this.admins = admins;
+    }
+
+    /** Le joueur (pseudo ou UUID) est-il admin (autorise a utiliser /server) ? */
+    boolean isAdmin(String name, UUID uuid) {
+        return admins.contains(name.toLowerCase(java.util.Locale.ROOT)) || admins.contains(uuid.toString().toLowerCase(java.util.Locale.ROOT));
+    }
+
+    private static java.util.Set<String> parseAdmins(String text) {
+        java.util.Set<String> out = new java.util.HashSet<>();
+        for (String part : text.split(",")) {
+            if (!part.isBlank()) {
+                out.add(part.trim().toLowerCase(java.util.Locale.ROOT));
+            }
+        }
+        return out;
     }
 
     int port() {
@@ -57,6 +77,10 @@ final class RelayConfig {
                 props.setProperty("port", String.valueOf(DEFAULT_PORT));
                 changed = true;
             }
+            if (!props.containsKey("admins")) {
+                props.setProperty("admins", DEFAULT_ADMINS); // 1.2.0 : seuls eux peuvent utiliser /server
+                changed = true;
+            }
             boolean generated = false;
             if (props.getProperty("token", "").isBlank()) {
                 props.setProperty("token", UUID.randomUUID().toString());
@@ -76,10 +100,10 @@ final class RelayConfig {
             }
             int port = Integer.parseInt(props.getProperty("port").trim());
             String token = props.getProperty("token").trim();
-            return new RelayConfig(port, token);
+            return new RelayConfig(port, token, parseAdmins(props.getProperty("admins", DEFAULT_ADMINS)));
         } catch (IOException e) {
             logger.error("[KaliumRelay] Impossible de charger/creer relay.properties, valeurs par defaut utilisees.", e);
-            return new RelayConfig(DEFAULT_PORT, UUID.randomUUID().toString());
+            return new RelayConfig(DEFAULT_PORT, UUID.randomUUID().toString(), parseAdmins(DEFAULT_ADMINS));
         }
     }
 }

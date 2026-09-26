@@ -235,3 +235,18 @@ historiques.
 
 À déployer en même temps que KalGames 1.12.4 et KalBingo 0.1.23 (même nettoyage, voir leurs JOURNAL) - pas urgent.
 **Statut : déployé sur le proxy le 24/09/2026 (démarrage vérifié dans le journal).**
+
+## 1.2.0 — /server réservé aux admins (26/09/2026)
+
+**Demande de LeKiwi06** : « désactiver la commande /server pour les joueurs (pas les admins) sur tous les serveurs ».
+- `/server` est une commande du proxy (Velocity), autorisée à tous par défaut. Le proxy n'a pas de gestionnaire de
+  permissions (pas de LuckPerms) et ne connaît pas les opérateurs des serveurs : KaliumRelay bloque `/server` (et
+  `/velocity:server`) pour tout joueur absent de la liste **`admins`** de `relay.properties` (pseudos ou UUID séparés
+  par des virgules, insensible à la casse ; **LeKiwi06,Maaxster** par défaut, ajoutée au fichier au premier démarrage),
+  avec un message (« réservée aux admins, utilise la boussole ») ; la commande est aussi retirée des suggestions (Tab).
+- Pour ajouter un admin : modifier `admins=` dans `plugins/kaliumrelay/relay.properties` sur le proxy, puis
+  redémarrer le proxy.
+- Compilation : adventure-api / adventure-key / brigadier ajoutés au classpath (déjà dans `outils-build/libs`).
+**Statut : non testé en jeu, non déployé.** Le déploiement demande un redémarrage du proxy (tous les joueurs sont
+déconnectés).
+

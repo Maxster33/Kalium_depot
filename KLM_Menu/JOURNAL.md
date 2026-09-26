@@ -58,3 +58,13 @@ défaut avec **`compass.enabled: false`** (la boussole est un objectif du Bingo 
 plugin ». Nouvelle méthode `giveNavigation(joueur)` : un plugin qui vide l'inventaire (KalGames au hub) demande à
 KLM_Menu de remettre la boussole, au lieu de la commande console `/kaliummenu give`. En-tête de `config.yml` mis à
 jour. **Statut : déployé sur Kal-Games (7001) le 24/09/2026 (avec KG_Menu 1.0.0), testé et confirmé par LeKiwi06 le 24/09/2026** (boussole verrouillée en joueur ; déplaçable par les opérateurs, permission `kaliummenu.bypass`, voulu) ; lobby, Kixster, Serveur Jeux et Kanvas restent en 2.0.0.
+
+## Configuration du lobby — destination Kanvas (26/09/2026, pas de nouvelle version)
+
+**Demande de LeKiwi06** : mettre à jour les noms de KLM_Menu. Dans `plugins/KLM_Menu/config.yml` du lobby, la
+destination `kal-test-dev` (« Kal-Test-Dev », serveur de test) n'existait plus sur le proxy (renommé `Kanvas` dans
+`velocity.toml`) : remplacée par **`Kanvas`** (« Kanvas » en orange `#FF8800`, « Serveur de plots en créatif :
+construis, fais noter tes builds. »). Autres noms vérifiés, à jour. Original dans
+`plugins/_removed-klm_menu-config-2026-09-26/config.yml` du lobby. S'applique avec `/kaliummenu reload` (opérateur).
+La configuration par défaut du dépôt ne contenait pas `kal-test-dev`.
+

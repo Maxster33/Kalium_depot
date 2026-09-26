@@ -8,7 +8,7 @@
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.1.1
+VERSION=1.2.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 if [ -d "$DIR/../outils-build" ]; then
   TOOLS="$DIR/../outils-build"; DEST="$DIR/../sortie"
@@ -22,7 +22,8 @@ case "$(uname -s)" in
 esac
 CP=""
 for j in "$DIR"/libs/*.jar "$TOOLS"/libs/guava-*.jar "$TOOLS"/libs/slf4j-api-*.jar "$TOOLS"/libs/gson-*.jar \
-    "$TOOLS"/libs/checker-qual-*.jar "$TOOLS"/libs/jspecify-*.jar "$TOOLS"/libs/failureaccess-*.jar; do
+    "$TOOLS"/libs/checker-qual-*.jar "$TOOLS"/libs/jspecify-*.jar "$TOOLS"/libs/failureaccess-*.jar \
+    "$TOOLS"/libs/adventure-api-*.jar "$TOOLS"/libs/adventure-key-*.jar "$TOOLS"/libs/brigadier-*.jar; do
   CP="$CP$(win "$j")$SEP"
 done
 OUT="$TOOLS/classes/KaliumRelay"

@@ -29,7 +29,7 @@ import java.util.Optional;
  * plugins de Velocity repose entierement sur Guice : son propre Injector garantit que
  * com.google.inject.Inject est toujours present et correctement resolu, donc plus sur.
  */
-@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.1.1",
+@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.2.0",
         description = "Relais HTTP entre KalGames et KalBingo, independant de la presence d'un joueur.",
         authors = {"KaLium"})
 public final class KaliumRelay {
@@ -38,6 +38,7 @@ public final class KaliumRelay {
     private final Logger logger;
     private final Path dataDirectory;
     private RelayHttpServer http;
+    private RelayConfig config;
     /** Registre "joueur en partie" (reconnexion en cours de partie, voir onChooseInitialServer). */
     private final ActiveGameRegistry activeGameRegistry = new ActiveGameRegistry();
 
@@ -50,13 +51,46 @@ public final class KaliumRelay {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
-        RelayConfig config = RelayConfig.loadOrCreate(dataDirectory, logger);
+        config = RelayConfig.loadOrCreate(dataDirectory, logger);
         http = new RelayHttpServer(config, logger, activeGameRegistry);
         try {
             http.start();
             logger.info("[KaliumRelay] Serveur HTTP relais demarre sur le port " + config.port() + ".");
         } catch (Exception e) {
             logger.error("[KaliumRelay] Impossible de demarrer le serveur HTTP relais.", e);
+        }
+    }
+
+    /**
+     * 1.2.0 - /server reserve aux admins (liste « admins » de relay.properties), demande de LeKiwi06 (26/09/2026) :
+     * « desactiver la commande /server pour les joueurs (pas les admins) sur tous les serveurs ». Les joueurs passent
+     * par la boussole de navigation (KLM_Menu). Le proxy n'a pas de gestionnaire de permissions et ne connait pas les
+     * operateurs des serveurs : d'ou une liste de pseudos / UUID.
+     */
+    private boolean isAdmin(com.velocitypowered.api.proxy.Player player) {
+        return config != null && config.isAdmin(player.getUsername(), player.getUniqueId());
+    }
+
+    @Subscribe
+    public void onCommand(com.velocitypowered.api.event.command.CommandExecuteEvent event) {
+        if (!(event.getCommandSource() instanceof com.velocitypowered.api.proxy.Player player) || isAdmin(player)) {
+            return;
+        }
+        String command = event.getCommand().trim();
+        String label = (command.startsWith("/") ? command.substring(1) : command).split(" ", 2)[0].toLowerCase(java.util.Locale.ROOT);
+        if (label.equals("server") || label.equals("velocity:server")) {
+            event.setResult(com.velocitypowered.api.event.command.CommandExecuteEvent.CommandResult.denied());
+            player.sendMessage(net.kyori.adventure.text.Component.text(
+                    "Cette commande est réservée aux admins. Utilise la boussole (menu Navigation) pour changer de serveur.",
+                    net.kyori.adventure.text.format.NamedTextColor.RED));
+        }
+    }
+
+    /** Retire /server des suggestions (touche Tab) des joueurs qui ne sont pas admins. */
+    @Subscribe
+    public void onAvailableCommands(com.velocitypowered.api.event.command.PlayerAvailableCommandsEvent event) {
+        if (!isAdmin(event.getPlayer())) {
+            event.getRootNode().getChildren().removeIf(node -> node.getName().equals("server") || node.getName().equals("velocity:server"));
         }
     }
 
