@@ -10,7 +10,7 @@ commands:
   klmportal:
     description: Gestion des portails (operateurs).
     aliases: [portail, portails]
-    usage: /<command> set <region> <destination> | remove <region> | list | reload
+    usage: /<command> set | remove | list | reload | chute <destination> ... | arrivee ici|derniere|info
     permission: klmportal.admin
 
 permissions:

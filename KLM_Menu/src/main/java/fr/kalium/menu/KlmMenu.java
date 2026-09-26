@@ -712,7 +712,37 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
             return;
         }
         player.sendMessage(mm.deserialize(msg("connecting"), Placeholder.unparsed("server", server)));
-        player.sendPluginMessage(this, CHANNEL, data);
+        java.util.function.BiFunction<Player, String, java.util.concurrent.CompletableFuture<?>> hook = beforeConnect;
+        if (hook == null) {
+            player.sendPluginMessage(this, CHANNEL, data);
+            return;
+        }
+        // 2.3.0 : on attend le plugin (ex. KLM_Portal qui depose le point de chute), 3 s au plus, puis on envoie.
+        java.util.concurrent.CompletableFuture<?> ready;
+        try {
+            ready = hook.apply(player, server);
+        } catch (RuntimeException e) {
+            getLogger().warning("Avant le changement de serveur : " + e);
+            ready = java.util.concurrent.CompletableFuture.completedFuture(null);
+        }
+        ready.completeOnTimeout(null, 3, java.util.concurrent.TimeUnit.SECONDS)
+                .whenComplete((result, error) -> getServer().getScheduler().runTask(this, () -> {
+                    if (player.isOnline()) {
+                        player.sendPluginMessage(this, CHANNEL, data);
+                    }
+                }));
+    }
+
+    private volatile java.util.function.BiFunction<Player, String, java.util.concurrent.CompletableFuture<?>> beforeConnect;
+
+    /**
+     * 2.3.0 - API pour KLM_Portal (demande de LeKiwi06, 26/09/2026 : un point de chute pour chaque teleportation
+     * inter-serveur, regle cote depart). Appele avant CHAQUE changement de serveur fait par KLM_Menu (boussole,
+     * /lobby, portails) avec le joueur et le nom du serveur vise ; le changement attend la fin du resultat (3 s au
+     * plus). null pour retirer.
+     */
+    public void setBeforeConnect(java.util.function.BiFunction<Player, String, java.util.concurrent.CompletableFuture<?>> hook) {
+        this.beforeConnect = hook;
     }
 
     private void requestCount(Player carrier, String server) {
@@ -821,6 +851,15 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
     public List<String> destinationIds() {
         List<String> ids = new ArrayList<>();
         for (ServerEntry entry : allDestinations()) {
+            ids.add(entry.id());
+        }
+        return ids;
+    }
+
+    /** 2.3.0 - noms des serveurs vers lesquels ce menu envoie (sans les entrees locales), ex. pour les points de chute. */
+    public List<String> serverIds() {
+        List<String> ids = new ArrayList<>();
+        for (ServerEntry entry : menuEntries()) {
             ids.add(entry.id());
         }
         return ids;

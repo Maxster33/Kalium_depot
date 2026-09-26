@@ -60,6 +60,7 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
     private KlmMenu menu;
     private Lang lang;
     private Gui gui;
+    private Landings landings;
     private double pushStrength;
     private long cooldownMs;
 
@@ -83,9 +84,31 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
                 lang.c("catalog.title", "<#09add3>Ajouter un portail"),
                 lang.c("catalog.description", "<gray>Relier une région WorldGuard à une destination du menu."),
                 this::openAddMenu), this, ServicePriority.Normal);
+        // 1.1.0 : points de chute (voir Landings).
+        landings = new Landings(this, lang, gui);
+        getServer().getPluginManager().registerEvents(landings, this);
+        menu.setBeforeConnect(landings::beforeConnect);
+        getServer().getServicesManager().register(MenuSection.class, MenuSection.of(this, "landings",
+                MenuSection.Audience.ADMINS,
+                lang.c("catalog.landings-title", "<#09add3>Points de chute"),
+                lang.c("catalog.landings-description", "<gray>Où arrivent les joueurs envoyés sur un autre serveur, "
+                        + "et ceux qui arrivent ici."),
+                landings::openMenu), this, ServicePriority.Normal);
         // Verification des regions une fois tous les mondes et WorldGuard prets.
         getServer().getScheduler().runTask(this, this::checkRegions);
         lang.saveIfNeeded();
+    }
+
+    @Override
+    public void onDisable() {
+        if (menu != null && menu.isEnabled()) {
+            menu.setBeforeConnect(null);
+        }
+    }
+
+    /** Serveurs vers lesquels KLM_Menu envoie depuis ce serveur (pour les points de chute). */
+    List<String> destinationServers() {
+        return menu.serverIds();
     }
 
     private void loadPortals() {
@@ -244,6 +267,8 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
             case "set" -> set(sender, label, args);
             case "remove" -> remove(sender, label, args);
             case "list" -> list(sender);
+            case "chute" -> landings.commandLanding(sender, label, args);
+            case "arrivee" -> landings.commandArrival(sender, label, args);
             case "reload" -> {
                 loadPortals();
                 checkRegions();
@@ -251,7 +276,8 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
                 sender.sendMessage(lang.c("reloaded", "<green>Portails rechargés."));
             }
             default -> sender.sendMessage(lang.c("usage",
-                    "<gray>Usage : /<label> set <région> <destination> | remove <région> | list | reload",
+                    "<gray>Usage : /<label> set <région> <destination> | remove <région> | list | reload | "
+                            + "chute <destination> aucun|derniere|<x> <y> <z> [yaw pitch] [monde] | arrivee ici|derniere|info",
                     "label", label));
         }
         lang.saveIfNeeded();
@@ -411,7 +437,13 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         List<String> options = new ArrayList<>();
         if (args.length == 1) {
-            options.addAll(List.of("set", "remove", "list", "reload"));
+            options.addAll(List.of("set", "remove", "list", "reload", "chute", "arrivee"));
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("chute")) {
+            options.addAll(destinationServers());
+        } else if (args.length == 3 && args[0].equalsIgnoreCase("chute")) {
+            options.addAll(List.of("aucun", "derniere"));
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("arrivee")) {
+            options.addAll(List.of("ici", "derniere", "info"));
         } else if (args.length == 2 && args[0].equalsIgnoreCase("set") && sender instanceof Player player) {
             RegionManager manager = regions(player.getWorld());
             if (manager != null) {

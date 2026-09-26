@@ -5,7 +5,7 @@
 # Depend de KLM_Menu et de WorldGuard : leurs classes servent seulement a compiler (jamais embarquees).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.0.0
+VERSION=1.1.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then

@@ -25,3 +25,38 @@ push-strength: 0.8
 
 # Delai (en secondes) avant qu'un meme joueur puisse reprendre un portail (evite les envois en double).
 cooldown-seconds: 3
+
+# ============================================================
+#  Points de chute (1.1.0) - se reglent en jeu : boussole > Interfaces > KLM_Portal > Points de chute
+#  (ou /klmportal chute ... et /klmportal arrivee ...).
+# ============================================================
+
+# KaliumRelay (proxy) : transmet le point de chute au serveur d'arrivee. Le jeton est le "token" de
+# relay.properties du proxy ; il ne s'ecrit QUE dans le config.yml du serveur (jamais dans le depot).
+# Vide = aucun point de chute transmis (seule "default-arrival" s'applique).
+relay-url: "http://7018.mystrator.com:46199"
+relay-token: ""
+
+# Nom de CE serveur dans velocity.toml (ex. lobby). Sert a ignorer une consigne destinee a un autre serveur.
+# Vide = pas de verification.
+server-name: ""
+
+# Point de chute des joueurs envoyes d'ICI vers chaque serveur (cle = nom du serveur dans velocity.toml).
+#  mode: derniere-position | coordonnees (x, y, z, yaw, pitch, world ; world vide = monde principal de l'arrivee)
+# Sans entree : le serveur d'arrivee applique sa "default-arrival".
+# Exemple :
+# landings:
+#   lobby:
+#     mode: coordonnees
+#     world: ""
+#     x: 0.5
+#     y: 65.0
+#     z: 0.5
+#     yaw: 0.0
+#     pitch: 0.0
+landings: {}
+
+# Arrivee sur CE serveur quand aucune consigne n'est transmise (connexion directe au reseau, serveur de depart
+# sans KLM_Portal, destination sans point de chute). mode: derniere-position | coordonnees (+ x, y, z...).
+default-arrival:
+  mode: derniere-position

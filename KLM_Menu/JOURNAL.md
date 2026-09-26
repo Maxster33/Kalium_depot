@@ -87,4 +87,14 @@ Ajout nécessaire côté KLM_Menu (aucun changement visible en jeu) : trois mét
 Limite : un identifiant absent du menu de ce serveur est toujours considéré comme actif (il ne peut pas être désactivé).
 À déployer **avec KLM_Portal 1.0.0** sur chaque serveur qui reçoit des portails (règle 3.5). Sur le lobby, remplace
 la 2.0.0 (la 2.1.0 n'est que sur Kal-Games). **Déployé sur le lobby le 26/09/2026 18:25** (avec KLM_Portal 1.0.0 ;
-2.0.0 dans `/plugins/_removed-klm_menu-2.0.0/`). **Statut : non testé en jeu.**
+2.0.0 dans `/plugins/_removed-klm_menu-2.0.0/`). **Testé et confirmé par LeKiwi06 le 26/09/2026** (portails).
+
+## 2.3.0 — attente avant changement de serveur, pour les points de chute (26/09/2026)
+
+**Demande de LeKiwi06** : points de chute de KLM_Portal 1.1.0 (voir son journal). Ajouts nécessaires :
+- `setBeforeConnect(fonction)` : appelée avant CHAQUE changement de serveur fait par KLM_Menu (boussole, `/lobby`,
+  `sendToDestination`) ; le message « Connexion à ... » s'affiche tout de suite, l'envoi attend la fin de la fonction
+  (3 s au plus). Sans fonction : comme avant.
+- `serverIds()` : noms des serveurs du menu de ce serveur (sans les entrées locales).
+
+À déployer avec KLM_Portal 1.1.0. **Statut : compilé, non déployé, non testé.**
