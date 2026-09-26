@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KG_Bingo — LeKiwi06 — depuis le 2026-09-26 06:50 — parties Bingo restant dans la liste du hub
 
 
 
