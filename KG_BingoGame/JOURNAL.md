@@ -1576,3 +1576,11 @@ classements.
 - Tous les joueurs du résumé sont envoyés, abandons compris (leurs points propres, comme dans le résumé).
 **Déploiement** : avec **KG_Bingo 1.5.0** (hub), sur Serveur Jeux le 26/09/2026 à 5 h 23 (`_removed-kg_bingogame-0.7.8/`). **Statut : testé et confirmé par LeKiwi06 le 26/09/2026.**
 
+## 0.8.1 — bonus du 1er = moitié des points de base (26/09/2026)
+
+**Demande de LeKiwi06** : « le bonus pour avoir un item en 1er est la moitié des points de base de l'item (avant ce
+n'était pas exactement 50 % et les faciles n'en avaient pas) ».
+- `Difficulty` : bonus de la 1re équipe 1 / 3 / 5 / 10 pour des objectifs à 2 / 6 / 10 / 20 (était 0 / 2 / 4 / 6).
+  Le reste du barème est inchangé (bonus de victoire 2 / 4 / 6 / 10, coefficients des bingos...).
+**Statut : non testé en jeu, non déployé.** (D'autres corrections du Bingo suivent dans la même session.)
+
