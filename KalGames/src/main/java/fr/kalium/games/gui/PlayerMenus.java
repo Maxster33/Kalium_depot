@@ -5,7 +5,6 @@ import fr.kalium.games.data.Kit;
 import fr.kalium.games.game.GameInstance;
 import fr.kalium.games.game.InstanceManager;
 import fr.kalium.games.game.PvpInstance;
-import fr.kalium.games.game.RaceInstance;
 import fr.kalium.games.model.Arena;
 import fr.kalium.games.model.Minigame;
 import fr.kalium.games.model.MinigameType;
@@ -327,9 +326,9 @@ public final class PlayerMenus {
                 int def = Math.max(option.min(), Math.min(option.max(), minigame.getInt(option.defaultSetting(), option.fallback())));
                 inputs.add(gui.number(option.key(), plugin.lang().parse(option.label()), option.min(), option.max(), def, 1));
             }
-            if (type == MinigameType.PARKOUR) {
-                inputs.add(gui.toggle("training", t("menu.create-training",
-                        "Mode entraînement (sans limite de temps, sans points ni classement)"), false));
+            // 1.20.0 : cases a cocher declarees par le type (ex. mode entrainement de KG_Parkour).
+            for (MinigameType.CreateToggle toggle : type.createToggles()) {
+                inputs.add(gui.toggle(toggle.key(), plugin.lang().parse(toggle.label()), false));
             }
         }
         inputs.add(gui.toggle("listed", t("menu.create-listed", "Afficher la partie dans la liste des parties ouvertes"), true));
@@ -360,9 +359,11 @@ public final class PlayerMenus {
             if (kitMode != null) {
                 options.put("kitMode", kitMode);
             }
-            Boolean training = view.getBoolean("training");
-            if (training != null) {
-                options.put("training", training);
+            for (MinigameType.CreateToggle toggle : minigame.type().createToggles()) {
+                Boolean value = view.getBoolean(toggle.key());
+                if (value != null) {
+                    options.put(toggle.key(), value);
+                }
             }
             Boolean listed = view.getBoolean("listed");
             options.put("listed", listed != null && listed);
@@ -547,12 +548,12 @@ public final class PlayerMenus {
             body.add(t("game.body-pvp", "<gray>Manches : <white><rounds></white> - Kit : <white><kit></white>",
                     "rounds", info.rounds(), "kit", info.randomKits() ? "aléatoire" : "vote"));
         }
-        if (game instanceof RaceInstance race && race.training()) {
-            body.add(t("game.body-training", "<green>Mode entraînement : sans limite de temps, ni points, ni classement."));
-            buttons.add(gui.button(t("game.training-restart", "<green>Recommencer depuis le départ"), null, p -> {
-                GameInstance current = plugin.instances().of(p);
-                if (current instanceof RaceInstance r) {
-                    r.restartTraining(p);
+        // 1.20.0 : informations et boutons fournis par le jeu lui-meme (ex. entrainement du Parcours, KG_Parkour).
+        body.addAll(game.menuInfo(player));
+        for (GameInstance.MenuAction action : game.menuActions(player)) {
+            buttons.add(gui.button(action.label(), null, p -> {
+                if (plugin.instances().of(p) == game) {
+                    action.action().accept(p);
                 }
             }));
         }

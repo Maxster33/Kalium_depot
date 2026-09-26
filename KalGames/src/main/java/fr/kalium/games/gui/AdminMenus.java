@@ -201,7 +201,7 @@ public final class AdminMenus {
         List<DialogInput> inputs = List.of(
                 gui.text("id", t("admin.new-id", "Identifiant (minuscules, sans espace)"), "", 24),
                 gui.text("display", t("admin.new-display", "Nom affiché (MiniMessage accepté)"), "<yellow><bold>Nouveau jeu", 60),
-                gui.choice("type", t("admin.new-type", "Type de mini-jeu"), ids, labels, MinigameType.PARKOUR.name()));
+                gui.choice("type", t("admin.new-type", "Type de mini-jeu"), ids, labels, MinigameType.PVP_KIT.name()));
         List<ActionButton> buttons = new ArrayList<>();
         buttons.add(frm(t("admin.new-create", "<green>Créer"), null, (p, view) -> {
             String id = view.getText("id") == null ? "" : view.getText("id").trim().toLowerCase(Locale.ROOT);

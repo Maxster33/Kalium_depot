@@ -779,3 +779,21 @@ joueur quand il les passe ». Le retour au point de contrôle reprenait l'orient
 - Correctif mis dans KalGames en attendant le futur KG_Parkour (demande de LeKiwi06).
 **Déploiement** : seul, sur kal-games, le 25/09/2026 à 21 h 31 (`_removed-kalgames-1.19.0`). **Statut : déployé,
 testé et confirmé par LeKiwi06 le 25/09/2026 (« tout est bon »).**
+
+## 1.20.0 — le Parcours sort dans KG_Parkour (26/09/2026)
+
+**Demande de LeKiwi06** : « isoler KG_Parkour du reste en suivant le cahier des charges » (`KG_Parkour/CAHIER_DES_CHARGES.md`),
+comme la course de bateau en 1.17.0.
+- **PARKOUR retiré de KalGames** (enregistré par KG_Parkour 1.0.0) ; `RaceInstance` supprimé (plus aucun jeu ne
+  l'utilisait). Les mini-jeux Parcours sont gardés de côté au démarrage puis rattachés dès que KG_Parkour enregistre
+  le type (mécanisme de la 1.17.0, rien n'est perdu).
+- Nouveaux crochets génériques à la place des tests « Parcours » des menus : `MinigameType.CreateToggle` (case à
+  cocher déclarée par le type à la création d'une partie privée : le « Mode entraînement » du Parcours) ;
+  `GameInstance.menuInfo` / `menuActions` (lignes et boutons fournis par le jeu dans le menu de la partie :
+  « Mode entraînement… », « Recommencer depuis le départ »).
+- Menu admin « Nouveau mini-jeu » : type proposé par défaut = PvP Kit (c'était Parcours).
+- Textes inchangés (`race.*`, `game.body-training`, `game.training-restart`, `menu.create-training` n'est plus utilisé :
+  le libellé de la case vient de KG_Parkour).
+**Déploiement** : **avec KG_Parkour 1.0.0** (sinon le Parcours n'est plus jouable : ses mini-jeux restent gardés de
+côté, sans perte). KG_BoatRace 1.4.1, KG_Bingo, KG_Menu, KG_ScoreBoards recompilés sans changement. Aucune clé de config
+nouvelle. **Statut : non testé en jeu, non déployé.**

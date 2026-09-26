@@ -1,9 +1,9 @@
-package fr.kalium.games.game;
+package fr.kalium.parkour;
 
 import fr.kalium.games.KalGames;
+import fr.kalium.games.game.GameInstance;
 import fr.kalium.games.model.Arena;
 import fr.kalium.games.model.Minigame;
-import fr.kalium.games.model.MinigameType;
 import fr.kalium.games.model.Pos;
 import fr.kalium.games.world.Template;
 import net.kyori.adventure.text.Component;
@@ -13,8 +13,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -26,13 +24,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-/** Course chronometree : parcours (a pied) et course de bateau (points de controle, tours). */
-public final class RaceInstance extends GameInstance {
+/**
+ * Parcours (course a pied chronometree avec points de controle), repris TEL QUEL de RaceInstance (KalGames 1.19.1),
+ * sans la partie « bateau » (inactive depuis KalGames 1.17.0, la course de bateau etant dans KG_BoatRace). Aucun
+ * changement de comportement ; textes : ceux du lang.yml de KalGames (race.*).
+ */
+public final class ParkourInstance extends GameInstance {
 
     private static final int GRACE_SECONDS = 30;
 
     private static final class Racer {
-        int lap;
         int next;
         Location lastCheckpoint;
         Location previous;
@@ -41,13 +42,10 @@ public final class RaceInstance extends GameInstance {
         boolean out;
         long finishMillis;
         int rank;
-        int remountCooldown;
         /** Debut de la course (ou du tour d'entrainement) de ce joueur. */
         long runStart;
         /** Dernier point de controle atteint (ou depart) : sert au temps maximum. */
         long segmentStart;
-        /** Debut du tour en cours (depart de la course, puis chaque passage de la ligne d'arrivee). */
-        long lapStart;
         /** Entrainement : meilleur temps de la session, -1 si aucun. */
         long bestRun = -1;
         int runs;
@@ -55,17 +53,11 @@ public final class RaceInstance extends GameInstance {
         long noticeUntil;
     }
 
-    /** Nombre de tours maximal d'une course de bateau. */
-    private static final int MAX_LAPS = 40;
-    private static final int DEFAULT_PUBLIC_LAPS = 3;
-
-    private final boolean boats;
     /** Parcours en partie privee : sans limite de temps, sans points ni classement. */
     private final boolean training;
-    private final int laps;
     private final int privateCap;
     private final Map<UUID, Racer> racers = new LinkedHashMap<>();
-    /** Joueurs dont le bateau ne doit plus etre verrouille (retour checkpoint, changement de partie). */
+    /** Joueurs en cours de teleportation par le jeu (retour au point de controle...). */
     private final java.util.Set<UUID> released = new java.util.HashSet<>();
     private final List<UUID> finishOrder = new ArrayList<>();
     /** Nombre de coureurs arrives (ne diminue pas si un arrive quitte la partie). */
@@ -74,27 +66,12 @@ public final class RaceInstance extends GameInstance {
     private int graceLeft = -1;
     private int elapsed;
 
-    public RaceInstance(KalGames plugin, String id, Minigame minigame, Arena arena, Template template,
-                        boolean publicGame, Map<String, Object> options, int slot) {
+    public ParkourInstance(KalGames plugin, String id, Minigame minigame, Arena arena, Template template,
+                           boolean publicGame, Map<String, Object> options, int slot) {
         super(plugin, id, minigame, arena, template, publicGame, options, slot);
-        // 1.17.0 : la course de bateau est dans KG_BoatRace (BoatRaceInstance) ; cette classe ne sert plus qu'au
-        // Parcours. La partie « bateau » restante est inactive et disparaitra a la sortie du Parcours (KG_Parkour).
-        this.boats = false;
-        this.training = !publicGame && !boats && options.get("training") instanceof Boolean flag && flag;
-        // Course de bateau : les parties publiques ont toujours le meme nombre de tours (public-laps, 3 par defaut) ;
-        // l'hote d'une partie privee choisit librement (jusqu'a 40).
-        this.laps = boats ? Math.max(1, Math.min(MAX_LAPS, publicGame
-                ? minigame.getInt("public-laps", DEFAULT_PUBLIC_LAPS)
-                : optionInt("laps", minigame.getInt("laps", DEFAULT_PUBLIC_LAPS)))) : 1;
-        int max = minigame.getInt("max-players", boats ? 12 : 8);
-        if (boats) {
-            max = Math.min(max, Math.max(1, arena.list("start-grid").size()));
-        }
+        this.training = !publicGame && options.get("training") instanceof Boolean flag && flag;
+        int max = minigame.getInt("max-players", 8);
         this.privateCap = Math.max(1, Math.min(max, optionInt("maxPlayers", max)));
-    }
-
-    public boolean boats() {
-        return boats;
     }
 
     public boolean training() {
@@ -107,12 +84,25 @@ public final class RaceInstance extends GameInstance {
         return !training && super.ranked();
     }
 
-    public int laps() {
-        return laps;
-    }
-
     public int privateCap() {
         return privateCap;
+    }
+
+    // ------------------------------------------------------------------ menu de la partie (KalGames 1.20.0)
+
+    @Override
+    public List<Component> menuInfo(Player player) {
+        return training
+                ? List.of(t("game.body-training", "<green>Mode entraînement : sans limite de temps, ni points, ni classement."))
+                : List.of();
+    }
+
+    @Override
+    public List<MenuAction> menuActions(Player player) {
+        if (!training) {
+            return List.of();
+        }
+        return List.of(new MenuAction(t("game.training-restart", "<green>Recommencer depuis le départ"), this::restartTraining));
     }
 
     // ------------------------------------------------------------------ admission / demarrage
@@ -143,11 +133,7 @@ public final class RaceInstance extends GameInstance {
 
     @Override
     protected int maxParticipants() {
-        int max = minigame().getInt("max-players", boats ? 12 : 8);
-        if (boats) {
-            max = Math.min(max, Math.max(1, arena().list("start-grid").size()));
-        }
-        return Math.max(1, max);
+        return Math.max(1, minigame().getInt("max-players", 8));
     }
 
     @Override
@@ -178,23 +164,13 @@ public final class RaceInstance extends GameInstance {
         phase = Phase.COUNTDOWN;
         secondsLeft = Math.max(0, minigame().getInt("countdown-seconds", 5));
 
-        List<Pos> grid = arena().list("start-grid");
         Pos start = arena().point("start");
-        int index = 0;
         for (UUID uuid : participants) {
             Player player = Bukkit.getPlayer(uuid);
             if (player == null) {
                 continue;
             }
-            Location spot;
-            if (boats && !grid.isEmpty()) {
-                spot = loc(grid.get(index % grid.size()));
-            } else if (start != null) {
-                spot = loc(start);
-            } else {
-                spot = stands();
-            }
-            index++;
+            Location spot = start != null ? loc(start) : stands();
             Racer racer = new Racer();
             racer.lastCheckpoint = spot.clone();
             racer.previous = spot.clone();
@@ -202,10 +178,10 @@ public final class RaceInstance extends GameInstance {
 
             plugin.hub().resetPlayer(player, GameMode.ADVENTURE);
             player.teleport(spot);
-            plugin.hub().giveInGameItems(player, !boats);
+            plugin.hub().giveInGameItems(player, true);
         }
         broadcastTo(participants, t("race.start", "<gold><mode> : <white><n></white> participant(s), <white><laps></white> tour(s).",
-                "mode", boats ? "Course de bateau" : "Parcours", "n", racers.size(), "laps", laps));
+                "mode", "Parcours", "n", racers.size(), "laps", 1));
         if (secondsLeft == 0) {
             go();
         } else {
@@ -225,36 +201,14 @@ public final class RaceInstance extends GameInstance {
         for (Racer racer : racers.values()) {
             racer.runStart = startMillis;
             racer.segmentStart = startMillis;
-            racer.lapStart = startMillis;
         }
         title(participants, t("race.go-title", "<green><bold>Partez !"), Component.empty(), 0, 20, 10);
         for (UUID uuid : participants) {
             Player player = Bukkit.getPlayer(uuid);
-            if (player == null) {
-                continue;
-            }
-            player.playSound(player.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 0.8f, 1f);
-            if (boats) {
-                mountBoat(player, player.getLocation());
+            if (player != null) {
+                player.playSound(player.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 0.8f, 1f);
             }
         }
-    }
-
-    private void mountBoat(Player player, Location where) {
-        EntityType type;
-        try {
-            type = EntityType.valueOf(minigame().getText("boat-type", "OAK_BOAT").toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException e) {
-            type = EntityType.OAK_BOAT;
-        }
-        Entity boat;
-        try {
-            boat = world.spawnEntity(where, type);
-        } catch (IllegalArgumentException e) {
-            boat = world.spawnEntity(where, EntityType.OAK_BOAT);
-        }
-        boat.setPersistent(false);
-        boat.addPassenger(player);
     }
 
     // ------------------------------------------------------------------ boucle
@@ -268,24 +222,15 @@ public final class RaceInstance extends GameInstance {
         return finish == null ? null : loc(finish);
     }
 
-    /** Deuxieme point de la ligne d'arrivee (pitstop), si configure et si le coureur vise la ligne d'arrivee. */
-    private Location pitstop(Racer racer) {
-        if (racer.next < arena().list("checkpoints").size()) {
-            return null;
-        }
-        Pos pit = arena().point("finish-pit");
-        return pit == null ? null : loc(pit);
-    }
-
     @Override
     protected void matchTick() {
         if (phase != Phase.RUNNING) {
             return;
         }
-        int radius = minigame().getInt("checkpoint-radius", boats ? 8 : 3);
+        int radius = minigame().getInt("checkpoint-radius", 3);
         int configuredVoid = minigame().getInt("void-y", -64);
         int voidY = configuredVoid <= -64 ? minY - 5 : configuredVoid;
-        long timeoutMs = training || boats ? 0L : Math.max(0, minigame().getInt("checkpoint-timeout-seconds", 300)) * 1000L;
+        long timeoutMs = training ? 0L : Math.max(0, minigame().getInt("checkpoint-timeout-seconds", 300)) * 1000L;
         long now = System.currentTimeMillis();
         for (Map.Entry<UUID, Racer> entry : new ArrayList<>(racers.entrySet())) {
             Racer racer = entry.getValue();
@@ -304,22 +249,8 @@ public final class RaceInstance extends GameInstance {
                 respawn(player, racer);
                 continue;
             }
-            if (boats) {
-                if (racer.remountCooldown > 0) {
-                    racer.remountCooldown--;
-                } else if (!player.isInsideVehicle()) {
-                    mountBoat(player, current);
-                    racer.remountCooldown = 15;
-                }
-            }
             Location target = target(racer);
-            boolean atTarget = target != null && distanceToSegment(racer.previous, current, target) <= radius;
-            if (!atTarget && boats) {
-                // Ligne d'arrivee a deux points (pitstop) : franchir l'un ou l'autre suffit.
-                Location pit = pitstop(racer);
-                atTarget = pit != null && distanceToSegment(racer.previous, current, pit) <= radius;
-            }
-            if (atTarget) {
+            if (target != null && distanceToSegment(racer.previous, current, target) <= radius) {
                 reached(player, racer);
             }
             racer.previous = current;
@@ -349,11 +280,6 @@ public final class RaceInstance extends GameInstance {
     private Component racerStatus(Racer racer, long now) {
         List<Pos> checkpoints = arena().list("checkpoints");
         long run = Math.max(0, now - racer.runStart);
-        if (boats) {
-            return t("race.status", "<gold><time> <dark_gray>| <gray>Tour <white><lap>/<laps></white> <dark_gray>| <gray>Contrôle <white><cp>/<total></white>",
-                    "time", formatTenths(run), "lap", racer.lap + 1, "laps", laps,
-                    "cp", racer.next, "total", checkpoints.size());
-        }
         Component base = t(training ? "race.status-training" : "race.status-parkour",
                 training ? "<green>Entraînement <dark_gray>| <gold>⏱ <time> <dark_gray>| <gray>Checkpoint <white><cp>/<total></white>"
                         : "<gold>⏱ <time> <dark_gray>| <gray>Checkpoint <white><cp>/<total></white>",
@@ -375,8 +301,8 @@ public final class RaceInstance extends GameInstance {
             racer.next++;
             racer.segmentStart = System.currentTimeMillis();
             racer.noticeUntil = racer.segmentStart + 1500;
-            int points = Math.max(0, minigame().getInt("points-checkpoint", boats ? 0 : 1));
-            // 1.19.0 : attribution toujours transmise (journal), comptee ou non selon la partie et le joueur.
+            int points = Math.max(0, minigame().getInt("points-checkpoint", 1));
+            // 1.19.0 (KalGames) : attribution toujours transmise (journal), comptee ou non selon la partie et le joueur.
             if (!plugin.scores().award(this, player, points)) {
                 points = 0;
             }
@@ -392,34 +318,7 @@ public final class RaceInstance extends GameInstance {
             trainingLap(player, racer);
             return;
         }
-        racer.lap++;
-        if (boats) {
-            recordLap(player, racer);
-        }
-        if (racer.lap >= laps) {
-            racerFinished(player, racer);
-        } else {
-            racer.next = 0;
-            racer.segmentStart = System.currentTimeMillis();
-            racer.noticeUntil = racer.segmentStart + 1500;
-            racer.lastCheckpoint = facing(loc(arena().point("finish")), player);
-            player.sendActionBar(t("race.lap", "<green>Tour <white><n>/<total>", "n", racer.lap + 1, "total", laps));
-            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.7f, 1.2f);
-        }
-    }
-
-    /** Temps du tour qui vient d'etre termine : classement des meilleurs temps sur 1 tour (courses de bateau). */
-    private void recordLap(Player player, Racer racer) {
-        long now = System.currentTimeMillis();
-        long lapTime = now - racer.lapStart;
-        racer.lapStart = now;
-        if (plugin.scores().recordLap(player, minigame(), lapTime, ranked(player))) {
-            player.sendMessage(plugin.prefix().append(t("race.lap-record",
-                    "<light_purple>Nouveau record personnel sur 1 tour : <white><time></white> !", "time", formatTime(lapTime))));
-        } else {
-            player.sendMessage(plugin.prefix().append(t("race.lap-time", "<gray>Tour <white><n></white> : <white><time></white>",
-                    "n", racer.lap, "time", formatTime(lapTime))));
-        }
+        racerFinished(player, racer);
     }
 
     // ------------------------------------------------------------------ entrainement
@@ -518,8 +417,7 @@ public final class RaceInstance extends GameInstance {
         int points = Math.max(0, minigame().getInt("points-win", 3) - (racer.rank - 1));
         broadcast(t("race.finished", "<aqua><name></aqua> <green>termine <white>n°<rank></white> en <white><time></white>.",
                 "name", player.getName(), "rank", racer.rank, "time", formatTime(racer.finishMillis)));
-        // Course de bateau : ce sont les temps sur 1 tour (enregistres a chaque tour) qui sont classes.
-        if (!boats && plugin.scores().recordTime(this, player, racer.finishMillis)) {
+        if (plugin.scores().recordTime(this, player, racer.finishMillis)) {
             player.sendMessage(plugin.prefix().append(t("race.record", "<light_purple>Nouveau record personnel : <white><time></white> !",
                     "time", formatTime(racer.finishMillis))));
         }
@@ -545,9 +443,8 @@ public final class RaceInstance extends GameInstance {
     }
 
     /**
-     * 1.19.1 : le retour au point de controle garde l'orientation de la camera du joueur au moment ou il l'a passe, et
-     * non celle enregistree avec l'arene (demande de LeKiwi06, 25/09/2026 : « les cp nous font spawn dans le mauvais
-     * sens parfois, enregistre l'angle de caméra du joueur quand il les passe »).
+     * 1.19.1 (KalGames) : le retour au point de controle garde l'orientation de la camera du joueur au moment ou il
+     * l'a passe, et non celle enregistree avec l'arene.
      */
     private static Location facing(Location spot, Player player) {
         spot.setYaw(player.getLocation().getYaw());
@@ -565,9 +462,6 @@ public final class RaceInstance extends GameInstance {
         player.setVelocity(new Vector());
         racer.previous = spot.clone();
         racer.noticeUntil = System.currentTimeMillis() + 1500;
-        if (boats) {
-            racer.remountCooldown = 0;
-        }
         player.sendActionBar(t("race.respawn", "<yellow>Retour au dernier point de contrôle."));
     }
 
@@ -605,7 +499,7 @@ public final class RaceInstance extends GameInstance {
                     return;
                 }
                 elapsed++;
-                int limit = timeLimit();
+                int limit = minigame().getInt("time-limit-seconds", 600);
                 if (graceLeft > 0) {
                     graceLeft--;
                     if (graceLeft == 0) {
@@ -629,21 +523,6 @@ public final class RaceInstance extends GameInstance {
         }
     }
 
-    /**
-     * Temps limite (secondes) de la course. Une partie privee de plus de tours que la reference (public-laps)
-     * a un temps limite proportionnel : 40 tours ne tiennent pas dans le temps prevu pour 3.
-     */
-    private int timeLimit() {
-        int limit = minigame().getInt("time-limit-seconds", 600);
-        if (boats && limit > 0) {
-            int reference = Math.max(1, Math.min(MAX_LAPS, minigame().getInt("public-laps", DEFAULT_PUBLIC_LAPS)));
-            if (laps > reference) {
-                limit = (int) Math.min(Integer.MAX_VALUE, (long) limit * laps / reference);
-            }
-        }
-        return limit;
-    }
-
     private void finishRace() {
         if (phase != Phase.RUNNING) {
             return;
@@ -657,17 +536,14 @@ public final class RaceInstance extends GameInstance {
             }
         }
         unfinished.sort(Comparator
-                .comparingInt((Map.Entry<UUID, Racer> e) -> -e.getValue().lap)
-                .thenComparingInt(e -> -e.getValue().next)
+                .comparingInt((Map.Entry<UUID, Racer> e) -> -e.getValue().next)
                 .thenComparingDouble(e -> {
                     Player player = Bukkit.getPlayer(e.getKey());
                     Location target = target(e.getValue());
                     if (player == null || target == null || player.getWorld() != world) {
                         return Double.MAX_VALUE;
                     }
-                    double distance = player.getLocation().distance(target);
-                    Location pit = boats ? pitstop(e.getValue()) : null;
-                    return pit == null || pit.getWorld() != player.getWorld() ? distance : Math.min(distance, player.getLocation().distance(pit));
+                    return player.getLocation().distance(target);
                 }));
 
         broadcast(t("race.results", "<gold><bold>Résultats"));
@@ -834,7 +710,7 @@ public final class RaceInstance extends GameInstance {
         return true;
     }
 
-    /** Le joueur est-il en course (bateau verrouille : pas de sortie) ? */
+    /** Le joueur est-il en course ? */
     @Override
     public boolean racing(UUID uuid) {
         Racer racer = racers.get(uuid);

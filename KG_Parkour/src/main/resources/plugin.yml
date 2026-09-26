@@ -1,0 +1,7 @@
+name: KG_Parkour
+version: '${project.version}'
+main: fr.kalium.parkour.KGParkour
+api-version: '26.2'
+description: Parcours de Kal-Games (sorti de KalGames), branche sur le moteur de parties de KalGames.
+authors: [KaLium]
+depend: [KalGames, KG_ScoreBoards]

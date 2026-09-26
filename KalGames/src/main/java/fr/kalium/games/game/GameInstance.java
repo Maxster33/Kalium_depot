@@ -525,6 +525,23 @@ public abstract class GameInstance {
     public void releaseHold(UUID uuid) {
     }
 
+    /**
+     * 1.20.0 : bouton propose dans le menu de la partie par le jeu lui-meme (ex. « Recommencer depuis le départ » du
+     * Parcours, dans KG_Parkour), a la place des tests « instanceof RaceInstance » du menu.
+     */
+    public record MenuAction(Component label, java.util.function.Consumer<Player> action) {
+    }
+
+    /** 1.20.0 : lignes d'information du jeu dans le menu de la partie (ex. « Mode entraînement »). */
+    public List<Component> menuInfo(Player player) {
+        return List.of();
+    }
+
+    /** 1.20.0 : boutons du jeu dans le menu de la partie. */
+    public List<MenuAction> menuActions(Player player) {
+        return List.of();
+    }
+
     public boolean frozen(Player player) {
         return false;
     }

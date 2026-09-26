@@ -41,29 +41,6 @@ public final class MinigameType {
                     single("spawn-c", "Départ équipe C", false, "Optionnel : active la 3e équipe."),
                     single("spawn-d", "Départ équipe D", false, "Optionnel : active la 4e équipe."))));
 
-    public static final MinigameType PARKOUR = register(new MinigameType("PARKOUR", "Parcours", true,
-            "Course chronométrée avec points de contrôle. Le premier à l'arrivée gagne.",
-            List.of(
-                    integer("prewarm-arenas", "Copies de chaque arène préchargées au démarrage", 0, 0, 10, "Collées dès le démarrage du serveur et gardées de côté : aucune arène à charger au lancement d'une partie (0 = aucune)."),
-                    integer("max-private-games", "Parties privées simultanées maximum", 0, 0, 40, "0 = pas de limite."),
-                    integer("checkpoint-timeout-seconds", "Temps maximum entre deux points de contrôle (s)", 300, 0, 3600,
-                            "Un joueur qui n'atteint pas le suivant à temps est éliminé. 0 = pas de limite."),
-                    integer("points-checkpoint", "Points par point de contrôle atteint", 1, 0, 50, "Gagnés à chaque point de contrôle (course uniquement, pas en entraînement)."),
-                    integer("points-win", "Points du 1er (2e = -1, 3e = -2)", 3, 0, 50, "Points attribués au podium."),
-                    integer("void-y", "Hauteur de chute (Y absolu)", 1, -64, 320, "Sous cette hauteur : retour au dernier point de contrôle. -64 = automatique (juste sous l'arène)."),
-                    integer("time-limit-seconds", "Temps limite de la course (s)", 0, 0, 7200, "Fin de la course pour tout le monde. 0 = pas de limite globale."),
-                    integer("countdown-seconds", "Compte à rebours (s)", 5, 0, 15, "Avant le départ."),
-                    integer("checkpoint-radius", "Rayon des points de contrôle", 3, 1, 12, "En blocs."),
-                    integer("min-players", "Joueurs minimum", 1, 1, 16, "Pour lancer une partie publique."),
-                    integer("max-players", "Joueurs maximum", 8, 1, 32, "Places par course."),
-                    integer("gather-seconds", "Attente avant lancement (s)", 20, 5, 180, "Partie publique."),
-                    bool("allow-spectate", "Autoriser le mode spectateur", true, "Les joueurs peuvent regarder la partie (publique ou privée) sans y participer (vol libre).")),
-            List.of(
-                    single("stands", "Gradins (attente)", true, "Où attendent les joueurs."),
-                    single("start", "Départ", true, "Position de départ de tous les joueurs."),
-                    list("checkpoints", "Points de contrôle (dans l'ordre)", false, "Ajoutez-les dans l'ordre du parcours."),
-                    single("finish", "Arrivée", true, "Zone d'arrivée."))));
-
     public static final MinigameType RUSH = register(new MinigameType("RUSH", "Rush", true,
             "Chaque équipe défend son lit. Récupérez des ressources, construisez des ponts, achetez de l'équipement et détruisez le lit adverse. La dernière équipe en vie gagne.",
             List.of(
@@ -130,14 +107,12 @@ public final class MinigameType {
 
 
 
-    // 1.17.0 : moteurs des types fournis par KalGames. Les autres plugins (KG_BoatRace...) enregistrent leurs propres
-    // types avec register(), moteur compris.
+    // 1.17.0 : moteurs des types fournis par KalGames. Les autres plugins (KG_BoatRace, KG_Parkour depuis 1.20.0...)
+    // enregistrent leurs propres types avec register(), moteur compris.
     static {
         PVP_KIT.engine(fr.kalium.games.game.PvpInstance::new);
-        PARKOUR.engine(fr.kalium.games.game.RaceInstance::new).ranking(fr.kalium.scoreboards.Category.Kind.TIME);
         RUSH.engine(fr.kalium.games.game.RushInstance::new).prewarmAllowed(true);
         PVP_KIT.prewarmAllowed(true);
-        PARKOUR.prewarmAllowed(true);
     }
 
     /** Liste d'objets (butin...) editee depuis l'inventaire du moderateur. */
@@ -149,6 +124,13 @@ public final class MinigameType {
      * options de la partie, bornes, et reglage du mini-jeu qui donne la valeur par defaut.
      */
     public record CreateOption(String key, String label, int min, int max, String defaultSetting, int fallback) {
+    }
+
+    /**
+     * 1.20.0 : case a cocher proposee a l'hote a la creation d'une partie privee (ex. « Mode entraînement » du
+     * Parcours, dans KG_Parkour) : cle (booleen) dans les options de la partie, libelle (MiniMessage).
+     */
+    public record CreateToggle(String key, String label) {
     }
 
     /** Fabrique d'une partie de ce type (le moteur du jeu). */
@@ -207,6 +189,7 @@ public final class MinigameType {
     private GameFactory engine;
     private fr.kalium.scoreboards.Category.Kind ranking = fr.kalium.scoreboards.Category.Kind.POINTS;
     private final List<CreateOption> createOptions = new java.util.ArrayList<>();
+    private final List<CreateToggle> createToggles = new java.util.ArrayList<>();
     private boolean prewarmAllowed;
 
     private MinigameType(String name, String display, boolean configurable, String description, List<SettingSpec> settings,
@@ -246,6 +229,11 @@ public final class MinigameType {
         return this;
     }
 
+    public MinigameType createToggle(CreateToggle toggle) {
+        this.createToggles.add(toggle);
+        return this;
+    }
+
     /** Vrai si des copies d'arene peuvent etre collees a l'avance (reglage "prewarm-arenas"). */
     public MinigameType prewarmAllowed(boolean value) {
         this.prewarmAllowed = value;
@@ -281,6 +269,10 @@ public final class MinigameType {
 
     public List<CreateOption> createOptions() {
         return createOptions;
+    }
+
+    public List<CreateToggle> createToggles() {
+        return createToggles;
     }
 
     public boolean prewarmAllowed() {

@@ -1,10 +1,11 @@
 #!/bin/sh
-# Compile KalGames (ECJ, cible Java 21 : tourne sur Java 21+ / 25) et assemble le .jar
+# Compile KG_Parkour (ECJ, cible Java 21 : tourne sur Java 21+ / 25) et assemble le .jar
 # Outils : <racine du depot>/outils-build si present (PC local, ignore par git), sinon /tmp/claude-0 (espace cloud).
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
+# Depend de KalGames : KalGames est compile d'abord et ses classes servent seulement a compiler (jamais embarquees).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.20.0
+VERSION=1.0.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -17,16 +18,13 @@ case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) SEP=';'; win() { cygpath -w "$1"; } ;;
   *) SEP=':'; win() { printf '%s' "$1"; } ;;
 esac
-# 1.14.0 : depend de KG_ScoreBoards (compile d'abord ; ses classes servent seulement a compiler, jamais embarquees).
-sh "$DIR/../KG_ScoreBoards/build.sh" > /dev/null
-sh "$DIR/../KG_Menu/build.sh" > /dev/null
-CP="$(win "$TOOLS/classes/KG_ScoreBoards")$SEP$(win "$TOOLS/classes/KLM_Menu")$SEP$(win "$TOOLS/classes/KG_Menu")$SEP"
+sh "$DIR/../KalGames/build.sh" > /dev/null
+CP="$(win "$TOOLS/classes/KalGames")$SEP$(win "$TOOLS/classes/KG_ScoreBoards")$SEP$(win "$TOOLS/classes/KLM_Menu")$SEP$(win "$TOOLS/classes/KG_Menu")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
-OUT="$TOOLS/classes/KalGames"
+OUT="$TOOLS/classes/KG_Parkour"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"
 java -jar "$(win "$TOOLS/ecj.jar")" -21 -proc:none -nowarn -encoding UTF-8 \
   -cp "$CP" -d "$(win "$OUT")" src/main/java
-cp src/main/resources/config.yml "$OUT/"
 sed "s/\${project.version}/$VERSION/" src/main/resources/plugin.yml > "$OUT/plugin.yml"
-jar cf "$DEST/KalGames-$VERSION.jar" -C "$OUT" .
-echo "OK -> $DEST/KalGames-$VERSION.jar"
+jar cf "$DEST/KG_Parkour-$VERSION.jar" -C "$OUT" .
+echo "OK -> $DEST/KG_Parkour-$VERSION.jar"

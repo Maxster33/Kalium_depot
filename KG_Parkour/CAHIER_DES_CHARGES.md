@@ -6,6 +6,9 @@ Le Parkour sort de KalGames dans ce plugin séparé (`REGLES.md`, règle 2.2), c
 Point de départ : KalGames 1.16.0 + la migration de Maxster33 du 24/09/2026 (aucun changement de code). Déploiement
 sur le hub des mini-jeux `kal-games` = machine 7001 (ex KalGames2), comme KG_BoatRace.
 
+**Étape 0 (faite le 26/09/2026, KG_Parkour 1.0.0 + KalGames 1.20.0)** : le Parcours sort de KalGames tel quel ; les
+règles ci-dessous restent à faire.
+
 ## Chrono et fin de partie
 
 1. Chrono de départ : 30 s. Chaque checkpoint atteint AJOUTE du temps : CP 1 à 6 : +30 s ; CP 7 et suivants : +60 s
