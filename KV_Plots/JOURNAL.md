@@ -19,7 +19,7 @@ Demande de LeKiwi06 : « il y a une commande pour reset ou supprimer son plot ? 
   repris au redémarrage (`chantier` dans `plots.yml` ; l'ancienne clé `fusion-en-cours` de la 1.0.0 est relue).
 - API : `remettreAZero`, `supprimer` (boutons de KV_Menu).
 
-**Statut : non testé en jeu, non déployé.** À déployer avec KV_Menu 1.0.0 (qui utilise ces nouvelles fonctions).
+**Déployé sur Kanvas le 26/09/2026 (02:02) avec KV_Menu 1.0.0. Statut : non testé en jeu.**
 
 ## 1.0.0 - génération de la grille, réservation, éditeurs, protection (26/09/2026)
 
@@ -67,7 +67,11 @@ Limites connues :
 À faire au déploiement (serveur Kanvas) :
 - ~~Renommer `New World (2)`~~ : fait par LeKiwi06 le 26/09/2026, en `Kanvas` (monde principal).
 - ~~FAWE à la place de WorldEdit~~ (2.15.4, fait par LeKiwi06) ; reste à régler `region-restrictions: true` et les limites
-  anti-crash (config de FAWE).
+  anti-crash (config de FAWE) :
+  `region-restrictions: true` / `mode: MEMBER` déjà en place ; limites `limits.default` réduites le 26/09/2026
+  (max-changes 1 000 000, max-checks 2 000 000, max-radius 50, max-brush-radius 20, max-entities 25,
+  max-blockstates 500, max-history-mb 50) ; FAWE Paper à la place de la variante Bukkit. Reste : permissions des
+  joueurs dans LuckPerms (groupe `default`).
 - Désactiver le « mode survie forcé » de KLM_Menu sur Kanvas.
 
 **Déployé sur Kanvas le 26/09/2026 (01:43, sans KV_Menu), **

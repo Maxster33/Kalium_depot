@@ -24,4 +24,4 @@ Demande de LeKiwi06 : « une interface au lieu de juste avoir les commandes ».
 - Les refus de KV_Plots (plus de place, pas le créateur...) s'affichent dans un petit message avec « OK ».
 - Dépend de KLM_Menu et **KV_Plots 1.1.0** (à déployer ensemble).
 
-**Statut : non testé en jeu, non déployé.**
+**Déployé sur Kanvas le 26/09/2026 (02:02) avec KV_Plots 1.1.0. Statut : non testé en jeu.**
