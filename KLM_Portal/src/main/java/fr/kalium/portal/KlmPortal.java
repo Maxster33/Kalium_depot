@@ -6,7 +6,11 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.kalium.menu.KlmMenu;
+import fr.kalium.menu.api.Gui;
 import fr.kalium.menu.api.Lang;
+import fr.kalium.menu.api.MenuSection;
+import io.papermc.paper.registry.data.dialog.ActionButton;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -20,6 +24,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
@@ -30,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * KLM_Portal (demande de LeKiwi06, 26/09/2026) : remplace ConditionalEvents + PyxelRegions (+ VelocityCommandForward)
@@ -53,6 +59,7 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
 
     private KlmMenu menu;
     private Lang lang;
+    private Gui gui;
     private double pushStrength;
     private long cooldownMs;
 
@@ -63,12 +70,19 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
         saveDefaultConfig();
         menu = (KlmMenu) getServer().getPluginManager().getPlugin("KLM_Menu");
         lang = new Lang(this);
+        gui = new Gui(this, lang);
         loadPortals();
         getServer().getPluginManager().registerEvents(this, this);
         PluginCommand command = getCommand("klmportal");
         if (command != null) {
             command.setTabCompleter(this);
         }
+        // Interface "Ajouter un portail" dans le catalogue "Interfaces" de la boussole (rubrique admin).
+        getServer().getServicesManager().register(MenuSection.class, MenuSection.of(this, "add-portal",
+                MenuSection.Audience.ADMINS,
+                lang.c("catalog.title", "<#09add3>Ajouter un portail"),
+                lang.c("catalog.description", "<gray>Relier une région WorldGuard à une destination du menu."),
+                this::openAddMenu), this, ServicePriority.Normal);
         // Verification des regions une fois tous les mondes et WorldGuard prets.
         getServer().getScheduler().runTask(this, this::checkRegions);
         lang.saveIfNeeded();
@@ -253,29 +267,99 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
             sender.sendMessage(lang.c("usage-set", "<gray>Usage : /<label> set <région> <destination>", "label", label));
             return;
         }
+        createPortal(player, args[1], args[2]);
+    }
+
+    /** Cree (ou modifie) le portail de cette region, dans le monde du joueur ; vrai si reussi. */
+    private boolean createPortal(Player player, String regionName, String destination) {
         World world = player.getWorld();
         RegionManager manager = regions(world);
-        ProtectedRegion region = manager == null ? null : manager.getRegion(args[1]);
+        ProtectedRegion region = manager == null ? null : manager.getRegion(regionName);
         if (region == null) {
-            sender.sendMessage(lang.c("region-not-found",
-                    "<red>Aucune région WorldGuard <white><region></white> dans ce monde.", "region", args[1]));
-            return;
+            player.sendMessage(lang.c("region-not-found",
+                    "<red>Aucune région WorldGuard <white><region></white> dans ce monde.", "region", regionName));
+            return false;
         }
-        String destination = args[2];
         // On garde le nom de la region tel que WorldGuard l enregistre (minuscules).
         String name = region.getId();
         getConfig().set("portals." + name + ".world", world.getName());
         getConfig().set("portals." + name + ".destination", destination);
         saveConfig();
         loadPortals();
-        sender.sendMessage(lang.c("set", "<green>Portail <white><region></white> relié à <white><destination></white>.",
+        getLogger().info("Portail " + name + " (" + world.getName() + ") relié à " + destination + " par "
+                + player.getName() + ".");
+        player.sendMessage(lang.c("set", "<green>Portail <white><region></white> relié à <white><destination></white>.",
                 "region", name, "destination", destination));
         if (menu.destinationIds().stream().noneMatch(d -> d.equalsIgnoreCase(destination))) {
-            sender.sendMessage(lang.c("set-unknown",
+            player.sendMessage(lang.c("set-unknown",
                     "<yellow>Attention : <white><destination></white> n'est pas un bouton de KLM_Menu sur ce serveur "
                             + "(le portail enverra sur le serveur de ce nom, sans pouvoir être désactivé).",
                     "destination", destination));
         }
+        return true;
+    }
+
+    // ------------------------------------------------------------------ interface "Ajouter un portail"
+
+    /**
+     * Demande de LeKiwi06 (26/09/2026) : "ajoute une interface 'ajouter un portail' en tant qu'admin a la boussole".
+     * Deux listes : les regions WorldGuard du monde du joueur qui ne sont pas encore des portails, et les destinations
+     * de KLM_Menu sur ce serveur. La region se dessine avant, avec WorldEdit et /rg define.
+     */
+    private void openAddMenu(Player player, Consumer<Player> back) {
+        if (!player.hasPermission("klmportal.admin")) {
+            return;
+        }
+        Component title = lang.c("add.title", "<#09add3><bold>Ajouter un portail");
+        ActionButton backButton = gui.button(lang.c("add.back", "<gray>Retour"), null, back::accept);
+
+        List<String> freeRegions = new ArrayList<>();
+        RegionManager manager = regions(player.getWorld());
+        if (manager != null) {
+            Map<String, Portal> existing = portals.getOrDefault(player.getWorld().getName(), Map.of());
+            for (String id : manager.getRegions().keySet()) {
+                if (!id.equals("__global__") && !existing.containsKey(id.toLowerCase(Locale.ROOT))) {
+                    freeRegions.add(id);
+                }
+            }
+            freeRegions.sort(String::compareTo);
+        }
+        List<String> destinations = menu.destinationIds();
+
+        if (freeRegions.isEmpty() || destinations.isEmpty()) {
+            Component reason = freeRegions.isEmpty()
+                    ? lang.c("add.no-region", "<gray>Aucune région WorldGuard libre dans ce monde. Dessine la zone "
+                            + "avec la baguette de WorldEdit, puis <white>/rg define <nom></white>, et reviens ici.")
+                    : lang.c("add.no-destination", "<gray>Aucune destination dans KLM_Menu sur ce serveur.");
+            gui.open(player, title, List.of(reason), List.of(), List.of(backButton), null, 1);
+            lang.saveIfNeeded();
+            return;
+        }
+
+        List<Component> regionLabels = new ArrayList<>();
+        freeRegions.forEach(id -> regionLabels.add(Component.text(id)));
+        List<Component> destinationLabels = new ArrayList<>();
+        destinations.forEach(id -> destinationLabels.add(Component.text(id)));
+
+        Component body = lang.c("add.body", "<gray>Monde : <white><world></white>. Un joueur qui entre dans la région "
+                + "est envoyé vers la destination ; si son bouton est désactivé dans le menu, le portail l'est aussi.",
+                "world", player.getWorld().getName());
+        ActionButton create = gui.form(lang.c("add.create", "<green>Créer le portail"), null, (clicker, view) -> {
+            if (!clicker.hasPermission("klmportal.admin")) {
+                return;
+            }
+            String region = view.getText("region");
+            String destination = view.getText("destination");
+            if (region != null && destination != null && createPortal(clicker, region, destination)) {
+                openAddMenu(clicker, back);
+            }
+        });
+        gui.open(player, title, List.of(body),
+                List.of(gui.choice("region", lang.c("add.region", "Région WorldGuard"), freeRegions, regionLabels, null),
+                        gui.choice("destination", lang.c("add.destination", "Destination"), destinations,
+                                destinationLabels, null)),
+                List.of(create, backButton), null, 1);
+        lang.saveIfNeeded();
     }
 
     private void remove(CommandSender sender, String label, String[] args) {

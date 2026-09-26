@@ -22,11 +22,19 @@ désactivé = **message et recul seulement** (le visuel viendra plus tard) ; uti
   dans le monde de la région ; autocomplétion des régions et des destinations ; avertit si la destination n'est pas
   un bouton de KLM_Menu), `remove <région>` (la région WorldGuard est gardée), `list` (état de chaque portail,
   région manquante signalée), `reload`.
+- **Interface « Ajouter un portail »** (demande de LeKiwi06, même jour : « ajoute une interface "ajouter un portail"
+  en tant qu'admin à la boussole ») : boussole > Interfaces > KLM_Portal (rubrique admin, opérateurs). Deux listes :
+  régions WorldGuard du monde du joueur qui ne sont pas encore des portails, et destinations de KLM_Menu ; bouton
+  « Créer le portail ». Sans région libre : rappel de la marche à suivre (baguette WorldEdit, `/rg define <nom>`).
+  Création notée dans la console (« Portail ... relié à ... par <pseudo> »).
 - Au démarrage : régions WorldGuard introuvables signalées dans la console (portail inactif).
 - Textes dans `plugins/KLM_Portal/lang.yml` (créé à l'usage, modifiable).
 
 Limites : un portail n'agit que sur les **déplacements à pied** (pas sur une téléportation, ex. perle, qui arriverait
 dans la région) ; un joueur qui se connecte déjà dans la région n'est envoyé qu'après en être sorti et revenu.
 
-**Déploiement prévu** : lobby, avec KLM_Menu 2.2.0 (règle 3.5), puis retrait de ConditionalEvents et PyxelRegions
-(dans `_removed-…`) une fois les portails testés. **Statut : compilé, non déployé, non testé en jeu.**
+**Déployé sur le lobby le 26/09/2026 18:25** (serveur éteint), avec KLM_Menu 2.2.0 (règle 3.5). LeKiwi06 confirme que
+ConditionalEvents et PyxelRegions ne servaient qu'aux portails : jars rangés dans
+`/plugins/_removed-conditionalevents-4.79.2/` et `/plugins/_removed-pyxelregions-1.2.2/` (dossiers de données
+`ConditionalEvents/` et `PyxelRegions/` laissés en place). Les anciens portails ne sont pas repris : LeKiwi06 recrée
+les régions dans WorldGuard. VelocityCommandForward reste installé (pas demandé). **Statut : non testé en jeu.**

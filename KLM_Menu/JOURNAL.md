@@ -86,4 +86,5 @@ Ajout nécessaire côté KLM_Menu (aucun changement visible en jeu) : trois mét
 
 Limite : un identifiant absent du menu de ce serveur est toujours considéré comme actif (il ne peut pas être désactivé).
 À déployer **avec KLM_Portal 1.0.0** sur chaque serveur qui reçoit des portails (règle 3.5). Sur le lobby, remplace
-la 2.0.0 (la 2.1.0 n'est que sur Kal-Games). **Statut : compilé, non déployé, non testé en jeu.**
+la 2.0.0 (la 2.1.0 n'est que sur Kal-Games). **Déployé sur le lobby le 26/09/2026 18:25** (avec KLM_Portal 1.0.0 ;
+2.0.0 dans `/plugins/_removed-klm_menu-2.0.0/`). **Statut : non testé en jeu.**
