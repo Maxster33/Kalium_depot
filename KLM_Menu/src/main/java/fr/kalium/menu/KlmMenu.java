@@ -808,6 +808,54 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         }
     }
 
+    /**
+     * 2.2.0 - API pour KLM_Portal (demande de LeKiwi06, 26/09/2026 : les portails se desactivent quand on desactive
+     * le bouton dans KLM_Menu). Une destination est active tant qu'elle n'est pas dans disabled-destinations
+     * (menu > Parametres) ; un identifiant absent du menu de ce serveur est donc toujours actif.
+     */
+    public boolean isDestinationEnabled(String id) {
+        return id != null && !id.isBlank() && !isDisabled(id);
+    }
+
+    /** 2.2.0 - identifiants des destinations de CE serveur (ceux du menu Parametres), ex. pour l'autocompletion. */
+    public List<String> destinationIds() {
+        List<String> ids = new ArrayList<>();
+        for (ServerEntry entry : allDestinations()) {
+            ids.add(entry.id());
+        }
+        return ids;
+    }
+
+    /**
+     * 2.2.0 - envoie le joueur vers une destination, exactement comme un clic sur son bouton : entree locale =
+     * sa commande sur ce serveur, sinon changement de serveur par le proxy (l'identifiant est le nom du serveur dans
+     * velocity.toml). Renvoie false (sans rien faire) si la destination est desactivee.
+     */
+    public boolean sendToDestination(Player player, String id) {
+        if (player == null || !player.isOnline() || !isDestinationEnabled(id)) {
+            return false;
+        }
+        for (ServerEntry entry : localEntries.values()) {
+            if (entry.id().equalsIgnoreCase(id)) {
+                player.performCommand(entry.command());
+                return true;
+            }
+        }
+        if (lobbyRole && id.equalsIgnoreCase(lobbyServer)) {
+            player.sendMessage(mm.deserialize(msg("already-in-lobby")));
+            return true;
+        }
+        // Meme orthographe que le bouton du menu (Velocity distingue les majuscules : "Kanvas").
+        String target = id;
+        for (String key : servers.keySet()) {
+            if (key.equalsIgnoreCase(id)) {
+                target = key;
+            }
+        }
+        connect(player, target);
+        return true;
+    }
+
     private void giveCompass(Player player) {
         if (!getConfig().getBoolean("compass.enabled", true)) {
             return;

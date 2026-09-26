@@ -26,6 +26,7 @@ Bingo sur 7015.
 |---|---|---|
 | **KLM_Relay** (aujourd'hui KaliumRelay, renommage décidé, voir charte § 2) | proxy Velocity | « Boîte aux lettres » entre serveurs, indépendante des joueurs (affectations, reconnexion en partie, futures pages de menu à distance). Reste séparé : un plugin Velocity ne tourne pas sur Paper |
 | **KLM_Menu** | chaque serveur Paper | Couche profonde des menus : navigation entre serveurs, boussole, boîte à outils des menus, catalogue « Interfaces », redirection de fin de partie |
+| **KLM_Portal** | chaque serveur Paper (lobby d'abord) | Portails : une région WorldGuard reliée à une destination de KLM_Menu, désactivée avec son bouton. Remplace ConditionalEvents + PyxelRegions (décidé par LeKiwi06 le 26/09/2026) |
 | **KLM_Hub** (nouveau) | chaque serveur Paper | Point d'apparition, arrivée des joueurs, objets verrouillés du hub. Les **protections de zone** sont confiées à **WorldGuard** (déjà installé), pas codées |
 | **Menus par serveur** : KG_Menu (mini-jeux), puis KX_Menu, SK_Menu, KV_Menu... | un par serveur | Menu propre au serveur ; alimenté par les plugins du serveur |
 
@@ -75,7 +76,7 @@ KG_Menu et KG_ScoreBoards.
 
 | Préfixe | Portée | Exemples |
 |---|---|---|
-| `KLM_` | Réseau entier (proxy ou chaque serveur Paper) | KLM_Menu, KLM_Hub, KLM_Relay |
+| `KLM_` | Réseau entier (proxy ou chaque serveur Paper) | KLM_Menu, KLM_Portal, KLM_Hub, KLM_Relay |
 | `KG_` | Serveur des mini-jeux (Kal-Games) | KG_Instances, KG_Menu, KG_ScoreBoards, KG_BoatRace, KG_Parkour |
 | `<XX>_` | Serveur précis, un préfixe de 2 lettres par serveur (`KS_` = serveur Event, choisi par Maxster33 le 25/09/2026) | KS_Dimensions ; KX_Menu, SK_Menu, KV_Menu (futurs) |
 

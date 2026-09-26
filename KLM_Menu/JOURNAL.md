@@ -73,3 +73,17 @@ pas pu être lu et le menu ne proposait plus que le lobby. Description mise entr
 snakeyaml avant envoi (5 destinations), renvoyé. À retenir : toujours vérifier un config.yml modifié avant de l'envoyer.
 **Testé et confirmé par LeKiwi06 le 26/09/2026** (boussole du lobby).
 
+## 2.2.0 — API des destinations pour KLM_Portal (26/09/2026)
+
+**Demande de LeKiwi06** : remplacer ConditionalEvents et PyxelRegions (portails du lobby) par un plugin KLM_Portal
+« relié au KLM_menu pour que les portails se désactivent quand on désactive le bouton dans le KLM_menu ».
+Ajout nécessaire côté KLM_Menu (aucun changement visible en jeu) : trois méthodes publiques.
+- `isDestinationEnabled(id)` : faux si la destination est dans `disabled-destinations` (menu > Paramètres).
+- `destinationIds()` : identifiants des destinations de ce serveur (autocomplétion de KLM_Portal).
+- `sendToDestination(joueur, id)` : même effet qu'un clic sur le bouton (entrée locale = sa commande, sinon
+  changement de serveur par le proxy, avec l'orthographe exacte de la clé de `servers`, ex. `Kanvas`). Ne fait rien
+  et renvoie `false` si la destination est désactivée.
+
+Limite : un identifiant absent du menu de ce serveur est toujours considéré comme actif (il ne peut pas être désactivé).
+À déployer **avec KLM_Portal 1.0.0** sur chaque serveur qui reçoit des portails (règle 3.5). Sur le lobby, remplace
+la 2.0.0 (la 2.1.0 n'est que sur Kal-Games). **Statut : compilé, non déployé, non testé en jeu.**

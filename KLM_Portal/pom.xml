@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.kalium</groupId>
-    <artifactId>KLM_Menu</artifactId>
-    <version>2.2.0</version>
+    <artifactId>KLM_Portal</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>KLM_Menu</name>
+    <name>KLM_Portal</name>
 
     <properties>
         <!-- Paper 26.x requires Java 25 -->
@@ -21,6 +21,10 @@
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>enginehub</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -28,6 +32,25 @@
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>26.2.build.123-stable</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- KLM_Menu (destinations et boite a outils des menus) : fourni par le serveur, jamais embarque (voir build.sh). -->
+        <dependency>
+            <groupId>fr.kalium</groupId>
+            <artifactId>KLM_Menu</artifactId>
+            <version>2.2.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>worldguard-bukkit</artifactId>
+            <version>7.0.19</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <version>7.4.5</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

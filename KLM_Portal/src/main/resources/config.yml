@@ -1,0 +1,27 @@
+# ============================================================
+#  KLM_Portal - portails du reseau KaLium
+#  Le meme fichier .jar peut etre installe sur n'importe quel serveur Paper (avec KLM_Menu et WorldGuard).
+# ============================================================
+#
+# Un portail = une region WorldGuard + une destination de KLM_Menu.
+#  - La region se dessine avec la baguette de WorldEdit, puis : /rg define <nom de la region>
+#  - Le portail se cree en jeu, dans le monde de la region : /klmportal set <nom de la region> <destination>
+#  - destination = identifiant d'un bouton de KLM_Menu sur CE serveur : cle de "servers" (nom du serveur dans
+#    velocity.toml, ex. kal-games, Kanvas), nom du lobby, ou cle de "local-entries" (commande locale).
+#    Un nom de serveur absent du menu marche aussi, mais ne peut alors pas etre desactive.
+#
+# Quand le bouton de la destination est desactive dans KLM_Menu (menu > Parametres), le portail l'est aussi :
+# le joueur recoit un message et est repousse hors de la region.
+#
+# Exemple :
+# portals:
+#   portail-kalgames:
+#     world: world
+#     destination: kal-games
+portals: {}
+
+# Force du recul quand le portail est desactive (0.1 a 3).
+push-strength: 0.8
+
+# Delai (en secondes) avant qu'un meme joueur puisse reprendre un portail (evite les envois en double).
+cooldown-seconds: 3

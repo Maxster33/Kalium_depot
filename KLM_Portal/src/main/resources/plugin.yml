@@ -1,0 +1,19 @@
+name: KLM_Portal
+version: '${project.version}'
+main: fr.kalium.portal.KlmPortal
+api-version: '26.2'
+description: Portails du reseau KaLium - une region WorldGuard reliee a une destination de KLM_Menu (active / desactivee avec son bouton). Utilisable sur tous les serveurs Paper.
+authors: [KaLium]
+depend: [KLM_Menu, WorldGuard]
+
+commands:
+  klmportal:
+    description: Gestion des portails (operateurs).
+    aliases: [portail, portails]
+    usage: /<command> set <region> <destination> | remove <region> | list | reload
+    permission: klmportal.admin
+
+permissions:
+  klmportal.admin:
+    description: Creer, retirer, lister les portails et recharger la configuration.
+    default: op

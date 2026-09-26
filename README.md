@@ -14,6 +14,7 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 | `KG_Bingo/` | Partie Bingo du hub : créer / rejoindre, transfert vers Kixster (dépend de KalGames) | kal-games |
 | `KG_BingoGame/` | Le jeu Bingo lui-même (anciennement KalBingo) | Kixster |
 | `KLM_Menu/` | Interface globale : navigation entre serveurs, catalogue des interfaces des plugins, boîte à outils des menus (anciennement KaliumMenu) | chaque serveur Paper |
+| `KLM_Portal/` | Portails : une région WorldGuard reliée à une destination de KLM_Menu (désactivée avec son bouton) | chaque serveur Paper (lobby d'abord) |
 | `KaliumRelay/` | Relais HTTP entre serveurs | proxy Velocity |
 | `KaliumCore/` | Survie (projet en pause) | Kal-Test-Dev |
 | `KS_Dimensions/` | Menu des opérateurs (`/dimensions`) pour activer / désactiver les portails du Nether et de l'End | event |
