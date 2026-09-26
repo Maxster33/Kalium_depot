@@ -33,6 +33,10 @@
 ## Ajout en fin de session
 - « Des parties ne se sont pas supprimées de l'interface du Bingo sur Kal-Games » : KG_Bingo 1.5.1 (partie listée plus
   de 30 min retirée ; cause : redémarrages de Serveur Jeux pendant des salles d'attente), déployée à 6 h 56.
+- Affichage « Kanvas » (text_display orange) dans le lobby : réglages des autres (taille ×8, fond 25 %) relus dans les
+  fichiers du monde du lobby ; commandes données à LeKiwi06 (chat limité à 256 caractères : deux commandes).
+- KLM_Menu (lobby) : destination `kal-test-dev` renommée `Kanvas` (erreur YAML de Claude corrigée : « : » hors
+  guillemets). KaliumRelay 1.2.0 : `/server` réservé aux admins (liste dans relay.properties), déployé à 7 h 21.
 
 ## Reste à faire
 Voir « À faire plus tard » dans le compte rendu du 2026-09-26 de `REPRISE_PROJET.md`.
