@@ -39,7 +39,7 @@ Ajouté dans la même version (pas encore déployée), demande de LeKiwi06 : **c
   `modifierConcours`, `terminerConcours`, `cloreVotes`, `annulerConcours`, `exclureDuConcours` ; `ConcoursInfo`,
   `PhaseConcours` ; `PlotInfo.concours`.
 
-**Statut : non testé en jeu, non déployé.** À déployer avec KV_Menu 1.3.0.
+**Déployé sur Kanvas le 26/09/2026 (03:45) avec KV_Menu 1.3.0. Statut : non testé en jeu.**
 
 ## 1.3.1 - informations du plot dans un tableau sur le côté (26/09/2026)
 

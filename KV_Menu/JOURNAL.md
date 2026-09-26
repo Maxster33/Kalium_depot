@@ -28,7 +28,7 @@ actions de **KV_Plots** (par son API `fr.kalium.kvplots.api.KanvasPlots`). Menus
 - Fiche d'un plot du concours : pas de « Valider », « Rouvrir » ni « Supprimer » (sauf staff).
 - Nécessite **KV_Plots 1.4.0** (à déployer ensemble).
 
-**Statut : non testé en jeu, non déployé.**
+**Déployé sur Kanvas le 26/09/2026 (03:45) avec KV_Plots 1.4.0. Statut : non testé en jeu.**
 
 ## 1.2.0 - visites, titre et description (26/09/2026)
 
