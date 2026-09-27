@@ -57,6 +57,9 @@ public final class KVBuildBattle extends JavaPlugin implements TabExecutor {
             return;
         }
         monde.setSpawnLocation(0, 80, 0);
+        // 0.3.1 : pas de ticks aléatoires (LeKiwi06 : « la glace a fondu ») : glace, neige, feuilles, cultures restent telles
+        // quelles dans l'arène et les constructions.
+        monde.setGameRule(org.bukkit.GameRules.RANDOM_TICK_SPEED, 0);
         travaux = new Travaux(this);
         arene = new Arene(this);
         arene.protegerMonde();

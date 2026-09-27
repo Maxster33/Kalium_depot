@@ -4,6 +4,16 @@ Serveur Kanvas. Cahier des charges (commun avec KG_BuildBattle) : `KV_BuildBattl
 KLM_Menu (menus, catalogue « Interfaces » ; API inchangée depuis 2.0.0, la version en place sur Kanvas) et de
 WorldGuard (FAWE fournit l'API WorldEdit).
 
+## 0.3.1 - la glace ne fond plus (27/09/2026)
+
+Signalé par LeKiwi06 : « j'avais posé des blocs de glace dans l'arène de build battle, elle a fondu car le random tick
+speed n'est pas à 0 ». Au démarrage, la règle `randomTickSpeed` du monde `buildbattle` est mise à **0** : glace, neige,
+feuilles, cultures, herbe ne changent plus d'elles-mêmes (arène et constructions des joueurs).
+- Limite : la glace déjà fondue dans les boîtes générées ne revient pas : la reposer dans la boîte d'origine, la
+  recapturer puis regénérer l'arène. Le monde `Kanvas` (plots, boîte d'origine) n'est pas touché.
+
+**Compilé, non déployé. Statut : non testé en jeu.**
+
 ## 0.3.0 - étape 2 : la partie (27/09/2026)
 
 Cahier des charges (décisions de LeKiwi06 du 27/09/2026). Classes : `Jeu` (remplace `Accueil` : arrivée, parties par
