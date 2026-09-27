@@ -4,6 +4,19 @@ Serveur Kanvas. Cahier des charges (commun avec KG_BuildBattle) : `KV_BuildBattl
 KLM_Menu (menus, catalogue « Interfaces » ; API inchangée depuis 2.0.0, la version en place sur Kanvas) et de
 WorldGuard (FAWE fournit l'API WorldEdit).
 
+## 0.3.2 - barre d'action, salle d'attente en mode aventure (27/09/2026)
+
+Retours de LeKiwi06 : « les informations sont marquées en boss bar au lieu de l'action bar comme les autres jeux » ;
+« on est en créatif dans le lobby d'attente pour le jeu, on devrait pas (rend-nous invincibles quand même) ».
+- Les informations de la partie (salle d'attente, thème, temps restant, terrain noté, résultats) sont dans la **barre
+  d'action**, renvoyée chaque seconde ; plus de barre du boss.
+- **Salle d'attente et choix du thème** (qui s'y déroule) : **mode aventure**, sans vol. Les règles du monde laissent
+  ce mode aux joueurs d'une partie à ces phases (sinon créatif forcé comme avant). Créatif à partir de la construction.
+- Joueurs d'une partie **invincibles** et **sans faim**, à toutes les phases ; une chute dans le vide ramène au point
+  d'apparition de la salle (ou de la boîte où le joueur doit être).
+
+**Compilé, non déployé. Statut : non testé en jeu.**
+
 ## 0.3.1 - la glace ne fond plus (27/09/2026)
 
 Signalé par LeKiwi06 : « j'avais posé des blocs de glace dans l'arène de build battle, elle a fondu car le random tick

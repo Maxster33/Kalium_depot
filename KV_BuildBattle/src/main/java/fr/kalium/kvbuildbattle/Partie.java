@@ -21,7 +21,6 @@ import org.bukkit.entity.Player;
 
 import fr.kalium.menu.api.Gui;
 import io.papermc.paper.registry.data.dialog.ActionButton;
-import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
@@ -51,7 +50,7 @@ final class Partie {
     final Set<UUID> joueurs = new LinkedHashSet<>();
 
     Phase phase = Phase.ATTENTE;
-    /** Secondes restantes de la phase (-1 = pas de compte à rebours) et durée totale (pour la barre). */
+    /** Secondes restantes de la phase (-1 = pas de compte à rebours) et durée totale de la phase. */
     private int compteur = -1, duree = 1;
     /** Équipes, dans l'ordre des boîtes de la colonne (rang 0, 1...). */
     final List<List<UUID>> equipes = new ArrayList<>();
@@ -64,7 +63,6 @@ final class Partie {
     /** Équipe dont le terrain est noté (phase VOTES), ou gagnante (RESULTATS). */
     int terrain = -1;
     private final Map<Integer, Map<UUID, Integer>> notes = new HashMap<>();
-    private final BossBar barre = BossBar.bossBar(Component.empty(), 1f, BossBar.Color.YELLOW, BossBar.Overlay.PROGRESS);
 
     Partie(KVBuildBattle plugin, Jeu jeu, int colonne, Type type, String id, String code, UUID hote, int tailleEquipes,
            int equipesMax, int minutes, boolean themesEcrits) {
@@ -132,11 +130,13 @@ final class Partie {
         return n.isEmpty() ? "(équipe partie)" : String.join(", ", n);
     }
 
-    /** Arrivée en salle d'attente : objets de la salle et barre d'état. */
+    /** Arrivée en salle d'attente : objets de la salle ; mode aventure, invincible (0.3.2, LeKiwi06). */
     void accueillir(Player joueur) {
         joueurs.add(joueur.getUniqueId());
-        joueur.showBossBar(barre);
-        joueur.setGameMode(GameMode.CREATIVE);
+        joueur.setGameMode(GameMode.ADVENTURE);
+        joueur.setFlying(false);
+        joueur.setAllowFlight(false);
+        joueur.setFoodLevel(20);
         joueur.getInventory().clear();
         if (type == Type.PRIVE && joueur.getUniqueId().equals(hote)) joueur.getInventory().setItem(4, jeu.objets().lancer());
         for (Player p : enLigne()) {
@@ -155,7 +155,6 @@ final class Partie {
     void retirer(Player joueur) {
         UUID u = joueur.getUniqueId();
         if (!joueurs.remove(u)) return;
-        joueur.hideBossBar(barre);
         propositions.remove(u);
         votesTheme.remove(u);
         for (List<UUID> e : equipes) e.remove(u);
@@ -236,8 +235,9 @@ final class Partie {
             case RESULTATS -> texte = "Résultats · retour dans " + compteur + " s";
             default -> texte = "";
         }
-        barre.name(Component.text(texte));
-        barre.progress(compteur < 0 ? 1f : Math.max(0f, Math.min(1f, compteur / (float) Math.max(1, duree))));
+        // 0.3.2 : barre d'action, comme les autres jeux (LeKiwi06), renvoyée chaque seconde.
+        Component ligne = Component.text(texte, NamedTextColor.GOLD);
+        for (Player p : enLigne()) p.sendActionBar(ligne);
     }
 
     private static String temps(int s) {
@@ -531,7 +531,6 @@ final class Partie {
         boolean jouee = phase != Phase.ATTENTE;
         phase = Phase.FINIE;
         for (Player p : enLigne()) {
-            p.hideBossBar(barre);
             jeu.sortir(p);
             jeu.renvoyer(p);
         }

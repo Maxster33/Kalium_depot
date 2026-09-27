@@ -51,6 +51,7 @@ final class Regles implements Listener {
 
     private void creatif(Player joueur) {
         if (!joueur.isOnline() || !joueur.getWorld().equals(plugin.monde())) return;
+        if (plugin.jeu() != null && plugin.jeu().aventure(joueur)) return; // salle d'attente : mode aventure (0.3.2)
         if (joueur.getGameMode() != GameMode.CREATIVE) joueur.setGameMode(GameMode.CREATIVE);
         joueur.setAllowFlight(true);
     }
@@ -78,6 +79,7 @@ final class Regles implements Listener {
     public void onGameMode(PlayerGameModeChangeEvent e) {
         Player joueur = e.getPlayer();
         if (!joueur.getWorld().equals(plugin.monde()) || joueur.isOp() || e.getNewGameMode() == GameMode.CREATIVE) return;
+        if (e.getNewGameMode() == GameMode.ADVENTURE && plugin.jeu() != null && plugin.jeu().aventure(joueur)) return;
         e.setCancelled(true);
         creatifPlusTard(joueur); // le vol peut avoir été retiré entre-temps
     }

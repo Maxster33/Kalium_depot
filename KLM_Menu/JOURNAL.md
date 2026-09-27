@@ -106,4 +106,5 @@ points de chute vers d'autres serveurs non testés (`relay-token` vide, KLM_Port
 Demande de LeKiwi06 : le point de chute réglé au lobby pour Kanvas ne s'appliquait pas (Kanvas n'avait ni KLM_Portal ni
 KLM_Menu 2.3.0, qui lisent la consigne à l'arrivée). **KLM_Menu 2.3.0 + KLM_Portal 1.2.0** installés sur Kanvas le 27/09/2026 à
 19:59 (KLM_Menu 2.0.0 dans `_removed-klm_menu-2.0.0/`) ; `relay-token` de `plugins/KLM_Portal/config.yml` à remplir à
-la main (Kanvas et lobby). Statut : non testé sur Kanvas.
+la main (Kanvas et lobby). Statut : testé et confirmé par LeKiwi06 le 27/09/2026 (point de chute vers Kanvas, boussole et étoile de
+KV_Menu).

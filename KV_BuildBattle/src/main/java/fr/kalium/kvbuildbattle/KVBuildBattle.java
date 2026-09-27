@@ -100,6 +100,10 @@ public final class KVBuildBattle extends JavaPlugin implements TabExecutor {
         return travaux;
     }
 
+    Jeu jeu() {
+        return jeu;
+    }
+
     Arene arene() {
         return arene;
     }

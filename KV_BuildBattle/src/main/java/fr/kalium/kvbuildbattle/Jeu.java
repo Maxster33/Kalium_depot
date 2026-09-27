@@ -363,6 +363,34 @@ final class Jeu implements Listener {
         }
     }
 
+    /** Salle d'attente et choix du thème : mode aventure (0.3.2, LeKiwi06 : « on est en créatif dans le lobby d'attente »). */
+    boolean aventure(Player joueur) {
+        Partie p = parJoueur.get(joueur.getUniqueId());
+        return p != null && (p.phase == Partie.Phase.ATTENTE || p.phase == Partie.Phase.THEME_ECRITURE
+                || p.phase == Partie.Phase.THEME_VOTE);
+    }
+
+    /** Joueurs d'une partie invincibles (chute dans le vide : retour au point d'apparition) et sans faim. */
+    @EventHandler(ignoreCancelled = true)
+    public void onDegats(org.bukkit.event.entity.EntityDamageEvent e) {
+        if (!(e.getEntity() instanceof Player j)) return;
+        Partie p = parJoueur.get(j.getUniqueId());
+        if (p == null) return;
+        e.setCancelled(true);
+        if (e.getCause() == org.bukkit.event.entity.EntityDamageEvent.DamageCause.VOID) {
+            int boite = p.boiteImposee(j.getUniqueId());
+            Location l = boite >= 0 ? plugin.arene().apparitionBoite(p.colonne, boite) : plugin.arene().apparitionSalle(p.colonne);
+            if (l == null) l = plugin.monde().getSpawnLocation().add(0.5, 0, 0.5);
+            j.setFallDistance(0);
+            j.teleport(l);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onFaim(org.bukkit.event.entity.FoodLevelChangeEvent e) {
+        if (e.getEntity() instanceof Player j && parJoueur.containsKey(j.getUniqueId())) e.setCancelled(true);
+    }
+
     /** Hors construction, l'inventaire est figé (objets de la salle, du thème et du vote). */
     private boolean fige(Player joueur) {
         Partie p = parJoueur.get(joueur.getUniqueId());
