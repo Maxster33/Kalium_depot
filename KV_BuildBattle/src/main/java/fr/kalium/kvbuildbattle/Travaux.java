@@ -166,14 +166,18 @@ final class Travaux {
 
     private static final Pattern NOM = Pattern.compile("CustomName:\"((?:[^\"\\\\]|\\\\.)*)\"");
 
+    /**
+     * Retire toutes les entités de la zone collée (hors joueurs), puis recrée celles du modèle. 0.3.5 : le retrait se
+     * faisait seulement si le modèle avait des entités ; les mobs posés en partie restaient d'une partie à l'autre.
+     */
     private void placerEntites(Modele m, World monde, int x, int y, int z) {
-        if (m.entites.isEmpty()) return;
         for (int cx = x >> 4; cx <= (x + m.sx) >> 4; cx++) {
             for (int cz = z >> 4; cz <= (z + m.sz) >> 4; cz++) {
                 monde.getChunkAt(cx, cz).getEntities(); // charge le chunk et ses entités
             }
         }
         retirerEntites(monde, new BoundingBox(x, y, z, x + m.sx, y + m.sy, z + m.sz));
+        if (m.entites.isEmpty()) return;
         for (Modele.Entite e : m.entites) {
             try {
                 Entity cree = Bukkit.getEntityFactory().createEntitySnapshot(e.copie())

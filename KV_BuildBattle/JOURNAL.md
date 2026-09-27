@@ -4,6 +4,17 @@ Serveur Kanvas. Cahier des charges (commun avec KG_BuildBattle) : `KV_BuildBattl
 KLM_Menu (menus, catalogue « Interfaces » ; API inchangée depuis 2.0.0, la version en place sur Kanvas) et de
 WorldGuard (FAWE fournit l'API WorldEdit).
 
+## 0.3.5 - les mobs sont retirés d'une partie à l'autre (28/09/2026)
+
+Signalé par LeKiwi06 : « les mobs ne sont pas supprimés d'une partie à une autre ». Cause : en recollant la boîte, les
+entités présentes n'étaient retirées que si la boîte capturée contenait elle-même des entités (sinon la fonction
+s'arrêtait avant). Désormais, toutes les entités de la boîte (hors joueurs) sont retirées à chaque collage (fin de
+partie, génération de l'arène, copies de la salle d'attente), puis celles de la capture sont recréées.
+- Les mobs restés dans une boîte depuis une partie jouée en 0.3.4 disparaissent à la fin de la prochaine partie sur
+  cette boîte, ou tout de suite avec « Générer l'arène ».
+
+**Compilé, non déployé. Statut : non testé en jeu.**
+
 ## 0.3.4 - mobs figés, rien ne dépasse de la zone (27/09/2026)
 
 Retours de LeKiwi06 : « les mobs ont toujours leur IA dans le build battle, on ne peut donc pas poser les entités » ;
