@@ -28,6 +28,13 @@ le Bingo (KG_Bingo sur kal-games / KG_BingoGame sur Serveur Jeux, liaison par le
   puis les zones constructibles.
 - **Salle d'attente sur Kanvas** : les joueurs y passent en rejoignant une file ou une partie. LeKiwi06 la construira
   plus tard ; il faut l'option pour la capturer « comme pour le Bingo ».
+- **Boîtes par partie** : de **2 à 8** (une par équipe), prises parmi les 32 boîtes libres de l'arène.
+- **Capture de l'arène** : sert à la **recoller une fois dans le monde à part**. Après une partie, on ne recharge pas
+  l'arène : on **vide seulement les zones constructibles** des boîtes utilisées.
+- **Thème écrit (partie privée)** : chaque joueur propose un thème (64 caractères) pendant **1 min** (passe à **3 s**
+  quand tout le monde a proposé), puis **vote de 30 s** parmi les propositions (passe à **3 s** quand tout le monde a
+  voté). Pendant ce vote, la **poudre de blaze** sert à **signaler un thème inapproprié**.
+- **Vote des terrains** : **30 s** par terrain par défaut, qui passent à **3 s** quand tout le monde a voté.
 
 ## Repris de KV_Plots (principes, pas de dépendance au monde des plots)
 
@@ -39,19 +46,13 @@ le Bingo (KG_Bingo sur kal-games / KG_BingoGame sur Serveur Jeux, liaison par le
 
 ## Questions ouvertes
 
-1. **Les 32 boîtes** : forment-elles 4 groupes fixes de 8 (une « sous-arène » par partie), ou une partie prend-elle
-   n'importe quelles boîtes libres ?
-2. **Capture de l'arène** : la capture sert-elle à **recoller l'arène dans le monde à part** (le monde actuel est
-   ensuite laissé tel quel), et à **remettre les boîtes à neuf** après chaque partie (depuis la capture) ?
-3. **Mode « thème écrit »** : chaque joueur propose un thème, puis tout le monde vote parmi les propositions ? Ou
-   l'hôte écrit seul le thème ?
-4. **Vote des terrains** : durée par terrain (KalGames prévoyait 30 s) ? Une équipe dont personne n'a posé de bloc
-   est-elle sautée ?
-5. **Joueurs** : minimum pour lancer une partie publique (2 équipes ?) et compte à rebours de la file.
-6. **Vote du thème** : durée (ex. 15 s) ; égalité = au hasard entre les ex æquo ?
-7. **Points et classements** (KG_ScoreBoards, barème calé sur `EQUILIBRAGE_POINTS.md`) : maintenant, ou dans une
+1. **Thème signalé** : que se passe-t-il ? (thème retiré du vote, message au staff, sanction ?)
+2. **Vote des 5 thèmes** (partie publique) : même rythme (30 s, puis 3 s quand tout le monde a voté) ? Égalité = au
+   hasard entre les ex æquo ?
+3. **File publique** : nombre d'équipes pour lancer (2 minimum ?), compte à rebours, départ immédiat à 8 équipes ?
+4. **Terrain vide** : une équipe dont personne n'a posé de bloc est-elle sautée au vote ?
+5. **Points et classements** (KG_ScoreBoards, barème calé sur `EQUILIBRAGE_POINTS.md`) : maintenant, ou dans une
    étape suivante ?
-8. **Fin de partie** : classement annoncé, puis retour automatique sur kal-games après combien de secondes ?
-   Possibilité de visiter les builds avant le retour ?
-9. **Déconnexion** : un joueur qui se déconnecte peut-il revenir dans sa partie (reconnexion comme au Bingo) ?
-10. **Salle d'attente** : une seule salle partagée par les 4 parties, ou une par partie ?
+6. **Fin de partie** : classement annoncé, puis retour automatique sur kal-games après combien de secondes ?
+7. **Déconnexion** : un joueur qui se déconnecte peut-il revenir dans sa partie (reconnexion comme au Bingo) ?
+8. **Salle d'attente** : une seule salle partagée par toutes les parties, ou une par partie ?
