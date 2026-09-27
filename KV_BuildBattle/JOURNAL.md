@@ -21,7 +21,7 @@ blocs qui ont pu dépasser soient bien supprimés également ».
 Choix par défaut (Claude, à ajuster si besoin) : pas de limite du nombre de mobs par zone (KV_Plots prévoit 10 / 25
 par plot, pas encore fait) ; les oeufs lancés (poulets) sont permis et figés comme les autres.
 
-**Compilé, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 27/09/2026 (21:32, 0.3.3 dans `_removed-kv_buildbattle-0.3.3/`). Statut : non testé en jeu.**
 
 ## 0.3.3 - 200 thèmes (27/09/2026)
 
