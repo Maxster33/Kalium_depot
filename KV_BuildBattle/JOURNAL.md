@@ -4,6 +4,25 @@ Serveur Kanvas. Cahier des charges (commun avec KG_BuildBattle) : `KV_BuildBattl
 KLM_Menu (menus, catalogue « Interfaces » ; API inchangée depuis 2.0.0, la version en place sur Kanvas) et de
 WorldGuard (FAWE fournit l'API WorldEdit).
 
+## 0.3.4 - mobs figés, rien ne dépasse de la zone (27/09/2026)
+
+Retours de LeKiwi06 : « les mobs ont toujours leur IA dans le build battle, on ne peut donc pas poser les entités » ;
+« quand j'ai fait pousser un arbre au bord de la zone, il a poussé en partie à l'extérieur ; il faut vérifier que les
+blocs qui ont pu dépasser soient bien supprimés également ».
+- **Mobs figés** dans le monde `buildbattle` : ceux qui apparaissent par un oeuf, un seau, un golem construit, une
+  commande ou la copie de l'arène sont **sans IA** (immobiles), silencieux, invincibles et jamais retirés par le jeu.
+  Toutes les autres apparitions (naturelles, générateurs, Wither construit...) sont annulées.
+- **Retirer un mob** : pendant la construction, un clic gauche d'un joueur de l'équipe sur un mob de sa zone le retire.
+- **Pousse et engrais** : un arbre, un champignon géant ou de l'engrais (herbe, fleurs...) ne posent plus aucun bloc
+  hors de la zone constructible d'où ils partent.
+- **Fin de partie** : c'est la **boîte entière** qui est remise comme capturée, et plus seulement la zone : tout ce
+  qui aurait pu dépasser de la zone est effacé, les entités de la boîte sont recréées.
+
+Choix par défaut (Claude, à ajuster si besoin) : pas de limite du nombre de mobs par zone (KV_Plots prévoit 10 / 25
+par plot, pas encore fait) ; les oeufs lancés (poulets) sont permis et figés comme les autres.
+
+**Compilé, non déployé. Statut : non testé en jeu.**
+
 ## 0.3.3 - 200 thèmes (27/09/2026)
 
 Demande de LeKiwi06 : « il me faut 200 thèmes diversifiés, qui ne doivent pas être trop restrictifs dans leur énoncé,

@@ -217,16 +217,17 @@ final class Arene {
     }
 
     /**
-     * Vide la zone constructible : elle redevient comme dans la boîte capturée (vide, sol compris s'il est dans la
-     * zone), entités retirées ; fini est lancé une fois la zone remise. Le reste de la boîte n'est pas touché.
+     * Après une partie : la boîte ENTIÈRE redevient comme capturée (zone vidée, et tout ce qui aurait pu dépasser de la
+     * zone effacé ; 0.3.4, LeKiwi06 : un arbre avait poussé hors de la zone), entités de la boîte recréées. fini est
+     * lancé une fois la boîte remise.
      */
     void viderZone(int colonne, int rang, Runnable fini) {
-        if (!boitesCollees() || zsx <= 0 || boite == null) {
+        if (!boitesCollees() || boite == null) {
             if (fini != null) fini.run();
             return;
         }
         int[] o = coinBoite(colonne, rang, gz);
-        travaux().collerZone(boite, plugin.monde(), o[0], o[1], o[2], zx, zy, zz, zsx, zsy, zsz, fini);
+        travaux().coller(boite, plugin.monde(), o[0], o[1], o[2], fini);
     }
 
     /** Numéro de la zone constructible (colonne * boîtes + rang) contenant ce bloc, ou -1. */

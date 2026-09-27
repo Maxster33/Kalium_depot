@@ -406,6 +406,25 @@ final class Jeu implements Listener {
         }
     }
 
+    /**
+     * 0.3.4 : les mobs du Build Battle sont figés et invincibles (voir Regles) ; pendant la construction, un clic gauche
+     * d'un joueur de l'équipe sur un mob de sa zone le retire. Sinon, frapper un mob ne fait rien.
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onFrappe(org.bukkit.event.entity.EntityDamageByEntityEvent e) {
+        if (!(e.getEntity() instanceof org.bukkit.entity.Mob mob) || !mob.getWorld().equals(plugin.monde())) return;
+        e.setCancelled(true);
+        if (!(e.getDamager() instanceof Player j)) return;
+        Partie p = parJoueur.get(j.getUniqueId());
+        if (p == null || p.phase != Partie.Phase.CONSTRUCTION) return;
+        int equipe = p.equipeDe(j.getUniqueId());
+        Location l = mob.getLocation();
+        if (equipe >= 0 && plugin.arene().zoneEn(l.getBlockX(), l.getBlockY(), l.getBlockZ())
+                == p.colonne * plugin.arene().boitesParColonne() + equipe) {
+            mob.remove();
+        }
+    }
+
     @EventHandler(ignoreCancelled = true)
     public void onFaim(org.bukkit.event.entity.FoodLevelChangeEvent e) {
         if (e.getEntity() instanceof Player j && parJoueur.containsKey(j.getUniqueId())) e.setCancelled(true);

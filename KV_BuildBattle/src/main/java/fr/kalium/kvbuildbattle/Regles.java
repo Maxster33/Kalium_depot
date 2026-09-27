@@ -1,9 +1,15 @@
 package fr.kalium.kvbuildbattle;
 
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
@@ -18,6 +25,8 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
@@ -25,6 +34,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 
 /**
  * Règles du monde du Build Battle, reprises de KV_Plots (ReglesMonde) : créatif + vol pour tous, pas de TNT ni
@@ -145,6 +155,51 @@ final class Regles implements Listener {
         if (!ici(de)) return;
         Arene a = plugin.arene();
         if (a.zoneEn(de.getX(), de.getY(), de.getZ()) != a.zoneEn(vers.getX(), vers.getY(), vers.getZ())) e.setCancelled(true);
+    }
+
+    // --- Mobs figés (0.3.4, LeKiwi06 : « les mobs ont toujours leur IA dans le build battle ») ---
+
+    /** Apparitions voulues (oeufs, seaux, golems construits, commandes, copies de l'arène) ; les autres sont annulées. */
+    private static final Set<SpawnReason> PERMISES = EnumSet.of(SpawnReason.SPAWNER_EGG, SpawnReason.BUCKET,
+            SpawnReason.EGG, SpawnReason.BUILD_SNOWMAN, SpawnReason.BUILD_IRONGOLEM, SpawnReason.BUILD_COPPERGOLEM,
+            SpawnReason.SHEARED, SpawnReason.COMMAND, SpawnReason.CUSTOM, SpawnReason.DEFAULT);
+
+    @EventHandler(ignoreCancelled = true)
+    public void onApparition(CreatureSpawnEvent e) {
+        if (!e.getEntity().getWorld().equals(plugin.monde())) return;
+        if (!PERMISES.contains(e.getSpawnReason())) {
+            e.setCancelled(true);
+            return;
+        }
+        if (e.getEntity() instanceof Mob m) figer(m);
+    }
+
+    /** Décor : sans IA (immobile), silencieux, invincible, jamais retiré par le jeu. */
+    static void figer(Mob m) {
+        m.setAI(false);
+        m.setSilent(true);
+        m.setInvulnerable(true);
+        m.setPersistent(true);
+        m.setRemoveWhenFarAway(false);
+    }
+
+    // --- Rien ne pousse hors de sa zone (0.3.4, LeKiwi06 : un arbre au bord de la zone a poussé à l'extérieur) ---
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPousse(StructureGrowEvent e) {
+        if (e.getWorld().equals(plugin.monde())) garderDansZone(e.getLocation().getBlock(), e.getBlocks());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEngrais(BlockFertilizeEvent e) {
+        if (ici(e.getBlock())) garderDansZone(e.getBlock(), e.getBlocks());
+    }
+
+    /** Retire les blocs qui sortiraient de la zone constructible de l'origine (tous, si l'origine est hors zone). */
+    private void garderDansZone(Block origine, List<BlockState> blocs) {
+        Arene a = plugin.arene();
+        int zone = a.zoneEn(origine.getX(), origine.getY(), origine.getZ());
+        blocs.removeIf(s -> zone < 0 || a.zoneEn(s.getX(), s.getY(), s.getZ()) != zone);
     }
 
     // --- Redstone désactivée ---

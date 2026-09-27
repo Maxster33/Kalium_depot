@@ -135,29 +135,6 @@ final class Travaux {
         });
     }
 
-    /**
-     * Recolle seulement une partie du modèle (décalage d, taille s, relatifs au modèle), modèle collé en (x, y, z), et
-     * retire les entités de cette partie (hors joueurs). Sert à vider une zone constructible après une partie.
-     */
-    void collerZone(Modele m, World monde, int x, int y, int z, int dx, int dy, int dz, int sx, int sy, int sz,
-                    Runnable fini) {
-        ajouter(new Zone("vidage d'une zone", monde, x + dx, y + dy, z + dz, sx, sy, sz) {
-            @Override
-            int bloc(Block b, int rx, int ry, int rz) {
-                BlockData voulu = m.etat(m.indice(dx + rx, dy + ry, dz + rz));
-                if (b.getBlockData().equals(voulu)) return 1;
-                b.setBlockData(voulu, false);
-                return 4;
-            }
-
-            @Override
-            void fin(Throwable err) {
-                retirerEntites(monde, new BoundingBox(x + dx, y + dy, z + dz, x + dx + sx, y + dy + sy, z + dz + sz));
-                if (fini != null) fini.run();
-            }
-        });
-    }
-
     /** Remplace par de l'air un cuboïde (coin le plus bas en (x, y, z)) et retire ses entités (hors joueurs). */
     void effacer(World monde, int x, int y, int z, int sx, int sy, int sz, Runnable fini) {
         BlockData air = Bukkit.createBlockData(Material.AIR);
