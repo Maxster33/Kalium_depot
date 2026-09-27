@@ -9,10 +9,13 @@ WorldGuard (FAWE fournit l'API WorldEdit).
 Signalé par LeKiwi06 : « j'avais posé des blocs de glace dans l'arène de build battle, elle a fondu car le random tick
 speed n'est pas à 0 ». Au démarrage, la règle `randomTickSpeed` du monde `buildbattle` est mise à **0** : glace, neige,
 feuilles, cultures, herbe ne changent plus d'elles-mêmes (arène et constructions des joueurs).
+- Dans les 5 s qui suivent l'arrivée en salle d'attente, une téléportation hors du monde `buildbattle` est annulée :
+  un point de chute de KLM_Portal (installé sur Kanvas le même jour, « default-arrival » en coordonnées) sortirait sinon
+  le joueur de sa partie. Par défaut (« dernière position »), KLM_Portal ne téléporte personne à l'arrivée.
 - Limite : la glace déjà fondue dans les boîtes générées ne revient pas : la reposer dans la boîte d'origine, la
-  recapturer puis regénérer l'arène. Le monde `Kanvas` (plots, boîte d'origine) n'est pas touché.
+  recapturer puis regénérer l'arène. Le monde `Kanvas` est réglé par KV_Plots 1.4.1.
 
-**Compilé, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 27/09/2026 (19:59, 0.3.0 dans `_removed-kv_buildbattle-0.3.0/`). Statut : non testé en jeu.**
 
 ## 0.3.0 - étape 2 : la partie (27/09/2026)
 

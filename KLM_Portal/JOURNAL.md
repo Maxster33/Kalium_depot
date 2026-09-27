@@ -96,3 +96,10 @@ de WorldGuard, déjà réservé) : choix de Claude, signalé.
 **Déployé sur le lobby le 26/09/2026 20:54** (serveur éteint, accord de LeKiwi06) ; 1.1.0 et son `config.yml` dans
 `/plugins/_removed-klm_portal-1.1.0/`. Section `region-effects` (région `lobby`, `speed: 6`, `jump_boost: 2`) ajoutée à
 la fin du `config.yml` du lobby, le reste du fichier inchangé. **Testé et confirmé par LeKiwi06 le 27/09/2026.**
+
+## Déploiement sur Kanvas (27/09/2026, pas de nouvelle version)
+
+Demande de LeKiwi06 : le point de chute réglé au lobby pour Kanvas ne s'appliquait pas (Kanvas n'avait ni KLM_Portal ni
+KLM_Menu 2.3.0, qui lisent la consigne à l'arrivée). **KLM_Menu 2.3.0 + KLM_Portal 1.2.0** installés sur Kanvas le 27/09/2026 à
+19:59 (KLM_Menu 2.0.0 dans `_removed-klm_menu-2.0.0/`) ; `relay-token` de `plugins/KLM_Portal/config.yml` à remplir à
+la main (Kanvas et lobby). Statut : non testé sur Kanvas.
