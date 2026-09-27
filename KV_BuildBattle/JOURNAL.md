@@ -15,6 +15,9 @@ et pas trop sur le même thème (le Nether et l'End ça va dans une liste de 200
   précis, cabane suffit ») : 25 bâtiments de ville ou thèmes redondants retirés (gratte-ciel, métro, hôpital, école,
   banque, restaurant...), énoncés raccourcis (Cabane, Forêt, Océan, Île, Voiture, Planète, Égypte...), 25 thèmes
   d'autres familles ajoutés (Automne, Couleurs, Géométrie, Chaos, Mythologie, Steampunk, Miroir...).
+- Troisième version (LeKiwi06) : 14 retirés (Royaume, Soleil, Lune, Étoiles, Nuage, Ninja, Détective, Espion, Vampire,
+  Nouvel an, Carnaval, Emoji, Paix, Amitié), 14 ajoutés (Nid, Coquillage, Plume, Tortue, Pingouin, Totem, Potion,
+  Tapis volant, Boussole, Épouvantail, Squelette, Pique-nique, Bijou, Arène).
 - `config.yml` fourni : `themes: []` (vide = liste intégrée) ; une autre liste peut y être écrite sur le serveur.
 
 **Compilé, non déployé. Statut : non testé en jeu.**
