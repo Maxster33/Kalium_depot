@@ -92,7 +92,9 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-Aucune (27/09/2026 : tout ce qui est compilé est déployé, voir le tableau ci-dessus).
+- **KG_BuildBattle 0.1.0** (kal-games) + **KV_BuildBattle 0.2.0** (Kanvas), à déployer ensemble (27/09/2026) : bouton
+  Build Battle dans KG_Menu, file publique et parties privées, envoi vers la salle d'attente sur Kanvas par le relais.
+  `relay-token` à remplir à la main dans les deux config.yml. Non testés en jeu.
 
 ## Chantiers en cours
 

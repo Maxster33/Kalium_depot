@@ -30,6 +30,7 @@ public final class KVBuildBattle extends JavaPlugin implements TabExecutor {
     private Arene arene;
     private Lang lang;
     private MenuAdmin menu;
+    private Accueil accueil;
     /** Confirmation de /bbadmin generer : joueur (ou console) -> heure de la demande. */
     private final java.util.Map<String, Long> confirmations = new java.util.HashMap<>();
 
@@ -60,6 +61,10 @@ public final class KVBuildBattle extends JavaPlugin implements TabExecutor {
         arene = new Arene(this);
         arene.protegerMonde();
         getServer().getPluginManager().registerEvents(new Regles(this), this);
+        // 0.2.0 : arrivée des joueurs envoyés par KG_BuildBattle (kal-games).
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        accueil = new Accueil(this);
+        getServer().getPluginManager().registerEvents(accueil, this);
 
         lang = new Lang(this);
         menu = new MenuAdmin(this, lang, new Gui(this, lang));
@@ -100,7 +105,14 @@ public final class KVBuildBattle extends JavaPlugin implements TabExecutor {
                 if (qui instanceof Player p) menu.ouvrir(p, null);
                 else arene.info(qui);
             }
-            case "info" -> arene.info(qui);
+            case "info" -> {
+                arene.info(qui);
+                for (Accueil.Salon s : accueil.salons()) {
+                    qui.sendMessage("§7  Colonne " + (s.colonne + 1) + " : " + (s.type == Accueil.Type.PRIVE
+                            ? "partie privée " + s.code : "file publique " + s.mode()) + ", " + s.joueurs.size() + "/"
+                            + s.places() + " joueurs en salle d'attente");
+                }
+            }
             case "monde" -> {
                 if (qui instanceof Player p) allerAuMonde(p);
             }

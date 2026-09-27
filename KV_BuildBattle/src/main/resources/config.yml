@@ -25,3 +25,12 @@ disposition:
 # (1 par bloc lu, 4 par bloc modifie), pour ne pas bloquer le serveur.
 taille-max: 256
 blocs-par-tick: 10000
+
+# 0.2.0 : arrivee des joueurs envoyes par KG_BuildBattle (kal-games). Leur affectation est lue sur le relais HTTP
+# (KaliumRelay, sur le proxy). Valeurs par defaut dans le code : cles a ajouter a la main dans le config.yml du serveur.
+relay-url: "http://7018.mystrator.com:46199"
+# Jeton du relais : a renseigner UNIQUEMENT dans le config.yml du serveur, jamais ici (depot public, REGLES.md
+# section 2). Meme valeur que "token" dans relay.properties du proxy.
+relay-token: ""
+# Nom Velocity du serveur ou renvoyer un joueur quand toutes les arenes sont occupees.
+serveur-retour: kal-games

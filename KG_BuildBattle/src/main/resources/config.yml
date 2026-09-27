@@ -1,0 +1,18 @@
+# KG_BuildBattle - reglages (cahier des charges : KV_BuildBattle/CAHIER_DES_CHARGES.md)
+# Ce fichier n'est copie qu'a la premiere installation : une nouvelle cle doit etre ajoutee a la main sur le serveur.
+
+# Nom Velocity du serveur ou se joue le Build Battle (velocity.toml du proxy).
+serveur: Kanvas
+
+# Equipes de 1 a 4 joueurs, 8 equipes au plus par partie (une colonne de 8 boites sur Kanvas).
+equipes-max: 8
+
+# Une partie privee encore listee apres ce delai (minutes) est retiree de la liste (0 = jamais).
+expiration-liste-minutes: 30
+
+# Relais HTTP (KaliumRelay, sur le proxy) : l'affectation du joueur (file publique ou partie privee) y est deposee
+# avant son envoi, et relue par KV_BuildBattle a son arrivee sur Kanvas.
+relay-url: "http://7018.mystrator.com:46199"
+# Jeton du relais : a renseigner UNIQUEMENT dans le config.yml du serveur, jamais ici (depot public, REGLES.md
+# section 2). Meme valeur que "token" dans relay.properties du proxy.
+relay-token: ""

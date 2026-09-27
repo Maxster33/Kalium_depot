@@ -4,6 +4,25 @@ Serveur Kanvas. Cahier des charges (commun avec KG_BuildBattle) : `KV_BuildBattl
 KLM_Menu (menus, catalogue « Interfaces » ; API inchangée depuis 2.0.0, la version en place sur Kanvas) et de
 WorldGuard (FAWE fournit l'API WorldEdit).
 
+## 0.2.0 - accueil des joueurs envoyés par KG_BuildBattle (27/09/2026)
+
+Demande de LeKiwi06 : la partie kal-games « comme pour le Bingo » (KG_BuildBattle 0.1.0). Empilée sur 0.1.0 pas
+encore testée, à sa demande.
+- À la connexion, l'affectation est lue sur le relais (`buildbattle-<uuid>`, 3 essais à 1 s d'intervalle). Sans
+  affectation (joueur venu pour les plots), rien ne change.
+- Le joueur rejoint la **salle d'attente** de sa partie, une par colonne de l'arène : partie privée = même identifiant ;
+  file publique = partie publique de la même taille d'équipe qui a encore de la place ; sinon une nouvelle partie sur
+  une colonne libre. Plus de colonne libre : message et renvoi sur kal-games (`serveur-retour`).
+- Salle pas encore capturée : le joueur arrive au point d'apparition du monde `buildbattle` (message).
+- Un joueur qui se déconnecte ou quitte le monde `buildbattle` quitte sa salle ; une salle vide libère sa colonne.
+- `/bbadmin info` liste les salles d'attente occupées.
+- Nouvelles clés (valeurs par défaut dans le code) : `relay-url`, `relay-token` (vide : **à remplir à la main** sur le
+  serveur, même valeur que `token` de `relay.properties` du proxy), `serveur-retour` (`kal-games`).
+- Pas encore (étape 2) : compte à rebours, lancement par l'hôte, thème, construction, votes ; le joueur garde son
+  inventaire et les objets de Kanvas (étoile de KV_Menu, boussole).
+
+**À déployer avec KG_BuildBattle 0.1.0 (kal-games). Compilé, non déployé. Statut : non testé en jeu.**
+
 ## 0.1.0 - étape 1 : arène (27/09/2026)
 
 Demande de LeKiwi06 : « j'ai déjà construit l'arène du build battle, ce sera dans un monde à part [...] il faudra me
