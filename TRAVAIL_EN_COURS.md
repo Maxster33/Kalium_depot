@@ -16,12 +16,11 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-
-
+- KG_BuildBattle — LeKiwi06 — depuis le 2026-09-27 09:47 — nouveau plugin : Build Battle côté kal-games (file publique, parties privées, envoi vers Kanvas)
+- KV_BuildBattle — LeKiwi06 — depuis le 2026-09-27 09:47 — nouveau plugin : Build Battle côté Kanvas (arène, terrains, votes)
 
 ## Requis parfois
 
-
-
+- KV_Plots — LeKiwi06 — depuis le 2026-09-27 09:47 — Build Battle : reprise du vote, du gel des terrains et des règles du monde (retouche éventuelle)
 
 ## Demandes
