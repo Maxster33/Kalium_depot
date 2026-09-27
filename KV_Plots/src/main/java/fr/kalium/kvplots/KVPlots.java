@@ -52,6 +52,9 @@ public final class KVPlots extends JavaPlugin {
         String nomMonde = getConfig().getString("monde", "Kanvas");
         monde = getServer().getWorld(nomMonde);
         if (monde == null) monde = new WorldCreator(nomMonde).createWorld(); // charge le dossier existant
+        // 1.4.1 : pas de ticks aléatoires (LeKiwi06, 27/09/2026 : la glace fondait) : glace, neige, feuilles, cultures restent
+        // telles quelles dans les plots.
+        if (monde != null) monde.setGameRule(org.bukkit.GameRules.RANDOM_TICK_SPEED, 0);
         grille = new Grille(getConfig().getInt("grille.origine-x", 0), getConfig().getInt("grille.origine-z", 0),
                 getConfig().getInt("grille.taille-plot", 49), getConfig().getInt("grille.largeur-route", 9),
                 getConfig().getInt("grille.colonne-min", -5), getConfig().getInt("grille.colonne-max", 5),

@@ -65,6 +65,8 @@ final class Jeu implements Listener {
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build();
     private final Map<Integer, Partie> parColonne = new LinkedHashMap<>();
     private final Map<UUID, Partie> parJoueur = new HashMap<>();
+    /** Heure d'arrivée en salle d'attente (protection contre un point de chute appliqué juste après, voir onTeleport). */
+    private final Map<UUID, Long> arrivees = new HashMap<>();
 
     Jeu(KVBuildBattle plugin, Gui gui) {
         this.plugin = plugin;
@@ -251,6 +253,7 @@ final class Jeu implements Listener {
         joueur.teleport(l);
         joueur.setAllowFlight(true);
         inventaires.mettreDeCote(joueur);
+        arrivees.put(joueur.getUniqueId(), System.currentTimeMillis());
         parJoueur.put(joueur.getUniqueId(), partie);
         partie.accueillir(joueur);
     }
@@ -326,6 +329,7 @@ final class Jeu implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
+        arrivees.remove(e.getPlayer().getUniqueId());
         sortir(e.getPlayer());
     }
 
@@ -388,6 +392,25 @@ final class Jeu implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPickup(EntityPickupItemEvent e) {
         if (e.getEntity() instanceof Player j && fige(j)) e.setCancelled(true);
+    }
+
+    /**
+     * 0.3.1 : dans les 5 s qui suivent l'arrivée en salle d'attente, une téléportation hors du monde du Build Battle est
+     * annulée : un point de chute de KLM_Portal (« default-arrival » en coordonnées sur Kanvas), appliqué en même temps
+     * que l'arrivée, sortirait sinon le joueur de sa partie.
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onTeleport(org.bukkit.event.player.PlayerTeleportEvent e) {
+        Long arrivee = arrivees.get(e.getPlayer().getUniqueId());
+        if (arrivee == null) return;
+        if (System.currentTimeMillis() - arrivee > 5000L) {
+            arrivees.remove(e.getPlayer().getUniqueId());
+            return;
+        }
+        if (parJoueur.containsKey(e.getPlayer().getUniqueId()) && e.getTo() != null
+                && !plugin.monde().equals(e.getTo().getWorld())) {
+            e.setCancelled(true);
+        }
     }
 
     /** Pendant la construction on reste dans sa boîte ; pendant les votes et les résultats, dans la boîte montrée. */
