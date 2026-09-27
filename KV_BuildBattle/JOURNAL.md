@@ -21,7 +21,7 @@ encore testée, à sa demande.
 - Pas encore (étape 2) : compte à rebours, lancement par l'hôte, thème, construction, votes ; le joueur garde son
   inventaire et les objets de Kanvas (étoile de KV_Menu, boussole).
 
-**À déployer avec KG_BuildBattle 0.1.0 (kal-games). Compilé, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 27/09/2026 (13:55) avec KG_BuildBattle 0.1.0 (0.1.0 dans `_removed-kv_buildbattle-0.1.0/`). Statut : non testé en jeu.**
 
 ## 0.1.0 - étape 1 : arène (27/09/2026)
 
@@ -62,4 +62,4 @@ Limites connues :
 - Une nouvelle capture de la boîte ne touche pas l'arène déjà générée : il faut « Générer l'arène » à nouveau.
 - La boîte d'origine (monde `Kanvas`) n'est pas touchée.
 
-**Déployé sur Kanvas le 27/09/2026 (10:40). Statut : non testé en jeu.**
+**Déployé sur Kanvas le 27/09/2026 (10:40), remplacé par 0.2.0 à 13:55. Statut : non testé en jeu.**
