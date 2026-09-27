@@ -13,7 +13,9 @@ partie, génération de l'arène, copies de la salle d'attente), puis celles de 
 - Les mobs restés dans une boîte depuis une partie jouée en 0.3.4 disparaissent à la fin de la prochaine partie sur
   cette boîte, ou tout de suite avec « Générer l'arène ».
 
-**Déployé sur Kanvas le 28/09/2026 (01:17, 0.3.4 dans `_removed-kv_buildbattle-0.3.4/`). Statut : non testé en jeu.**
+**Déployé sur Kanvas le 28/09/2026 (01:17, 0.3.4 dans `_removed-kv_buildbattle-0.3.4/`). Statut : testé et validé par LeKiwi06 le
+28/09/2026 (« parfait, tu peux tout valider ») : la partie complète (étapes 1 à 3 du cahier des charges) avec les corrections
+0.3.1 à 0.3.5.**
 
 ## 0.3.4 - mobs figés, rien ne dépasse de la zone (27/09/2026)
 

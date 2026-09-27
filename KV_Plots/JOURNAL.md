@@ -11,7 +11,7 @@ Demande de LeKiwi06 (glace fondue dans l'arène du Build Battle, posée dans le 
 dans les plots. Aucune autre modification.
 
 **Déployé sur Kanvas le 27/09/2026 (19:59, 1.4.0 dans `_removed-kv_plots-1.4.0/`) avec KV_BuildBattle 0.3.1, KLM_Menu 2.3.0 et
-KLM_Portal 1.2.0. Statut : non testé en jeu.**
+KLM_Portal 1.2.0. Statut : testé et validé par LeKiwi06 le 28/09/2026.**
 
 ## 1.4.0 - signalements, concours de build (26/09/2026)
 

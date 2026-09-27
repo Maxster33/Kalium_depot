@@ -16,13 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KG_BuildBattle — LeKiwi06 — depuis le 2026-09-27 09:47 — nouveau plugin : Build Battle côté kal-games (file publique, parties privées, envoi vers Kanvas)
-- KV_BuildBattle — LeKiwi06 — depuis le 2026-09-27 09:47 — nouveau plugin : Build Battle côté Kanvas (arène, terrains, votes)
 
 ## Requis parfois
 
-- KV_Plots — LeKiwi06 — depuis le 2026-09-27 09:47 — Build Battle : reprise du vote, du gel des terrains et des règles du monde (retouche éventuelle) ; 1.4.1 : randomTickSpeed à 0
-- KLM_Menu — LeKiwi06 — depuis le 2026-09-27 19:58 — déploiement de la 2.3.0 sur Kanvas (points de chute), pas de changement de code
-- KLM_Portal — LeKiwi06 — depuis le 2026-09-27 19:58 — installation de la 1.2.0 sur Kanvas (points de chute), pas de changement de code
 
 ## Demandes

@@ -371,3 +371,42 @@ dans `_removed-config-2026-09-24/` (racine de chaque serveur) et `plugins/_remov
 - Kanvas : cahier `KV_Plots/CAHIER_DES_CHARGES.md` en local chez LeKiwi06 (non poussé), questions restantes, tri des
   plugins, zone Build Battle à sauvegarder.
 - Bingo : tester Nether / End et 2 parties simultanées.
+
+---
+
+## Compte rendu de LeKiwi06 retiré de REPRISE_PROJET.md le 28/09/2026
+
+### 2026-09-26 (soir) — LeKiwi06
+
+*(Session du 26/09/2026, de 18 h à 21 h, testée le 27/09/2026. Fin de session : toutes les réservations libérées.)*
+
+**Lobby : ConditionalEvents et PyxelRegions remplacés par KLM_Portal (testé et confirmé par LeKiwi06)**
+- **KLM_Portal** (nouveau plugin réseau, `KLM_Portal/JOURNAL.md`) : un portail = une région WorldGuard reliée à une
+  destination de KLM_Menu ; désactiver le bouton dans menu > Paramètres désactive le portail (message + recul).
+  Interfaces dans la boussole (Interfaces > KLM_Portal) : « Ajouter un portail » et « Points de chute ». 4 portails
+  au lobby (`portal_event`, `portal_kal_games`, `portal_kixster`, `portal_kanvas`, monde `Lobby Kalium`).
+- Arrivée au lobby : centre `7.5 67 39.5` (reprend l'événement `center_lobby` de ConditionalEvents).
+- Effets de zone : speed 6 et jump_boost 2 dans la région WorldGuard `lobby` (reprend `lobby_effects`, sans la
+  vision nocturne, non demandée).
+- KLM_Menu 2.2.0 / 2.3.0 : API des destinations et attente avant changement de serveur (points de chute).
+- ConditionalEvents 4.79.2 et PyxelRegions 1.2.2 rangés dans `_removed-…` (dossiers de données laissés).
+
+**Kal-Games : KG_Parkour 1.1.0 (testé et confirmé par LeKiwi06)** : chrono de 30 s qui s'allonge à chaque checkpoint
+(+30 s, +60 s à partir du 7e ; à zéro le joueur tombe au temps), plus de collision entre coureurs, adversaires à
+moins de 3 blocs vus sous forme de bottes en cuir colorées.
+
+**À faire plus tard**
+- **`relay-token`** à remplir dans `plugins/KLM_Portal/config.yml` du lobby (le `token` de `relay.properties` du
+  proxy) pour que les points de chute vers d'autres serveurs soient transmis ; installer KLM_Menu 2.3.0 +
+  KLM_Portal 1.2.0 sur un serveur pour qu'il applique les points de chute qu'on lui envoie. (27/09/2026 : KLM_Menu 2.3.0 + KLM_Portal 1.2.0 installés sur Kanvas)
+- Sur le lobby, non retirés (pas demandé) : VelocityCommandForward (plus utilisé par les portails), dossiers de
+  données `ConditionalEvents/` et `PyxelRegions/`. Avant ConditionalEvents, `/l` et `/lobby` au lobby ramenaient au
+  centre : KLM_Menu répond maintenant « Tu es déjà au lobby » (à trancher).
+- Visuel des portails désactivés (prévu plus tard par LeKiwi06).
+- **KG_Parkour** (cahier des charges) : réglages du chrono par checkpoint et par map (panneau admin), barème,
+  contre-la-montre avec fantôme ; bottes et anti-collision à revérifier avec des joueurs Bedrock.
+- Repris de la session précédente : tester KG_Bingo 1.5.1 et KG_BingoGame 0.8.2 (bonus du 1er, Nether en Normal,
+  3-4 équipes) ; équilibrage des barèmes (`EQUILIBRAGE_POINTS.md`) ; Kanvas (limites d'entités, agrandissement moyen →
+  grand, classements, extension du monde) ; sauvegardes des mondes ; dossiers gardés volontairement (plugins retirés de
+  Kanvas le 26/09, dossiers de l'Event, grosses sauvegardes, `plugins/KG_BingoGame/icons/26.2-3d/` sur Serveur Jeux).
+

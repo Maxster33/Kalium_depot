@@ -40,7 +40,8 @@ Bingo sur 7015.
 | **KG_BoatRace**, **KG_Parkour** | Jeux (en cours, voir leurs cahiers des charges). Chacun : son barème, son interface admin, son interface joueur |
 | **KG_PvpKit**, **KG_Rush** | Jeux à sortir ensuite (d'abord les jeux les plus joués ; le Rush, jeu de niche, sera peaufiné plus tard) |
 | **KG_Bingo** / **KG_BingoGame** | Déjà séparés |
-| Hunger Games, Manhunt, Build Battle | En attente (aujourd'hui simples emplacements sans moteur dans KalGames) |
+| **KG_BuildBattle** (kal-games) + **KV_BuildBattle** (Kanvas) | Build Battle (fait et validé le 28/09/2026) : file et parties sur kal-games, jeu sur Kanvas, comme le Bingo |
+| Hunger Games, Manhunt | En attente (aujourd'hui simples emplacements sans moteur dans KalGames) |
 
 ## Modération (plus tard, session dédiée)
 
