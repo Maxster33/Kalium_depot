@@ -20,7 +20,7 @@ et pas trop sur le même thème (le Nether et l'End ça va dans une liste de 200
   Tapis volant, Boussole, Épouvantail, Squelette, Pique-nique, Bijou, Arène). **Liste validée par LeKiwi06 le 27/09/2026.**
 - `config.yml` fourni : `themes: []` (vide = liste intégrée) ; une autre liste peut y être écrite sur le serveur.
 
-**Compilé, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 27/09/2026 (21:08, avec les changements de 0.3.2 ; 0.3.1 dans `_removed-kv_buildbattle-0.3.1/`). Statut : non testé en jeu.**
 
 ## 0.3.2 - barre d'action, salle d'attente en mode aventure (27/09/2026)
 
@@ -33,7 +33,7 @@ Retours de LeKiwi06 : « les informations sont marquées en boss bar au lieu de 
 - Joueurs d'une partie **invincibles** et **sans faim**, à toutes les phases ; une chute dans le vide ramène au point
   d'apparition de la salle (ou de la boîte où le joueur doit être).
 
-**Compilé, non déployé. Statut : non testé en jeu.**
+**Pas déployée seule : comprise dans 0.3.3.**
 
 ## 0.3.1 - la glace ne fond plus (27/09/2026)
 
