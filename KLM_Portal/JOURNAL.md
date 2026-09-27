@@ -95,4 +95,4 @@ de WorldGuard, déjà réservé) : choix de Claude, signalé.
 
 **Déployé sur le lobby le 26/09/2026 20:54** (serveur éteint, accord de LeKiwi06) ; 1.1.0 et son `config.yml` dans
 `/plugins/_removed-klm_portal-1.1.0/`. Section `region-effects` (région `lobby`, `speed: 6`, `jump_boost: 2`) ajoutée à
-la fin du `config.yml` du lobby, le reste du fichier inchangé. **Statut : non testé en jeu.**
+la fin du `config.yml` du lobby, le reste du fichier inchangé. **Testé et confirmé par LeKiwi06 le 27/09/2026.**

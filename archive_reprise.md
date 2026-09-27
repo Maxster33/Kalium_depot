@@ -304,3 +304,70 @@ dans `_removed-config-2026-09-24/` (racine de chaque serveur) et `plugins/_remov
 - Erreurs de Claude, corrigées : un journal envoyé à la place d'un jar (chemin avec espaces, contourné par des
   scripts WinSCP) ; secret Velocity affiché pendant une vérification ; méthode supprimée par erreur lors d'une
   modification (vue à la compilation).
+
+---
+
+## Comptes rendus de LeKiwi06 retirés de REPRISE_PROJET.md le 27/09/2026
+
+### 2026-09-26 — LeKiwi06
+
+*(Session de la nuit du 26/09/2026, de 0 h à 6 h 45. Fin de session : toutes les réservations libérées.)*
+
+**Kanvas (serveur de plots en créatif) : testé et confirmé par LeKiwi06**
+- Cahier des charges complété (`KV_Plots/CAHIER_DES_CHARGES.md`) ; monde `New World (2)` renommé `Kanvas` ; grille de
+  121 plots générée (plot de référence : coin -107 / -57, plots 49 x 49, routes 9).
+- KV_Plots 1.4.0 et KV_Menu 1.3.0 : réservation (moyen / grand), éditeurs, protection WorldGuard, remise à zéro /
+  suppression, créatif gardé, validation, votes aux terracottas, déblocage à 100 points, titre / description, tableau
+  sur le côté, visites, signalements, concours de build ; étoile du Nether (menu) en case 4.
+- FAWE Paper (la variante Bukkit ne marchait pas), limites, permissions LuckPerms du groupe `default`, baguette de
+  navigation = vide de structure ; tri des plugins de Kanvas.
+
+**Kal-Games / Serveur Jeux**
+- Testés : KG_Parkour 1.0.0 + KalGames 1.20.0 (le Parcours sort de KalGames) ; KG_BingoGame 0.8.0 + KG_Bingo 1.5.0
+  (barème du Bingo doublé, points du Bingo dans les classements).
+- **KG_BingoGame 0.8.2 déployé, non testé** : bonus du 1er = moitié des points de base ; partie à 4 équipes (joueurs
+  non téléportés : reconnexion et joueurs sans équipe ; barre d'action courte à partir de 3 équipes) ; icônes de la
+  carte (blocs en 3D comme dans l'inventaire, tout en 22 pixels) ; 7 objets courants du Nether passés en Normal
+  (`objectives.yml` du serveur remplacé).
+- Nettoyage : nouvelle règle (`REGLES.md` 4.3 : `_removed-…` supprimables à 3 versions ou plus de la version en
+  service, suppression par l'humain) ; 85 dossiers supprimés par LeKiwi06 avec des scripts WinSCP préparés par Claude.
+
+**À faire plus tard** (demande de LeKiwi06, 26/09/2026)
+- **Tester KG_Bingo 1.5.1** (Kal-Games) : les parties qui ne démarrent pas quittent la liste au bout de 30 min (message
+  dans la console) ; les parties bloquées de la nuit ont disparu au redémarrage.
+- **Tester KG_BingoGame 0.8.2** (icônes de la carte : confirmées) : bonus du 1er,
+  Nether en Normal, partie à 3-4 équipes (barre d'action, joueur sans équipe placé, reconnexion pendant la
+  préparation).
+- **Équilibrage des barèmes** (`EQUILIBRAGE_POINTS.md`) : barème du Parcours (jouer quelques parties « à fond » pour
+  mesurer), PvP Kit, Rush, recalcul du passé (dont les anciennes parties de Bingo, jamais créditées).
+- **Kanvas** : limites d'entités et mobs sans IA ; agrandissement moyen → grand (et « dupliquer en version grande ») ;
+  classements KV_ScoreBoards (solo / duo / équipe, général et du mois) ; extension automatique du monde.
+- **KG_Parkour** (cahier des charges) : chrono allongé à chaque checkpoint, barème, contre-la-montre avec fantôme,
+  anti-collision.
+- **Sauvegardes des mondes** (voir « Points ouverts »).
+- Dossiers gardés volontairement : plugins retirés de Kanvas le 26/09 (à supprimer dans quelques jours), dossiers de
+  l'Event (voir avec Maxster33), grosses sauvegardes datées (tant que les sauvegardes des mondes ne sont pas réglées) ;
+  dossier `plugins/KG_BingoGame/icons/26.2-3d/` sur Serveur Jeux (plus lu depuis 0.8.2).
+
+### 2026-09-25 (soir) — LeKiwi06
+
+*(Session du 25/09/2026 après-midi et soir. Fin de session : réservations KG_BingoGame et KalGames libérées.)*
+
+**Déployé et testé (« tout est bon »)**
+- KalGames 1.19.0 + KG_ScoreBoards 1.5.0 : plus de limite de parties privées, chaque attribution de points journalisée,
+  `/classements verifier [jours]` et `/classements crediter` (points de course non comptés recrédités).
+- KalGames 1.19.1 : aux points de contrôle (Parcours et courses), le retour garde l'orientation de la caméra du joueur
+  au moment du passage (correctif mis dans KalGames en attendant KG_Parkour).
+- KG_BingoGame 0.7.2 → 0.7.8 : préparation des maps débloquée (plus de blocage à 0 %), succès limités à la partie ;
+  salle d'attente invincible, nether star bloquée, plaques de pression, entités recopiées (invulnérables, avec leur
+  nom), barrières non recopiées ; positions de capture gardées dans `plugins/KG_BingoGame/lobby_capture.yml`
+  (`/bingoadmin lobby capture` et `info` marchent aussi depuis la console) ; XP remise à zéro au lancement et en fin de
+  partie, convertie en bonus (0,1 point par niveau, solo et équipe, sans cumul ni multiplicateur).
+- Salle d'attente du Bingo (monde `bingo_lobby`) : coin 1 `-69 63 -14`, coin 2 `-5 108 67`, apparition
+  `-13.49 79 2.77`.
+
+**À faire / à savoir**
+- KG_Parkour à créer (cahier des charges dans le dépôt) ; suite de KG_BoatRace (étapes 4, 5, 6).
+- Kanvas : cahier `KV_Plots/CAHIER_DES_CHARGES.md` en local chez LeKiwi06 (non poussé), questions restantes, tri des
+  plugins, zone Build Battle à sauvegarder.
+- Bingo : tester Nether / End et 2 parties simultanées.

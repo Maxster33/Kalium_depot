@@ -16,14 +16,11 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KG_Parkour — LeKiwi06 — depuis le 2026-09-26 20:50 — chrono qui s'allonge à chaque CP, anti-collision, invisibilité (bottes) près d'un adversaire
-- KLM_Portal — LeKiwi06 — depuis le 2026-09-26 18:15 — nouveau plugin : portails (régions WorldGuard) liés aux destinations de KLM_Menu
 
 
 
 ## Requis parfois
 
-- KLM_Menu — LeKiwi06 — depuis le 2026-09-26 20:50 — 2.3.0 déployé sur le lobby, en attente de test (points de chute)
 
 
 

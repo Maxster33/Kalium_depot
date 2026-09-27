@@ -98,4 +98,5 @@ la 2.0.0 (la 2.1.0 n'est que sur Kal-Games). **Déployé sur le lobby le 26/09/2
 - `serverIds()` : noms des serveurs du menu de ce serveur (sans les entrées locales).
 
 **Déployé sur le lobby le 26/09/2026 19:37** avec KLM_Portal 1.1.0 (2.2.0 dans `/plugins/_removed-klm_menu-2.2.0/`).
-**Statut : non testé en jeu.**
+**Testé et confirmé par LeKiwi06 le 26-27/09/2026** (boussole, `/lobby`, portails, arrivée au centre du lobby) ;
+points de chute vers d'autres serveurs non testés (`relay-token` vide, KLM_Portal absent des autres serveurs).

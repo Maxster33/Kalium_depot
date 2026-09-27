@@ -52,4 +52,4 @@ anti-collision à tester sur Bedrock. Le délai de grâce de 30 s après le 1er 
 
 **Déployé seul sur Kal-Games (7001) le 26/09/2026 20:56** (serveur éteint, accord de LeKiwi06) ; 1.0.0 dans
 `/plugins/_removed-kg_parkour-1.0.0/`. Nouveaux réglages : valeurs par défaut du code tant qu'ils ne sont pas changés
-dans le panneau admin. **Statut : non testé en jeu.**
+dans le panneau admin. **Testé et confirmé par LeKiwi06 le 27/09/2026** (« tout fonctionne bien »).

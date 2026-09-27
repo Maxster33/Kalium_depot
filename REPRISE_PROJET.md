@@ -81,8 +81,8 @@ Copie exacte de chaque jar dans `jars-deployes/`.
 | Serveur | Jar | Test en jeu |
 |---|---|---|
 | **Serveur Jeux** (`serveur-jeux`, Bingo) | copie complète de Kixster du 24/09/2026 + **`KG_BingoGame-0.8.2.jar`** (26/09/2026 06:27 : icônes de la carte en 22 pixels, blocs en 3D ; icônes testées et confirmées par LeKiwi06 le 26/09/2026 ; 0.8.1 dans `_removed-kg_bingogame-0.8.1/` ; dossier `plugins/KG_BingoGame/icons/26.2-3d/` à supprimer par l'humain) ; 0.8.1 (06:15 : bonus du 1er = moitié des points, joueurs non téléportés corrigés, barre d'action courte à 3-4 équipes, icônes de la carte en 3D, 7 objets du Nether en Normal (`objectives.yml` du serveur remplacé) ; non testé ; 0.8.0 et l'ancien `objectives.yml` dans `_removed-kg_bingogame-0.8.0/`) ; 0.8.0 (barème doublé, résultats envoyés au hub, testé) ; 0.7.8 (25/09/2026 : succès limités à la partie, XP remise à zéro et convertie en points bonus (0,1/niveau), préparation des maps corrigée et 3 fois plus rapide, salle d'attente protégée avec entités recopiées et sans barrières, positions de capture gardées dans `plugins/KG_BingoGame/lobby_capture.yml` ; versions précédentes dans les `_removed-kg_bingogame-…`) + `KLM_Menu-2.0.0.jar` (boussole désactivée) + Floodgate, BedrockSkinRestorer, VelocityCommandForward. Config : `network.self-server-name: "serveur-jeux"`, `network.kal-games-server-name: "kal-games"`, `lobby.max-size: 256`, `lobby.blocks-per-tick: 10000`, `instances.pregeneration-radius-blocks: 150`, `pregeneration-stagger-seconds: 5`, `pregeneration-chunks-per-second: 40` (25/09/2026) | 0.6.0 testée et confirmée par LeKiwi06 le 24/09/2026 (préparation des maps fluide, partie complète, Bedrock) ; à confirmer : Nether / End, 2 parties simultanées |
-| **Kal-Games** (`kal-games`, hub, machine 7001, ex KalGames2) | copie complète de kal-games du 24/09/2026, puis (LeKiwi06) : **`KalGames-1.20.0.jar`** (26/09/2026 04:41 : Parcours sorti dans KG_Parkour ; 1.19.1 et copies de config.yml, minigames.yml, arenas.yml dans `_removed-kalgames-1.19.1/`) + **`KG_Parkour-1.1.0.jar`** (26/09/2026 20:56 : chrono qui s'allonge à chaque checkpoint, anti-collision, bottes de proximité ; non testé ; 1.0.0 dans `_removed-kg_parkour-1.0.0/`, Parcours sorti de KalGames tel quel, testé et confirmé par LeKiwi06 le 26/09/2026) + **`KG_BoatRace-1.4.1.jar`** (course de bateau sortie de KalGames) + **`KG_ScoreBoards-1.5.0.jar`** (journal des parties, points décimaux, `/classements verifier` et `crediter`) + `KG_Menu-1.0.0.jar` + `KLM_Menu-2.1.0.jar` + `KG_Bingo-1.5.1.jar` (26/09/2026 06:56 : parties listées plus de 30 min retirées de la liste ; non testé ; 1.5.0 dans `_removed-kg_bingo-1.5.0/`) ; 1.5.0 (05:23 : points du Bingo dans les classements ; testé et confirmé par LeKiwi06 le 26/09/2026 ; 1.4.0 dans `_removed-kg_bingo-1.4.0/` ; `bingo.server-name: serveur-jeux` ; pseudo de l'hôte corrigé dans la liste) ; anciens jars et configs dans les `_removed-…` de chaque plugin ; + Floodgate, BedrockSkinRestorer, VelocityCommandForward, GrimAC | testé et confirmé par LeKiwi06 les 24 et 25/09/2026 (menus, boussole, course de bateau : checkpoints, km/h, classement en direct, écarts, barème, hors-piste, anti-collision Java et Bedrock ; Parkour, classements, Bingo) ; non testé : Rush, capture d'arène |
-| lobby | **`KLM_Menu-2.3.0.jar` + `KLM_Portal-1.1.0.jar`** (26/09/2026 19:37 : points de chute, arrivée au centre `7.5 67 39.5` testée et confirmée par LeKiwi06 ; `relay-token` de KLM_Portal encore vide ; **`KLM_Portal-1.2.0.jar`** déployé à 20:54 (effets de zone speed 6 / jump_boost 2 dans la région `lobby` ; non testé ; 1.1.0 dans `_removed-klm_portal-1.1.0/`) ; 2.2.0 / 1.0.0 dans `_removed-…`) ; avant : `KLM_Menu-2.2.0.jar` + `KLM_Portal-1.0.0.jar` (26/09/2026 18:25, LeKiwi06 : portails en régions WorldGuard reliés aux destinations du menu, interface « Ajouter un portail » ; ConditionalEvents 4.79.2 et PyxelRegions 1.2.2 rangés dans `_removed-…`, dossiers de données laissés ; 2.0.0 dans `_removed-klm_menu-2.0.0/` ; testés et confirmés par LeKiwi06 le 26/09/2026 ; 4 portails. KLM_Menu 2.3.0 + KLM_Portal 1.1.0 déployés ensuite) ; avant : `KLM_Menu-2.0.0.jar` (destinations au 24/09/2026 : `kixster` (désactivée), `kal-games`, `serveur-jeux`, `kal-test-dev`, `event` (désactivée) ; activer / désactiver en jeu : menu > Paramètres) | non testé (catalogue « Interfaces » ; nouvelles destinations) |
+| **Kal-Games** (`kal-games`, hub, machine 7001, ex KalGames2) | copie complète de kal-games du 24/09/2026, puis (LeKiwi06) : **`KalGames-1.20.0.jar`** (26/09/2026 04:41 : Parcours sorti dans KG_Parkour ; 1.19.1 et copies de config.yml, minigames.yml, arenas.yml dans `_removed-kalgames-1.19.1/`) + **`KG_Parkour-1.1.0.jar`** (26/09/2026 20:56 : chrono qui s'allonge à chaque checkpoint, anti-collision, bottes de proximité ; testé et confirmé par LeKiwi06 le 27/09/2026 ; 1.0.0 dans `_removed-kg_parkour-1.0.0/`, Parcours sorti de KalGames tel quel, testé et confirmé par LeKiwi06 le 26/09/2026) + **`KG_BoatRace-1.4.1.jar`** (course de bateau sortie de KalGames) + **`KG_ScoreBoards-1.5.0.jar`** (journal des parties, points décimaux, `/classements verifier` et `crediter`) + `KG_Menu-1.0.0.jar` + `KLM_Menu-2.1.0.jar` + `KG_Bingo-1.5.1.jar` (26/09/2026 06:56 : parties listées plus de 30 min retirées de la liste ; non testé ; 1.5.0 dans `_removed-kg_bingo-1.5.0/`) ; 1.5.0 (05:23 : points du Bingo dans les classements ; testé et confirmé par LeKiwi06 le 26/09/2026 ; 1.4.0 dans `_removed-kg_bingo-1.4.0/` ; `bingo.server-name: serveur-jeux` ; pseudo de l'hôte corrigé dans la liste) ; anciens jars et configs dans les `_removed-…` de chaque plugin ; + Floodgate, BedrockSkinRestorer, VelocityCommandForward, GrimAC | testé et confirmé par LeKiwi06 les 24 et 25/09/2026 (menus, boussole, course de bateau : checkpoints, km/h, classement en direct, écarts, barème, hors-piste, anti-collision Java et Bedrock ; Parkour, classements, Bingo) ; non testé : Rush, capture d'arène |
+| lobby | **`KLM_Menu-2.3.0.jar` + `KLM_Portal-1.1.0.jar`** (26/09/2026 19:37 : points de chute, arrivée au centre `7.5 67 39.5` testée et confirmée par LeKiwi06 ; `relay-token` de KLM_Portal encore vide ; **`KLM_Portal-1.2.0.jar`** déployé à 20:54 (effets de zone speed 6 / jump_boost 2 dans la région `lobby` ; testé et confirmé par LeKiwi06 le 27/09/2026 ; 1.1.0 dans `_removed-klm_portal-1.1.0/`) ; 2.2.0 / 1.0.0 dans `_removed-…`) ; avant : `KLM_Menu-2.2.0.jar` + `KLM_Portal-1.0.0.jar` (26/09/2026 18:25, LeKiwi06 : portails en régions WorldGuard reliés aux destinations du menu, interface « Ajouter un portail » ; ConditionalEvents 4.79.2 et PyxelRegions 1.2.2 rangés dans `_removed-…`, dossiers de données laissés ; 2.0.0 dans `_removed-klm_menu-2.0.0/` ; testés et confirmés par LeKiwi06 le 26/09/2026 ; 4 portails. KLM_Menu 2.3.0 + KLM_Portal 1.1.0 déployés ensuite) ; avant : `KLM_Menu-2.0.0.jar` (destinations au 24/09/2026 : `kixster` (désactivée), `kal-games`, `serveur-jeux`, `kal-test-dev`, `event` (désactivée) ; activer / désactiver en jeu : menu > Paramètres) | non testé (catalogue « Interfaces » ; nouvelles destinations) |
 | proxy | icône de la liste Multijoueur : `server-icon.png` (64 x 64, logo KaLium, 26/09/2026) à la racine ; `KaliumRelay-1.2.0.jar` (26/09/2026 07:21 : `/server` réservé aux admins, liste `admins` de `plugins/kaliumrelay/relay.properties`, LeKiwi06 et Maaxster par défaut ; testé et confirmé par LeKiwi06 le 26/09/2026 ; 1.1.1 dans `_removed-kaliumrelay-1.1.1/`) ; 1.1.1 (déployé le 24/09/2026) | relais confirmé le 24/09/2026 en 1.1.0 ; démarrage 1.1.1 vérifié dans le journal ; reconnexion directe non confirmée |
 | Kanvas (ex Kal-Test-Dev) | `KV_Plots-1.4.0.jar` + `KV_Menu-1.3.0.jar` (26/09/2026 03:45, LeKiwi06 ; signalements, concours de build) ; `KLM_Menu-2.0.0.jar` (24/09/2026) ; FastAsyncWorldEdit **Paper** 2.15.4 (la variante Bukkit ne fonctionnait pas sur Paper 26.2 ; limites `limits.default` réduites, baguette de navigation = vide de structure ; originaux dans `_removed-fastasyncworldedit-config-2026-09-26/`) ; WorldGuard 7.0.19 ; LuckPerms (groupe `default` : permissions FAWE), PlaceholderAPI, ViaVersion / ViaBackwards, floodgate, voicechat 2.6.23 ; monde principal `Kanvas` (`level-name=Kanvas`). **Tri du 26/09/2026** : KaliumCore 1.4.0, PlayerKits2, GrimAC, ConditionalEvents, JEIRecipeFix, Geyser-Spigot, PyxelRegions rangés dans `plugins/_removed-<plugin>-<version>/` (dossiers de données laissés en place). Anciens dossiers `_removed-kv_plots-…` / `kv_menu-…` supprimés le 26/09/2026 par LeKiwi06 (règle des 3 versions) ; anciens `_removed-kaliumcore-…` supprimés aussi. `PlaceholderAPIScoreboardObjectivesPlaceholder.jar` (extension PlaceholderAPI qui ne se chargeait pas, inutilisée) rangé dans `_removed-placeholderapi-scoreboard/` le 26/09/2026 (accord de LeKiwi06) | KV_Plots 1.0.0 à 1.2.0, KV_Menu 1.0.0 et 1.1.0, FAWE : testés et confirmés par LeKiwi06 le 26/09/2026 ; KV_Plots 1.3.0 / 1.3.1 (titre, description, visites, tableau sur le côté) et KV_Menu 1.2.0 testés et confirmés par LeKiwi06 le 26/09/2026 ; tri des plugins vérifié (plus d'erreur au démarrage) ; KV_Plots 1.4.0 et KV_Menu 1.3.0 (signalements, concours de build) testés et confirmés par LeKiwi06 le 26/09/2026 |
 | Kixster (`kixster`) | remis dans l'état d'avant le Bingo le 24/09/2026 : monde d'origine `Kixster SMP` (ex `Kixster SMP_bak`, dernière sauvegarde 23/09 00:11), plugins SMP du 14/09 + WorldEdit 7.4.6-beta (gardé) + `KLM_Menu-2.0.0.jar` (boussole désactivée, `/menu` = alias de `/servers` dans `commands.yml`) ; tout le Bingo rangé dans `/_removed-bingo-2026-09-24/` et `/plugins/_removed-bingo-2026-09-24/` | non testé |
@@ -233,68 +233,39 @@ une recherche, pas une navigation ; autoriser `Textinputhost` (clavier tactile W
 Format : `### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici ; les précédents vont dans
 `archive_reprise.md`.
 
-### 2026-09-26 — LeKiwi06
+### 2026-09-26 (soir) — LeKiwi06
 
-*(Session de la nuit du 26/09/2026, de 0 h à 6 h 45. Fin de session : toutes les réservations libérées.)*
+*(Session du 26/09/2026, de 18 h à 21 h, testée le 27/09/2026. Fin de session : toutes les réservations libérées.)*
 
-**Kanvas (serveur de plots en créatif) : testé et confirmé par LeKiwi06**
-- Cahier des charges complété (`KV_Plots/CAHIER_DES_CHARGES.md`) ; monde `New World (2)` renommé `Kanvas` ; grille de
-  121 plots générée (plot de référence : coin -107 / -57, plots 49 x 49, routes 9).
-- KV_Plots 1.4.0 et KV_Menu 1.3.0 : réservation (moyen / grand), éditeurs, protection WorldGuard, remise à zéro /
-  suppression, créatif gardé, validation, votes aux terracottas, déblocage à 100 points, titre / description, tableau
-  sur le côté, visites, signalements, concours de build ; étoile du Nether (menu) en case 4.
-- FAWE Paper (la variante Bukkit ne marchait pas), limites, permissions LuckPerms du groupe `default`, baguette de
-  navigation = vide de structure ; tri des plugins de Kanvas.
+**Lobby : ConditionalEvents et PyxelRegions remplacés par KLM_Portal (testé et confirmé par LeKiwi06)**
+- **KLM_Portal** (nouveau plugin réseau, `KLM_Portal/JOURNAL.md`) : un portail = une région WorldGuard reliée à une
+  destination de KLM_Menu ; désactiver le bouton dans menu > Paramètres désactive le portail (message + recul).
+  Interfaces dans la boussole (Interfaces > KLM_Portal) : « Ajouter un portail » et « Points de chute ». 4 portails
+  au lobby (`portal_event`, `portal_kal_games`, `portal_kixster`, `portal_kanvas`, monde `Lobby Kalium`).
+- Arrivée au lobby : centre `7.5 67 39.5` (reprend l'événement `center_lobby` de ConditionalEvents).
+- Effets de zone : speed 6 et jump_boost 2 dans la région WorldGuard `lobby` (reprend `lobby_effects`, sans la
+  vision nocturne, non demandée).
+- KLM_Menu 2.2.0 / 2.3.0 : API des destinations et attente avant changement de serveur (points de chute).
+- ConditionalEvents 4.79.2 et PyxelRegions 1.2.2 rangés dans `_removed-…` (dossiers de données laissés).
 
-**Kal-Games / Serveur Jeux**
-- Testés : KG_Parkour 1.0.0 + KalGames 1.20.0 (le Parcours sort de KalGames) ; KG_BingoGame 0.8.0 + KG_Bingo 1.5.0
-  (barème du Bingo doublé, points du Bingo dans les classements).
-- **KG_BingoGame 0.8.2 déployé, non testé** : bonus du 1er = moitié des points de base ; partie à 4 équipes (joueurs
-  non téléportés : reconnexion et joueurs sans équipe ; barre d'action courte à partir de 3 équipes) ; icônes de la
-  carte (blocs en 3D comme dans l'inventaire, tout en 22 pixels) ; 7 objets courants du Nether passés en Normal
-  (`objectives.yml` du serveur remplacé).
-- Nettoyage : nouvelle règle (`REGLES.md` 4.3 : `_removed-…` supprimables à 3 versions ou plus de la version en
-  service, suppression par l'humain) ; 85 dossiers supprimés par LeKiwi06 avec des scripts WinSCP préparés par Claude.
+**Kal-Games : KG_Parkour 1.1.0 (testé et confirmé par LeKiwi06)** : chrono de 30 s qui s'allonge à chaque checkpoint
+(+30 s, +60 s à partir du 7e ; à zéro le joueur tombe au temps), plus de collision entre coureurs, adversaires à
+moins de 3 blocs vus sous forme de bottes en cuir colorées.
 
-**À faire plus tard** (demande de LeKiwi06, 26/09/2026)
-- **Tester KG_Bingo 1.5.1** (Kal-Games) : les parties qui ne démarrent pas quittent la liste au bout de 30 min (message
-  dans la console) ; les parties bloquées de la nuit ont disparu au redémarrage.
-- **Tester KG_BingoGame 0.8.2** (icônes de la carte : confirmées) : bonus du 1er,
-  Nether en Normal, partie à 3-4 équipes (barre d'action, joueur sans équipe placé, reconnexion pendant la
-  préparation).
-- **Équilibrage des barèmes** (`EQUILIBRAGE_POINTS.md`) : barème du Parcours (jouer quelques parties « à fond » pour
-  mesurer), PvP Kit, Rush, recalcul du passé (dont les anciennes parties de Bingo, jamais créditées).
-- **Kanvas** : limites d'entités et mobs sans IA ; agrandissement moyen → grand (et « dupliquer en version grande ») ;
-  classements KV_ScoreBoards (solo / duo / équipe, général et du mois) ; extension automatique du monde.
-- **KG_Parkour** (cahier des charges) : chrono allongé à chaque checkpoint, barème, contre-la-montre avec fantôme,
-  anti-collision.
-- **Sauvegardes des mondes** (voir « Points ouverts »).
-- Dossiers gardés volontairement : plugins retirés de Kanvas le 26/09 (à supprimer dans quelques jours), dossiers de
-  l'Event (voir avec Maxster33), grosses sauvegardes datées (tant que les sauvegardes des mondes ne sont pas réglées) ;
-  dossier `plugins/KG_BingoGame/icons/26.2-3d/` sur Serveur Jeux (plus lu depuis 0.8.2).
-
-### 2026-09-25 (soir) — LeKiwi06
-
-*(Session du 25/09/2026 après-midi et soir. Fin de session : réservations KG_BingoGame et KalGames libérées.)*
-
-**Déployé et testé (« tout est bon »)**
-- KalGames 1.19.0 + KG_ScoreBoards 1.5.0 : plus de limite de parties privées, chaque attribution de points journalisée,
-  `/classements verifier [jours]` et `/classements crediter` (points de course non comptés recrédités).
-- KalGames 1.19.1 : aux points de contrôle (Parcours et courses), le retour garde l'orientation de la caméra du joueur
-  au moment du passage (correctif mis dans KalGames en attendant KG_Parkour).
-- KG_BingoGame 0.7.2 → 0.7.8 : préparation des maps débloquée (plus de blocage à 0 %), succès limités à la partie ;
-  salle d'attente invincible, nether star bloquée, plaques de pression, entités recopiées (invulnérables, avec leur
-  nom), barrières non recopiées ; positions de capture gardées dans `plugins/KG_BingoGame/lobby_capture.yml`
-  (`/bingoadmin lobby capture` et `info` marchent aussi depuis la console) ; XP remise à zéro au lancement et en fin de
-  partie, convertie en bonus (0,1 point par niveau, solo et équipe, sans cumul ni multiplicateur).
-- Salle d'attente du Bingo (monde `bingo_lobby`) : coin 1 `-69 63 -14`, coin 2 `-5 108 67`, apparition
-  `-13.49 79 2.77`.
-
-**À faire / à savoir**
-- KG_Parkour à créer (cahier des charges dans le dépôt) ; suite de KG_BoatRace (étapes 4, 5, 6).
-- Kanvas : cahier `KV_Plots/CAHIER_DES_CHARGES.md` en local chez LeKiwi06 (non poussé), questions restantes, tri des
-  plugins, zone Build Battle à sauvegarder.
-- Bingo : tester Nether / End et 2 parties simultanées.
+**À faire plus tard**
+- **`relay-token`** à remplir dans `plugins/KLM_Portal/config.yml` du lobby (le `token` de `relay.properties` du
+  proxy) pour que les points de chute vers d'autres serveurs soient transmis ; installer KLM_Menu 2.3.0 +
+  KLM_Portal 1.2.0 sur un serveur pour qu'il applique les points de chute qu'on lui envoie.
+- Sur le lobby, non retirés (pas demandé) : VelocityCommandForward (plus utilisé par les portails), dossiers de
+  données `ConditionalEvents/` et `PyxelRegions/`. Avant ConditionalEvents, `/l` et `/lobby` au lobby ramenaient au
+  centre : KLM_Menu répond maintenant « Tu es déjà au lobby » (à trancher).
+- Visuel des portails désactivés (prévu plus tard par LeKiwi06).
+- **KG_Parkour** (cahier des charges) : réglages du chrono par checkpoint et par map (panneau admin), barème,
+  contre-la-montre avec fantôme ; bottes et anti-collision à revérifier avec des joueurs Bedrock.
+- Repris de la session précédente : tester KG_Bingo 1.5.1 et KG_BingoGame 0.8.2 (bonus du 1er, Nether en Normal,
+  3-4 équipes) ; équilibrage des barèmes (`EQUILIBRAGE_POINTS.md`) ; Kanvas (limites d'entités, agrandissement moyen →
+  grand, classements, extension du monde) ; sauvegardes des mondes ; dossiers gardés volontairement (plugins retirés de
+  Kanvas le 26/09, dossiers de l'Event, grosses sauvegardes, `plugins/KG_BingoGame/icons/26.2-3d/` sur Serveur Jeux).
 
 ### 2026-09-25 — Maxster33
 
