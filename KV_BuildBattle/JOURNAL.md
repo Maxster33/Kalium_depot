@@ -45,7 +45,7 @@ l'équipe est partie reste présenté au vote).
 Limites connues : arrêt du serveur en pleine partie : les joueurs récupèrent leur inventaire, mais les zones ne sont pas
 vidées ni figées (les vider en regénérant l'arène) ; points et classements : étape 4.
 
-**Compilé, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 27/09/2026 (14:12, 0.2.0 dans `_removed-kv_buildbattle-0.2.0/`). Statut : non testé en jeu.**
 
 ## 0.2.0 - accueil des joueurs envoyés par KG_BuildBattle (27/09/2026)
 
