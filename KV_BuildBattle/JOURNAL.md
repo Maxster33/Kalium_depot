@@ -11,6 +11,10 @@ et pas trop sur le même thème (le Nether et l'End ça va dans une liste de 200
 - Liste intégrée (`Jeu.THEMES`) portée de 40 à **200 thèmes** courts et ouverts, répartis entre lieux et bâtiments,
   époques, créatures et fantastique, animaux, nourriture, fêtes, métiers, objets, nature et météo, idées abstraites
   (quelques-uns par famille). 5 sont tirés au hasard à chaque partie.
+- Deuxième version, même jour (LeKiwi06 : « trop de propositions sur le thème de la ville ; cabane dans les arbres est trop
+  précis, cabane suffit ») : 25 bâtiments de ville ou thèmes redondants retirés (gratte-ciel, métro, hôpital, école,
+  banque, restaurant...), énoncés raccourcis (Cabane, Forêt, Océan, Île, Voiture, Planète, Égypte...), 25 thèmes
+  d'autres familles ajoutés (Automne, Couleurs, Géométrie, Chaos, Mythologie, Steampunk, Miroir...).
 - `config.yml` fourni : `themes: []` (vide = liste intégrée) ; une autre liste peut y être écrite sur le serveur.
 
 **Compilé, non déployé. Statut : non testé en jeu.**
