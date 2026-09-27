@@ -17,7 +17,7 @@ et pas trop sur le même thème (le Nether et l'End ça va dans une liste de 200
   d'autres familles ajoutés (Automne, Couleurs, Géométrie, Chaos, Mythologie, Steampunk, Miroir...).
 - Troisième version (LeKiwi06) : 14 retirés (Royaume, Soleil, Lune, Étoiles, Nuage, Ninja, Détective, Espion, Vampire,
   Nouvel an, Carnaval, Emoji, Paix, Amitié), 14 ajoutés (Nid, Coquillage, Plume, Tortue, Pingouin, Totem, Potion,
-  Tapis volant, Boussole, Épouvantail, Squelette, Pique-nique, Bijou, Arène).
+  Tapis volant, Boussole, Épouvantail, Squelette, Pique-nique, Bijou, Arène). **Liste validée par LeKiwi06 le 27/09/2026.**
 - `config.yml` fourni : `themes: []` (vide = liste intégrée) ; une autre liste peut y être écrite sur le serveur.
 
 **Compilé, non déployé. Statut : non testé en jeu.**
