@@ -4,6 +4,17 @@ Serveur Kanvas. Cahier des charges (commun avec KG_BuildBattle) : `KV_BuildBattl
 KLM_Menu (menus, catalogue « Interfaces » ; API inchangée depuis 2.0.0, la version en place sur Kanvas) et de
 WorldGuard (FAWE fournit l'API WorldEdit).
 
+## 0.3.3 - 200 thèmes (27/09/2026)
+
+Demande de LeKiwi06 : « il me faut 200 thèmes diversifiés, qui ne doivent pas être trop restrictifs dans leur énoncé,
+et pas trop sur le même thème (le Nether et l'End ça va dans une liste de 200, mais pas tous les biomes du jeu) ».
+- Liste intégrée (`Jeu.THEMES`) portée de 40 à **200 thèmes** courts et ouverts, répartis entre lieux et bâtiments,
+  époques, créatures et fantastique, animaux, nourriture, fêtes, métiers, objets, nature et météo, idées abstraites
+  (quelques-uns par famille). 5 sont tirés au hasard à chaque partie.
+- `config.yml` fourni : `themes: []` (vide = liste intégrée) ; une autre liste peut y être écrite sur le serveur.
+
+**Compilé, non déployé. Statut : non testé en jeu.**
+
 ## 0.3.2 - barre d'action, salle d'attente en mode aventure (27/09/2026)
 
 Retours de LeKiwi06 : « les informations sont marquées en boss bar au lieu de l'action bar comme les autres jeux » ;

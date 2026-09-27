@@ -50,13 +50,36 @@ import fr.kalium.menu.api.Gui;
  */
 final class Jeu implements Listener {
 
-    /** Thèmes par défaut, si « themes » est absent de config.yml (ajout à la main sur le serveur). */
-    static final List<String> THEMES = List.of("Château", "Pirate", "Espace", "Ferme", "Volcan", "Dragon", "Forêt magique",
-            "Ville futuriste", "Sous l'eau", "Fête foraine", "Désert", "Robot", "Maison hantée", "Jungle", "Montagne",
-            "Hiver", "Cuisine", "Musique", "Sport", "Dinosaures", "Moyen Âge", "Village japonais", "Train",
-            "Phare", "Cabane dans les arbres", "Nourriture géante", "Insectes", "Cirque", "Laboratoire", "Bateau",
-            "Temple", "Île tropicale", "Pâtisserie", "Ruines", "Nether", "L'End", "Monstre", "Jardin", "Arc-en-ciel",
-            "Western");
+    /**
+     * 200 thèmes par défaut (0.3.3, demande de LeKiwi06 : « 200 thèmes diversifiés, pas trop restrictifs, pas trop sur le
+     * même thème »), si « themes » est absent ou vide dans config.yml.
+     */
+    static final List<String> THEMES = List.of(
+            "Château", "Pirates", "Espace", "Ferme", "Volcan", "Dragon", "Forêt enchantée", "Ville du futur",
+            "Fond de l'océan", "Fête foraine", "Désert", "Robot", "Maison hantée", "Jungle", "Montagne", "Hiver",
+            "Cuisine", "Musique", "Sport", "Dinosaures", "Moyen Âge", "Japon", "Train", "Phare",
+            "Cabane dans les arbres", "Nourriture géante", "Insectes", "Cirque", "Laboratoire", "Bateau", "Temple",
+            "Île paradisiaque", "Pâtisserie", "Ruines", "Nether", "L'End", "Monstre", "Jardin", "Arc-en-ciel",
+            "Far West", "Égypte ancienne", "Vikings", "Samouraï", "Chevaliers", "Sorcière", "Magicien", "Fantôme",
+            "Vampire", "Zombies", "Extraterrestres", "Fusée", "Planète inconnue", "Sous-marin", "Avion",
+            "Montgolfière", "Voiture de course", "Pont", "Gratte-ciel", "Métro", "Aéroport", "Hôpital", "École",
+            "Bibliothèque", "Musée", "Prison", "Banque", "Supermarché", "Restaurant", "Café", "Hôtel", "Camping",
+            "Plage", "Piscine", "Parc d'attractions", "Zoo", "Aquarium", "Stade", "Jeu vidéo", "Cinéma", "Théâtre",
+            "Concert", "Mariage", "Anniversaire", "Noël", "Halloween", "Pâques", "Nouvel an", "Carnaval",
+            "Saint-Valentin", "Fleurs", "Arbre géant", "Champignon", "Cactus", "Fruits", "Légumes", "Bonbons",
+            "Crème glacée", "Pizza", "Burger", "Gâteau", "Petit-déjeuner", "Chat", "Chien", "Oiseau", "Poisson",
+            "Cheval", "Serpent", "Araignée", "Abeilles", "Papillon", "Licorne", "Phénix", "Kraken", "Géant", "Nain",
+            "Fée", "Sirène", "Trésor", "Labyrinthe", "Puzzle", "Jeu de société", "Échecs", "Jouets", "Nounours",
+            "Super-héros", "Méchant", "Ninja", "Détective", "Espion", "Policier", "Pompier", "Médecin", "Artiste",
+            "Sculpture", "Fontaine", "Horloge", "Machine à remonter le temps", "Invention", "Usine", "Mine", "Moulin",
+            "Barrage", "Énergie", "Tempête", "Soleil", "Lune", "Étoile filante", "Nuage", "Aurore boréale",
+            "Cristaux", "Or", "Feu", "Cascade", "Grotte", "Île flottante", "Village", "Capitale", "Royaume", "Trône",
+            "Couronne", "Épée", "Armure", "Tour", "Muraille", "Port", "Marché", "Caravane", "Igloo", "Refuge",
+            "Maison de rêve", "Chambre", "Salle de bain", "Salon", "Grenier", "Serre", "Miniature",
+            "Monde à l'envers", "Rêve", "Cauchemar", "Illusion d'optique", "Pixel art", "Emoji", "Drapeau",
+            "Carte postale", "Voyage", "Aventure", "Mystère", "Paix", "Amitié", "Famille", "Ordinateur",
+            "Téléphone", "Instrument de musique", "Livre", "Mode", "Chapeau", "Chaussure", "Lunettes", "Parapluie",
+            "Vélo");
 
     private final KVBuildBattle plugin;
     private final Gui gui;

@@ -47,45 +47,6 @@ durees:
   # Affichage des resultats avant le retour sur kal-games.
   resultats: 15
 
-# Themes tires au hasard (5 par partie). Absent ou vide = la liste integree au plugin (40 themes).
-themes:
-  - Château
-  - Pirate
-  - Espace
-  - Ferme
-  - Volcan
-  - Dragon
-  - Forêt magique
-  - Ville futuriste
-  - Sous l'eau
-  - Fête foraine
-  - Désert
-  - Robot
-  - Maison hantée
-  - Jungle
-  - Montagne
-  - Hiver
-  - Cuisine
-  - Musique
-  - Sport
-  - Dinosaures
-  - Moyen Âge
-  - Village japonais
-  - Train
-  - Phare
-  - Cabane dans les arbres
-  - Nourriture géante
-  - Insectes
-  - Cirque
-  - Laboratoire
-  - Bateau
-  - Temple
-  - Île tropicale
-  - Pâtisserie
-  - Ruines
-  - Nether
-  - L'End
-  - Monstre
-  - Jardin
-  - Arc-en-ciel
-  - Western
+# Themes tires au hasard (5 par partie). Vide = la liste integree au plugin (200 themes, voir Jeu.THEMES).
+# Pour une autre liste, l'ecrire ici (un theme par ligne, « - Theme »), avec un editeur de texte sur le PC (accents).
+themes: []
