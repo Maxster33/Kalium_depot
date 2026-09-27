@@ -54,7 +54,7 @@ le Bingo (KG_Bingo sur kal-games / KG_BingoGame sur Serveur Jeux, liaison par le
 
 1. **KV_BuildBattle : arène** (0.1.0, compilé le 27/09/2026) — monde à part, capture de l'arène entière et des 32 zones constructibles, collage dans
    le monde à part, capture de la salle d'attente (menu comme au Bingo).
-2. **KV_BuildBattle : partie** — thème (5 au choix / thèmes écrits), construction chronométrée, gel, votes, résultats,
+2. **KV_BuildBattle : partie** (0.3.0, compilé le 27/09/2026) — thème (5 au choix / thèmes écrits), construction chronométrée, gel, votes, résultats,
    vidage des zones ; lançable par le staff sur Kanvas pour tester sans kal-games.
 3. **KG_BuildBattle** (0.1.0 + accueil dans KV_BuildBattle 0.2.0, compilés le 27/09/2026, avant l'étape 2 à la demande
    de LeKiwi06 ; liaison « comme le Bingo », sans le moteur de KalGames) — file publique (solo / duo / trio / squad, tempo normal), parties privées (hôte : tempo, taille

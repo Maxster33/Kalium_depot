@@ -27,4 +27,4 @@ sur kal-games).
 Limites connues : le nombre de joueurs dans les files publiques n'est pas affiché sur kal-games (il n'est connu que de
 Kanvas) ; KalGames garde son emplacement « Build Battle » sans moteur (à retirer en retouchant KalGames).
 
-**Déployé sur kal-games le 27/09/2026 (13:55) avec KV_BuildBattle 0.2.0 (Kanvas). Statut : non testé en jeu.**
+**Déployé sur kal-games le 27/09/2026 (13:55) avec KV_BuildBattle 0.2.0 (Kanvas). Statut : envoi en file publique testé et confirmé par LeKiwi06 le 27/09/2026 ; parties privées pas encore testées.**

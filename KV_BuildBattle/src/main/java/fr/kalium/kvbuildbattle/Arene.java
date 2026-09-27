@@ -193,6 +193,42 @@ final class Arene {
         return salle.apparition(plugin.monde(), c[0], c[1], c[2]);
     }
 
+    /** Le lieu est-il dans la boîte (entière, murs compris) de cette colonne et de ce rang ? */
+    boolean dansBoite(int colonne, int rang, Location l) {
+        if (!boitesCollees() || l.getWorld() == null || !l.getWorld().equals(plugin.monde())) return false;
+        int[] o = coinBoite(colonne, rang, gz);
+        return l.getX() >= o[0] && l.getX() < o[0] + gx && l.getY() >= o[1] - 2 && l.getY() < o[1] + gy + 2
+                && l.getZ() >= o[2] && l.getZ() < o[2] + gz;
+    }
+
+    /** Constructeurs de la zone (membres de sa région WorldGuard) ; liste vide = zone figée. */
+    void membres(int colonne, int rang, java.util.Collection<java.util.UUID> joueurs) {
+        RegionManager rm = regions();
+        if (rm == null) return;
+        ProtectedRegion region = rm.getRegion(nomRegion(colonne, rang));
+        if (region == null) {
+            plugin.getLogger().warning("Région " + nomRegion(colonne, rang) + " introuvable : l'arène a-t-elle été générée ?");
+            return;
+        }
+        com.sk89q.worldguard.domains.DefaultDomain d = new com.sk89q.worldguard.domains.DefaultDomain();
+        for (java.util.UUID u : joueurs) d.addPlayer(u);
+        region.setMembers(d);
+        enregistrer(rm);
+    }
+
+    /**
+     * Vide la zone constructible : elle redevient comme dans la boîte capturée (vide, sol compris s'il est dans la
+     * zone), entités retirées ; fini est lancé une fois la zone remise. Le reste de la boîte n'est pas touché.
+     */
+    void viderZone(int colonne, int rang, Runnable fini) {
+        if (!boitesCollees() || zsx <= 0 || boite == null) {
+            if (fini != null) fini.run();
+            return;
+        }
+        int[] o = coinBoite(colonne, rang, gz);
+        travaux().collerZone(boite, plugin.monde(), o[0], o[1], o[2], zx, zy, zz, zsx, zsy, zsz, fini);
+    }
+
     /** Numéro de la zone constructible (colonne * boîtes + rang) contenant ce bloc, ou -1. */
     int zoneEn(int x, int y, int z) {
         if (!boitesCollees() || zsx <= 0) return -1;

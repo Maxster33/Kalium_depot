@@ -34,3 +34,58 @@ relay-url: "http://7018.mystrator.com:46199"
 relay-token: ""
 # Nom Velocity du serveur ou renvoyer un joueur quand toutes les arenes sont occupees.
 serveur-retour: kal-games
+
+# 0.3.0 : deroulement d'une partie (valeurs par defaut dans le code ; cles a ajouter a la main pour les changer).
+durees:
+  # Compte a rebours de la file publique, des qu'il y a de quoi faire 2 equipes (depart immediat a 8 equipes).
+  depart: 30
+  # Ecriture des themes (mode « themes ecrits » des parties privees), puis vote du theme.
+  ecriture-theme: 60
+  vote-theme: 30
+  # Vote de chaque terrain ; chaque phase passe a 3 s quand tout le monde a repondu.
+  vote-terrain: 30
+  # Affichage des resultats avant le retour sur kal-games.
+  resultats: 15
+
+# Themes tires au hasard (5 par partie). Absent ou vide = la liste integree au plugin (40 themes).
+themes:
+  - Château
+  - Pirate
+  - Espace
+  - Ferme
+  - Volcan
+  - Dragon
+  - Forêt magique
+  - Ville futuriste
+  - Sous l'eau
+  - Fête foraine
+  - Désert
+  - Robot
+  - Maison hantée
+  - Jungle
+  - Montagne
+  - Hiver
+  - Cuisine
+  - Musique
+  - Sport
+  - Dinosaures
+  - Moyen Âge
+  - Village japonais
+  - Train
+  - Phare
+  - Cabane dans les arbres
+  - Nourriture géante
+  - Insectes
+  - Cirque
+  - Laboratoire
+  - Bateau
+  - Temple
+  - Île tropicale
+  - Pâtisserie
+  - Ruines
+  - Nether
+  - L'End
+  - Monstre
+  - Jardin
+  - Arc-en-ciel
+  - Western

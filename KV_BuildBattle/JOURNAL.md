@@ -4,6 +4,49 @@ Serveur Kanvas. Cahier des charges (commun avec KG_BuildBattle) : `KV_BuildBattl
 KLM_Menu (menus, catalogue « Interfaces » ; API inchangée depuis 2.0.0, la version en place sur Kanvas) et de
 WorldGuard (FAWE fournit l'API WorldEdit).
 
+## 0.3.0 - étape 2 : la partie (27/09/2026)
+
+Cahier des charges (décisions de LeKiwi06 du 27/09/2026). Classes : `Jeu` (remplace `Accueil` : arrivée, parties par
+colonne, horloge, objets), `Partie` (phases), `Objets`, `Inventaires`.
+- **Salle d'attente** : l'inventaire Kanvas du joueur est **mis de côté** (fichier `inventaires/<uuid>.yml`) et rendu
+  quand il quitte la partie (fin, déconnexion, changement de monde ; à la connexion suivante si le serveur s'est
+  arrêté). Barre en haut de l'écran : mode, joueurs, départ.
+  - **Public** : compte à rebours de **30 s** dès qu'il y a de quoi faire 2 équipes (plus de joueurs que la taille
+    d'une équipe), annulé si l'on repasse en dessous ; **départ immédiat** quand les 8 équipes sont pleines.
+  - **Privé** : l'hôte lance avec l'**émeraude** (au moins 2 équipes). S'il part, le joueur suivant devient l'hôte. Au
+    lancement, `buildbattle-fermee-<id>` est déposé sur le relais : KG_BuildBattle retire la partie de sa liste.
+- **Équipes** tirées au hasard, remplies dans l'ordre (ex. 3 joueurs en duo : une équipe de 2 et une de 1), 8 au plus.
+- **Thème** :
+  - normal : **5 thèmes** tirés au hasard dans `themes` (liste intégrée de 40 thèmes si absente), vote dans un menu
+    (papier pour le rouvrir), **30 s**, puis 3 s quand tout le monde a voté ; égalité = tirage au sort ;
+  - « thèmes écrits » (partie privée) : chacun écrit un thème (64 caractères, livre pour rouvrir), **1 min**, puis 3 s
+    quand tout le monde a proposé ; puis vote de **30 s** parmi les propositions (doublons fusionnés). Aucune
+    proposition : 5 thèmes au hasard ; une seule : elle est prise directement. Pendant ce vote, la **poudre de blaze**
+    ouvre « Signaler un thème » : message au staff connecté (`kvbuildbattle.admin`) et dans la console, enregistré dans
+    `signalements-themes.yml` (date, thème, auteur, signalé par, partie) ; le thème reste dans le vote.
+- **Construction** : chaque équipe est téléportée dans sa boîte (rang 0, 1... de la colonne), devient membre de la
+  région de sa zone (FAWE compris, dans la zone seulement), inventaire vide, créatif. Titre « Thème : … », barre avec
+  le temps restant (3, 5, 10 ou 30 min selon le tempo). **On ne sort pas de sa boîte** (retour au point d'apparition).
+- **Fin de la construction** : toutes les zones sont **figées** (plus de membres).
+- **Votes** : tout le monde est téléporté sur chaque terrain, l'un après l'autre, **30 s** par terrain, puis 3 s quand
+  tous ceux qui peuvent voter ont voté ; 5 terracottas (cases 3 à 7), note modifiable tant qu'on est sur le terrain ;
+  l'équipe du terrain ne vote pas. On reste dans la boîte montrée. Hors construction, l'inventaire est figé.
+- **Résultats** : classement au total des points puis à la moyenne (chat), titre du gagnant, tout le monde dans la boîte
+  gagnante pendant **15 s**, puis **retour sur kal-games** ; les zones utilisées sont **remises comme dans la boîte
+  capturée** (vides), puis la colonne est libérée.
+- Une partie dont tous les joueurs sont partis s'arrête (zones vidées, colonne libérée).
+- Durées réglables : section `durees` (`depart`, `ecriture-theme`, `vote-theme`, `vote-terrain`, `resultats`), valeurs
+  par défaut dans le code. `/bbadmin info` affiche la phase de chaque partie.
+
+Choix par défaut (Claude, à ajuster si besoin) : équipes tirées au hasard ; la note d'un terrain peut être changée
+pendant ses 30 s ; un joueur déconnecté ne revient pas dans la partie (son équipe continue, un terrain dont toute
+l'équipe est partie reste présenté au vote).
+
+Limites connues : arrêt du serveur en pleine partie : les joueurs récupèrent leur inventaire, mais les zones ne sont pas
+vidées ni figées (les vider en regénérant l'arène) ; points et classements : étape 4.
+
+**Compilé, non déployé. Statut : non testé en jeu.**
+
 ## 0.2.0 - accueil des joueurs envoyés par KG_BuildBattle (27/09/2026)
 
 Demande de LeKiwi06 : la partie kal-games « comme pour le Bingo » (KG_BuildBattle 0.1.0). Empilée sur 0.1.0 pas
@@ -21,7 +64,7 @@ encore testée, à sa demande.
 - Pas encore (étape 2) : compte à rebours, lancement par l'hôte, thème, construction, votes ; le joueur garde son
   inventaire et les objets de Kanvas (étoile de KV_Menu, boussole).
 
-**Déployé sur Kanvas le 27/09/2026 (13:55) avec KG_BuildBattle 0.1.0 (0.1.0 dans `_removed-kv_buildbattle-0.1.0/`). Statut : non testé en jeu.**
+**Déployé sur Kanvas le 27/09/2026 (13:55) avec KG_BuildBattle 0.1.0 (0.1.0 dans `_removed-kv_buildbattle-0.1.0/`). Statut : testé et confirmé par LeKiwi06 le 27/09/2026 (2 joueurs en file publique solo, retrouvés ensemble dans la salle d'attente).**
 
 ## 0.1.0 - étape 1 : arène (27/09/2026)
 
