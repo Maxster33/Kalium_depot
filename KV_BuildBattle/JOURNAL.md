@@ -43,4 +43,4 @@ Limites connues :
 - Une nouvelle capture de la boîte ne touche pas l'arène déjà générée : il faut « Générer l'arène » à nouveau.
 - La boîte d'origine (monde `Kanvas`) n'est pas touchée.
 
-**Compilé, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 27/09/2026 (10:40). Statut : non testé en jeu.**
