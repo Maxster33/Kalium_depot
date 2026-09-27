@@ -21,6 +21,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
-- KV_Plots — LeKiwi06 — depuis le 2026-09-27 09:47 — Build Battle : reprise du vote, du gel des terrains et des règles du monde (retouche éventuelle)
+- KV_Plots — LeKiwi06 — depuis le 2026-09-27 09:47 — Build Battle : reprise du vote, du gel des terrains et des règles du monde (retouche éventuelle) ; 1.4.1 : randomTickSpeed à 0
+- KLM_Menu — LeKiwi06 — depuis le 2026-09-27 14:40 — déploiement de la 2.3.0 sur Kanvas (points de chute), pas de changement de code
+- KLM_Portal — LeKiwi06 — depuis le 2026-09-27 14:40 — installation de la 1.2.0 sur Kanvas (points de chute), pas de changement de code
 
 ## Demandes
