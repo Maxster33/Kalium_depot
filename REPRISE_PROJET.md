@@ -92,7 +92,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-Aucune (26/09/2026 : tout ce qui est compilé est déployé, voir le tableau ci-dessus).
+- **KV_BuildBattle 0.1.0** (Kanvas, 27/09/2026) : étape 1 du Build Battle (monde `buildbattle`, capture de la boîte
+  et de la salle d'attente, génération de 4 colonnes de 8 boîtes, régions WorldGuard). Non testé en jeu.
 
 ## Chantiers en cours
 
@@ -118,6 +119,9 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
   concours de build). Restent : limites d'entités et mobs sans IA, agrandissement moyen → grand (et « dupliquer en
   version grande »), classements KV_ScoreBoards (solo / duo / équipe, général et du mois), extension automatique du
   monde.
+- **Build Battle** (cahier des charges : `KV_BuildBattle/CAHIER_DES_CHARGES.md`, 27/09/2026) : KG_BuildBattle
+  (kal-games : file publique, parties privées, envoi vers Kanvas) + KV_BuildBattle (Kanvas : le jeu). Étape 1 (arène)
+  compilée (KV_BuildBattle 0.1.0). Restent : 2 (partie jouable sur Kanvas), 3 (KG_BuildBattle), 4 (points).
 - **Architecture** : KalGames à répartir entre KG_Instances (moteur des parties : déjà ouvert aux plugins de jeu
   depuis KalGames 1.17.0), KLM_Hub + WorldGuard, KG_Menu et KG_ScoreBoards ; puis PvP Kit et Rush en plugins.
   Renommage KaliumRelay → KLM_Relay (voir la charte). Plus tard : menus inter-serveurs, KG_AntiCheat (avec GrimAC).

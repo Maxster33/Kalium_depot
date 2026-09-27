@@ -13,6 +13,7 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 | `KG_ScoreBoards/` | Classements (points, temps, archives, panneaux du hub) - KalGames en dépend | kal-games |
 | `KG_Bingo/` | Partie Bingo du hub : créer / rejoindre, transfert vers Kixster (dépend de KalGames) | kal-games |
 | `KG_BingoGame/` | Le jeu Bingo lui-même (anciennement KalBingo) | Kixster |
+| `KV_BuildBattle/` | Build Battle : arène, terrains, votes (cahier des charges commun avec KG_BuildBattle dans le dossier) | Kanvas |
 | `KLM_Menu/` | Interface globale : navigation entre serveurs, catalogue des interfaces des plugins, boîte à outils des menus (anciennement KaliumMenu) | chaque serveur Paper |
 | `KLM_Portal/` | Portails : une région WorldGuard reliée à une destination de KLM_Menu (désactivée avec son bouton) | chaque serveur Paper (lobby d'abord) |
 | `KaliumRelay/` | Relais HTTP entre serveurs | proxy Velocity |

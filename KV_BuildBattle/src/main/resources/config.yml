@@ -1,0 +1,27 @@
+# KV_BuildBattle - reglages (cahier des charges : KV_BuildBattle/CAHIER_DES_CHARGES.md)
+
+# Monde a part du Build Battle (monde vide, cree au premier demarrage).
+monde: buildbattle
+
+# Disposition de l'arene dans ce monde : une colonne de boites par partie.
+disposition:
+  # Coin le plus bas (x, y, z) de la 1re boite de la 1re colonne. Loin du point d'apparition du monde (0, 80, 0),
+  # ou l'on construit la salle d'attente avant de la capturer.
+  origine-x: 10000
+  origine-y: 64
+  origine-z: 0
+  # 4 parties simultanees de 8 equipes au plus.
+  colonnes: 4
+  boites-par-colonne: 8
+  # Distance entre le bord ouest de deux colonnes (vers l'est) : assez pour ne pas voir les pseudos des autres
+  # parties. Ne pas changer une fois l'arene generee (les boites deja collees ne seraient plus retrouvees).
+  pas-colonnes: 600
+  # Blocs vides entre deux boites d'une meme colonne (vers le sud).
+  ecart-boites: 8
+  # Blocs vides entre la salle d'attente d'une colonne (au nord) et sa 1re boite.
+  ecart-salle: 32
+
+# Capture et collage : taille maximale d'une capture (blocs par cote) et cout maximal par tick
+# (1 par bloc lu, 4 par bloc modifie), pour ne pas bloquer le serveur.
+taille-max: 256
+blocs-par-tick: 10000

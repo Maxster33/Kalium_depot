@@ -52,7 +52,7 @@ le Bingo (KG_Bingo sur kal-games / KG_BingoGame sur Serveur Jeux, liaison par le
 
 ## Étapes
 
-1. **KV_BuildBattle : arène** — monde à part, capture de l'arène entière et des 32 zones constructibles, collage dans
+1. **KV_BuildBattle : arène** (0.1.0, compilé le 27/09/2026) — monde à part, capture de l'arène entière et des 32 zones constructibles, collage dans
    le monde à part, capture de la salle d'attente (menu comme au Bingo).
 2. **KV_BuildBattle : partie** — thème (5 au choix / thèmes écrits), construction chronométrée, gel, votes, résultats,
    vidage des zones ; lançable par le staff sur Kanvas pour tester sans kal-games.
@@ -68,8 +68,11 @@ le Bingo (KG_Bingo sur kal-games / KG_BingoGame sur Serveur Jeux, liaison par le
 - **Vote** : 5 terracottas (rouge 1 … vert foncé 5) sur les cases 3 à 7 ; pas de vote sur le terrain de son équipe.
 - Pas de TNT ni d'explosion, rien ne brûle, liquides limités au terrain, redstone coupée.
 
+- **Boîtes identiques** : on en capture **une** (boîte entière + zone constructible), le plugin la recopie en **4
+  colonnes de 8** dans le monde à part, une colonne par partie, **espacées** pour qu'on ne voie pas les pseudos des
+  autres parties (LeKiwi06, 27/09/2026).
+
 ## Questions ouvertes
 
-1. **Forme des boîtes** : les 32 boîtes sont-elles identiques et alignées à intervalles réguliers ? (Si oui, on n'en
-   désigne qu'une + l'écart ; sinon, on désigne les 32 une par une.)
-2. **Points d'apparition** : où l'équipe apparaît-elle dans sa boîte, et d'où regarde-t-on un terrain pendant le vote ?
+1. **Points d'apparition** : choix par défaut (Claude) : un point posé par l'admin dans la boîte, qui sert à
+   l'apparition de l'équipe et de point de vue pendant le vote de son terrain.

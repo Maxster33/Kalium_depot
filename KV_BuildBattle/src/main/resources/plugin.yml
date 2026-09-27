@@ -1,0 +1,18 @@
+name: KV_BuildBattle
+version: '${project.version}'
+main: fr.kalium.kvbuildbattle.KVBuildBattle
+api-version: '26.2'
+description: Serveur Kanvas - Build Battle (arene, terrains, votes). Parties lancees depuis kal-games (KG_BuildBattle).
+authors: [KaLium]
+depend: [KLM_Menu, WorldGuard]
+
+commands:
+  bbadmin:
+    description: Administration du Build Battle (capture de la boite et de la salle d'attente, generation de l'arene).
+    usage: /<command> [menu | monde | boite <pos1|pos2|zone1|zone2|apparition|capturer> | salle <pos1|pos2|apparition|capturer> | generer [confirmer] | info]
+    permission: kvbuildbattle.admin
+
+permissions:
+  kvbuildbattle.admin:
+    description: Staff - capturer la boite et la salle d'attente, generer l'arene du Build Battle.
+    default: op
