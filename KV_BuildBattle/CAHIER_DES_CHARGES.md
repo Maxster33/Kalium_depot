@@ -35,6 +35,30 @@ le Bingo (KG_Bingo sur kal-games / KG_BingoGame sur Serveur Jeux, liaison par le
   quand tout le monde a proposé), puis **vote de 30 s** parmi les propositions (passe à **3 s** quand tout le monde a
   voté). Pendant ce vote, la **poudre de blaze** sert à **signaler un thème inapproprié**.
 - **Vote des terrains** : **30 s** par terrain par défaut, qui passent à **3 s** quand tout le monde a voté.
+- **Thème signalé** : message au staff connecté + enregistrement dans un fichier (le thème n'est pas retiré du vote).
+- **File publique** : compte à rebours de **30 s** dès qu'il y a de quoi faire **2 équipes** ; départ immédiat à **8
+  équipes**.
+- **Points et classements** (KG_ScoreBoards) : **étape suivante**, une fois le jeu jouable et testé.
+- **Salle d'attente** : capturée une fois, puis **une copie par partie** (comme au Bingo).
+
+## Choix par défaut (Claude, à ajuster si besoin)
+
+- Vote des 5 thèmes (partie publique) : même rythme que le vote des thèmes écrits (30 s, puis 3 s quand tout le monde
+  a voté) ; égalité = tirage au hasard entre les ex æquo.
+- Terrain vide (aucun bloc posé) : présenté au vote comme les autres.
+- Fin de partie : classement annoncé (titre + chat), 15 s pour regarder, puis retour sur kal-games.
+- Déconnexion : pas de reconnexion à la partie dans la 1re version ; l'équipe continue sans lui (une équipe vide
+  garde son terrain au vote).
+
+## Étapes
+
+1. **KV_BuildBattle : arène** — monde à part, capture de l'arène entière et des 32 zones constructibles, collage dans
+   le monde à part, capture de la salle d'attente (menu comme au Bingo).
+2. **KV_BuildBattle : partie** — thème (5 au choix / thèmes écrits), construction chronométrée, gel, votes, résultats,
+   vidage des zones ; lançable par le staff sur Kanvas pour tester sans kal-games.
+3. **KG_BuildBattle** — file publique (solo / duo / trio / squad, tempo normal), parties privées (hôte : tempo, taille
+   des équipes, thème écrit), envoi vers Kanvas par le relais, retour sur kal-games.
+4. **Points et classements** (KG_ScoreBoards).
 
 ## Repris de KV_Plots (principes, pas de dépendance au monde des plots)
 
@@ -46,13 +70,6 @@ le Bingo (KG_Bingo sur kal-games / KG_BingoGame sur Serveur Jeux, liaison par le
 
 ## Questions ouvertes
 
-1. **Thème signalé** : que se passe-t-il ? (thème retiré du vote, message au staff, sanction ?)
-2. **Vote des 5 thèmes** (partie publique) : même rythme (30 s, puis 3 s quand tout le monde a voté) ? Égalité = au
-   hasard entre les ex æquo ?
-3. **File publique** : nombre d'équipes pour lancer (2 minimum ?), compte à rebours, départ immédiat à 8 équipes ?
-4. **Terrain vide** : une équipe dont personne n'a posé de bloc est-elle sautée au vote ?
-5. **Points et classements** (KG_ScoreBoards, barème calé sur `EQUILIBRAGE_POINTS.md`) : maintenant, ou dans une
-   étape suivante ?
-6. **Fin de partie** : classement annoncé, puis retour automatique sur kal-games après combien de secondes ?
-7. **Déconnexion** : un joueur qui se déconnecte peut-il revenir dans sa partie (reconnexion comme au Bingo) ?
-8. **Salle d'attente** : une seule salle partagée par toutes les parties, ou une par partie ?
+1. **Forme des boîtes** : les 32 boîtes sont-elles identiques et alignées à intervalles réguliers ? (Si oui, on n'en
+   désigne qu'une + l'écart ; sinon, on désigne les 32 une par une.)
+2. **Points d'apparition** : où l'équipe apparaît-elle dans sa boîte, et d'où regarde-t-on un terrain pendant le vote ?
