@@ -28,7 +28,7 @@ partie de Bingo préparation comprise), sans l'attente entre les parties.
 2. **Parcours** : coder le barème du cahier des charges (`KG_Parkour/CAHIER_DES_CHARGES.md` : chrono allongé à chaque
    checkpoint, 1 / 3 / 5 points selon la difficulté, bonus du 1er, first try ×2, paliers de temps), puis caler les
    valeurs sur ~135 / 30 min. **Il faut des parties « à fond » de LeKiwi06** pour mesurer (temps par checkpoint).
-3. **PvP Kit** (KG_PvpKit 1.0.0, 28/09/2026, non déployé) : barème par estimation (élimination 5, victoire 10,
+3. **PvP Kit** (KG_PvpKit 1.0.0, déployé le 28/09/2026, non testé) : barème par estimation (élimination 5, victoire 10,
    2e / 3e 4 / 2, infériorité 5 par joueur d'écart, série x1,25 / x1,5, déclassement +50 % par niveau) ; ~135 / 30 min
    en 1 contre 1 avec 60 % de victoires. À corriger avec les vraies parties (événement « round » du journal).
    **Rush** : retoucher par estimation, puis corriger avec les vraies parties.

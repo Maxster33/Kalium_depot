@@ -66,4 +66,4 @@ pas celui du kit déclassé.
 **Déploiement** : **avec KalGames 1.22.0** (sinon plus de PvP Kit : son mini-jeu reste gardé de côté, sans perte).
 Garder PlayerKits2 (ou au moins son dossier `kits`) jusqu'au premier démarrage de KG_PvpKit (conversion des kits), puis
 le ranger dans `_removed-playerkits2-…`. Nouvelles clés : valeurs par défaut du code tant qu'elles ne sont pas changées
-dans le panneau admin. **Statut : compilé, non déployé, non testé en jeu.**
+dans le panneau admin. **Statut : déployé sur Kal-Games (7001) le 28/09/2026 à 21 h 44 avec KalGames 1.22.0 (serveur éteint, par Claude de LeKiwi06 en ligne de commande WinSCP) ; non testé en jeu.**
