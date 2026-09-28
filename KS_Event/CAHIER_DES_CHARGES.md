@@ -144,3 +144,34 @@ les choix d'interprétation qui en découlent (partie 3). **Règle posée par Ma
   les morts (fermes comprises) ; **ajouts** (potions, roses du wither, endermite, warden) : seulement si un joueur tue.
 - **Corail** : les 5 coraux vivants (tube, cerveau, bulle, feu, corne) → bloc de la même couleur. Coraux morts non
   compris (non cités).
+
+# 4. Deuxième demande (Maxster33, 28/09/2026) : estomac du gardien et coffres de structures
+
+Demande : modifier le plugin de loot existant, créer un plugin pour un nouveau coffre, créer un plugin pour les
+nouveaux loots des coffres de structures. Détail des changements dans les `JOURNAL.md` de `KS_EstomacGardien`,
+`KS_LootCoffres`, `KS_LootEntites` et `KS_LootPotions`.
+
+| Question | Réponse de Maxster33 |
+|---|---|
+| Estomac : image du sac noir, sans être un vrai sac | ok |
+| Utilisation | clic droit : l'objet est consommé et donne le contenu |
+| Tirage 1 : 10 % casque, sinon rien | ok |
+| « Random bateau » | tous les bateaux, avec ou sans coffre |
+| « Random corail » | plante, éventail et bloc (5 coraux vivants) |
+| « Random algues » | varech et herbe marine |
+| Trident de l'estomac | (ajout) enchanté niveau 10 à 29 |
+| Grand gardien 50 % seulement si un joueur tue, dans KS_LootEntites | ok |
+| Cité antique : autres poids x2 pour diviser la pomme par 2 (≈ 8,6 % → 4,4 % par coffre), totem pareil | ok |
+| Trésor enfoui : tirage à part, même chance par coffre (≈ 4,4 %) | ok |
+| Bastion, salle au trésor : seulement les versions enchantées | ok |
+| Avant-poste : « potion mauvais présage » = fiole sinistre, poids 3 dans le tirage expérience / fer | oui |
+| Chambres d'épreuve : « fiole funeste » = fiole sinistre | ok |
+| Forteresse : ajouts dans le tirage principal | ok |
+| Faiblesse du pillard : 10 % pour le capitaine seulement (+ son 1 % de potion aléatoire) | ok |
+
+| Plugin | Contenu |
+|---|---|
+| `KS_EstomacGardien` | Objet « Estomac du gardien » et son contenu |
+| `KS_LootCoffres` | Loots des coffres de structures et des coffres-forts |
+| `KS_LootEntites` 1.1.0 | + grand gardien 50 % d'estomac |
+| `KS_LootPotions` 1.1.0 | Faiblesse : capitaine seulement |

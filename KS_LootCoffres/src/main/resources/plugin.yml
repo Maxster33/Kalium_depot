@@ -1,0 +1,6 @@
+name: KS_LootCoffres
+version: '${project.version}'
+main: fr.kalium.lootcoffres.KSLootCoffres
+api-version: '26.2'
+description: Loots des coffres de structures du serveur Event (cite antique, bastions, tresor enfoui, cite de l'End, forteresse, avant-poste, manoir, coffres-forts).
+authors: [KaLium]

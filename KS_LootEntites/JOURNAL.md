@@ -23,3 +23,14 @@ effet sur les pourcentages.
 - Potions des autres mobs : dans KS_LootPotions.
 
 **Déployé sur Event le 25/09/2026. Statut : non testé en jeu.**
+
+## 1.1.0 - grand gardien : Estomac du gardien (28/09/2026)
+
+Demande de Maxster33 : « Grand Gardien : ajouter 50 % de chance d'obtenir l'estomac du gardien (nouveau coffre) ».
+- **Grand gardien** : 50 % d'un Estomac du gardien, seulement si un joueur le tue (comme les autres ajouts ; accord de
+  Maxster33).
+- L'objet vient de **KS_EstomacGardien** (`softdepend`) : sans ce plugin activé, rien n'est ajouté. `build.sh`
+  compile contre les classes de KS_EstomacGardien : **compiler KS_EstomacGardien d'abord**.
+- **À déployer avec KS_EstomacGardien 1.0.0.**
+
+**Compilé le 28/09/2026, non déployé. Statut : non testé en jeu.**

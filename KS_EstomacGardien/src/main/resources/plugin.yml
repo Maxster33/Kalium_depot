@@ -1,0 +1,6 @@
+name: KS_EstomacGardien
+version: '${project.version}'
+main: fr.kalium.estomacgardien.KSEstomacGardien
+api-version: '26.2'
+description: Objet Estomac du gardien (image du sac noir) - clic droit pour obtenir son contenu.
+authors: [KaLium]

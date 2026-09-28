@@ -84,10 +84,11 @@ public final class KSLootPotions extends JavaPlugin implements Listener {
         switch (entity.getType()) {
             case VEX -> add(drops, 0.10, PotionType.INFESTED);
             case PHANTOM -> add(drops, 0.10, PotionType.SLOW_FALLING);
+            // Capitaine seulement (1.1.0) : les pillards ordinaires n'ont plus de potion.
             case PILLAGER -> {
-                add(drops, 0.10, PotionType.WEAKNESS);
-                if (((Raider) entity).isPatrolLeader() && chance(0.01)) {
-                    drops.add(basicPotion(randomPotion()));
+                if (((Raider) entity).isPatrolLeader()) {
+                    add(drops, 0.10, PotionType.WEAKNESS);
+                    add(drops, 0.01, randomPotion());
                 }
             }
             case STRIDER -> add(drops, 0.01, PotionType.FIRE_RESISTANCE);

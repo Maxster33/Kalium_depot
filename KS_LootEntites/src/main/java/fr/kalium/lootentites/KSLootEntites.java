@@ -95,11 +95,21 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
                     drops.add(xpBottle(WARDEN_LEVELS[random().nextInt(WARDEN_LEVELS.length)]));
                 }
             }
+            // Objet du plugin KS_EstomacGardien (ignore s'il n'est pas active).
+            case ELDER_GUARDIAN -> {
+                if (byPlayer && estomacGardienActif() && chance(0.50)) {
+                    drops.add(fr.kalium.estomacgardien.KSEstomacGardien.creerEstomac());
+                }
+            }
             default -> {
             }
         }
         // Tous les mobs qui donnent de la chair putrefiee : chaque chair a 50 % de chance de devenir un os.
         fleshToBones(drops);
+    }
+
+    private boolean estomacGardienActif() {
+        return getServer().getPluginManager().isPluginEnabled("KS_EstomacGardien");
     }
 
     private static void ironGolem(List<ItemStack> drops) {

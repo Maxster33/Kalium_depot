@@ -92,7 +92,10 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-Aucune (28/09/2026 21:44 : tout ce qui est compilé est déployé).
+- **Event (Maxster33, 28/09/2026, non testés)** : `KS_EstomacGardien-1.0.0` (nouveau : objet « Estomac du gardien »),
+  `KS_LootCoffres-1.0.0` (nouveau : loots des coffres de structures et des coffres-forts), `KS_LootEntites-1.1.0`
+  (grand gardien : 50 % d'estomac), `KS_LootPotions-1.1.0` (faiblesse : capitaine seulement). **KS_EstomacGardien et
+  KS_LootEntites à déployer ensemble.** Demande : `KS_Event/CAHIER_DES_CHARGES.md`, partie 4.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »
 (case de gauche : Classements pour tous, Paramètres pour les admins, un bouton par jeu), boussole réduite à la

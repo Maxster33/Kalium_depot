@@ -19,3 +19,12 @@ effet.
 - Potion de régénération de l'endermite : dans KS_LootEntites (tirage de 6 objets).
 
 **Déployé sur Event le 25/09/2026. Statut : non testé en jeu.**
+
+## 1.1.0 - potion de faiblesse : capitaine seulement (28/09/2026)
+
+Demande de Maxster33 : « Pillard : enlève les 10 % de chance d'obtenir une potion de faiblesse basique et ajoute-les
+au capitaine pillard ».
+- **Pillard ordinaire** : plus aucune potion.
+- **Capitaine** (patrouille ou raid) : 10 % faiblesse basique + 1 % potion basique aléatoire (inchangé).
+
+**Compilé le 28/09/2026, non déployé. Statut : non testé en jeu.**
