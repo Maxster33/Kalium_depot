@@ -16,6 +16,9 @@ commands:
   lobby:
     description: Retourne au lobby.
     usage: /<command>
+  menu:
+    description: Ouvre le menu du serveur (choix s'il y en a plusieurs) ; /menu on | off remet ou retire les objets de menu de la barre.
+    usage: /<command> [on|off]
   informations:
     description: Ouvre « Informations » (classements ; parametres pour les admins), comme le comparateur.
     aliases: [infos]

@@ -67,6 +67,25 @@ final class ObjetMenu implements Listener {
         return p.getWorld().equals(plugin.plots().monde());
     }
 
+    private boolean masque(Player p) {
+        return plugin.getServer().getPluginManager().getPlugin("KLM_Menu") instanceof fr.kalium.menu.KlmMenu klm && klm.itemsHidden(p);
+    }
+
+    /** 1.3.1 : etoile declaree a KLM_Menu pour /menu (ouvrir, /menu on | off). */
+    fr.kalium.menu.api.InterfaceItem interfaceItem() {
+        return new fr.kalium.menu.api.InterfaceItem() {
+            public org.bukkit.plugin.Plugin owner() { return plugin; }
+            public String id() { return "kanvas"; }
+            public net.kyori.adventure.text.Component name() { return lang.c("item.name", "<gold><bold>Kanvas"); }
+            public int order() { return 1; }
+            public boolean available(Player p) { return ici(p); }
+            public void open(Player p) { ouvrir.accept(p); }
+            public int slot(Player p) { return ici(p) && !surSonChantier(p) ? emplacement() : -1; }
+            public boolean isItem(ItemStack item) { return estObjet(item); }
+            public void give(Player p) { verifier(p); }
+        };
+    }
+
     private ItemStack objet() {
         Material m = Material.matchMaterial(plugin.getConfig().getString("hub-item.material", "NETHER_STAR"));
         if (m == null || m.isAir() || !m.isItem()) m = Material.NETHER_STAR;
@@ -147,19 +166,21 @@ final class ObjetMenu implements Listener {
         PlayerInventory inv = p.getInventory();
         boolean ici = ici(p);
         boolean chantier = ici && surSonChantier(p);
+        // 1.3.1 : /menu off (KLM_Menu 2.4.0) : plus d'etoile tant que le joueur ne fait pas /menu on.
+        boolean masque = masque(p);
         surChantier.put(p.getUniqueId(), chantier);
         int slot = chantier ? RANGEMENT_ETOILE : emplacement();
         int trouve = -1;
         for (int i = 0; i < inv.getSize(); i++) {
             if (!estObjet(inv.getItem(i))) continue;
-            if (!ici || trouve >= 0) {
+            if (!ici || masque || trouve >= 0) {
                 inv.setItem(i, null);
             } else {
                 trouve = i;
             }
         }
         if (estObjet(p.getItemOnCursor())) p.setItemOnCursor(null);
-        if (!ici) return;
+        if (!ici || masque) return;
         if (trouve < 0) {
             ItemStack avant = inv.getItem(slot);
             inv.setItem(slot, objet());

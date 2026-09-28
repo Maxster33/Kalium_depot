@@ -822,6 +822,7 @@ obsolète ».
 - Nombre de joueurs de chaque mini-jeu fourni à KG_Menu (affiché sur le bouton du jeu).
 - Menus lisibles sur Bedrock (couleurs trop claires assombries, `BedrockColors` de KLM_Menu 2.4.0).
 - Le comparateur « Informations » n'est jamais copié dans un kit créé depuis l'inventaire (comme la boussole).
+- `/menu on | off` (KLM_Menu 2.4.0) refusé pendant une partie, dans les gradins ou en spectateur.
 - `/kalgames admin` ouvre « Informations > Paramètres ». Hunger Games et Manhunt (configuration seule) : pas de bouton
   tant qu'aucun mini-jeu de ce type n'existe (ils ne se créent plus à la main).
 

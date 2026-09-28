@@ -39,6 +39,8 @@ rien » ; classements et paramètres vont dans le comparateur « Informations »
   « Informations > Paramètres » (`MenuSection.expand`), un par jeu : course de bateau, parcours, PvP Kit, Rush, Bingo...
   et « Parties en cours ». Plus d'écran « Paramètres Kal-Games » intermédiaire.
 - Étoile : en créatif, sa case ne peut plus être remplacée (comme la boussole) ; inventaire renvoyé après un refus.
+- Étoile déclarée à KLM_Menu pour `/menu` (ouverture, `/menu on | off`) ; pas d'étoile donnée à un joueur qui a fait
+  `/menu off`.
 
 **Déploiement** : avec KLM_Menu 2.4.0 (obligatoire), KalGames 1.21.0, KG_ScoreBoards 1.6.0, KG_Bingo 1.6.0,
 KG_BuildBattle 0.2.0. **Statut : compilé, non déployé, non testé en jeu.**

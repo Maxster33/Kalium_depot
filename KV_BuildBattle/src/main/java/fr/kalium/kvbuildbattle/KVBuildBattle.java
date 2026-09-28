@@ -72,6 +72,16 @@ public final class KVBuildBattle extends JavaPlugin implements TabExecutor {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         jeu = new Jeu(this, gui);
         getServer().getPluginManager().registerEvents(jeu, this);
+        // 0.3.6 : /menu on | off (KLM_Menu 2.4.0) refuse pendant une partie de Build Battle (salle d'attente comprise).
+        getServer().getServicesManager().register(fr.kalium.menu.api.PlayerActivity.class, new fr.kalium.menu.api.PlayerActivity() {
+            public org.bukkit.plugin.Plugin owner() { return KVBuildBattle.this; }
+            public boolean inGame(org.bukkit.entity.Player joueur) {
+                for (Partie p : jeu.parties()) {
+                    if (p.joueurs.contains(joueur.getUniqueId())) return true;
+                }
+                return false;
+            }
+        }, this, org.bukkit.plugin.ServicePriority.Normal);
         getServer().getServicesManager().register(MenuSection.class, MenuSection.of(this, "arene",
                 MenuSection.Audience.ADMINS,
                 lang.c("catalogue.titre", "<gold>Build Battle : arène"),

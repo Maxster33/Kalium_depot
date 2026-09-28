@@ -1643,6 +1643,8 @@ illisibles sur Bedrock.
 - Toutes les 5 s, le nombre de joueurs dans les mondes du Bingo (`bingo_...` : salles d'attente et parties) est publié
   sur le relais (clé `compteur-bingo`), lu par KG_Bingo 1.6.0. Échec silencieux, nouvel essai 5 s plus tard.
 - Menus : couleurs trop claires assombries pour les joueurs Bedrock (`BedrockColors` de KLM_Menu 2.4.0).
+- **`/menu` devient `/bingomenu`** (menu de la salle d'attente, opérateurs ; aussi dans « Informations > Paramètres ») :
+  `/menu` est maintenant celui de KLM_Menu sur tous les serveurs. `/menu on | off` refusé dans les mondes du Bingo.
 
 **Déploiement** : avec **KLM_Menu 2.4.0 sur Serveur Jeux** (obligatoire : il y est en 2.0.0). **Statut : compilé, non
 déployé, non testé en jeu.**

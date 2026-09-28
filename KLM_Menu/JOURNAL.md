@@ -125,8 +125,26 @@ comparateur sur tous les serveurs, case de gauche, verrou pour tout le monde (op
   (kal-games pour l'instant) ; retiré sinon (ex. un admin qui repasse joueur). Mêmes règles que la boussole (arrivée,
   réapparition, `giveNavigation`), jamais par-dessus un objet du joueur, retiré des objets lâchés à la mort.
   `informations.enabled` absent = comme `compass.enabled` : pas de comparateur sur Serveur Jeux, Kixster, Event (le
-  Bingo a des objectifs, la survie a besoin de la barre). Là, **`/informations`** (alias `/infos`) et un bouton
-  « Informations » dans `/menu` ouvrent le même menu.
+  Bingo a des objectifs, la survie a besoin de la barre). Là, **`/informations`** (alias `/infos`) ou `/menu` y mènent.
+- **`/menu`** (demande de LeKiwi06, même jour : « /menu ouvre l'interface ; si le serveur ne possède qu'un item
+  d'interface : ouvrir directement cette interface, s'il en possède plusieurs : menu de sélection ; /menu on/off sert à
+  donner / retirer les divers items d'interface de la hotbar ; si des items sont dans les slots correspondants : refuser,
+  sauf sur Kanvas comme on est en créatif ; durant un mini-jeu : refuser ») :
+  - `/menu` : les objets d'interface proposés au joueur là où il est (étoile de kal-games ou de Kanvas, boussole =
+    navigation, comparateur = informations) ; un seul → il s'ouvre, plusieurs → menu de choix. Marche aussi avec les
+    objets retirés, et sur les serveurs sans boussole (la navigation y est toujours proposée).
+  - `/menu off` : retire tous ces objets (inventaire entier) et n'en redonne plus, même après une mort ou une
+    reconnexion ; `/menu on` : les remet à leurs cases. Mémorisé par serveur dans `plugins/KLM_Menu/objets-masques.yml`.
+  - `/menu on` refusé si une de ces cases contient autre chose (message avec les numéros de case, 1 à 9), **sauf en mode
+    créatif** : l'objet du joueur est déplacé dans l'inventaire (remplacé s'il n'y a plus de place, sans perte en
+    créatif). Règle liée au mode de jeu, pas au serveur : Kanvas est concerné car on y est en créatif.
+  - `/menu on` et `/menu off` refusés pendant une partie (KalGames : partie, gradins, spectateur ; Build Battle ; mondes
+    du Bingo). `/menu` seul reste permis en partie (il ouvre par exemple le menu de la partie sur kal-games).
+  - Nouvelles API : `InterfaceItem` (objet d'interface d'un plugin : nom, case, donner, ouvrir) et `PlayerActivity`
+    (le joueur est-il en partie ?), par le registre de services ; `KlmMenu.itemsHidden(Player)`.
+  - Sur Kixster et Event, `/menu` était un alias de `/servers` dans `commands.yml` : **retirer cet alias au
+    déploiement**, sinon il masque la nouvelle commande. Sur Serveur Jeux, l'ancien `/menu` de KG_BingoGame (menu de la
+    salle d'attente) devient `/bingomenu` (0.8.3).
 - **Paramètres** : les réglages de chaque plugin **à plat**, un bouton chacun (interfaces ADMINS ; une interface peut en
   fournir plusieurs avec `MenuSection.expand`, ex. KG_Menu : un par jeu), puis « Téléportations » (l'ancien
   « Paramètres » de la boussole : activer / désactiver les destinations et les portails reliés).

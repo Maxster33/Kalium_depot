@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * /menu : ouvre le menu graphique de la salle d'attente. Reserve aux operateurs (permission
+ * /bingomenu (0.8.3, anciennement /menu) : ouvre le menu graphique de la salle d'attente. Reserve aux operateurs (permission
  * bingo.admin, la meme que /bingoadmin - demande explicite de l'utilisateur : "uniquement
  * pour les operateurs"). Double verification ici (en plus du "permission:" de plugin.yml)
  * pour un message d'erreur en francais coherent avec le reste du plugin plutot que le

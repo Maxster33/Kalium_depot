@@ -27,9 +27,9 @@ commands:
   bingonulle:
     description: Proposer une nulle dans une partie de Bingo, ou voter.
     usage: /<command> [proposer|oui|non]
-  menu:
+  bingomenu:
     description: Menu graphique pour capturer/modifier la salle d'attente Bingo (opérateurs).
-    aliases: [bingomenu]
+    aliases: [bg-menu]
     usage: /<command>
     permission: bingo.admin
     permission-message: §cVous n'avez pas la permission d'utiliser ce menu.

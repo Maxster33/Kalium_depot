@@ -136,6 +136,22 @@ public final class KgMenu extends JavaPlugin implements Listener {
             }
         }, this, ServicePriority.Normal);
 
+        // 1.1.0 : etoile declaree a KLM_Menu pour /menu (ouvrir, /menu on | off).
+        getServer().getServicesManager().register(fr.kalium.menu.api.InterfaceItem.class, new fr.kalium.menu.api.InterfaceItem() {
+            public org.bukkit.plugin.Plugin owner() { return KgMenu.this; }
+            public String id() { return "kalgames"; }
+            public Component name() { return t("item.games.name", "<gold><bold>Mini-jeux"); }
+            public int order() { return 1; }
+            public boolean available(Player player) { return true; }
+            public void open(Player player) { openFor(player); }
+            public int slot(Player player) {
+                int slot = getConfig().getInt("hub-item.slot", 4);
+                return slot < 0 || slot > 8 ? 4 : slot;
+            }
+            public boolean isItem(ItemStack item) { return isHubItem(item); }
+            public void give(Player player) { giveHubItem(player); }
+        }, this, ServicePriority.Normal);
+
         // Decouverte une fois tous les plugins actives, puis a chaque ajout / retrait.
         getServer().getScheduler().runTask(this, () -> refreshProviders(true));
         getLogger().info("KG_Menu actif.");
@@ -313,6 +329,10 @@ public final class KgMenu extends JavaPlugin implements Listener {
 
     /** Donne l'objet du hub a son emplacement (appele par KalGames quand il prepare le hub). */
     public void giveHubItem(Player player) {
+        // 1.1.0 : pas d'etoile pour un joueur qui a retire ses objets de menu (/menu off, KLM_Menu 2.4.0).
+        if (getServer().getPluginManager().getPlugin("KLM_Menu") instanceof fr.kalium.menu.KlmMenu klm && klm.itemsHidden(player)) {
+            return;
+        }
         int slot = getConfig().getInt("hub-item.slot", 4);
         if (slot < 0 || slot > 8) {
             slot = 4;

@@ -141,6 +141,7 @@ public final class KalGames extends JavaPlugin {
 
             // 1.21.0 : un bouton par jeu (+ parties en cours) dans « Informations > Parametres », au lieu de
             // « Mini-jeux Kal-Games ».
+            // « Mini-jeux Kal-Games ».
             @Override
             public java.util.List<Entry> settings(Player player) {
                 return admin.settingsEntries(player);
@@ -149,6 +150,18 @@ public final class KalGames extends JavaPlugin {
             @Override
             public boolean openCurrent(Player player) {
                 return menus.openCurrent(player);
+            }
+        }, this, org.bukkit.plugin.ServicePriority.Normal);
+        // 1.21.0 : /menu on | off (KLM_Menu 2.4.0) refuse pendant une partie, dans les gradins ou en spectateur.
+        getServer().getServicesManager().register(fr.kalium.menu.api.PlayerActivity.class, new fr.kalium.menu.api.PlayerActivity() {
+            @Override
+            public org.bukkit.plugin.Plugin owner() {
+                return KalGames.this;
+            }
+
+            @Override
+            public boolean inGame(Player player) {
+                return instances != null && (instances.of(player) != null || instances.spectatorOf(player) != null);
             }
         }, this, org.bukkit.plugin.ServicePriority.Normal);
         getLogger().info("KalGames actif : " + repository.minigames().size() + " mini-jeu(x), " + repository.arenas().size()

@@ -13,6 +13,8 @@ quitter la barre d'objets quand on construit sur son plot, comme l'étoile et la
   l'étoile et de la boussole) ; il revient à sa case (`informations.slot` de KLM_Menu, 0 par défaut) en sortant du plot.
 - Les interfaces admin de KV_Menu (concours de build, signalements) sont maintenant dans « Informations > Paramètres »
   (KLM_Menu 2.4.0) ; l'entrée « Kanvas » joueurs n'y est plus listée (l'étoile l'ouvre).
+- Étoile déclarée à KLM_Menu pour `/menu` (ouverture, `/menu on | off`) ; après `/menu off`, plus d'étoile sur Kanvas
+  jusqu'à `/menu on`.
 
 **Déploiement** : avec KLM_Menu 2.4.0 et KV_BuildBattle 0.3.6 sur Kanvas. **Statut : compilé, non déployé, non testé en
 jeu.**

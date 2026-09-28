@@ -72,7 +72,11 @@ public final class KvMenu extends JavaPlugin {
                         t("klm.home", "<gold><bold>Kanvas"), t("klm.home-tip", "<gray>Plots de construction : réserver, mes plots, éditeurs."),
                         this::accueil),
                 this, ServicePriority.Normal);
-        getServer().getPluginManager().registerEvents(new ObjetMenu(this, lang, p -> accueil(p, null)), this);
+        ObjetMenu objetMenu = new ObjetMenu(this, lang, p -> accueil(p, null));
+        getServer().getPluginManager().registerEvents(objetMenu, this);
+        // 1.3.1 : etoile connue de /menu (KLM_Menu 2.4.0).
+        getServer().getServicesManager().register(fr.kalium.menu.api.InterfaceItem.class, objetMenu.interfaceItem(), this,
+                org.bukkit.plugin.ServicePriority.Normal);
         tetes = new TetesJoueurs(plots, lang, this::plotsJoueur);
         getServer().getPluginManager().registerEvents(tetes, this);
         getServer().getPluginManager().registerEvents(new PoudreSignalement(), this);

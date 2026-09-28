@@ -288,7 +288,16 @@ public class BingoPlugin extends JavaPlugin {
         // l'utilisateur, "je ne comprends pas l'utilisation de la commande".
         LobbyMenu lobbyMenu = new LobbyMenu(lobbyCaptureService);
         getServer().getPluginManager().registerEvents(lobbyMenu, this);
-        getCommand("menu").setExecutor(new MenuCommand(lobbyMenu));
+        // 0.8.3 : /menu est celui de KLM_Menu 2.4.0 (menu du serveur, /menu on | off) : ce menu admin devient /bingomenu
+        // (aussi dans « Informations > Parametres »).
+        getCommand("bingomenu").setExecutor(new MenuCommand(lobbyMenu));
+        // 0.8.3 : /menu on | off refuse dans les mondes du Bingo (salles d'attente, parties).
+        getServer().getServicesManager().register(fr.kalium.menu.api.PlayerActivity.class, new fr.kalium.menu.api.PlayerActivity() {
+            public org.bukkit.plugin.Plugin owner() { return BingoPlugin.this; }
+            public boolean inGame(org.bukkit.entity.Player player) {
+                return player.getWorld().getName().startsWith("bingo_");
+            }
+        }, this, org.bukkit.plugin.ServicePriority.Normal);
         // 0.5.0 : interface declaree a KLM_Menu (catalogue "Interfaces" de la boussole), operateurs seulement.
         getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
                 new fr.kalium.menu.api.MenuSection() {
@@ -309,7 +318,7 @@ public class BingoPlugin extends JavaPlugin {
 
                     @Override
                     public net.kyori.adventure.text.Component description() {
-                        return net.kyori.adventure.text.Component.text("Capturer ou modifier le modèle de la salle d'attente (comme /menu).",
+                        return net.kyori.adventure.text.Component.text("Capturer ou modifier le modèle de la salle d'attente (comme /bingomenu).",
                                 net.kyori.adventure.text.format.NamedTextColor.GRAY);
                     }
 

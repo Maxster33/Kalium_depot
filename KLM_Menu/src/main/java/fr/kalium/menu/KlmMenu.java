@@ -94,7 +94,7 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
     private int buttonWidth;
 
     /** Bouton special (en plus de "changer de serveur" / "executer une commande"). */
-    private enum Special { NONE, OP_SWITCH, GAMEMODE_SWITCH, INFORMATIONS }
+    private enum Special { NONE, OP_SWITCH, GAMEMODE_SWITCH }
 
     /** Entree du menu : un serveur, ou (local = true) une commande executee sur ce serveur. */
     private record ServerEntry(String id, String display, String description, boolean local, String command,
@@ -142,13 +142,15 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         getServer().getMessenger().registerIncomingPluginChannel(this, CHANNEL, this);
         getServer().getPluginManager().registerEvents(this, this);
 
-        for (String name : List.of("servers", "lobby", "kaliummenu", "informations")) {
+        for (String name : List.of("servers", "lobby", "kaliummenu", "informations", "menu")) {
             PluginCommand command = getCommand(name);
             if (command != null) {
                 command.setExecutor(this);
                 command.setTabCompleter(this);
             }
         }
+        loadHidden();
+        registerOwnItems();
 
         // Garde le cache du nombre de joueurs a jour tant qu'un joueur est en ligne.
         getServer().getScheduler().runTaskTimer(this, this::refreshCounts, 40L, 200L);
@@ -530,7 +532,17 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
             return true;
         }
 
-        if (name.equals("servers")) {
+        if (name.equals("menu")) {
+            if (args.length == 0) {
+                openInterfaces(player);
+            } else if (args[0].equalsIgnoreCase("on")) {
+                showItems(player);
+            } else if (args[0].equalsIgnoreCase("off")) {
+                hideItems(player);
+            } else {
+                player.sendMessage(lang.c("menu-cmd.usage", "<gray>/menu : ouvrir le menu. <white>/menu off<gray> : retirer les objets de menu de la barre, <white>/menu on<gray> : les remettre."));
+            }
+        } else if (name.equals("servers")) {
             openMenu(player);
         } else if (name.equals("informations")) {
             openInformations(player);
@@ -548,6 +560,17 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if (command.getName().equalsIgnoreCase("menu")) {
+            List<String> options = new ArrayList<>();
+            if (args.length == 1) {
+                for (String option : List.of("on", "off")) {
+                    if (option.startsWith(args[0].toLowerCase(Locale.ROOT))) {
+                        options.add(option);
+                    }
+                }
+            }
+            return options;
+        }
         if (!command.getName().equalsIgnoreCase("kaliummenu")) {
             return List.of();
         }
@@ -597,12 +620,6 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         entries.removeIf(entry -> isDisabled(entry.id()));
         // 2.4.0 : « Interfaces » et « Parametres » quittent la boussole (navigation seulement) pour le comparateur
         // « Informations ».
-        // Sur un serveur sans comparateur (boussole desactivee : Bingo, Event, Kixster), « Informations » reste
-        // accessible par ce menu (/menu), comme l'etait « Interfaces ».
-        if (!informationsEnabled() && hasInformations(player)) {
-            entries.add(new ServerEntry("informations", msg("informations-button"), msg("informations-description"),
-                    true, "", List.of(), List.of(), Special.INFORMATIONS));
-        }
         if (isListedOperator(player)) {
             boolean op = player.isOp();
             entries.add(new ServerEntry(
@@ -681,8 +698,6 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
                                             toggleOperator(clicker);
                                         } else if (entry.special() == Special.GAMEMODE_SWITCH) {
                                             cycleGamemode(clicker);
-                                        } else if (entry.special() == Special.INFORMATIONS) {
-                                            openInformations(clicker);
                                         } else if (isDisabled(target)) {
                                             clicker.sendMessage(mm.deserialize(msg("destination-disabled")));
                                         } else if (entry.local()) {
@@ -936,6 +951,253 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
                 && item.getItemMeta().getPersistentDataContainer().has(informationsKey, PersistentDataType.BYTE);
     }
 
+    // ------------------------------------------------------------------ /menu, /menu on, /menu off (2.4.0)
+
+    /**
+     * Demande de LeKiwi06 (28/09/2026) : « /menu ouvre l'interface (si le serveur ne possede qu'un item d'interface :
+     * ouvrir directement cette interface ; s'il en possede plusieurs : menu de selection) ; /menu on/off sert a
+     * donner / retirer les divers items d'interface de la hotbar : nether star, boussole, comparateur... ; si des items
+     * sont contenus dans les slots correspondants : refuser la commande (sauf sur Kanvas comme on est en creatif) ;
+     * durant un mini-jeu : refuser la commande ».
+     * Joueurs qui ont retire leurs objets (/menu off), par serveur : plugins/KLM_Menu/objets-masques.yml.
+     */
+    private final java.util.Set<UUID> hidden = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
+    private java.io.File hiddenFile() {
+        return new java.io.File(getDataFolder(), "objets-masques.yml");
+    }
+
+    private void loadHidden() {
+        hidden.clear();
+        var yaml = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(hiddenFile());
+        for (String value : yaml.getStringList("joueurs")) {
+            try {
+                hidden.add(UUID.fromString(value));
+            } catch (IllegalArgumentException ignored) {
+                // ligne abimee : ignoree
+            }
+        }
+    }
+
+    private void saveHidden() {
+        var yaml = new org.bukkit.configuration.file.YamlConfiguration();
+        List<String> list = new ArrayList<>();
+        for (UUID uuid : hidden) {
+            list.add(uuid.toString());
+        }
+        yaml.set("joueurs", list);
+        try {
+            getDataFolder().mkdirs();
+            yaml.save(hiddenFile());
+        } catch (IOException e) {
+            getLogger().warning("Impossible d'enregistrer objets-masques.yml : " + e.getMessage());
+        }
+    }
+
+    /** 2.4.0 - API : le joueur a-t-il retire ses objets d'interface (/menu off) ? Les plugins ne lui en donnent pas. */
+    public boolean itemsHidden(Player player) {
+        return player != null && hidden.contains(player.getUniqueId());
+    }
+
+    /** Boussole et comparateur, declares comme les objets des autres plugins. */
+    private void registerOwnItems() {
+        getServer().getServicesManager().register(fr.kalium.menu.api.InterfaceItem.class, new fr.kalium.menu.api.InterfaceItem() {
+            public org.bukkit.plugin.Plugin owner() { return KlmMenu.this; }
+            public String id() { return "navigation"; }
+            public Component name() { return mm.deserialize(getConfig().getString("compass.name", "<#09add3><bold>Navigation")); }
+            public int order() { return 10; }
+            public boolean available(Player player) { return true; }
+            public void open(Player player) { openMenu(player); }
+            public int slot(Player player) {
+                if (!getConfig().getBoolean("compass.enabled", true)) {
+                    return -1;
+                }
+                int slot = getConfig().getInt("compass.slot", 8);
+                return slot < 0 || slot > 8 ? 8 : slot;
+            }
+            public boolean isItem(ItemStack item) { return isCompass(item); }
+            public void give(Player player) { giveCompass(player); }
+        }, this, org.bukkit.plugin.ServicePriority.Normal);
+        getServer().getServicesManager().register(fr.kalium.menu.api.InterfaceItem.class, new fr.kalium.menu.api.InterfaceItem() {
+            public org.bukkit.plugin.Plugin owner() { return KlmMenu.this; }
+            public String id() { return "informations"; }
+            public Component name() { return lang.c("info.item-name", "<#09add3><bold>Informations"); }
+            public int order() { return 20; }
+            public boolean available(Player player) { return hasInformations(player); }
+            public void open(Player player) { openInformations(player); }
+            public int slot(Player player) {
+                if (!informationsEnabled() || !hasInformations(player)) {
+                    return -1;
+                }
+                int slot = getConfig().getInt("informations.slot", 0);
+                return slot < 0 || slot > 8 ? 0 : slot;
+            }
+            public boolean isItem(ItemStack item) { return isInformations(item); }
+            public void give(Player player) { giveInformations(player); }
+        }, this, org.bukkit.plugin.ServicePriority.Normal);
+    }
+
+    /** Objets d'interface de ce serveur (tous les plugins), dans l'ordre d'affichage. */
+    private List<fr.kalium.menu.api.InterfaceItem> interfaceItems() {
+        List<fr.kalium.menu.api.InterfaceItem> list = new ArrayList<>();
+        for (var registration : getServer().getServicesManager().getRegistrations(fr.kalium.menu.api.InterfaceItem.class)) {
+            if (registration.getPlugin().isEnabled()) {
+                list.add(registration.getProvider());
+            }
+        }
+        list.sort(java.util.Comparator.comparingInt(fr.kalium.menu.api.InterfaceItem::order)
+                .thenComparing(item -> item.owner().getName().toLowerCase(Locale.ROOT)));
+        return list;
+    }
+
+    private boolean isInterfaceItem(ItemStack stack) {
+        if (stack == null || stack.getType().isAir()) {
+            return false;
+        }
+        for (var item : interfaceItems()) {
+            try {
+                if (item.isItem(stack)) {
+                    return true;
+                }
+            } catch (RuntimeException ignored) {
+                // plugin en erreur : on continue
+            }
+        }
+        return false;
+    }
+
+    /** /menu : l'interface du serveur, directement s'il n'y en a qu'une, sinon un menu de choix. */
+    private void openInterfaces(Player player) {
+        List<fr.kalium.menu.api.InterfaceItem> list = new ArrayList<>();
+        for (var item : interfaceItems()) {
+            try {
+                if (item.available(player)) {
+                    list.add(item);
+                }
+            } catch (RuntimeException e) {
+                getLogger().warning("Objet d'interface " + item.owner().getName() + "/" + item.id() + " : " + e);
+            }
+        }
+        if (list.isEmpty()) {
+            player.sendMessage(lang.c("menu-cmd.none", "<red>Aucun menu n'est disponible ici."));
+            return;
+        }
+        if (list.size() == 1) {
+            list.get(0).open(player);
+            return;
+        }
+        List<ActionButton> buttons = new ArrayList<>();
+        for (var item : list) {
+            buttons.add(gui.button(item.name(), null, item::open));
+        }
+        gui.open(player, lang.c("menu-cmd.title", "<#09add3><bold>Menus"),
+                List.of(lang.c("menu-cmd.body", "<gray>Choisis un menu.")), List.of(), buttons, null, 1);
+    }
+
+    /** Le joueur est-il en partie (d'apres les plugins de jeu) ? */
+    private boolean inGame(Player player) {
+        for (var registration : getServer().getServicesManager().getRegistrations(fr.kalium.menu.api.PlayerActivity.class)) {
+            try {
+                if (registration.getPlugin().isEnabled() && registration.getProvider().inGame(player)) {
+                    return true;
+                }
+            } catch (RuntimeException e) {
+                getLogger().warning("Activité de " + registration.getPlugin().getName() + " : " + e);
+            }
+        }
+        return false;
+    }
+
+    /** /menu off : retire tous les objets d'interface et n'en donne plus (jusqu'a /menu on). */
+    private void hideItems(Player player) {
+        if (inGame(player)) {
+            player.sendMessage(lang.c("menu-cmd.in-game", "<red>Impossible pendant une partie."));
+            return;
+        }
+        if (!hidden.add(player.getUniqueId())) {
+            player.sendMessage(lang.c("menu-cmd.already-off", "<yellow>Tes objets de menu sont déjà retirés. <gray>(/menu on pour les remettre)"));
+            return;
+        }
+        saveHidden();
+        PlayerInventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getSize(); i++) {
+            if (isInterfaceItem(inventory.getItem(i))) {
+                inventory.setItem(i, null);
+            }
+        }
+        if (isInterfaceItem(player.getItemOnCursor())) {
+            player.setItemOnCursor(null);
+        }
+        player.sendMessage(lang.c("menu-cmd.off", "<green>Objets de menu retirés de ta barre. <gray>/menu les ouvre toujours ; /menu on pour les remettre."));
+    }
+
+    /**
+     * /menu on : redonne les objets d'interface a leurs cases. Refuse si une de ces cases contient autre chose, sauf en
+     * creatif (Kanvas) : l'objet du joueur est alors deplace dans l'inventaire (ou remplace s'il n'y a plus de place,
+     * sans perte en creatif).
+     */
+    private void showItems(Player player) {
+        if (inGame(player)) {
+            player.sendMessage(lang.c("menu-cmd.in-game", "<red>Impossible pendant une partie."));
+            return;
+        }
+        if (!hidden.contains(player.getUniqueId())) {
+            player.sendMessage(lang.c("menu-cmd.already-on", "<yellow>Tes objets de menu sont déjà dans ta barre. <gray>(/menu off pour les retirer)"));
+            return;
+        }
+        PlayerInventory inventory = player.getInventory();
+        List<fr.kalium.menu.api.InterfaceItem> toGive = new ArrayList<>();
+        java.util.TreeSet<Integer> busy = new java.util.TreeSet<>();
+        for (var item : interfaceItems()) {
+            int slot;
+            try {
+                slot = item.slot(player);
+            } catch (RuntimeException e) {
+                continue;
+            }
+            if (slot < 0 || slot > 8) {
+                continue;
+            }
+            toGive.add(item);
+            ItemStack current = inventory.getItem(slot);
+            if (current != null && !current.getType().isAir() && !isInterfaceItem(current)) {
+                busy.add(slot);
+            }
+        }
+        boolean creative = player.getGameMode() == org.bukkit.GameMode.CREATIVE;
+        if (!busy.isEmpty() && !creative) {
+            List<String> numbers = new ArrayList<>();
+            for (int slot : busy) {
+                numbers.add(String.valueOf(slot + 1));
+            }
+            player.sendMessage(lang.c("menu-cmd.busy", "<red>Libère d'abord <white>la case <slots></white> de ta barre (cases comptées de 1 à 9 depuis la gauche).",
+                    "slots", String.join(", ", numbers)));
+            return;
+        }
+        for (int slot : busy) {
+            ItemStack occupant = inventory.getItem(slot);
+            inventory.setItem(slot, null);
+            // Hors de la barre si possible (cases 9 a 35), sinon remplace (creatif : aucune perte).
+            for (int i = 9; i < 36 && occupant != null; i++) {
+                ItemStack free = inventory.getItem(i);
+                if (free == null || free.getType().isAir()) {
+                    inventory.setItem(i, occupant);
+                    occupant = null;
+                }
+            }
+        }
+        hidden.remove(player.getUniqueId());
+        saveHidden();
+        for (var item : toGive) {
+            try {
+                item.give(player);
+            } catch (RuntimeException e) {
+                getLogger().warning("Objet d'interface " + item.owner().getName() + "/" + item.id() + " : " + e);
+            }
+        }
+        player.sendMessage(lang.c("menu-cmd.on", "<green>Objets de menu remis dans ta barre."));
+    }
+
     /** Objets de KLM_Menu verrouilles (boussole, comparateur). */
     private boolean isLocked(ItemStack item) {
         return isCompass(item) || isInformations(item);
@@ -947,7 +1209,7 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
      */
     private void giveInformations(Player player) {
         PlayerInventory inventory = player.getInventory();
-        boolean wanted = informationsEnabled() && hasInformations(player);
+        boolean wanted = informationsEnabled() && hasInformations(player) && !itemsHidden(player); // 2.4.0 : /menu off
         boolean present = false;
         for (int i = 0; i < inventory.getSize(); i++) {
             if (isInformations(inventory.getItem(i))) {
@@ -1040,7 +1302,7 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
     }
 
     private void giveCompass(Player player) {
-        if (!getConfig().getBoolean("compass.enabled", true)) {
+        if (!getConfig().getBoolean("compass.enabled", true) || itemsHidden(player)) { // 2.4.0 : /menu off
             return;
         }
         PlayerInventory inventory = player.getInventory();
@@ -1209,8 +1471,6 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
             case "settings-state-on" -> " <dark_gray>| <green>activée";
             case "settings-state-off" -> " <dark_gray>| <red>désactivée";
             case "settings-toggle-description" -> "<gray>Clique pour changer.";
-            case "informations-button" -> "<#09add3><bold>Informations";
-            case "informations-description" -> "<gray>Classements et paramètres de <white>ce serveur<gray>.";
             case "destination-disabled" -> "<red>Cette téléportation est désactivée.";
             case "give-done" -> "<green>Boussole donnée à <player>.";
             case "player-not-found" -> "<red>Joueur introuvable.";

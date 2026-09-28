@@ -12,6 +12,7 @@ nombre, par le relais).
   `compteur-buildbattle`), lu par KG_BuildBattle 0.2.0. Échec silencieux, nouvel essai 5 s plus tard. Utilise
   `relay-url` / `relay-token` (déjà en place).
 - Interface « Build Battle : arène » : dans « Informations > Paramètres » (KLM_Menu 2.4.0), plus dans « Interfaces ».
+- `/menu on | off` (KLM_Menu 2.4.0) refusé pendant une partie (salle d'attente comprise).
 
 **Déploiement** : avec KG_BuildBattle 0.2.0 (kal-games) et KLM_Menu 2.4.0. **Statut : compilé, non déployé, non testé
 en jeu.**

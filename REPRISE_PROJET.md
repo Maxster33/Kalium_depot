@@ -96,7 +96,9 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 (case de gauche : Classements pour tous, Paramètres pour les admins, un bouton par jeu), boussole réduite à la
 navigation et verrouillée pour tout le monde, couleurs des menus assombries pour les joueurs Bedrock, nombre de joueurs
 sur chaque bouton de jeu de kal-games, boutons obsolètes retirés (Mini-jeux, Kits, Hub, Arènes mélangées, emplacement
-Build Battle de KalGames). Détail dans chaque `JOURNAL.md`.
+Build Battle de KalGames), `/menu` (ouvre le menu du serveur, choix s'il y en a plusieurs ; `/menu on | off` remet / retire
+les objets de menu de la barre, refusé en partie ou si les cases sont prises, sauf en créatif). Détail dans chaque
+`JOURNAL.md`. **Au déploiement sur Kixster et Event : retirer l'alias `menu` (vers `servers`) de `commands.yml`.**
 - Tous les serveurs Paper : `KLM_Menu-2.4.0.jar` (obligatoire partout où l'un des plugins suivants tourne).
 - Kal-Games : `KalGames-1.21.0`, `KG_Menu-1.1.0`, `KG_ScoreBoards-1.6.0`, `KG_Bingo-1.6.0`, `KG_BuildBattle-0.2.0`.
 - Serveur Jeux : `KG_BingoGame-0.8.3` (+ KLM_Menu 2.4.0, il y est en 2.0.0).

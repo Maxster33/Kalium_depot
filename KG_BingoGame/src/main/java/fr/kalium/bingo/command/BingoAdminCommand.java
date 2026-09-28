@@ -68,7 +68,7 @@ public class BingoAdminCommand implements CommandExecutor {
             sender.sendMessage("§7Usage: /" + label + " lobby <tp|pos1|pos2|spawn|capture|info>");
             sender.sendMessage("§7Usage: /" + label + " start <gameId>");
             sender.sendMessage("§7Usage: /" + label + " grid <reload|show <gameId>>");
-            sender.sendMessage("§7Astuce : /menu propose un menu graphique équivalent pour la salle d'attente.");
+            sender.sendMessage("§7Astuce : /bingomenu propose un menu graphique équivalent pour la salle d'attente.");
             return true;
         }
         // 0.7.5 : capture et info possibles depuis la console (positions enregistrees, voir LobbyCaptureService).
