@@ -1,0 +1,12 @@
+{
+  "resource_pack_name": "kalium_objets",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "kalium.estomac_gardien": {
+      "textures": ["textures/items/kalium_estomac_gardien"]
+    },
+    "kalium.cle_de_l_end": {
+      "textures": ["textures/items/kalium_cle_de_l_end"]
+    }
+  }
+}

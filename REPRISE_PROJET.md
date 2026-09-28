@@ -13,7 +13,7 @@ Le détail technique de chaque version est dans `<plugin>/JOURNAL.md`. Documents
 
 | Rôle | Nom Velocity | Hôte SFTP (onglet WinSCP) | Adresse de jeu | Plugin(s) à nous |
 |---|---|---|---|---|
-| Proxy Velocity | — | `ProxyVelocity@7018.mystrator.com` | port 25370 | KaliumRelay (relais HTTP, port 46199) |
+| Proxy Velocity | — | `ProxyVelocity@7018.mystrator.com` | port 25370 | KaliumRelay (relais HTTP, port 46199) ; Geyser : apparence Bedrock des objets custom (`geyser-bedrock/`) |
 | Lobby | `lobby` | `lobby@7002.mystrator.com` | 91.197.6.152:28618 | KLM_Menu, KLM_Portal |
 | **Hub mini-jeux (Kal-Games)** | `kal-games` | `KalGames2@7001.mystrator.com` (onglet « KalGames2 ») | 91.197.6.24:22142 | KalGames, KG_PvpKit, KG_BoatRace, KG_Parkour, KG_BuildBattle, KG_Menu, KG_Bingo, KG_ScoreBoards, KLM_Menu |
 | **Bingo + jeux gourmands** (Manhunt...) | `serveur-jeux` | `serveurjeux@7015.mystrator.com` | 91.197.6.65:22470 | KG_BingoGame, KLM_Menu (boussole désactivée) |
@@ -311,3 +311,8 @@ installés : le point de chute du lobby vers Kanvas fonctionne, boussole et éto
 - À tester : estomac (clic droit, contenu, inventaire plein), drop du grand gardien, coffres de structures neufs,
   coffres-forts normal et sinistre, capitaine / pillard, `/kaliumgive`, coffre de l'Ender (ouverture, déblocage,
   contenu gardé après reconnexion), craft de la Clé de l'End.
+- **Apparence Bedrock (29/09/2026 00:18, non testée)** : nouveau dossier `geyser-bedrock/` (voir son README). Geyser
+  n'affichait pas l'image (`item_model`) des objets custom : sur Bedrock, l'Estomac du gardien et la Clé de l'End
+  étaient des livres. Correspondance Geyser `custom_mappings/kalium_objets.json` et pack `KaLium-objets-1.0.0.mcpack`
+  envoyés sur le proxy (dossiers `custom_mappings/` et `packs/` de Geyser-Velocity, vides avant) ; **actif après
+  redémarrage du proxy (l'humain)**. Aucun autre plugin n'utilise d'`item_model` (vérifié dans tout le dépôt).

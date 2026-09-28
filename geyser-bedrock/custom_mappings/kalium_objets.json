@@ -1,0 +1,27 @@
+{
+  "format_version": 2,
+  "items": {
+    "minecraft:knowledge_book": [
+      {
+        "type": "definition",
+        "model": "minecraft:black_bundle",
+        "bedrock_identifier": "kalium:estomac_gardien",
+        "display_name": "Estomac du gardien",
+        "bedrock_options": {
+          "icon": "kalium.estomac_gardien",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:ominous_trial_key",
+        "bedrock_identifier": "kalium:cle_de_l_end",
+        "display_name": "Clé de l'End",
+        "bedrock_options": {
+          "icon": "kalium.cle_de_l_end",
+          "allow_offhand": true
+        }
+      }
+    ]
+  }
+}

@@ -28,3 +28,7 @@ reste vanilla) ; changements de poids par remplacement à probabilité exacte.
   avec la Clé de l'End ; réponses : 1 clé = 1 case, barrière, craft sans forme, clé par 64), KS_Crafts 1.1.0 (craft de
   la clé), KS_KaliumGive 1.1.0 (id `cle_de_l_end`). À tester.
 - 29/09/2026 00:02 : KS_EstomacGardien 1.3.0 (chance du casque en diamant x2 : 10 % → 20 %), déployé.
+- 29/09/2026 00:18 : sur Bedrock, l'Estomac du gardien et la Clé de l'End s'affichaient comme des livres (Geyser ne
+  transmet pas `item_model`). Maxster33 refuse d'utiliser le vrai sac / la vraie clé comme base (objets utiles en
+  jeu) : apparence seulement, par une correspondance Geyser + un pack Bedrock (`geyser-bedrock/`), envoyés sur le
+  proxy. Aucun autre objet concerné. Reste : redémarrer le proxy et tester sur Bedrock.
