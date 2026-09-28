@@ -15,7 +15,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 « refus (...) » ; le demandeur retire la ligne à la fin du créneau).
 
 ## Utilisés actuellement
-- KLM_Portal — LeKiwi06 — depuis le 2026-09-28 11:58 — interdire un portail sur la région d'arrivée ou une région à effets (lobby entier relié à Event)
 
 ## Requis parfois
 

@@ -104,3 +104,23 @@ KLM_Menu 2.3.0, qui lisent la consigne à l'arrivée). **KLM_Menu 2.3.0 + KLM_Po
 19:59 (KLM_Menu 2.0.0 dans `_removed-klm_menu-2.0.0/`) ; `relay-token` de `plugins/KLM_Portal/config.yml` à remplir à
 la main (Kanvas et lobby). Statut : testé et confirmé par LeKiwi06 le 27/09/2026 (point de chute vers Kanvas, boussole et étoile de
 KV_Menu).
+
+## 1.3.0 — garde-fou : pas de portail sur le lobby entier ni sur la zone d'arrivée (28/09/2026)
+
+**Signalé par LeKiwi06 (28/09/2026)** : « quand j'arrive dans le lobby, si je bouge ça me tp dans le serveur event ».
+Cause (journal du lobby, 11:49:45) : un portail avait été créé sur la région WorldGuard **`lobby`** (tout le lobby, la
+zone des effets de vitesse et de saut) vers `event`, avec l'interface « Ajouter un portail » (« Portail lobby (Lobby
+Kalium) relié à event par Maaxster ») ; le moindre pas dans le lobby envoyait donc sur Event. Le code faisait ce qu'on
+lui demandait, mais laissait faire cette erreur.
+- Une région ne peut plus être un portail si c'est la **région globale**, une **zone à effets** (`region-effects`) ou
+  si elle **contient le point d'arrivée** des joueurs (`default-arrival` en coordonnées) : `/klmportal set` et
+  « Ajouter un portail » refusent (message avec la raison), l'interface ne propose plus ces régions.
+- Un tel portail déjà écrit dans `config.yml` est **ignoré** (il n'envoie personne) et signalé dans la console au
+  démarrage, avec la commande pour le retirer (`/klmportal remove <région>`).
+
+Vérifié ailleurs : KLM_Portal n'est que sur le lobby et Kanvas ; Kanvas n'a aucun portail. Sur le lobby, le portail
+`lobby` reste dans `config.yml` tant qu'un opérateur n'a pas fait `/klmportal remove lobby` (la région WorldGuard est
+gardée) ; en 1.3.0 il n'a plus d'effet.
+
+**Déployé sur le lobby et Kanvas le 28/09/2026 à 11 h 59** (serveurs allumés, pris en compte au redémarrage ; 1.2.0 dans
+`/plugins/_removed-klm_portal-1.2.0/`). **Statut : non testé en jeu.**

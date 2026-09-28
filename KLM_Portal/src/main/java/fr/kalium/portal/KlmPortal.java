@@ -139,12 +139,52 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
         regionEffects.load();
     }
 
+    /**
+     * 1.3.0 - garde-fou (28/09/2026) : le 28/09 a 11 h 49, un portail a ete cree sur la region WorldGuard « lobby »
+     * (tout le lobby, zone des effets de vitesse) vers Event : le moindre pas a l'arrivee envoyait sur Event. Une region
+     * ne peut donc pas etre un portail si elle est la region globale, une zone a effets (region-effects), ou si elle
+     * contient le point d'arrivee des joueurs (default-arrival) : on y serait envoye des le premier pas.
+     * Renvoie la raison du refus, ou null si la region peut etre un portail.
+     */
+    private String forbiddenReason(World world, ProtectedRegion region) {
+        if (region == null || world == null) {
+            return null;
+        }
+        String id = region.getId();
+        if (id.equalsIgnoreCase("__global__")) {
+            return "c'est la région globale du monde";
+        }
+        ConfigurationSection effects = getConfig().getConfigurationSection("region-effects");
+        if (effects != null) {
+            for (String key : effects.getKeys(false)) {
+                if (key.equalsIgnoreCase(id) && world.getName().equals(effects.getString(key + ".world", ""))) {
+                    return "c'est une zone à effets (region-effects), souvent tout le lobby";
+                }
+            }
+        }
+        ConfigurationSection arrival = getConfig().getConfigurationSection("default-arrival");
+        if (arrival != null && Landings.POINT.equals(arrival.getString("mode", ""))
+                && world.getName().equals(arrival.getString("world", ""))
+                && region.contains(BlockVector3.at(Math.floor(arrival.getDouble("x")), Math.floor(arrival.getDouble("y")),
+                        Math.floor(arrival.getDouble("z"))))) {
+            return "elle contient le point d'arrivée des joueurs sur ce serveur";
+        }
+        return null;
+    }
+
     private void checkRegions() {
         for (Map<String, Portal> byRegion : portals.values()) {
             for (Portal portal : byRegion.values()) {
-                if (region(portal) == null) {
+                ProtectedRegion region = region(portal);
+                if (region == null) {
                     getLogger().warning("Portail " + portal.region() + " : région WorldGuard introuvable dans le monde "
                             + portal.world() + " (portail inactif).");
+                    continue;
+                }
+                String reason = forbiddenReason(getServer().getWorld(portal.world()), region);
+                if (reason != null) {
+                    getLogger().warning("Portail " + portal.region() + " ignoré : " + reason
+                            + ". Retirez-le avec /klmportal remove " + portal.region() + ".");
                 }
             }
         }
@@ -173,7 +213,8 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
         BlockVector3 block = BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         for (Portal portal : byRegion.values()) {
             ProtectedRegion region = manager.getRegion(portal.region());
-            if (region != null && region.contains(block)) {
+            // 1.3.0 : un portail interdit (lobby entier, zone d'arrivee...) n'envoie jamais personne.
+            if (region != null && region.contains(block) && forbiddenReason(location.getWorld(), region) == null) {
                 return portal;
             }
         }
@@ -311,6 +352,13 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
                     "<red>Aucune région WorldGuard <white><region></white> dans ce monde.", "region", regionName));
             return false;
         }
+        String reason = forbiddenReason(world, region);
+        if (reason != null) {
+            player.sendMessage(lang.c("forbidden",
+                    "<red>La région <white><region></white> ne peut pas être un portail : <reason>. Dessine une région autour du portail seulement.",
+                    "region", region.getId(), "reason", reason));
+            return false;
+        }
         // On garde le nom de la region tel que WorldGuard l enregistre (minuscules).
         String name = region.getId();
         getConfig().set("portals." + name + ".world", world.getName());
@@ -349,7 +397,9 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
         if (manager != null) {
             Map<String, Portal> existing = portals.getOrDefault(player.getWorld().getName(), Map.of());
             for (String id : manager.getRegions().keySet()) {
-                if (!id.equals("__global__") && !existing.containsKey(id.toLowerCase(Locale.ROOT))) {
+                // 1.3.0 : les regions interdites (zone a effets, zone d'arrivee) ne sont pas proposees.
+                if (!id.equals("__global__") && !existing.containsKey(id.toLowerCase(Locale.ROOT))
+                        && forbiddenReason(player.getWorld(), manager.getRegion(id)) == null) {
                     freeRegions.add(id);
                 }
             }
