@@ -76,6 +76,10 @@ public final class Minigame {
         this.privateEnabled = value;
     }
 
+    /**
+     * Kits proposes au vote (identifiants), enregistres dans minigames.yml. 1.22.0 : les kits eux-memes et leur
+     * utilisation sont dans KG_PvpKit ; la liste reste stockee ici avec le reste du mini-jeu.
+     */
     public List<String> kits() {
         return kits;
     }

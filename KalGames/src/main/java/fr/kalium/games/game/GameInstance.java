@@ -542,6 +542,19 @@ public abstract class GameInstance {
         return List.of();
     }
 
+    /**
+     * 1.22.0 : le joueur vient de reapparaitre apres une mort dans cette partie (hors course, voir racing). Par defaut :
+     * retour dans les gradins ; le PvP Kit (KG_PvpKit) le met en spectateur si le match continue.
+     */
+    public void onRespawned(Player player) {
+        arriveInStands(player);
+    }
+
+    /** 1.22.0 : commande « /kalgames vote » : ouvre le vote du jeu s'il en a un (PvP Kit), sinon renvoie false. */
+    public boolean openVote(Player player) {
+        return false;
+    }
+
     public boolean frozen(Player player) {
         return false;
     }

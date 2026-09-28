@@ -1,4 +1,4 @@
-package fr.kalium.games.data;
+package fr.kalium.pvpkit;
 
 import org.bukkit.inventory.ItemStack;
 
@@ -7,26 +7,24 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Kit de combat : armure, main secondaire, objets a placer automatiquement ou a un slot precis. */
+/**
+ * Kit de combat : armure, main secondaire, objets a une case precise ou a placer automatiquement.
+ * Repris de KalGames 1.21.0 ; plus de kit relie a PlayerKits2 (les anciens sont convertis, voir KitLibrary).
+ */
 public final class Kit {
-
-    public static final String SOURCE_INVENTORY = "inventory";
-    public static final String SOURCE_PK2_PREFIX = "playerkits2:";
 
     private final String id;
     private String display;
-    private String source;
     /** boots, leggings, chestplate, helmet. */
     private final ItemStack[] armor = new ItemStack[4];
     private ItemStack offhand;
+    /** Objets sans case precise (kits convertis depuis PlayerKits2) : ajoutes a la suite dans l'inventaire. */
     private final List<ItemStack> auto = new ArrayList<>();
     private final Map<Integer, ItemStack> slots = new LinkedHashMap<>();
-    private boolean broken;
 
-    public Kit(String id, String display, String source) {
+    public Kit(String id, String display) {
         this.id = id;
         this.display = display;
-        this.source = source;
     }
 
     public String id() {
@@ -39,14 +37,6 @@ public final class Kit {
 
     public void display(String value) {
         this.display = value;
-    }
-
-    public String source() {
-        return source;
-    }
-
-    public void source(String value) {
-        this.source = value;
     }
 
     public ItemStack[] armor() {
@@ -69,24 +59,12 @@ public final class Kit {
         return slots;
     }
 
-    public boolean broken() {
-        return broken;
-    }
-
-    public void broken(boolean value) {
-        this.broken = value;
-    }
-
-    public void clearContents() {
-        for (int i = 0; i < armor.length; i++) {
-            armor[i] = null;
+    public boolean empty() {
+        for (ItemStack item : armor) {
+            if (item != null) {
+                return false;
+            }
         }
-        offhand = null;
-        auto.clear();
-        slots.clear();
-    }
-
-    public String pk2Name() {
-        return source.startsWith(SOURCE_PK2_PREFIX) ? source.substring(SOURCE_PK2_PREFIX.length()) : null;
+        return offhand == null && auto.isEmpty() && slots.isEmpty();
     }
 }

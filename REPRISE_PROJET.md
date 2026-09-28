@@ -92,7 +92,10 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-Aucune (28/09/2026 : tout ce qui est compilé est déployé).
+- **KalGames 1.22.0 + KG_PvpKit 1.0.0** (28/09/2026, LeKiwi06) : le PvP Kit sort de KalGames avec ses kits, nouveau barème
+  (éliminations, victoire / place, infériorité, série, déclassement du kit x1,5 à x3). **À déployer ensemble** sur
+  Kal-Games ; garder PlayerKits2 jusqu'au premier démarrage de KG_PvpKit (conversion des kits), puis le ranger dans
+  `_removed-playerkits2-…`. Non testés. Détail : `KG_PvpKit/JOURNAL.md`.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »
 (case de gauche : Classements pour tous, Paramètres pour les admins, un bouton par jeu), boussole réduite à la
@@ -133,8 +136,8 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
   KG_BuildBattle 0.1.0). Reste : 4 (points et classements, KG_ScoreBoards) ; limite de mobs par zone ; retirer
   l'emplacement « Build Battle » sans moteur de KalGames.
 - **Architecture** : KalGames à répartir entre KG_Instances (moteur des parties : déjà ouvert aux plugins de jeu
-  depuis KalGames 1.17.0), KLM_Hub + WorldGuard, KG_Menu et KG_ScoreBoards ; puis PvP Kit et Rush en plugins.
-  Renommage KaliumRelay → KLM_Relay (voir la charte). Plus tard : menus inter-serveurs, KG_AntiCheat (avec GrimAC).
+  depuis KalGames 1.17.0), KLM_Hub + WorldGuard, KG_Menu et KG_ScoreBoards ; puis le Rush en plugin.
+  PvP Kit sorti dans KG_PvpKit (1.0.0, compilé le 28/09/2026, non déployé). Renommage KaliumRelay → KLM_Relay (voir la charte). Plus tard : menus inter-serveurs, KG_AntiCheat (avec GrimAC).
 - **KG_ScoreBoards** : journal des parties (1.3.0), points décimaux (1.4.0) et vérification / crédit des parties des
   derniers jours (1.5.0 : `/classements verifier [jours]`, `/classements crediter <id|tout>`) faits. Étape C (résultats du Bingo via
   le relais) faite le 26/09/2026 (KG_BingoGame 0.8.0 + KG_Bingo 1.5.0 : classement « bingo », testé et confirmé par LeKiwi06 le 26/09/2026). Restent

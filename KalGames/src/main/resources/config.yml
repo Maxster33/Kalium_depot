@@ -1,7 +1,7 @@
 # ============================================================
 #  KalGames - configuration
 #  Les textes se modifient dans lang.yml (format MiniMessage).
-#  Les mini-jeux, arenes et kits se gerent depuis le menu
+#  Les mini-jeux et arenes se gerent depuis le menu
 #  "Parametres" (objet Mini-jeux du hub, visible des moderateurs).
 # ============================================================
 
@@ -77,10 +77,6 @@ arenas:
   # Blocs analyses par tick pendant la capture (plus bas = capture plus lente mais moins de charge). Les chunks sont
   # charges en arriere-plan, sans jamais bloquer le serveur.
   capture-blocks-per-tick: 30000
-
-kits:
-  # Dossier des kits PlayerKits2 (relatif au dossier plugins/).
-  playerkits2-folder: PlayerKits2/kits
 
 # Classement general : commandes executees par la console (datapack "minigames").
 # Placeholders : %player%, %points%, %obj%, %minigame%

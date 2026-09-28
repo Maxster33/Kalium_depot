@@ -1,10 +1,8 @@
 package fr.kalium.games.gui;
 
 import fr.kalium.games.KalGames;
-import fr.kalium.games.data.Kit;
 import fr.kalium.games.game.GameInstance;
 import fr.kalium.games.game.InstanceManager;
-import fr.kalium.games.game.PvpInstance;
 import fr.kalium.games.model.Arena;
 import fr.kalium.games.model.Minigame;
 import fr.kalium.games.model.MinigameType;
@@ -290,33 +288,9 @@ public final class PlayerMenus {
             inputs.add(gui.choice("arena", t("menu.create-arena", "Arène"), ids, labels, ids.get(0)));
         }
         MinigameType type = minigame.type();
-        if (type == MinigameType.PVP_KIT) {
-            int maxTeams = 2;
-            for (Arena arena : arenas) {
-                int count = 0;
-                for (String letter : List.of("a", "b", "c", "d")) {
-                    if (arena.point("spawn-" + letter) == null) {
-                        break;
-                    }
-                    count++;
-                }
-                maxTeams = Math.max(maxTeams, count);
-            }
-            if (maxTeams > 2) {
-                inputs.add(gui.number("teams", t("menu.create-teams", "Nombre d'équipes"), 2, maxTeams, 2, 1));
-            }
-            inputs.add(gui.number("teamSize", t("menu.create-team-size", "Joueurs par équipe"), 1, 4, 1, 1));
-            if (minigame.getBool("bedrock-option", true)) {
-                inputs.add(gui.toggle("haste", t("menu.create-haste", "PvP Bedrock (Haste, clic spam)"), false));
-            }
-            inputs.add(gui.choice("rounds", t("menu.create-rounds", "Nombre de manches"),
-                    List.of("1", "3", "5"),
-                    List.of(t("menu.rounds-1", "1 manche"), t("menu.rounds-3", "3 manches (première équipe à 2 victoires)"),
-                            t("menu.rounds-5", "5 manches (première équipe à 3 victoires)")), "1"));
-            inputs.add(gui.choice("kitMode", t("menu.create-kitmode", "Choix du kit"),
-                    List.of("vote", "random"),
-                    List.of(t("menu.kitmode-vote", "Vote avant chaque manche"),
-                            t("menu.kitmode-random", "Kit aléatoire à chaque manche (le même pour toutes les équipes)")), "vote"));
+        if (type.createForm() != null) {
+            // 1.22.0 : formulaire fourni par le jeu (equipes, manches, kit du PvP Kit : KG_PvpKit).
+            inputs.addAll(type.createForm().inputs(minigame, arenas, gui));
         } else {
             int max = minigame.getInt("max-players", 8);
             if (max > 1) {
@@ -338,27 +312,12 @@ public final class PlayerMenus {
         buttons.add(gui.form(t("menu.create-confirm", "<green>Créer la partie"), null, (p, view) -> {
             Map<String, Object> options = new HashMap<>();
             String arenaId = arenas.size() > 1 ? view.getText("arena") : arenas.get(0).id();
-            putNumber(options, "teams", view);
-            putNumber(options, "teamSize", view);
+            if (minigame.type().createForm() != null) {
+                minigame.type().createForm().read(view, options);
+            }
             putNumber(options, "maxPlayers", view);
             for (MinigameType.CreateOption option : minigame.type().createOptions()) {
                 putNumber(options, option.key(), view);
-            }
-            Boolean haste = view.getBoolean("haste");
-            if (haste != null) {
-                options.put("haste", haste);
-            }
-            String roundsText = view.getText("rounds");
-            if (roundsText != null) {
-                try {
-                    options.put("rounds", Integer.parseInt(roundsText.trim()));
-                } catch (NumberFormatException ignored) {
-                    options.put("rounds", 1);
-                }
-            }
-            String kitMode = view.getText("kitMode");
-            if (kitMode != null) {
-                options.put("kitMode", kitMode);
             }
             for (MinigameType.CreateToggle toggle : minigame.type().createToggles()) {
                 Boolean value = view.getBoolean(toggle.key());
@@ -475,58 +434,6 @@ public final class PlayerMenus {
         return name == null ? "?" : name;
     }
 
-    // ------------------------------------------------------------------ vote du kit
-
-    public void openVote(Player player, PvpInstance game) {
-        if (!game.voteOpen(player.getUniqueId())) {
-            return;
-        }
-        List<Kit> kits = game.voteKits();
-        List<ActionButton> buttons = new ArrayList<>();
-        String mine = game.voteOf(player.getUniqueId());
-        for (Kit kit : kits) {
-            boolean selected = kit.id().equals(mine);
-            Component label = Component.empty();
-            if (selected) {
-                label = label.append(t("vote.selected", "<green>✔ "));
-            }
-            label = label.append(plugin.lang().parse(kit.display()))
-                    .append(t("vote.count", " <dark_gray>(<n>)", "n", game.votesFor(kit.id())));
-            List<Component> tip = new ArrayList<>(plugin.kits().summary(kit, 14));
-            buttons.add(gui.button(label, Component.join(net.kyori.adventure.text.JoinConfiguration.newlines(), tip),
-                    p -> vote(p, game, kit.id())));
-        }
-        Component random = Component.empty();
-        if (PvpInstance.RANDOM_KIT.equals(mine)) {
-            random = random.append(t("vote.selected", "<green>✔ "));
-        }
-        random = random.append(t("vote.random", "<light_purple>Kit aléatoire"))
-                .append(t("vote.count", " <dark_gray>(<n>)", "n", game.votesFor(PvpInstance.RANDOM_KIT)));
-        buttons.add(gui.button(random, t("vote.random-tip", "<gray>Un kit tiré au sort parmi tous les kits."),
-                p -> vote(p, game, PvpInstance.RANDOM_KIT)));
-
-        List<Component> body = new ArrayList<>();
-        if (game.phase() == GameInstance.Phase.VOTE) {
-            body.add(t("vote.body-running", "<gray>Le kit le plus voté sera utilisé. Temps restant : <white><s></white> s.",
-                    "s", game.secondsLeft()));
-        } else {
-            body.add(t("vote.body-lobby", "<gray>Votez dès maintenant : le vote compte quand l'hôte lance la partie."));
-        }
-        gui.open(player, t("vote.title", "<gold><bold>Vote du kit"), body, List.of(), buttons, gui.close(), 2);
-    }
-
-    private void vote(Player player, PvpInstance game, String kitId) {
-        Component error = game.castVote(player, kitId);
-        if (error != null) {
-            player.sendMessage(plugin.prefix().append(error));
-            return;
-        }
-        Kit kit = plugin.kits().get(kitId);
-        Component label = kit == null ? t("vote.random", "<light_purple>Kit aléatoire") : plugin.lang().parse(kit.display());
-        player.sendMessage(plugin.prefix().append(t("vote.done", "<gray>Vote enregistré : <white><kit></white>", "kit", label)));
-        openVote(player, game);
-    }
-
     // ------------------------------------------------------------------ menu de la partie
 
     public void openGameMenu(Player player) {
@@ -544,10 +451,6 @@ public final class PlayerMenus {
         }
         if (!game.ready()) {
             body.add(t("game.body-preparing", "<yellow>Préparation de l'arène…"));
-        }
-        if (game instanceof PvpInstance info && !info.isPublic()) {
-            body.add(t("game.body-pvp", "<gray>Manches : <white><rounds></white> - Kit : <white><kit></white>",
-                    "rounds", info.rounds(), "kit", info.randomKits() ? "aléatoire" : "vote"));
         }
         // 1.20.0 : informations et boutons fournis par le jeu lui-meme (ex. entrainement du Parcours, KG_Parkour).
         body.addAll(game.menuInfo(player));
@@ -569,14 +472,6 @@ public final class PlayerMenus {
                     }
                 }
             }));
-        }
-        if (game instanceof PvpInstance pvp) {
-            if (pvp.voteOpen(uuid)) {
-                buttons.add(gui.button(t("game.vote", "<gold>Voter pour le kit"), null, p -> openVote(p, pvp)));
-            }
-            if (!pvp.isPublic() && pvp.phase() == GameInstance.Phase.WAITING) {
-                buttons.add(gui.button(t("game.teams", "<aqua>Équipes"), null, p -> openTeams(p, pvp)));
-            }
         }
         if (game instanceof fr.kalium.games.game.RushInstance rush && rush.teamsOpen()) {
             fr.kalium.games.model.RushLayout.Team team = rush.teamOf(uuid);
@@ -629,60 +524,5 @@ public final class PlayerMenus {
             }));
         }
         gui.open(player, t("game.menu-title", "<gold><bold>Menu de la partie"), body, List.of(), buttons, null, 1);
-    }
-
-    // ------------------------------------------------------------------ equipes
-
-    public void openTeams(Player player, PvpInstance game) {
-        if (game.isPublic() || game.phase() != GameInstance.Phase.WAITING) {
-            plugin.tell(player, "team.locked", "<red>Les équipes ne sont modifiables que dans le salon d'une partie privée.");
-            return;
-        }
-        UUID uuid = player.getUniqueId();
-        List<Component> body = new ArrayList<>();
-        for (int team = 0; team < game.privateTeams(); team++) {
-            List<String> names = new ArrayList<>();
-            for (UUID member : game.members()) {
-                if (game.teamOf(member) == team) {
-                    names.add(nameOf(member));
-                }
-            }
-            body.add(t("teams.line", "<team> <dark_gray>(<n>/<size>) <gray><names>", "team", game.teamName(team),
-                    "n", names.size(), "size", game.privateTeamSize(), "names", String.join(", ", names)));
-        }
-        List<ActionButton> buttons = new ArrayList<>();
-        for (int team = 0; team < game.privateTeams(); team++) {
-            final int target = team;
-            Component label = t("teams.join", "Rejoindre <team>", "team", game.teamName(team));
-            if (game.teamOf(uuid) == team) {
-                label = t("vote.selected", "<green>✔ ").append(label);
-            }
-            buttons.add(gui.button(label, null, p -> {
-                Component error = game.changeTeam(p, target);
-                if (error != null) {
-                    p.sendMessage(plugin.prefix().append(error));
-                }
-                openTeams(p, game);
-            }));
-        }
-        if (game.isHost(uuid)) {
-            for (UUID member : new ArrayList<>(game.members())) {
-                if (member.equals(uuid)) {
-                    continue;
-                }
-                int current = game.teamOf(member);
-                int next = (current + 1) % game.privateTeams();
-                Component label = t("teams.move", "Déplacer <name> <dark_gray>→ <team>", "name", nameOf(member), "team", game.teamName(next));
-                buttons.add(gui.button(label, null, p -> {
-                    Component error = game.moveToTeam(member, next);
-                    if (error != null) {
-                        p.sendMessage(plugin.prefix().append(error));
-                    }
-                    openTeams(p, game);
-                }));
-            }
-        }
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openGameMenu));
-        gui.open(player, t("teams.title", "<aqua><bold>Équipes"), body, List.of(), buttons, gui.close(), 1);
     }
 }

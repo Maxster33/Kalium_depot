@@ -1,7 +1,6 @@
 package fr.kalium.games;
 
 import fr.kalium.games.command.KalGamesCommand;
-import fr.kalium.games.data.KitLibrary;
 import fr.kalium.games.data.Lang;
 import fr.kalium.games.data.Repository;
 import fr.kalium.games.game.HubService;
@@ -32,7 +31,6 @@ import java.io.IOException;
 public final class KalGames extends JavaPlugin {
 
     private Lang lang;
-    private KitLibrary kits;
     private Repository repository;
     private TemplateService templates;
     private InstanceWorld worlds;
@@ -51,10 +49,8 @@ public final class KalGames extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         lang = new Lang(this);
-        kits = new KitLibrary(this);
-        kits.load();
         repository = new Repository(this);
-        repository.load(kits);
+        repository.load();
         // 1.17.0 : les plugins de jeu separes (KG_BoatRace...) enregistrent leur type apres le demarrage de KalGames.
         fr.kalium.games.model.MinigameType.onRegister(repository::resolvePending);
         templates = new TemplateService(this);
@@ -165,7 +161,7 @@ public final class KalGames extends JavaPlugin {
             }
         }, this, org.bukkit.plugin.ServicePriority.Normal);
         getLogger().info("KalGames actif : " + repository.minigames().size() + " mini-jeu(x), " + repository.arenas().size()
-                + " arène(s), " + kits.all().size() + " kit(s).");
+                + " arène(s).");
         if (save.isCancelled()) {
             getLogger().fine("Sauvegarde automatique des textes indisponible.");
         }
@@ -191,13 +187,12 @@ public final class KalGames extends JavaPlugin {
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
     }
 
-    /** Recharge config.yml, lang.yml, kits et mini-jeux (les parties en cours sont fermees). */
+    /** Recharge config.yml, lang.yml et mini-jeux (les parties en cours sont fermees). */
     public void reloadAll() {
         instances.closeAll(t("admin.reload-closed", "<yellow>Configuration rechargée : la partie est fermée."));
         reloadConfig();
         lang.load();
-        kits.load();
-        repository.load(kits);
+        repository.load();
         ranking.boards().load();
         ranking.boards().refreshAll();
         instances.prewarm();
@@ -207,10 +202,6 @@ public final class KalGames extends JavaPlugin {
 
     public Lang lang() {
         return lang;
-    }
-
-    public KitLibrary kits() {
-        return kits;
     }
 
     public Repository repository() {

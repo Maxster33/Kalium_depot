@@ -828,3 +828,23 @@ obsolète ».
 
 **Déploiement** : avec KLM_Menu 2.4.0 et KG_Menu 1.1.0 (obligatoires), KG_ScoreBoards 1.6.0, KG_Bingo 1.6.0,
 KG_BuildBattle 0.2.0. Aucune clé de config nouvelle. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**
+
+## 1.22.0 — le PvP Kit sort dans KG_PvpKit (28/09/2026)
+
+**Demande de LeKiwi06** : « créer le plugin de PvP Kit, en sortant le code de KalGames » (kits compris ; voir
+`KG_PvpKit/JOURNAL.md`).
+- **PVP_KIT retiré de KalGames** (enregistré par KG_PvpKit 1.0.0) ; `PvpInstance`, `Kit`, `KitLibrary`, menus du vote,
+  des équipes et des kits supprimés (repris dans KG_PvpKit). Le mini-jeu PvP Kit est gardé de côté au démarrage puis
+  rattaché dès que KG_PvpKit enregistre le type (mécanisme de la 1.17.0). La liste des kits proposés reste enregistrée
+  dans `minigames.yml` (`Minigame.kits()`).
+- Plus de PvP Kit créé au tout premier démarrage (fichiers absents) ; section `kits` (PlayerKits2) retirée du
+  `config.yml` fourni (ignorée si présente sur le serveur). `kits.yml` de KalGames n'est plus lu (KG_PvpKit le recopie).
+- Nouveaux crochets génériques : `MinigameType.CreateForm` (formulaire de partie privée fourni par le jeu),
+  `AdminAction` / `adminInfo` (boutons et lignes du jeu dans sa page de paramètres), `GameInstance.onRespawned`
+  (réapparition), `GameInstance.openVote` (`/kalgames vote`).
+- Page des paramètres d'un jeu : l'info-bulle ne mentionne plus « , kits ».
+- Non retiré (pas demandé) : le blocage de `/kit` et `/kits` pour les joueurs (`HubListener`), sans effet une fois
+  PlayerKits2 retiré.
+**Déploiement** : **avec KG_PvpKit 1.0.0** (obligatoire). KG_BoatRace, KG_Parkour recompilés sans changement. Aucune
+clé de config nouvelle. Attention : 1.21.0 n'est pas encore testée en jeu (on empile sur une version non testée, à la
+demande de LeKiwi06). **Statut : compilé, non déployé, non testé en jeu.**

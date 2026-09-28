@@ -2,7 +2,6 @@ package fr.kalium.games.listener;
 
 import fr.kalium.games.KalGames;
 import fr.kalium.games.game.GameInstance;
-import fr.kalium.games.game.PvpInstance;
 import io.papermc.paper.event.player.AsyncPlayerSpawnLocationEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -96,11 +95,7 @@ public final class ConnectionListener implements Listener {
             plugin.later(1L, () -> {
                 GameInstance current = plugin.instances().of(player);
                 if (player.isOnline() && current == game) {
-                    if (game instanceof PvpInstance pvp) {
-                        pvp.onRespawned(player);
-                    } else {
-                        game.arriveInStands(player);
-                    }
+                    game.onRespawned(player); // 1.22.0 : crochet generique (PvP Kit dans KG_PvpKit)
                 }
             });
             return;

@@ -1,4 +1,4 @@
-package fr.kalium.games.data;
+package fr.kalium.pvpkit;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -14,16 +14,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
- * Bibliotheque de kits. Un kit peut venir de PlayerKits2 (le fichier du kit est relu : une seule source
- * de verite avec /kit) ou etre enregistre depuis l'inventaire d'un moderateur.
+ * Bibliotheque des kits du PvP Kit (plugins/KG_PvpKit/kits.yml), reprise de KalGames 1.21.0.
+ *
+ * Premier demarrage : les kits de KalGames (plugins/KalGames/kits.yml) sont recopies. Ceux qui venaient de PlayerKits2
+ * sont convertis (contenu relu une derniere fois dans le dossier de PlayerKits2) : PlayerKits2 n'est plus necessaire.
  */
 public final class KitLibrary {
 
@@ -50,63 +52,68 @@ public final class KitLibrary {
         return get(id) != null;
     }
 
-    public File pk2Folder() {
-        String path = plugin.getConfig().getString("kits.playerkits2-folder", "PlayerKits2/kits");
-        return new File(plugin.getDataFolder().getParentFile(), path);
-    }
-
-    /** Noms des kits PlayerKits2 disponibles (fichiers .yml du dossier). */
-    public List<String> pk2Available() {
-        List<String> names = new ArrayList<>();
-        File[] files = pk2Folder().listFiles((dir, name) -> name.toLowerCase(Locale.ROOT).endsWith(".yml"));
-        if (files != null) {
-            for (File f : files) {
-                String name = f.getName();
-                names.add(name.substring(0, name.length() - 4));
-            }
-        }
-        names.sort(String.CASE_INSENSITIVE_ORDER);
-        return names;
-    }
-
     // ------------------------------------------------------------------ chargement / sauvegarde
 
     public void load() {
         kits.clear();
-        boolean fresh = !file.exists();
+        if (!file.exists()) {
+            migrateFromKalGames();
+            return;
+        }
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
         ConfigurationSection section = config.getConfigurationSection("kits");
+        if (section == null) {
+            return;
+        }
+        for (String id : section.getKeys(false)) {
+            ConfigurationSection s = section.getConfigurationSection(id);
+            if (s != null) {
+                Kit kit = new Kit(id, s.getString("display", id));
+                read(kit, s);
+                kits.put(id, kit);
+            }
+        }
+    }
+
+    /** Premier demarrage : recopie les kits de KalGames (voir la description de la classe). */
+    private void migrateFromKalGames() {
+        File folder = plugin.getDataFolder().getParentFile();
+        File old = new File(folder, "KalGames/kits.yml");
+        if (!old.exists()) {
+            plugin.getLogger().info("Aucun kit a reprendre de KalGames : bibliotheque vide.");
+            save();
+            return;
+        }
+        YamlConfiguration oldConfig = YamlConfiguration.loadConfiguration(new File(folder, "KalGames/config.yml"));
+        File pk2Folder = new File(folder, oldConfig.getString("kits.playerkits2-folder", "PlayerKits2/kits"));
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(old);
+        ConfigurationSection section = config.getConfigurationSection("kits");
+        int copied = 0;
+        List<String> lost = new ArrayList<>();
         if (section != null) {
             for (String id : section.getKeys(false)) {
                 ConfigurationSection s = section.getConfigurationSection(id);
                 if (s == null) {
                     continue;
                 }
-                Kit kit = new Kit(id, s.getString("display", id), s.getString("source", Kit.SOURCE_INVENTORY));
-                if (kit.pk2Name() != null) {
-                    loadPk2(kit);
+                Kit kit = new Kit(id, s.getString("display", id));
+                String source = s.getString("source", "inventory");
+                if (source.startsWith("playerkits2:")) {
+                    readPk2(kit, new File(pk2Folder, source.substring("playerkits2:".length()) + ".yml"));
                 } else {
-                    loadInventory(kit, s);
+                    read(kit, s);
+                }
+                if (kit.empty()) {
+                    lost.add(id);
+                    continue;
                 }
                 kits.put(id, kit);
-            }
-        }
-        if (fresh) {
-            bootstrapDefaults();
-        }
-    }
-
-    /** Premier demarrage : importe les 4 kits du PvP Kit s'ils existent dans PlayerKits2. */
-    private void bootstrapDefaults() {
-        List<String> available = pk2Available();
-        for (String wanted : List.of("GapSpeed2", "NetheriteP4", "MaceCrossbow", "SpamDistance")) {
-            for (String name : available) {
-                if (name.equalsIgnoreCase(wanted)) {
-                    importPk2(name);
-                }
+                copied++;
             }
         }
         save();
+        plugin.getLogger().info(copied + " kit(s) repris de KalGames (plugins/KalGames/kits.yml)."
+                + (lost.isEmpty() ? "" : " Kit(s) vide(s) ou introuvable(s), non repris : " + String.join(", ", lost) + "."));
     }
 
     public void save() {
@@ -114,19 +121,19 @@ public final class KitLibrary {
         for (Kit kit : kits.values()) {
             String base = "kits." + kit.id();
             config.set(base + ".display", kit.display());
-            config.set(base + ".source", kit.source());
-            if (kit.pk2Name() == null) {
-                for (Map.Entry<Integer, ItemStack> entry : kit.slots().entrySet()) {
-                    config.set(base + ".slots." + entry.getKey(), entry.getValue());
+            for (Map.Entry<Integer, ItemStack> entry : kit.slots().entrySet()) {
+                config.set(base + ".slots." + entry.getKey(), entry.getValue());
+            }
+            for (int i = 0; i < kit.armor().length; i++) {
+                if (kit.armor()[i] != null) {
+                    config.set(base + ".armor." + i, kit.armor()[i]);
                 }
-                for (int i = 0; i < kit.armor().length; i++) {
-                    if (kit.armor()[i] != null) {
-                        config.set(base + ".armor." + i, kit.armor()[i]);
-                    }
-                }
-                if (kit.offhand() != null) {
-                    config.set(base + ".offhand", kit.offhand());
-                }
+            }
+            if (kit.offhand() != null) {
+                config.set(base + ".offhand", kit.offhand());
+            }
+            if (!kit.auto().isEmpty()) {
+                config.set(base + ".auto", kit.auto());
             }
         }
         try {
@@ -137,8 +144,7 @@ public final class KitLibrary {
         }
     }
 
-    private void loadInventory(Kit kit, ConfigurationSection s) {
-        kit.clearContents();
+    private void read(Kit kit, ConfigurationSection s) {
         ConfigurationSection slots = s.getConfigurationSection("slots");
         if (slots != null) {
             for (String key : slots.getKeys(false)) {
@@ -159,22 +165,25 @@ public final class KitLibrary {
             }
         }
         kit.offhand(s.getItemStack("offhand"));
+        List<?> auto = s.getList("auto");
+        if (auto != null) {
+            for (Object o : auto) {
+                if (o instanceof ItemStack item) {
+                    kit.auto().add(item);
+                }
+            }
+        }
     }
 
-    /** Relit le fichier PlayerKits2 du kit et reconstruit son contenu. */
-    private void loadPk2(Kit kit) {
-        kit.clearContents();
-        kit.broken(false);
-        File f = new File(pk2Folder(), kit.pk2Name() + ".yml");
+    /** Ancien kit PlayerKits2 (KalGames) : contenu lu une derniere fois dans son fichier. */
+    private void readPk2(Kit kit, File f) {
         if (!f.exists()) {
-            kit.broken(true);
-            plugin.getLogger().warning("Kit " + kit.id() + " : fichier PlayerKits2 introuvable (" + f.getName() + ").");
+            plugin.getLogger().warning("Kit " + kit.id() + " : fichier PlayerKits2 introuvable (" + f.getPath() + ").");
             return;
         }
         YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
         ConfigurationSection items = config.getConfigurationSection("items");
         if (items == null) {
-            kit.broken(true);
             return;
         }
         for (String key : items.getKeys(false)) {
@@ -182,49 +191,32 @@ public final class KitLibrary {
             if (item == null || item.getType().isAir()) {
                 continue;
             }
-            place(kit, item, config.getBoolean("items." + key + ".offhand", false));
-        }
-    }
-
-    private void place(Kit kit, ItemStack item, boolean offhand) {
-        if (offhand && kit.offhand() == null) {
-            kit.offhand(item);
-            return;
-        }
-        EquipmentSlot slot = item.getType().getEquipmentSlot();
-        int index = switch (slot) {
-            case FEET -> 0;
-            case LEGS -> 1;
-            case CHEST -> 2;
-            case HEAD -> 3;
-            default -> -1;
-        };
-        if (index >= 0 && kit.armor()[index] == null) {
-            kit.armor()[index] = item;
-        } else {
-            kit.auto().add(item);
+            if (config.getBoolean("items." + key + ".offhand", false) && kit.offhand() == null) {
+                kit.offhand(item);
+                continue;
+            }
+            EquipmentSlot slot = item.getType().getEquipmentSlot();
+            int index = switch (slot) {
+                case FEET -> 0;
+                case LEGS -> 1;
+                case CHEST -> 2;
+                case HEAD -> 3;
+                default -> -1;
+            };
+            if (index >= 0 && kit.armor()[index] == null) {
+                kit.armor()[index] = item;
+            } else {
+                kit.auto().add(item);
+            }
         }
     }
 
     // ------------------------------------------------------------------ creation / suppression
 
-    public Kit importPk2(String pk2Name) {
-        String id = pk2Name.toLowerCase(Locale.ROOT);
-        Kit kit = new Kit(id, pk2Name, Kit.SOURCE_PK2_PREFIX + pk2Name);
-        loadPk2(kit);
-        kits.put(id, kit);
-        save();
-        return kit;
-    }
-
-    public Kit createFromInventory(String id, String display, Player player) {
-        return createFromInventory(id, display, player, item -> false);
-    }
-
     /** exclude : objets a ignorer (objets verrouilles du hub, boussole...). */
-    public Kit createFromInventory(String id, String display, Player player, java.util.function.Predicate<ItemStack> exclude) {
+    public Kit createFromInventory(String id, String display, Player player, Predicate<ItemStack> exclude) {
         String key = id.toLowerCase(Locale.ROOT);
-        Kit kit = new Kit(key, display, Kit.SOURCE_INVENTORY);
+        Kit kit = new Kit(key, display);
         PlayerInventory inventory = player.getInventory();
         for (int slot = 0; slot < 36; slot++) {
             ItemStack item = inventory.getItem(slot);
@@ -257,31 +249,24 @@ public final class KitLibrary {
 
     // ------------------------------------------------------------------ application
 
-    /** Remplace tout l'inventaire du joueur par le kit. */
+    /** Remplace tout l'inventaire du joueur par le kit (deja declasse si besoin, voir Downgrade). */
     public void apply(Player player, Kit kit) {
         PlayerInventory inventory = player.getInventory();
         inventory.clear();
-        inventory.setArmorContents(cloneAll(kit.armor()));
+        ItemStack[] armor = new ItemStack[4];
+        for (int i = 0; i < 4; i++) {
+            armor[i] = kit.armor()[i] == null ? null : kit.armor()[i].clone();
+        }
+        inventory.setArmorContents(armor);
         inventory.setItemInOffHand(kit.offhand() == null ? new ItemStack(Material.AIR) : kit.offhand().clone());
         for (Map.Entry<Integer, ItemStack> entry : kit.slots().entrySet()) {
             inventory.setItem(entry.getKey(), entry.getValue().clone());
         }
         for (ItemStack item : kit.auto()) {
-            Map<Integer, ItemStack> leftover = inventory.addItem(item.clone());
-            if (!leftover.isEmpty()) {
+            if (!inventory.addItem(item.clone()).isEmpty()) {
                 plugin.getLogger().fine("Kit " + kit.id() + " : inventaire plein pour " + player.getName());
             }
         }
-    }
-
-    private ItemStack[] cloneAll(ItemStack[] source) {
-        ItemStack[] copy = Arrays.copyOf(source, source.length);
-        for (int i = 0; i < copy.length; i++) {
-            if (copy[i] != null) {
-                copy[i] = copy[i].clone();
-            }
-        }
-        return copy;
     }
 
     // ------------------------------------------------------------------ apercu
@@ -320,9 +305,6 @@ public final class KitLibrary {
             }
             lines.add(line);
             shown++;
-        }
-        if (kit.broken()) {
-            lines.add(Component.text("Kit introuvable : vérifiez le fichier PlayerKits2.", NamedTextColor.RED));
         }
         return lines;
     }

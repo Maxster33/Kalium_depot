@@ -1,11 +1,12 @@
-package fr.kalium.games.game;
+package fr.kalium.pvpkit;
 
 import fr.kalium.games.KalGames;
-import fr.kalium.games.data.Kit;
+import fr.kalium.games.game.GameInstance;
 import fr.kalium.games.model.Arena;
 import fr.kalium.games.model.Minigame;
 import fr.kalium.games.model.Pos;
 import fr.kalium.games.world.Template;
+import fr.kalium.scoreboards.data.StatsService;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -30,7 +31,20 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * PvP Kit : jusqu'a 4 equipes, vote du kit dans les gradins, combat, derniere equipe en vie.
- * Reprend les regles du datapack pvpkit (points de victoire + bonus d'infériorite).
+ *
+ * 1.0.0 : repris de KalGames 1.21.0 (PvpInstance) ; memes regles de partie (vote, equipes, manches, kit aleatoire,
+ * Haste, restauration de l'arene), memes textes (lang.yml de KalGames, cles « pvp.* »). Nouveautes (demande de LeKiwi06,
+ * 28/09/2026) :
+ * <ul>
+ *   <li>bareme par manche : points par elimination, victoire, 2e et 3e place (a 3 ou 4 equipes), bonus d'inferiorite
+ *       numerique, puis multiplicateurs ADDITIFS (regle commune, comme la course de bateau) : serie de manches gagnees
+ *       d'affilee et declassement du kit ; points decimaux ;</li>
+ *   <li>declassement du kit (0 a 4) choisi par chaque joueur avant le combat : -1 niveau a chaque enchantement et -20 %
+ *       des consommables par niveau, +50 % de points par niveau (voir Downgrade) ;</li>
+ *   <li>elimination attribuee au dernier joueur qui a frappe la victime (10 s), meme si elle tombe dans le vide.</li>
+ * </ul>
+ * Parties privees a plusieurs manches : chaque manche rapporte ses points, sans bonus de fin de match (choix de
+ * LeKiwi06).
  */
 public final class PvpInstance extends GameInstance {
 
@@ -39,6 +53,7 @@ public final class PvpInstance extends GameInstance {
     private static final String[] TEAM_NAMES = {
             "<red>Équipe A</red>", "<blue>Équipe B</blue>", "<green>Équipe C</green>", "<yellow>Équipe D</yellow>"};
 
+    private final KGPvpKit pvp;
     private final int privateTeams;
     private final int privateTeamSize;
     private final boolean haste;
@@ -59,10 +74,20 @@ public final class PvpInstance extends GameInstance {
     private final Map<Integer, Integer> teamSizes = new TreeMap<>();
     private Kit chosenKit;
     private int winnerTeam = -1;
+    /** Niveau de declassement choisi par chaque joueur (0 = kit complet). */
+    private final Map<UUID, Integer> downgrade = new HashMap<>();
+    /** Niveau applique a chaque participant pour la manche en cours (fige au compte a rebours). */
+    private final Map<UUID, Integer> roundDowngrade = new HashMap<>();
+    /** Eliminations de la manche en cours, par joueur. */
+    private final Map<UUID, Integer> kills = new HashMap<>();
+    /** Equipes eliminees pendant la manche, dans l'ordre (la derniere eliminee finit 2e). */
+    private final List<Integer> eliminated = new ArrayList<>();
+    private long fightStart;
 
     public PvpInstance(KalGames plugin, String id, Minigame minigame, Arena arena, Template template,
                        boolean publicGame, Map<String, Object> options, int slot) {
         super(plugin, id, minigame, arena, template, publicGame, options, slot);
+        this.pvp = KGPvpKit.get();
         int available = teamsAvailable();
         this.privateTeams = Math.max(2, Math.min(available, optionInt("teams", 2)));
         this.privateTeamSize = Math.max(1, Math.min(4, optionInt("teamSize", 1)));
@@ -84,9 +109,13 @@ public final class PvpInstance extends GameInstance {
 
     /** Nombre d'equipes possibles (points de depart A, B, C, D definis a la suite). */
     public int teamsAvailable() {
+        return teamsAvailable(arena());
+    }
+
+    static int teamsAvailable(Arena arena) {
         int count = 0;
         for (String letter : LETTERS) {
-            if (arena().point("spawn-" + letter) == null) {
+            if (arena.point("spawn-" + letter) == null) {
                 break;
             }
             count++;
@@ -170,6 +199,38 @@ public final class PvpInstance extends GameInstance {
         return best;
     }
 
+    // ------------------------------------------------------------------ declassement
+
+    public int maxDowngrade() {
+        return Math.max(0, Math.min(4, minigame().getInt("downgrade-max-level", 4)));
+    }
+
+    public int downgradeOf(UUID uuid) {
+        return Math.min(maxDowngrade(), downgrade.getOrDefault(uuid, 0));
+    }
+
+    /** Le joueur peut-il encore changer de declassement (pas pendant son propre combat) ? */
+    public boolean downgradeOpen(UUID uuid) {
+        if (!members.contains(uuid) || maxDowngrade() == 0) {
+            return false;
+        }
+        boolean fighting = participants.contains(uuid) && (phase == Phase.COUNTDOWN || phase == Phase.RUNNING);
+        return !fighting;
+    }
+
+    public Component setDowngrade(Player player, int level) {
+        if (!downgradeOpen(player.getUniqueId())) {
+            return t("pvp.downgrade-locked", "<red>Le déclassement ne se change pas pendant votre combat.");
+        }
+        downgrade.put(player.getUniqueId(), Math.max(0, Math.min(maxDowngrade(), level)));
+        return null;
+    }
+
+    /** Multiplicateur apporte par un niveau de declassement (ex. niveau 2 : +1,0). */
+    public double downgradeBonus(int level) {
+        return level * minigame().getInt("downgrade-bonus-pct", 50) / 100.0;
+    }
+
     // ------------------------------------------------------------------ admission
 
     @Override
@@ -215,7 +276,7 @@ public final class PvpInstance extends GameInstance {
                     "code", code, "rounds", roundsText())));
             plugin.later(10L, () -> {
                 if (player.isOnline() && members.contains(uuid) && phase == Phase.WAITING) {
-                    plugin.menus().openVote(player, this);
+                    pvp.menus().openVote(player, this);
                 }
             });
         }
@@ -322,6 +383,9 @@ public final class PvpInstance extends GameInstance {
         winnerTeam = -1;
         chosenKit = null;
         teamSizes.clear();
+        kills.clear();
+        eliminated.clear();
+        roundDowngrade.clear();
         for (UUID uuid : participants) {
             teamSizes.merge(teamOf.getOrDefault(uuid, 0), 1, Integer::sum);
             alive.add(uuid);
@@ -364,7 +428,7 @@ public final class PvpInstance extends GameInstance {
             if (player.getWorld() != world || !contains(player.getLocation())) {
                 arriveInStands(player);
             }
-            plugin.menus().openVote(player, this);
+            pvp.menus().openVote(player, this);
         }
     }
 
@@ -410,8 +474,8 @@ public final class PvpInstance extends GameInstance {
     public List<Kit> voteKits() {
         List<Kit> kits = new ArrayList<>();
         for (String id : minigame().kits()) {
-            Kit kit = plugin.kits().get(id);
-            if (kit != null && !kit.broken()) {
+            Kit kit = pvp.kits().get(id);
+            if (kit != null) {
                 kits.add(kit);
             }
         }
@@ -432,7 +496,7 @@ public final class PvpInstance extends GameInstance {
         if (!voteOpen(player.getUniqueId())) {
             return t("pvp.vote-closed", "<red>Le vote n'est pas ouvert pour vous.");
         }
-        if (!RANDOM_KIT.equals(kitId) && (plugin.kits().get(kitId) == null)) {
+        if (!RANDOM_KIT.equals(kitId) && (pvp.kits().get(kitId) == null)) {
             return t("pvp.vote-unknown", "<red>Kit inconnu.");
         }
         votes.put(player.getUniqueId(), kitId);
@@ -490,10 +554,7 @@ public final class PvpInstance extends GameInstance {
         if (!tied.isEmpty()) {
             winner = tied.get(ThreadLocalRandom.current().nextInt(tied.size()));
         }
-        Kit kit = winner == null || RANDOM_KIT.equals(winner) ? null : plugin.kits().get(winner);
-        if (kit != null && kit.broken()) {
-            kit = null;
-        }
+        Kit kit = winner == null || RANDOM_KIT.equals(winner) ? null : pvp.kits().get(winner);
         boolean random = kit == null;
         if (kit == null) {
             kit = kits.get(ThreadLocalRandom.current().nextInt(kits.size()));
@@ -510,13 +571,21 @@ public final class PvpInstance extends GameInstance {
     private void startCountdown() {
         phase = Phase.COUNTDOWN;
         secondsLeft = Math.max(0, minigame().getInt("countdown-seconds", 3));
+        int percent = Math.max(0, Math.min(25, minigame().getInt("downgrade-consumables-pct", 20)));
         for (UUID uuid : participants) {
             Player player = Bukkit.getPlayer(uuid);
             if (player == null) {
                 continue;
             }
+            int level = downgradeOf(uuid);
+            roundDowngrade.put(uuid, level);
             plugin.hub().resetPlayer(player, GameMode.SURVIVAL);
-            plugin.kits().apply(player, chosenKit);
+            pvp.kits().apply(player, Downgrade.apply(chosenKit, level, percent));
+            if (level > 0) {
+                player.sendMessage(plugin.prefix().append(t("pvp.downgrade-applied",
+                        "<gray>Kit déclassé : niveau <white><level></white> <dark_gray>(points x<mult>)",
+                        "level", level, "mult", fmt(1 + downgradeBonus(level)))));
+            }
             if (haste) {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, PotionEffect.INFINITE_DURATION, 50, false, false, true));
             }
@@ -551,6 +620,7 @@ public final class PvpInstance extends GameInstance {
             return;
         }
         phase = Phase.RUNNING;
+        fightStart = System.currentTimeMillis();
         title(participants, t("pvp.fight-title", "<red><bold>Combat !"), Component.empty(), 0, 25, 10);
         for (UUID uuid : participants) {
             Player player = Bukkit.getPlayer(uuid);
@@ -599,18 +669,35 @@ public final class PvpInstance extends GameInstance {
         if (phase != Phase.RUNNING || !alive.contains(victim.getUniqueId())) {
             return;
         }
-        eliminate(victim, killer);
+        eliminate(victim, killer != null ? killer : pvp.lastAttacker(victim));
     }
 
     private void eliminate(Player victim, Player killer) {
         alive.remove(victim.getUniqueId());
-        if (killer != null && !killer.equals(victim)) {
+        boolean credited = killer != null && !killer.equals(victim) && participants.contains(killer.getUniqueId())
+                && teamOf.getOrDefault(killer.getUniqueId(), -1) != teamOf.getOrDefault(victim.getUniqueId(), -2);
+        if (credited) {
+            kills.merge(killer.getUniqueId(), 1, Integer::sum);
             broadcast(t("pvp.kill", "<gray><victim> <red>a été éliminé par <white><killer></white>.",
                     "victim", victim.getName(), "killer", killer.getName()));
         } else {
             broadcast(t("pvp.death", "<gray><victim> <red>est éliminé.", "victim", victim.getName()));
         }
+        noteEliminatedTeam(teamOf.getOrDefault(victim.getUniqueId(), -1));
         checkWin();
+    }
+
+    /** L'equipe n'a plus aucun joueur en vie : on note son rang d'elimination (places du bareme). */
+    private void noteEliminatedTeam(int team) {
+        if (team < 0 || eliminated.contains(team)) {
+            return;
+        }
+        for (UUID uuid : alive) {
+            if (teamOf.getOrDefault(uuid, -1) == team) {
+                return;
+            }
+        }
+        eliminated.add(team);
     }
 
     @Override
@@ -621,7 +708,7 @@ public final class PvpInstance extends GameInstance {
             return;
         }
         if (phase == Phase.RUNNING && alive.contains(uuid)) {
-            eliminate(player, null);
+            eliminate(player, pvp.lastAttacker(player));
         }
         // Le match continue pour les autres : mode spectateur (vol libre) plutot que gradins libres.
         if (matchInProgress()) {
@@ -632,6 +719,7 @@ public final class PvpInstance extends GameInstance {
     }
 
     /** Apres la reapparition d'un joueur elimine : mode spectateur si le match continue, sinon gradins d'attente. */
+    @Override
     public void onRespawned(Player player) {
         if (matchInProgress()) {
             becomeMatchSpectator(player);
@@ -660,41 +748,28 @@ public final class PvpInstance extends GameInstance {
         secondsLeft = Math.max(1, minigame().getInt("end-delay-seconds", 5));
         roundsPlayed++;
         if (winnerTeam < 0) {
-            broadcast(t("pvp.draw", "<yellow>Manche nulle : plus personne en vie. Aucun point attribué."));
+            broadcast(t("pvp.draw-2", "<yellow>Manche nulle : plus personne en vie. Seules les éliminations rapportent des points."));
             title(participants, t("pvp.draw-title", "<yellow>Manche nulle"), Component.empty(), 5, 50, 10);
         } else {
             wins.merge(winnerTeam, 1, Integer::sum);
-            int winnerSize = teamSizes.getOrDefault(winnerTeam, 1);
-            int maxOpponent = 0;
-            for (Map.Entry<Integer, Integer> entry : teamSizes.entrySet()) {
-                if (entry.getKey() != winnerTeam) {
-                    maxOpponent = Math.max(maxOpponent, entry.getValue());
-                }
-            }
-            int points = minigame().getInt("points-win", 1)
-                    + minigame().getInt("points-bonus", 2) * Math.max(0, maxOpponent - winnerSize);
-
             List<String> names = new ArrayList<>();
             for (UUID uuid : participants) {
-                if (teamOf.getOrDefault(uuid, -1) != winnerTeam || !members.contains(uuid)) {
-                    continue;
+                if (teamOf.getOrDefault(uuid, -1) == winnerTeam && members.contains(uuid)) {
+                    Player player = Bukkit.getPlayer(uuid);
+                    if (player != null) {
+                        names.add(player.getName());
+                    }
                 }
-                Player player = Bukkit.getPlayer(uuid);
-                if (player == null) {
-                    continue;
-                }
-                names.add(player.getName());
-                plugin.scores().award(this, player, points);
             }
             Collections.sort(names);
-            broadcast(t(rounds > 1 ? "pvp.round-win" : "pvp.win",
-                    rounds > 1 ? "<green>Manche remportée par <aqua><names></aqua> ! <gold>+<points> point(s)</gold> chacun."
-                            : "<green>Victoire de <aqua><names></aqua> ! <gold>+<points> point(s)</gold> chacun.",
-                    "names", String.join(", ", names), "points", points));
+            broadcast(t(rounds > 1 ? "pvp.round-win-2" : "pvp.win-2",
+                    rounds > 1 ? "<green>Manche remportée par <aqua><names></aqua> !" : "<green>Victoire de <aqua><names></aqua> !",
+                    "names", String.join(", ", names)));
             title(participants, t(rounds > 1 ? "pvp.round-win-title" : "pvp.win-title",
                             rounds > 1 ? "<green><bold>Manche gagnée !" : "<green><bold>Victoire !"),
                     t("pvp.win-sub", "<white><team>", "team", teamName(winnerTeam)), 5, 60, 15);
         }
+        scoreRound();
         matchOver = decided();
         if (rounds > 1) {
             broadcast(t("pvp.score", "<gray>Score : <scoreline>", "scoreline", plugin.lang().parse(scoreLine())));
@@ -702,6 +777,187 @@ public final class PvpInstance extends GameInstance {
                 announceMatchResult();
             }
         }
+    }
+
+    // ------------------------------------------------------------------ bareme
+
+    /** Points d'un joueur pour la manche et leur detail (affiche au joueur, ecrit dans le journal). */
+    private record RoundScore(double base, double multiplier, double points, int kills, int place, int level, int streak,
+                              String detail) {
+    }
+
+    /**
+     * Bareme d'une manche (demande de LeKiwi06, 28/09/2026). D'abord les points : eliminations, victoire (ou 2e / 3e
+     * place a 3 ou 4 equipes), bonus d'inferiorite numerique pour l'equipe gagnante. Puis les multiplicateurs, ADDITIFS
+     * (x1,25 et x1,5 = x1,75) : serie de manches gagnees d'affilee (gagnants seulement) et declassement du kit.
+     */
+    private void scoreRound() {
+        int teamCount = teamSizes.size();
+        int winnerSize = teamSizes.getOrDefault(winnerTeam, 1);
+        int maxOpponent = 0;
+        for (Map.Entry<Integer, Integer> entry : teamSizes.entrySet()) {
+            if (entry.getKey() != winnerTeam) {
+                maxOpponent = Math.max(maxOpponent, entry.getValue());
+            }
+        }
+        int gap = winnerTeam < 0 ? 0 : Math.max(0, maxOpponent - winnerSize);
+        List<Map<String, Object>> results = new ArrayList<>();
+        for (UUID uuid : participants) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player == null || !members.contains(uuid)) {
+                continue;
+            }
+            int team = teamOf.getOrDefault(uuid, -1);
+            boolean won = winnerTeam >= 0 && team == winnerTeam;
+            int place = won ? 1 : placeOf(team, teamCount);
+            // Serie : +1 a chaque manche gagnee, remise a zero a chaque manche perdue (une manche nulle ne change rien).
+            int streak = pvp.streak(uuid);
+            if (won) {
+                streak = pvp.streak(uuid, streak + 1);
+            } else if (winnerTeam >= 0) {
+                streak = pvp.streak(uuid, 0);
+            }
+            RoundScore score = score(uuid, won, place, teamCount, gap, streak);
+            boolean counted = credit(player, score);
+            results.add(result(uuid, player.getName(), team, score, counted));
+            if (score.points() > 0) {
+                player.sendMessage(plugin.prefix().append(t(counted ? "pvp.points" : "pvp.points-uncounted",
+                        counted ? "<gold>+<points> pt(s) <gray>(<detail>)"
+                                : "<gold>+<points> pt(s) <gray>(<detail>) <dark_gray>- non comptés au classement",
+                        "points", StatsService.formatPoints(score.points()), "detail", score.detail())));
+            }
+        }
+        logRound(results);
+    }
+
+    /** Place d'une equipe perdante : la derniere eliminee est 2e ; 0 si inconnue (manche nulle...). */
+    private int placeOf(int team, int teamCount) {
+        int index = eliminated.indexOf(team);
+        if (index < 0 || winnerTeam < 0) {
+            return 0;
+        }
+        return teamCount - index;
+    }
+
+    private RoundScore score(UUID uuid, boolean won, int place, int teamCount, int gap, int streak) {
+        int killCount = kills.getOrDefault(uuid, 0);
+        List<String> parts = new ArrayList<>();
+        double base = 0;
+        if (killCount > 0) {
+            int value = killCount * minigame().getInt("points-kill", 5);
+            base += value;
+            parts.add(killCount + " élim. " + value);
+        }
+        if (won) {
+            int value = minigame().getInt("points-round-win", 10);
+            base += value;
+            parts.add("victoire " + value);
+            if (gap > 0) {
+                int bonus = gap * minigame().getInt("points-inferiority", 5);
+                base += bonus;
+                parts.add("infériorité " + bonus);
+            }
+        } else if (place == 2 && teamCount >= 3) {
+            int value = minigame().getInt("points-second", 4);
+            base += value;
+            parts.add("2e " + value);
+        } else if (place == 3 && teamCount >= 4) {
+            int value = minigame().getInt("points-third", 2);
+            base += value;
+            parts.add("3e " + value);
+        }
+        double streakBonus = 0;
+        if (won) {
+            if (streak >= minigame().getInt("streak-2-wins", 5)) {
+                streakBonus = minigame().getInt("streak-2-bonus-pct", 50) / 100.0;
+            } else if (streak >= minigame().getInt("streak-1-wins", 3)) {
+                streakBonus = minigame().getInt("streak-1-bonus-pct", 25) / 100.0;
+            }
+        }
+        int level = roundDowngrade.getOrDefault(uuid, 0);
+        double multiplier = 1 + streakBonus + downgradeBonus(level);
+        double points = Math.round(base * multiplier * 100) / 100.0;
+        StringBuilder detail = new StringBuilder(String.join(" + ", parts));
+        if (multiplier > 1 && base > 0) {
+            detail.append(" x").append(fmt(multiplier));
+            List<String> why = new ArrayList<>();
+            if (streakBonus > 0) {
+                why.add("série de " + streak);
+            }
+            if (level > 0) {
+                why.add("déclassement " + level);
+            }
+            detail.append(" : ").append(String.join(", ", why));
+        }
+        return new RoundScore(base, multiplier, points, killCount, place, level, streak, detail.toString());
+    }
+
+    /**
+     * Credite les points au classement (general et du mois, KG_ScoreBoards, points decimaux) et note l'attribution dans
+     * le journal des parties (evenement « points », comme KalGames : /classements verifier retrouve les points non comptes).
+     */
+    private boolean credit(Player player, RoundScore score) {
+        if (score.points() <= 0) {
+            return false;
+        }
+        String reason = plugin.scores().excluded(player) ? "operateur" : !ranked(player) ? "partie-non-classee" : null;
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("match", matchId());
+        fields.put("arena", arena().id());
+        fields.put("public", isPublic());
+        fields.put("player", player.getUniqueId().toString());
+        fields.put("name", player.getName());
+        fields.put("platform", player.getUniqueId().getMostSignificantBits() == 0 ? "bedrock" : "java");
+        fields.put("points", score.points());
+        fields.put("counted", reason == null);
+        fields.put("reason", reason);
+        plugin.ranking().log(minigame().id(), "points", fields);
+        if (reason != null) {
+            return false;
+        }
+        plugin.ranking().stats().addPoints(minigame().id(), player.getUniqueId(), player.getName(), score.points());
+        plugin.ranking().boards().refreshSoon();
+        return true;
+    }
+
+    private Map<String, Object> result(UUID uuid, String name, int team, RoundScore score, boolean counted) {
+        Map<String, Object> one = new LinkedHashMap<>();
+        one.put("player", uuid.toString());
+        one.put("name", name);
+        one.put("team", team);
+        one.put("kills", score.kills());
+        one.put("place", score.place());
+        one.put("downgrade", score.level());
+        one.put("streak", score.streak());
+        one.put("base", score.base());
+        one.put("multiplier", score.multiplier());
+        one.put("points", score.points());
+        one.put("counted", counted);
+        return one;
+    }
+
+    /** Detail de la manche dans le journal des parties (evenement « round ») : sert a caler le bareme. */
+    private void logRound(List<Map<String, Object>> results) {
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("match", matchId());
+        fields.put("arena", arena().id());
+        fields.put("public", isPublic());
+        fields.put("round", round);
+        fields.put("rounds", rounds);
+        fields.put("kit", chosenKit == null ? null : chosenKit.id());
+        fields.put("teams", teamSizes.size());
+        fields.put("winnerTeam", winnerTeam);
+        fields.put("fightMillis", fightStart == 0 ? 0 : System.currentTimeMillis() - fightStart);
+        fields.put("results", results);
+        plugin.ranking().log(minigame().id(), "round", fields);
+    }
+
+    static String fmt(double value) {
+        double rounded = Math.round(value * 100) / 100.0;
+        if (rounded == Math.rint(rounded)) {
+            return String.valueOf((long) rounded);
+        }
+        return String.valueOf(rounded).replace('.', ',');
     }
 
     private void announceMatchResult() {
@@ -733,7 +989,7 @@ public final class PvpInstance extends GameInstance {
                 t("pvp.win-sub", "<white><team>", "team", teamName(team)), 5, 70, 20);
     }
 
-    private String nameOf(UUID uuid) {
+    String nameOf(UUID uuid) {
         Player player = Bukkit.getPlayer(uuid);
         if (player != null) {
             return player.getName();
@@ -746,6 +1002,7 @@ public final class PvpInstance extends GameInstance {
     protected void onMemberLeft(UUID uuid, boolean wasParticipant, boolean disconnected) {
         votes.remove(uuid);
         greeted.remove(uuid);
+        downgrade.remove(uuid);
         Player player = Bukkit.getPlayer(uuid);
         if (!wasParticipant || !matchInProgress()) {
             teamOf.remove(uuid);
@@ -758,6 +1015,7 @@ public final class PvpInstance extends GameInstance {
             if (player != null) {
                 plugin.scores().combatLeave(player.getName(), minigame());
             }
+            noteEliminatedTeam(teamOf.getOrDefault(uuid, -1));
             checkWin();
         } else if (phase == Phase.VOTE || phase == Phase.COUNTDOWN) {
             Set<Integer> teamsLeft = new HashSet<>();
@@ -790,6 +1048,9 @@ public final class PvpInstance extends GameInstance {
         round = 0;
         roundsPlayed = 0;
         matchOver = false;
+        kills.clear();
+        eliminated.clear();
+        roundDowngrade.clear();
         if (isPublic()) {
             teamOf.clear();
         }
@@ -848,6 +1109,45 @@ public final class PvpInstance extends GameInstance {
 
     public Kit chosenKit() {
         return chosenKit;
+    }
+
+    // ------------------------------------------------------------------ menus (crochets de KalGames 1.22.0)
+
+    @Override
+    public boolean openVote(Player player) {
+        pvp.menus().openVote(player, this);
+        return true;
+    }
+
+    @Override
+    public List<Component> menuInfo(Player player) {
+        List<Component> lines = new ArrayList<>();
+        if (!isPublic()) {
+            lines.add(t("game.body-pvp", "<gray>Manches : <white><rounds></white> - Kit : <white><kit></white>",
+                    "rounds", rounds, "kit", randomKits ? "aléatoire" : "vote"));
+        }
+        if (maxDowngrade() > 0) {
+            int level = downgradeOf(player.getUniqueId());
+            lines.add(t("pvp.downgrade-line", "<gray>Déclassement du kit : <white><level></white> <dark_gray>(points x<mult>)",
+                    "level", level, "mult", fmt(1 + downgradeBonus(level))));
+        }
+        return lines;
+    }
+
+    @Override
+    public List<MenuAction> menuActions(Player player) {
+        UUID uuid = player.getUniqueId();
+        List<MenuAction> actions = new ArrayList<>();
+        if (voteOpen(uuid)) {
+            actions.add(new MenuAction(t("game.vote", "<gold>Voter pour le kit"), p -> pvp.menus().openVote(p, this)));
+        }
+        if (downgradeOpen(uuid)) {
+            actions.add(new MenuAction(t("pvp.downgrade-button", "<light_purple>Déclassement du kit"), p -> pvp.menus().openDowngrade(p, this)));
+        }
+        if (!isPublic() && phase == Phase.WAITING) {
+            actions.add(new MenuAction(t("game.teams", "<aqua>Équipes"), p -> pvp.menus().openTeams(p, this)));
+        }
+        return actions;
     }
 
     // ------------------------------------------------------------------ affichage

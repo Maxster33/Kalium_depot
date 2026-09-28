@@ -92,11 +92,10 @@ public final class Repository {
 
     // ------------------------------------------------------------------ chargement
 
-    public void load(KitLibrary kitLibrary) {
+    public void load() {
         minigames.clear();
         arenas.clear();
         pending.clear();
-        boolean fresh = !minigamesFile.exists();
 
         YamlConfiguration mg = YamlConfiguration.loadConfiguration(minigamesFile);
         ConfigurationSection mgSection = mg.getConfigurationSection("minigames");
@@ -120,9 +119,7 @@ public final class Repository {
             }
         }
         loadArenas();
-        if (fresh) {
-            bootstrapDefaults(kitLibrary);
-        }
+        // 1.22.0 : plus de PvP Kit cree au premier demarrage (le jeu et ses kits sont dans KG_PvpKit).
     }
 
     /**
@@ -238,31 +235,6 @@ public final class Repository {
                 arenas.put(id, arena);
             }
         }
-    }
-
-    /**
-     * Premier demarrage : recree le PvP Kit du datapack existant (kits, points de depart et tribune).
-     * L'arene n'a pas encore de modele : il faut capturer la zone depuis le menu Parametres.
-     */
-    private void bootstrapDefaults(KitLibrary kitLibrary) {
-        Minigame pvp = new Minigame("pvpkit", "<red><bold>PvP Kit", MinigameType.PVP_KIT);
-        pvp.description("Affrontez d'autres joueurs avec un kit voté. La dernière équipe en vie gagne.");
-        for (Kit kit : kitLibrary.all()) {
-            pvp.kits().add(kit.id());
-        }
-        minigames.put(pvp.id(), pvp);
-
-        // Points de l'arene tribune (departs A a D, gradins) tels que definis sur le serveur de test.
-        Arena arena = new Arena("tribune", "pvpkit", "Arène Tribune");
-        arena.points().put("stands", new Pos(988.49, 28.5, 1027.93, 177.9f, 29.8f));
-        arena.points().put("spawn-a", new Pos(951.5, 1, 1001.5, -90, 0));
-        arena.points().put("spawn-b", new Pos(1026.5, 2, 1001.5, 90, 0));
-        arena.points().put("spawn-c", new Pos(989.5, 2, 1027.5, 180, 0));
-        arena.points().put("spawn-d", new Pos(989.5, 2, 976.5, 0, 0));
-        String world = plugin.getConfig().getString("hub.world", "Kal-Games");
-        arena.suggestedArea(world + ";1051;-4;1049;932;41;954");
-        arenas.put(arena.id(), arena);
-        save();
     }
 
     // ------------------------------------------------------------------ sauvegarde

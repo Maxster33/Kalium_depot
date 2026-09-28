@@ -2,7 +2,6 @@ package fr.kalium.games.command;
 
 import fr.kalium.games.KalGames;
 import fr.kalium.games.game.GameInstance;
-import fr.kalium.games.game.PvpInstance;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -106,9 +105,7 @@ public final class KalGamesCommand implements CommandExecutor, TabCompleter {
             }
             case "vote" -> {
                 GameInstance game = plugin.instances().of(player);
-                if (game instanceof PvpInstance pvp) {
-                    plugin.menus().openVote(player, pvp);
-                } else {
+                if (game == null || !game.openVote(player)) { // 1.22.0 : vote fourni par le jeu (KG_PvpKit)
                     plugin.tell(player, "cmd.no-vote", "<red>Aucun vote de kit en cours.");
                 }
             }

@@ -17,30 +17,6 @@ import static fr.kalium.games.model.SettingSpec.text;
  */
 public final class MinigameType {
 
-    public static final MinigameType PVP_KIT = register(new MinigameType("PVP_KIT", "PvP Kit", true,
-            "Combat d'équipes (jusqu'à 4) avec vote du kit. Dernière équipe en vie.",
-            List.of(
-                    integer("vote-seconds", "Durée du vote de kit (s)", 60, 10, 180, "Le vote se termine plus tôt si tout le monde a voté."),
-                    integer("countdown-seconds", "Compte à rebours avant combat (s)", 3, 0, 10, "0 = combat immediat."),
-                    integer("end-delay-seconds", "Délai après la victoire (s)", 5, 1, 30, "Avant le retour en tribune."),
-                    integer("points-win", "Points par victoire", 1, 0, 50, "Points de base d'un joueur gagnant."),
-                    integer("points-bonus", "Bonus par joueur d'écart", 2, 0, 50, "Ajouté par joueur d'écart quand l'équipe gagnante est en infériorité."),
-                    integer("public-team-size", "Partie publique : joueurs par équipe", 1, 1, 4, "1 = chacun pour soi."),
-                    integer("public-min-teams", "Partie publique : équipes minimum", 2, 2, 4, "Nombre d'équipes pour lancer un match."),
-                    integer("public-max-teams", "Partie publique : équipes maximum", 4, 2, 4, "Un match démarre dès que ce nombre est atteint."),
-                    integer("public-gather-seconds", "Partie publique : attente avant lancement (s)", 30, 5, 180, "Délai dès que le minimum est atteint."),
-                    integer("prewarm-arenas", "Copies de chaque arène préchargées au démarrage", 0, 0, 10, "Collées dès le démarrage du serveur et gardées de côté : aucune arène à charger au lancement d'une partie (0 = aucune)."),
-                    integer("max-private-games", "Parties privées simultanées maximum", 0, 0, 40, "0 = pas de limite."),
-                    bool("break-map", "Casser les blocs de la carte", false, "Non : seuls les blocs posés pendant le match sont cassables. Tout est restauré à la fin."),
-                    bool("bedrock-option", "Option PvP Bedrock (Haste) proposée", true, "Propose la case Haste dans les parties privées."),
-                    bool("allow-spectate", "Autoriser le mode spectateur", true, "Les joueurs peuvent regarder la partie (publique ou privée) sans y participer (vol libre).")),
-            List.of(
-                    single("stands", "Gradins (tribune)", true, "Où attendent les spectateurs et les éliminés."),
-                    single("spawn-a", "Départ équipe A", true, "Regarde vers le centre."),
-                    single("spawn-b", "Départ équipe B", true, "Regarde vers le centre."),
-                    single("spawn-c", "Départ équipe C", false, "Optionnel : active la 3e équipe."),
-                    single("spawn-d", "Départ équipe D", false, "Optionnel : active la 4e équipe."))));
-
     public static final MinigameType RUSH = register(new MinigameType("RUSH", "Rush", true,
             "Chaque équipe défend son lit. Récupérez des ressources, construisez des ponts, achetez de l'équipement et détruisez le lit adverse. La dernière équipe en vie gagne.",
             List.of(
@@ -94,14 +70,12 @@ public final class MinigameType {
     // 1.21.0 : emplacement « Build Battle » (sans moteur) retire : le jeu est dans KG_BuildBattle / KV_BuildBattle. Un
     // mini-jeu de ce type deja enregistre est garde de cote dans minigames.yml (jamais perdu), comme un type absent.
 
+    // 1.22.0 : le PvP Kit (type PVP_KIT, kits compris) est dans KG_PvpKit, qui enregistre son type au demarrage.
 
-
-    // 1.17.0 : moteurs des types fournis par KalGames. Les autres plugins (KG_BoatRace, KG_Parkour depuis 1.20.0...)
-    // enregistrent leurs propres types avec register(), moteur compris.
+    // 1.17.0 : moteurs des types fournis par KalGames. Les autres plugins (KG_BoatRace, KG_Parkour depuis 1.20.0,
+    // KG_PvpKit depuis 1.22.0...) enregistrent leurs propres types avec register(), moteur compris.
     static {
-        PVP_KIT.engine(fr.kalium.games.game.PvpInstance::new);
         RUSH.engine(fr.kalium.games.game.RushInstance::new).prewarmAllowed(true);
-        PVP_KIT.prewarmAllowed(true);
     }
 
     /** Liste d'objets (butin...) editee depuis l'inventaire du moderateur. */
@@ -120,6 +94,28 @@ public final class MinigameType {
      * Parcours, dans KG_Parkour) : cle (booleen) dans les options de la partie, libelle (MiniMessage).
      */
     public record CreateToggle(String key, String label) {
+    }
+
+    /**
+     * 1.22.0 : formulaire de creation d'une partie privee entierement fourni par le jeu (ex. equipes, manches et choix
+     * du kit du PvP Kit, dans KG_PvpKit), a la place de « Joueurs maximum » et des options / cases ci-dessus. Le choix
+     * de l'arene et « Afficher la partie dans la liste » restent geres par KalGames.
+     */
+    public interface CreateForm {
+        /** Champs du formulaire (arenas : arenes utilisables de ce mini-jeu). */
+        List<io.papermc.paper.registry.data.dialog.input.DialogInput> inputs(Minigame minigame, List<Arena> arenas,
+                                                                          fr.kalium.games.gui.Gui gui);
+
+        /** Lit les champs remplis et les range dans les options de la partie. */
+        void read(io.papermc.paper.dialog.DialogResponseView view, java.util.Map<String, Object> options);
+    }
+
+    /**
+     * 1.22.0 : bouton ajoute par le jeu a sa page « Informations &gt; Parametres » (ex. « Kits du mini-jeu » du PvP Kit,
+     * dans KG_PvpKit). KalGames verifie que le joueur est moderateur avant d'executer l'action.
+     */
+    public record AdminAction(net.kyori.adventure.text.Component label,
+                              java.util.function.BiConsumer<org.bukkit.entity.Player, Minigame> action) {
     }
 
     /** Fabrique d'une partie de ce type (le moteur du jeu). */
@@ -180,6 +176,9 @@ public final class MinigameType {
     private final List<CreateOption> createOptions = new java.util.ArrayList<>();
     private final List<CreateToggle> createToggles = new java.util.ArrayList<>();
     private boolean prewarmAllowed;
+    private CreateForm createForm;
+    private final List<AdminAction> adminActions = new java.util.ArrayList<>();
+    private java.util.function.Function<Minigame, List<net.kyori.adventure.text.Component>> adminInfo = minigame -> List.of();
 
     private MinigameType(String name, String display, boolean configurable, String description, List<SettingSpec> settings,
                          List<PointSpec> points) {
@@ -223,6 +222,24 @@ public final class MinigameType {
         return this;
     }
 
+    /** 1.22.0 : formulaire de creation d'une partie privee fourni par le jeu (voir CreateForm). */
+    public MinigameType createForm(CreateForm form) {
+        this.createForm = form;
+        return this;
+    }
+
+    /** 1.22.0 : bouton du jeu dans sa page de parametres (voir AdminAction). */
+    public MinigameType adminAction(AdminAction action) {
+        this.adminActions.add(action);
+        return this;
+    }
+
+    /** 1.22.0 : lignes d'information du jeu dans sa page de parametres (ex. nombre de kits proposes au vote). */
+    public MinigameType adminInfo(java.util.function.Function<Minigame, List<net.kyori.adventure.text.Component>> info) {
+        this.adminInfo = info;
+        return this;
+    }
+
     /** Vrai si des copies d'arene peuvent etre collees a l'avance (reglage "prewarm-arenas"). */
     public MinigameType prewarmAllowed(boolean value) {
         this.prewarmAllowed = value;
@@ -262,6 +279,19 @@ public final class MinigameType {
 
     public List<CreateToggle> createToggles() {
         return createToggles;
+    }
+
+    /** null : formulaire standard (joueurs maximum, options et cases declarees). */
+    public CreateForm createForm() {
+        return createForm;
+    }
+
+    public List<AdminAction> adminActions() {
+        return adminActions;
+    }
+
+    public List<net.kyori.adventure.text.Component> adminInfo(Minigame minigame) {
+        return adminInfo.apply(minigame);
     }
 
     public boolean prewarmAllowed() {

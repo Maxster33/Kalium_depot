@@ -1,0 +1,7 @@
+name: KG_PvpKit
+version: '${project.version}'
+main: fr.kalium.pvpkit.KGPvpKit
+api-version: '26.2'
+description: PvP Kit de Kal-Games (sorti de KalGames), kits et bareme, branche sur le moteur de parties de KalGames.
+authors: [KaLium]
+depend: [KalGames, KG_ScoreBoards]

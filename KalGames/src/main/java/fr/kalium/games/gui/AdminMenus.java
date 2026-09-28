@@ -1,7 +1,6 @@
 package fr.kalium.games.gui;
 
 import fr.kalium.games.KalGames;
-import fr.kalium.games.data.Kit;
 import fr.kalium.games.game.GameInstance;
 import fr.kalium.games.model.Arena;
 import fr.kalium.games.model.Minigame;
@@ -47,8 +46,6 @@ public final class AdminMenus {
     private final Map<UUID, Corner> corner1 = new HashMap<>();
     private final Map<UUID, Corner> corner2 = new HashMap<>();
     private final Set<String> capturing = new HashSet<>();
-    /** 1.21.0 : page du mini-jeu (PvP Kit) d'ou la gestion des kits a ete ouverte, pour le bouton Retour. */
-    private final Map<UUID, Minigame> kitsFrom = new HashMap<>();
 
     public AdminMenus(KalGames plugin, Gui gui) {
         this.plugin = plugin;
@@ -159,11 +156,6 @@ public final class AdminMenus {
             }
             Minigame minigame = plugin.repository().createMinigame(id, "<gold><bold>" + type.display(), type);
             minigame.description(type.description());
-            if (type == MinigameType.PVP_KIT) {
-                for (Kit kit : plugin.kits().all()) {
-                    minigame.kits().add(kit.id());
-                }
-            }
             plugin.repository().save();
             plugin.getLogger().info("Mini-jeu " + id + " créé pour le type " + type.name() + " (à régler dans Informations > Paramètres).");
         }
@@ -177,7 +169,7 @@ public final class AdminMenus {
         }
         for (Minigame minigame : plugin.repository().minigames()) {
             Component tip = t("admin.mg-tip-2", "<gray>Réglages, arènes<kits>. <dark_gray>(<state>)",
-                    "kits", minigame.type() == MinigameType.PVP_KIT ? ", kits" : "", "state", onOff(minigame.enabled()));
+                    "kits", "", "state", onOff(minigame.enabled())); // 1.22.0 : « , kits » du PvP Kit retire
             entries.add(new fr.kalium.kgmenu.api.MenuProvider.Entry("kalgames-" + minigame.id(),
                     plugin.lang().parse(minigame.display()), tip, (p, back) -> openMinigame(p, minigame)));
         }
@@ -207,9 +199,7 @@ public final class AdminMenus {
         if (!type.playable()) {
             body.add(t("admin.mg-noengine", "<yellow>Moteur de jeu à venir : vous pouvez déjà tout configurer, mais le mini-jeu n'est pas encore jouable."));
         }
-        if (type == MinigameType.PVP_KIT) {
-            body.add(t("admin.mg-kits", "<gray>Kits proposés au vote : <white><n></white>", "n", minigame.kits().size()));
-        }
+        body.addAll(type.adminInfo(minigame)); // 1.22.0 : lignes fournies par le jeu (kits du PvP Kit, KG_PvpKit)
 
         List<ActionButton> buttons = new ArrayList<>();
         buttons.add(btn(t("admin.mg-rename", "<white>Nom et description"), null, p -> openMinigameInfo(p, minigame)));
@@ -229,8 +219,9 @@ public final class AdminMenus {
             openMinigame(p, minigame);
         }));
         buttons.add(btn(t("admin.mg-settings", "<gold>Réglages"), null, p -> openSettings(p, minigame)));
-        if (type == MinigameType.PVP_KIT) {
-            buttons.add(btn(t("admin.mg-kit-pick", "<aqua>Kits du mini-jeu"), null, p -> openMinigameKits(p, minigame)));
+        // 1.22.0 : boutons fournis par le jeu (ex. « Kits du mini-jeu » du PvP Kit, KG_PvpKit).
+        for (MinigameType.AdminAction action : type.adminActions()) {
+            buttons.add(btn(action.label(), null, p -> action.action().accept(p, minigame)));
         }
         // 1.21.0 : les arenes (maps) de CE jeu seulement ; classements (moderation comprise) dans « Informations >
         // Classements » ; plus de suppression (chaque jeu a son mini-jeu, recree au demarrage de toute facon).
@@ -332,35 +323,9 @@ public final class AdminMenus {
         gui.open(player, t("admin.settings-title", "<gold><bold>Réglages"), body, inputs, buttons, gui.close(), 1);
     }
 
-    private void openMinigameKits(Player player, Minigame minigame) {
-        List<DialogInput> inputs = new ArrayList<>();
-        for (Kit kit : plugin.kits().all()) {
-            inputs.add(gui.toggle("k_" + kit.id(), plugin.lang().parse(kit.display()), minigame.kits().contains(kit.id())));
-        }
-        List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(frm(t("admin.save", "<green>Enregistrer"), null, (p, view) -> {
-            minigame.kits().clear();
-            for (Kit kit : plugin.kits().all()) {
-                Boolean value = view.getBoolean("k_" + kit.id());
-                if (value != null && value) {
-                    minigame.kits().add(kit.id());
-                }
-            }
-            plugin.repository().save();
-            say(p, "admin.saved", "<green>Enregistré.");
-            openMinigame(p, minigame);
-        }));
-        buttons.add(btn(t("admin.kits-manage", "<aqua>Gérer les kits"), null, p -> {
-            kitsFrom.put(p.getUniqueId(), minigame);
-            openKits(p);
-        }));
-        buttons.add(back(p -> openMinigame(p, minigame)));
-        gui.open(player, t("admin.mgkits-title", "<aqua><bold>Kits du mini-jeu"),
-                List.of(t("admin.mgkits-body", "<gray>Cochez les kits proposés au vote.")), inputs, buttons, gui.close(), 1);
-    }
+    // ------------------------------------------------------------------ objets verrouilles
 
-    // ------------------------------------------------------------------ kits
-
+    // 1.22.0 : les menus des kits sont dans KG_PvpKit ; ceci reste pour les listes d'objets des arenes.
     private boolean lockedItem(ItemStack item) {
         if (plugin.items().isOurs(item)) {
             return true;
@@ -373,106 +338,6 @@ public final class AdminMenus {
         return data.has(new NamespacedKey("klm_menu", "menu_compass"), PersistentDataType.BYTE)
                 || data.has(new NamespacedKey("kaliummenu", "menu_compass"), PersistentDataType.BYTE)
                 || data.has(new NamespacedKey("klm_menu", "informations"), PersistentDataType.BYTE); // 1.21.0 : comparateur
-    }
-
-    private void openKits(Player player) {
-        List<ActionButton> buttons = new ArrayList<>();
-        for (Kit kit : plugin.kits().all()) {
-            Component tip = lines(plugin.kits().summary(kit, 12));
-            buttons.add(btn(plugin.lang().parse(kit.display()), tip, p -> openKit(p, kit)));
-        }
-        buttons.add(btn(t("admin.kits-create", "<green>+ Créer depuis mon inventaire"), null, this::openNewKit));
-        buttons.add(btn(t("admin.kits-import", "<aqua>+ Importer depuis PlayerKits2"), null, this::openImportKits));
-        // 1.21.0 : les kits ne s'ouvrent plus que depuis la page du PvP Kit : retour a ses « Kits du mini-jeu ».
-        buttons.add(back(p -> {
-            Minigame from = kitsFrom.get(p.getUniqueId());
-            if (from != null && plugin.repository().minigame(from.id()) != null) {
-                openMinigameKits(p, from);
-            } else {
-                openHome(p);
-            }
-        }));
-        gui.open(player, t("admin.kits-title", "<aqua><bold>Kits"),
-                List.of(t("admin.kits-body", "<gray><n> kit(s). Survolez un kit pour voir son contenu.", "n", plugin.kits().all().size())),
-                List.of(), buttons, gui.close(), 1);
-    }
-
-    private void openKit(Player player, Kit kit) {
-        List<Component> body = new ArrayList<>();
-        body.add(t("admin.kit-source", "<gray>Source : <white><source>", "source", kit.source()));
-        body.addAll(plugin.kits().summary(kit, 20));
-        List<ActionButton> buttons = new ArrayList<>();
-        if (kit.source().equals(Kit.SOURCE_INVENTORY)) {
-            buttons.add(btn(t("admin.kit-update", "<yellow>Remplacer par mon inventaire actuel"), null, p -> {
-                String id = kit.id();
-                String display = kit.display();
-                plugin.kits().createFromInventory(id, display, p, this::lockedItem);
-                say(p, "admin.kit-updated", "<green>Kit mis à jour.");
-                openKits(p);
-            }));
-        }
-        buttons.add(btn(t("admin.kit-delete", "<dark_red>Supprimer ce kit"), null, p -> {
-            plugin.kits().delete(kit.id());
-            for (Minigame minigame : plugin.repository().minigames()) {
-                minigame.kits().remove(kit.id());
-            }
-            plugin.repository().save();
-            say(p, "admin.kit-deleted", "<green>Kit supprimé.");
-            openKits(p);
-        }));
-        buttons.add(back(this::openKits));
-        gui.open(player, plugin.lang().parse(kit.display()), body, List.of(), buttons, gui.close(), 1);
-    }
-
-    private void openNewKit(Player player) {
-        List<DialogInput> inputs = List.of(
-                gui.text("id", t("admin.kit-id", "Identifiant du kit"), "", 24),
-                gui.text("display", t("admin.kit-display", "Nom affiché (MiniMessage)"), "<yellow>Nouveau kit", 60));
-        List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(frm(t("admin.kit-create-confirm", "<green>Créer le kit"), null, (p, view) -> {
-            String id = view.getText("id") == null ? "" : view.getText("id").trim().toLowerCase(Locale.ROOT);
-            if (!ID.matcher(id).matches()) {
-                say(p, "admin.bad-id", "<red>Identifiant invalide : 2 à 24 caractères parmi a-z, 0-9, - et _.");
-                return;
-            }
-            if (plugin.kits().exists(id)) {
-                say(p, "admin.id-taken", "<red>Cet identifiant existe déjà.");
-                return;
-            }
-            Kit kit = plugin.kits().createFromInventory(id, view.getText("display") == null || view.getText("display").isBlank() ? id : view.getText("display"),
-                    p, this::lockedItem);
-            if (kit.slots().isEmpty() && kit.armor()[0] == null && kit.armor()[1] == null && kit.armor()[2] == null && kit.armor()[3] == null) {
-                plugin.kits().delete(id);
-                say(p, "admin.kit-empty", "<red>Votre inventaire est vide : rien à enregistrer.");
-                return;
-            }
-            say(p, "admin.kit-created", "<green>Kit créé. Ajoutez-le aux mini-jeux voulus depuis \"Kits du mini-jeu\".");
-            openKits(p);
-        }));
-        buttons.add(back(this::openKits));
-        gui.open(player, t("admin.kit-new-title", "<green><bold>Nouveau kit"),
-                List.of(t("admin.kit-new-body", "<gray>Préparez votre inventaire (armure, main secondaire, objets) puis validez : il est copié tel quel.")),
-                inputs, buttons, gui.close(), 1);
-    }
-
-    private void openImportKits(Player player) {
-        List<ActionButton> buttons = new ArrayList<>();
-        for (String name : plugin.kits().pk2Available()) {
-            boolean known = plugin.kits().exists(name);
-            Component label = known
-                    ? t("admin.pk2-known", "<white><name> <dark_gray>(déjà importé - recharger)", "name", name)
-                    : Component.text(name);
-            buttons.add(btn(label, null, p -> {
-                plugin.kits().importPk2(name);
-                say(p, "admin.pk2-done", "<green>Kit <name> importé.", "name", name);
-                openKits(p);
-            }));
-        }
-        buttons.add(back(this::openKits));
-        Component body = buttons.size() == 1
-                ? t("admin.pk2-none", "<red>Aucun kit trouvé dans <path>.", "path", plugin.kits().pk2Folder().getPath())
-                : t("admin.pk2-body", "<gray>Choisissez un kit PlayerKits2 à copier.");
-        gui.open(player, t("admin.pk2-title", "<aqua><bold>Importer de PlayerKits2"), List.of(body), List.of(), buttons, gui.close(), 1);
     }
 
     // ------------------------------------------------------------------ arenes
