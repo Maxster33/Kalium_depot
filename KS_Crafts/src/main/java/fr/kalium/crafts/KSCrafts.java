@@ -13,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
@@ -121,12 +122,32 @@ public final class KSCrafts extends JavaPlugin implements Listener {
                 new RecipeChoice.MaterialChoice(Material.NETHER_WART_BLOCK)));
 
         getLogger().info(added.size() + " crafts ajoutés.");
+        // Joueurs déjà connectés (rechargement du plugin).
+        Bukkit.getOnlinePlayers().forEach(this::livreDeRecettes);
     }
 
     @Override
     public void onDisable() {
         added.forEach(Bukkit::removeRecipe);
         Bukkit.getPotionBrewer().removePotionMix(key("awkward_from_nether_wart_block"));
+    }
+
+    // ------------------------------------------------------------------ livre de recettes
+
+    /**
+     * Recettes montrées dans le livre de recettes de tous les joueurs (1.2.0) : Clé de l'End. Une recette de plugin
+     * n'y apparaît que si elle est « débloquée » pour le joueur.
+     */
+    private void livreDeRecettes(Player player) {
+        NamespacedKey cle = key("cle_de_l_end");
+        if (added.contains(cle)) {
+            player.discoverRecipe(cle);
+        }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        livreDeRecettes(event.getPlayer());
     }
 
     // ------------------------------------------------------------------ recettes
