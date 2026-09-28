@@ -27,3 +27,4 @@ reste vanilla) ; changements de poids par remplacement à probabilité exacte.
 - Ajouté ensuite (23:47) : KS_EC_Extension 1.0.0 (coffre de l'Ender à 6 lignes, 3 du bas débloquées case par case
   avec la Clé de l'End ; réponses : 1 clé = 1 case, barrière, craft sans forme, clé par 64), KS_Crafts 1.1.0 (craft de
   la clé), KS_KaliumGive 1.1.0 (id `cle_de_l_end`). À tester.
+- 29/09/2026 00:02 : KS_EstomacGardien 1.3.0 (chance du casque en diamant x2 : 10 % → 20 %), déployé.

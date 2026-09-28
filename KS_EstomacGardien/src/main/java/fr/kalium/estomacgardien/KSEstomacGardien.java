@@ -113,13 +113,13 @@ public final class KSEstomacGardien extends JavaPlugin implements Listener {
     // ------------------------------------------------------------------ contenu
 
     /**
-     * Tirage 1 (1 tirage) : 10 % casque en diamant enchanté niveau 30 à 50.
+     * Tirage 1 (1 tirage) : 20 % casque en diamant enchanté niveau 30 à 50.
      * Tirage 2 (2 tirages, poids) : oeuf de tortue 3, bateau 3, corail x2-3 10, algue x2-3 10, trident enchanté niveau
      * 10 à 29 3, armure de nautile en diamant 1, coeur de la mer 1.
      */
     static List<ItemStack> contenu() {
         List<ItemStack> items = new ArrayList<>();
-        if (random().nextDouble() < 0.10) {
+        if (random().nextDouble() < 0.20) {
             items.add(enchanter(new ItemStack(Material.DIAMOND_HELMET), entre(30, 50)));
         }
         for (int i = 0; i < 2; i++) {

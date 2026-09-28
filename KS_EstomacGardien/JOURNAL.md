@@ -37,3 +37,11 @@ Demande de Maxster33 : « supprime la commande » ; l'objet se donne maintenant 
 `/kaliumgive <pseudo> estomac_gardien <nombre>` (nouveau plugin KS_KaliumGive). Code identique à la 1.0.0.
 
 **Déployé sur Event le 28/09/2026 à 23:35 (1.1.0 dans `_removed-ks_estomacgardien-1.1.0/`). Statut : non testé en jeu.**
+
+## 1.3.0 - casque en diamant : 10 % → 20 % (29/09/2026)
+
+Demande de Maxster33 : « multiplier par deux les chances d'obtenir le casque en diamant ». Tirage 1 : 20 % casque en
+diamant enchanté niveau 30 à 50 (sinon rien) ; le reste est inchangé.
+
+**Déployé sur Event le 29/09/2026 à 00:02 (1.2.0 dans `_removed-ks_estomacgardien-1.2.0/` ;
+`_removed-ks_estomacgardien-1.0.0/` supprimable par l'humain, 3 versions derrière). Statut : non testé en jeu.**
