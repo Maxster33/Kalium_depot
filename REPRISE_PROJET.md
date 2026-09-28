@@ -18,7 +18,7 @@ Le détail technique de chaque version est dans `<plugin>/JOURNAL.md`. Documents
 | **Hub mini-jeux (Kal-Games)** | `kal-games` | `KalGames2@7001.mystrator.com` (onglet « KalGames2 ») | 91.197.6.24:22142 | KalGames, KG_PvpKit, KG_BoatRace, KG_Parkour, KG_BuildBattle, KG_Menu, KG_Bingo, KG_ScoreBoards, KLM_Menu |
 | **Bingo + jeux gourmands** (Manhunt...) | `serveur-jeux` | `serveurjeux@7015.mystrator.com` | 91.197.6.65:22470 | KG_BingoGame, KLM_Menu (boussole désactivée) |
 | Kixster SMP (rendu au SMP le 24/09/2026) | `kixster` | `kixster@7003.mystrator.com` | 91.197.6.212:29599 | KLM_Menu (boussole désactivée, menu par `/menu`) |
-| Event : survie classique (depuis le 25/09/2026) | `event` | `kalgames@7021.mystrator.com` | 51.254.174.133:21088 | KLM_Menu (boussole désactivée, `/menu`), KS_Dimensions, KS_Enclume, KS_Villageois, KS_Crafts, KS_LootBlocs, KS_LootEntites, KS_LootPeche, KS_LootPotions (cahier des charges : `KS_Event/`) |
+| Event : survie classique (depuis le 25/09/2026) | `event` | `Event@7021.mystrator.com` (session WinSCP enregistrée) | 51.254.174.133:21088 | KLM_Menu (boussole désactivée, `/menu`), KS_Dimensions, KS_Enclume, KS_Villageois, KS_Crafts, KS_LootBlocs, KS_LootEntites, KS_LootPeche, KS_LootPotions, KS_EstomacGardien, KS_LootCoffres (cahier des charges : `KS_Event/`) |
 | Serveur de plots en créatif (Kanvas) | `Kanvas` (ex `kal-test-dev`, renommé par LeKiwi06 dans `velocity.toml` le 24-25/09/2026 ; destination de la boussole du lobby renommée `Kanvas` le 26/09/2026) | `Kal-Test-Dev@5038.mystrator.com` | 91.197.6.215:21621 | KV_Plots, KV_Menu, KLM_Menu (cahier des charges : `KV_Plots/CAHIER_DES_CHARGES.md`) |
 
 Machines Minestrator : **machine 1** = proxy, lobby, Event (ex kal-games), Kixster ; **machine 2** = Kal-Test-Dev ;
@@ -86,16 +86,13 @@ Copie exacte de chaque jar dans `jars-deployes/`.
 | proxy | icône de la liste Multijoueur : `server-icon.png` (64 x 64, logo KaLium, 26/09/2026) à la racine ; `KaliumRelay-1.2.0.jar` (26/09/2026 07:21 : `/server` réservé aux admins, liste `admins` de `plugins/kaliumrelay/relay.properties`, LeKiwi06 et Maaxster par défaut ; testé et confirmé par LeKiwi06 le 26/09/2026 ; 1.1.1 dans `_removed-kaliumrelay-1.1.1/`) ; 1.1.1 (déployé le 24/09/2026) | relais confirmé le 24/09/2026 en 1.1.0 ; démarrage 1.1.1 vérifié dans le journal ; reconnexion directe non confirmée |
 | Kanvas (ex Kal-Test-Dev) | **28/09/2026 12:03 : `KLM_Portal-1.3.1.jar`** (1.3.0 et 1.2.0 dans les `_removed-klm_portal-…/`, non testé). **28/09/2026 03:40 (LeKiwi06, refonte des menus, non testé) : `KLM_Menu-2.4.0`, `KV_BuildBattle-0.3.6`, `KV_Menu-1.3.1`** (anciennes versions dans les `_removed-…`). Avant : **`KV_BuildBattle-0.3.5.jar`** (28/09/2026 01:17, LeKiwi06 : Build Battle complet, voir son JOURNAL ; anciens jars dans `_removed-kv_buildbattle-…/`, supprimables par l'humain : 0.1.0, 0.2.0, 0.3.0, 0.3.1) + **`KV_Plots-1.4.1.jar`** + **`KLM_Menu-2.3.0.jar`** + **`KLM_Portal-1.2.0.jar`** (27/09/2026 19:59 : randomTickSpeed à 0 dans `Kanvas` et `buildbattle`, points de chute appliqués à l'arrivée ; anciens jars dans `_removed-kv_plots-1.4.0/`, `_removed-klm_menu-2.0.0/`) + `KV_Menu-1.3.0.jar` (26/09/2026 03:45, LeKiwi06 ; signalements, concours de build) ; FastAsyncWorldEdit **Paper** 2.15.4 (la variante Bukkit ne fonctionnait pas sur Paper 26.2 ; limites `limits.default` réduites, baguette de navigation = vide de structure ; originaux dans `_removed-fastasyncworldedit-config-2026-09-26/`) ; WorldGuard 7.0.19 ; LuckPerms (groupe `default` : permissions FAWE), PlaceholderAPI, ViaVersion / ViaBackwards, floodgate, voicechat 2.6.23 ; monde principal `Kanvas` (`level-name=Kanvas`). **Tri du 26/09/2026** : KaliumCore 1.4.0, PlayerKits2, GrimAC, ConditionalEvents, JEIRecipeFix, Geyser-Spigot, PyxelRegions rangés dans `plugins/_removed-<plugin>-<version>/` (dossiers de données laissés en place). Anciens dossiers `_removed-kv_plots-…` / `kv_menu-…` supprimés le 26/09/2026 par LeKiwi06 (règle des 3 versions) ; anciens `_removed-kaliumcore-…` supprimés aussi. `PlaceholderAPIScoreboardObjectivesPlaceholder.jar` (extension PlaceholderAPI qui ne se chargeait pas, inutilisée) rangé dans `_removed-placeholderapi-scoreboard/` le 26/09/2026 (accord de LeKiwi06) | KV_Plots 1.0.0 à 1.2.0, KV_Menu 1.0.0 et 1.1.0, FAWE : testés et confirmés par LeKiwi06 le 26/09/2026 ; KV_Plots 1.3.0 / 1.3.1 (titre, description, visites, tableau sur le côté) et KV_Menu 1.2.0 testés et confirmés par LeKiwi06 le 26/09/2026 ; tri des plugins vérifié (plus d'erreur au démarrage) ; KV_Plots 1.4.0 et KV_Menu 1.3.0 (signalements, concours de build) testés et confirmés par LeKiwi06 le 26/09/2026 ; KV_BuildBattle 0.1.0 à 0.3.5, KV_Plots 1.4.1, KLM_Menu 2.3.0 et KLM_Portal 1.2.0 (point de chute, boussole, étoile) testés et validés par LeKiwi06 les 27 et 28/09/2026 |
 | Kixster (`kixster`) | **28/09/2026 04:03 : `KLM_Menu-2.4.1.jar`** + config (`compass.enabled: true`, `items-by-default: false` : objets de menu seulement après `/menu on` ; non testé). **28/09/2026 03:40 : `KLM_Menu-2.4.0.jar`** (2.0.0 dans `_removed-klm_menu-2.0.0/`) et alias `menu` retiré de `commands.yml` (non testé). Avant : remis dans l'état d'avant le Bingo le 24/09/2026 : monde d'origine `Kixster SMP` (ex `Kixster SMP_bak`, dernière sauvegarde 23/09 00:11), plugins SMP du 14/09 + WorldEdit 7.4.6-beta (gardé) + `KLM_Menu-2.0.0.jar` (boussole désactivée, `/menu` = alias de `/servers` dans `commands.yml`) ; tout le Bingo rangé dans `/_removed-bingo-2026-09-24/` et `/plugins/_removed-bingo-2026-09-24/` | non testé |
-| Event (`event`, ancien kal-games) | **28/09/2026 04:03 : `KLM_Menu-2.4.1.jar`** + config (`compass.enabled: true`, `items-by-default: false` : objets de menu seulement après `/menu on` ; non testé). **28/09/2026 03:40 : `KLM_Menu-2.4.0.jar`** (2.0.0 dans `_removed-klm_menu-2.0.0/`) et alias `menu` retiré de `commands.yml` (non testé). Avant : reconverti en **survie classique** le 25/09/2026 : nouveau monde `world` (généré au premier démarrage, seed aléatoire, difficulté hard) ; ancien hub `Kal-Games` et vieux `world` dans `/_removed-survie-2026-09-25/` ; KalGames, KG_Bingo, KG_ScoreBoards (et tous leurs anciens jars) dans `/plugins/_removed-kalgames-event-2026-09-25/` ; `KLM_Menu-2.0.0.jar` (boussole désactivée, `/menu` = alias de `/servers` dans `commands.yml`) + **`KS_Dimensions-1.0.0.jar`** + `KS_Enclume`, `KS_Villageois`, `KS_Crafts`, `KS_LootBlocs`, `KS_LootEntites`, `KS_LootPeche`, `KS_LootPotions` 1.0.0 (25/09/2026, cahier des charges `KS_Event/CAHIER_DES_CHARGES.md`) ; + Floodgate (config et clé du proxy, 25/09/2026) ; PlayerKits2 retiré (`/plugins/_removed-playerkits2-1.23.3/`) ; extension PlaceholderAPI remise dans `plugins/PlaceholderAPI/expansions/` ; plugins tiers du hub gardés (ConditionalEvents, PyxelRegions, WorldGuard, GrimAC, JEIRecipeFix, PlaceholderAPI, ViaVersion / ViaBackwards, LuckPerms, voicechat, WorldEdit) | non testé |
+| Event (`event`, ancien kal-games) | **28/09/2026 23:19 (Maxster33) : `KS_EstomacGardien-1.0.0.jar` et `KS_LootCoffres-1.0.0.jar` (nouveaux), `KS_LootEntites-1.1.0.jar`, `KS_LootPotions-1.1.0.jar`** (anciens dans `_removed-ks_lootentites-1.0.0/` et `_removed-ks_lootpotions-1.0.0/` ; non testés ; demande : `KS_Event/CAHIER_DES_CHARGES.md`, partie 4). **28/09/2026 04:03 : `KLM_Menu-2.4.1.jar`** + config (`compass.enabled: true`, `items-by-default: false` : objets de menu seulement après `/menu on` ; non testé). **28/09/2026 03:40 : `KLM_Menu-2.4.0.jar`** (2.0.0 dans `_removed-klm_menu-2.0.0/`) et alias `menu` retiré de `commands.yml` (non testé). Avant : reconverti en **survie classique** le 25/09/2026 : nouveau monde `world` (généré au premier démarrage, seed aléatoire, difficulté hard) ; ancien hub `Kal-Games` et vieux `world` dans `/_removed-survie-2026-09-25/` ; KalGames, KG_Bingo, KG_ScoreBoards (et tous leurs anciens jars) dans `/plugins/_removed-kalgames-event-2026-09-25/` ; `KLM_Menu-2.0.0.jar` (boussole désactivée, `/menu` = alias de `/servers` dans `commands.yml`) + **`KS_Dimensions-1.0.0.jar`** + `KS_Enclume`, `KS_Villageois`, `KS_Crafts`, `KS_LootBlocs`, `KS_LootEntites`, `KS_LootPeche`, `KS_LootPotions` 1.0.0 (25/09/2026, cahier des charges `KS_Event/CAHIER_DES_CHARGES.md`) ; + Floodgate (config et clé du proxy, 25/09/2026) ; PlayerKits2 retiré (`/plugins/_removed-playerkits2-1.23.3/`) ; extension PlaceholderAPI remise dans `plugins/PlaceholderAPI/expansions/` ; plugins tiers du hub gardés (ConditionalEvents, PyxelRegions, WorldGuard, GrimAC, JEIRecipeFix, PlaceholderAPI, ViaVersion / ViaBackwards, LuckPerms, voicechat, WorldEdit) | non testé |
 
 Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne très bien ».
 
 ### Versions compilées, non déployées
 
-- **Event (Maxster33, 28/09/2026, non testés)** : `KS_EstomacGardien-1.0.0` (nouveau : objet « Estomac du gardien »),
-  `KS_LootCoffres-1.0.0` (nouveau : loots des coffres de structures et des coffres-forts), `KS_LootEntites-1.1.0`
-  (grand gardien : 50 % d'estomac), `KS_LootPotions-1.1.0` (faiblesse : capitaine seulement). **KS_EstomacGardien et
-  KS_LootEntites à déployer ensemble.** Demande : `KS_Event/CAHIER_DES_CHARGES.md`, partie 4.
+Aucune (28/09/2026 23:19 : les plugins Event de Maxster33 sont déployés).
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »
 (case de gauche : Classements pour tous, Paramètres pour les admins, un bouton par jeu), boussole réduite à la
@@ -286,28 +283,24 @@ installés : le point de chute du lobby vers Kanvas fonctionne, boussole et éto
   tester KG_Bingo 1.5.1 et KG_BingoGame 0.8.2 ; équilibrage des barèmes ; Kanvas (limites d'entités, agrandissement
   moyen → grand, classements, extension du monde) ; sauvegardes des mondes ; dossiers gardés volontairement.
 
-### 2026-09-25 — Maxster33
+### 2026-09-28 — Maxster33
 
-**Serveur Event reconverti en survie classique** (demande de Maxster33, faite par son Claude, WinSCP en ligne de
-commande) :
-- Map : ancien hub `Kal-Games` et vieux dossier `world` rangés dans `/_removed-survie-2026-09-25/` ;
-  `server.properties` : `level-name=world` (nouveau monde vierge généré au premier démarrage, seed aléatoire),
-  `difficulty=hard` (décisions de Maxster33) ; anciens `server.properties`, `commands.yml` et config KLM_Menu dans ce
-  même dossier.
-- Plugins retirés (rangés dans `/plugins/_removed-kalgames-event-2026-09-25/`) : KalGames 1.15.1, KG_Bingo 1.2.0,
-  KG_ScoreBoards 1.1.0, leurs dossiers de données, tous les anciens `_removed-kalgames/kg_*/kaliummenu`, `claudebak`
-  et les `.jar.bak`. Plugins tiers gardés (pas demandé de les retirer).
-- KLM_Menu 2.0.0 gardé : boussole désactivée, menu par `/menu` (alias de `/servers` dans `commands.yml`, même
-  méthode que Kixster).
-- **Nouveau plugin KS_Dimensions 1.0.0** (préfixe `KS_` = serveur Event) : `/dimensions` (opérateurs) ouvre un menu
-  pour activer / désactiver les portails du Nether et de l'End ; un portail désactivé bloque l'aller depuis le monde
-  normal, jamais le retour (voir son JOURNAL). Compilé, déployé, non testé.
-- À faire / à savoir : démarrer Event (l'humain) et tester ; activer la destination `event` dans le menu du lobby ;
-  voir « Points ouverts ». Ensuite (même jour) : Floodgate installé (config et clé du proxy), extension
-  PlaceholderAPI déplacée dans `expansions/`, PlayerKits2 retiré (`/plugins/_removed-playerkits2-1.23.3/`).
-  Restent à vérifier : réglages de hub de ConditionalEvents / PyxelRegions / WorldGuard.
-- **Plugins du serveur Event (soir du 25/09/2026)** : cahier des charges de Maxster33 enregistré dans
-  `KS_Event/CAHIER_DES_CHARGES.md` (demande, réponses, interprétations) ; 7 plugins autonomes créés, compilés et
-  déployés sur Event, non testés : KS_Enclume, KS_Villageois, KS_Crafts, KS_LootBlocs, KS_LootEntites, KS_LootPeche,
-  KS_LootPotions (détail dans leurs JOURNAL.md). KS_Elixirs reporté (décision de Maxster33). Limite connue :
-  4 blocs de cuivre en carré 2×2 donnent probablement le cuivre taillé vanilla (voir KS_Crafts/JOURNAL.md).
+*(Session du 28/09/2026, de 21 h 40 à 23 h 30, Claude de Maxster33. Fin de session : réservations libérées.)*
+
+**Serveur Event : estomac du gardien et loots des coffres de structures** (demande et réponses :
+`KS_Event/CAHIER_DES_CHARGES.md`, partie 4). Déployé sur Event le 28/09/2026 à 23:19 (WinSCP en ligne de commande),
+**non testé en jeu, redémarrage d'Event à faire par l'humain** :
+- **KS_EstomacGardien 1.0.0** (nouveau) : objet « Estomac du gardien » (image du sac noir, pas un vrai sac) ; clic
+  droit : consommé, donne son contenu (casque en diamant 10 %, puis 2 tirages : oeuf de tortue, bateau, corail,
+  algue, trident enchanté, armure de nautile en diamant, coeur de la mer).
+- **KS_LootCoffres 1.0.0** (nouveau) : cité antique, 4 bastions, trésor enfoui, cité de l'End, forteresse,
+  avant-poste, manoir, coffres-forts des chambres d'épreuve. Le loot vanilla (tables 26.2 lues dans le jeu) est
+  modifié après génération ; changements de poids exacts par remplacement (voir son JOURNAL). Seuls les coffres pas
+  encore ouverts sont concernés.
+- **KS_LootEntites 1.1.0** : grand gardien 50 % d'estomac (tué par un joueur ; `softdepend` KS_EstomacGardien).
+- **KS_LootPotions 1.1.0** : potion de faiblesse 10 % pour le capitaine pillard seulement.
+- Anciens jars dans `/plugins/_removed-ks_lootentites-1.0.0/` et `/plugins/_removed-ks_lootpotions-1.0.0/`.
+- À savoir : la session WinSCP enregistrée d'Event s'appelle `Event@7021.mystrator.com` (port 2022) ; le nom
+  `kalgames@7021...` ne marche pas en ligne de commande (WinSCP essaie alors le port 22) ; tableau d'architecture corrigé.
+- À tester : estomac (clic droit, contenu, inventaire plein), drop du grand gardien, coffres de structures neufs,
+  coffres-forts normal et sinistre, capitaine / pillard.

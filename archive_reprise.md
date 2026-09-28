@@ -410,3 +410,31 @@ moins de 3 blocs vus sous forme de bottes en cuir colorées.
   grand, classements, extension du monde) ; sauvegardes des mondes ; dossiers gardés volontairement (plugins retirés de
   Kanvas le 26/09, dossiers de l'Event, grosses sauvegardes, `plugins/KG_BingoGame/icons/26.2-3d/` sur Serveur Jeux).
 
+
+---
+
+### 2026-09-25 — Maxster33
+
+**Serveur Event reconverti en survie classique** (demande de Maxster33, faite par son Claude, WinSCP en ligne de
+commande) :
+- Map : ancien hub `Kal-Games` et vieux dossier `world` rangés dans `/_removed-survie-2026-09-25/` ;
+  `server.properties` : `level-name=world` (nouveau monde vierge généré au premier démarrage, seed aléatoire),
+  `difficulty=hard` (décisions de Maxster33) ; anciens `server.properties`, `commands.yml` et config KLM_Menu dans ce
+  même dossier.
+- Plugins retirés (rangés dans `/plugins/_removed-kalgames-event-2026-09-25/`) : KalGames 1.15.1, KG_Bingo 1.2.0,
+  KG_ScoreBoards 1.1.0, leurs dossiers de données, tous les anciens `_removed-kalgames/kg_*/kaliummenu`, `claudebak`
+  et les `.jar.bak`. Plugins tiers gardés (pas demandé de les retirer).
+- KLM_Menu 2.0.0 gardé : boussole désactivée, menu par `/menu` (alias de `/servers` dans `commands.yml`, même
+  méthode que Kixster).
+- **Nouveau plugin KS_Dimensions 1.0.0** (préfixe `KS_` = serveur Event) : `/dimensions` (opérateurs) ouvre un menu
+  pour activer / désactiver les portails du Nether et de l'End ; un portail désactivé bloque l'aller depuis le monde
+  normal, jamais le retour (voir son JOURNAL). Compilé, déployé, non testé.
+- À faire / à savoir : démarrer Event (l'humain) et tester ; activer la destination `event` dans le menu du lobby ;
+  voir « Points ouverts ». Ensuite (même jour) : Floodgate installé (config et clé du proxy), extension
+  PlaceholderAPI déplacée dans `expansions/`, PlayerKits2 retiré (`/plugins/_removed-playerkits2-1.23.3/`).
+  Restent à vérifier : réglages de hub de ConditionalEvents / PyxelRegions / WorldGuard.
+- **Plugins du serveur Event (soir du 25/09/2026)** : cahier des charges de Maxster33 enregistré dans
+  `KS_Event/CAHIER_DES_CHARGES.md` (demande, réponses, interprétations) ; 7 plugins autonomes créés, compilés et
+  déployés sur Event, non testés : KS_Enclume, KS_Villageois, KS_Crafts, KS_LootBlocs, KS_LootEntites, KS_LootPeche,
+  KS_LootPotions (détail dans leurs JOURNAL.md). KS_Elixirs reporté (décision de Maxster33). Limite connue :
+  4 blocs de cuivre en carré 2×2 donnent probablement le cuivre taillé vanilla (voir KS_Crafts/JOURNAL.md).

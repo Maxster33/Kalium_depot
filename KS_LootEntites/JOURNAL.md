@@ -33,4 +33,4 @@ Demande de Maxster33 : « Grand Gardien : ajouter 50 % de chance d'obtenir l'est
   compile contre les classes de KS_EstomacGardien : **compiler KS_EstomacGardien d'abord**.
 - **À déployer avec KS_EstomacGardien 1.0.0.**
 
-**Compilé le 28/09/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 28/09/2026 à 23:19. Statut : non testé en jeu.**

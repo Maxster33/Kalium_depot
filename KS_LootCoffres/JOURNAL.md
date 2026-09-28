@@ -38,4 +38,4 @@ poids (calcul en commentaire dans le code) :
 - Enchantements « niveau X à Y » : comme la fonction vanilla `enchant_with_levels` (enchantements `#on_random_loot`) ;
   l'usure vanilla des objets est gardée.
 
-**Compilé le 28/09/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 28/09/2026 à 23:19. Statut : non testé en jeu.**

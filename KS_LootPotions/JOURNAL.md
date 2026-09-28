@@ -27,4 +27,4 @@ au capitaine pillard ».
 - **Pillard ordinaire** : plus aucune potion.
 - **Capitaine** (patrouille ou raid) : 10 % faiblesse basique + 1 % potion basique aléatoire (inchangé).
 
-**Compilé le 28/09/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 28/09/2026 à 23:19. Statut : non testé en jeu.**

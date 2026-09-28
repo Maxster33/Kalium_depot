@@ -20,4 +20,4 @@ Plugin autonome (réutilisable ailleurs), serveur Event. Demande de Maxster33 du
     `#on_random_loot`).
 - Pour les autres plugins : `KSEstomacGardien.creerEstomac()` (utilisé par KS_LootEntites 1.1.0 : grand gardien).
 
-**Compilé le 28/09/2026, non déployé. Statut : non testé en jeu.** À déployer avec KS_LootEntites 1.1.0.
+**Déployé sur Event le 28/09/2026 à 23:19. Statut : non testé en jeu.** Déployé avec KS_LootEntites 1.1.0.
