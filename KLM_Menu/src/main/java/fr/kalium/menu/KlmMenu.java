@@ -63,8 +63,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * - Navigation entre serveurs (lobby, hubs...), base sur les Dialogs natifs de Minecraft (aucun coffre). Le transfert
  *   passe par le canal BungeeCord, supporte par Velocity (bungee-plugin-message-channel = true).
  * - Boite a outils des menus pour les autres plugins (fr.kalium.menu.api : Gui, Lang).
- * - Catalogue des interfaces : chaque plugin declare les siennes (MenuSection, registre de services de Paper) ;
- *   KLM_Menu les decouvre au demarrage et les affiche, rangees par plugin, dans le bouton "Interfaces".
+ * - Interfaces des plugins : chaque plugin declare les siennes (MenuSection, registre de services de Paper) ;
+ *   KLM_Menu les decouvre au demarrage. 2.4.0 : elles sont dans le comparateur « Informations » (case de gauche) :
+ *   Classements pour tous, Parametres pour les admins ; la boussole ne sert plus qu'a la navigation.
+ * - 2.4.0 : menus lisibles sur Bedrock (couleurs trop claires assombries, voir BedrockColors) ; boussole et
+ *   comparateur verrouilles pour tout le monde.
  */
 public final class KlmMenu extends JavaPlugin implements Listener, PluginMessageListener, CommandExecutor, TabCompleter {
 
@@ -77,6 +80,8 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
     private final Map<String, ServerEntry> servers = new LinkedHashMap<>();
 
     private NamespacedKey compassKey;
+    /** 2.4.0 : etiquette du comparateur « Informations » (klm_menu:informations). */
+    private NamespacedKey informationsKey;
     /** 2.0.0 : etiquette des boussoles donnees par KaliumMenu (avant le renommage), toujours reconnue. */
     private final NamespacedKey legacyCompassKey = new NamespacedKey("kaliummenu", "menu_compass");
     /** 2.0.0 : interfaces declarees par les plugins (voir MenuSection), mises a jour par refreshSections(). */
@@ -89,7 +94,7 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
     private int buttonWidth;
 
     /** Bouton special (en plus de "changer de serveur" / "executer une commande"). */
-    private enum Special { NONE, OP_SWITCH, GAMEMODE_SWITCH, SETTINGS, CATALOG }
+    private enum Special { NONE, OP_SWITCH, GAMEMODE_SWITCH, INFORMATIONS }
 
     /** Entree du menu : un serveur, ou (local = true) une commande executee sur ce serveur. */
     private record ServerEntry(String id, String display, String description, boolean local, String command,
@@ -129,6 +134,7 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         saveDefaultConfig();
         loadSettings();
         compassKey = new NamespacedKey(this, "menu_compass");
+        informationsKey = new NamespacedKey(this, "informations");
         lang = new fr.kalium.menu.api.Lang(this);
         gui = new fr.kalium.menu.api.Gui(this, lang);
 
@@ -136,7 +142,7 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         getServer().getMessenger().registerIncomingPluginChannel(this, CHANNEL, this);
         getServer().getPluginManager().registerEvents(this, this);
 
-        for (String name : List.of("servers", "lobby", "kaliummenu")) {
+        for (String name : List.of("servers", "lobby", "kaliummenu", "informations")) {
             PluginCommand command = getCommand(name);
             if (command != null) {
                 command.setExecutor(this);
@@ -162,7 +168,7 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         }
     }
 
-    // ------------------------------------------------------------------ catalogue des interfaces (2.0.0)
+    // ------------------------------------------------------------------ interfaces declarees par les plugins (2.0.0)
 
     /** Interroge le registre de services : toutes les interfaces declarees par les plugins actifs. */
     private void refreshSections(boolean log) {
@@ -221,60 +227,117 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         return list;
     }
 
+    // ------------------------------------------------------------------ comparateur « Informations » (2.4.0)
+
     /**
-     * Catalogue (demande de LeKiwi06 : "une interface claire pour trouver les interfaces de chaque chose") : un bouton
-     * par plugin, puis ses interfaces. Un plugin qui n'en a qu'une l'ouvre directement.
+     * Demande de LeKiwi06 (28/09/2026) : « pour tout ce qui est classements et parametres, tu vas faire ca dans un
+     * comparateur avec texture enchantee en slot 1 de la hotbar qui portera le nom "Informations" ; pour les joueurs il
+     * contiendra que le classement pour le moment, pour les admins il doit aussi contenir les parametres retravailles ».
+     * Remplace le bouton « Interfaces » (catalogue par plugin) et le bouton « Parametres » de la boussole, qui ne sert
+     * plus qu'a la navigation.
      */
-    private void openCatalog(Player player) {
-        Map<String, List<fr.kalium.menu.api.MenuSection>> byPlugin = new LinkedHashMap<>();
+    private static final java.util.Comparator<fr.kalium.menu.api.MenuSection> SECTION_ORDER =
+            java.util.Comparator.comparingInt((fr.kalium.menu.api.MenuSection s) -> s.order())
+                    .thenComparing(s -> s.owner().getName().toLowerCase(Locale.ROOT));
+
+    private boolean isAdmin(Player player) {
+        return player.hasPermission("kaliummenu.admin");
+    }
+
+    /** Interfaces de classements visibles par ce joueur. */
+    private List<fr.kalium.menu.api.MenuSection> rankingSections(Player player) {
+        List<fr.kalium.menu.api.MenuSection> list = new ArrayList<>();
         for (var section : visibleSections(player)) {
-            byPlugin.computeIfAbsent(section.owner().getName(), k -> new ArrayList<>()).add(section);
+            if (section.ranking()) {
+                list.add(section);
+            }
         }
-        List<Component> body = new ArrayList<>();
-        body.add(lang.c("catalog.body", "<gray>Toutes les interfaces de <white>ce serveur<gray>, rangées par plugin."));
-        if (byPlugin.isEmpty()) {
-            body.add(lang.c("catalog.empty", "<gray>Aucune interface disponible ici."));
-        }
-        List<ActionButton> buttons = new ArrayList<>();
-        for (Map.Entry<String, List<fr.kalium.menu.api.MenuSection>> entry : byPlugin.entrySet()) {
-            List<fr.kalium.menu.api.MenuSection> list = entry.getValue();
-            Component label = lang.c("catalog.plugin", "<gold><plugin></gold> <dark_gray>(<n>)",
-                    "plugin", entry.getKey(), "n", list.size());
-            Component tip = list.size() == 1 ? list.get(0).description()
-                    : lang.c("catalog.plugin-tip", "<gray><n> interfaces", "n", list.size());
-            buttons.add(gui.button(label, tip, p -> {
-                if (list.size() == 1) {
-                    openSection(p, list.get(0));
-                } else {
-                    openPluginSections(p, entry.getKey(), list);
-                }
-            }));
-        }
-        buttons.add(gui.button(lang.c("catalog.back", "<gray>Retour"), null, this::openMenu));
-        gui.open(player, lang.c("catalog.title", "<#09add3><bold>Interfaces"), body, List.of(), buttons, null, 1);
+        list.sort(SECTION_ORDER);
+        return list;
     }
 
-    private void openPluginSections(Player player, String pluginName, List<fr.kalium.menu.api.MenuSection> list) {
-        List<ActionButton> buttons = new ArrayList<>();
-        for (var section : list) {
-            Component label = section.audience() == fr.kalium.menu.api.MenuSection.Audience.ADMINS
-                    ? section.title().append(lang.c("catalog.admin-mark", " <dark_gray>(admin)"))
-                    : section.title();
-            buttons.add(gui.button(label, section.description(), p -> openSection(p, section)));
+    /** Reglages (interfaces ADMINS qui ne sont pas des classements), a plat. */
+    private List<fr.kalium.menu.api.MenuSection> settingsSections(Player player) {
+        List<fr.kalium.menu.api.MenuSection> list = new ArrayList<>();
+        for (var section : visibleSections(player)) {
+            if (section.ranking() || section.audience() != fr.kalium.menu.api.MenuSection.Audience.ADMINS) {
+                continue;
+            }
+            try {
+                list.addAll(section.expand(player));
+            } catch (RuntimeException e) {
+                getLogger().warning("Interface " + section.owner().getName() + "/" + section.id() + " : " + e);
+            }
         }
-        buttons.add(gui.button(lang.c("catalog.back", "<gray>Retour"), null, this::openCatalog));
-        gui.open(player, lang.c("catalog.plugin-title", "<gold><bold><plugin>", "plugin", pluginName),
-                List.of(lang.c("catalog.plugin-body", "<gray>Interfaces de <white><plugin><gray>.", "plugin", pluginName)),
-                List.of(), buttons, null, 1);
+        list.sort(SECTION_ORDER);
+        return list;
     }
 
-    private void openSection(Player player, fr.kalium.menu.api.MenuSection section) {
+    /** Le joueur a-t-il quelque chose a voir dans « Informations » ? (sinon, pas de comparateur) */
+    private boolean hasInformations(Player player) {
+        return isAdmin(player) || !rankingSections(player).isEmpty();
+    }
+
+    /** 2.4.0 - API : ouvre « Informations » (comparateur). */
+    public void openInformations(Player player) {
+        List<ActionButton> buttons = new ArrayList<>();
+        List<fr.kalium.menu.api.MenuSection> rankings = rankingSections(player);
+        if (!rankings.isEmpty()) {
+            buttons.add(gui.button(lang.c("info.rankings", "<gold><bold>Classements"),
+                    lang.c("info.rankings-tip", "<gray>Meilleurs joueurs de chaque jeu, général et du mois."), p -> {
+                        List<fr.kalium.menu.api.MenuSection> list = rankingSections(p);
+                        if (list.size() == 1) {
+                            openSection(p, list.get(0), this::openInformations);
+                        } else {
+                            openRankings(p);
+                        }
+                    }));
+        }
+        if (isAdmin(player)) {
+            buttons.add(gui.button(lang.c("info.settings", "<red><bold>Paramètres"),
+                    lang.c("info.settings-tip", "<gray>Réglages de <white>ce serveur<gray> (réservé aux admins)."), this::openParametres));
+        }
+        List<Component> body = List.of(buttons.isEmpty()
+                ? lang.c("info.empty", "<gray>Rien à afficher sur ce serveur pour le moment.")
+                : lang.c("info.body", "<gray>Choisis une rubrique."));
+        gui.open(player, lang.c("info.title", "<#09add3><bold>Informations"), body, List.of(), buttons, null, 1);
+    }
+
+    private void openRankings(Player player) {
+        List<ActionButton> buttons = new ArrayList<>();
+        for (var section : rankingSections(player)) {
+            buttons.add(gui.button(section.title(), section.description(), p -> openSection(p, section, this::openRankings)));
+        }
+        buttons.add(gui.button(lang.c("info.back", "<gray>Retour"), null, this::openInformations));
+        gui.open(player, lang.c("info.rankings-title", "<gold><bold>Classements"),
+                List.of(lang.c("info.rankings-body", "<gray>Choisis un classement.")), List.of(), buttons, null, 1);
+    }
+
+    /** 2.4.0 - API : ouvre « Parametres » (admins) : les reglages de chaque plugin de ce serveur, a plat. */
+    public void openParametres(Player player) {
+        if (!isAdmin(player)) {
+            openInformations(player);
+            return;
+        }
+        List<ActionButton> buttons = new ArrayList<>();
+        for (var section : settingsSections(player)) {
+            buttons.add(gui.button(section.title(), section.description(), p -> openSection(p, section, this::openParametres)));
+        }
+        buttons.add(gui.button(lang.c("info.teleports", "<aqua>Téléportations"),
+                lang.c("info.teleports-tip", "<gray>Activer ou désactiver les destinations de la boussole (et les portails reliés)."),
+                this::openSettings));
+        buttons.add(gui.button(lang.c("info.back", "<gray>Retour"), null, this::openInformations));
+        gui.open(player, lang.c("info.settings-title", "<red><bold>Paramètres"),
+                List.of(lang.c("info.settings-body", "<gray>Réglages de <white>ce serveur<gray>.")), List.of(), buttons, null, 1);
+    }
+
+    private void openSection(Player player, fr.kalium.menu.api.MenuSection section, java.util.function.Consumer<Player> back) {
         if (!section.owner().isEnabled() || !section.visibleTo(player)) {
             player.sendMessage(mm.deserialize(msg("destination-disabled")));
             return;
         }
         try {
-            section.open(player, this::openCatalog);
+            section.open(player, back);
         } catch (RuntimeException e) {
             getLogger().warning("Ouverture de " + section.owner().getName() + "/" + section.id() + " impossible : " + e);
         }
@@ -392,6 +455,8 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         }
         player.sendMessage(mm.deserialize(msg(nowOp ? "op-now-operator" : "op-now-player")));
         getLogger().info(player.getName() + (nowOp ? " est passé opérateur." : " est repassé joueur (mode survie)."));
+        giveInformations(player); // 2.4.0 : comparateur donne ou retire selon les nouveaux droits
+
     }
 
     private String gamemodeKey(org.bukkit.GameMode mode) {
@@ -467,6 +532,8 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
 
         if (name.equals("servers")) {
             openMenu(player);
+        } else if (name.equals("informations")) {
+            openInformations(player);
         } else if (name.equals("lobby")) {
             if (lobbyRole) {
                 player.sendMessage(mm.deserialize(msg("already-in-lobby")));
@@ -528,13 +595,13 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
             entries.addAll(menuEntries());
         }
         entries.removeIf(entry -> isDisabled(entry.id()));
-        if (!visibleSections(player).isEmpty()) {
-            entries.add(new ServerEntry("catalog", msg("catalog-button"), msg("catalog-description"),
-                    true, "", List.of(), List.of(), Special.CATALOG));
-        }
-        if (player.hasPermission("kaliummenu.admin")) {
-            entries.add(new ServerEntry("settings", msg("settings-button"), msg("settings-description"),
-                    true, "", List.of(), List.of(), Special.SETTINGS));
+        // 2.4.0 : « Interfaces » et « Parametres » quittent la boussole (navigation seulement) pour le comparateur
+        // « Informations ».
+        // Sur un serveur sans comparateur (boussole desactivee : Bingo, Event, Kixster), « Informations » reste
+        // accessible par ce menu (/menu), comme l'etait « Interfaces ».
+        if (!informationsEnabled() && hasInformations(player)) {
+            entries.add(new ServerEntry("informations", msg("informations-button"), msg("informations-description"),
+                    true, "", List.of(), List.of(), Special.INFORMATIONS));
         }
         if (isListedOperator(player)) {
             boolean op = player.isOp();
@@ -614,10 +681,8 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
                                             toggleOperator(clicker);
                                         } else if (entry.special() == Special.GAMEMODE_SWITCH) {
                                             cycleGamemode(clicker);
-                                        } else if (entry.special() == Special.SETTINGS) {
-                                            openSettings(clicker);
-                                        } else if (entry.special() == Special.CATALOG) {
-                                            openCatalog(clicker);
+                                        } else if (entry.special() == Special.INFORMATIONS) {
+                                            openInformations(clicker);
                                         } else if (isDisabled(target)) {
                                             clicker.sendMessage(mm.deserialize(msg("destination-disabled")));
                                         } else if (entry.local()) {
@@ -636,12 +701,18 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
 
         // Action nulle = ferme simplement le Dialog.
         ActionButton close = ActionButton.create(mm.deserialize(msg("close-button")), null, buttonWidth, null);
+        DialogBase base = DialogBase.builder(mm.deserialize(msg("menu-title")))
+                .body(List.of(DialogBody.plainMessage(mm.deserialize(msg("menu-header")))))
+                .build();
+        // 2.4.0 : couleurs trop claires assombries pour les joueurs Bedrock.
+        boolean bedrock = fr.kalium.menu.api.BedrockColors.isBedrock(player);
+        DialogBase shownBase = bedrock ? fr.kalium.menu.api.BedrockColors.adapt(base) : base;
+        List<ActionButton> shownButtons = bedrock ? fr.kalium.menu.api.BedrockColors.adaptButtons(buttons) : buttons;
+        ActionButton shownClose = bedrock ? fr.kalium.menu.api.BedrockColors.adapt(close) : close;
 
         Dialog dialog = Dialog.create(factory -> factory.empty()
-                .base(DialogBase.builder(mm.deserialize(msg("menu-title")))
-                        .body(List.of(DialogBody.plainMessage(mm.deserialize(msg("menu-header")))))
-                        .build())
-                .type(DialogType.multiAction(buttons, close, 1)));
+                .base(shownBase)
+                .type(DialogType.multiAction(shownButtons, shownClose, 1)));
 
         player.showDialog(dialog);
     }
@@ -692,13 +763,10 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
                         }
                     }, ClickCallback.Options.builder().uses(1).lifetime(Duration.ofMinutes(2)).build())));
         }
-        ActionButton back = ActionButton.create(mm.deserialize(msg("close-button")), null, buttonWidth, null);
-        Dialog dialog = Dialog.create(factory -> factory.empty()
-                .base(DialogBase.builder(mm.deserialize(msg("settings-title")))
-                        .body(List.of(DialogBody.plainMessage(mm.deserialize(msg("settings-header")))))
-                        .build())
-                .type(DialogType.multiAction(buttons, back, 1)));
-        player.showDialog(dialog);
+        // 2.4.0 : ouvert depuis « Informations > Parametres » : bouton Retour ; Gui adapte les couleurs pour Bedrock.
+        buttons.add(gui.button(lang.c("info.back", "<gray>Retour"), null, this::openParametres));
+        gui.open(player, mm.deserialize(msg("settings-title")), List.of(mm.deserialize(msg("settings-header"))),
+                List.of(), buttons, ActionButton.create(mm.deserialize(msg("close-button")), null, buttonWidth, null), 1);
     }
 
     // ------------------------------------------------------------------ canal BungeeCord / Velocity
@@ -835,7 +903,83 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
     public void giveNavigation(Player player) {
         if (player != null && player.isOnline()) {
             giveCompass(player);
+            giveInformations(player);
         }
+    }
+
+    // ------------------------------------------------------------------ comparateur « Informations » : objet (2.4.0)
+
+    /** Comparateur actif sur ce serveur ? Par defaut comme la boussole (desactivee la ou elle gene : Bingo, survie). */
+    private boolean informationsEnabled() {
+        return getConfig().getBoolean("informations.enabled", getConfig().getBoolean("compass.enabled", true));
+    }
+
+    private ItemStack createInformations() {
+        Material material = Material.matchMaterial(getConfig().getString("informations.material", "COMPARATOR"));
+        if (material == null || material.isAir() || !material.isItem()) {
+            material = Material.COMPARATOR;
+        }
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(noItalic(lang.c("info.item-name", "<#09add3><bold>Informations")));
+        meta.lore(List.of(noItalic(lang.c("info.item-lore", "<gray>Clic droit : classements"))));
+        meta.setEnchantmentGlintOverride(true);
+        meta.getPersistentDataContainer().set(informationsKey, PersistentDataType.BYTE, (byte) 1);
+        item.setItemMeta(meta);
+        lang.saveIfNeeded();
+        return item;
+    }
+
+    /** 2.4.0 - API : le comparateur « Informations » (ex. pour le ranger ailleurs, KV_Menu sur son plot). */
+    public boolean isInformations(ItemStack item) {
+        return item != null && !item.getType().isAir() && item.hasItemMeta()
+                && item.getItemMeta().getPersistentDataContainer().has(informationsKey, PersistentDataType.BYTE);
+    }
+
+    /** Objets de KLM_Menu verrouilles (boussole, comparateur). */
+    private boolean isLocked(ItemStack item) {
+        return isCompass(item) || isInformations(item);
+    }
+
+    /**
+     * Donne le comparateur a son emplacement (case de gauche par defaut) a qui a quelque chose a y voir (classement sur
+     * ce serveur, ou admin) ; le retire aux autres (ex. un admin repasse joueur sur un serveur sans classement).
+     */
+    private void giveInformations(Player player) {
+        PlayerInventory inventory = player.getInventory();
+        boolean wanted = informationsEnabled() && hasInformations(player);
+        boolean present = false;
+        for (int i = 0; i < inventory.getSize(); i++) {
+            if (isInformations(inventory.getItem(i))) {
+                if (!wanted || present) {
+                    inventory.setItem(i, null);
+                }
+                present = true;
+            }
+        }
+        if (!wanted || present) {
+            return;
+        }
+        int slot = getConfig().getInt("informations.slot", 0);
+        if (slot < 0 || slot > 8) {
+            slot = 0;
+        }
+        ItemStack existing = inventory.getItem(slot);
+        if (existing != null && !existing.getType().isAir()) {
+            // Comme la boussole : jamais d'objet du joueur ecrase, autre case libre de la barre sinon.
+            slot = -1;
+            for (int i = 0; i < 9; i++) {
+                ItemStack candidate = inventory.getItem(i);
+                if (candidate == null || candidate.getType().isAir()) {
+                    slot = i;
+                    break;
+                }
+            }
+            if (slot == -1) {
+                return;
+            }
+        }
+        inventory.setItem(slot, createInformations());
     }
 
     /**
@@ -928,8 +1072,21 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         inventory.setItem(slot, createCompass());
     }
 
+    /**
+     * 2.4.0 : verrouille pour TOUT LE MONDE, operateurs compris (demande de LeKiwi06, 28/09/2026 : « la boussole
+     * n'est pas lock in slot, on peut la drop et la bouger ») ; la permission kaliummenu.bypass n'a plus d'effet.
+     */
     private boolean lockEnabled(Player player) {
-        return getConfig().getBoolean("compass.lock-item", true) && !player.hasPermission("kaliummenu.bypass");
+        return getConfig().getBoolean("compass.lock-item", true);
+    }
+
+    /** Apres un clic annule, renvoie l'inventaire au joueur (en creatif, son jeu croit sinon l'objet deplace). */
+    private void resync(Player player) {
+        getServer().getScheduler().runTask(this, () -> {
+            if (player.isOnline()) {
+                player.updateInventory();
+            }
+        });
     }
 
     // ------------------------------------------------------------------ evenements
@@ -940,6 +1097,7 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         getServer().getScheduler().runTaskLater(this, () -> {
             if (player.isOnline()) {
                 giveCompass(player);
+                giveInformations(player);
             }
         }, 1L);
     }
@@ -950,6 +1108,7 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         getServer().getScheduler().runTaskLater(this, () -> {
             if (player.isOnline()) {
                 giveCompass(player);
+                giveInformations(player);
             }
         }, 1L);
     }
@@ -968,6 +1127,15 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         if (action != Action.RIGHT_CLICK_AIR && action != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
+        if (isInformations(event.getItem())) {
+            event.setCancelled(true);
+            long now = System.currentTimeMillis();
+            Long previous = lastOpen.put(event.getPlayer().getUniqueId(), now);
+            if (previous == null || now - previous >= OPEN_COOLDOWN_MS) {
+                openInformations(event.getPlayer());
+            }
+            return;
+        }
         if (!isCompass(event.getItem())) {
             return;
         }
@@ -977,8 +1145,9 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
-        if (lockEnabled(event.getPlayer()) && isCompass(event.getItemDrop().getItemStack())) {
+        if (lockEnabled(event.getPlayer()) && isLocked(event.getItemDrop().getItemStack())) {
             event.setCancelled(true);
+            resync(event.getPlayer());
         }
     }
 
@@ -987,39 +1156,44 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         if (!lockEnabled(event.getPlayer())) {
             return;
         }
-        if (isCompass(event.getMainHandItem()) || isCompass(event.getOffHandItem())) {
+        if (isLocked(event.getMainHandItem()) || isLocked(event.getOffHandItem())) {
             event.setCancelled(true);
         }
     }
 
+    /** Couvre aussi le mode creatif (InventoryCreativeEvent est un InventoryClickEvent). */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player) || !lockEnabled(player)) {
             return;
         }
-        if (isCompass(event.getCurrentItem()) || isCompass(event.getCursor())) {
-            event.setCancelled(true);
-            return;
+        boolean locked = isLocked(event.getCurrentItem()) || isLocked(event.getCursor())
+                || (event.getClick() == ClickType.NUMBER_KEY && isLocked(player.getInventory().getItem(event.getHotbarButton())))
+                || (event.getClick() == ClickType.SWAP_OFFHAND && isLocked(player.getInventory().getItemInOffHand()));
+        // Creatif : le jeu du joueur envoie directement le nouveau contenu d'une case ; on refuse de remplacer une case
+        // qui contient un objet verrouille (ex. glisse vers l'inventaire creatif pour le detruire).
+        if (!locked && event instanceof org.bukkit.event.inventory.InventoryCreativeEvent
+                && event.getClickedInventory() == player.getInventory() && event.getSlot() >= 0
+                && isLocked(player.getInventory().getItem(event.getSlot()))) {
+            locked = true;
         }
-        if (event.getClick() == ClickType.NUMBER_KEY && isCompass(player.getInventory().getItem(event.getHotbarButton()))) {
+        if (locked) {
             event.setCancelled(true);
-            return;
-        }
-        if (event.getClick() == ClickType.SWAP_OFFHAND && isCompass(player.getInventory().getItemInOffHand())) {
-            event.setCancelled(true);
+            resync(player);
         }
     }
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        if (event.getWhoClicked() instanceof Player player && lockEnabled(player) && isCompass(event.getOldCursor())) {
+        if (event.getWhoClicked() instanceof Player player && lockEnabled(player) && isLocked(event.getOldCursor())) {
             event.setCancelled(true);
+            resync(player);
         }
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
-        event.getDrops().removeIf(this::isCompass);
+        event.getDrops().removeIf(this::isLocked);
     }
 
     // ------------------------------------------------------------------ utilitaires
@@ -1030,15 +1204,13 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
             return value;
         }
         return switch (key) {
-            case "catalog-button" -> "<#09add3><bold>Interfaces";
-            case "catalog-description" -> "<gray>Toutes les interfaces de <white>ce serveur<gray> (jeux, classements, réglages...).";
-            case "settings-button" -> "<yellow><bold>Paramètres";
-            case "settings-description" -> "<gray>Activer ou désactiver les téléportations de <white>ce serveur<gray>.";
             case "settings-title" -> "<yellow><bold>Paramètres des téléportations";
             case "settings-header" -> "<gray>Clique sur une destination pour l'activer ou la désactiver sur <white>ce serveur<gray>. Une destination désactivée est cachée pour tout le monde.";
             case "settings-state-on" -> " <dark_gray>| <green>activée";
             case "settings-state-off" -> " <dark_gray>| <red>désactivée";
             case "settings-toggle-description" -> "<gray>Clique pour changer.";
+            case "informations-button" -> "<#09add3><bold>Informations";
+            case "informations-description" -> "<gray>Classements et paramètres de <white>ce serveur<gray>.";
             case "destination-disabled" -> "<red>Cette téléportation est désactivée.";
             case "give-done" -> "<green>Boussole donnée à <player>.";
             case "player-not-found" -> "<red>Joueur introuvable.";

@@ -108,3 +108,48 @@ KLM_Menu 2.3.0, qui lisent la consigne à l'arrivée). **KLM_Menu 2.3.0 + KLM_Po
 19:59 (KLM_Menu 2.0.0 dans `_removed-klm_menu-2.0.0/`) ; `relay-token` de `plugins/KLM_Portal/config.yml` à remplir à
 la main (Kanvas et lobby). Statut : testé et confirmé par LeKiwi06 le 27/09/2026 (point de chute vers Kanvas, boussole et étoile de
 KV_Menu).
+
+## 2.4.0 — comparateur « Informations », couleurs lisibles sur Bedrock, verrou pour tous (28/09/2026)
+
+**Demandes de LeKiwi06 (28/09/2026)** : « certaines couleurs se voient très mal sur Bedrock, notamment le gris clair,
+vert et vert clair, jaune pâle (toutes les couleurs trop claires) » ; « la boussole n'est pas lock in slot, on peut la
+drop et la bouger » ; « sur lobby j'ai un bouton paramètres et un bouton interface, sauf que le bouton interface contient
+uniquement des paramètres » ; « pour tout ce qui est classements et paramètres, tu vas faire ça dans un comparateur avec
+texture enchantée en slot 1 de la hotbar qui portera le nom "Informations" ; pour les joueurs il contiendra que le
+classement pour le moment, et pour les admins il doit aussi contenir les paramètres retravaillés ». Choix de LeKiwi06 :
+comparateur sur tous les serveurs, case de gauche, verrou pour tout le monde (opérateurs compris).
+
+- **Comparateur « Informations »** (texture enchantée, case de gauche = `informations.slot: 0`) : clic droit →
+  **Classements** (interfaces déclarées comme classements, `MenuSection.ranking()`) pour tous, et **Paramètres** pour
+  les admins (`kaliummenu.admin`). Donné aux admins partout, aux joueurs seulement s'il y a un classement sur le serveur
+  (kal-games pour l'instant) ; retiré sinon (ex. un admin qui repasse joueur). Mêmes règles que la boussole (arrivée,
+  réapparition, `giveNavigation`), jamais par-dessus un objet du joueur, retiré des objets lâchés à la mort.
+  `informations.enabled` absent = comme `compass.enabled` : pas de comparateur sur Serveur Jeux, Kixster, Event (le
+  Bingo a des objectifs, la survie a besoin de la barre). Là, **`/informations`** (alias `/infos`) et un bouton
+  « Informations » dans `/menu` ouvrent le même menu.
+- **Paramètres** : les réglages de chaque plugin **à plat**, un bouton chacun (interfaces ADMINS ; une interface peut en
+  fournir plusieurs avec `MenuSection.expand`, ex. KG_Menu : un par jeu), puis « Téléportations » (l'ancien
+  « Paramètres » de la boussole : activer / désactiver les destinations et les portails reliés).
+- **Boussole = navigation seulement** : boutons « Interfaces » (catalogue par plugin, supprimé) et « Paramètres » retirés.
+  Restent les destinations, « Passer opérateur / joueur » et « Mode : ... ».
+- **Verrou pour tout le monde** : la permission `kaliummenu.bypass` n'a plus d'effet (la boussole était volontairement
+  libre pour les opérateurs depuis la 2.1.0). Boussole et comparateur ne se jettent, ne se déplacent ni ne s'échangent
+  avec la main secondaire. En créatif (le jeu du joueur décide seul du contenu des cases), une case qui contient un de
+  ces objets ne peut plus être remplacée, et l'inventaire est renvoyé au joueur après chaque tentative refusée.
+- **Bedrock** (`fr.kalium.menu.api.BedrockColors`) : Geyser affiche les menus sur fond clair ; pour un joueur Bedrock
+  (identifiant Floodgate), toute couleur trop claire (luminance > 0,15 : gris clair, blanc, vert, jaune, aqua, or,
+  rose, le bleu KaLium...) est assombrie en gardant sa teinte, dans le titre, les textes, les boutons, les info-bulles
+  et les champs. Les joueurs Java ne voient aucun changement. Appliqué par `Gui.open` (tous les plugins qui utilisent la
+  boîte à outils) et par les menus propres de KLM_Menu ; KalGames 1.21.0 et KG_BingoGame 0.8.3 l'utilisent aussi.
+- API (compatible avec les plugins compilés avant) : `MenuSection.ranking()`, `order()`, `expand(Player)`,
+  `MenuSection.of(..., ranking, order, ...)` ; `KlmMenu.openInformations`, `openParametres`, `isInformations`.
+
+Limites : le seuil de 0,15 est calculé pour le gris clair des boutons Bedrock (contraste d'au moins 3 contre 1) ; à
+revoir en jeu si un titre devient trop foncé. Les interfaces « joueurs » qui ne sont pas des classements (accueil
+Kal-Games, Kanvas) ne sont plus listées par KLM_Menu : elles ont leur objet (étoile). Textes du comparateur : `lang.yml`
+de KLM_Menu (`info.*`).
+
+**Déploiement** : sur **tous les serveurs Paper** (les plugins ci-dessous en dépendent), avec KG_Menu 1.1.0, KalGames
+1.21.0, KG_ScoreBoards 1.6.0, KG_Bingo 1.6.0, KG_BuildBattle 0.2.0 (kal-games), KG_BingoGame 0.8.3 (Serveur Jeux),
+KV_BuildBattle 0.3.6 et KV_Menu 1.3.1 (Kanvas). Aucune clé de config obligatoire. **Statut : compilé, non déployé, non
+testé en jeu.**

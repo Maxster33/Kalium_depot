@@ -4,6 +4,18 @@ Serveur Kanvas. Cahier des charges (commun avec KG_BuildBattle) : `KV_BuildBattl
 KLM_Menu (menus, catalogue « Interfaces » ; API inchangée depuis 2.0.0, la version en place sur Kanvas) et de
 WorldGuard (FAWE fournit l'API WorldEdit).
 
+## 0.3.6 - nombre de joueurs publié pour kal-games (28/09/2026)
+
+Demande de LeKiwi06 (28/09/2026) : afficher sur chaque bouton de jeu de kal-games combien de joueurs y sont (le vrai
+nombre, par le relais).
+- Toutes les 5 s, le nombre de joueurs dans les parties (salles d'attente comprises) est publié sur le relais (clé
+  `compteur-buildbattle`), lu par KG_BuildBattle 0.2.0. Échec silencieux, nouvel essai 5 s plus tard. Utilise
+  `relay-url` / `relay-token` (déjà en place).
+- Interface « Build Battle : arène » : dans « Informations > Paramètres » (KLM_Menu 2.4.0), plus dans « Interfaces ».
+
+**Déploiement** : avec KG_BuildBattle 0.2.0 (kal-games) et KLM_Menu 2.4.0. **Statut : compilé, non déployé, non testé
+en jeu.**
+
 ## 0.3.5 - les mobs sont retirés d'une partie à l'autre (28/09/2026)
 
 Signalé par LeKiwi06 : « les mobs ne sont pas supprimés d'une partie à une autre ». Cause : en recollant la boîte, les

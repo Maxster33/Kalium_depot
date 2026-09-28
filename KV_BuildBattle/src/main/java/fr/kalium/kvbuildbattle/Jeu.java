@@ -94,6 +94,8 @@ final class Jeu implements Listener {
         this.objets = new Objets(plugin);
         this.inventaires = new Inventaires(plugin);
         plugin.getServer().getScheduler().runTaskTimer(plugin, this::seconde, 20L, 20L);
+        // 0.3.6 : nombre de joueurs en Build Battle publie toutes les 5 s (bouton du menu de kal-games, KG_BuildBattle 0.2.0).
+        plugin.getServer().getScheduler().runTaskTimer(plugin, this::publierCompteur, 100L, 100L);
     }
 
     Gui gui() {
@@ -180,6 +182,25 @@ final class Jeu implements Listener {
             if (ex instanceof InterruptedException) Thread.currentThread().interrupt();
             return null;
         }
+    }
+
+    /**
+     * 0.3.6 : nombre de joueurs dans les parties (salles d'attente comprises), clé « compteur-buildbattle » lue par
+     * KG_BuildBattle (demande de LeKiwi06, 28/09/2026 : afficher combien de joueurs sont dans chaque jeu). Sans message
+     * en cas d'échec (nouvel essai 5 s plus tard).
+     */
+    private void publierCompteur() {
+        String url = url();
+        if (url == null || url.isBlank()) return;
+        int n = 0;
+        for (Partie p : parties()) n += p.joueurs.size();
+        HttpRequest requete = HttpRequest.newBuilder()
+                .uri(URI.create(url + "/assignment/compteur-buildbattle"))
+                .header("X-Kalium-Relay-Token", plugin.getConfig().getString("relay-token", ""))
+                .timeout(Duration.ofSeconds(5))
+                .POST(HttpRequest.BodyPublishers.ofString(String.valueOf(n), StandardCharsets.UTF_8))
+                .build();
+        http.sendAsync(requete, HttpResponse.BodyHandlers.discarding()).exceptionally(e -> null);
     }
 
     /** Partie privée lancée : KG_BuildBattle la retire de sa liste (clé « buildbattle-fermee-<id> »). */

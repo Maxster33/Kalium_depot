@@ -92,6 +92,9 @@ final class ObjetMenu implements Listener {
      * redonne la boussole qu'à l'arrivée sur le serveur.
      */
     private static final int RANGEMENT_ETOILE = 34, RANGEMENT_BOUSSOLE = 35;
+    /** 1.3.1 : comparateur « Informations » de KLM_Menu 2.4.0 (demande de LeKiwi06, 28/09/2026), range comme la boussole. */
+    private static final int RANGEMENT_INFORMATIONS = 33;
+    private static final NamespacedKey INFORMATIONS = new NamespacedKey("klm_menu", "informations");
     private static final NamespacedKey BOUSSOLE = new NamespacedKey("klm_menu", "menu_compass");
     private static final NamespacedKey BOUSSOLE_ANCIENNE = new NamespacedKey("kaliummenu", "menu_compass");
 
@@ -108,6 +111,18 @@ final class ObjetMenu implements Listener {
         if (item == null || item.getType().isAir() || !item.hasItemMeta()) return false;
         var pdc = item.getItemMeta().getPersistentDataContainer();
         return pdc.has(BOUSSOLE, PersistentDataType.BYTE) || pdc.has(BOUSSOLE_ANCIENNE, PersistentDataType.BYTE);
+    }
+
+    private static boolean estInformations(ItemStack item) {
+        return item != null && !item.getType().isAir() && item.hasItemMeta()
+                && item.getItemMeta().getPersistentDataContainer().has(INFORMATIONS, PersistentDataType.BYTE);
+    }
+
+    /** Emplacement du comparateur dans la configuration de KLM_Menu (0 par défaut, case de gauche). */
+    private int emplacementInformations() {
+        int slot = plugin.getServer().getPluginManager().getPlugin("KLM_Menu") instanceof JavaPlugin klm
+                ? klm.getConfig().getInt("informations.slot", 0) : 0;
+        return slot < 0 || slot > 8 ? 0 : slot;
     }
 
     /** Emplacement de la boussole dans la configuration de KLM_Menu (8 par défaut). */
@@ -158,6 +173,12 @@ final class ObjetMenu implements Listener {
             if (!estBoussole(inv.getItem(i))) continue;
             if (chantier && i < 9) echanger(inv, i, RANGEMENT_BOUSSOLE);
             else if (!chantier && i >= 9) echanger(inv, i, emplacementBoussole());
+            break;
+        }
+        for (int i = 0; i < 36; i++) {
+            if (!estInformations(inv.getItem(i))) continue;
+            if (chantier && i < 9) echanger(inv, i, RANGEMENT_INFORMATIONS);
+            else if (!chantier && i >= 9) echanger(inv, i, emplacementInformations());
             break;
         }
     }

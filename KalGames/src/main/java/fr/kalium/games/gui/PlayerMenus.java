@@ -98,9 +98,10 @@ public final class PlayerMenus {
             } else {
                 tip.add(t("menu.games-unusable", "<red>Aucune arène complète (visible des modérateurs uniquement)."));
             }
+            // 1.21.0 : nombre de joueurs affiche sur le bouton par KG_Menu 1.1.0.
             entries.add(new fr.kalium.kgmenu.api.MenuProvider.Entry(minigame.id(), name(minigame),
                     Component.join(net.kyori.adventure.text.JoinConfiguration.newlines(), tip),
-                    (p, back) -> openMinigame(p, minigame)));
+                    (p, back) -> openMinigame(p, minigame), manager.playersIn(minigame.id())));
         }
         return entries;
     }

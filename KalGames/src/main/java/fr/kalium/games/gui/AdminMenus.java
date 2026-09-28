@@ -47,6 +47,8 @@ public final class AdminMenus {
     private final Map<UUID, Corner> corner1 = new HashMap<>();
     private final Map<UUID, Corner> corner2 = new HashMap<>();
     private final Set<String> capturing = new HashSet<>();
+    /** 1.21.0 : page du mini-jeu (PvP Kit) d'ou la gestion des kits a ete ouverte, pour le bouton Retour. */
+    private final Map<UUID, Minigame> kitsFrom = new HashMap<>();
 
     public AdminMenus(KalGames plugin, Gui gui) {
         this.plugin = plugin;
@@ -123,105 +125,39 @@ public final class AdminMenus {
 
     // ------------------------------------------------------------------ accueil
 
+    /**
+     * 1.21.0 (demande de LeKiwi06, 28/09/2026) : plus d'accueil « Mini-jeux Kal-Games : parametres ». Chaque jeu a son
+     * bouton dans « Informations &gt; Parametres » (comparateur de KLM_Menu), qui ouvre directement sa page (reglages,
+     * arenes de ce jeu, kits pour le PvP Kit). Retires, devenus obsoletes : la liste « Mini-jeux » et « Nouveau
+     * mini-jeu » (chaque jeu se declare lui-meme, voir ensureMinigames), la liste de toutes les arenes melangees, le
+     * bouton « Kits » de l'accueil (dans la page du PvP Kit) et « Hub de Kal-Games » (arrivee geree par KLM_Portal ; le
+     * point de retour apres une partie reste dans config.yml, section hub). Ce « retour » ramene donc aux Parametres.
+     */
     public void openHome(Player player) {
         if (!guard(player)) {
             return;
         }
-        int ready = 0;
-        for (Arena arena : plugin.repository().arenas()) {
-            Minigame minigame = plugin.repository().minigame(arena.minigameId());
-            if (minigame != null && arena.ready(minigame.type())) {
-                ready++;
-            }
-        }
-        List<Component> body = new ArrayList<>();
-        body.add(t("admin.home-stats", "<gray>Mini-jeux : <white><mg></white> - Arènes prêtes : <white><ready>/<all></white> - Parties en cours : <white><games></white> (<slots>/<max> emplacements)",
-                "mg", plugin.repository().minigames().size(), "ready", ready, "all", plugin.repository().arenas().size(),
-                "games", plugin.instances().all().size(), "slots", plugin.worlds().usedSlots(), "max", plugin.worlds().maxSlots()));
-        if (!plugin.worlds().ready()) {
-            body.add(t("admin.home-noworld", "<red>Le monde des parties n'a pas pu être créé (voir la console)."));
-        }
-        List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(btn(t("admin.home-minigames", "<gold>Mini-jeux"), t("admin.home-minigames-tip", "<gray>Ajouter, modifier, régler les mini-jeux."), this::openMinigames));
-        buttons.add(btn(t("admin.home-arenas", "<green>Arènes"), t("admin.home-arenas-tip", "<gray>Points, capture de la zone, test."), p -> openArenas(p, null)));
-        buttons.add(btn(t("admin.home-kits", "<aqua>Kits"), t("admin.home-kits-tip", "<gray>Créer depuis votre inventaire ou importer de PlayerKits2."), this::openKits));
-        buttons.add(btn(t("admin.home-hub", "<yellow>Hub de Kal-Games"), t("admin.home-hub-tip", "<gray>Définir le point d'arrivée."), this::openHub));
-        buttons.add(btn(t("admin.home-games", "<light_purple>Parties en cours"), null, this::openInstances));
-        buttons.add(btn(t("admin.home-reload", "<gray>Recharger la configuration"), null, p -> {
-            plugin.reloadAll();
-            say(p, "admin.reloaded", "<green>Configuration rechargée.");
-            openHome(p);
-        }));
-        // 1.16.0 : retour a l'accueil "Parametres" de KG_Menu (reglages de tous les plugins de kal-games).
-        buttons.add(btn(t("menu.back", "<gray>Retour"), null, p -> plugin.kgMenu().openSettings(p, null)));
-        gui.open(player, t("admin.mg-home-title", "<light_purple><bold>Mini-jeux Kal-Games : paramètres"), body, List.of(), buttons, null, 1);
+        plugin.klm().openParametres(player);
     }
 
-    // ------------------------------------------------------------------ hub
-
-    private void openHub(Player player) {
-        Location hub = plugin.hub().hubLocation();
-        List<Component> body = List.of(t("admin.hub-body", "<gray>Point d'arrivée actuel : <white><w> <pos></white><newline><gray>Les joueurs y arrivent et y reviennent après une partie.",
-                "w", hub.getWorld().getName(), "pos", String.format(Locale.ROOT, "%.1f, %.1f, %.1f", hub.getX(), hub.getY(), hub.getZ())));
-        List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(btn(t("admin.hub-set", "<green>Définir le hub ici"), null, p -> {
-            plugin.hub().setHub(p.getLocation());
-            say(p, "admin.hub-set-done", "<green>Le hub est maintenant votre position actuelle.");
-            openHub(p);
-        }));
-        buttons.add(btn(t("admin.hub-tp", "<aqua>Aller au hub"), null, p -> p.teleport(plugin.hub().hubLocation())));
-        buttons.add(back(this::openHome));
-        gui.open(player, t("admin.hub-title", "<yellow><bold>Hub de Kal-Games"), body, List.of(), buttons, gui.close(), 1);
-    }
-
-    // ------------------------------------------------------------------ mini-jeux
-
-    private void openMinigames(Player player) {
-        List<ActionButton> buttons = new ArrayList<>();
-        for (Minigame minigame : plugin.repository().minigames()) {
-            Component label = plugin.lang().parse(minigame.display());
-            Component tip = t("admin.mg-tip", "<gray><type> - <state>", "type", minigame.type().display(), "state", onOff(minigame.enabled()));
-            buttons.add(btn(label, tip, p -> openMinigame(p, minigame)));
-        }
-        buttons.add(btn(t("admin.mg-new", "<green>+ Nouveau mini-jeu"), null, this::openNewMinigame));
-        buttons.add(back(this::openHome));
-        gui.open(player, t("admin.mg-title", "<gold><bold>Mini-jeux"),
-                List.of(t("admin.mg-body", "<gray>Choisissez un mini-jeu à modifier ou ajoutez-en un.")), List.of(), buttons, gui.close(), 1);
-    }
-
-    private void openNewMinigame(Player player) {
-        List<String> ids = new ArrayList<>();
-        List<Component> labels = new ArrayList<>();
+    /**
+     * 1.21.0 : un mini-jeu par type jouable enregistre (course de bateau, parcours, PvP Kit, Rush...) : ceux qui n'en ont
+     * pas encore en recoivent un, pret a regler (plus de creation a la main). Appele une fois le serveur demarre.
+     */
+    public void ensureMinigames() {
         for (MinigameType type : MinigameType.values()) {
-            ids.add(type.name());
-            labels.add(type.playable()
-                    ? Component.text(type.display())
-                    : t("admin.type-config-only", "<type> <gray>(configuration seule)", "type", type.display()));
-        }
-        List<DialogInput> inputs = List.of(
-                gui.text("id", t("admin.new-id", "Identifiant (minuscules, sans espace)"), "", 24),
-                gui.text("display", t("admin.new-display", "Nom affiché (MiniMessage accepté)"), "<yellow><bold>Nouveau jeu", 60),
-                gui.choice("type", t("admin.new-type", "Type de mini-jeu"), ids, labels, MinigameType.PVP_KIT.name()));
-        List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(frm(t("admin.new-create", "<green>Créer"), null, (p, view) -> {
-            String id = view.getText("id") == null ? "" : view.getText("id").trim().toLowerCase(Locale.ROOT);
-            if (!ID.matcher(id).matches()) {
-                say(p, "admin.bad-id", "<red>Identifiant invalide : 2 à 24 caractères parmi a-z, 0-9, - et _.");
-                return;
+            if (!type.playable()) {
+                continue;
             }
-            if (plugin.repository().minigame(id) != null) {
-                say(p, "admin.id-taken", "<red>Cet identifiant existe déjà.");
-                return;
+            boolean present = false;
+            for (Minigame minigame : plugin.repository().minigames()) {
+                present |= minigame.type() == type;
             }
-            MinigameType type;
-            try {
-                type = MinigameType.valueOf(view.getText("type"));
-            } catch (Exception e) {
-                say(p, "admin.bad-type", "<red>Type invalide.");
-                return;
+            String id = type.name().toLowerCase(Locale.ROOT).replace('_', '-');
+            if (present || plugin.repository().minigame(id) != null) {
+                continue;
             }
-            String display = view.getText("display") == null || view.getText("display").isBlank() ? id : view.getText("display");
-            Minigame minigame = plugin.repository().createMinigame(id, display, type);
+            Minigame minigame = plugin.repository().createMinigame(id, "<gold><bold>" + type.display(), type);
             minigame.description(type.description());
             if (type == MinigameType.PVP_KIT) {
                 for (Kit kit : plugin.kits().all()) {
@@ -229,13 +165,26 @@ public final class AdminMenus {
                 }
             }
             plugin.repository().save();
-            say(p, "admin.mg-created", "<green>Mini-jeu créé. Ajoutez maintenant une arène.");
-            openMinigame(p, minigame);
-        }));
-        buttons.add(back(this::openMinigames));
-        gui.open(player, t("admin.new-title", "<green><bold>Nouveau mini-jeu"),
-                List.of(t("admin.new-body", "<gray>Course de bateau, parcours, PvP Kit sont jouables. Hunger Games, Manhunt et Build Battle : la configuration est prête, le moteur arrive.")),
-                inputs, buttons, gui.close(), 1);
+            plugin.getLogger().info("Mini-jeu " + id + " créé pour le type " + type.name() + " (à régler dans Informations > Paramètres).");
+        }
+    }
+
+    /** 1.21.0 : boutons de « Informations &gt; Parametres » : un par jeu, puis les parties en cours. */
+    public List<fr.kalium.kgmenu.api.MenuProvider.Entry> settingsEntries(Player player) {
+        List<fr.kalium.kgmenu.api.MenuProvider.Entry> entries = new ArrayList<>();
+        if (!plugin.isAdmin(player)) {
+            return entries;
+        }
+        for (Minigame minigame : plugin.repository().minigames()) {
+            Component tip = t("admin.mg-tip-2", "<gray>Réglages, arènes<kits>. <dark_gray>(<state>)",
+                    "kits", minigame.type() == MinigameType.PVP_KIT ? ", kits" : "", "state", onOff(minigame.enabled()));
+            entries.add(new fr.kalium.kgmenu.api.MenuProvider.Entry("kalgames-" + minigame.id(),
+                    plugin.lang().parse(minigame.display()), tip, (p, back) -> openMinigame(p, minigame)));
+        }
+        entries.add(new fr.kalium.kgmenu.api.MenuProvider.Entry("kalgames-games", t("admin.home-games", "<light_purple>Parties en cours"),
+                t("admin.home-games-tip", "<gray>Parties des mini-jeux de Kal-Games, rechargement de la configuration."),
+                (p, back) -> openInstances(p)));
+        return entries;
     }
 
     public void openMinigame(Player player, Minigame minigame) {
@@ -283,26 +232,10 @@ public final class AdminMenus {
         if (type == MinigameType.PVP_KIT) {
             buttons.add(btn(t("admin.mg-kit-pick", "<aqua>Kits du mini-jeu"), null, p -> openMinigameKits(p, minigame)));
         }
-        buttons.add(btn(t("admin.mg-arena-list", "<green>Arènes (<n>)", "n", arenas.size()), null, p -> openArenas(p, minigame)));
-        buttons.add(btn(t("admin.mg-rankings", "<light_purple>Classements (général, mois, archives, panneaux du hub)"), null,
-                p -> plugin.ranking().openAdmin(p, minigame.id(), q -> plugin.admin().openMinigame(q, minigame))));
-        buttons.add(btn(t("admin.mg-delete", "<dark_red>Supprimer le mini-jeu"), null, p -> gui.confirm(p,
-                t("admin.mg-delete-title", "<dark_red>Supprimer ?"),
-                t("admin.mg-delete-body", "<gray>Le mini-jeu <white><name></white> et toutes ses arènes seront supprimés.", "name", plugin.lang().parse(minigame.display())),
-                q -> {
-                    if (!guard(q)) {
-                        return;
-                    }
-                    plugin.instances().closeAllOf(minigame.id(), t("admin.mg-removed", "<yellow>Ce mini-jeu a été supprimé."));
-                    for (Arena arena : plugin.repository().arenasOf(minigame.id())) {
-                        plugin.templates().delete(arena.id());
-                    }
-                    plugin.ranking().removeBoardsOf(minigame.id());
-                    plugin.repository().deleteMinigame(minigame.id());
-                    say(q, "admin.mg-deleted", "<green>Mini-jeu supprimé.");
-                    openMinigames(q);
-                }, this::openHome)));
-        buttons.add(back(this::openMinigames));
+        // 1.21.0 : les arenes (maps) de CE jeu seulement ; classements (moderation comprise) dans « Informations >
+        // Classements » ; plus de suppression (chaque jeu a son mini-jeu, recree au demarrage de toute facon).
+        buttons.add(btn(t("admin.mg-arena-list-2", "<green>Arènes / maps (<n>)", "n", arenas.size()), null, p -> openArenas(p, minigame)));
+        buttons.add(back(this::openHome));
         gui.open(player, plugin.lang().parse(minigame.display()), body, List.of(), buttons, gui.close(), 1);
     }
 
@@ -417,7 +350,10 @@ public final class AdminMenus {
             say(p, "admin.saved", "<green>Enregistré.");
             openMinigame(p, minigame);
         }));
-        buttons.add(btn(t("admin.kits-manage", "<aqua>Gérer les kits"), null, this::openKits));
+        buttons.add(btn(t("admin.kits-manage", "<aqua>Gérer les kits"), null, p -> {
+            kitsFrom.put(p.getUniqueId(), minigame);
+            openKits(p);
+        }));
         buttons.add(back(p -> openMinigame(p, minigame)));
         gui.open(player, t("admin.mgkits-title", "<aqua><bold>Kits du mini-jeu"),
                 List.of(t("admin.mgkits-body", "<gray>Cochez les kits proposés au vote.")), inputs, buttons, gui.close(), 1);
@@ -435,7 +371,8 @@ public final class AdminMenus {
         }
         var data = item.getItemMeta().getPersistentDataContainer();
         return data.has(new NamespacedKey("klm_menu", "menu_compass"), PersistentDataType.BYTE)
-                || data.has(new NamespacedKey("kaliummenu", "menu_compass"), PersistentDataType.BYTE);
+                || data.has(new NamespacedKey("kaliummenu", "menu_compass"), PersistentDataType.BYTE)
+                || data.has(new NamespacedKey("klm_menu", "informations"), PersistentDataType.BYTE); // 1.21.0 : comparateur
     }
 
     private void openKits(Player player) {
@@ -446,7 +383,15 @@ public final class AdminMenus {
         }
         buttons.add(btn(t("admin.kits-create", "<green>+ Créer depuis mon inventaire"), null, this::openNewKit));
         buttons.add(btn(t("admin.kits-import", "<aqua>+ Importer depuis PlayerKits2"), null, this::openImportKits));
-        buttons.add(back(this::openHome));
+        // 1.21.0 : les kits ne s'ouvrent plus que depuis la page du PvP Kit : retour a ses « Kits du mini-jeu ».
+        buttons.add(back(p -> {
+            Minigame from = kitsFrom.get(p.getUniqueId());
+            if (from != null && plugin.repository().minigame(from.id()) != null) {
+                openMinigameKits(p, from);
+            } else {
+                openHome(p);
+            }
+        }));
         gui.open(player, t("admin.kits-title", "<aqua><bold>Kits"),
                 List.of(t("admin.kits-body", "<gray><n> kit(s). Survolez un kit pour voir son contenu.", "n", plugin.kits().all().size())),
                 List.of(), buttons, gui.close(), 1);
@@ -597,7 +542,7 @@ public final class AdminMenus {
         }
         Minigame minigame = plugin.repository().minigame(arena.minigameId());
         if (minigame == null) {
-            openArenas(player, null);
+            openHome(player);
             return;
         }
         MinigameType type = minigame.type();
@@ -704,7 +649,7 @@ public final class AdminMenus {
         }
         Minigame minigame = plugin.repository().minigame(arena.minigameId());
         if (minigame == null) {
-            openArenas(player, null);
+            openHome(player);
             return;
         }
         List<ActionButton> buttons = new ArrayList<>();
@@ -1117,9 +1062,21 @@ public final class AdminMenus {
                     "kind", game.isPublic() ? "publique" : "privée " + game.code(), "n", game.members().size(), "phase", game.phase().name());
             buttons.add(btn(label, null, p -> openInstance(p, game)));
         }
+        // 1.21.0 : repris de l'ancien accueil (etat du monde des parties, rechargement).
+        buttons.add(btn(t("admin.home-reload", "<gray>Recharger la configuration"),
+                t("admin.home-reload-tip", "<gray>Relit config.yml, les textes, kits et mini-jeux. Les parties en cours sont fermées."), p -> {
+                    plugin.reloadAll();
+                    say(p, "admin.reloaded", "<green>Configuration rechargée.");
+                    openInstances(p);
+                }));
         buttons.add(back(this::openHome));
-        gui.open(player, t("admin.games-title", "<light_purple><bold>Parties en cours"),
-                List.of(t("admin.games-body", "<gray><n> partie(s).", "n", plugin.instances().all().size())), List.of(), buttons, gui.close(), 1);
+        List<Component> body = new ArrayList<>();
+        body.add(t("admin.games-body-2", "<gray><n> partie(s) en cours (<slots>/<max> emplacements d'arène).",
+                "n", plugin.instances().all().size(), "slots", plugin.worlds().usedSlots(), "max", plugin.worlds().maxSlots()));
+        if (!plugin.worlds().ready()) {
+            body.add(t("admin.home-noworld", "<red>Le monde des parties n'a pas pu être créé (voir la console)."));
+        }
+        gui.open(player, t("admin.games-title", "<light_purple><bold>Parties en cours"), body, List.of(), buttons, gui.close(), 1);
     }
 
     private void openInstance(Player player, GameInstance game) {

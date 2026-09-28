@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Assistant pour les menus (Dialog natif de Minecraft, aucun coffre) - boite a outils commune de KLM_Menu (2.0.0),
  * reprise telle quelle de KalGames. Chaque plugin cree le sien avec son propre Lang (ses textes) : largeur des boutons
- * lue dans sa config (gui.button-width, 240 par defaut).
+ * lue dans sa config (gui.button-width, 240 par defaut). 2.4.0 : couleurs adaptees aux joueurs Bedrock (BedrockColors).
  */
 public final class Gui {
 
@@ -174,16 +174,24 @@ public final class Gui {
         for (Component line : body) {
             bodies.add(DialogBody.plainMessage(line, 320));
         }
-        DialogBase base = DialogBase.builder(title)
+        DialogBase built = DialogBase.builder(title)
                 .body(bodies)
                 .inputs(inputs)
                 .build();
-        ActionButton exitButton = exit == null ? close() : exit;
-        Dialog dialog = buttons.isEmpty()
+        ActionButton exitChoice = exit == null ? close() : exit;
+        // 2.4.0 : couleurs trop claires assombries pour les joueurs Bedrock (voir BedrockColors).
+        boolean bedrock = BedrockColors.isBedrock(player);
+        DialogBase base = bedrock ? BedrockColors.adapt(built) : built;
+        ActionButton exitButton = bedrock ? BedrockColors.adapt(exitChoice) : exitChoice;
+        if (bedrock) {
+            buttons = BedrockColors.adaptButtons(buttons);
+        }
+        List<ActionButton> shown = buttons;
+        Dialog dialog = shown.isEmpty()
                 ? Dialog.create(factory -> factory.empty().base(base).type(DialogType.notice(exitButton)))
                 : Dialog.create(factory -> factory.empty()
                         .base(base)
-                        .type(DialogType.multiAction(buttons, exitButton, Math.max(1, columns))));
+                        .type(DialogType.multiAction(shown, exitButton, Math.max(1, columns))));
         player.showDialog(dialog);
     }
 

@@ -26,6 +26,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KG_BingoGame — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : nombre de joueurs en partie publié sur le relais
 - KG_BuildBattle — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : compteur de joueurs sur le bouton
 - KV_BuildBattle — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : nombre de joueurs en partie publié sur le relais
-- KV_Plots — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : comparateur « Informations » rangé quand on construit sur son plot
+- KV_Menu — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : comparateur « Informations » rangé quand on construit sur son plot (c'est KV_Menu qui range les objets, pas KV_Plots)
 
 ## Demandes

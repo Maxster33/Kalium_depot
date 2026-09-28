@@ -239,6 +239,20 @@ public class BingoPlugin extends JavaPlugin {
         // genereux, jamais moins (voir BingoGame.restoreInProgress).
         getServer().getScheduler().runTaskTimer(this, () -> gamePersistence.saveAll(gameManager.getActiveGames()), 1200L, 1200L);
 
+        // 0.8.3 : nombre de joueurs en Bingo (salles d'attente et parties : mondes "bingo_...") publie sur le relais
+        // toutes les 5 s, pour le bouton du Bingo sur kal-games (KG_Bingo 1.6.0).
+        getServer().getScheduler().runTaskTimer(this, () -> {
+            int count = 0;
+            for (org.bukkit.entity.Player online : getServer().getOnlinePlayers()) {
+                String world = online.getWorld().getName();
+                if (world.startsWith(worldNamePrefix) || world.startsWith("bingo_")) {
+                    count++;
+                }
+            }
+            int players = count;
+            getServer().getScheduler().runTaskAsynchronously(this, () -> relayClient.postPlayerCount(players));
+        }, 100L, 100L);
+
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord",
                 new AssignmentNetworkListener(this, assignmentService));

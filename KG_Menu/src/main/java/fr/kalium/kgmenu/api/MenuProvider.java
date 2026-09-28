@@ -22,8 +22,18 @@ import java.util.function.Consumer;
  */
 public interface MenuProvider {
 
-    /** Un bouton : libelle, info-bulle (peut etre null) et ouverture (joueur, action du bouton "Retour"). */
-    record Entry(String id, Component label, Component tooltip, BiConsumer<Player, Consumer<Player>> open) {
+    /**
+     * Un bouton : libelle, info-bulle (peut etre null) et ouverture (joueur, action du bouton "Retour").
+     * 1.1.0 : {@code players} = nombre de joueurs dans ce jeu, affiche sur le bouton par KG_Menu (demande de LeKiwi06,
+     * 28/09/2026 : « pour chaque bouton visant a rejoindre un jeu, le plugin doit afficher combien il y a de joueurs
+     * dedans ») ; -1 = inconnu (rien d'affiche).
+     */
+    record Entry(String id, Component label, Component tooltip, BiConsumer<Player, Consumer<Player>> open, int players) {
+
+        /** Sans nombre de joueurs (reglages, boutons divers, plugins compiles avant la 1.1.0). */
+        public Entry(String id, Component label, Component tooltip, BiConsumer<Player, Consumer<Player>> open) {
+            this(id, label, tooltip, open, -1);
+        }
     }
 
     /** Plugin qui fournit ces boutons. */
@@ -42,7 +52,10 @@ public interface MenuProvider {
         return List.of();
     }
 
-    /** Reglages proposes a ce joueur dans l'accueil "Parametres" (ne renvoyer que ce qu'il a le droit de voir). */
+    /**
+     * Reglages proposes a ce joueur (ne renvoyer que ce qu'il a le droit de voir). 1.1.0 : chaque reglage devient un
+     * bouton de « Informations &gt; Parametres » (comparateur de KLM_Menu) ; un bouton par jeu de preference.
+     */
     default List<Entry> settings(Player player) {
         return List.of();
     }

@@ -88,3 +88,15 @@ claires et structurées.
 - Testé hors serveur sur le journal réel : retrouve les 195 + 46,5 points et le tour de 37,2 s de .PatientLime2170
   (courses non classées à cause de l'ancienne limite), et le meilleur tour de LeKiwi06 du 24/09 à 20 h 55.
 **Déploiement** : avec KalGames 1.19.0. **Statut : déployé le 25/09/2026 à 20 h 37 (stats.yml d'avant dans `_removed-kg_scoreboards-1.4.0/`), testé et confirmé par LeKiwi06 le 25/09/2026 : oublis de .PatientLime2170 crédités avec `/classements crediter`, scores à jour.**
+
+## 1.6.0 — classements dans « Informations », modération dans le classement (28/09/2026)
+
+**Demande de LeKiwi06 (28/09/2026)** : « classement modération surcharge pour rien, on pourrait simplement inclure un
+bouton modération dans l'interface de classement directement » ; classements dans le comparateur « Informations ».
+- Les classements sont une interface de KLM_Menu 2.4.0 déclarée comme classement : **Informations > Classements**
+  (plus dans le menu de l'étoile). Plus de « Classements (modération) » dans les Paramètres.
+- Dans le classement d'un jeu, les modérateurs ont un bouton **« Modération »** (classements complets, archives,
+  panneaux du hub, clôture du mois) ; son « Retour » ramène au classement.
+
+**Déploiement** : avec KLM_Menu 2.4.0 (obligatoire), KG_Menu 1.1.0, KalGames 1.21.0. **Statut : compilé, non déployé,
+non testé en jeu.**

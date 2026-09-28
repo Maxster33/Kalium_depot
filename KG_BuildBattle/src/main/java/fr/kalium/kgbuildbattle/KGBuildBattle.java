@@ -26,6 +26,8 @@ public final class KGBuildBattle extends JavaPlugin {
         Lang lang = new Lang(this);
         Menus menus = new Menus(parties, lang, new Gui(this, lang));
         getServer().getScheduler().runTaskTimer(this, parties::verifierFermees, 100L, 100L);
+        // 0.2.0 : nombre de joueurs en Build Battle (publie par KV_BuildBattle), affiche sur le bouton par KG_Menu.
+        RelayCounter joueurs = new RelayCounter(this, "compteur-buildbattle");
 
         getServer().getServicesManager().register(MenuProvider.class, new MenuProvider() {
             @Override
@@ -42,7 +44,7 @@ public final class KGBuildBattle extends JavaPlugin {
             public List<Entry> games(Player joueur) {
                 return List.of(new Entry("kg_buildbattle", menus.t("menu.bouton", "<gold><bold>Build Battle"),
                         menus.t("menu.bouton-info", "<gray>Construis sur un thème, puis vote. File publique ou partie privée."),
-                        menus::ouvrir));
+                        menus::ouvrir, joueurs.value()));
             }
         }, this, ServicePriority.Normal);
         lang.saveIfNeeded();

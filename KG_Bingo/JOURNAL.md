@@ -90,3 +90,15 @@ l'équilibrage des barèmes (`EQUILIBRAGE_POINTS.md`).
   valeur par défaut dans le code, clé facultative) est retirée de la liste (message dans la console).
 **Déployé sur Kal-Games le 26/09/2026 à 6 h 56** (1.5.0 dans `_removed-kg_bingo-1.5.0/`). **Statut : non testé en jeu.**
 
+
+## 1.6.0 — nombre de joueurs sur le bouton du Bingo (28/09/2026)
+
+**Demande de LeKiwi06 (28/09/2026)** : afficher sur chaque bouton de jeu combien de joueurs y sont ; choix de LeKiwi06 :
+le vrai nombre, par le relais.
+- `RelayCounter` lit toutes les 5 s la clé `compteur-bingo` du relais (publiée par KG_BingoGame 0.8.3) ; le bouton
+  « Bingo » du menu de kal-games affiche « | n en jeu » (KG_Menu 1.1.0). Sans nouvelle valeur depuis 30 s : rien
+  d'affiché. Utilise `bingo.relay-url` / `bingo.relay-token` (déjà en place).
+- Réglages du Bingo : bouton « Bingo » de « Informations > Paramètres » (son « Retour » y ramène).
+
+**Déploiement** : avec KG_BingoGame 0.8.3 (Serveur Jeux ; sans elle, aucun nombre affiché, rien de cassé) et KLM_Menu
+2.4.0, KG_Menu 1.1.0, KalGames 1.21.0. **Statut : compilé, non déployé, non testé en jeu.**

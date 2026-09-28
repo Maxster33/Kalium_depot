@@ -17,8 +17,8 @@ import java.util.function.Consumer;
  * getServer().getServicesManager().register(MenuSection.class, section, this, ServicePriority.Normal);
  * </pre>
  * KLM_Menu les recupere une fois le serveur completement demarre (puis a chaque ajout ou retrait) et les range dans
- * son catalogue, par plugin. Le contenu reste entierement gere par le plugin : KLM_Menu ne fait qu'afficher le bouton
- * et appeler {@link #open}.
+ * le comparateur « Informations » (2.4.0 : Classements, et Parametres pour les admins). Le contenu reste entierement
+ * gere par le plugin : KLM_Menu ne fait qu'afficher le bouton et appeler {@link #open}.
  */
 public interface MenuSection {
 
@@ -57,15 +57,54 @@ public interface MenuSection {
     }
 
     /**
-     * Ouvre l'interface pour ce joueur. {@code back} ramene au catalogue de KLM_Menu : a utiliser pour le bouton
-     * "Retour" du premier ecran (facultatif).
+     * Ouvre l'interface pour ce joueur. {@code back} ramene au menu de KLM_Menu qui l'a ouverte (« Informations ») :
+     * a utiliser pour le bouton "Retour" du premier ecran (facultatif).
      */
     void open(Player player, Consumer<Player> back);
+
+    /**
+     * 2.4.0 - interface de classements : rangee sous « Classements » dans le comparateur « Informations » (joueurs et
+     * admins). Les interfaces ADMINS qui ne sont pas des classements vont dans « Parametres » (admins seulement) ; les
+     * autres interfaces PLAYERS ne sont plus affichees par KLM_Menu (elles ont leur propre objet, ex. l'etoile).
+     */
+    default boolean ranking() {
+        return false;
+    }
+
+    /** 2.4.0 - ordre d'affichage dans « Informations » (plus petit = plus haut), puis ordre alphabetique du plugin. */
+    default int order() {
+        return 100;
+    }
+
+    /**
+     * 2.4.0 - boutons a afficher pour cette interface : elle-meme par defaut. Une interface qui regroupe plusieurs
+     * reglages (ex. KG_Menu : un par jeu) peut renvoyer une liste, affichee a plat dans « Parametres » (pas de
+     * sous-menu inutile).
+     */
+    default java.util.List<MenuSection> expand(Player player) {
+        return java.util.List.of(this);
+    }
 
     /** Raccourci pour declarer une interface sans ecrire de classe. */
     static MenuSection of(Plugin owner, String id, Audience audience, Component title, Component description,
                           java.util.function.BiConsumer<Player, Consumer<Player>> opener) {
+        return of(owner, id, audience, false, 100, title, description, opener);
+    }
+
+    /** 2.4.0 - raccourci avec le genre (classement ou non) et l'ordre d'affichage. */
+    static MenuSection of(Plugin owner, String id, Audience audience, boolean ranking, int order, Component title,
+                          Component description, java.util.function.BiConsumer<Player, Consumer<Player>> opener) {
         return new MenuSection() {
+            @Override
+            public boolean ranking() {
+                return ranking;
+            }
+
+            @Override
+            public int order() {
+                return order;
+            }
+
             @Override
             public String id() {
                 return id;

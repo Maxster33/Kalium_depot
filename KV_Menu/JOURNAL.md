@@ -5,6 +5,18 @@ actions de **KV_Plots** (par son API `fr.kalium.kvplots.api.KanvasPlots`). Menus
 (boîte à outils `Gui` / `Lang` de KLM_Menu), textes modifiables dans `lang.yml`. Cahier des charges :
 `KV_Plots/CAHIER_DES_CHARGES.md`.
 
+## 1.3.1 - comparateur « Informations » rangé sur son plot (28/09/2026)
+
+Demande de LeKiwi06 (28/09/2026) : le nouveau comparateur « Informations » de KLM_Menu 2.4.0 (case de gauche) doit
+quitter la barre d'objets quand on construit sur son plot, comme l'étoile et la boussole.
+- Sur un plot en travaux dont on est créateur ou éditeur, le comparateur est rangé dans l'inventaire (case 33, à côté de
+  l'étoile et de la boussole) ; il revient à sa case (`informations.slot` de KLM_Menu, 0 par défaut) en sortant du plot.
+- Les interfaces admin de KV_Menu (concours de build, signalements) sont maintenant dans « Informations > Paramètres »
+  (KLM_Menu 2.4.0) ; l'entrée « Kanvas » joueurs n'y est plus listée (l'étoile l'ouvre).
+
+**Déploiement** : avec KLM_Menu 2.4.0 et KV_BuildBattle 0.3.6 sur Kanvas. **Statut : compilé, non déployé, non testé en
+jeu.**
+
 ## 1.3.0 - signalements, concours de build (26/09/2026)
 
 - **Formulaire de signalement** : cases à cocher (contenu inapproprié, copie d'un autre build, plot vide ou bâclé,

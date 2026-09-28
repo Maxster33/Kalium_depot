@@ -799,3 +799,31 @@ côté, sans perte). KG_BoatRace 1.4.1, KG_Bingo, KG_Menu, KG_ScoreBoards recomp
 nouvelle. Déployé sur Kal-Games (7001) le 26/09/2026 à 4 h 41 avec KG_Parkour 1.0.0 (1.19.1 et copies de config.yml,
 minigames.yml, arenas.yml dans `_removed-kalgames-1.19.1/`). Anciens dossiers `_removed-kalgames-…` (1.9.5 à
 1.18.0) supprimés le 26/09/2026 par LeKiwi06 (règle des 3 versions). **Statut : testé et confirmé par LeKiwi06 le 26/09/2026.**
+
+## 1.21.0 — paramètres par jeu, boutons obsolètes retirés (28/09/2026)
+
+**Demande de LeKiwi06 (28/09/2026)** : dans « Mini-jeux Kal-Games », « un bouton mini-jeux (obsolète maintenant que les
+jeux se déclarent d'eux-mêmes) ; le bouton kit, qui n'a rien à faire perdu ici ; le bouton arènes est utile mais mal
+organisé, il faudrait une catégorie par jeu puis chaque jeu a sa liste de maps, au lieu de devoir lire l'entre
+parenthèses et que tout soit mélangé ; hub de Kal-Games, obsolète depuis KLM_Portal » ; « tu vas enlever tout ce qui est
+obsolète ».
+- **Plus d'accueil « Mini-jeux Kal-Games : paramètres »** : chaque mini-jeu est un bouton de « Informations >
+  Paramètres » (KLM_Menu 2.4.0, par KG_Menu 1.1.0) qui ouvre directement sa page : activé / publiques / privées, nom et
+  description, réglages, **ses arènes (maps) seulement**, kits (PvP Kit). Un bouton « Parties en cours » en plus (avec
+  l'état des emplacements d'arène et « Recharger la configuration », repris de l'ancien accueil).
+- **Retirés** : liste « Mini-jeux » et « + Nouveau mini-jeu » (chaque type de jeu jouable enregistré reçoit
+  automatiquement son mini-jeu au démarrage s'il n'en a pas, message dans la console), liste de toutes les arènes
+  mélangées, bouton « Kits » de l'accueil (les kits se gèrent depuis la page du PvP Kit > Kits du mini-jeu > Gérer les
+  kits), page « Hub de Kal-Games » (le point de retour après une partie reste réglé dans `config.yml`, section `hub`),
+  « Supprimer le mini-jeu » (un mini-jeu par jeu) et « Classements » dans la page d'un jeu (la modération est dans le
+  classement lui-même, KG_ScoreBoards 1.6.0).
+- **Emplacement « Build Battle » retiré** (sans moteur ; le jeu est KG_BuildBattle / KV_BuildBattle). Un mini-jeu de
+  ce type déjà créé reste gardé de côté dans `minigames.yml` (mécanisme de la 1.17.0), jamais perdu.
+- Nombre de joueurs de chaque mini-jeu fourni à KG_Menu (affiché sur le bouton du jeu).
+- Menus lisibles sur Bedrock (couleurs trop claires assombries, `BedrockColors` de KLM_Menu 2.4.0).
+- Le comparateur « Informations » n'est jamais copié dans un kit créé depuis l'inventaire (comme la boussole).
+- `/kalgames admin` ouvre « Informations > Paramètres ». Hunger Games et Manhunt (configuration seule) : pas de bouton
+  tant qu'aucun mini-jeu de ce type n'existe (ils ne se créent plus à la main).
+
+**Déploiement** : avec KLM_Menu 2.4.0 et KG_Menu 1.1.0 (obligatoires), KG_ScoreBoards 1.6.0, KG_Bingo 1.6.0,
+KG_BuildBattle 0.2.0. Aucune clé de config nouvelle. **Statut : compilé, non déployé, non testé en jeu.**

@@ -155,16 +155,21 @@ public final class Gui {
         for (Component line : body) {
             bodies.add(DialogBody.plainMessage(line, 320));
         }
-        DialogBase base = DialogBase.builder(title)
+        DialogBase built = DialogBase.builder(title)
                 .body(bodies)
                 .inputs(inputs)
                 .build();
-        ActionButton exitButton = exit == null ? close() : exit;
-        Dialog dialog = buttons.isEmpty()
+        ActionButton exitChoice = exit == null ? close() : exit;
+        // 1.21.0 : couleurs trop claires assombries pour les joueurs Bedrock (boite a outils de KLM_Menu 2.4.0).
+        boolean bedrock = fr.kalium.menu.api.BedrockColors.isBedrock(player);
+        DialogBase base = bedrock ? fr.kalium.menu.api.BedrockColors.adapt(built) : built;
+        ActionButton exitButton = bedrock ? fr.kalium.menu.api.BedrockColors.adapt(exitChoice) : exitChoice;
+        List<ActionButton> shown = bedrock ? fr.kalium.menu.api.BedrockColors.adaptButtons(buttons) : buttons;
+        Dialog dialog = shown.isEmpty()
                 ? Dialog.create(factory -> factory.empty().base(base).type(DialogType.notice(exitButton)))
                 : Dialog.create(factory -> factory.empty()
                         .base(base)
-                        .type(DialogType.multiAction(buttons, exitButton, Math.max(1, columns))));
+                        .type(DialogType.multiAction(shown, exitButton, Math.max(1, columns))));
         player.showDialog(dialog);
     }
 

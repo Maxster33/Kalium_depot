@@ -24,12 +24,22 @@ compass:
   material: COMPASS
   # Emplacement de la hotbar, de 0 (gauche) a 8 (droite).
   slot: 8
-  # Empeche de deplacer / jeter la boussole (sauf permission kaliummenu.bypass).
+  # Empeche de deplacer / jeter la boussole et le comparateur « Informations » (2.4.0 : pour tout le monde,
+  # operateurs compris).
   lock-item: true
   name: "<#09add3><bold>Navigation"
   lore:
     - "<gray>Clic droit pour choisir"
     - "<gray>ton serveur."
+
+# 2.4.0 - comparateur « Informations » (classements ; parametres pour les admins).
+# Donne aux admins (kaliummenu.admin) et aux joueurs s'il y a un classement sur ce serveur.
+# Cles facultatives : sans elles, enabled suit compass.enabled, slot 0 (case de gauche), COMPARATOR.
+# Nom et description de l'objet : lang.yml (info.item-name, info.item-lore).
+informations:
+  # enabled: true   (absent = comme compass.enabled)
+  slot: 0
+  material: COMPARATOR
 
 # Operateurs autorises : ces joueurs voient dans le menu deux boutons -
 # un pour basculer rapidement entre operateur et joueur, un pour changer de mode de jeu

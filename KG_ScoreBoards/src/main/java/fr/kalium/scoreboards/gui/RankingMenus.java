@@ -109,6 +109,12 @@ public final class RankingMenus {
                             : t("rank.show-lap", "<aqua>Voir les meilleurs temps sur 1 tour"),
                     null, p -> openPlayer(p, minigame, monthly, !showLap, back)));
         }
+        // 1.6.0 : moderation directement dans le classement (demande de LeKiwi06, 28/09/2026), moderateurs seulement.
+        if (plugin.isAdmin(player)) {
+            buttons.add(adminButton(t("rank.moderation", "<red>Modération"),
+                    t("rank.moderation-tip", "<gray>Classements complets, archives, panneaux du hub, clôture du mois."),
+                    p -> openAdmin(p, minigame, q -> openPlayer(q, minigame, monthly, lap, back))));
+        }
         buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, back::accept));
         gui.open(player, t("rank.title", "<light_purple><bold>Classements <name>", "name", name(minigame)), body, List.of(), buttons, gui.close(), 1);
     }

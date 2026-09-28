@@ -50,8 +50,8 @@ import java.util.function.Consumer;
  *   KG_ScoreBoards...) et affiche leurs boutons : accueil (jeux, puis autres boutons) et accueil "Parametres".
  * - Objet du hub (etoile "Mini-jeux", repris de KalGames) : ouvre le menu de la partie en cours si un jeu s'en charge,
  *   sinon l'accueil. Donne par KalGames quand il prepare le hub (giveHubItem), verrouille ici.
- * - Apparait dans le catalogue de KLM_Menu sous une seule entree "Kal-Games" (+ "Kal-Games : paramètres" pour les
- *   admins).
+ * - Apparait dans KLM_Menu : 1.1.0, les reglages des plugins de kal-games sont a plat dans « Informations >
+ *   Parametres » (un bouton par jeu) ; chaque bouton de jeu de l'accueil affiche son nombre de joueurs.
  */
 public final class KgMenu extends JavaPlugin implements Listener {
 
@@ -76,7 +76,30 @@ public final class KgMenu extends JavaPlugin implements Listener {
                         t("klm.home", "<gold><bold>Kal-Games"), t("klm.home-tip", "<gray>Mini-jeux, Bingo, classements."),
                         (p, back) -> openHome(p, back)),
                 this, ServicePriority.Normal);
+        // 1.1.0 : les reglages de chaque plugin de kal-games s'affichent a plat dans « Informations > Parametres »
+        // (KLM_Menu 2.4.0), un bouton par jeu, sans l'ancien niveau « Parametres Kal-Games ».
         getServer().getServicesManager().register(MenuSection.class, new MenuSection() {
+            @Override
+            public int order() {
+                return 10;
+            }
+
+            @Override
+            public List<MenuSection> expand(Player player) {
+                List<MenuSection> list = new ArrayList<>();
+                for (MenuProvider.Entry entry : settingsFor(player)) {
+                    list.add(MenuSection.of(KgMenu.this, "settings-" + entry.id(), Audience.ADMINS, false, 10,
+                            entry.label(), entry.tooltip(), (p, back) -> {
+                                try {
+                                    entry.open().accept(p, back);
+                                } catch (RuntimeException e) {
+                                    getLogger().warning("Ouverture de " + entry.id() + " impossible : " + e);
+                                }
+                            }));
+                }
+                return list;
+            }
+
             @Override
             public String id() {
                 return "settings";
@@ -225,20 +248,21 @@ public final class KgMenu extends JavaPlugin implements Listener {
         openHome(player, null);
     }
 
-    /** Accueil : les jeux, puis les autres boutons, puis "Parametres" (si le joueur a des reglages). */
+    /**
+     * Accueil : les jeux (avec le nombre de joueurs de chacun, 1.1.0), puis les autres boutons. 1.1.0 : plus de bouton
+     * « Parametres » ici ; classements et parametres sont dans le comparateur « Informations » (KLM_Menu).
+     */
     public void openHome(Player player, Consumer<Player> back) {
         Consumer<Player> here = p -> openHome(p, back);
         List<ActionButton> buttons = new ArrayList<>();
         List<MenuProvider.Entry> games = collect(player, MenuProvider::games);
         for (MenuProvider.Entry entry : games) {
-            buttons.add(button(entry, here));
+            buttons.add(button(entry.players() < 0 ? entry
+                    : new MenuProvider.Entry(entry.id(), entry.label().append(t("menu.players", " <dark_gray>| <gray><n> en jeu",
+                            "n", entry.players())), entry.tooltip(), entry.open(), entry.players()), here));
         }
         for (MenuProvider.Entry entry : collect(player, MenuProvider::extras)) {
             buttons.add(button(entry, here));
-        }
-        if (!settingsFor(player).isEmpty()) {
-            buttons.add(gui.button(t("menu.settings", "<light_purple><bold>Paramètres"),
-                    t("menu.settings-tip", "<gray>Réservé aux modérateurs : jeux, arènes, kits, hub..."), p -> openSettings(p, here)));
         }
         if (back != null) {
             buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, back::accept));
@@ -249,7 +273,10 @@ public final class KgMenu extends JavaPlugin implements Listener {
         gui.open(player, t("menu.games-title", "<gold><bold>Mini-jeux Kal-Games"), body, List.of(), buttons, null, 1);
     }
 
-    /** Accueil "Parametres" : les reglages de chaque plugin que ce joueur a le droit de voir. */
+    /**
+     * Accueil "Parametres" : les reglages de chaque plugin que ce joueur a le droit de voir. 1.1.0 : n'est plus ouvert
+     * par les menus (voir « Informations &gt; Parametres » de KLM_Menu) ; garde pour la section groupee de KLM_Menu.
+     */
     public void openSettings(Player player, Consumer<Player> back) {
         Consumer<Player> here = p -> openSettings(p, back);
         List<ActionButton> buttons = new ArrayList<>();
@@ -335,8 +362,17 @@ public final class KgMenu extends JavaPlugin implements Listener {
         }
         if (isHubItem(event.getCurrentItem()) || isHubItem(event.getCursor())
                 || (event.getClick() == ClickType.NUMBER_KEY && isHubItem(player.getInventory().getItem(event.getHotbarButton())))
-                || (event.getClick() == ClickType.SWAP_OFFHAND && isHubItem(player.getInventory().getItemInOffHand()))) {
+                || (event.getClick() == ClickType.SWAP_OFFHAND && isHubItem(player.getInventory().getItemInOffHand()))
+                // 1.1.0 : en creatif, refuse aussi de remplacer la case de l'etoile (comme la boussole de KLM_Menu).
+                || (event instanceof org.bukkit.event.inventory.InventoryCreativeEvent
+                        && event.getClickedInventory() == player.getInventory() && event.getSlot() >= 0
+                        && isHubItem(player.getInventory().getItem(event.getSlot())))) {
             event.setCancelled(true);
+            getServer().getScheduler().runTask(this, () -> {
+                if (player.isOnline()) {
+                    player.updateInventory();
+                }
+            });
         }
     }
 

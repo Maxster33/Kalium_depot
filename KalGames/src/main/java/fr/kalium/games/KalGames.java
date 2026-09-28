@@ -114,6 +114,8 @@ public final class KalGames extends JavaPlugin {
             Bukkit.getScheduler().runTaskLater(this, instances::prewarm, 100L);
             // Monde des parties connu seulement maintenant : pas de panneau de classement dedans.
             ranking.setForbiddenWorld(w -> w == worlds.world());
+            // 1.21.0 : chaque jeu enregistre (KG_BoatRace, KG_Parkour... actives avant cette tache) a son mini-jeu.
+            admin.ensureMinigames();
             lang.saveIfNeeded();
         });
         BukkitTask save = Bukkit.getScheduler().runTaskTimer(this, () -> {
@@ -137,13 +139,11 @@ public final class KalGames extends JavaPlugin {
                 return menus.gameEntries(player);
             }
 
+            // 1.21.0 : un bouton par jeu (+ parties en cours) dans « Informations > Parametres », au lieu de
+            // « Mini-jeux Kal-Games ».
             @Override
             public java.util.List<Entry> settings(Player player) {
-                if (!isAdmin(player)) {
-                    return java.util.List.of();
-                }
-                return java.util.List.of(new Entry("kalgames", t("klm.settings", "<gold>Mini-jeux Kal-Games"),
-                        t("klm.settings-tip", "<gray>Mini-jeux, arènes, kits, hub, parties en cours."), (p, back) -> admin.openHome(p)));
+                return admin.settingsEntries(player);
             }
 
             @Override

@@ -1635,3 +1635,14 @@ simplement les logos des items ? ».
 **Déployé sur Serveur Jeux le 26/09/2026 à 6 h 27** (0.8.1 dans `_removed-kg_bingogame-0.8.1/`). Aperçu validé par LeKiwi06
 (« c'est beaucoup mieux comme ça »). **Statut : icônes de la carte testées et confirmées par LeKiwi06 le 26/09/2026 ;
 reste à tester en jeu : bonus du 1er, Nether en Normal, partie à 3-4 équipes (0.8.1).**
+
+## 0.8.3 — nombre de joueurs publié sur le relais, menus lisibles sur Bedrock (28/09/2026)
+
+**Demandes de LeKiwi06 (28/09/2026)** : nombre de joueurs sur le bouton du Bingo à kal-games ; couleurs trop claires
+illisibles sur Bedrock.
+- Toutes les 5 s, le nombre de joueurs dans les mondes du Bingo (`bingo_...` : salles d'attente et parties) est publié
+  sur le relais (clé `compteur-bingo`), lu par KG_Bingo 1.6.0. Échec silencieux, nouvel essai 5 s plus tard.
+- Menus : couleurs trop claires assombries pour les joueurs Bedrock (`BedrockColors` de KLM_Menu 2.4.0).
+
+**Déploiement** : avec **KLM_Menu 2.4.0 sur Serveur Jeux** (obligatoire : il y est en 2.0.0). **Statut : compilé, non
+déployé, non testé en jeu.**

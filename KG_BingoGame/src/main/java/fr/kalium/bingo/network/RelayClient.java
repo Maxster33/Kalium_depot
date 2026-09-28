@@ -153,6 +153,32 @@ public final class RelayClient {
         }
     }
 
+    /**
+     * 0.8.3 : publie le nombre de joueurs en Bingo (cle « compteur-bingo »), affiche sur le bouton du Bingo du menu de
+     * kal-games (KG_Bingo 1.6.0, demande de LeKiwi06 du 28/09/2026). Republie toutes les 5 s. Bloquant - thread
+     * asynchrone uniquement ; en cas d'echec, rien dans la console (nouvel essai 5 s plus tard).
+     */
+    public void postPlayerCount(int count) {
+        String url = plugin.getConfig().getString("network.relay-url", "");
+        if (url == null || url.isBlank()) {
+            return;
+        }
+        String token = plugin.getConfig().getString("network.relay-token", "");
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url + "/assignment/compteur-bingo"))
+                    .header("X-Kalium-Relay-Token", token)
+                    .timeout(Duration.ofSeconds(5))
+                    .POST(HttpRequest.BodyPublishers.ofString(String.valueOf(count), StandardCharsets.UTF_8))
+                    .build();
+            http.send(request, HttpResponse.BodyHandlers.discarding());
+        } catch (IOException | InterruptedException e) {
+            if (Thread.currentThread().isInterrupted()) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
     public void postPartyClosed(String gameId) {
         String url = plugin.getConfig().getString("network.relay-url", "");
         if (url == null || url.isBlank()) {

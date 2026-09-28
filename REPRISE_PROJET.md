@@ -92,7 +92,15 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-Aucune (27/09/2026 : tout ce qui est compilé est déployé, voir le tableau ci-dessus).
+**Refonte des menus (28/09/2026, LeKiwi06, à déployer ensemble, non testée en jeu)** : comparateur « Informations »
+(case de gauche : Classements pour tous, Paramètres pour les admins, un bouton par jeu), boussole réduite à la
+navigation et verrouillée pour tout le monde, couleurs des menus assombries pour les joueurs Bedrock, nombre de joueurs
+sur chaque bouton de jeu de kal-games, boutons obsolètes retirés (Mini-jeux, Kits, Hub, Arènes mélangées, emplacement
+Build Battle de KalGames). Détail dans chaque `JOURNAL.md`.
+- Tous les serveurs Paper : `KLM_Menu-2.4.0.jar` (obligatoire partout où l'un des plugins suivants tourne).
+- Kal-Games : `KalGames-1.21.0`, `KG_Menu-1.1.0`, `KG_ScoreBoards-1.6.0`, `KG_Bingo-1.6.0`, `KG_BuildBattle-0.2.0`.
+- Serveur Jeux : `KG_BingoGame-0.8.3` (+ KLM_Menu 2.4.0, il y est en 2.0.0).
+- Kanvas : `KV_BuildBattle-0.3.6`, `KV_Menu-1.3.1` (+ KLM_Menu 2.4.0).
 
 ## Chantiers en cours
 

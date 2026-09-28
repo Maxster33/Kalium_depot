@@ -22,6 +22,8 @@ public final class KGBingo extends JavaPlugin {
     private KalGames kg;
     private BingoPartyManager parties;
     private BingoResults results;
+    /** 1.6.0 : joueurs en Bingo sur Serveur Jeux (bouton du menu de kal-games). */
+    private RelayCounter players;
 
     @Override
     public void onEnable() {
@@ -49,6 +51,7 @@ public final class KGBingo extends JavaPlugin {
             command.setExecutor(new BingoCommand(this, parties));
         }
 
+        players = new RelayCounter(this, "compteur-bingo");
         BingoMenus menus = new BingoMenus(this, kg);
         // Bingo : serveur dedie separe, pas un Minigame/Arena classique de KalGames - bouton visible de tous
         // (comme /bingo create et /bingo join).
@@ -69,7 +72,7 @@ public final class KGBingo extends JavaPlugin {
             public java.util.List<Entry> games(org.bukkit.entity.Player player) {
                 return java.util.List.of(new Entry(ENTRY_ID, menus.t("bingo.hub-entry", "<gold><bold>Bingo"),
                         menus.t("bingo.hub-entry-tip", "<gray>Mini-jeu sur serveur dédié : créez une partie ou rejoignez-en une avec un code."),
-                        (p, back) -> menus.openBingoMenu(p)));
+                        (p, back) -> menus.openBingoMenu(p), players.value()));
             }
 
             @Override

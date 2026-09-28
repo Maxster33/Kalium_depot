@@ -25,3 +25,20 @@ restart par KG_Menu ».
 
 **Déploiement** : avec KLM_Menu 2.1.0, KalGames 1.16.0, KG_Bingo 1.3.0, KG_ScoreBoards 1.2.0. Textes de l'objet du
 hub : reprendre `item.games.*` du `lang.yml` de KalGames s'ils ont été modifiés. **Statut : déployé sur Kal-Games (7001) le 24/09/2026 par LeKiwi06, testé et confirmé par LeKiwi06 le 24/09/2026 (hub : boussole et étoile, accueil, Paramètres, catalogue « Interfaces », Java et Bedrock).**
+
+## 1.1.0 — nombre de joueurs sur les boutons des jeux, paramètres par jeu (28/09/2026)
+
+**Demandes de LeKiwi06 (28/09/2026)** : « pour chaque bouton visant à rejoindre un jeu, le plugin doit afficher combien
+il y a de joueurs dedans » ; le bouton « Paramètres » ouvrait « Mini-jeux Kal-Games, Bingo, Classements (modération) » :
+« le Bingo est un mini-jeu aussi, "mini-jeux Kal-Games" est une répétition, classement modération surcharge pour
+rien » ; classements et paramètres vont dans le comparateur « Informations » (KLM_Menu 2.4.0).
+- **Accueil (étoile)** : chaque jeu affiche « | n en jeu » (nouveau champ `players` de `MenuProvider.Entry`, -1 =
+  inconnu, rien d'affiché ; l'ancien constructeur à 4 champs existe toujours). Plus de bouton « Paramètres » ni
+  « Classements » ici.
+- **Paramètres** : les réglages fournis par les plugins (`MenuProvider.settings`) sont des boutons à plat de
+  « Informations > Paramètres » (`MenuSection.expand`), un par jeu : course de bateau, parcours, PvP Kit, Rush, Bingo...
+  et « Parties en cours ». Plus d'écran « Paramètres Kal-Games » intermédiaire.
+- Étoile : en créatif, sa case ne peut plus être remplacée (comme la boussole) ; inventaire renvoyé après un refus.
+
+**Déploiement** : avec KLM_Menu 2.4.0 (obligatoire), KalGames 1.21.0, KG_ScoreBoards 1.6.0, KG_Bingo 1.6.0,
+KG_BuildBattle 0.2.0. **Statut : compilé, non déployé, non testé en jeu.**

@@ -91,19 +91,8 @@ public final class MinigameType {
                     single("hunter-spawn", "Départ des chasseurs", false, "Si l'arène modèle est utilisée.")),
             List.of()));
 
-    public static final MinigameType BUILD_BATTLE = register(new MinigameType("BUILD_BATTLE", "Build Battle", false,
-            "Chaque joueur construit sur un thème, puis les constructions sont votées. Moteur à venir : la configuration est déjà disponible.",
-            List.of(
-                    integer("build-seconds", "Durée de construction (s)", 300, 60, 1800, ""),
-                    integer("vote-seconds", "Durée du vote (s)", 30, 10, 120, ""),
-                    integer("plot-size", "Taille d'un terrain (blocs)", 24, 8, 64, ""),
-                    text("themes", "Thèmes (séparés par des virgules)", "Château,Pirate,Espace,Ferme,Volcan", ""),
-                    integer("min-players", "Joueurs minimum", 2, 2, 16, ""),
-                    integer("max-players", "Joueurs maximum", 12, 2, 32, "")),
-            List.of(
-                    single("stands", "Salle d'attente", true, ""),
-                    list("plots", "Terrains de construction", true, "Un point central par terrain.")),
-            List.of()));
+    // 1.21.0 : emplacement « Build Battle » (sans moteur) retire : le jeu est dans KG_BuildBattle / KV_BuildBattle. Un
+    // mini-jeu de ce type deja enregistre est garde de cote dans minigames.yml (jamais perdu), comme un type absent.
 
 
 

@@ -28,3 +28,12 @@ Limites connues : le nombre de joueurs dans les files publiques n'est pas affich
 Kanvas) ; KalGames garde son emplacement « Build Battle » sans moteur (à retirer en retouchant KalGames).
 
 **Déployé sur kal-games le 27/09/2026 (13:55) avec KV_BuildBattle 0.2.0 (Kanvas). Statut : testé et validé par LeKiwi06 le 28/09/2026 (envoi en file publique confirmé le 27/09 ; « parfait, tu peux tout valider »).**
+
+## 0.2.0 - nombre de joueurs sur le bouton du Build Battle (28/09/2026)
+
+Demande de LeKiwi06 : afficher sur chaque bouton de jeu combien de joueurs y sont (le vrai nombre, par le relais).
+- `RelayCounter` lit toutes les 5 s la clé `compteur-buildbattle` (publiée par KV_BuildBattle 0.3.6) ; le bouton
+  « Build Battle » affiche « | n en jeu » (KG_Menu 1.1.0). Sans nouvelle valeur depuis 30 s : rien d'affiché.
+
+**Déploiement** : avec KV_BuildBattle 0.3.6 (Kanvas), KG_Menu 1.1.0 et KLM_Menu 2.4.0. **Statut : compilé, non déployé,
+non testé en jeu.**
