@@ -20,6 +20,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KalGames — LeKiwi06 — depuis le 2026-09-28 16:25 — retrait du PvP Kit et des kits (sortis dans KG_PvpKit)
 - KS_LootCoffres — Maxster33 — depuis le 2026-09-28 22:57 — nouveau plugin (Event) : loots des coffres de structures
 - KS_EstomacGardien — Maxster33 — depuis le 2026-09-28 22:57 — nouveau plugin (Event) : objet-coffre « Estomac du gardien »
+- KS_LootEntites — Maxster33 — depuis le 2026-09-28 23:05 — grand gardien : 50 % d'estomac du gardien
+- KS_LootPotions — Maxster33 — depuis le 2026-09-28 23:05 — potion de faiblesse : du pillard vers le capitaine seulement
 
 ## Requis parfois
 
