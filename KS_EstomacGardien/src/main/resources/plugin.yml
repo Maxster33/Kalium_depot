@@ -4,12 +4,3 @@ main: fr.kalium.estomacgardien.KSEstomacGardien
 api-version: '26.2'
 description: Objet Estomac du gardien (image du sac noir) - clic droit pour obtenir son contenu.
 authors: [KaLium]
-commands:
-  estomac:
-    description: Donne des Estomacs du gardien.
-    usage: /estomac [joueur] [nombre]
-    permission: ks.estomac.give
-permissions:
-  ks.estomac.give:
-    description: Utiliser /estomac.
-    default: op

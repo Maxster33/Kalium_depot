@@ -21,4 +21,6 @@ reste vanilla) ; changements de poids par remplacement à probabilité exacte.
 
 ## Reste à faire
 - Redémarrer Event (l'humain) et tester (voir le compte rendu dans `REPRISE_PROJET.md`).
-- Ajouté ensuite : KS_EstomacGardien 1.1.0 (`/estomac [joueur] [nombre]`, opérateurs), déployé à 23:25.
+- Ajouté ensuite : KS_EstomacGardien 1.1.0 (`/estomac`, 23:25), puis à la demande de Maxster33 commande retirée
+  (1.2.0) et nouveau plugin KS_KaliumGive 1.0.0 (`/kaliumgive <pseudo> <id_custom> <nombre>`, id `estomac_gardien`),
+  déployés à 23:35.

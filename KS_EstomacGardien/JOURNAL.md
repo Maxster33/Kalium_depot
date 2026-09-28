@@ -30,3 +30,10 @@ Demande de Maxster33 : pouvoir se donner l'objet (option « commande du plugin �
   une faute de frappe géante). Un estomac par case ; inventaire plein : le reste tombe au sol.
 
 **Déployé sur Event le 28/09/2026 à 23:25 (1.0.0 dans `_removed-ks_estomacgardien-1.0.0/`). Statut : non testé en jeu.**
+
+## 1.2.0 - commande /estomac retirée (28/09/2026)
+
+Demande de Maxster33 : « supprime la commande » ; l'objet se donne maintenant avec
+`/kaliumgive <pseudo> estomac_gardien <nombre>` (nouveau plugin KS_KaliumGive). Code identique à la 1.0.0.
+
+**Déployé sur Event le 28/09/2026 à 23:35 (1.1.0 dans `_removed-ks_estomacgardien-1.1.0/`). Statut : non testé en jeu.**
