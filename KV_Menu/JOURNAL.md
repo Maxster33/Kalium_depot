@@ -16,8 +16,7 @@ quitter la barre d'objets quand on construit sur son plot, comme l'étoile et la
 - Étoile déclarée à KLM_Menu pour `/menu` (ouverture, `/menu on | off`) ; après `/menu off`, plus d'étoile sur Kanvas
   jusqu'à `/menu on`.
 
-**Déploiement** : avec KLM_Menu 2.4.0 et KV_BuildBattle 0.3.6 sur Kanvas. **Statut : compilé, non déployé, non testé en
-jeu.**
+**Déploiement** : avec KLM_Menu 2.4.0 et KV_BuildBattle 0.3.6 sur Kanvas. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**
 
 ## 1.3.0 - signalements, concours de build (26/09/2026)
 

@@ -43,4 +43,4 @@ rien » ; classements et paramètres vont dans le comparateur « Informations »
   `/menu off`.
 
 **Déploiement** : avec KLM_Menu 2.4.0 (obligatoire), KalGames 1.21.0, KG_ScoreBoards 1.6.0, KG_Bingo 1.6.0,
-KG_BuildBattle 0.2.0. **Statut : compilé, non déployé, non testé en jeu.**
+KG_BuildBattle 0.2.0. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**

@@ -98,5 +98,4 @@ bouton modération dans l'interface de classement directement » ; classements d
 - Dans le classement d'un jeu, les modérateurs ont un bouton **« Modération »** (classements complets, archives,
   panneaux du hub, clôture du mois) ; son « Retour » ramène au classement.
 
-**Déploiement** : avec KLM_Menu 2.4.0 (obligatoire), KG_Menu 1.1.0, KalGames 1.21.0. **Statut : compilé, non déployé,
-non testé en jeu.**
+**Déploiement** : avec KLM_Menu 2.4.0 (obligatoire), KG_Menu 1.1.0, KalGames 1.21.0. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**

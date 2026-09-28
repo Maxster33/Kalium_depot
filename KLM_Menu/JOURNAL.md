@@ -169,5 +169,4 @@ de KLM_Menu (`info.*`).
 
 **Déploiement** : sur **tous les serveurs Paper** (les plugins ci-dessous en dépendent), avec KG_Menu 1.1.0, KalGames
 1.21.0, KG_ScoreBoards 1.6.0, KG_Bingo 1.6.0, KG_BuildBattle 0.2.0 (kal-games), KG_BingoGame 0.8.3 (Serveur Jeux),
-KV_BuildBattle 0.3.6 et KV_Menu 1.3.1 (Kanvas). Aucune clé de config obligatoire. **Statut : compilé, non déployé, non
-testé en jeu.**
+KV_BuildBattle 0.3.6 et KV_Menu 1.3.1 (Kanvas). Aucune clé de config obligatoire. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**

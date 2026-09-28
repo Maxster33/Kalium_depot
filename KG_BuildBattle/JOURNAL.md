@@ -35,5 +35,4 @@ Demande de LeKiwi06 : afficher sur chaque bouton de jeu combien de joueurs y son
 - `RelayCounter` lit toutes les 5 s la clé `compteur-buildbattle` (publiée par KV_BuildBattle 0.3.6) ; le bouton
   « Build Battle » affiche « | n en jeu » (KG_Menu 1.1.0). Sans nouvelle valeur depuis 30 s : rien d'affiché.
 
-**Déploiement** : avec KV_BuildBattle 0.3.6 (Kanvas), KG_Menu 1.1.0 et KLM_Menu 2.4.0. **Statut : compilé, non déployé,
-non testé en jeu.**
+**Déploiement** : avec KV_BuildBattle 0.3.6 (Kanvas), KG_Menu 1.1.0 et KLM_Menu 2.4.0. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**

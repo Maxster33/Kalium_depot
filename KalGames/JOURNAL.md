@@ -827,4 +827,4 @@ obsolète ».
   tant qu'aucun mini-jeu de ce type n'existe (ils ne se créent plus à la main).
 
 **Déploiement** : avec KLM_Menu 2.4.0 et KG_Menu 1.1.0 (obligatoires), KG_ScoreBoards 1.6.0, KG_Bingo 1.6.0,
-KG_BuildBattle 0.2.0. Aucune clé de config nouvelle. **Statut : compilé, non déployé, non testé en jeu.**
+KG_BuildBattle 0.2.0. Aucune clé de config nouvelle. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**

@@ -1646,5 +1646,4 @@ illisibles sur Bedrock.
 - **`/menu` devient `/bingomenu`** (menu de la salle d'attente, opérateurs ; aussi dans « Informations > Paramètres ») :
   `/menu` est maintenant celui de KLM_Menu sur tous les serveurs. `/menu on | off` refusé dans les mondes du Bingo.
 
-**Déploiement** : avec **KLM_Menu 2.4.0 sur Serveur Jeux** (obligatoire : il y est en 2.0.0). **Statut : compilé, non
-déployé, non testé en jeu.**
+**Déploiement** : avec **KLM_Menu 2.4.0 sur Serveur Jeux** (obligatoire : il y est en 2.0.0). **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**

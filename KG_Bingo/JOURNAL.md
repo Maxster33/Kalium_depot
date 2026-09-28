@@ -101,4 +101,4 @@ le vrai nombre, par le relais.
 - Réglages du Bingo : bouton « Bingo » de « Informations > Paramètres » (son « Retour » y ramène).
 
 **Déploiement** : avec KG_BingoGame 0.8.3 (Serveur Jeux ; sans elle, aucun nombre affiché, rien de cassé) et KLM_Menu
-2.4.0, KG_Menu 1.1.0, KalGames 1.21.0. **Statut : compilé, non déployé, non testé en jeu.**
+2.4.0, KG_Menu 1.1.0, KalGames 1.21.0. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**

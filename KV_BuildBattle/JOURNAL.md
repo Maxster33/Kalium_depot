@@ -14,8 +14,7 @@ nombre, par le relais).
 - Interface « Build Battle : arène » : dans « Informations > Paramètres » (KLM_Menu 2.4.0), plus dans « Interfaces ».
 - `/menu on | off` (KLM_Menu 2.4.0) refusé pendant une partie (salle d'attente comprise).
 
-**Déploiement** : avec KG_BuildBattle 0.2.0 (kal-games) et KLM_Menu 2.4.0. **Statut : compilé, non déployé, non testé
-en jeu.**
+**Déploiement** : avec KG_BuildBattle 0.2.0 (kal-games) et KLM_Menu 2.4.0. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**
 
 ## 0.3.5 - les mobs sont retirés d'une partie à l'autre (28/09/2026)
 
