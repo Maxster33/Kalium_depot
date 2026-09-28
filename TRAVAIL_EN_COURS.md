@@ -18,6 +18,9 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_PvpKit — LeKiwi06 — depuis le 2026-09-28 16:25 — nouveau plugin : PvP Kit sorti de KalGames, kits, barème (éliminations, place, infériorité, série, déclassement)
 - KalGames — LeKiwi06 — depuis le 2026-09-28 16:25 — retrait du PvP Kit et des kits (sortis dans KG_PvpKit)
+- KS_EC_Extension — Maxster33 — depuis le 2026-09-28 23:42 — nouveau plugin (Event) : coffre de l'Ender doublé, cases à débloquer avec la Clé de l'End
+- KS_Crafts — Maxster33 — depuis le 2026-09-28 23:42 — craft de la Clé de l'End
+- KS_KaliumGive — Maxster33 — depuis le 2026-09-28 23:42 — id cle_de_l_end
 
 ## Requis parfois
 
