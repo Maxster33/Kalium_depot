@@ -21,3 +21,12 @@ Plugin autonome (réutilisable ailleurs), serveur Event. Demande de Maxster33 du
 - Pour les autres plugins : `KSEstomacGardien.creerEstomac()` (utilisé par KS_LootEntites 1.1.0 : grand gardien).
 
 **Déployé sur Event le 28/09/2026 à 23:19. Statut : non testé en jeu.** Déployé avec KS_LootEntites 1.1.0.
+
+## 1.1.0 - commande /estomac (28/09/2026)
+
+Demande de Maxster33 : pouvoir se donner l'objet (option « commande du plugin » choisie plutôt qu'un datapack).
+- **`/estomac [joueur] [nombre]`** : opérateurs seulement (permission `ks.estomac.give`, `default: op`). Sans joueur :
+  soi-même (depuis la console, le joueur est obligatoire). Nombre de 1 à 64 (1 par défaut ; limite ajoutée pour éviter
+  une faute de frappe géante). Un estomac par case ; inventaire plein : le reste tombe au sol.
+
+**Déployé sur Event le 28/09/2026 à 23:25 (1.0.0 dans `_removed-ks_estomacgardien-1.0.0/`). Statut : non testé en jeu.**

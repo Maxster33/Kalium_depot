@@ -9,6 +9,8 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -32,6 +34,8 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * L'objet de base est un livre de connaissances (ni sac, ni bloc, ni ingrédient de craft) dont le clic droit vanilla
  * est annulé ; seule l'image (item_model) est celle du sac noir. Autres plugins : creerEstomac() (ex. KS_LootEntites).
+ *
+ * Commande /estomac [joueur] [nombre] (opérateurs, permission ks.estomac.give) : donne des estomacs.
  */
 public final class KSEstomacGardien extends JavaPlugin implements Listener {
 
@@ -56,6 +60,7 @@ public final class KSEstomacGardien extends JavaPlugin implements Listener {
     public void onEnable() {
         cle = new NamespacedKey(this, "estomac");
         getServer().getPluginManager().registerEvents(this, this);
+        getCommand("estomac").setExecutor(this);
     }
 
     private static ThreadLocalRandom random() {
@@ -107,6 +112,50 @@ public final class KSEstomacGardien extends JavaPlugin implements Listener {
         for (ItemStack reste : player.getInventory().addItem(contenu().toArray(new ItemStack[0])).values()) {
             player.getWorld().dropItemNaturally(player.getLocation(), reste);
         }
+    }
+
+    // ------------------------------------------------------------------ commande
+
+    /** /estomac [joueur] [nombre] : nombre de 1 à 64 (1 par défaut), joueur : soi-même par défaut. */
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length > 2) {
+            return false;
+        }
+        Player cible;
+        if (args.length >= 1) {
+            cible = Bukkit.getPlayerExact(args[0]);
+            if (cible == null) {
+                sender.sendMessage(Component.text("Joueur introuvable : " + args[0], NamedTextColor.RED));
+                return true;
+            }
+        } else if (sender instanceof Player player) {
+            cible = player;
+        } else {
+            sender.sendMessage(Component.text("Depuis la console : /estomac <joueur> [nombre]", NamedTextColor.RED));
+            return true;
+        }
+        int nombre = 1;
+        if (args.length == 2) {
+            try {
+                nombre = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                nombre = 0;
+            }
+            if (nombre < 1 || nombre > 64) {
+                sender.sendMessage(Component.text("Le nombre doit être entre 1 et 64.", NamedTextColor.RED));
+                return true;
+            }
+        }
+        // Un estomac par case (comme un sac) ; inventaire plein : le reste tombe au sol.
+        for (int i = 0; i < nombre; i++) {
+            for (ItemStack reste : cible.getInventory().addItem(creerEstomac()).values()) {
+                cible.getWorld().dropItemNaturally(cible.getLocation(), reste);
+            }
+        }
+        sender.sendMessage(Component.text(nombre + " Estomac" + (nombre > 1 ? "s" : "") + " du gardien donné"
+                + (nombre > 1 ? "s" : "") + " à " + cible.getName() + ".", NamedTextColor.GREEN));
+        return true;
     }
 
     // ------------------------------------------------------------------ contenu

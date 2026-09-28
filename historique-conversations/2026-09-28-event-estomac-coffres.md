@@ -21,3 +21,4 @@ reste vanilla) ; changements de poids par remplacement à probabilité exacte.
 
 ## Reste à faire
 - Redémarrer Event (l'humain) et tester (voir le compte rendu dans `REPRISE_PROJET.md`).
+- Ajouté ensuite : KS_EstomacGardien 1.1.0 (`/estomac [joueur] [nombre]`, opérateurs), déployé à 23:25.
