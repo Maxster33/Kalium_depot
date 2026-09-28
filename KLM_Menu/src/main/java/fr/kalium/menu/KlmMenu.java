@@ -959,33 +959,52 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
      * donner / retirer les divers items d'interface de la hotbar : nether star, boussole, comparateur... ; si des items
      * sont contenus dans les slots correspondants : refuser la commande (sauf sur Kanvas comme on est en creatif) ;
      * durant un mini-jeu : refuser la commande ».
-     * Joueurs qui ont retire leurs objets (/menu off), par serveur : plugins/KLM_Menu/objets-masques.yml.
+     * Choix de chaque joueur, par serveur : plugins/KLM_Menu/objets-masques.yml (joueurs = /menu off, affiches =
+     * /menu on). 2.4.1 : sur un serveur ou les objets sont retires par defaut (items-by-default: false, Kixster et
+     * Event : « par defaut il doit etre off pour pas deranger les joueurs, mais il faut laisser la possibilite pour
+     * ceux qui preferent avoir la boussole », LeKiwi06, 28/09/2026), seuls les joueurs qui ont fait /menu on les ont.
      */
     private final java.util.Set<UUID> hidden = java.util.concurrent.ConcurrentHashMap.newKeySet();
+    private final java.util.Set<UUID> shown = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     private java.io.File hiddenFile() {
         return new java.io.File(getDataFolder(), "objets-masques.yml");
     }
 
-    private void loadHidden() {
-        hidden.clear();
-        var yaml = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(hiddenFile());
-        for (String value : yaml.getStringList("joueurs")) {
+    /** 2.4.1 : objets de menu donnes par defaut sur ce serveur ? (items-by-default, true si absent) */
+    private boolean itemsByDefault() {
+        return getConfig().getBoolean("items-by-default", true);
+    }
+
+    private static void readUuids(java.util.Set<UUID> into, List<String> values) {
+        into.clear();
+        for (String value : values) {
             try {
-                hidden.add(UUID.fromString(value));
+                into.add(UUID.fromString(value));
             } catch (IllegalArgumentException ignored) {
                 // ligne abimee : ignoree
             }
         }
     }
 
+    private void loadHidden() {
+        var yaml = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(hiddenFile());
+        readUuids(hidden, yaml.getStringList("joueurs"));
+        readUuids(shown, yaml.getStringList("affiches"));
+    }
+
     private void saveHidden() {
         var yaml = new org.bukkit.configuration.file.YamlConfiguration();
-        List<String> list = new ArrayList<>();
+        List<String> off = new ArrayList<>();
         for (UUID uuid : hidden) {
-            list.add(uuid.toString());
+            off.add(uuid.toString());
         }
-        yaml.set("joueurs", list);
+        List<String> on = new ArrayList<>();
+        for (UUID uuid : shown) {
+            on.add(uuid.toString());
+        }
+        yaml.set("joueurs", off);
+        yaml.set("affiches", on);
         try {
             getDataFolder().mkdirs();
             yaml.save(hiddenFile());
@@ -994,9 +1013,16 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         }
     }
 
-    /** 2.4.0 - API : le joueur a-t-il retire ses objets d'interface (/menu off) ? Les plugins ne lui en donnent pas. */
+    /**
+     * 2.4.0 - API : le joueur est-il sans objets de menu (/menu off, ou 2.4.1 : objets retires par defaut sur ce
+     * serveur et pas de /menu on) ? Les plugins ne lui en donnent pas.
+     */
     public boolean itemsHidden(Player player) {
-        return player != null && hidden.contains(player.getUniqueId());
+        if (player == null) {
+            return false;
+        }
+        UUID uuid = player.getUniqueId();
+        return hidden.contains(uuid) || (!itemsByDefault() && !shown.contains(uuid));
     }
 
     /** Boussole et comparateur, declares comme les objets des autres plugins. */
@@ -1114,10 +1140,12 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
             player.sendMessage(lang.c("menu-cmd.in-game", "<red>Impossible pendant une partie."));
             return;
         }
-        if (!hidden.add(player.getUniqueId())) {
+        if (itemsHidden(player)) {
             player.sendMessage(lang.c("menu-cmd.already-off", "<yellow>Tes objets de menu sont déjà retirés. <gray>(/menu on pour les remettre)"));
             return;
         }
+        hidden.add(player.getUniqueId());
+        shown.remove(player.getUniqueId());
         saveHidden();
         PlayerInventory inventory = player.getInventory();
         for (int i = 0; i < inventory.getSize(); i++) {
@@ -1141,7 +1169,7 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
             player.sendMessage(lang.c("menu-cmd.in-game", "<red>Impossible pendant une partie."));
             return;
         }
-        if (!hidden.contains(player.getUniqueId())) {
+        if (!itemsHidden(player)) {
             player.sendMessage(lang.c("menu-cmd.already-on", "<yellow>Tes objets de menu sont déjà dans ta barre. <gray>(/menu off pour les retirer)"));
             return;
         }
@@ -1187,6 +1215,7 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
             }
         }
         hidden.remove(player.getUniqueId());
+        shown.add(player.getUniqueId());
         saveHidden();
         for (var item : toGive) {
             try {

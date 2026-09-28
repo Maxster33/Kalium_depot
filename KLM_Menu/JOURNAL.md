@@ -170,3 +170,20 @@ de KLM_Menu (`info.*`).
 **Déploiement** : sur **tous les serveurs Paper** (les plugins ci-dessous en dépendent), avec KG_Menu 1.1.0, KalGames
 1.21.0, KG_ScoreBoards 1.6.0, KG_Bingo 1.6.0, KG_BuildBattle 0.2.0 (kal-games), KG_BingoGame 0.8.3 (Serveur Jeux),
 KV_BuildBattle 0.3.6 et KV_Menu 1.3.1 (Kanvas). Aucune clé de config obligatoire. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**
+
+## 2.4.1 — objets de menu retirés par défaut sur Kixster et Event, /menu on pour les avoir (28/09/2026)
+
+**Retour de LeKiwi06 (28/09/2026)** : « le /menu fonctionne bien dans Kixster et Event, mais il ne donne pas la boussole
+quand je fais /menu on (par défaut il doit être off sur ces serveurs pour pas déranger les joueurs, mais il faut laisser
+la possibilité pour ceux qui préfèrent avoir la boussole, les items) ». Cause : `compass.enabled: false` sur ces deux
+serveurs interdisait la boussole, même après `/menu on`.
+- Nouvelle clé **`items-by-default`** (absente = `true`) : à `false`, un joueur n'a aucun objet de menu tant qu'il n'a pas
+  fait `/menu on` ; son choix est gardé (`objets-masques.yml` : `joueurs` = `/menu off`, `affiches` = `/menu on`).
+- `compass.enabled: false` garde son sens : jamais de boussole, même avec `/menu on` (Serveur Jeux : la boussole est un
+  objectif du Bingo).
+- Configs modifiées le 28/09/2026 (accord de LeKiwi06) : **Kixster et Event** : `compass.enabled: true` +
+  `items-by-default: false` (anciennes configs dans `/plugins/_removed-klm_menu-2.4.0/`).
+
+**Déployé sur Kixster et Event le 28/09/2026 à 4 h 03** (serveurs allumés, pris en compte au redémarrage ; 2.4.0 dans
+`/plugins/_removed-klm_menu-2.4.0/`). Lobby, kal-games, Serveur Jeux, Kanvas restent en 2.4.0 (même comportement sans la
+clé). **Statut : non testé en jeu.**

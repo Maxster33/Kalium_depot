@@ -32,6 +32,12 @@ compass:
     - "<gray>Clic droit pour choisir"
     - "<gray>ton serveur."
 
+# 2.4.1 - objets de menu (boussole, comparateur, etoiles des autres plugins) donnes par defaut ? false = retires tant
+# que le joueur ne fait pas /menu on (Kixster, Event : pour ne pas deranger en survie). Absent = true.
+# Ne pas confondre avec compass.enabled: false, qui interdit la boussole meme avec /menu on (Serveur Jeux : c'est un
+# objectif du Bingo).
+items-by-default: true
+
 # 2.4.0 - comparateur « Informations » (classements ; parametres pour les admins).
 # Donne aux admins (kaliummenu.admin) et aux joueurs s'il y a un classement sur ce serveur.
 # Cles facultatives : sans elles, enabled suit compass.enabled, slot 0 (case de gauche), COMPARATOR.
