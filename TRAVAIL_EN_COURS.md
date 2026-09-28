@@ -15,9 +15,17 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 « refus (...) » ; le demandeur retire la ligne à la fin du créneau).
 
 ## Utilisés actuellement
-
+- KLM_Menu — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : couleurs Bedrock, verrou pour tous, comparateur « Informations » (classements, paramètres)
+- KG_Menu — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : compteurs de joueurs, paramètres par jeu dans « Informations »
+- KalGames — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : retrait des boutons obsolètes (mini-jeux, kits, hub), paramètres et arènes par jeu
+- KG_ScoreBoards — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : bouton modération dans les classements
+- KG_Bingo — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : compteur de joueurs, paramètres du Bingo
 
 ## Requis parfois
 
+- KG_BingoGame — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : nombre de joueurs en partie publié sur le relais
+- KG_BuildBattle — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : compteur de joueurs sur le bouton
+- KV_BuildBattle — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : nombre de joueurs en partie publié sur le relais
+- KV_Plots — LeKiwi06 — depuis le 2026-09-28 02:23 — refonte des menus : comparateur « Informations » rangé quand on construit sur son plot
 
 ## Demandes
