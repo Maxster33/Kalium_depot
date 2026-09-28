@@ -1,5 +1,6 @@
 package fr.kalium.crafts;
 
+import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import io.papermc.paper.potion.PotionMix;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -38,6 +39,12 @@ public final class KSCrafts extends JavaPlugin implements Listener {
 
     private NamespacedKey breakerKey;
     private final List<NamespacedKey> added = new ArrayList<>();
+
+    /** Ingrédients de la Clé de l'End (craft sans forme, un de chaque). */
+    private static final List<Material> CLE_INGREDIENTS = List.of(
+            Material.HEART_OF_THE_SEA, Material.WITHER_SKELETON_SKULL, Material.TOTEM_OF_UNDYING,
+            Material.ENCHANTED_GOLDEN_APPLE, Material.CALIBRATED_SCULK_SENSOR, Material.SPONGE,
+            Material.NETHERITE_INGOT, Material.BELL, Material.CREAKING_HEART);
 
     @Override
     public void onEnable() {
@@ -88,16 +95,8 @@ public final class KSCrafts extends JavaPlugin implements Listener {
 
         // Clé de l'End (1.1.0) : objet de KS_EC_Extension (softdepend), sans forme.
         if (getServer().getPluginManager().isPluginEnabled("KS_EC_Extension")) {
-            shapeless("cle_de_l_end", fr.kalium.ecextension.KSECExtension.creerCle(), List.of(
-                    new RecipeChoice.MaterialChoice(Material.HEART_OF_THE_SEA),
-                    new RecipeChoice.MaterialChoice(Material.WITHER_SKELETON_SKULL),
-                    new RecipeChoice.MaterialChoice(Material.TOTEM_OF_UNDYING),
-                    new RecipeChoice.MaterialChoice(Material.ENCHANTED_GOLDEN_APPLE),
-                    new RecipeChoice.MaterialChoice(Material.CALIBRATED_SCULK_SENSOR),
-                    new RecipeChoice.MaterialChoice(Material.SPONGE),
-                    new RecipeChoice.MaterialChoice(Material.NETHERITE_INGOT),
-                    new RecipeChoice.MaterialChoice(Material.BELL),
-                    new RecipeChoice.MaterialChoice(Material.CREAKING_HEART)));
+            shapeless("cle_de_l_end", fr.kalium.ecextension.KSECExtension.creerCle(),
+                    CLE_INGREDIENTS.stream().map(m -> (RecipeChoice) new RecipeChoice.MaterialChoice(m)).toList());
         } else {
             getLogger().warning("KS_EC_Extension absent : craft de la Clé de l'End ignoré.");
         }
@@ -122,7 +121,7 @@ public final class KSCrafts extends JavaPlugin implements Listener {
                 new RecipeChoice.MaterialChoice(Material.NETHER_WART_BLOCK)));
 
         getLogger().info(added.size() + " crafts ajoutés.");
-        // Joueurs déjà connectés (rechargement du plugin).
+        // Joueurs déjà connectés (rechargement du plugin) qui ont un ingrédient de la Clé de l'End.
         Bukkit.getOnlinePlayers().forEach(this::livreDeRecettes);
     }
 
@@ -135,19 +134,37 @@ public final class KSCrafts extends JavaPlugin implements Listener {
     // ------------------------------------------------------------------ livre de recettes
 
     /**
-     * Recettes montrées dans le livre de recettes de tous les joueurs (1.2.0) : Clé de l'End. Une recette de plugin
-     * n'y apparaît que si elle est « débloquée » pour le joueur.
+     * Clé de l'End dans le livre de recettes (1.3.0) : comme une recette vanilla, débloquée quand le joueur obtient
+     * l'un de ses ingrédients (objet qui arrive dans son inventaire). Une recette de plugin n'apparaît dans le livre
+     * que si elle est débloquée pour le joueur ; une fois débloquée, elle le reste.
      */
-    private void livreDeRecettes(Player player) {
+    private void debloquerCle(Player player) {
         NamespacedKey cle = key("cle_de_l_end");
-        if (added.contains(cle)) {
+        if (added.contains(cle) && !player.hasDiscoveredRecipe(cle)) {
             player.discoverRecipe(cle);
+        }
+    }
+
+    /** Joueur qui a déjà un ingrédient (obtenu avant cette version, ou au démarrage du plugin). */
+    private void livreDeRecettes(Player player) {
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && CLE_INGREDIENTS.contains(item.getType())) {
+                debloquerCle(player);
+                return;
+            }
         }
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         livreDeRecettes(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onSlotChange(PlayerInventorySlotChangeEvent event) {
+        if (CLE_INGREDIENTS.contains(event.getNewItemStack().getType())) {
+            debloquerCle(event.getPlayer());
+        }
     }
 
     // ------------------------------------------------------------------ recettes

@@ -34,3 +34,5 @@ reste vanilla) ; changements de poids par remplacement à probabilité exacte.
   proxy. Aucun autre objet concerné. Reste : redémarrer le proxy et tester sur Bedrock.
 - 29/09/2026 00:25 : KS_Crafts 1.2.0 (recette de la Clé de l'End débloquée dans le livre de recettes de chaque
   joueur à la connexion), déployé.
+- 29/09/2026 00:27 : correction de Maxster33 (« à l'obtention de l'un des objets de la recette », pas à la
+  connexion) : KS_Crafts 1.3.0, recette débloquée dès qu'un ingrédient arrive dans l'inventaire ; déployé.

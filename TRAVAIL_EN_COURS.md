@@ -18,7 +18,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_PvpKit — LeKiwi06 — depuis le 2026-09-28 16:25 — nouveau plugin : PvP Kit sorti de KalGames, kits, barème (éliminations, place, infériorité, série, déclassement)
 - KalGames — LeKiwi06 — depuis le 2026-09-28 16:25 — retrait du PvP Kit et des kits (sortis dans KG_PvpKit)
-- KS_Crafts — Maxster33 — depuis le 2026-09-29 00:26 — Clé de l'End : recette débloquée à l'obtention d'un ingrédient
 
 ## Requis parfois
 
