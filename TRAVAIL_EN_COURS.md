@@ -18,6 +18,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_PvpKit — LeKiwi06 — depuis le 2026-09-28 16:25 — nouveau plugin : PvP Kit sorti de KalGames, kits, barème (éliminations, place, infériorité, série, déclassement)
 - KalGames — LeKiwi06 — depuis le 2026-09-28 16:25 — retrait du PvP Kit et des kits (sortis dans KG_PvpKit)
+- KS_EstomacGardien — Maxster33 — depuis le 2026-09-29 00:01 — casque en diamant : 10 % → 20 %
 
 ## Requis parfois
 
