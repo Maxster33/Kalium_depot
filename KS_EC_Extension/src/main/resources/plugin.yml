@@ -1,0 +1,6 @@
+name: KS_EC_Extension
+version: '${project.version}'
+main: fr.kalium.ecextension.KSECExtension
+api-version: '26.2'
+description: Coffre de l'Ender double (6 lignes) ; les 3 lignes du bas se debloquent case par case avec la Cle de l'End.
+authors: [KaLium]

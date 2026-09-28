@@ -24,3 +24,6 @@ reste vanilla) ; changements de poids par remplacement à probabilité exacte.
 - Ajouté ensuite : KS_EstomacGardien 1.1.0 (`/estomac`, 23:25), puis à la demande de Maxster33 commande retirée
   (1.2.0) et nouveau plugin KS_KaliumGive 1.0.0 (`/kaliumgive <pseudo> <id_custom> <nombre>`, id `estomac_gardien`),
   déployés à 23:35.
+- Ajouté ensuite (23:47) : KS_EC_Extension 1.0.0 (coffre de l'Ender à 6 lignes, 3 du bas débloquées case par case
+  avec la Clé de l'End ; réponses : 1 clé = 1 case, barrière, craft sans forme, clé par 64), KS_Crafts 1.1.0 (craft de
+  la clé), KS_KaliumGive 1.1.0 (id `cle_de_l_end`). À tester.

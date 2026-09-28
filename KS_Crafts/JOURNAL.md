@@ -37,3 +37,12 @@ Crafts « 8 + 1 » en anneau autour de l'objet central, les autres sans forme (r
 - Élixirs : reportés (décision de Maxster33).
 
 **Déployé sur Event le 25/09/2026. Statut : non testé en jeu.**
+
+## 1.1.0 - craft de la Clé de l'End (28/09/2026)
+
+Demande de Maxster33. **Clé de l'End** (objet de KS_EC_Extension, `softdepend`), sans forme : coeur de la mer, crâne
+de wither squelette, totem d'immortalité, pomme dorée enchantée, capteur sculk calibré, éponge (sèche), lingot de
+netherite, cloche, coeur de grinceur → 1 Clé de l'End. Sans KS_EC_Extension activé : craft ignoré (avertissement dans la
+console). `build.sh` compile contre les classes de KS_EC_Extension : **compiler KS_EC_Extension d'abord**.
+
+**Déployé sur Event le 28/09/2026 à 23:47 (1.0.0 dans `_removed-ks_crafts-1.0.0/`). Statut : non testé en jeu.**

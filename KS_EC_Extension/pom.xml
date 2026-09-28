@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.kalium</groupId>
-    <artifactId>KS_KaliumGive</artifactId>
-    <version>1.1.0</version>
+    <artifactId>KS_EC_Extension</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>KS_KaliumGive</name>
+    <name>KS_EC_Extension</name>
 
     <properties>
         <!-- Paper 26.x requires Java 25 -->

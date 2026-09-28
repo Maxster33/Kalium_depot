@@ -85,6 +85,22 @@ public final class KSCrafts extends JavaPlugin implements Listener {
         ring("ochre_froglight", Material.MAGMA_BLOCK, new RecipeChoice.MaterialChoice(Material.ORANGE_DYE), new ItemStack(Material.OCHRE_FROGLIGHT, 4));
         ring("pearlescent_froglight", Material.MAGMA_BLOCK, new RecipeChoice.MaterialChoice(Material.PURPLE_DYE), new ItemStack(Material.PEARLESCENT_FROGLIGHT, 4));
 
+        // Clé de l'End (1.1.0) : objet de KS_EC_Extension (softdepend), sans forme.
+        if (getServer().getPluginManager().isPluginEnabled("KS_EC_Extension")) {
+            shapeless("cle_de_l_end", fr.kalium.ecextension.KSECExtension.creerCle(), List.of(
+                    new RecipeChoice.MaterialChoice(Material.HEART_OF_THE_SEA),
+                    new RecipeChoice.MaterialChoice(Material.WITHER_SKELETON_SKULL),
+                    new RecipeChoice.MaterialChoice(Material.TOTEM_OF_UNDYING),
+                    new RecipeChoice.MaterialChoice(Material.ENCHANTED_GOLDEN_APPLE),
+                    new RecipeChoice.MaterialChoice(Material.CALIBRATED_SCULK_SENSOR),
+                    new RecipeChoice.MaterialChoice(Material.SPONGE),
+                    new RecipeChoice.MaterialChoice(Material.NETHERITE_INGOT),
+                    new RecipeChoice.MaterialChoice(Material.BELL),
+                    new RecipeChoice.MaterialChoice(Material.CREAKING_HEART)));
+        } else {
+            getLogger().warning("KS_EC_Extension absent : craft de la Clé de l'End ignoré.");
+        }
+
         // Verrue du Nether : remplacee par le bloc de verrue (briques rouges), craft 9 verrues -> bloc retire.
         Bukkit.removeRecipe(NamespacedKey.minecraft("red_nether_bricks"));
         Bukkit.removeRecipe(NamespacedKey.minecraft("nether_wart_block"));

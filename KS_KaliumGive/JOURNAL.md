@@ -17,3 +17,10 @@ Plugin autonome, serveur Event. Demande de Maxster33 du 28/09/2026.
   `build.sh`.
 
 **Déployé sur Event le 28/09/2026 à 23:35. Statut : non testé en jeu.**
+
+## 1.1.0 - id cle_de_l_end (28/09/2026)
+
+Demande de Maxster33 : **`cle_de_l_end`** ajouté à la liste (Clé de l'End, créée par KS_EC_Extension,
+`KSECExtension.creerCle()` ; `softdepend` et `build.sh` : compiler KS_EC_Extension d'abord).
+
+**Déployé sur Event le 28/09/2026 à 23:47 (1.0.0 dans `_removed-ks_kaliumgive-1.0.0/`). Statut : non testé en jeu.**

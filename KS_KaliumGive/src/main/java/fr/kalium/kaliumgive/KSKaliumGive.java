@@ -34,6 +34,8 @@ public final class KSKaliumGive extends JavaPlugin {
     static {
         OBJETS.put("estomac_gardien", new ObjetCustom("KS_EstomacGardien",
                 () -> fr.kalium.estomacgardien.KSEstomacGardien.creerEstomac()));
+        OBJETS.put("cle_de_l_end", new ObjetCustom("KS_EC_Extension",
+                () -> fr.kalium.ecextension.KSECExtension.creerCle()));
     }
 
     @Override
