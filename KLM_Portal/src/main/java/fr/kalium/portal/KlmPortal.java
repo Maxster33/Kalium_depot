@@ -385,6 +385,9 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
      * Deux listes : les regions WorldGuard du monde du joueur qui ne sont pas encore des portails, et les destinations
      * de KLM_Menu sur ce serveur. La region se dessine avant, avec WorldEdit et /rg define.
      */
+    /** 1.3.1 : prefixe des regions proposees par « Ajouter un portail ». */
+    private static final String PORTAL_PREFIX = "portal_";
+
     private void openAddMenu(Player player, Consumer<Player> back) {
         if (!player.hasPermission("klmportal.admin")) {
             return;
@@ -398,7 +401,9 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
             Map<String, Portal> existing = portals.getOrDefault(player.getWorld().getName(), Map.of());
             for (String id : manager.getRegions().keySet()) {
                 // 1.3.0 : les regions interdites (zone a effets, zone d'arrivee) ne sont pas proposees.
-                if (!id.equals("__global__") && !existing.containsKey(id.toLowerCase(Locale.ROOT))
+                // 1.3.1 : seulement les regions dont le nom commence par « portal_ » (demande de LeKiwi06, 28/09/2026 :
+                // « pour eviter de futurs missclicks »). /klmportal set accepte toujours n'importe quelle region autorisee.
+                if (id.toLowerCase(Locale.ROOT).startsWith(PORTAL_PREFIX) && !id.equals("__global__") && !existing.containsKey(id.toLowerCase(Locale.ROOT))
                         && forbiddenReason(player.getWorld(), manager.getRegion(id)) == null) {
                     freeRegions.add(id);
                 }
@@ -409,8 +414,8 @@ public final class KlmPortal extends JavaPlugin implements Listener, TabComplete
 
         if (freeRegions.isEmpty() || destinations.isEmpty()) {
             Component reason = freeRegions.isEmpty()
-                    ? lang.c("add.no-region", "<gray>Aucune région WorldGuard libre dans ce monde. Dessine la zone "
-                            + "avec la baguette de WorldEdit, puis <white>/rg define <nom></white>, et reviens ici.")
+                    ? lang.c("add.no-region-2", "<gray>Aucune région <white>portal_...</white> libre dans ce monde. Dessine la zone "
+                            + "avec la baguette de WorldEdit, puis <white>/rg define portal_<nom></white>, et reviens ici.")
                     : lang.c("add.no-destination", "<gray>Aucune destination dans KLM_Menu sur ce serveur.");
             gui.open(player, title, List.of(reason), List.of(), List.of(backButton), null, 1);
             lang.saveIfNeeded();

@@ -15,7 +15,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 « refus (...) » ; le demandeur retire la ligne à la fin du créneau).
 
 ## Utilisés actuellement
-- KLM_Portal — LeKiwi06 — depuis le 2026-09-28 12:02 — « Ajouter un portail » : seulement les régions portal_...
 
 ## Requis parfois
 

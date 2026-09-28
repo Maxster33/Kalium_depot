@@ -124,3 +124,15 @@ gardée) ; en 1.3.0 il n'a plus d'effet.
 
 **Déployé sur le lobby et Kanvas le 28/09/2026 à 11 h 59** (serveurs allumés, pris en compte au redémarrage ; 1.2.0 dans
 `/plugins/_removed-klm_portal-1.2.0/`). **Statut : non testé en jeu.**
+
+## 1.3.1 — « Ajouter un portail » : seulement les régions portal_... (28/09/2026)
+
+**Demande de LeKiwi06 (28/09/2026)** : « fais en sorte de n'inclure que les régions qui commencent par "portal_" dans
+cette interface pour éviter de futurs missclicks ».
+- L'interface « Ajouter un portail » ne propose que les régions WorldGuard dont le nom commence par `portal_` (les 4
+  portails du lobby sont déjà nommés ainsi). Sans région de ce nom : rappel de la marche à suivre
+  (`/rg define portal_<nom>`, nouveau texte `add.no-region-2`).
+- `/klmportal set <région> <destination>` accepte toujours n'importe quelle région autorisée (garde-fou de la 1.3.0).
+
+**Déployé sur le lobby et Kanvas le 28/09/2026 à 12 h 03** (serveurs allumés, pris en compte au redémarrage ; 1.3.0 dans
+`/plugins/_removed-klm_portal-1.3.0/`). **Statut : non testé en jeu.**
