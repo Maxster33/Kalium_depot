@@ -18,6 +18,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_PvpKit — LeKiwi06 — depuis le 2026-09-28 16:25 — nouveau plugin : PvP Kit sorti de KalGames, kits, barème (éliminations, place, infériorité, série, déclassement)
 - KalGames — LeKiwi06 — depuis le 2026-09-28 16:25 — retrait du PvP Kit et des kits (sortis dans KG_PvpKit)
+- geyser-bedrock (Geyser du proxy : custom_mappings et packs) — Maxster33 — depuis le 2026-09-29 00:18 — apparence Bedrock de l'Estomac du gardien et de la Clé de l'End
 
 ## Requis parfois
 
