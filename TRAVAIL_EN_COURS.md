@@ -15,6 +15,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 « refus (...) » ; le demandeur retire la ligne à la fin du créneau).
 
 ## Utilisés actuellement
+- KLM_Menu — LeKiwi06 — depuis le 2026-09-28 04:00 — objets de menu désactivés par défaut sur Kixster et Event, /menu on pour les avoir
 
 ## Requis parfois
 
