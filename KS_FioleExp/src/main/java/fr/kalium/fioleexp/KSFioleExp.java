@@ -53,6 +53,10 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
     public void onEnable() {
         pointsKey = new NamespacedKey(this, "points");
         getServer().getPluginManager().registerEvents(this, this);
+        // 1.2.0 : formulaire Bedrock, seulement si Floodgate est present (ses classes ne sont chargees qu'ici).
+        if (getServer().getPluginManager().isPluginEnabled("floodgate")) {
+            getServer().getPluginManager().registerEvents(new FormulaireBedrock(this), this);
+        }
     }
 
     // ------------------------------------------------------------------ fiole remplie
@@ -77,7 +81,7 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
     }
 
     /** 1395 -> "1 395". */
-    private static String groupDigits(int value) {
+    static String groupDigits(int value) {
         String digits = String.valueOf(value);
         StringBuilder out = new StringBuilder();
         for (int i = 0; i < digits.length(); i++) {
@@ -90,7 +94,7 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
     }
 
     /** Nombre de points tape dans le champ du nom (espaces toleres), ou null si ce n'est pas un nombre positif. */
-    private static Integer parsePoints(String text) {
+    static Integer parsePoints(String text) {
         if (text == null) {
             return null;
         }
@@ -114,7 +118,7 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
     }
 
     /** Niveau atteint avec ce total de points. */
-    private static int levelFor(int points) {
+    static int levelFor(int points) {
         int level = 0;
         while (pointsForLevel(level + 1) <= points) {
             level++;
@@ -203,7 +207,7 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
         ItemStack first = inventory.getFirstItem();
         first.setAmount(first.getAmount() - 1);
         inventory.setFirstItem(first.getAmount() > 0 ? first : null);
-        damageAnvil(inventory, player);
+        damageAnvil(inventory.getLocation(), player);
         getServer().getScheduler().runTask(this, player::updateInventory);
     }
 
@@ -218,8 +222,7 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
     }
 
     /** Usure vanilla : 12 % de chance que l'enclume passe a l'etat suivant (hors mode creatif). */
-    private void damageAnvil(AnvilInventory inventory, Player player) {
-        Location location = inventory.getLocation();
+    void damageAnvil(Location location, Player player) {
         if (location == null || location.getWorld() == null) {
             return;
         }

@@ -45,4 +45,8 @@ get "$E/com/sk89q/worldguard/worldguard-core/7.0.19/worldguard-core-7.0.19.jar" 
 get "$E/com/sk89q/worldguard/worldguard-bukkit/7.0.19/worldguard-bukkit-7.0.19.jar" "$L/worldguard-bukkit-7.0.19.jar"
 get "$E/com/sk89q/worldedit/worldedit-core/7.4.5/worldedit-core-7.4.5.jar" "$L/worldedit-core-7.4.5.jar"
 get "$E/com/sk89q/worldedit/worldedit-bukkit/7.4.5/worldedit-bukkit-7.4.5.jar" "$L/worldedit-bukkit-7.4.5.jar"
+# Floodgate + Cumulus (API seulement, formulaires Bedrock de KS_FioleExp ; sur le serveur, Floodgate les fournit)
+O=https://repo.opencollab.dev/main/org/geysermc
+get "$O/floodgate/api/2.2.5-SNAPSHOT/api-2.2.5-20260917.145236-21.jar" "$L/floodgate-api-2.2.5.jar"
+get "$O/cumulus/cumulus/1.1.2/cumulus-1.1.2.jar" "$L/cumulus-1.1.2.jar"
 echo "Outils prets dans $DIR/outils-build"

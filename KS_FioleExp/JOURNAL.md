@@ -44,3 +44,24 @@ Avec KS_Enclume 1.1.0 : au-delà de 39 niveaux, le coût affiché pour remplir u
 coût est écrit en barre d'action (le prélèvement reste fait en points par KS_FioleExp).
 
 **Déployé sur Event le 29/09/2026 à 03:54 (1.0.0 dans `_removed-ks_fioleexp-1.0.0/`). Statut : testé et confirmé en Java par Maxster33 le 29/09/2026 ; Bedrock : problème de remplissage à l'enclume (voir REPRISE_PROJET.md).**
+
+## 1.2.0 - formulaire Bedrock pour remplir une fiole (29/09/2026)
+
+Test de Maxster33 (Bedrock) : à l'enclume, la fiole reçue est la bonne mais on ne voit pas le nombre de niveaux
+consommés (l'aperçu Bedrock montre un simple renommage « 1395 »). Cause : sur Bedrock, le texte du champ du nom n'est
+envoyé au serveur (par Geyser) qu'à la prise du résultat ; le serveur ne peut pas calculer le coût avant. Demande :
+voir le nombre de niveaux consommés. Choix de Maxster33 : formulaire Floodgate.
+- Joueurs Bedrock (Floodgate) : **accroupi + clic droit sur une enclume avec une fiole vide en main** → formulaire
+  « Fiole d'expérience » : points et niveau actuels, champ « Nombre de points à stocker ». Puis confirmation :
+  « Stocker 1 395 points consommera 12 niveaux : tu passeras du niveau 40 au niveau 28. » (Confirmer / Annuler).
+- Confirmation : tout est revérifié (points suffisants, fiole vide dans l'inventaire, enclume toujours là et à 6 blocs
+  au plus) ; une fiole vide consommée, points exacts retirés, fiole remplie donnée (au sol si inventaire plein), usure
+  vanilla de l'enclume. Erreur (nombre invalide, pas assez de points, pas de fiole vide, enclume hors de portée) : le
+  1er formulaire revient avec le message en rouge.
+- Un seul formulaire par seconde (un clic Bedrock peut arriver en double).
+- Joueurs Java : inchangés (champ du nom de l'enclume). L'enclume reste utilisable par les joueurs Bedrock (sans coût
+  visible).
+- Technique : classe `FormulaireBedrock` chargée seulement si Floodgate est activé (`softdepend: [floodgate]`) ;
+  compilé contre l'API Floodgate 2.2.5 et Cumulus 1.1.2, ajoutés à `telecharger-outils.sh` (à relancer sur chaque PC).
+
+**Non déployé. Statut : non testé en jeu.**

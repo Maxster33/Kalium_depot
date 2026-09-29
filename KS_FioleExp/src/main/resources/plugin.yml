@@ -4,3 +4,4 @@ main: fr.kalium.fioleexp.KSFioleExp
 api-version: '26.2'
 description: Stocke des points d'experience dans une fiole a l'enclume ; lancee, la fiole rend exactement ces points.
 authors: [KaLium]
+softdepend: [floodgate]
