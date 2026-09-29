@@ -248,41 +248,35 @@ une recherche, pas une navigation ; autoriser `Textinputhost` (clavier tactile W
 Format : `### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici ; les précédents vont dans
 `archive_reprise.md`.
 
-### 2026-09-28 — LeKiwi06
+### 2026-09-29 — LeKiwi06
 
-*(Session du 27/09/2026 à 9 h 47 au 28/09/2026 à 1 h 30. Fin de session : toutes les réservations libérées.)*
+*(Session du 29/09/2026, de 0 h 45 à 17 h 50, mise en pause par LeKiwi06. Fin de session : réservations libérées.)*
 
-**Build Battle, nouveau mini-jeu (testé et validé par LeKiwi06 le 28/09/2026)** : cahier des charges
-`KV_BuildBattle/CAHIER_DES_CHARGES.md`. Accessible seulement depuis kal-games, joué sur Kanvas (créatif + FAWE, mêmes
-protections que les plots).
-- **KG_BuildBattle 0.1.0** (kal-games, nouveau) : bouton dans KG_Menu ; file publique solo / duo / trio / squad (tempo
-  normal 5 min) ; parties privées (tempo 3 / 5 / 10 / 30 min, équipes de 1 à 4, mode « thèmes écrits », code) ; envoi
-  vers Kanvas par le relais (clé `buildbattle-<uuid>`). Liaison « comme le Bingo » (le moteur de KalGames n'est pas
-  utilisé).
-- **KV_BuildBattle 0.3.5** (Kanvas, nouveau) : monde `buildbattle` ; capture d'une boîte (entière + zone constructible
-  + apparition) recopiée en 4 colonnes de 8 (une par partie, 600 blocs entre colonnes) ; salle d'attente capturée et
-  recopiée par colonne ; partie complète : compte à rebours 30 s dès 2 équipes, 8 équipes max (16 en duo, 32 en
-  squad), vote parmi 5 thèmes (liste de 200 validée) ou thèmes écrits (signalement à la poudre de blaze), construction
-  chronométrée dans sa boîte, zones figées, vote terrain par terrain aux terracottas (30 s → 3 s), résultats, retour
-  sur kal-games, boîtes remises à neuf ; salle en mode aventure, joueurs invincibles, infos en barre d'action ;
-  mobs figés et retirables d'un clic ; rien ne pousse hors de la zone ; `randomTickSpeed` à 0.
-- `relay-token` rempli à la main par LeKiwi06 dans les config.yml de KG_BuildBattle et KV_BuildBattle.
+**Bot Discord : KLM_DiscordBot (nouveau), cahier des charges `KLM_DiscordBot/CAHIER_DES_CHARGES.md`.** Bot externe en
+Node.js qui lit les données de kal-games par une API de KG_ScoreBoards (seul interlocuteur du bot). Décisions de
+LeKiwi06 : commandes slash, salon des classements rafraîchi, annonces, récaps (jour et heure réglables) ; profil joueur,
+classements, accomplissements, activité ; liaison des comptes par code (`/lier`) ; résultats de toutes les parties dans
+un salon avec un fil par jeu ; mention Discord seulement dans les classements mensuels ; `/comparer` avec écarts en % ;
+séries de victoires : parties non classées ignorées, PvP Kit en manches ET en matchs. 6 étapes.
+- **Étape 1 faite, non testée** :
+  - **KG_ScoreBoards 1.7.0** : API HTTP en lecture (`/api/v1/status`, `rankings`, `archives`, `players`, `events` avec
+    curseur), jeton obligatoire. **Déployé sur Kal-Games le 29/09/2026 à 2 h 36, serveur allumé** : actif au prochain
+    redémarrage. Clés `api.port: 45347` (port attribué par Minestrator) et `api.token` **à ajouter à la main** par
+    LeKiwi06 dans `plugins/KG_ScoreBoards/config.yml` (jeton jamais dans le dépôt).
+  - **KLM_DiscordBot 0.1.0** : `/classement` (top 10 en image : général, du mois, mois archivé ; points ou meilleur
+    tour). Lancement : `npm install` puis `npm start` dans `KLM_DiscordBot/` (mode d'emploi : `README.md`).
+- Bot Discord créé par LeKiwi06 dans le portail développeur et invité sur le serveur Discord (7 permissions, lien
+  d'invitation avec `permissions=309237763072`). Node.js 24 installé sur le PC de LeKiwi06.
+- `KLM_DiscordBot/.env` créé vide sur le PC de LeKiwi06 (ignoré par git) : à remplir (`DISCORD_TOKEN`,
+  `DISCORD_GUILD_ID`, `API_TOKEN`).
+- À savoir : en **mode automatique**, Claude Code bloque les envois sur les serveurs (WinSCP), même avec l'accord écrit de
+  l'humain ; repasser dans le mode où l'on approuve chaque action avant un déploiement. Le serveur SFTP de Minestrator ne
+  gère pas la copie distante (`cp` de WinSCP) : passer par un téléchargement puis un envoi.
 
-**Kanvas** : KV_Plots 1.4.1 (`randomTickSpeed` à 0 : la glace ne fond plus) ; KLM_Menu 2.0.0 → 2.3.0 et KLM_Portal 1.2.0
-installés : le point de chute du lobby vers Kanvas fonctionne, boussole et étoile de KV_Menu vérifiées (validé).
-
-**À faire plus tard**
-- **Build Battle, étape 4** : points et classements (KG_ScoreBoards, barème calé sur `EQUILIBRAGE_POINTS.md`).
-- Build Battle : limite du nombre de mobs par zone (non demandée pour l'instant) ; retirer l'emplacement « Build
-  Battle » sans moteur de KalGames à la prochaine retouche de KalGames ; si le serveur s'arrête en pleine partie, les
-  boîtes ne sont pas remises à neuf (« Générer l'arène »).
-- Nettoyage (par l'humain, règle des 3 versions) : sur Kanvas, `_removed-kv_buildbattle-0.1.0/`, `0.2.0/`, `0.3.0/`,
-  `0.3.1/`.
-- Repris de la session du 26/09 (soir) : sur le lobby, VelocityCommandForward et dossiers `ConditionalEvents/`,
-  `PyxelRegions/` non retirés ; `/l` et `/lobby` au lobby (« Tu es déjà au lobby », à trancher) ; visuel des portails
-  désactivés ; KG_Parkour (réglages par checkpoint et par map, barème, contre-la-montre avec fantôme, Bedrock) ;
-  tester KG_Bingo 1.5.1 et KG_BingoGame 0.8.2 ; équilibrage des barèmes ; Kanvas (limites d'entités, agrandissement
-  moyen → grand, classements, extension du monde) ; sauvegardes des mondes ; dossiers gardés volontairement.
+**Reste à faire (reprise)** : ajouter les clés `api` au `config.yml` de KG_ScoreBoards et redémarrer kal-games (console :
+« API du bot Discord à l'écoute sur le port 45347 ») ; remplir `.env` ; lancer le bot et tester `/classement` ; puis
+étape 2 (`/stats`, `/activite`, graphiques d'évolution). Supprimables par l'humain sur kal-games :
+`_removed-kg_scoreboards-1.3.0/` et `1.4.0/`.
 
 ### 2026-09-28 — Maxster33
 

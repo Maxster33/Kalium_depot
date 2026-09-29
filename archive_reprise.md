@@ -413,6 +413,47 @@ moins de 3 blocs vus sous forme de bottes en cuir colorées.
 
 ---
 
+## Compte rendu de LeKiwi06 retiré de REPRISE_PROJET.md le 29/09/2026
+
+### 2026-09-28 — LeKiwi06
+
+*(Session du 27/09/2026 à 9 h 47 au 28/09/2026 à 1 h 30. Fin de session : toutes les réservations libérées.)*
+
+**Build Battle, nouveau mini-jeu (testé et validé par LeKiwi06 le 28/09/2026)** : cahier des charges
+`KV_BuildBattle/CAHIER_DES_CHARGES.md`. Accessible seulement depuis kal-games, joué sur Kanvas (créatif + FAWE, mêmes
+protections que les plots).
+- **KG_BuildBattle 0.1.0** (kal-games, nouveau) : bouton dans KG_Menu ; file publique solo / duo / trio / squad (tempo
+  normal 5 min) ; parties privées (tempo 3 / 5 / 10 / 30 min, équipes de 1 à 4, mode « thèmes écrits », code) ; envoi
+  vers Kanvas par le relais (clé `buildbattle-<uuid>`). Liaison « comme le Bingo » (le moteur de KalGames n'est pas
+  utilisé).
+- **KV_BuildBattle 0.3.5** (Kanvas, nouveau) : monde `buildbattle` ; capture d'une boîte (entière + zone constructible
+  + apparition) recopiée en 4 colonnes de 8 (une par partie, 600 blocs entre colonnes) ; salle d'attente capturée et
+  recopiée par colonne ; partie complète : compte à rebours 30 s dès 2 équipes, 8 équipes max (16 en duo, 32 en
+  squad), vote parmi 5 thèmes (liste de 200 validée) ou thèmes écrits (signalement à la poudre de blaze), construction
+  chronométrée dans sa boîte, zones figées, vote terrain par terrain aux terracottas (30 s → 3 s), résultats, retour
+  sur kal-games, boîtes remises à neuf ; salle en mode aventure, joueurs invincibles, infos en barre d'action ;
+  mobs figés et retirables d'un clic ; rien ne pousse hors de la zone ; `randomTickSpeed` à 0.
+- `relay-token` rempli à la main par LeKiwi06 dans les config.yml de KG_BuildBattle et KV_BuildBattle.
+
+**Kanvas** : KV_Plots 1.4.1 (`randomTickSpeed` à 0 : la glace ne fond plus) ; KLM_Menu 2.0.0 → 2.3.0 et KLM_Portal 1.2.0
+installés : le point de chute du lobby vers Kanvas fonctionne, boussole et étoile de KV_Menu vérifiées (validé).
+
+**À faire plus tard**
+- **Build Battle, étape 4** : points et classements (KG_ScoreBoards, barème calé sur `EQUILIBRAGE_POINTS.md`).
+- Build Battle : limite du nombre de mobs par zone (non demandée pour l'instant) ; retirer l'emplacement « Build
+  Battle » sans moteur de KalGames à la prochaine retouche de KalGames ; si le serveur s'arrête en pleine partie, les
+  boîtes ne sont pas remises à neuf (« Générer l'arène »).
+- Nettoyage (par l'humain, règle des 3 versions) : sur Kanvas, `_removed-kv_buildbattle-0.1.0/`, `0.2.0/`, `0.3.0/`,
+  `0.3.1/`.
+- Repris de la session du 26/09 (soir) : sur le lobby, VelocityCommandForward et dossiers `ConditionalEvents/`,
+  `PyxelRegions/` non retirés ; `/l` et `/lobby` au lobby (« Tu es déjà au lobby », à trancher) ; visuel des portails
+  désactivés ; KG_Parkour (réglages par checkpoint et par map, barème, contre-la-montre avec fantôme, Bedrock) ;
+  tester KG_Bingo 1.5.1 et KG_BingoGame 0.8.2 ; équilibrage des barèmes ; Kanvas (limites d'entités, agrandissement
+  moyen → grand, classements, extension du monde) ; sauvegardes des mondes ; dossiers gardés volontairement.
+
+
+---
+
 ### 2026-09-25 — Maxster33
 
 **Serveur Event reconverti en survie classique** (demande de Maxster33, faite par son Claude, WinSCP en ligne de
