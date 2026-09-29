@@ -399,6 +399,6 @@ installés : le point de chute du lobby vers Kanvas fonctionne, boussole et éto
   ensemble) : fiole remplie en **niveaux** (niveau 50 = points du niveau 0 au niveau 50), à l'enclume et dans le menu
   (Java et Bedrock) ; nom « Fiole d'expérience (niveau 50) », points en description ; confirmation du menu détaillée
   (points de la fiole, points du joueur, coût en points et en niveaux perdus) ; `fiole_exp(N)` en niveaux.
-- **29/09/2026 14:15, compilé, non déployé, non testé** : **KS_LootEntites 1.2.0** : Warden (tué par un joueur) : une
+- **29/09/2026 14:10, compilé, non déployé, non testé** : **KS_LootEntites 1.2.0** : Warden (tué par un joueur) : une
   fiole d'expérience tirée au sort à chaque fois, niveau 20 (poids 15), 30 (10), 40 (6), 50 (3) ou 60 (1) ; l'ancienne
   fiole (10 % d'une fiole de niveau 10 à 50) est retirée.
