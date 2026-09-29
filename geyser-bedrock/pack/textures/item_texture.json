@@ -10,6 +10,15 @@
     },
     "kalium.bedrock_breaker": {
       "textures": ["textures/items/kalium_bedrock_breaker"]
+    },
+    "kalium.fragment_spawner": {
+      "textures": ["textures/items/kalium_fragment_spawner"]
+    },
+    "kalium.coeur_spawner": {
+      "textures": ["textures/items/kalium_coeur_spawner"]
+    },
+    "kalium.changeur_biome": {
+      "textures": ["textures/items/kalium_changeur_biome"]
     }
   }
 }

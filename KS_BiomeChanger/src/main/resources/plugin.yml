@@ -1,0 +1,7 @@
+name: KS_BiomeChanger
+version: '${project.version}'
+main: fr.kalium.biomechanger.KSBiomeChanger
+api-version: '26.2'
+description: Changeur de Biome (serveur Event) - change le biome autour du joueur (overworld), avec historique.
+authors: [KaLium]
+depend: [KLM_Menu]

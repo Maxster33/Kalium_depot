@@ -49,3 +49,15 @@ niveau 0 au niveau N, 1 à 20 000), ex. `/kaliumgive Maxster33 fiole_exp(50) 1` 
 (5 345 points). Message d'id inconnu : `fiole_exp(<niveaux>)`. Utilise `KSFioleExp.creerFioleNiveaux(niveaux)`.
 
 **Déployé sur Event le 29/09/2026 à 14:18 avec KS_FioleExp 1.5.0 (1.3.0 dans `_removed-ks_kaliumgive-1.3.0/` ; supprimables par l'humain, 3 versions derrière : `_removed-ks_kaliumgive-1.0.0/`, `1.1.0/`). Statut : non testé en jeu.**
+
+## 1.5.0 - spawners, fragments, cœur, têtes, Changeur de Biome (29/09/2026)
+
+Demande de Maxster33 : nouveaux id `fragment_spawner`, `coeur_spawner` (KS_ItemSimple), `changeur_biome`
+(KS_BiomeChanger), `spawner_zombi`, `spawner_squelette`, `spawner_araignee`, `spawner_creeper`, `spawner_blaze`,
+`spawner_mouton`, `spawner_vache`, `spawner_poule` (KS_Spawners) ; plus `tete_araignee`, `tete_blaze`, `tete_mouton`,
+`tete_vache`, `tete_poule` (têtes « Steve » de KS_ItemSimple, seul moyen de les obtenir pour l'instant). « spawner
+araignée » de la demande écrit `spawner_araignee` (pas d'espace ni d'accent dans un id). `softdepend` et `build.sh` :
+compiler KS_ItemSimple, KS_BiomeChanger et KS_Spawners d'abord.
+
+**À déployer avec KS_ItemSimple 1.0.0, KS_Spawners 1.0.0 et KS_BiomeChanger 1.0.0. Compilé le 29/09/2026, non déployé.
+Statut : non testé en jeu.**

@@ -4,7 +4,7 @@
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.5.0
+VERSION=1.6.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -17,8 +17,10 @@ case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) SEP=';'; win() { cygpath -w "$1"; } ;;
   *) SEP=':'; win() { printf '%s' "$1"; } ;;
 esac
-# Utilise KS_EC_Extension et KS_BedrockBreaker (softdepend) : compiles d'abord, leurs classes servent seulement a compiler.
+# Utilise KS_EC_Extension, KS_BedrockBreaker, KS_ItemSimple, KS_Spawners et KS_BiomeChanger (softdepend) : compiles
+# d'abord, leurs classes servent seulement a compiler.
 CP="$(win "$TOOLS/classes/KS_EC_Extension")$SEP$(win "$TOOLS/classes/KS_BedrockBreaker")$SEP"
+for p in KS_ItemSimple KS_Spawners KS_BiomeChanger; do CP="$CP$(win "$TOOLS/classes/$p")$SEP"; done
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
 OUT="$TOOLS/classes/KS_Crafts"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"

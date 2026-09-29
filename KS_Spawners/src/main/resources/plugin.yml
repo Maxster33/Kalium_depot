@@ -1,0 +1,6 @@
+name: KS_Spawners
+version: '${project.version}'
+main: fr.kalium.spawners.KSSpawners
+api-version: '26.2'
+description: Spawners fabriques avec leur creature (serveur Event) ; poses par un joueur, ils tombent quand on les casse.
+authors: [KaLium]

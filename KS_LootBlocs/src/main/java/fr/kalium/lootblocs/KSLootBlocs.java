@@ -1,15 +1,19 @@
 package fr.kalium.lootblocs;
 
 import io.papermc.paper.event.block.BlockBreakBlockEvent;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
@@ -31,7 +35,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * - autres minerais : 1 % de chance que le drop soit remplacé par 2 blocs du minerai cassé (jamais avec Toucher de soie) ;
  * - feuilles (cassées ou dégradées) : pousses ×2 sur chêne noir, chêne pâle et acacia ; pommes sur toutes les feuilles
  *   (taux vanilla), chaque pomme : 1 % pomme dorée, 0,01 % pomme dorée enchantée ;
- * - verrue du Nether : plus aucun drop de verrue.
+ * - verrue du Nether : plus aucun drop de verrue ;
+ * - spawners naturels (1.1.0) : 1 Fragment de Spawner + 5 % de chance d'un 2e.
  * Les potions (émeraude deepslate, chorus, verrue) sont dans KS_LootPotions.
  */
 public final class KSLootBlocs extends JavaPlugin implements Listener {
@@ -183,6 +188,30 @@ public final class KSLootBlocs extends JavaPlugin implements Listener {
         event.setCancelled(true);
         block.setType(Material.AIR, true);
         drop(block.getLocation(), drops);
+    }
+
+    // ------------------------------------------------------------------ spawners
+
+    /** Marqueur des spawners poses par un joueur (KS_Spawners) : ils ne donnent pas de fragments. */
+    private static final NamespacedKey SPAWNER_POSE = NamespacedKey.fromString("ks_spawners:pose");
+
+    /**
+     * 1.1.0 (Maxster33) : spawner naturel casse par un joueur (hors creatif, n'importe quel outil) : 1 Fragment de
+     * Spawner (KS_ItemSimple), et 5 % de chance d'un 2e ; l'XP reste vanilla. Les spawners fabriques (KS_Spawners)
+     * n'en donnent pas (sinon on pourrait en produire a l'infini). MONITOR : seulement si le cassage n'est pas annule.
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSpawnerBreak(BlockBreakEvent event) {
+        Block block = event.getBlock();
+        if (block.getType() != Material.SPAWNER || event.getPlayer().getGameMode() == GameMode.CREATIVE
+                || !getServer().getPluginManager().isPluginEnabled("KS_ItemSimple")
+                || (block.getState() instanceof CreatureSpawner spawner
+                        && spawner.getPersistentDataContainer().has(SPAWNER_POSE))) {
+            return;
+        }
+        ItemStack fragments = fr.kalium.itemsimple.KSItemSimple.creerFragmentSpawner();
+        fragments.setAmount(random().nextDouble() < 0.05 ? 2 : 1);
+        drop(block.getLocation(), List.of(fragments));
     }
 
     // ------------------------------------------------------------------ verrue cassee autrement que par un joueur

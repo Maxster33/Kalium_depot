@@ -118,6 +118,31 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             getLogger().warning("KS_BedrockBreaker absent : craft du Bedrock Breaker ignoré.");
         }
 
+        // 1.6.0 (Maxster33) : spawners (KS_Spawners) et Changeur de Biome (KS_BiomeChanger), avec les objets de
+        // KS_ItemSimple ; sans forme (seuls les crafts « 8 + 1 » sont en anneau). Les têtes d'araignée, de blaze, de
+        // mouton, de vache et de poule sont les têtes « Steve » nommées de KS_ItemSimple.
+        if (actif("KS_ItemSimple") && actif("KS_Spawners")) {
+            spawner("zombi", new RecipeChoice.MaterialChoice(Material.ZOMBIE_HEAD));
+            spawner("squelette", new RecipeChoice.MaterialChoice(Material.SKELETON_SKULL));
+            spawner("creeper", new RecipeChoice.MaterialChoice(Material.CREEPER_HEAD));
+            for (String animal : fr.kalium.itemsimple.KSItemSimple.TETES.keySet()) {
+                spawner(animal, new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerTete(animal)));
+            }
+        } else {
+            getLogger().warning("KS_ItemSimple ou KS_Spawners absent : crafts des spawners ignorés.");
+        }
+        if (actif("KS_ItemSimple") && actif("KS_BiomeChanger")) {
+            shapeless("changeur_biome", fr.kalium.biomechanger.KSBiomeChanger.creerChangeur(), concat(
+                    repeat(new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerFragmentSpawner()), 4),
+                    List.of(new RecipeChoice.MaterialChoice(Material.MOSS_BLOCK),
+                            new RecipeChoice.MaterialChoice(Material.POWDER_SNOW_BUCKET),
+                            new RecipeChoice.MaterialChoice(Material.OPEN_EYEBLOSSOM),
+                            new RecipeChoice.MaterialChoice(Material.SNIFFER_EGG),
+                            new RecipeChoice.MaterialChoice(Material.BROWN_MUSHROOM))));
+        } else {
+            getLogger().warning("KS_ItemSimple ou KS_BiomeChanger absent : craft du Changeur de Biome ignoré.");
+        }
+
         // Verrue du Nether : remplacee par le bloc de verrue (briques rouges), craft 9 verrues -> bloc retire.
         Bukkit.removeRecipe(NamespacedKey.minecraft("red_nether_bricks"));
         Bukkit.removeRecipe(NamespacedKey.minecraft("nether_wart_block"));
@@ -155,21 +180,37 @@ public final class KSCrafts extends JavaPlugin implements Listener {
      * ses ingrédients (objet qui arrive dans son inventaire). Une recette de plugin n'apparaît dans le livre que si
      * elle est débloquée pour le joueur ; une fois débloquée, elle le reste.
      * Clé de l'End depuis 1.3.0 ; Bedrock Breaker depuis 1.4.0 (ses nouveaux ingrédients depuis 1.5.0).
+     * 1.6.0 (Maxster33) : un Fragment de Spawner débloque les recettes des spawners et du Changeur de Biome (le fragment
+     * est reconnu à son marqueur : c'est un livre de connaissances, comme d'autres objets custom).
      */
-    private void debloquer(Player player, Material obtenu) {
+    private void debloquer(Player player, ItemStack obtenu) {
+        Material type = obtenu.getType();
         LIVRE.forEach((id, ingredients) -> {
-            NamespacedKey recette = key(id);
-            if (ingredients.contains(obtenu) && added.contains(recette) && !player.hasDiscoveredRecipe(recette)) {
-                player.discoverRecipe(recette);
+            if (ingredients.contains(type)) {
+                decouvrir(player, key(id));
             }
         });
+        if (type == Material.KNOWLEDGE_BOOK && actif("KS_ItemSimple")
+                && "fragment_spawner".equals(fr.kalium.itemsimple.KSItemSimple.idObjet(obtenu))) {
+            for (NamespacedKey recette : added) {
+                if (recette.getKey().startsWith("spawner_") || recette.getKey().equals("changeur_biome")) {
+                    decouvrir(player, recette);
+                }
+            }
+        }
+    }
+
+    private void decouvrir(Player player, NamespacedKey recette) {
+        if (added.contains(recette) && !player.hasDiscoveredRecipe(recette)) {
+            player.discoverRecipe(recette);
+        }
     }
 
     /** Joueur qui a déjà un ingrédient (obtenu avant cette version, ou au démarrage du plugin). */
     private void livreDeRecettes(Player player) {
         for (ItemStack item : player.getInventory().getContents()) {
             if (item != null) {
-                debloquer(player, item.getType());
+                debloquer(player, item);
             }
         }
     }
@@ -181,7 +222,7 @@ public final class KSCrafts extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onSlotChange(PlayerInventorySlotChangeEvent event) {
-        debloquer(event.getPlayer(), event.getNewItemStack().getType());
+        debloquer(event.getPlayer(), event.getNewItemStack());
     }
 
     // ------------------------------------------------------------------ recettes
@@ -198,6 +239,17 @@ public final class KSCrafts extends JavaPlugin implements Listener {
 
     private NamespacedKey key(String id) {
         return new NamespacedKey(this, id);
+    }
+
+    private boolean actif(String plugin) {
+        return getServer().getPluginManager().isPluginEnabled(plugin);
+    }
+
+    /** 1.6.0 : 7 Fragments de Spawner + 1 Cœur de Spawner + la tête -> spawner (id : zombi, squelette...). */
+    private void spawner(String id, RecipeChoice tete) {
+        shapeless("spawner_" + id, fr.kalium.spawners.KSSpawners.creerSpawner(id), concat(
+                repeat(new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerFragmentSpawner()), 7),
+                List.of(new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerCoeurSpawner()), tete)));
     }
 
     private void add(org.bukkit.inventory.Recipe recipe) {

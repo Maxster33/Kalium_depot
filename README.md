@@ -26,6 +26,9 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 | `KS_Villageois/` | Villageois et marchands ambulants sans échanges (sauf étiquette `ks_pnj`) | event |
 | `KS_Crafts/` | Crafts du serveur Event (sable rouge, blocs bruts, calcite, froglights, recette du Bedrock Breaker, Clé de l'End, bloc de verrue...) | event |
 | `KS_BedrockBreaker/` | Bedrock Breaker : objet à usage unique qui retire un bloc de bedrock (protections WorldGuard respectées) | event |
+| `KS_ItemSimple/` | Objets qui ne servent qu'au craft : Fragment et Cœur de Spawner, têtes en attente du plugin des têtes | event |
+| `KS_Spawners/` | Spawners fabriqués avec leur créature ; posés par un joueur, ils tombent quand on les casse | event |
+| `KS_BiomeChanger/` | Changeur de Biome : change le biome autour du joueur (overworld), menu et historique (dépend de KLM_Menu) | event |
 | `KS_LootBlocs/` | Loots des blocs : minerais, feuilles, verrue du Nether | event |
 | `KS_LootEntites/` | Loots des mobs (nerf des fermes AFK) et fioles d'expérience à niveau | event |
 | `KS_LootPeche/` | Pêche sans livres enchantés | event |

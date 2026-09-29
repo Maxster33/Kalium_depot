@@ -98,3 +98,33 @@ Demande de Maxster33 : nouvelle recette du Bedrock Breaker (avec forme) :
   houe en diamant ne la débloquent plus. Un joueur qui l'avait déjà débloquée la garde.
 
 **Déployé sur Event le 29/09/2026 à 13:59 (1.4.0 dans `_removed-ks_crafts-1.4.0/` ; supprimables par l'humain, 3 versions derrière : `_removed-ks_crafts-1.0.0/`, `1.1.0/`, `1.2.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.6.0 - spawners et Changeur de Biome (29/09/2026)
+
+Demande de Maxster33 (détail des objets : `KS_ItemSimple/`, `KS_Spawners/`, `KS_BiomeChanger/`). Crafts **sans forme**
+(seuls les crafts « 8 + 1 » sont en anneau) :
+
+| Ingrédients | Résultat |
+|---|---|
+| 7 Fragments de Spawner + 1 Cœur de Spawner + 1 tête de zombie | Spawner à zombi |
+| ... + 1 crâne de squelette | Spawner à squelette |
+| ... + 1 tête de creeper | Spawner à creeper |
+| ... + 1 Tête d'araignée (tête « Steve » de KS_ItemSimple) | Spawner à araignée |
+| ... + 1 Tête de blaze (idem) | Spawner à blaze |
+| ... + 1 Tête de mouton (idem) | Spawner à mouton |
+| ... + 1 Tête de vache (idem) | Spawner à vache |
+| ... + 1 Tête de poule (idem) | Spawner à poule |
+| 4 Fragments de Spawner + bloc de mousse + seau de neige poudreuse + oeilchidée ouverte + oeuf de sniffer + champignon brun | Changeur de Biome |
+
+- Fragments, cœur et têtes « Steve » : objets exacts de KS_ItemSimple (une tête de joueur ordinaire ne marche pas) ;
+  têtes de zombie, squelette et creeper : les têtes vanilla. Les têtes d'araignée, de blaze, de mouton, de vache et de
+  poule n'existent pas en vanilla : têtes « Steve » nommées en attendant un plugin dédié aux têtes (choix de Maxster33 ;
+  avec de simples têtes de Steve, les 5 recettes auraient été identiques).
+- `softdepend` KS_ItemSimple, KS_Spawners, KS_BiomeChanger ; `build.sh` : les compiler d'abord. Sans eux : crafts
+  ignorés (avertissement dans la console).
+- **Livre de recettes** (demande de Maxster33) : dès qu'un joueur obtient un **Fragment de Spawner**, les recettes des
+  8 spawners et du Changeur de Biome sont débloquées (fragment reconnu à son marqueur, pas seulement au livre de
+  connaissances qui sert de base à d'autres objets custom).
+
+**À déployer avec KS_ItemSimple 1.0.0, KS_Spawners 1.0.0 et KS_BiomeChanger 1.0.0. Compilé le 29/09/2026, non déployé.
+Statut : non testé en jeu.**

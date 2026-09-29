@@ -4,7 +4,7 @@ main: fr.kalium.kaliumgive.KSKaliumGive
 api-version: '26.2'
 description: Commande /kaliumgive pour donner les objets custom du serveur (liste des id_custom dans le plugin).
 authors: [KaLium]
-softdepend: [KS_EstomacGardien, KS_EC_Extension, KS_FioleExp, KS_BedrockBreaker]
+softdepend: [KS_EstomacGardien, KS_EC_Extension, KS_FioleExp, KS_BedrockBreaker, KS_ItemSimple, KS_BiomeChanger, KS_Spawners]
 commands:
   kaliumgive:
     description: Donne un objet custom a un joueur.

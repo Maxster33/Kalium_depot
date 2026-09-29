@@ -17,3 +17,16 @@ Plugin autonome (réutilisable ailleurs), serveur Event. Cahier des charges : `K
 - Potions (émeraude deepslate, chorus, verrue) : dans KS_LootPotions.
 
 **Déployé sur Event le 25/09/2026. Statut : non testé en jeu.**
+
+## 1.1.0 - Fragments de Spawner (29/09/2026)
+
+Demande de Maxster33 : les spawners lâchent des Fragments de Spawner : 1 à chaque spawner + 5 % de chance d'en avoir un
+2e.
+- Spawner **naturel** cassé par un joueur (hors créatif, n'importe quel outil, cassage non annulé par une protection) :
+  1 Fragment de Spawner (KS_ItemSimple), 2 avec 5 % de chance ; l'XP reste vanilla.
+- Les spawners **posés par un joueur** (marqueur `ks_spawners:pose` de KS_Spawners) n'en lâchent pas : ils tombent
+  eux-mêmes (sinon, fragments -> spawner -> fragments à l'infini).
+- `softdepend` KS_ItemSimple ; `build.sh` : compiler KS_ItemSimple d'abord. Sans KS_ItemSimple activé : rien.
+
+**À déployer avec KS_ItemSimple 1.0.0 et KS_Spawners 1.0.0. Compilé le 29/09/2026, non déployé. Statut : non testé en
+jeu.**

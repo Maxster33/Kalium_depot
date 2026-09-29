@@ -40,6 +40,22 @@ public final class KSKaliumGive extends JavaPlugin {
                 () -> fr.kalium.ecextension.KSECExtension.creerCle()));
         OBJETS.put("bedrock_breaker", new ObjetCustom("KS_BedrockBreaker",
                 () -> fr.kalium.bedrockbreaker.KSBedrockBreaker.creerBreaker()));
+        // 1.5.0 : objets de KS_ItemSimple, KS_BiomeChanger et KS_Spawners (ids écrits ici : aucune classe de ces plugins
+        // n'est chargée tant que l'objet n'est pas demandé).
+        OBJETS.put("fragment_spawner", new ObjetCustom("KS_ItemSimple",
+                () -> fr.kalium.itemsimple.KSItemSimple.creerFragmentSpawner()));
+        OBJETS.put("coeur_spawner", new ObjetCustom("KS_ItemSimple",
+                () -> fr.kalium.itemsimple.KSItemSimple.creerCoeurSpawner()));
+        OBJETS.put("changeur_biome", new ObjetCustom("KS_BiomeChanger",
+                () -> fr.kalium.biomechanger.KSBiomeChanger.creerChangeur()));
+        for (String creature : List.of("zombi", "squelette", "araignee", "creeper", "blaze", "mouton", "vache", "poule")) {
+            OBJETS.put("spawner_" + creature, new ObjetCustom("KS_Spawners",
+                    () -> fr.kalium.spawners.KSSpawners.creerSpawner(creature)));
+        }
+        for (String animal : List.of("araignee", "blaze", "mouton", "vache", "poule")) {
+            OBJETS.put("tete_" + animal, new ObjetCustom("KS_ItemSimple",
+                    () -> fr.kalium.itemsimple.KSItemSimple.creerTete(animal)));
+        }
     }
 
     /** Fiole d'experience de KS_FioleExp, avec son nombre de niveaux (1.4.0 ; points avant) : fiole_exp(50). */

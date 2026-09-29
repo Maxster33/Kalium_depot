@@ -31,6 +31,36 @@
           "icon": "kalium.bedrock_breaker",
           "allow_offhand": true
         }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:disc_fragment_5",
+        "bedrock_identifier": "kalium:fragment_spawner",
+        "display_name": "Fragment de Spawner",
+        "bedrock_options": {
+          "icon": "kalium.fragment_spawner",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:respawn_anchor",
+        "bedrock_identifier": "kalium:coeur_spawner",
+        "display_name": "Cœur de Spawner",
+        "bedrock_options": {
+          "icon": "kalium.coeur_spawner",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:end_crystal",
+        "bedrock_identifier": "kalium:changeur_biome",
+        "display_name": "Changeur de Biome",
+        "bedrock_options": {
+          "icon": "kalium.changeur_biome",
+          "allow_offhand": true
+        }
       }
     ]
   }

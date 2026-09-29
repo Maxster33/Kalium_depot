@@ -18,7 +18,7 @@ Le détail technique de chaque version est dans `<plugin>/JOURNAL.md`. Documents
 | **Hub mini-jeux (Kal-Games)** | `kal-games` | `KalGames2@7001.mystrator.com` (onglet « KalGames2 ») | 91.197.6.24:22142 | KalGames, KG_PvpKit, KG_BoatRace, KG_Parkour, KG_BuildBattle, KG_Menu, KG_Bingo, KG_ScoreBoards, KLM_Menu |
 | **Bingo + jeux gourmands** (Manhunt...) | `serveur-jeux` | `serveurjeux@7015.mystrator.com` | 91.197.6.65:22470 | KG_BingoGame, KLM_Menu (boussole désactivée) |
 | Kixster SMP (rendu au SMP le 24/09/2026) | `kixster` | `kixster@7003.mystrator.com` | 91.197.6.212:29599 | KLM_Menu (boussole désactivée, menu par `/menu`) |
-| Event : survie classique (depuis le 25/09/2026) | `event` | `Event@7021.mystrator.com` (session WinSCP enregistrée) | 51.254.174.133:21088 | KLM_Menu (boussole désactivée, `/menu`), KS_Dimensions, KS_Enclume, KS_Villageois, KS_Crafts, KS_BedrockBreaker, KS_LootBlocs, KS_LootEntites, KS_LootPeche, KS_LootPotions, KS_EstomacGardien, KS_LootCoffres, KS_KaliumGive, KS_EC_Extension, KS_FioleExp (cahier des charges : `KS_Event/`) |
+| Event : survie classique (depuis le 25/09/2026) | `event` | `Event@7021.mystrator.com` (session WinSCP enregistrée) | 51.254.174.133:21088 | KLM_Menu (boussole désactivée, `/menu`), KS_Dimensions, KS_Enclume, KS_Villageois, KS_Crafts, KS_BedrockBreaker, KS_ItemSimple (à déployer), KS_Spawners (à déployer), KS_BiomeChanger (à déployer), KS_LootBlocs, KS_LootEntites, KS_LootPeche, KS_LootPotions, KS_EstomacGardien, KS_LootCoffres, KS_KaliumGive, KS_EC_Extension, KS_FioleExp (cahier des charges : `KS_Event/`) |
 | Serveur de plots en créatif (Kanvas) | `Kanvas` (ex `kal-test-dev`, renommé par LeKiwi06 dans `velocity.toml` le 24-25/09/2026 ; destination de la boussole du lobby renommée `Kanvas` le 26/09/2026) | `Kal-Test-Dev@5038.mystrator.com` | 91.197.6.215:21621 | KV_Plots, KV_Menu, KLM_Menu (cahier des charges : `KV_Plots/CAHIER_DES_CHARGES.md`) |
 
 Machines Minestrator : **machine 1** = proxy, lobby, Event (ex kal-games), Kixster ; **machine 2** = Kal-Test-Dev ;
@@ -409,3 +409,12 @@ installés : le point de chute du lobby vers Kanvas fonctionne, boussole et éto
   `_removed-ks_fioleexp-1.0.0/`, `1.1.0/`, `1.2.0/`, `_removed-ks_kaliumgive-1.0.0/`, `1.1.0/`.
 - **29/09/2026 14:21, déployé sur Event à 14:22, non testé (actif après redémarrage d'Event ; supprimable par l'humain : `_removed-ks_lootentites-1.0.0/`)** : **KS_LootEntites 1.2.1** : Warden, ligne « rien » de poids 315
   dans le tirage : 10 % de chance d'une fiole (niveau 10 : 4,29 %, 15 : 2,86 %, 20 : 1,71 %, 30 : 0,86 %, 40 : 0,29 %).
+- **29/09/2026 17:10, compilé, non déployé, non testé** : **spawners et Changeur de Biome** (à déployer ensemble ;
+  réservations au-delà de 2 plugins avec l'accord de LeKiwi06, selon Maxster33). Nouveaux plugins **KS_ItemSimple 1.0.0**
+  (Fragment de Spawner, Cœur de Spawner, 5 têtes « Steve » nommées en attendant un plugin des têtes), **KS_Spawners
+  1.0.0** (8 spawners avec leur créature, empilables par 64 ; posés par un joueur, ils tombent quand on les casse, sans
+  XP), **KS_BiomeChanger 1.0.0** (Changeur de Biome : menu des biomes de l'overworld, sphère de 32 blocs, historique,
+  téléportation pour les opérateurs ; dépend de KLM_Menu) ; **KS_Crafts 1.6.0** (8 spawners : 7 fragments + cœur + tête ;
+  Changeur de Biome ; recettes débloquées dans le livre à l'obtention d'un Fragment de Spawner) ; **KS_KaliumGive 1.5.0**
+  (16 nouveaux id) ; **KS_LootBlocs 1.1.0** (spawner naturel : 1 fragment + 5 % d'un 2e) ; **geyser-bedrock 1.2.0**
+  (apparence Bedrock, proxy). Détail dans chaque `JOURNAL.md`.

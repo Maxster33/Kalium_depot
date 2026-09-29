@@ -10,6 +10,9 @@ côté serveur (aucun effet du vrai sac ou de la vraie clé).
 | Estomac du gardien (KS_EstomacGardien) | `knowledge_book` | `minecraft:black_bundle` | `kalium:estomac_gardien` | sac noir |
 | Clé de l'End (KS_EC_Extension) | `knowledge_book` | `minecraft:ominous_trial_key` | `kalium:cle_de_l_end` | clé des épreuves sinistre |
 | Bedrock Breaker (KS_BedrockBreaker) | `knowledge_book` | `minecraft:blaze_rod` | `kalium:bedrock_breaker` | bâton de blaze |
+| Fragment de Spawner (KS_ItemSimple) | `knowledge_book` | `minecraft:disc_fragment_5` | `kalium:fragment_spawner` | fragment de disque |
+| Cœur de Spawner (KS_ItemSimple) | `knowledge_book` | `minecraft:respawn_anchor` | `kalium:coeur_spawner` | côté de l'ancre de réapparition (image plate) |
+| Changeur de Biome (KS_BiomeChanger) | `knowledge_book` | `minecraft:end_crystal` | `kalium:changeur_biome` | cristal de l'End |
 
 Attention : **tout** livre de connaissances qui a l'un de ces `item_model` prend cette apparence ; un futur objet
 custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne ici.
@@ -41,3 +44,6 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
 - **1.1.0 (29/09/2026, Maxster33)** : Bedrock Breaker (image du bâton de blaze). Pack `KaLium-objets-1.1.0.mcpack` (1.0.0
   retiré de `packs/`) et `kalium_objets.json` mis à jour sur le proxy ; anciens fichiers rangés hors de `packs/` et de
   `custom_mappings/` (Geyser lit peut-être les sous-dossiers). Envoyé sur le proxy le 29/09/2026 à 12:56 (anciens fichiers dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.0.0/`) ; actif après redémarrage du proxy. **Non testé.**
+- **1.2.0 (29/09/2026, Maxster33)** : Fragment de Spawner (fragment de disque), Cœur de Spawner (côté de l'ancre de
+  réapparition : l'ancre est un bloc en 3D sur Java, Bedrock n'a qu'une image plate pour un objet custom) et Changeur
+  de Biome (cristal de l'End). **Construit, non envoyé sur le proxy.**

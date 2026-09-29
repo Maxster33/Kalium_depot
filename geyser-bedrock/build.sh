@@ -4,7 +4,7 @@
 # Usage : sh geyser-bedrock/build.sh [chemin du .jar du jeu] (par defaut : version 26.2 du launcher officiel).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.1.0
+VERSION=1.2.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 GAME_JAR="${1:-$APPDATA/.minecraft/versions/26.2/26.2.jar}"
 DEST="$DIR/../sortie"
@@ -16,6 +16,10 @@ cp "$DIR/pack/textures/item_texture.json" "$WORK/textures/"
 unzip -p "$GAME_JAR" assets/minecraft/textures/item/black_bundle.png > "$WORK/textures/items/kalium_estomac_gardien.png"
 unzip -p "$GAME_JAR" assets/minecraft/textures/item/ominous_trial_key.png > "$WORK/textures/items/kalium_cle_de_l_end.png"
 unzip -p "$GAME_JAR" assets/minecraft/textures/item/blaze_rod.png > "$WORK/textures/items/kalium_bedrock_breaker.png"
+unzip -p "$GAME_JAR" assets/minecraft/textures/item/disc_fragment_5.png > "$WORK/textures/items/kalium_fragment_spawner.png"
+# Ancre de reapparition : bloc en 3D sur Java ; sur Bedrock, image plate de son cote (icone d'objet).
+unzip -p "$GAME_JAR" assets/minecraft/textures/block/respawn_anchor_side0.png > "$WORK/textures/items/kalium_coeur_spawner.png"
+unzip -p "$GAME_JAR" assets/minecraft/textures/item/end_crystal.png > "$WORK/textures/items/kalium_changeur_biome.png"
 for f in "$WORK"/textures/items/*.png; do [ -s "$f" ] || { echo "Image manquante : $f"; exit 1; }; done
 rm -f "$DEST/KaLium-objets-$VERSION.mcpack"
 (cd "$WORK" && jar cfM "../KaLium-objets-$VERSION.mcpack" .)
