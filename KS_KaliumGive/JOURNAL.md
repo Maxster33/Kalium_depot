@@ -24,3 +24,10 @@ Demande de Maxster33 : **`cle_de_l_end`** ajouté à la liste (Clé de l'End, cr
 `KSECExtension.creerCle()` ; `softdepend` et `build.sh` : compiler KS_EC_Extension d'abord).
 
 **Déployé sur Event le 28/09/2026 à 23:47 (1.0.0 dans `_removed-ks_kaliumgive-1.0.0/`). Statut : non testé en jeu.**
+
+## 1.2.0 - id fiole_exp(<points>) (29/09/2026)
+
+Demande de Maxster33 : **`fiole_exp(<points>)`**, ex. `/kaliumgive Maxster33 fiole_exp(1395) 1` donne une
+« Fiole d'expérience (1 395 XP) » (créée par KS_FioleExp, `KSFioleExp.creerFiole(points)` ; 1 à 999 999 999 points).
+Complétion : `fiole_exp(` ; le message d'id inconnu cite `fiole_exp(<points>)`. `softdepend` et `build.sh` :
+compiler KS_FioleExp d'abord. **À déployer avec KS_FioleExp 1.0.0** (nécessaire pour cet id).

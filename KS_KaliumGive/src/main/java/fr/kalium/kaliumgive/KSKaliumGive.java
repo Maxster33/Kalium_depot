@@ -14,6 +14,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * KS_KaliumGive (demande de Maxster33, 28/09/2026) : /kaliumgive <pseudo> <id_custom> <nombre> donne un objet custom
@@ -38,6 +40,20 @@ public final class KSKaliumGive extends JavaPlugin {
                 () -> fr.kalium.ecextension.KSECExtension.creerCle()));
     }
 
+    /** Fiole d'experience de KS_FioleExp, avec son nombre de points : fiole_exp(1395). */
+    private static final Pattern FIOLE_EXP = Pattern.compile("fiole_exp\\((\\d{1,9})\\)");
+
+    /** id_custom -> objet, ou null si l'id est inconnu. */
+    private static ObjetCustom trouver(String id) {
+        Matcher fiole = FIOLE_EXP.matcher(id);
+        if (fiole.matches()) {
+            int points = Integer.parseInt(fiole.group(1));
+            return points > 0 ? new ObjetCustom("KS_FioleExp",
+                    () -> fr.kalium.fioleexp.KSFioleExp.creerFiole(points)) : null;
+        }
+        return OBJETS.get(id);
+    }
+
     @Override
     public void onEnable() {
         getCommand("kaliumgive").setExecutor(this);
@@ -53,10 +69,10 @@ public final class KSKaliumGive extends JavaPlugin {
             sender.sendMessage(Component.text("Joueur introuvable : " + args[0], NamedTextColor.RED));
             return true;
         }
-        ObjetCustom objet = OBJETS.get(args[1].toLowerCase());
+        ObjetCustom objet = trouver(args[1].toLowerCase());
         if (objet == null) {
             sender.sendMessage(Component.text("id_custom inconnu : " + args[1] + ". Liste : "
-                    + String.join(", ", OBJETS.keySet()), NamedTextColor.RED));
+                    + String.join(", ", OBJETS.keySet()) + ", fiole_exp(<points>)", NamedTextColor.RED));
             return true;
         }
         if (!getServer().getPluginManager().isPluginEnabled(objet.plugin())) {
@@ -92,6 +108,7 @@ public final class KSKaliumGive extends JavaPlugin {
             Bukkit.getOnlinePlayers().forEach(p -> choix.add(p.getName()));
         } else if (args.length == 2) {
             choix.addAll(OBJETS.keySet());
+            choix.add("fiole_exp(");
         } else {
             return List.of();
         }

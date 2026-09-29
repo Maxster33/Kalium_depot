@@ -22,6 +22,8 @@ opération ; usure vanilla de l'enclume.
 - **Utilisation** : lancée, la fiole se brise comme en vanilla (`ExpBottleEvent`) et lâche exactement les points
   stockés en orbes (ramassables par n'importe qui, absorbées par le Raccommodage comme en vanilla). Marche aussi
   lancée par un distributeur. Les fioles de même quantité s'empilent.
+- **Autres plugins** : `KSFioleExp.creerFiole(points)` crée une fiole remplie (utilisée par KS_KaliumGive 1.2.0,
+  id `fiole_exp(<points>)`, à déployer ensemble).
 - Indépendant de KS_LootEntites (fioles « niveau N », autre marqueur) et compatible avec KS_Enclume (plafond levé).
 
 Limites :

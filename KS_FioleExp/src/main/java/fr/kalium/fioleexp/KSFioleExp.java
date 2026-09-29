@@ -44,7 +44,7 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
 
     private static final int RESULT_SLOT = 2;
 
-    private NamespacedKey pointsKey;
+    private static NamespacedKey pointsKey;
 
     @Override
     public void onEnable() {
@@ -54,8 +54,9 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------ fiole remplie
 
-    /** Fiole d'experience vanilla marquee avec le nombre de points stockes. */
-    private ItemStack filledBottle(int points) {
+    /** Fiole d'experience vanilla marquee avec le nombre de points stockes. Necessite que le plugin soit active
+     * (utilisee aussi par KS_KaliumGive). */
+    public static ItemStack creerFiole(int points) {
         ItemStack bottle = new ItemStack(Material.EXPERIENCE_BOTTLE);
         ItemMeta meta = bottle.getItemMeta();
         meta.displayName(Component.text("Fiole d'expérience (" + groupDigits(points) + " XP)")
@@ -65,7 +66,7 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
         return bottle;
     }
 
-    private Integer storedPoints(ItemStack item) {
+    private static Integer storedPoints(ItemStack item) {
         if (item == null || item.getType() != Material.EXPERIENCE_BOTTLE || !item.hasItemMeta()) {
             return null;
         }
@@ -142,7 +143,7 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
             event.setResult(null); // pas assez d'XP
             return;
         }
-        event.setResult(filledBottle(points));
+        event.setResult(creerFiole(points));
         view.setRepairCost(Math.max(1, player.getLevel() - levelFor(current - points)));
     }
 
@@ -168,7 +169,7 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
         if (points > current) {
             return;
         }
-        ItemStack given = filledBottle(points);
+        ItemStack given = creerFiole(points);
         ClickType click = event.getClick();
         if (click.isShiftClick()) {
             if (!canFit(player.getInventory(), given)) {
