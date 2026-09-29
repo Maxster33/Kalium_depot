@@ -31,12 +31,13 @@ import java.util.UUID;
  *
  * Objet : livre de connaissances (ni outil, ni bloc, ni ingrédient de craft) avec l'image du bâton de blaze, nommé
  * « Bedrock Breaker », description « Utilisation unique », empilable par 64. Son clic droit vanilla est annulé.
- * Clic droit sur un bloc de bedrock : le bloc disparaît (aucun drop) et un Bedrock Breaker est consommé. Refusé :
- * - sur la couche du fond de la dimension (hauteur minimale du monde), pour ne pas ouvrir le vide ;
- * - là où les protections l'interdisent : un cassage de bloc est simulé (BlockBreakEvent), que WorldGuard (ou tout
- *   autre plugin de protection) annule dans une région protégée ; en mode aventure aussi.
+ * Clic droit sur un bloc de bedrock : le bloc disparaît (aucun drop) et un Bedrock Breaker est consommé. Refusé là où
+ * les protections l'interdisent : un cassage de bloc est simulé (BlockBreakEvent), que WorldGuard (ou tout autre plugin
+ * de protection) annule dans une région protégée ; en mode aventure aussi.
  *
  * 1.0.1 : un bloc par seconde au plus et par joueur (un clic répété cassait aussi le bloc juste derrière).
+ * 1.0.2 : la couche du fond (hauteur minimale du monde, refusée en 1.0.0 et 1.0.1) peut de nouveau être cassée
+ * (demande de Maxster33).
  *
  * Les anciens Bedrock Breaker (houe en bois marquée par KS_Crafts 1.0.0 à 1.3.0) marchent encore, avec ces règles.
  * Autres plugins : creerBreaker() (KS_Crafts, KS_KaliumGive).
@@ -102,10 +103,6 @@ public final class KSBedrockBreaker extends JavaPlugin implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        if (block.getY() <= block.getWorld().getMinHeight()) {
-            player.sendActionBar(Component.text("La couche du fond ne peut pas être cassée.", NamedTextColor.RED));
-            return;
-        }
         if (player.getGameMode() == GameMode.ADVENTURE) {
             return;
         }

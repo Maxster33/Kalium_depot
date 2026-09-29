@@ -47,3 +47,12 @@ Demande : limiter l'utilisation à 1 par seconde.
   aucun Bedrock Breaker consommé). Seuls les cassages réussis déclenchent le délai.
 
 **Déployé sur Event le 29/09/2026 à 13:30 (1.0.0 dans `_removed-ks_bedrockbreaker-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.0.2 - couche du fond cassable (29/09/2026)
+
+Demande de Maxster33 : « enlève l'interdiction de casser la couche du fond ». Toute bedrock peut être cassée, y compris
+la couche du fond de chaque dimension (y = -64 dans le monde normal, y = 0 dans le Nether) : un joueur peut donc ouvrir
+un passage vers le vide. Message « La couche du fond ne peut pas être cassée. » retiré. Le reste est inchangé
+(protections WorldGuard, mode aventure, un bloc par seconde).
+
+**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**

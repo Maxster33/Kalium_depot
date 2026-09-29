@@ -390,3 +390,5 @@ installés : le point de chute du lobby vers Kanvas fonctionne, boussole et éto
 - **29/09/2026 13:20, déployé sur Event à 13:30, non testé (actif après redémarrage d'Event)** : **KS_BedrockBreaker 1.0.1** : un bloc par seconde au plus
   par joueur (signalé par Maxster33 : un bloc de bedrock juste derrière était cassé aussi, avec un 2e Bedrock Breaker,
   à cause du clic répété).
+- **29/09/2026 13:35, compilé, non déployé, non testé** : **KS_BedrockBreaker 1.0.2** : la couche du fond peut de nouveau
+  être cassée (demande de Maxster33 ; passage vers le vide possible).
