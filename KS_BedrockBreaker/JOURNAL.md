@@ -36,3 +36,14 @@ Limites :
   la bedrock).
 
 **Déployé sur Event le 29/09/2026 à 12:55 (avec KS_Crafts 1.4.0 et KS_KaliumGive 1.3.0 ; apparence Bedrock : geyser-bedrock 1.1.0 sur le proxy à 12:56), actif après redémarrage d'Event et du proxy. Statut : non testé en jeu.**
+
+## 1.0.1 - un bloc par seconde (29/09/2026)
+
+Signalé par Maxster33 : en cassant un bloc de bedrock avec un autre juste derrière, les deux blocs étaient cassés et
+deux Bedrock Breaker consommés. Cause probable : le clic droit maintenu est répété par le jeu Java (toutes les 0,2 s
+environ) et un clic Bedrock peut arriver en double ; le 2e clic touchait le bloc qui venait d'apparaître derrière.
+Demande : limiter l'utilisation à 1 par seconde.
+- Après un bloc cassé, le même joueur ne peut plus en casser pendant 1 seconde : le clic est ignoré (aucun message,
+  aucun Bedrock Breaker consommé). Seuls les cassages réussis déclenchent le délai.
+
+**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**

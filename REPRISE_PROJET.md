@@ -387,3 +387,6 @@ installés : le point de chute du lobby vers Kanvas fonctionne, boussole et éto
   description, pile de 64, bedrock cassée (1 objet consommé), couche du fond refusée, région WorldGuard refusée (objet
   gardé), ancien Bedrock Breaker, `/kaliumgive <pseudo> bedrock_breaker 1`. **Nettoyage possible par l'humain** (règle
   des 3 versions) : sur Event, `_removed-ks_crafts-1.0.0/`, `_removed-ks_crafts-1.1.0/`, `_removed-ks_kaliumgive-1.0.0/`.
+- **29/09/2026 13:20, compilé, non déployé, non testé** : **KS_BedrockBreaker 1.0.1** : un bloc par seconde au plus
+  par joueur (signalé par Maxster33 : un bloc de bedrock juste derrière était cassé aussi, avec un 2e Bedrock Breaker,
+  à cause du clic répété).

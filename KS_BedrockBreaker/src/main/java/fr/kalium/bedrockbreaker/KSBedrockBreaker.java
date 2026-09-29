@@ -21,7 +21,10 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * KS_BedrockBreaker (demande de Maxster33, 29/09/2026) : le Bedrock Breaker, sorti de KS_Crafts (qui garde la recette).
@@ -33,6 +36,8 @@ import java.util.List;
  * - là où les protections l'interdisent : un cassage de bloc est simulé (BlockBreakEvent), que WorldGuard (ou tout
  *   autre plugin de protection) annule dans une région protégée ; en mode aventure aussi.
  *
+ * 1.0.1 : un bloc par seconde au plus et par joueur (un clic répété cassait aussi le bloc juste derrière).
+ *
  * Les anciens Bedrock Breaker (houe en bois marquée par KS_Crafts 1.0.0 à 1.3.0) marchent encore, avec ces règles.
  * Autres plugins : creerBreaker() (KS_Crafts, KS_KaliumGive).
  */
@@ -41,7 +46,13 @@ public final class KSBedrockBreaker extends JavaPlugin implements Listener {
     /** Marqueur des anciens Bedrock Breaker (houe en bois de KS_Crafts). */
     private static final NamespacedKey ANCIEN_MARQUEUR = new NamespacedKey("ks_crafts", "bedrock_breaker");
 
+    /** 1.0.1 : délai minimal entre deux blocs cassés par un même joueur. */
+    private static final long DELAI_MS = 1000;
+
     private static NamespacedKey marqueur;
+
+    /** Heure du dernier bloc cassé par chaque joueur. */
+    private final Map<UUID, Long> dernierCassage = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -98,6 +109,13 @@ public final class KSBedrockBreaker extends JavaPlugin implements Listener {
         if (player.getGameMode() == GameMode.ADVENTURE) {
             return;
         }
+        // 1.0.1 : clic droit maintenu (répété par le jeu) ou clic Bedrock en double : sans ce délai, le bloc de bedrock
+        // juste derrière était cassé aussi, avec un 2e Bedrock Breaker.
+        long maintenant = System.currentTimeMillis();
+        Long dernier = dernierCassage.get(player.getUniqueId());
+        if (dernier != null && maintenant - dernier < DELAI_MS) {
+            return;
+        }
         ItemStack enMain = player.getInventory().getItem(main);
         if (!estBreaker(enMain)) {
             return;
@@ -109,6 +127,7 @@ public final class KSBedrockBreaker extends JavaPlugin implements Listener {
         if (!cassage.callEvent()) {
             return;
         }
+        dernierCassage.put(player.getUniqueId(), maintenant);
         block.setType(Material.AIR);
         enMain.setAmount(enMain.getAmount() - 1);
         player.getInventory().setItem(main, enMain.getAmount() > 0 ? enMain : null);
