@@ -37,11 +37,16 @@ import org.bukkit.plugin.java.JavaPlugin;
  *
  * 1.1.1 : le résultat au-delà de 39 niveaux est renvoyé au joueur (sinon son jeu le masquait : croix rouge) ; vrai coût
  * en dernière ligne de sa description (la barre d'action était cachée par l'enclume), retirée à la prise.
+ *
+ * 1.1.2 : au-delà de 39 niveaux, l'enclume n'affiche aucun coût (0 envoyé au joueur) ; le vrai coût est rendu à
+ * l'enclume au moment de la prise, qui retire elle-même les niveaux.
  */
 public final class KSEnclume extends JavaPlugin implements Listener {
 
     /** Au-dela, le jeu du joueur affiche « Trop cher ! ». */
     private static final int MAX_AFFICHE = 39;
+    /** 1.1.2 : coût envoyé au joueur au-delà de 39 niveaux ; à 0, son jeu n'écrit aucune ligne de coût. */
+    private static final int COUT_ENVOYE = 0;
     private static final int RESULT_SLOT = 2;
 
     /** Vrai coût (> 39) du résultat affiché dans l'enclume ouverte par chaque joueur, et le résultat sans la ligne ajoutée. */
@@ -85,10 +90,10 @@ public final class KSEnclume extends JavaPlugin implements Listener {
         }
         etats.put(player.getUniqueId(), new Etat(cout, result.clone()));
         event.setResult(avecCout(result, cout, player.getLevel() >= cout));
-        view.setRepairCost(MAX_AFFICHE);
+        view.setRepairCost(COUT_ENVOYE);
         // 1.1.1 : le jeu du joueur recalcule lui-même le résultat quand les cases changent et le vide dès 40 niveaux
         // (croix rouge). On lui renvoie tout le contenu de l'enclume au tick suivant : il recalcule les cases
-        // d'entrée, puis reçoit le résultat et le coût (39) du serveur, qui restent affichés.
+        // d'entrée, puis reçoit le résultat et le coût du serveur, qui restent affichés.
         getServer().getScheduler().runTask(this, player::updateInventory);
     }
 
@@ -105,14 +110,14 @@ public final class KSEnclume extends JavaPlugin implements Listener {
     }
 
     /**
-     * Prise du résultat : le résultat sans la ligne ajoutée est remis dans la case avant la prise ; l'enclume vanilla
-     * retire les 39 niveaux affichés, le plugin retire le reste au tick suivant si la prise a bien eu lieu. Refusée si
-     * le joueur n'a pas le vrai coût. Les prises gérées par un autre plugin (clic annulé, ex. KS_FioleExp, qui donne sa
+     * Prise du résultat : le résultat sans la ligne ajoutée est remis dans la case et le vrai coût est rendu à l'enclume
+     * juste avant la prise : l'enclume vanilla vérifie et retire elle-même les niveaux (1.1.2). Si la prise n'a pas eu
+     * lieu (ex. curseur occupé), l'affichage est remis au tick suivant. Refusée si le joueur n'a pas le vrai coût. Les prises gérées par un autre plugin (clic annulé, ex. KS_FioleExp, qui donne sa
      * propre fiole) sont ignorées.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTake(InventoryClickEvent event) {
-        if (!(event.getView() instanceof AnvilView) || event.getRawSlot() != RESULT_SLOT
+        if (!(event.getView() instanceof AnvilView view) || event.getRawSlot() != RESULT_SLOT
                 || !(event.getWhoClicked() instanceof Player player)) {
             return;
         }
@@ -128,13 +133,15 @@ public final class KSEnclume extends JavaPlugin implements Listener {
             return;
         }
         event.setCurrentItem(etat.resultat().clone());
-        if (creatif) {
-            return;
-        }
-        int reste = etat.cout() - MAX_AFFICHE;
+        view.setRepairCost(etat.cout());
         getServer().getScheduler().runTask(this, () -> {
-            if (player.isOnline() && player.getLevel() <= avant - MAX_AFFICHE) {
-                player.giveExpLevels(-reste);
+            ItemStack reste = view.getTopInventory().getItem(RESULT_SLOT);
+            // Pas pris : la case contient encore le résultat propre remis ci-dessus.
+            if (player.getOpenInventory().getTopInventory().equals(view.getTopInventory())
+                    && etat.resultat().equals(reste)) {
+                view.getTopInventory().setItem(RESULT_SLOT, avecCout(reste, etat.cout(), player.getLevel() >= etat.cout()));
+                view.setRepairCost(COUT_ENVOYE);
+                player.updateInventory();
             }
         });
     }

@@ -45,3 +45,18 @@ Correctif : quand le coût est plafonné, le contenu de l'enclume est renvoyé a
   avec un nombre entier envoyé par le serveur (un pack de ressources changerait le texte pour tous les coûts).
 
 **Déployé sur Event le 29/09/2026 à 04:17 (1.1.0 dans `_removed-ks_enclume-1.1.0/`). Statut : non testé en jeu.**
+
+## 1.1.2 - aucun coût affiché au-delà de 39 niveaux (29/09/2026)
+
+Demande de Maxster33 : ne rien écrire à la place de 39 (« laisser juste coût : »). Le jeu du joueur écrit la ligne de
+coût d'un bloc : impossible de garder « Coût : » sans nombre ; à 0, il n'écrit aucune ligne. Choix de Maxster33 : aucune
+ligne.
+- Au-delà de 39 niveaux, le coût envoyé au joueur est 0 : aucune ligne de coût dans l'enclume ; le vrai coût reste en
+  dernière ligne de la description du résultat.
+- À la prise : le vrai coût est rendu à l'enclume juste avant (`setRepairCost`) ; l'enclume vanilla vérifie et retire
+  elle-même les niveaux (plus de retrait « 39 + reste » au tick suivant). Si la prise n'a pas eu lieu (curseur occupé...),
+  l'affichage (coût 0, ligne ajoutée) est remis au tick suivant.
+- Limite possible : avec un coût de 0, le jeu Java croit ne pas pouvoir prendre l'objet ; le serveur accepte la prise et
+  corrige l'affichage (bref clignotement possible). À vérifier en jeu.
+
+**Non déployé. Statut : non testé en jeu.**
