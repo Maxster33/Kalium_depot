@@ -75,4 +75,4 @@ le jeu écrit un nombre ; 39 à la place).
   « Coût réel », et pour une fiole remplie à l'enclume il montre un simple renommage « 1395 » ; la fiole reçue est
   pourtant la bonne). Un pack de ressources ne change pas ce calcul.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 05:15 (1.1.2 dans `_removed-ks_enclume-1.1.2/`). Statut : non testé en jeu.**
