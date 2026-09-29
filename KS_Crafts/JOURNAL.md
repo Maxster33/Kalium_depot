@@ -126,5 +126,4 @@ Demande de Maxster33 (détail des objets : `KS_ItemSimple/`, `KS_Spawners/`, `KS
   8 spawners et du Changeur de Biome sont débloquées (fragment reconnu à son marqueur, pas seulement au livre de
   connaissances qui sert de base à d'autres objets custom).
 
-**À déployer avec KS_ItemSimple 1.0.0, KS_Spawners 1.0.0 et KS_BiomeChanger 1.0.0. Compilé le 29/09/2026, non déployé.
-Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 17:22 avec KS_ItemSimple, KS_Spawners, KS_BiomeChanger, KS_Crafts 1.6.0, KS_KaliumGive 1.5.0 et KS_LootBlocs 1.1.0 (1.5.0 dans `_removed-ks_crafts-1.5.0/` ; supprimables par l'humain, 3 versions derrière ou plus : `_removed-ks_crafts-1.0.0/` à `1.3.0/`). Statut : non testé en jeu.**

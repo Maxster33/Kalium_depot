@@ -18,17 +18,10 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_ScoreBoards — LeKiwi06 — depuis le 2026-09-29 01:58 — API HTTP en lecture pour le bot Discord (étape 1 de KLM_DiscordBot)
 - KLM_DiscordBot — LeKiwi06 — depuis le 2026-09-29 01:58 — nouveau : bot Discord Node.js, étape 1 (squelette, /classement)
-- KS_ItemSimple — Maxster33 — depuis le 2026-09-29 17:00 — nouveau : Fragment et Coeur de Spawner, têtes — accord de LeKiwi06 (selon Maxster33) pour dépasser 2 plugins
-- KS_BiomeChanger — Maxster33 — depuis le 2026-09-29 17:00 — nouveau : Changeur de Biome, menu, historique — accord de LeKiwi06 (selon Maxster33)
-- KS_Spawners — Maxster33 — depuis le 2026-09-29 17:00 — nouveau : spawners avec créature, pose et cassage — accord de LeKiwi06 (selon Maxster33)
-- KS_Crafts — Maxster33 — depuis le 2026-09-29 17:00 — recettes des spawners et du Changeur de Biome — accord de LeKiwi06 (selon Maxster33)
-- KS_LootBlocs — Maxster33 — depuis le 2026-09-29 17:00 — fragments de spawner sur les spawners naturels — accord de LeKiwi06 (selon Maxster33)
 
 
 ## Requis parfois
 
-- KS_KaliumGive — Maxster33 — depuis le 2026-09-29 17:00 — id des spawners, fragment, coeur, têtes, changeur de biome
-- geyser-bedrock — Maxster33 — depuis le 2026-09-29 17:00 — apparence Bedrock : fragment, coeur de spawner, changeur de biome
 
 
 

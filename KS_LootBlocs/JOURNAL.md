@@ -28,5 +28,4 @@ Demande de Maxster33 : les spawners lâchent des Fragments de Spawner : 1 à cha
   eux-mêmes (sinon, fragments -> spawner -> fragments à l'infini).
 - `softdepend` KS_ItemSimple ; `build.sh` : compiler KS_ItemSimple d'abord. Sans KS_ItemSimple activé : rien.
 
-**À déployer avec KS_ItemSimple 1.0.0 et KS_Spawners 1.0.0. Compilé le 29/09/2026, non déployé. Statut : non testé en
-jeu.**
+**Déployé sur Event le 29/09/2026 à 17:22 avec KS_ItemSimple, KS_Spawners, KS_BiomeChanger, KS_Crafts 1.6.0, KS_KaliumGive 1.5.0 et KS_LootBlocs 1.1.0 (1.0.0 dans `_removed-ks_lootblocs-1.0.0/`). Statut : non testé en jeu.**

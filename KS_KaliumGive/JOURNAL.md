@@ -59,5 +59,4 @@ Demande de Maxster33 : nouveaux id `fragment_spawner`, `coeur_spawner` (KS_ItemS
 araignée » de la demande écrit `spawner_araignee` (pas d'espace ni d'accent dans un id). `softdepend` et `build.sh` :
 compiler KS_ItemSimple, KS_BiomeChanger et KS_Spawners d'abord.
 
-**À déployer avec KS_ItemSimple 1.0.0, KS_Spawners 1.0.0 et KS_BiomeChanger 1.0.0. Compilé le 29/09/2026, non déployé.
-Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 17:22 avec KS_ItemSimple, KS_Spawners, KS_BiomeChanger, KS_Crafts 1.6.0, KS_KaliumGive 1.5.0 et KS_LootBlocs 1.1.0 (1.4.0 dans `_removed-ks_kaliumgive-1.4.0/` ; supprimables par l'humain : `_removed-ks_kaliumgive-1.0.0/` à `1.2.0/`). Statut : non testé en jeu.**

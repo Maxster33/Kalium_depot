@@ -40,3 +40,8 @@ Changeur de Biome dans le livre de recettes dès l'obtention d'un Fragment de Sp
   redémarrage), vérification WorldGuard cellule par cellule avant de consommer l'objet (API WorldGuard 7.0.19 /
   WorldEdit 7.4.5, déjà dans `telecharger-outils.sh`), forme notée dans l'historique ; KS_Spawners : spawner posé
   détruit par une explosion lâché au sol.
+- « oui installe » : déployé sur Event le 29/09/2026 à 17:22 (KS_ItemSimple, KS_Spawners, KS_BiomeChanger 1.0.0,
+  KS_Crafts 1.6.0, KS_KaliumGive 1.5.0, KS_LootBlocs 1.1.0 ; anciens dans `_removed-ks_crafts-1.5.0/`,
+  `_removed-ks_kaliumgive-1.4.0/`, `_removed-ks_lootblocs-1.0.0/`) et sur le proxy à 17:23 (geyser-bedrock 1.2.0 ;
+  anciens dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.1.0/`). Réservations libérées. Redémarrer Event et le
+  proxy (l'humain).
