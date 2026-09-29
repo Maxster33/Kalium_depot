@@ -12,3 +12,20 @@ Demande de Maxster33 : réparer ou fusionner sans « Trop cher ! », coût calcu
   le jeu du joueur) alors que le serveur accepte ; à vérifier en jeu.
 
 **Déployé sur Event le 25/09/2026. Statut : non testé en jeu.**
+
+## 1.1.0 - plus de « Trop cher ! » à l'écran (29/09/2026)
+
+Demande de Maxster33 : au-delà de 40 niveaux, l'enclume affichait « Trop cher ! » (fioles de KS_FioleExp et
+équipement), même si la prise était acceptée. Ce texte est affiché par le jeu du joueur dès 40 niveaux (le serveur ne
+peut pas le changer). Choix de Maxster33 : 39 affiché + vrai coût écrit.
+- Au-delà de 39 niveaux, le coût envoyé au joueur est plafonné à 39 (`PrepareAnvilEvent`, priorité HIGHEST, après
+  les autres plugins) et le vrai coût s'écrit dans la barre d'action : « Coût réel : 55 niveaux » (vert si le joueur
+  a assez de niveaux, rouge sinon).
+- À la prise : refusée si le joueur n'a pas le vrai coût (message en barre d'action) ; sinon l'enclume vanilla retire
+  les 39 niveaux et le plugin retire le reste au tick suivant, seulement si la prise a bien eu lieu (niveau du joueur
+  baissé d'au moins 39). Les niveaux sont retirés comme en vanilla (progression dans le niveau gardée). En créatif :
+  rien n'est retiré, comme en vanilla.
+- Prises gérées par un autre plugin (clic annulé, ex. KS_FioleExp qui retire lui-même les points) : ignorées ; seul
+  l'affichage est plafonné.
+
+**Non déployé. Statut : non testé en jeu.**

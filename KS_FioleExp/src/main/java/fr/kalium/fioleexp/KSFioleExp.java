@@ -36,7 +36,10 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Le résultat est une fiole d'expérience vanilla marquée, nommée « Fiole d'expérience (1 395 XP) ». Une seule fiole
  * vide est remplie par opération. La prise du résultat est faite par le plugin (et non par l'enclume vanilla, qui
  * retirerait des niveaux entiers et toute la pile de fioles vides) : exactement les points demandés sont retirés,
- * l'enclume s'use comme en vanilla (12 %). Le coût affiché est le nombre de niveaux que le joueur va perdre.
+ * l'enclume s'use comme en vanilla (12 %). Le coût affiché est le nombre de niveaux que le joueur va perdre
+ * (plafonné à 39 à l'écran par KS_Enclume au-delà, vrai coût en barre d'action).
+ *
+ * 1.1.0 : les fioles d'expérience (vanilla ou remplies) ne peuvent plus être renommées à l'enclume.
  *
  * Lancée, la fiole se brise comme une fiole vanilla et lâche exactement les points stockés en orbes.
  */
@@ -134,6 +137,12 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPrepare(PrepareAnvilEvent event) {
         AnvilView view = event.getView();
+        // 1.1.0 : aucune fiole d'experience (vanilla ou remplie) ne peut etre renommee.
+        ItemStack first = event.getInventory().getFirstItem();
+        if (first != null && first.getType() == Material.EXPERIENCE_BOTTLE) {
+            event.setResult(null);
+            return;
+        }
         Integer points = requestedPoints(event.getInventory(), view);
         if (points == null || !(view.getPlayer() instanceof Player player)) {
             return;

@@ -34,3 +34,13 @@ Limites :
 - Bedrock (Geyser) : affichage du résultat et du coût de l'enclume à vérifier.
 
 **Déployé sur Event le 29/09/2026 à 03:39 (avec KS_KaliumGive 1.2.0). Statut : testé et confirmé par Maxster33 le 29/09/2026.**
+
+## 1.1.0 - fioles d'expérience impossibles à renommer (29/09/2026)
+
+Demande de Maxster33 : rendre impossible le renommage des fioles d'expérience. Toute fiole d'expérience (vanilla,
+remplie par KS_FioleExp ou « niveau N » de KS_LootEntites) en 1re case de l'enclume : aucun résultat. Le nom d'une
+fiole remplie correspond donc toujours à son contenu.
+Avec KS_Enclume 1.1.0 : au-delà de 39 niveaux, le coût affiché pour remplir une fiole est plafonné à 39 et le vrai
+coût est écrit en barre d'action (le prélèvement reste fait en points par KS_FioleExp).
+
+**Non déployé. Statut : non testé en jeu.**
