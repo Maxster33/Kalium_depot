@@ -40,6 +40,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  *
  * 1.1.2 : au-delà de 39 niveaux, l'enclume n'affiche aucun coût (0 envoyé au joueur) ; le vrai coût est rendu à
  * l'enclume au moment de la prise, qui retire elle-même les niveaux.
+ *
+ * 1.1.3 : joueurs Bedrock (leur jeu refuse la prise à coût 0) : 39 s'ils ont assez de niveaux, sinon « Trop cher ! ».
  */
 public final class KSEnclume extends JavaPlugin implements Listener {
 
@@ -90,11 +92,35 @@ public final class KSEnclume extends JavaPlugin implements Listener {
         }
         etats.put(player.getUniqueId(), new Etat(cout, result.clone()));
         event.setResult(avecCout(result, cout, player.getLevel() >= cout));
-        view.setRepairCost(COUT_ENVOYE);
+        view.setRepairCost(coutEnvoye(player, cout));
         // 1.1.1 : le jeu du joueur recalcule lui-même le résultat quand les cases changent et le vide dès 40 niveaux
         // (croix rouge). On lui renvoie tout le contenu de l'enclume au tick suivant : il recalcule les cases
         // d'entrée, puis reçoit le résultat et le coût du serveur, qui restent affichés.
         getServer().getScheduler().runTask(this, player::updateInventory);
+    }
+
+    /**
+     * Coût envoyé au joueur au-delà de 39 niveaux. Java : 0 (aucune ligne de coût). Bedrock (1.1.3) : son jeu refuse la
+     * prise avec un coût de 0 ; on envoie 39 s'il a assez de niveaux, sinon le vrai coût (son jeu affiche alors
+     * « Trop cher ! »). « 40+ » est impossible : le jeu écrit lui-même un nombre.
+     */
+    private static int coutEnvoye(Player player, int cout) {
+        if (!estBedrock(player)) {
+            return COUT_ENVOYE;
+        }
+        return player.getLevel() >= cout || player.getGameMode() == GameMode.CREATIVE ? MAX_AFFICHE : cout;
+    }
+
+    /** Joueur Bedrock (Floodgate, lu sans dépendance de compilation ; sinon UUID Floodgate : 64 premiers bits à 0). */
+    private static boolean estBedrock(Player player) {
+        UUID uuid = player.getUniqueId();
+        try {
+            Class<?> api = Class.forName("org.geysermc.floodgate.api.FloodgateApi");
+            Object instance = api.getMethod("getInstance").invoke(null);
+            return (Boolean) api.getMethod("isFloodgatePlayer", UUID.class).invoke(instance, uuid);
+        } catch (ReflectiveOperationException | LinkageError | RuntimeException e) {
+            return uuid.getMostSignificantBits() == 0;
+        }
     }
 
     /** Copie du résultat avec « Coût réel : N niveaux » en dernière ligne (vert si le joueur a assez de niveaux). */
@@ -140,7 +166,7 @@ public final class KSEnclume extends JavaPlugin implements Listener {
             if (player.getOpenInventory().getTopInventory().equals(view.getTopInventory())
                     && etat.resultat().equals(reste)) {
                 view.getTopInventory().setItem(RESULT_SLOT, avecCout(reste, etat.cout(), player.getLevel() >= etat.cout()));
-                view.setRepairCost(COUT_ENVOYE);
+                view.setRepairCost(coutEnvoye(player, etat.cout()));
                 player.updateInventory();
             }
         });

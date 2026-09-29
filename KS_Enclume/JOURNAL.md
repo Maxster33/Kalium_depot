@@ -60,3 +60,19 @@ ligne.
   corrige l'affichage (bref clignotement possible). À vérifier en jeu.
 
 **Déployé sur Event le 29/09/2026 à 04:31 (1.1.1 dans `_removed-ks_enclume-1.1.1/`). Statut : testé et confirmé en Java par Maxster33 le 29/09/2026 ; Bedrock : vrai coût absent de la description (voir REPRISE_PROJET.md).**
+
+## 1.1.3 - affichage pour les joueurs Bedrock (29/09/2026)
+
+Test de Maxster33 (Bedrock) avec 1.1.2 : au-delà de 39 niveaux, résultat visible mais impossible à prendre, aucun coût
+affiché. Cause : le jeu Bedrock (via Geyser, qui aligne son coût sur celui du serveur) refuse la prise à coût 0. Avec
+1.1.1 (39 envoyé), la prise marchait. Demande : « Trop cher » sans assez de niveaux, « 40+ » sinon (« 40+ » impossible :
+le jeu écrit un nombre ; 39 à la place).
+- Joueurs Bedrock seulement : 39 envoyé s'ils ont assez de niveaux (ou en créatif), sinon le vrai coût (≥ 40 : leur jeu
+  affiche « Trop cher ! »). Joueurs Java : inchangé (0, aucune ligne de coût).
+- Détection : API Floodgate lue par réflexion (`softdepend: [floodgate]`, pas de dépendance de compilation) ; à défaut,
+  UUID Floodgate (64 premiers bits à 0).
+- Limites Bedrock (non corrigeables côté serveur) : le jeu Bedrock affiche son propre aperçu du résultat (pas la ligne
+  « Coût réel », et pour une fiole remplie à l'enclume il montre un simple renommage « 1395 » ; la fiole reçue est
+  pourtant la bonne). Un pack de ressources ne change pas ce calcul.
+
+**Non déployé. Statut : non testé en jeu.**
