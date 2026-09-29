@@ -40,7 +40,9 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
             Material.RED_TULIP, Material.ORANGE_TULIP, Material.WHITE_TULIP, Material.PINK_TULIP,
             Material.OXEYE_DAISY, Material.CORNFLOWER, Material.LILY_OF_THE_VALLEY);
 
-    private static final int[] WARDEN_LEVELS = {10, 20, 30, 40, 50};
+    /** 1.2.0 (Maxster33) : un tirage de fiole au Warden, niveaux et poids (avant : 10 % d'une fiole 10 à 50). */
+    private static final int[] WARDEN_LEVELS = {20, 30, 40, 50, 60};
+    private static final int[] WARDEN_WEIGHTS = {15, 10, 6, 3, 1};
 
     private NamespacedKey xpLevelKey;
 
@@ -91,8 +93,8 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
                 }
             }
             case WARDEN -> {
-                if (byPlayer && chance(0.10)) {
-                    drops.add(xpBottle(WARDEN_LEVELS[random().nextInt(WARDEN_LEVELS.length)]));
+                if (byPlayer) {
+                    drops.add(xpBottle(wardenLevel()));
                 }
             }
             // Objet du plugin KS_EstomacGardien (ignore s'il n'est pas active).
@@ -194,6 +196,22 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
             case 4 -> new ItemStack(Material.CHORUS_FRUIT);
             default -> new ItemStack(Material.ENDER_PEARL, 8);
         };
+    }
+
+    /** Niveau de la fiole du Warden : un tirage pondere (20 : 15, 30 : 10, 40 : 6, 50 : 3, 60 : 1, sur 35). */
+    private static int wardenLevel() {
+        int total = 0;
+        for (int weight : WARDEN_WEIGHTS) {
+            total += weight;
+        }
+        int roll = random().nextInt(total);
+        for (int i = 0; i < WARDEN_LEVELS.length; i++) {
+            roll -= WARDEN_WEIGHTS[i];
+            if (roll < 0) {
+                return WARDEN_LEVELS[i];
+            }
+        }
+        return WARDEN_LEVELS[WARDEN_LEVELS.length - 1];
     }
 
     private static ItemStack basicPotion(PotionType type) {
