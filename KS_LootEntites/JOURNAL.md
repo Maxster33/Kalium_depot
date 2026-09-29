@@ -59,5 +59,8 @@ description « 160 points d'expérience », s'empile avec les fioles de 10 nivea
 KS_FioleExp ; `build.sh` : compiler KS_FioleExp d'abord. Sans KS_FioleExp activé : l'ancienne fiole (le tirage garde
 ses 6 objets).
 
-**À déployer avec KS_FioleExp 1.5.0 (nécessaire pour la fiole de l'endermite). Compilé le 29/09/2026, non déployé.
-Statut : non testé en jeu.**
+Précision de Maxster33 : les loots ajoutés de l'endermite et du Warden ne tombent que s'ils sont tués par un joueur
+(déjà le cas depuis 1.0.0, vérifié dans le code).
+
+**Déployé sur Event le 29/09/2026 à 14:18 avec KS_FioleExp 1.5.0 (1.1.0 dans `_removed-ks_lootentites-1.1.0/`), actif après
+redémarrage d'Event. Statut : non testé en jeu.**

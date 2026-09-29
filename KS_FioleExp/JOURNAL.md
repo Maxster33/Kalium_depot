@@ -131,5 +131,6 @@ Limites :
   niveaux (les niveaux hauts valent plus de points). La confirmation du menu le détaille ; à l'enclume, seul le nombre de
   niveaux perdus est affiché.
 
-**À déployer avec KS_KaliumGive 1.4.0 (sinon `/kaliumgive ... fiole_exp(...)` échoue). Compilé le 29/09/2026, non
-déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 14:18 avec KS_KaliumGive 1.4.0 et KS_LootEntites 1.2.0 (1.4.0 dans
+`_removed-ks_fioleexp-1.4.0/` ; supprimables par l'humain, 3 versions derrière : `_removed-ks_fioleexp-1.0.0/`, `1.1.0/`,
+`1.2.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

@@ -48,4 +48,4 @@ Choix de Maxster33 (avec KS_FioleExp 1.5.0) : `fiole_exp(N)` donne une fiole de 
 niveau 0 au niveau N, 1 à 20 000), ex. `/kaliumgive Maxster33 fiole_exp(50) 1` → « Fiole d'expérience (niveau 50) »
 (5 345 points). Message d'id inconnu : `fiole_exp(<niveaux>)`. Utilise `KSFioleExp.creerFioleNiveaux(niveaux)`.
 
-**À déployer avec KS_FioleExp 1.5.0. Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 14:18 avec KS_FioleExp 1.5.0 (1.3.0 dans `_removed-ks_kaliumgive-1.3.0/` ; supprimables par l'humain, 3 versions derrière : `_removed-ks_kaliumgive-1.0.0/`, `1.1.0/`). Statut : non testé en jeu.**
