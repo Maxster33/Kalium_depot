@@ -99,3 +99,32 @@ bouton modération dans l'interface de classement directement » ; classements d
   panneaux du hub, clôture du mois) ; son « Retour » ramène au classement.
 
 **Déploiement** : avec KLM_Menu 2.4.0 (obligatoire), KG_Menu 1.1.0, KalGames 1.21.0. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**
+
+## 1.7.0 — API HTTP pour le bot Discord (29/09/2026)
+
+**Demande de LeKiwi06 (29/09/2026)** : bot Discord externe (Node.js) qui affiche classements, stats et graphiques
+(cahier des charges : `KLM_DiscordBot/CAHIER_DES_CHARGES.md`, étape 1). KG_ScoreBoards reste le seul interlocuteur du bot.
+- Nouveau `api/StatsApi` : petit serveur HTTP (`com.sun.net.httpserver`, déjà dans Java, aucune dépendance), fils à
+  part ; les classements en mémoire sont lus sur le fil principal (`callSyncMethod`, 5 s au plus, sinon 503).
+- Routes (GET, JSON) : `/api/v1/status` (version, heure, mois, joueurs en ligne, jeux), `/api/v1/rankings/<jeu>`
+  (`period=general|month`, `sort=points|lap`, `limit` ≤ 100), `/api/v1/archives`, `/api/v1/archives/<archive>/<jeu>`,
+  `/api/v1/players/<uuid ou pseudo>` (points, temps, rang par jeu, général et mois), `/api/v1/events` (journal).
+- Nouveau `api/JournalReader` : lit le journal des parties après un **curseur** (mois en cours de lecture + position
+  en octets de chaque fichier de ce mois, rendu en base64 opaque) ; seules les lignes complètes sont rendues ; chaque
+  événement reçoit un identifiant `_id` (`<mois>/<jeu>@<octet>`). `limit` ≤ 2000, `more: true` s'il en reste.
+- Sécurité : en-tête `Authorization: Bearer <api.token>` obligatoire (comparaison à temps constant), 120 requêtes par
+  minute et par adresse, jeton jamais affiché dans la console. HTTP simple (pas de HTTPS) : données en lecture seule.
+- `config.yml` : **nouvelles clés `api.port` (0 = désactivée) et `api.token` (vide = désactivée)**, valeurs par défaut
+  dans le code. **À ajouter à la main** dans le `config.yml` du serveur (`REGLES.md` § 3.3).
+- Testé hors serveur : curseur du journal (pagination, ligne en cours d'écriture, mois suivant, curseur invalide).
+  Routes HTTP non testées sur un serveur.
+
+**Déploiement** (serveur ARRÊTÉ) : `_removed-kg_scoreboards-1.6.0/` (ancien jar + copie du `config.yml`), envoyer
+`KG_ScoreBoards-1.7.0.jar`, ajouter à la fin de `plugins/KG_ScoreBoards/config.yml` :
+```
+api:
+  port: 45347
+  token: '<jeton genere par l humain, jamais dans le depot>'
+```
+Au démarrage, vérifier dans la console « API du bot Discord à l'écoute sur le port 45347 ».
+**Statut : compilé, non déployé, non testé en jeu.**

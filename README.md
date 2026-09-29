@@ -19,6 +19,7 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 | `KLM_Menu/` | Interface globale : navigation entre serveurs, catalogue des interfaces des plugins, boîte à outils des menus (anciennement KaliumMenu) | chaque serveur Paper |
 | `KLM_Portal/` | Portails : une région WorldGuard reliée à une destination de KLM_Menu (désactivée avec son bouton) | chaque serveur Paper (lobby d'abord) |
 | `KaliumRelay/` | Relais HTTP entre serveurs | proxy Velocity |
+| `KLM_DiscordBot/` | Bot Discord (Node.js, hors Minecraft) : classements, stats et graphiques tirés de l'API de KG_ScoreBoards (cahier des charges dans le dossier) | hébergement à choisir |
 | `KaliumCore/` | Survie (projet en pause) | Kal-Test-Dev |
 | `KS_Dimensions/` | Menu des opérateurs (`/dimensions`) pour activer / désactiver les portails du Nether et de l'End | event |
 | `KS_Enclume/` | Enclume sans plafond de prix (coût vanilla) | event |

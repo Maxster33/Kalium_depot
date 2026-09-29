@@ -18,3 +18,11 @@ boards:
 gui:
   # Largeur des boutons des menus (100 a 400).
   button-width: 240
+
+# 1.7.0 : API HTTP en lecture pour le bot Discord (KLM_DiscordBot). Desactivee tant que port = 0 ou token vide.
+api:
+  # Port d'ecoute (port supplementaire attribue par Minestrator). 0 = API desactivee.
+  port: 0
+  # Jeton partage avec le bot (en-tete Authorization: Bearer ...). A remplir UNIQUEMENT sur le serveur, jamais
+  # dans le depot. Une longue chaine aleatoire (40 caracteres ou plus).
+  token: ''

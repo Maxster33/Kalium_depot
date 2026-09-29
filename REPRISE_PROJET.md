@@ -92,7 +92,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-Aucune (28/09/2026 23:19 : les plugins Event de Maxster33 sont déployés).
+- **KG_ScoreBoards 1.7.0** (29/09/2026, LeKiwi06) : API HTTP en lecture pour le bot Discord (clés `api.port` / `api.token` à ajouter à la main, port 45347 attribué par Minestrator) ; non testé. Procédure dans son `JOURNAL.md`.
+- **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »
 (case de gauche : Classements pour tous, Paramètres pour les admins, un bouton par jeu), boussole réduite à la

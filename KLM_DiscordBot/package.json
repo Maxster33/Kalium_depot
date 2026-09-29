@@ -1,0 +1,19 @@
+{
+  "name": "klm-discordbot",
+  "version": "0.1.0",
+  "description": "Bot Discord du réseau KaLium : classements, statistiques et graphiques tirés de KG_ScoreBoards.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node --env-file=.env src/index.js",
+    "apercu": "node scripts/apercu.js"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.9",
+    "chart.js": "^4.5.1",
+    "discord.js": "^14.27.0"
+  }
+}

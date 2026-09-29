@@ -190,7 +190,7 @@ Pour avoir séries et victoires au **Parcours**, au **Rush** et au **Bingo**, il
 
 | Étape | Contenu | Plugins / dossiers touchés |
 |---|---|---|
-| **1** | API en lecture dans KG_ScoreBoards (`status`, `rankings`, `players`, `events`) + squelette du bot (`/classement` en image). Valide toute la chaîne | KG_ScoreBoards, KLM_DiscordBot |
+| **1** (faite le 29/09/2026 : KG_ScoreBoards 1.7.0 + bot 0.1.0, non testée) | API en lecture dans KG_ScoreBoards (`status`, `rankings`, `players`, `events`) + squelette du bot (`/classement` en image). Valide toute la chaîne | KG_ScoreBoards, KLM_DiscordBot |
 | **2** | Base locale, synchronisation du journal, `/stats`, `/activite` et leurs graphiques | KLM_DiscordBot |
 | **3** | Accomplissements, `/records`, annonces de records | KLM_DiscordBot |
 | **4** | Liaison (`/lier` en jeu et sur Discord) | KG_ScoreBoards, KLM_DiscordBot |
