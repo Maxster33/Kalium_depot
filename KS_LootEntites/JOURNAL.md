@@ -64,3 +64,21 @@ Précision de Maxster33 : les loots ajoutés de l'endermite et du Warden ne tomb
 
 **Déployé sur Event le 29/09/2026 à 14:18 avec KS_FioleExp 1.5.0 (1.1.0 dans `_removed-ks_lootentites-1.1.0/`), actif après
 redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.2.1 - Warden : 10 % de fiole (29/09/2026)
+
+Demande de Maxster33 : 10 % de chance d'obtenir une fiole, par une ligne « rien » dans le tirage du Warden. Les fioles
+pèsent 35 au total : « rien » pèse 315 (35 / 350 = 10 %).
+
+| Résultat | Poids | Chance |
+|---|---|---|
+| rien | 315 | 90 % |
+| fiole niveau 10 | 15 | 4,29 % |
+| fiole niveau 15 | 10 | 2,86 % |
+| fiole niveau 20 | 6 | 1,71 % |
+| fiole niveau 30 | 3 | 0,86 % |
+| fiole niveau 40 | 1 | 0,29 % |
+
+Toujours seulement si le Warden est tué par un joueur. Endermite inchangée.
+
+**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**

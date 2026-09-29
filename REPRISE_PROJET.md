@@ -407,3 +407,5 @@ installés : le point de chute du lobby vers Kanvas fonctionne, boussole et éto
   et description, confirmation détaillée, `/kaliumgive <pseudo> fiole_exp(50) 1`, fiole du Warden et de l'endermite
   (tués par un joueur). **Nettoyage possible par l'humain** (règle des 3 versions) : sur Event,
   `_removed-ks_fioleexp-1.0.0/`, `1.1.0/`, `1.2.0/`, `_removed-ks_kaliumgive-1.0.0/`, `1.1.0/`.
+- **29/09/2026 14:25, compilé, non déployé, non testé** : **KS_LootEntites 1.2.1** : Warden, ligne « rien » de poids 315
+  dans le tirage : 10 % de chance d'une fiole (niveau 10 : 4,29 %, 15 : 2,86 %, 20 : 1,71 %, 30 : 0,86 %, 40 : 0,29 %).
