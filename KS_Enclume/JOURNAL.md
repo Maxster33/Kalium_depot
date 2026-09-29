@@ -37,5 +37,11 @@ Cause : le jeu du joueur recalcule lui-même le résultat quand les cases d'entr
 (valeur fixée dans le jeu) ; le résultat existait côté serveur (en 1.0.0 aussi : un clic sur la case vide le donnait).
 Correctif : quand le coût est plafonné, le contenu de l'enclume est renvoyé au joueur au tick suivant
 (`updateInventory`) : son jeu recalcule les cases d'entrée puis reçoit le résultat et le coût (39) du serveur.
+- Vrai coût : la barre d'action était cachée par l'interface de l'enclume (signalé par Maxster33 ; chat refusé). Choix de
+  Maxster33 : dernière ligne de la description du résultat, « Coût réel : 55 niveaux » (vert si assez de niveaux, rouge
+  sinon). À la prise, le résultat sans cette ligne est remis dans la case juste avant (`setCurrentItem`) : l'objet obtenu
+  ne la garde pas. Pas assez de niveaux : prise refusée sans message (la ligne est rouge).
+- Demandé aussi : afficher « + » au lieu de 39. Impossible : le jeu du joueur écrit lui-même « Coût d'enchantement : N »
+  avec un nombre entier envoyé par le serveur (un pack de ressources changerait le texte pour tous les coûts).
 
 **Non déployé. Statut : non testé en jeu.**

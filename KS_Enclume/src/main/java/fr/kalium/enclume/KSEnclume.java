@@ -1,11 +1,14 @@
 package fr.kalium.enclume;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,6 +19,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.view.AnvilView;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,10 +32,11 @@ import org.bukkit.plugin.java.JavaPlugin;
  * niveaux ("Trop cher !") est levé. Il est levé à l'ouverture de l'enclume (avant tout calcul) et à chaque calcul.
  *
  * 1.1.0 (Maxster33, 29/09/2026) : le jeu du joueur affiche lui-même « Trop cher ! » dès 40 niveaux. Au-delà de 39, le
- * coût envoyé au joueur est donc plafonné à 39 et le vrai coût est écrit dans la barre d'action. À la prise, l'enclume
+ * coût envoyé au joueur est donc plafonné à 39 et le vrai coût est indiqué (1.1.1 : dans la description du résultat). À la prise, l'enclume
  * retire les 39 niveaux affichés et le plugin retire le reste (le joueur doit avoir le vrai coût en niveaux).
  *
- * 1.1.1 : le résultat au-delà de 39 niveaux est renvoyé au joueur (sinon son jeu le masquait : croix rouge).
+ * 1.1.1 : le résultat au-delà de 39 niveaux est renvoyé au joueur (sinon son jeu le masquait : croix rouge) ; vrai coût
+ * en dernière ligne de sa description (la barre d'action était cachée par l'enclume), retirée à la prise.
  */
 public final class KSEnclume extends JavaPlugin implements Listener {
 
@@ -39,8 +44,11 @@ public final class KSEnclume extends JavaPlugin implements Listener {
     private static final int MAX_AFFICHE = 39;
     private static final int RESULT_SLOT = 2;
 
-    /** Vrai coût (> 39) du résultat affiché dans l'enclume ouverte par chaque joueur. */
-    private final Map<UUID, Integer> vraiCout = new HashMap<>();
+    /** Vrai coût (> 39) du résultat affiché dans l'enclume ouverte par chaque joueur, et le résultat sans la ligne ajoutée. */
+    private record Etat(int cout, ItemStack resultat) {
+    }
+
+    private final Map<UUID, Etat> etats = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -59,7 +67,10 @@ public final class KSEnclume extends JavaPlugin implements Listener {
         event.getView().setMaximumRepairCost(Integer.MAX_VALUE);
     }
 
-    /** Apres tous les autres plugins (KS_FioleExp compris) : plafonne le coût affiché à 39. */
+    /**
+     * Apres tous les autres plugins (KS_FioleExp compris) : plafonne le coût affiché à 39 et ajoute le vrai coût en
+     * dernière ligne de la description du résultat (1.1.1 : la barre d'action était cachée par l'enclume).
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPrepareAffichage(PrepareAnvilEvent event) {
         AnvilView view = event.getView();
@@ -69,22 +80,35 @@ public final class KSEnclume extends JavaPlugin implements Listener {
         ItemStack result = event.getResult();
         int cout = view.getRepairCost();
         if (result == null || result.isEmpty() || cout <= MAX_AFFICHE) {
-            vraiCout.remove(player.getUniqueId());
+            etats.remove(player.getUniqueId());
             return;
         }
-        vraiCout.put(player.getUniqueId(), cout);
+        etats.put(player.getUniqueId(), new Etat(cout, result.clone()));
+        event.setResult(avecCout(result, cout, player.getLevel() >= cout));
         view.setRepairCost(MAX_AFFICHE);
-        player.sendActionBar(Component.text("Coût réel : " + cout + " niveaux",
-                player.getLevel() >= cout ? NamedTextColor.GREEN : NamedTextColor.RED));
         // 1.1.1 : le jeu du joueur recalcule lui-même le résultat quand les cases changent et le vide dès 40 niveaux
         // (croix rouge). On lui renvoie tout le contenu de l'enclume au tick suivant : il recalcule les cases
         // d'entrée, puis reçoit le résultat et le coût (39) du serveur, qui restent affichés.
         getServer().getScheduler().runTask(this, player::updateInventory);
     }
 
+    /** Copie du résultat avec « Coût réel : N niveaux » en dernière ligne (vert si le joueur a assez de niveaux). */
+    private static ItemStack avecCout(ItemStack result, int cout, boolean assez) {
+        ItemStack affiche = result.clone();
+        ItemMeta meta = affiche.getItemMeta();
+        List<Component> lore = meta.lore() != null ? new ArrayList<>(meta.lore()) : new ArrayList<>();
+        lore.add(Component.text("Coût réel : " + cout + " niveaux", assez ? NamedTextColor.GREEN : NamedTextColor.RED)
+                .decoration(TextDecoration.ITALIC, false));
+        meta.lore(lore);
+        affiche.setItemMeta(meta);
+        return affiche;
+    }
+
     /**
-     * Prise du résultat : l'enclume vanilla retire les 39 niveaux affichés, le plugin retire le reste au tick suivant
-     * si la prise a bien eu lieu. Les prises gérées par un autre plugin (clic annulé, ex. KS_FioleExp) sont ignorées.
+     * Prise du résultat : le résultat sans la ligne ajoutée est remis dans la case avant la prise ; l'enclume vanilla
+     * retire les 39 niveaux affichés, le plugin retire le reste au tick suivant si la prise a bien eu lieu. Refusée si
+     * le joueur n'a pas le vrai coût. Les prises gérées par un autre plugin (clic annulé, ex. KS_FioleExp, qui donne sa
+     * propre fiole) sont ignorées.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTake(InventoryClickEvent event) {
@@ -92,18 +116,22 @@ public final class KSEnclume extends JavaPlugin implements Listener {
                 || !(event.getWhoClicked() instanceof Player player)) {
             return;
         }
-        Integer cout = vraiCout.get(player.getUniqueId());
+        Etat etat = etats.get(player.getUniqueId());
         ItemStack result = event.getCurrentItem();
-        if (cout == null || result == null || result.isEmpty() || player.getGameMode() == GameMode.CREATIVE) {
+        if (etat == null || result == null || result.isEmpty()) {
             return;
         }
         int avant = player.getLevel();
-        if (avant < cout) {
+        boolean creatif = player.getGameMode() == GameMode.CREATIVE;
+        if (!creatif && avant < etat.cout()) {
             event.setCancelled(true);
-            player.sendActionBar(Component.text("Pas assez de niveaux : il en faut " + cout + ".", NamedTextColor.RED));
             return;
         }
-        int reste = cout - MAX_AFFICHE;
+        event.setCurrentItem(etat.resultat().clone());
+        if (creatif) {
+            return;
+        }
+        int reste = etat.cout() - MAX_AFFICHE;
         getServer().getScheduler().runTask(this, () -> {
             if (player.isOnline() && player.getLevel() <= avant - MAX_AFFICHE) {
                 player.giveExpLevels(-reste);
@@ -114,7 +142,7 @@ public final class KSEnclume extends JavaPlugin implements Listener {
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
         if (event.getView() instanceof AnvilView) {
-            vraiCout.remove(event.getPlayer().getUniqueId());
+            etats.remove(event.getPlayer().getUniqueId());
         }
     }
 }
