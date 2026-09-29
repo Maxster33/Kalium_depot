@@ -40,6 +40,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * (plafonné à 39 à l'écran par KS_Enclume au-delà, vrai coût en barre d'action).
  *
  * 1.1.0 : les fioles d'expérience (vanilla ou remplies) ne peuvent plus être renommées à l'enclume.
+ * 1.2.0 / 1.3.0 : menu de remplissage (accroupi + clic droit sur une enclume avec une fiole vide), voir MenuFiole.
  *
  * Lancée, la fiole se brise comme une fiole vanilla et lâche exactement les points stockés en orbes.
  */
@@ -54,9 +55,10 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
         pointsKey = new NamespacedKey(this, "points");
         getServer().getPluginManager().registerEvents(this, this);
         // 1.2.0 : formulaire Bedrock, seulement si Floodgate est present (ses classes ne sont chargees qu'ici).
-        if (getServer().getPluginManager().isPluginEnabled("floodgate")) {
-            getServer().getPluginManager().registerEvents(new FormulaireBedrock(this), this);
-        }
+        // 1.3.0 : menu aussi pour les joueurs Java (dialogue), voir MenuFiole.
+        FormulaireBedrock bedrock = getServer().getPluginManager().isPluginEnabled("floodgate")
+                ? new FormulaireBedrock() : null;
+        getServer().getPluginManager().registerEvents(new MenuFiole(this, bedrock), this);
     }
 
     // ------------------------------------------------------------------ fiole remplie

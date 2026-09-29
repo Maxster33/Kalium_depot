@@ -64,4 +64,26 @@ voir le nombre de niveaux consommés. Choix de Maxster33 : formulaire Floodgate.
 - Technique : classe `FormulaireBedrock` chargée seulement si Floodgate est activé (`softdepend: [floodgate]`) ;
   compilé contre l'API Floodgate 2.2.5 et Cumulus 1.1.2, ajoutés à `telecharger-outils.sh` (à relancer sur chaque PC).
 
-**Déployé sur Event le 29/09/2026 à 05:58 (1.1.0 dans `_removed-ks_fioleexp-1.1.0/`). Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 05:58 (1.1.0 dans `_removed-ks_fioleexp-1.1.0/`). Statut : testé et confirmé en Bedrock par Maxster33 le 29/09/2026.**
+
+## 1.3.0 - même menu pour les joueurs Java (29/09/2026)
+
+Demande de Maxster33 : uniformiser ; les joueurs Java accèdent eux aussi à un menu par accroupi + clic droit avec une
+fiole vide sur l'enclume, avec le même texte que sur Bedrock.
+- Joueurs Java : **dialogue natif** de Minecraft (API Dialog de Paper) : 1er dialogue « Fiole d'expérience » (points et
+  niveau actuels, champ « Nombre de points à stocker », boutons Valider / Annuler), puis confirmation « Stocker 1 395
+  points consommera 12 niveaux : tu passeras du niveau 40 au niveau 28. » (Confirmer / Annuler). Erreurs : le 1er
+  dialogue revient avec le message en rouge. Seule différence visible : pas de texte d'exemple grisé « ex. 1395 » dans
+  le champ (les dialogues Java n'en ont pas), et le bouton du 1er menu s'appelle « Valider » (sur Bedrock, son nom est
+  choisi par le jeu).
+- Joueurs Bedrock : inchangés (formulaire Floodgate).
+- Technique : nouvelle classe `MenuFiole` (déclencheur, textes, vérifications, remplissage, dialogues Java) commune aux
+  deux ; `FormulaireBedrock` n'affiche plus que les formulaires Floodgate. Sans Floodgate, tout le monde reçoit le
+  dialogue Java. Chaque bouton de dialogue ne sert qu'une fois (10 min au plus).
+- Le remplissage par le champ du nom de l'enclume (1.0.0) reste possible pour tous.
+
+Limites :
+- Les dialogues existent depuis Minecraft Java 1.21.6 : un joueur connecté avec une version plus ancienne (ViaBackwards)
+  ne verra probablement pas le menu (non vérifié).
+
+**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**
