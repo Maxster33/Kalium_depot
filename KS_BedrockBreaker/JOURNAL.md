@@ -46,4 +46,4 @@ Demande : limiter l'utilisation à 1 par seconde.
 - Après un bloc cassé, le même joueur ne peut plus en casser pendant 1 seconde : le clic est ignoré (aucun message,
   aucun Bedrock Breaker consommé). Seuls les cassages réussis déclenchent le délai.
 
-**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 13:30 (1.0.0 dans `_removed-ks_bedrockbreaker-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
