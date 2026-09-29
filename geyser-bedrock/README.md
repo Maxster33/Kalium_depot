@@ -35,4 +35,5 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
 
 - **1.0.0 (29/09/2026, Maxster33)** : Estomac du gardien et Clé de l'End. Geyser 2.11.3-b1245 sur le proxy,
   `enable-custom-content: true`, `force-resource-packs: true`. Envoyé sur le proxy le 29/09/2026 à 00:18 ; actif
-  après redémarrage du proxy. **Non testé.**
+  après redémarrage du proxy. **Testé et confirmé par Maxster33 le 29/09/2026** (le matin, les objets étaient encore
+  des livres : le proxy n'avait pas été redémarré).

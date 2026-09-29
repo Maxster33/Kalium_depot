@@ -86,4 +86,5 @@ Limites :
 - Les dialogues existent depuis Minecraft Java 1.21.6 : un joueur connecté avec une version plus ancienne (ViaBackwards)
   ne verra probablement pas le menu (non vérifié).
 
-**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 10:24 (1.2.0 dans `_removed-ks_fioleexp-1.2.0/`), actif après redémarrage d'Event.
+Statut : non testé en jeu.**
