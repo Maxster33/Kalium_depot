@@ -33,4 +33,4 @@ Limites :
   réel reste celui du marqueur). Signalé, non traité.
 - Bedrock (Geyser) : affichage du résultat et du coût de l'enclume à vérifier.
 
-**Déployé sur Event le 29/09/2026 à 03:39 (avec KS_KaliumGive 1.2.0). Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 03:39 (avec KS_KaliumGive 1.2.0). Statut : testé et confirmé par Maxster33 le 29/09/2026.**
