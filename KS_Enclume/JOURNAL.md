@@ -44,4 +44,4 @@ Correctif : quand le coût est plafonné, le contenu de l'enclume est renvoyé a
 - Demandé aussi : afficher « + » au lieu de 39. Impossible : le jeu du joueur écrit lui-même « Coût d'enchantement : N »
   avec un nombre entier envoyé par le serveur (un pack de ressources changerait le texte pour tous les coûts).
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 04:17 (1.1.0 dans `_removed-ks_enclume-1.1.0/`). Statut : non testé en jeu.**
