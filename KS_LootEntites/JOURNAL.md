@@ -50,7 +50,14 @@ remplacer par 1 tirage :
 
 - Chaque Warden tué par un joueur lâche **toujours** une de ces fioles (le tirage n'a pas d'entrée « rien »). Comme les
   autres ajouts du plugin : seulement s'il est tué par un joueur.
-- Fioles « Fiole d'expérience (niveau N) » de KS_LootEntites (marqueur `xp_level`), comme celles de l'endermite ; elles
-  n'ont pas la description en points des fioles de KS_FioleExp 1.5.0 et ne s'empilent pas avec elles.
+- Fioles « Fiole d'expérience (niveau N) » de KS_LootEntites (marqueur `xp_level`) ; elles n'ont pas la description en
+  points des fioles de KS_FioleExp 1.5.0 et ne s'empilent pas avec elles.
 
-**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**
+**Endermite** (demande de Maxster33, même version) : dans son tirage, l'ancienne fiole de niveau 10 est remplacée par
+la **nouvelle fiole de KS_FioleExp** (`KSFioleExp.creerFioleNiveaux(10)` : « Fiole d'expérience (niveau 10) »,
+description « 160 points d'expérience », s'empile avec les fioles de 10 niveaux faites à l'enclume). `softdepend`
+KS_FioleExp ; `build.sh` : compiler KS_FioleExp d'abord. Sans KS_FioleExp activé : l'ancienne fiole (le tirage garde
+ses 6 objets).
+
+**À déployer avec KS_FioleExp 1.5.0 (nécessaire pour la fiole de l'endermite). Compilé le 29/09/2026, non déployé.
+Statut : non testé en jeu.**

@@ -17,8 +17,8 @@ case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) SEP=';'; win() { cygpath -w "$1"; } ;;
   *) SEP=':'; win() { printf '%s' "$1"; } ;;
 esac
-# Utilise KS_EstomacGardien (softdepend) : compile d'abord, ses classes servent seulement a compiler.
-CP="$(win "$TOOLS/classes/KS_EstomacGardien")$SEP"
+# Utilise KS_EstomacGardien et KS_FioleExp (softdepend) : compiles d'abord, leurs classes servent seulement a compiler.
+CP="$(win "$TOOLS/classes/KS_EstomacGardien")$SEP$(win "$TOOLS/classes/KS_FioleExp")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
 OUT="$TOOLS/classes/KS_LootEntites"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"

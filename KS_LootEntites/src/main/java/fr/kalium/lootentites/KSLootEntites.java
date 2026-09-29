@@ -192,7 +192,9 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
             case 0 -> new ItemStack(Material.BUDDING_AMETHYST);
             case 1 -> new ItemStack(Material.SHULKER_SHELL);
             case 2 -> basicPotion(PotionType.REGENERATION);
-            case 3 -> xpBottle(10);
+            // 1.2.0 (Maxster33) : nouvelle fiole de KS_FioleExp (points en description) ; l'ancienne si absent.
+            case 3 -> getServer().getPluginManager().isPluginEnabled("KS_FioleExp")
+                    ? fr.kalium.fioleexp.KSFioleExp.creerFioleNiveaux(10) : xpBottle(10);
             case 4 -> new ItemStack(Material.CHORUS_FRUIT);
             default -> new ItemStack(Material.ENDER_PEARL, 8);
         };
