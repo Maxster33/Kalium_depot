@@ -39,11 +39,12 @@ import java.util.UUID;
  *
  * - Objet : livre de connaissances (ni bloc, ni ingrédient vanilla) avec l'image du cristal de l'End, nommé « Changeur de
  *   Biome », empilable par 64 ; son clic droit vanilla est annulé.
- * - Clic droit avec l'objet en main (overworld seulement) : menu (MenuBiome) avec les biomes de l'overworld et un bouton
- *   « Historique ». Le choix d'un biome revérifie qu'il reste un Changeur de Biome dans l'inventaire, le consomme,
- *   change le biome dans une sphère de 32 blocs de rayon autour du joueur (aucun bloc ne bouge : seul le biome change,
- *   par cellules de 4 x 4 x 4 blocs comme dans le jeu), écrit « Vous avez changé le biome pour : <biome> » et inscrit le
- *   changement dans l'historique (Historique, fichier historique.yml).
+ * - Clic droit avec l'objet en main (overworld seulement) : menu (MenuBiome) avec les biomes de l'overworld, un bouton
+ *   pour choisir la forme (sphère de 32 blocs de rayon ou cube de même volume, retenue pour chaque joueur) et un bouton
+ *   « Historique ». Le choix d'un biome revérifie qu'il reste un Changeur de Biome dans l'inventaire, refuse si la zone
+ *   touche une région WorldGuard (ProtectionWorldGuard), consomme l'objet, change le biome autour du joueur (aucun bloc
+ *   ne bouge : seul le biome change, par cellules de 4 x 4 x 4 blocs comme dans le jeu), écrit « Vous avez changé le
+ *   biome pour : <biome> » et inscrit le changement dans l'historique (Historique, fichier historique.yml).
  *
  * Autres plugins : creerChangeur() (KS_Crafts, KS_KaliumGive).
  */
@@ -51,10 +52,25 @@ public final class KSBiomeChanger extends JavaPlugin implements Listener {
 
     /** Rayon de la sphère modifiée (blocs). */
     static final int RAYON = 32;
+    /** Demi-côté du cube de même volume que la sphère : côté = rayon x racine cubique de 4 pi / 3 (51,6 blocs). */
+    static final double DEMI_COTE = RAYON * Math.cbrt(4 * Math.PI / 3) / 2;
+
+    /** Forme de la zone modifiée, choisie par le joueur dans le menu. */
+    enum Forme {
+        SPHERE("sphère"), CUBE("cube");
+
+        final String nom;
+
+        Forme(String nom) {
+            this.nom = nom;
+        }
+    }
 
     private static NamespacedKey marqueur;
 
     private final Map<UUID, Long> derniereOuverture = new HashMap<>();
+    /** Forme choisie par chaque joueur (sphère par défaut, oubliée au redémarrage). */
+    private final Map<UUID, Forme> formes = new HashMap<>();
     private List<Biome> biomes;
     private Historique historique;
     private MenuBiome menu;
@@ -80,6 +96,14 @@ public final class KSBiomeChanger extends JavaPlugin implements Listener {
 
     List<Biome> biomes() {
         return biomes;
+    }
+
+    Forme forme(Player player) {
+        return formes.getOrDefault(player.getUniqueId(), Forme.SPHERE);
+    }
+
+    void changerForme(Player player) {
+        formes.put(player.getUniqueId(), forme(player) == Forme.SPHERE ? Forme.CUBE : Forme.SPHERE);
     }
 
     // ------------------------------------------------------------------ objet
@@ -138,59 +162,79 @@ public final class KSBiomeChanger extends JavaPlugin implements Listener {
             player.sendMessage(Component.text("Le Changeur de Biome ne s'utilise que dans l'overworld.", NamedTextColor.RED));
             return;
         }
-        if (!consommer(player)) {
+        int slot = slotChangeur(player);
+        if (slot < 0) {
             player.sendMessage(Component.text("Tu n'as plus de Changeur de Biome dans ton inventaire.", NamedTextColor.RED));
             return;
         }
         Location centre = player.getLocation();
-        appliquer(centre, biome);
+        Forme forme = forme(player);
+        List<int[]> cellules = cellules(centre, forme);
+        if (getServer().getPluginManager().isPluginEnabled("WorldGuard")
+                && ProtectionWorldGuard.touche(centre.getWorld(), cellules)) {
+            player.sendMessage(Component.text("Impossible : la zone touche une zone protégée. Ton Changeur de Biome n'a pas"
+                    + " été utilisé.", NamedTextColor.RED));
+            return;
+        }
+        ItemStack item = player.getInventory().getItem(slot);
+        item.setAmount(item.getAmount() - 1);
+        player.getInventory().setItem(slot, item.getAmount() > 0 ? item : null);
+        appliquer(centre.getWorld(), cellules, biome);
         player.sendMessage(Component.text("Vous avez changé le biome pour : ", NamedTextColor.GREEN)
                 .append(Component.translatable(biome, NamedTextColor.GOLD)));
-        historique.ajouter(player, centre, biome);
+        historique.ajouter(player, centre, biome, forme);
     }
 
-    /** Retire un Changeur de Biome : celui de la main principale en priorité, sinon le premier de l'inventaire. */
-    private static boolean consommer(Player player) {
+    /** Case d'un Changeur de Biome : celui de la main principale en priorité, sinon le premier de l'inventaire ; -1. */
+    private static int slotChangeur(Player player) {
         PlayerInventory inventory = player.getInventory();
-        int slot = estChangeur(inventory.getItemInMainHand()) ? inventory.getHeldItemSlot() : -1;
+        if (estChangeur(inventory.getItemInMainHand())) {
+            return inventory.getHeldItemSlot();
+        }
         ItemStack[] contenu = inventory.getContents();
-        for (int i = 0; slot < 0 && i < contenu.length; i++) {
+        for (int i = 0; i < contenu.length; i++) {
             if (estChangeur(contenu[i])) {
-                slot = i;
+                return i;
             }
         }
-        if (slot < 0) {
-            return false;
-        }
-        ItemStack item = inventory.getItem(slot);
-        item.setAmount(item.getAmount() - 1);
-        inventory.setItem(slot, item.getAmount() > 0 ? item : null);
-        return true;
+        return -1;
     }
 
     /**
-     * Change le biome de chaque cellule de 4 x 4 x 4 blocs (résolution des biomes du jeu) dont le centre est à moins de
-     * RAYON blocs du centre, sans toucher aux blocs, puis renvoie les chunks concernés aux joueurs (couleurs de l'herbe,
-     * de l'eau, du ciel...).
+     * Cellules de 4 x 4 x 4 blocs (résolution des biomes du jeu), en coordonnées de cellule (qx, qy, qz), dont le centre
+     * est dans la forme : sphère de RAYON blocs, ou cube de DEMI_COTE blocs de part et d'autre du joueur. Limitées à la
+     * hauteur du monde.
      */
-    private static void appliquer(Location centre, Biome biome) {
+    static List<int[]> cellules(Location centre, Forme forme) {
         World world = centre.getWorld();
         int minY = Math.max(world.getMinHeight(), centre.getBlockY() - RAYON);
         int maxY = Math.min(world.getMaxHeight() - 1, centre.getBlockY() + RAYON);
-        Set<Long> chunks = new HashSet<>();
+        List<int[]> liste = new ArrayList<>();
         for (int qx = Math.floorDiv(centre.getBlockX() - RAYON, 4); qx <= Math.floorDiv(centre.getBlockX() + RAYON, 4); qx++) {
             for (int qz = Math.floorDiv(centre.getBlockZ() - RAYON, 4); qz <= Math.floorDiv(centre.getBlockZ() + RAYON, 4); qz++) {
                 for (int qy = Math.floorDiv(minY, 4); qy <= Math.floorDiv(maxY, 4); qy++) {
                     double dx = qx * 4 + 2 - centre.getX();
                     double dy = qy * 4 + 2 - centre.getY();
                     double dz = qz * 4 + 2 - centre.getZ();
-                    if (dx * dx + dy * dy + dz * dz > (double) RAYON * RAYON) {
-                        continue;
+                    boolean dedans = forme == Forme.SPHERE
+                            ? dx * dx + dy * dy + dz * dz <= (double) RAYON * RAYON
+                            : Math.abs(dx) <= DEMI_COTE && Math.abs(dy) <= DEMI_COTE && Math.abs(dz) <= DEMI_COTE;
+                    if (dedans) {
+                        liste.add(new int[] {qx, qy, qz});
                     }
-                    world.setBiome(qx * 4, Math.max(qy * 4, world.getMinHeight()), qz * 4, biome);
-                    chunks.add(((long) (qx >> 2) << 32) | ((qz >> 2) & 0xFFFFFFFFL));
                 }
             }
+        }
+        return liste;
+    }
+
+    /** Change le biome des cellules, sans toucher aux blocs, puis renvoie les chunks concernés aux joueurs (couleurs de
+     * l'herbe, du feuillage, de l'eau...). */
+    private static void appliquer(World world, List<int[]> cellules, Biome biome) {
+        Set<Long> chunks = new HashSet<>();
+        for (int[] c : cellules) {
+            world.setBiome(c[0] * 4, c[1] * 4, c[2] * 4, biome);
+            chunks.add(((long) (c[0] >> 2) << 32) | ((c[2] >> 2) & 0xFFFFFFFFL));
         }
         for (long chunk : chunks) {
             world.refreshChunk((int) (chunk >> 32), (int) chunk);

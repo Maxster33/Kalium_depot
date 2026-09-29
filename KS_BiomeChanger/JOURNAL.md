@@ -22,19 +22,25 @@ Fait :
   adaptées). Bouton « Historique », puis un bouton par biome du tag `#minecraft:is_overworld` (noms dans la langue du
   joueur, triés par identifiant), sur 2 colonnes. Hors de l'overworld : message « Le Changeur de Biome ne s'utilise que
   dans l'overworld. ». Un seul menu par seconde (clics en double).
+- **Forme** (demande de Maxster33 : au choix du joueur) : bouton « Forme : sphère (passer au cube) » en haut du menu ;
+  **sphère** de 32 blocs de rayon ou **cube** de même volume (52 blocs de côté : 32 x racine cubique de 4 pi / 3 = 51,6),
+  centrés sur le joueur. Choix retenu pour chaque joueur jusqu'au redémarrage (sphère par défaut).
+- **Zones protégées** (demande de Maxster33) : si WorldGuard est activé (`softdepend`), refus dès que la zone modifiée
+  touche une région WorldGuard (hors région globale), **même si le joueur en est membre ou propriétaire** (choix de
+  Maxster33) : « Impossible : la zone touche une zone protégée. Ton Changeur de Biome n'a pas été utilisé. » Vérifié
+  cellule par cellule (une sphère ne touche pas les régions proches des coins de sa boîte). Compilé contre l'API
+  WorldGuard 7.0.19 / WorldEdit 7.4.5 (`telecharger-outils.sh`, versions d'Event).
 - **Changement** (au clic sur un biome) : revérifie joueur en ligne, overworld, Changeur de Biome dans l'inventaire
-  (celui de la main en priorité, sinon le premier trouvé), le consomme ; **sphère** de 32 blocs de rayon centrée sur
-  la position du joueur au moment de la validation (choix de la sphère parmi les deux proposées) ; seul le biome change,
-  par cellules de 4 x 4 x 4 blocs (résolution des biomes dans le jeu : bord en escalier), dans la hauteur du monde ;
-  les chunks touchés sont renvoyés aux joueurs (couleurs de l'herbe, du feuillage, de l'eau). Message vert « Vous avez
-  changé le biome pour : » + nom du biome (doré).
+  (celui de la main en priorité, sinon le premier trouvé), zones protégées, puis le consomme ; zone centrée sur la
+  position du joueur au moment de la validation ; seul le biome change, par cellules de 4 x 4 x 4 blocs (résolution
+  des biomes dans le jeu : bord en escalier), dans la hauteur du monde ; les chunks touchés sont renvoyés aux joueurs
+  (couleurs de l'herbe, du feuillage, de l'eau). Message vert « Vous avez changé le biome pour : » + nom du biome (doré).
 - **Historique** (`plugins/KS_BiomeChanger/historique.yml`, enregistré à chaque changement) : date, joueur, monde,
-  position, biome. Menu « Historique des changements de biome », 10 par page, du plus récent au plus ancien : joueur =
-  ses changements (texte) ; opérateur = tous, un bouton par changement (« 29/09 14:30 · pseudo · biome ») qui le
+  position, biome, forme. Menu « Historique des changements de biome », 10 par page, du plus récent au plus ancien :
+  joueur = ses changements (texte) ; opérateur = tous, un bouton par changement (« 29/09 14:30 · pseudo · biome ») qui le
   téléporte à la position enregistrée (opérateur revérifié au clic). Bouton « Retour » vers le choix du biome.
 
 Limites :
-- Le biome change aussi dans les zones protégées (WorldGuard) : non demandé, à décider.
 - Un opérateur n'accède à l'historique que par le menu, donc avec un Changeur de Biome en main (ouvrir le menu ne le
   consomme pas).
 - Les biomes des grottes (grottes luxuriantes, deep dark...) font partie des biomes de l'overworld proposés.

@@ -31,3 +31,12 @@ Changeur de Biome dans le livre de recettes dès l'obtention d'un Fragment de Sp
   tester.
 - À décider : Changeur de Biome dans les zones WorldGuard ; loot des 5 têtes (plugin des têtes) ; accès des opérateurs à
   l'historique sans Changeur de Biome.
+
+## Suite (17:30)
+- Demandé : choix sphère ou cube pour le Changeur de Biome ; pas de changement dans les zones WorldGuard ; spawner
+  fabriqué détruit par une explosion : il tombe au sol.
+- Choix de Maxster33 : refus dès que la zone touche une région WorldGuard, même si le joueur en est membre.
+- Fait (versions 1.0.0 non déployées complétées) : bouton « Forme » dans le menu (choix retenu par joueur jusqu'au
+  redémarrage), vérification WorldGuard cellule par cellule avant de consommer l'objet (API WorldGuard 7.0.19 /
+  WorldEdit 7.4.5, déjà dans `telecharger-outils.sh`), forme notée dans l'historique ; KS_Spawners : spawner posé
+  détruit par une explosion lâché au sol.

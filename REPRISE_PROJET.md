@@ -418,3 +418,7 @@ installés : le point de chute du lobby vers Kanvas fonctionne, boussole et éto
   Changeur de Biome ; recettes débloquées dans le livre à l'obtention d'un Fragment de Spawner) ; **KS_KaliumGive 1.5.0**
   (16 nouveaux id) ; **KS_LootBlocs 1.1.0** (spawner naturel : 1 fragment + 5 % d'un 2e) ; **geyser-bedrock 1.2.0**
   (apparence Bedrock, proxy). Détail dans chaque `JOURNAL.md`.
+  Compléments (demandes de Maxster33, avant déploiement) : Changeur de Biome au choix **sphère** (32 blocs de rayon) ou
+  **cube** (52 blocs de côté, même volume) ; **refusé si la zone touche une région WorldGuard** (même celles du joueur) ;
+  un spawner fabriqué détruit par une **explosion** tombe au sol. `outils-build` : lancer `sh telecharger-outils.sh` si
+  l'API WorldGuard / WorldEdit manque (déjà dans le script, pour KV_Plots).

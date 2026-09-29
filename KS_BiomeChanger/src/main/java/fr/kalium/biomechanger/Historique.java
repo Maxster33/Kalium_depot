@@ -17,12 +17,12 @@ import java.util.UUID;
 
 /**
  * Historique des changements de biome (fichier historique.yml du plugin) : date, joueur, monde, position du joueur,
- * biome choisi. Chaque changement est inscrit et enregistré tout de suite.
+ * biome choisi, forme (sphère ou cube). Chaque changement est inscrit et enregistré tout de suite.
  */
 final class Historique {
 
     /** Un changement de biome. */
-    record Changement(long date, UUID joueur, String nom, String monde, int x, int y, int z, String biome) {
+    record Changement(long date, UUID joueur, String nom, String monde, int x, int y, int z, String biome, String forme) {
     }
 
     private final JavaPlugin plugin;
@@ -39,16 +39,18 @@ final class Historique {
                         UUID.fromString(String.valueOf(ligne.get("joueur"))), String.valueOf(ligne.get("nom")),
                         String.valueOf(ligne.get("monde")), ((Number) ligne.get("x")).intValue(),
                         ((Number) ligne.get("y")).intValue(), ((Number) ligne.get("z")).intValue(),
-                        String.valueOf(ligne.get("biome"))));
+                        String.valueOf(ligne.get("biome")),
+                        ligne.get("forme") != null ? String.valueOf(ligne.get("forme")) : "sphère"));
             } catch (RuntimeException e) {
                 plugin.getLogger().warning("Ligne illisible dans historique.yml, ignorée : " + ligne);
             }
         }
     }
 
-    void ajouter(Player player, Location lieu, Biome biome) {
+    void ajouter(Player player, Location lieu, Biome biome, KSBiomeChanger.Forme forme) {
         changements.add(new Changement(System.currentTimeMillis(), player.getUniqueId(), player.getName(),
-                lieu.getWorld().getName(), lieu.getBlockX(), lieu.getBlockY(), lieu.getBlockZ(), biome.getKey().toString()));
+                lieu.getWorld().getName(), lieu.getBlockX(), lieu.getBlockY(), lieu.getBlockZ(), biome.getKey().toString(),
+                forme.nom));
         enregistrer();
     }
 
@@ -64,6 +66,7 @@ final class Historique {
             ligne.put("y", c.y());
             ligne.put("z", c.z());
             ligne.put("biome", c.biome());
+            ligne.put("forme", c.forme());
             lignes.add(ligne);
         }
         YamlConfiguration yaml = new YamlConfiguration();

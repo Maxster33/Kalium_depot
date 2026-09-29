@@ -27,9 +27,11 @@ Choix de Maxster33 : nouveau plugin (le fonctionnement n'est pas qu'un craft) ; 
   spawner posé tombe tel quel, **sans XP** (sinon poser / casser produirait de l'XP à l'infini) ; en créatif, rien ne
   tombe (comme en vanilla). Si un opérateur a changé la créature avec un oeuf, c'est la nouvelle créature qui tombe
   (si elle fait partie des 8).
+- **Explosion** (demande de Maxster33) : un spawner posé détruit par une explosion (TNT, creeper, boule de feu...) n'est
+  pas perdu, il tombe au sol (toujours, sans XP). Un spawner naturel reste vanilla (détruit sans rien lâcher).
 - Spawners naturels : comportement vanilla, aucun objet ; KS_LootBlocs 1.1.0 y ajoute les Fragments de Spawner.
 
 Limites :
-- Un spawner posé détruit par une explosion (TNT, creeper) est perdu, comme un spawner vanilla.
+- Un spawner posé cassé par le corps du Wither (pas une explosion) est perdu, comme un spawner vanilla.
 
 **Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**

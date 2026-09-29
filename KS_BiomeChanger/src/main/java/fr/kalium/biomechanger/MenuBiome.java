@@ -51,17 +51,33 @@ final class MenuBiome {
 
     // ------------------------------------------------------------------ choix du biome
 
+    /** Zone d'une forme, en clair. */
+    private static String zone(KSBiomeChanger.Forme forme) {
+        return forme == KSBiomeChanger.Forme.SPHERE
+                ? "une sphère de " + KSBiomeChanger.RAYON + " blocs de rayon"
+                : "un cube de " + Math.round(KSBiomeChanger.DEMI_COTE * 2) + " blocs de côté (même volume que la sphère)";
+    }
+
     void ouvrir(Player player) {
+        KSBiomeChanger.Forme forme = plugin.forme(player);
+        KSBiomeChanger.Forme autre = forme == KSBiomeChanger.Forme.SPHERE ? KSBiomeChanger.Forme.CUBE
+                : KSBiomeChanger.Forme.SPHERE;
         List<ActionButton> boutons = new ArrayList<>();
         boutons.add(gui.button(Component.text("Historique", NamedTextColor.GOLD),
                 Component.text(player.isOp() ? "Tous les changements de biome" : "Tes derniers changements de biome"),
                 p -> historique(p, 0)));
+        // Choix de la forme (demande de Maxster33) : le bouton passe à l'autre forme et rouvre le menu.
+        boutons.add(gui.button(Component.text("Forme : " + forme.nom + " (passer au " + autre.nom + ")", NamedTextColor.AQUA),
+                Component.text("Changer pour " + zone(autre)), p -> {
+                    plugin.changerForme(p);
+                    ouvrir(p);
+                }));
         for (Biome biome : plugin.biomes()) {
             boutons.add(gui.button(Component.translatable(biome), null, p -> plugin.changer(p, biome)));
         }
-        List<Component> corps = List.of(Component.text("Choisis le nouveau biome : il sera appliqué dans une sphère de "
-                + KSBiomeChanger.RAYON + " blocs de rayon autour de toi. Aucun bloc ne bouge.\n"
-                + "Un Changeur de Biome sera consommé."));
+        List<Component> corps = List.of(Component.text("Choisis le nouveau biome : il sera appliqué dans " + zone(forme)
+                + " autour de toi. Aucun bloc ne bouge.\n"
+                + "Impossible si la zone touche une zone protégée. Un Changeur de Biome sera consommé."));
         gui.open(player, Component.text("Changeur de Biome"), corps, List.of(), boutons, null, 2);
     }
 
@@ -86,7 +102,7 @@ final class MenuBiome {
                     + " (page " + (numero + 1) + "/" + pages + ")"
                     + (op ? " : clique sur un changement pour t'y téléporter." : " :")));
             for (Historique.Changement c : liste.subList(numero * PAR_PAGE, Math.min(liste.size(), (numero + 1) * PAR_PAGE))) {
-                String lieu = c.monde() + " " + c.x() + " " + c.y() + " " + c.z();
+                String lieu = c.forme() + " · " + c.monde() + " " + c.x() + " " + c.y() + " " + c.z();
                 if (op) {
                     boutons.add(gui.button(Component.text(DATE_COURTE.format(Instant.ofEpochMilli(c.date())) + " · "
                                     + c.nom() + " · ").append(nomBiome(c.biome())),

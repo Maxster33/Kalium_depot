@@ -19,6 +19,7 @@ case "$(uname -s)" in
 esac
 # Utilise KLM_Menu (depend : boite a outils des menus) : ses classes servent seulement a compiler.
 CP="$(win "$TOOLS/classes/KLM_Menu")$SEP"
+# WorldGuard / WorldEdit (softdepend) : API dans outils-build/libs (telecharger-outils.sh).
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
 OUT="$TOOLS/classes/KS_BiomeChanger"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"

@@ -13,13 +13,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +34,7 @@ import java.util.Map;
  * - Cassage (n'importe quel outil, choix de Maxster33) : un spawner posé par un joueur tombe tel quel, sans XP (sinon
  *   on pourrait produire de l'XP à l'infini) ; en créatif, rien ne tombe (comme en vanilla). Les spawners naturels
  *   gardent le comportement vanilla (KS_LootBlocs y ajoute les Fragments de Spawner).
+ * - Explosion (TNT, creeper...) : un spawner posé par un joueur n'est pas perdu, il tombe au sol.
  *
  * Marqueur du bloc posé : « ks_spawners:pose » (lu aussi par KS_LootBlocs). Autres plugins : creerSpawner(id)
  * (KS_Crafts, KS_KaliumGive).
@@ -115,21 +119,56 @@ public final class KSSpawners extends JavaPlugin implements Listener {
         if (block.getType() != Material.SPAWNER || !(block.getState() instanceof CreatureSpawner spawner)) {
             return;
         }
-        String id = spawner.getPersistentDataContainer().get(marqueurPose, PersistentDataType.STRING);
+        String id = idPose(spawner);
         if (id == null) {
             return; // spawner naturel : comportement vanilla
         }
         event.setExpToDrop(0);
-        if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
-            return;
+        if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
+            lacher(block, id);
         }
-        // Créature actuelle si c'est l'une des nôtres (un opérateur a pu la changer avec un oeuf), sinon celle posée.
-        for (Map.Entry<String, EntityType> entry : CREATURES.entrySet()) {
-            if (entry.getValue() == spawner.getSpawnedType()) {
-                id = entry.getKey();
-                break;
+    }
+
+    /** Demande de Maxster33 : un spawner posé détruit par une explosion n'est pas perdu, il tombe au sol. */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityExplode(EntityExplodeEvent event) {
+        explosion(event.blockList());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockExplode(BlockExplodeEvent event) {
+        explosion(event.blockList());
+    }
+
+    private static void explosion(List<Block> blocs) {
+        for (Block block : blocs) {
+            if (block.getType() == Material.SPAWNER && block.getState() instanceof CreatureSpawner spawner) {
+                String id = idPose(spawner);
+                if (id != null) {
+                    lacher(block, id);
+                }
             }
         }
+    }
+
+    /**
+     * Id d'un spawner posé par un joueur (null pour un spawner naturel) : créature actuelle si c'est l'une des nôtres
+     * (un opérateur a pu la changer avec un oeuf), sinon celle posée.
+     */
+    private static String idPose(CreatureSpawner spawner) {
+        String id = spawner.getPersistentDataContainer().get(marqueurPose, PersistentDataType.STRING);
+        if (id == null) {
+            return null;
+        }
+        for (Map.Entry<String, EntityType> entry : CREATURES.entrySet()) {
+            if (entry.getValue() == spawner.getSpawnedType()) {
+                return entry.getKey();
+            }
+        }
+        return id;
+    }
+
+    private static void lacher(Block block, String id) {
         ItemStack objet = creerSpawner(id);
         if (objet != null) {
             block.getWorld().dropItemNaturally(block.getLocation().add(0.5, 0.5, 0.5), objet);
