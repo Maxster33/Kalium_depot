@@ -40,4 +40,4 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   des livres : le proxy n'avait pas été redémarré).
 - **1.1.0 (29/09/2026, Maxster33)** : Bedrock Breaker (image du bâton de blaze). Pack `KaLium-objets-1.1.0.mcpack` (1.0.0
   retiré de `packs/`) et `kalium_objets.json` mis à jour sur le proxy ; anciens fichiers rangés hors de `packs/` et de
-  `custom_mappings/` (Geyser lit peut-être les sous-dossiers). Actif après redémarrage du proxy. **Non testé.**
+  `custom_mappings/` (Geyser lit peut-être les sous-dossiers). Envoyé sur le proxy le 29/09/2026 à 12:56 (anciens fichiers dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.0.0/`) ; actif après redémarrage du proxy. **Non testé.**

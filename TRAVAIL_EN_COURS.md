@@ -18,14 +18,10 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_ScoreBoards — LeKiwi06 — depuis le 2026-09-29 01:58 — API HTTP en lecture pour le bot Discord (étape 1 de KLM_DiscordBot)
 - KLM_DiscordBot — LeKiwi06 — depuis le 2026-09-29 01:58 — nouveau : bot Discord Node.js, étape 1 (squelette, /classement)
-- KS_BedrockBreaker — Maxster33 — depuis le 2026-09-29 12:35 — nouveau plugin : fonctionnement du Bedrock Breaker (protections, pas la couche du fond)
-- KS_Crafts — Maxster33 — depuis le 2026-09-29 12:35 — recette du Bedrock Breaker (houe en diamant), livre de recettes
 
 
 ## Requis parfois
 
-- KS_KaliumGive — Maxster33 — depuis le 2026-09-29 12:35 — id bedrock_breaker
-- geyser-bedrock — Maxster33 — depuis le 2026-09-29 12:35 — apparence Bedrock du Bedrock Breaker (bâton de blaze)
 
 
 ## Demandes

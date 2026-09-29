@@ -40,4 +40,4 @@ Demande de Maxster33 : id **`bedrock_breaker`** (objet créé par KS_BedrockBrea
 ex. `/kaliumgive Maxster33 bedrock_breaker 5`. `softdepend` et `build.sh` : compiler KS_BedrockBreaker d'abord.
 À déployer avec KS_BedrockBreaker 1.0.0.
 
-**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 12:55 avec KS_BedrockBreaker 1.0.0 (1.2.0 dans `_removed-ks_kaliumgive-1.2.0/` ; supprimable par l'humain, 3 versions derrière : `_removed-ks_kaliumgive-1.0.0/`). Statut : non testé en jeu.**

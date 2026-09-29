@@ -80,4 +80,4 @@ Demande de Maxster33 (détail dans `KS_BedrockBreaker/JOURNAL.md`) :
 - Livre de recettes : la recette du Bedrock Breaker est débloquée dès qu'une **TNT ou une houe en diamant** arrive dans
   l'inventaire du joueur, comme la Clé de l'End (même mécanisme, généralisé : liste `LIVRE`).
 
-**À déployer avec KS_BedrockBreaker 1.0.0. Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 12:55 avec KS_BedrockBreaker 1.0.0 (1.3.0 dans `_removed-ks_crafts-1.3.0/` ; supprimables par l'humain, 3 versions derrière : `_removed-ks_crafts-1.0.0/` et `1.1.0/`). Statut : non testé en jeu.**
