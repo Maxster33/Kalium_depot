@@ -32,7 +32,7 @@ Changeur de Biome dans le livre de recettes dès l'obtention d'un Fragment de Sp
 - À décider : Changeur de Biome dans les zones WorldGuard ; loot des 5 têtes (plugin des têtes) ; accès des opérateurs à
   l'historique sans Changeur de Biome.
 
-## Suite (17:30)
+## Suite (17:19)
 - Demandé : choix sphère ou cube pour le Changeur de Biome ; pas de changement dans les zones WorldGuard ; spawner
   fabriqué détruit par une explosion : il tombe au sol.
 - Choix de Maxster33 : refus dès que la zone touche une région WorldGuard, même si le joueur en est membre.
