@@ -18,7 +18,7 @@ Le détail technique de chaque version est dans `<plugin>/JOURNAL.md`. Documents
 | **Hub mini-jeux (Kal-Games)** | `kal-games` | `KalGames2@7001.mystrator.com` (onglet « KalGames2 ») | 91.197.6.24:22142 | KalGames, KG_PvpKit, KG_BoatRace, KG_Parkour, KG_BuildBattle, KG_Menu, KG_Bingo, KG_ScoreBoards, KLM_Menu |
 | **Bingo + jeux gourmands** (Manhunt...) | `serveur-jeux` | `serveurjeux@7015.mystrator.com` | 91.197.6.65:22470 | KG_BingoGame, KLM_Menu (boussole désactivée) |
 | Kixster SMP (rendu au SMP le 24/09/2026) | `kixster` | `kixster@7003.mystrator.com` | 91.197.6.212:29599 | KLM_Menu (boussole désactivée, menu par `/menu`) |
-| Event : survie classique (depuis le 25/09/2026) | `event` | `Event@7021.mystrator.com` (session WinSCP enregistrée) | 51.254.174.133:21088 | KLM_Menu (boussole désactivée, `/menu`), KS_Dimensions, KS_Enclume, KS_Villageois, KS_Crafts, KS_LootBlocs, KS_LootEntites, KS_LootPeche, KS_LootPotions, KS_EstomacGardien, KS_LootCoffres, KS_KaliumGive, KS_EC_Extension, KS_FioleExp (cahier des charges : `KS_Event/`) |
+| Event : survie classique (depuis le 25/09/2026) | `event` | `Event@7021.mystrator.com` (session WinSCP enregistrée) | 51.254.174.133:21088 | KLM_Menu (boussole désactivée, `/menu`), KS_Dimensions, KS_Enclume, KS_Villageois, KS_Crafts, KS_BedrockBreaker (à déployer), KS_LootBlocs, KS_LootEntites, KS_LootPeche, KS_LootPotions, KS_EstomacGardien, KS_LootCoffres, KS_KaliumGive, KS_EC_Extension, KS_FioleExp (cahier des charges : `KS_Event/`) |
 | Serveur de plots en créatif (Kanvas) | `Kanvas` (ex `kal-test-dev`, renommé par LeKiwi06 dans `velocity.toml` le 24-25/09/2026 ; destination de la boussole du lobby renommée `Kanvas` le 26/09/2026) | `Kal-Test-Dev@5038.mystrator.com` | 91.197.6.215:21621 | KV_Plots, KV_Menu, KLM_Menu (cahier des charges : `KV_Plots/CAHIER_DES_CHARGES.md`) |
 
 Machines Minestrator : **machine 1** = proxy, lobby, Event (ex kal-games), Kixster ; **machine 2** = Kal-Test-Dev ;
@@ -93,6 +93,9 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 ### Versions compilées, non déployées
 
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
+- **Bedrock Breaker** (29/09/2026, Maxster33, à déployer ensemble, non testé) : **KS_BedrockBreaker 1.0.0** (nouveau,
+  Event), **KS_Crafts 1.4.0**, **KS_KaliumGive 1.3.0** (Event) et **geyser-bedrock 1.1.0** (proxy : `kalium_objets.json` et
+  `KaLium-objets-1.1.0.mcpack`). Détail dans `KS_BedrockBreaker/JOURNAL.md`.
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »
@@ -374,3 +377,12 @@ installés : le point de chute du lobby vers Kanvas fonctionne, boussole et éto
   et `_removed-ks_fioleexp-1.1.0/`) : **KS_FioleExp 1.4.0** : « la fabrication de fiole d'exp abîme
   trop l'enclume » : 6 % de chance d'usure par fiole au lieu de 12 % (environ 50 fioles par enclume au lieu de 25),
   réglable dans le nouveau `config.yml` (`usure-enclume-pourcent`, créé au premier démarrage ; 0 = aucune usure).
+- **29/09/2026 12:40, compilé, non déployé, non testé** : **Bedrock Breaker** (détail : `KS_BedrockBreaker/JOURNAL.md`).
+  Nouveau plugin **KS_BedrockBreaker 1.0.0** : objet « Bedrock Breaker » (image du bâton de blaze, description
+  « Utilisation unique », empilable par 64), un bloc de bedrock par objet, sauf la couche du fond ; protections
+  WorldGuard respectées (cassage simulé) ; anciens Bedrock Breaker (houe en bois) encore utilisables. **KS_Crafts 1.4.0** :
+  8 TNT autour d'une houe en diamant (n'importe laquelle) ; recette débloquée dans le livre dès qu'on obtient une TNT
+  ou une houe en diamant. **KS_KaliumGive 1.3.0** : id `bedrock_breaker`. **geyser-bedrock 1.1.0** : apparence Bedrock.
+  Déploiement refusé par le filtre de permissions de Claude : à faire (Event : 3 jars ; proxy : `kalium_objets.json` et
+  pack 1.1.0 à la place du 1.0.0, anciens fichiers rangés hors de `packs/` et `custom_mappings/`), puis redémarrer
+  Event et le proxy (l'humain).
