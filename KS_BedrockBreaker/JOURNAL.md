@@ -55,4 +55,4 @@ la couche du fond de chaque dimension (y = -64 dans le monde normal, y = 0 dans 
 un passage vers le vide. Message « La couche du fond ne peut pas être cassée. » retiré. Le reste est inchangé
 (protections WorldGuard, mode aventure, un bloc par seconde).
 
-**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 13:59 (1.0.1 dans `_removed-ks_bedrockbreaker-1.0.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

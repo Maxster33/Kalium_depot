@@ -97,4 +97,4 @@ Demande de Maxster33 : nouvelle recette du Bedrock Breaker (avec forme) :
   ingrédients (poudre de blaze, charge de feu, wagonnet à TNT, cristal de l'End, ancre de réapparition) ; la TNT et la
   houe en diamant ne la débloquent plus. Un joueur qui l'avait déjà débloquée la garde.
 
-**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 13:59 (1.4.0 dans `_removed-ks_crafts-1.4.0/` ; supprimables par l'humain, 3 versions derrière : `_removed-ks_crafts-1.0.0/`, `1.1.0/`, `1.2.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
