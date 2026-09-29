@@ -392,3 +392,6 @@ installés : le point de chute du lobby vers Kanvas fonctionne, boussole et éto
   à cause du clic répété).
 - **29/09/2026 13:35, compilé, non déployé, non testé** : **KS_BedrockBreaker 1.0.2** : la couche du fond peut de nouveau
   être cassée (demande de Maxster33 ; passage vers le vide possible).
+- **29/09/2026 13:55, compilé, non déployé, non testé** : **KS_Crafts 1.5.0** : nouvelle recette du Bedrock Breaker
+  (poudre de blaze aux 4 coins, charge de feu en haut, wagonnets à TNT à gauche et à droite, cristal de l'End au
+  centre, ancre de réapparition en bas) ; débloquée dans le livre de recettes à l'obtention d'un de ces ingrédients.

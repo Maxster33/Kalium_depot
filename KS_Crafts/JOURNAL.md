@@ -81,3 +81,20 @@ Demande de Maxster33 (détail dans `KS_BedrockBreaker/JOURNAL.md`) :
   l'inventaire du joueur, comme la Clé de l'End (même mécanisme, généralisé : liste `LIVRE`).
 
 **Déployé sur Event le 29/09/2026 à 12:55 avec KS_BedrockBreaker 1.0.0 (1.3.0 dans `_removed-ks_crafts-1.3.0/` ; supprimables par l'humain, 3 versions derrière : `_removed-ks_crafts-1.0.0/` et `1.1.0/`). Statut : non testé en jeu.**
+
+## 1.5.0 - nouvelle recette du Bedrock Breaker (29/09/2026)
+
+Demande de Maxster33 : nouvelle recette du Bedrock Breaker (avec forme) :
+
+| | gauche | milieu | droite |
+|---|---|---|---|
+| haut | poudre de blaze | charge de feu | poudre de blaze |
+| milieu | wagonnet à TNT | cristal de l'End | wagonnet à TNT |
+| bas | poudre de blaze | ancre de réapparition | poudre de blaze |
+
+- L'ancienne recette (8 TNT autour d'une houe en diamant) n'existe plus (même id `ks_crafts:bedrock_breaker`).
+- Livre de recettes (choix de Maxster33) : la recette est débloquée dès que le joueur obtient l'un des nouveaux
+  ingrédients (poudre de blaze, charge de feu, wagonnet à TNT, cristal de l'End, ancre de réapparition) ; la TNT et la
+  houe en diamant ne la débloquent plus. Un joueur qui l'avait déjà débloquée la garde.
+
+**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**

@@ -26,8 +26,8 @@ import java.util.Map;
  * Les crafts « 8 + 1 » sont en anneau autour de l'objet central, les autres sans forme (réponse de Maxster33).
  * Contient aussi le remplacement de la verrue du Nether par le bloc de verrue (briques rouges du Nether, potion
  * étrange à l'alambic).
- * 1.4.0 : le Bedrock Breaker (objet et utilisation) est dans KS_BedrockBreaker ; seule sa recette reste ici (8 TNT
- * autour d'une houe en diamant).
+ * 1.4.0 : le Bedrock Breaker (objet et utilisation) est dans KS_BedrockBreaker ; seule sa recette reste ici.
+ * 1.5.0 : nouvelle recette du Bedrock Breaker (voir onEnable).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -39,8 +39,9 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             Material.ENCHANTED_GOLDEN_APPLE, Material.CALIBRATED_SCULK_SENSOR, Material.SPONGE,
             Material.NETHERITE_INGOT, Material.BELL, Material.CREAKING_HEART);
 
-    /** Ingrédients du Bedrock Breaker (1.4.0). */
-    private static final List<Material> BREAKER_INGREDIENTS = List.of(Material.TNT, Material.DIAMOND_HOE);
+    /** Ingrédients du Bedrock Breaker (1.5.0 ; en 1.4.0 : TNT et houe en diamant). */
+    private static final List<Material> BREAKER_INGREDIENTS = List.of(Material.BLAZE_POWDER, Material.FIRE_CHARGE,
+            Material.TNT_MINECART, Material.END_CRYSTAL, Material.RESPAWN_ANCHOR);
 
     /** Recettes du livre de recettes débloquées à l'obtention d'un de leurs ingrédients (id -> ingrédients). */
     private static final Map<String, List<Material>> LIVRE = Map.of(
@@ -100,11 +101,19 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             getLogger().warning("KS_EC_Extension absent : craft de la Clé de l'End ignoré.");
         }
 
-        // Bedrock Breaker (1.4.0) : objet de KS_BedrockBreaker (softdepend), 8 TNT autour de n'importe quelle houe en
-        // diamant (même renommée, enchantée ou abîmée : choix de Maxster33).
+        // Bedrock Breaker : objet de KS_BedrockBreaker (softdepend). 1.5.0 (Maxster33) : poudre de blaze aux 4 coins,
+        // charge de feu en haut, wagonnets à TNT à gauche et à droite, cristal de l'End au centre, ancre de
+        // réapparition en bas (1.4.0 : 8 TNT autour d'une houe en diamant).
         if (getServer().getPluginManager().isPluginEnabled("KS_BedrockBreaker")) {
-            ring("bedrock_breaker", Material.TNT, new RecipeChoice.MaterialChoice(Material.DIAMOND_HOE),
+            ShapedRecipe breaker = new ShapedRecipe(key("bedrock_breaker"),
                     fr.kalium.bedrockbreaker.KSBedrockBreaker.creerBreaker());
+            breaker.shape("PFP", "WCW", "PAP");
+            breaker.setIngredient('P', Material.BLAZE_POWDER);
+            breaker.setIngredient('F', Material.FIRE_CHARGE);
+            breaker.setIngredient('W', Material.TNT_MINECART);
+            breaker.setIngredient('C', Material.END_CRYSTAL);
+            breaker.setIngredient('A', Material.RESPAWN_ANCHOR);
+            add(breaker);
         } else {
             getLogger().warning("KS_BedrockBreaker absent : craft du Bedrock Breaker ignoré.");
         }
@@ -145,7 +154,7 @@ public final class KSCrafts extends JavaPlugin implements Listener {
      * Livre de recettes : comme une recette vanilla, une recette de LIVRE est débloquée quand le joueur obtient l'un de
      * ses ingrédients (objet qui arrive dans son inventaire). Une recette de plugin n'apparaît dans le livre que si
      * elle est débloquée pour le joueur ; une fois débloquée, elle le reste.
-     * Clé de l'End depuis 1.3.0 ; Bedrock Breaker (TNT ou houe en diamant) depuis 1.4.0.
+     * Clé de l'End depuis 1.3.0 ; Bedrock Breaker depuis 1.4.0 (ses nouveaux ingrédients depuis 1.5.0).
      */
     private void debloquer(Player player, Material obtenu) {
         LIVRE.forEach((id, ingredients) -> {
