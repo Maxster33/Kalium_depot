@@ -99,4 +99,5 @@ Demande de Maxster33 : « la fabrication de fiole d'exp abîme trop l'enclume, i
 - Nouveau `config.yml` (le plugin n'en avait pas : il est créé au premier démarrage de la 1.4.0). La valeur par défaut
   6 est aussi dans le code. Valeur lue au démarrage : après modification, redémarrer le serveur.
 
-**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu (1.3.0, menu Java, pas encore testée non plus).**
+**Déployé sur Event le 29/09/2026 à 10:57 (1.3.0 dans `_removed-ks_fioleexp-1.3.0/`), actif après redémarrage d'Event.
+Statut : non testé en jeu (1.3.0, menu Java, pas encore testée non plus).**

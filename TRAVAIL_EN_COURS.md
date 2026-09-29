@@ -18,7 +18,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_ScoreBoards — LeKiwi06 — depuis le 2026-09-29 01:58 — API HTTP en lecture pour le bot Discord (étape 1 de KLM_DiscordBot)
 - KLM_DiscordBot — LeKiwi06 — depuis le 2026-09-29 01:58 — nouveau : bot Discord Node.js, étape 1 (squelette, /classement)
-- KS_FioleExp — Maxster33 — depuis le 2026-09-29 10:54 — usure de l'enclume réduite à 6 % pour les fioles (réglable)
 
 
 ## Requis parfois
