@@ -81,4 +81,4 @@ pèsent 35 au total : « rien » pèse 315 (35 / 350 = 10 %).
 
 Toujours seulement si le Warden est tué par un joueur. Endermite inchangée.
 
-**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 14:22 (1.2.0 dans `_removed-ks_lootentites-1.2.0/` ; supprimable par l'humain, 3 versions derrière : `_removed-ks_lootentites-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
