@@ -29,3 +29,13 @@ peut pas le changer). Choix de Maxster33 : 39 affiché + vrai coût écrit.
   l'affichage est plafonné.
 
 **Déployé sur Event le 29/09/2026 à 03:54 (1.0.0 dans `_removed-ks_enclume-1.0.0/`). Statut : non testé en jeu.**
+
+## 1.1.1 - correctif : croix rouge au-delà de 39 niveaux (29/09/2026)
+
+Signalé par Maxster33 (Java) : avec 1.1.0, au-delà de 39 niveaux l'enclume montrait une croix rouge (pas de résultat).
+Cause : le jeu du joueur recalcule lui-même le résultat quand les cases d'entrée changent et le vide dès 40 niveaux
+(valeur fixée dans le jeu) ; le résultat existait côté serveur (en 1.0.0 aussi : un clic sur la case vide le donnait).
+Correctif : quand le coût est plafonné, le contenu de l'enclume est renvoyé au joueur au tick suivant
+(`updateInventory`) : son jeu recalcule les cases d'entrée puis reçoit le résultat et le coût (39) du serveur.
+
+**Non déployé. Statut : non testé en jeu.**

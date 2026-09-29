@@ -30,6 +30,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 1.1.0 (Maxster33, 29/09/2026) : le jeu du joueur affiche lui-même « Trop cher ! » dès 40 niveaux. Au-delà de 39, le
  * coût envoyé au joueur est donc plafonné à 39 et le vrai coût est écrit dans la barre d'action. À la prise, l'enclume
  * retire les 39 niveaux affichés et le plugin retire le reste (le joueur doit avoir le vrai coût en niveaux).
+ *
+ * 1.1.1 : le résultat au-delà de 39 niveaux est renvoyé au joueur (sinon son jeu le masquait : croix rouge).
  */
 public final class KSEnclume extends JavaPlugin implements Listener {
 
@@ -74,6 +76,10 @@ public final class KSEnclume extends JavaPlugin implements Listener {
         view.setRepairCost(MAX_AFFICHE);
         player.sendActionBar(Component.text("Coût réel : " + cout + " niveaux",
                 player.getLevel() >= cout ? NamedTextColor.GREEN : NamedTextColor.RED));
+        // 1.1.1 : le jeu du joueur recalcule lui-même le résultat quand les cases changent et le vide dès 40 niveaux
+        // (croix rouge). On lui renvoie tout le contenu de l'enclume au tick suivant : il recalcule les cases
+        // d'entrée, puis reçoit le résultat et le coût (39) du serveur, qui restent affichés.
+        getServer().getScheduler().runTask(this, player::updateInventory);
     }
 
     /**
