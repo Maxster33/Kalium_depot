@@ -94,4 +94,4 @@ de niveaux. Demande : afficher le nombre de niveaux nécessaire. Choix de Maxste
   deux objets. Le coût affiché ne tient pas compte d'un nom tapé sur Bedrock (envoyé au serveur seulement à la prise ;
   le vrai coût est revérifié à ce moment).
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 05:43 (1.1.3 dans `_removed-ks_enclume-1.1.3/`). Statut : non testé en jeu.**
