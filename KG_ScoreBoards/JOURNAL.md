@@ -127,4 +127,4 @@ api:
   token: '<jeton genere par l humain, jamais dans le depot>'
 ```
 Au démarrage, vérifier dans la console « API du bot Discord à l'écoute sur le port 45347 ».
-**Statut : compilé, non déployé, non testé en jeu.**
+**Statut : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (serveur allumé : actif au prochain redémarrage ; 1.6.0 et copie du `config.yml` dans `_removed-kg_scoreboards-1.6.0/`), non testé. Clés `api` à ajouter à la main.**
