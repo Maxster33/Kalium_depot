@@ -28,4 +28,4 @@ peut pas le changer). Choix de Maxster33 : 39 affiché + vrai coût écrit.
 - Prises gérées par un autre plugin (clic annulé, ex. KS_FioleExp qui retire lui-même les points) : ignorées ; seul
   l'affichage est plafonné.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 03:54 (1.0.0 dans `_removed-ks_enclume-1.0.0/`). Statut : non testé en jeu.**
