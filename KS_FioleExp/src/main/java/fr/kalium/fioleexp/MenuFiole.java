@@ -34,7 +34,7 @@ import org.bukkit.inventory.PlayerInventory;
 /**
  * Menu de remplissage d'une fiole : accroupi + clic droit sur une enclume avec une fiole vide en main.
  * 1er menu : nombre de points ; 2e : « N points = X niveaux consommés (niveau A -> B) », Confirmer / Annuler.
- * Même effet qu'à l'enclume : points exacts retirés, une fiole vide consommée, usure vanilla de l'enclume.
+ * Même effet qu'à l'enclume : points exacts retirés, une fiole vide consommée, même usure de l'enclume.
  *
  * 1.2.0 : joueurs Bedrock seulement (formulaire Floodgate, voir FormulaireBedrock).
  * 1.3.0 - demande de Maxster33, 29/09/2026 (« uniformiser ») : joueurs Java aussi, par un dialogue natif (Paper), avec

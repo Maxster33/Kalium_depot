@@ -88,3 +88,15 @@ Limites :
 
 **Déployé sur Event le 29/09/2026 à 10:24 (1.2.0 dans `_removed-ks_fioleexp-1.2.0/`), actif après redémarrage d'Event.
 Statut : non testé en jeu.**
+
+## 1.4.0 - usure de l'enclume réduite (29/09/2026)
+
+Demande de Maxster33 : « la fabrication de fiole d'exp abîme trop l'enclume, il faut réduire ». Choix de Maxster33 :
+6 % (au lieu de 12 %, valeur vanilla), réglable dans le `config.yml`.
+- Chaque fiole remplie (champ du nom de l'enclume ou menu Java / Bedrock) a `usure-enclume-pourcent` % de chance
+  d'abîmer l'enclume d'un cran (cassée au 3e cran) : 6 par défaut, soit environ 50 fioles en moyenne par enclume
+  (25 avant). 0 = aucune usure. Toujours aucune usure en créatif. Les autres usages de l'enclume restent vanilla.
+- Nouveau `config.yml` (le plugin n'en avait pas : il est créé au premier démarrage de la 1.4.0). La valeur par défaut
+  6 est aussi dans le code. Valeur lue au démarrage : après modification, redémarrer le serveur.
+
+**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu (1.3.0, menu Java, pas encore testée non plus).**

@@ -36,11 +36,12 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Le résultat est une fiole d'expérience vanilla marquée, nommée « Fiole d'expérience (1 395 XP) ». Une seule fiole
  * vide est remplie par opération. La prise du résultat est faite par le plugin (et non par l'enclume vanilla, qui
  * retirerait des niveaux entiers et toute la pile de fioles vides) : exactement les points demandés sont retirés,
- * l'enclume s'use comme en vanilla (12 %). Le coût affiché est le nombre de niveaux que le joueur va perdre
- * (plafonné à 39 à l'écran par KS_Enclume au-delà, vrai coût en barre d'action).
+ * l'enclume s'use (12 % comme en vanilla jusqu'à 1.3.0, 6 % et réglable depuis 1.4.0). Le coût affiché est le nombre
+ * de niveaux que le joueur va perdre (plafonné à 39 à l'écran par KS_Enclume au-delà, vrai coût en barre d'action).
  *
  * 1.1.0 : les fioles d'expérience (vanilla ou remplies) ne peuvent plus être renommées à l'enclume.
  * 1.2.0 / 1.3.0 : menu de remplissage (accroupi + clic droit sur une enclume avec une fiole vide), voir MenuFiole.
+ * 1.4.0 : usure de l'enclume réduite à 6 % par fiole, réglable (config.yml : usure-enclume-pourcent).
  *
  * Lancée, la fiole se brise comme une fiole vanilla et lâche exactement les points stockés en orbes.
  */
@@ -48,11 +49,20 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
 
     private static final int RESULT_SLOT = 2;
 
+    /** 1.4.0 : valeur par defaut de usure-enclume-pourcent (la cle peut manquer d'un config.yml deja present). */
+    private static final double USURE_PAR_DEFAUT = 6;
+
     private static NamespacedKey pointsKey;
+
+    /** Chance (0 a 1) que l'enclume s'abime d'un cran a chaque fiole remplie. */
+    private double usureEnclume;
 
     @Override
     public void onEnable() {
         pointsKey = new NamespacedKey(this, "points");
+        saveDefaultConfig();
+        double pourcent = getConfig().getDouble("usure-enclume-pourcent", USURE_PAR_DEFAUT);
+        usureEnclume = Math.max(0, Math.min(100, pourcent)) / 100;
         getServer().getPluginManager().registerEvents(this, this);
         // 1.2.0 : formulaire Bedrock, seulement si Floodgate est present (ses classes ne sont chargees qu'ici).
         // 1.3.0 : menu aussi pour les joueurs Java (dialogue), voir MenuFiole.
@@ -223,12 +233,13 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
         return false;
     }
 
-    /** Usure vanilla : 12 % de chance que l'enclume passe a l'etat suivant (hors mode creatif). */
+    /** Usure : usure-enclume-pourcent de chance (6 % par defaut, 12 % en vanilla) que l'enclume passe a l'etat
+     * suivant (hors mode creatif). */
     void damageAnvil(Location location, Player player) {
         if (location == null || location.getWorld() == null) {
             return;
         }
-        if (player.getGameMode() == GameMode.CREATIVE || ThreadLocalRandom.current().nextFloat() >= 0.12f) {
+        if (player.getGameMode() == GameMode.CREATIVE || ThreadLocalRandom.current().nextDouble() >= usureEnclume) {
             location.getWorld().playEffect(location, Effect.ANVIL_USE, 0);
             return;
         }
