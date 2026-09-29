@@ -9,6 +9,7 @@ côté serveur (aucun effet du vrai sac ou de la vraie clé).
 |---|---|---|---|---|
 | Estomac du gardien (KS_EstomacGardien) | `knowledge_book` | `minecraft:black_bundle` | `kalium:estomac_gardien` | sac noir |
 | Clé de l'End (KS_EC_Extension) | `knowledge_book` | `minecraft:ominous_trial_key` | `kalium:cle_de_l_end` | clé des épreuves sinistre |
+| Bedrock Breaker (KS_BedrockBreaker) | `knowledge_book` | `minecraft:blaze_rod` | `kalium:bedrock_breaker` | bâton de blaze |
 
 Attention : **tout** livre de connaissances qui a l'un de ces `item_model` prend cette apparence ; un futur objet
 custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne ici.
@@ -37,3 +38,6 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   `enable-custom-content: true`, `force-resource-packs: true`. Envoyé sur le proxy le 29/09/2026 à 00:18 ; actif
   après redémarrage du proxy. **Testé et confirmé par Maxster33 le 29/09/2026** (le matin, les objets étaient encore
   des livres : le proxy n'avait pas été redémarré).
+- **1.1.0 (29/09/2026, Maxster33)** : Bedrock Breaker (image du bâton de blaze). Pack `KaLium-objets-1.1.0.mcpack` (1.0.0
+  retiré de `packs/`) et `kalium_objets.json` mis à jour sur le proxy ; anciens fichiers rangés hors de `packs/` et de
+  `custom_mappings/` (Geyser lit peut-être les sous-dossiers). Actif après redémarrage du proxy. **Non testé.**

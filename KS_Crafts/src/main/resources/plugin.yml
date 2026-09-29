@@ -2,6 +2,6 @@ name: KS_Crafts
 version: '${project.version}'
 main: fr.kalium.crafts.KSCrafts
 api-version: '26.2'
-description: Crafts du serveur Event (sable rouge, blocs bruts, calcite, froglights, Bedrock Breaker, bloc de verrue...).
+description: Crafts du serveur Event (sable rouge, blocs bruts, calcite, froglights, recette du Bedrock Breaker, bloc de verrue...).
 authors: [KaLium]
-softdepend: [KS_EC_Extension]
+softdepend: [KS_EC_Extension, KS_BedrockBreaker]

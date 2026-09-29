@@ -7,6 +7,9 @@
     },
     "kalium.cle_de_l_end": {
       "textures": ["textures/items/kalium_cle_de_l_end"]
+    },
+    "kalium.bedrock_breaker": {
+      "textures": ["textures/items/kalium_bedrock_breaker"]
     }
   }
 }

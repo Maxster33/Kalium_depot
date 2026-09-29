@@ -1,0 +1,6 @@
+name: KS_BedrockBreaker
+version: '${project.version}'
+main: fr.kalium.bedrockbreaker.KSBedrockBreaker
+api-version: '26.2'
+description: Bedrock Breaker (usage unique) - un clic droit sur un bloc de bedrock le retire, sauf la couche du fond.
+authors: [KaLium]

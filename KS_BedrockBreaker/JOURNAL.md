@@ -1,0 +1,38 @@
+# KS_BedrockBreaker - journal
+
+Plugin autonome, serveur Event. Le Bedrock Breaker, sorti de KS_Crafts (qui garde la recette) à la demande de
+Maxster33 du 29/09/2026.
+
+## 1.0.0 - Bedrock Breaker (29/09/2026)
+
+Demande de Maxster33 : recette toujours dans KS_Crafts, avec une houe en diamant à la place de la houe en bois ;
+apparence du bâton de blaze sur Java et Bedrock ; id `bedrock_breaker` dans KS_KaliumGive ; nouveau plugin pour le
+faire fonctionner ; un seul bloc de bedrock par objet, consommé ; toute bedrock sauf la couche du fond (pas de chute
+dans le vide) ; protections WorldGuard respectées ; recette dans le livre de recettes dès qu'on obtient une TNT ou une
+houe en diamant (KS_Crafts 1.4.0) ; description « Utilisation unique ». Réponses de Maxster33 : toute houe en diamant
+acceptée dans la recette (même renommée, enchantée ou abîmée) ; les anciens Bedrock Breaker marchent encore ;
+empilable par 64 ; la couche du haut du plafond du Nether peut être cassée.
+
+- **Objet** (`KSBedrockBreaker.creerBreaker()`, utilisé par KS_Crafts et KS_KaliumGive) : livre de connaissances
+  (ni outil, ni bloc, ni ingrédient) nommé « Bedrock Breaker », description « Utilisation unique » (gris),
+  `item_model` `minecraft:blaze_rod` (image du bâton de blaze ; sur Bedrock : `geyser-bedrock/` 1.1.0), empilable par
+  64, marqué `ks_bedrockbreaker:bedrock_breaker`. Son clic droit vanilla (livre de connaissances consommé) est annulé.
+- **Utilisation** : clic droit (main principale ou secondaire) sur un bloc de bedrock : le bloc disparaît, sans drop,
+  et un Bedrock Breaker est retiré de la pile.
+- **Refusé** :
+  - couche du fond de la dimension (hauteur minimale du monde : y = -64 dans le monde normal, y = 0 dans le Nether) :
+    message « La couche du fond ne peut pas être cassée. » en barre d'action ; les couches au-dessus peuvent être
+    cassées (la couche du fond reste toujours pleine) ;
+  - protections : un cassage de bloc est simulé (`BlockBreakEvent`) avant de retirer la bedrock ; WorldGuard (ou tout
+    autre plugin de protection) l'annule dans une région où le joueur ne peut pas casser, et affiche son propre
+    message ; le Bedrock Breaker n'est alors pas consommé ;
+  - mode aventure (ajouté, nécessaire pour respecter les protections : ce mode interdit de casser des blocs).
+- **Anciens Bedrock Breaker** (houe en bois marquée `ks_crafts:bedrock_breaker`, KS_Crafts 1.0.0 à 1.3.0) : marchent
+  encore, avec les mêmes règles ; leur clic droit ne laboure plus la terre.
+
+Limites :
+- La bedrock des structures de l'End (portail de sortie, portails d'accès) peut être cassée (« toute bedrock »).
+- Le cassage simulé est aussi vu par les autres plugins qui écoutent les cassages de blocs (aucun sur Event ne traite
+  la bedrock).
+
+**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**

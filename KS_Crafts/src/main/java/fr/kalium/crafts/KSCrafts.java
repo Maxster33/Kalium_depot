@@ -2,42 +2,35 @@ package fr.kalium.crafts;
 
 import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import io.papermc.paper.potion.PotionMix;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * KS_Crafts - crafts du serveur Event (cahier des charges : KS_Event/CAHIER_DES_CHARGES.md, Maxster33, 25/09/2026).
  * Les crafts « 8 + 1 » sont en anneau autour de l'objet central, les autres sans forme (réponse de Maxster33).
- * Contient aussi le Bedrock Breaker (usage unique : un clic droit sur un bloc de bedrock le retire) et le
- * remplacement de la verrue du Nether par le bloc de verrue (briques rouges du Nether, potion étrange à l'alambic).
+ * Contient aussi le remplacement de la verrue du Nether par le bloc de verrue (briques rouges du Nether, potion
+ * étrange à l'alambic).
+ * 1.4.0 : le Bedrock Breaker (objet et utilisation) est dans KS_BedrockBreaker ; seule sa recette reste ici (8 TNT
+ * autour d'une houe en diamant).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
-    private NamespacedKey breakerKey;
     private final List<NamespacedKey> added = new ArrayList<>();
 
     /** Ingrédients de la Clé de l'End (craft sans forme, un de chaque). */
@@ -46,9 +39,16 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             Material.ENCHANTED_GOLDEN_APPLE, Material.CALIBRATED_SCULK_SENSOR, Material.SPONGE,
             Material.NETHERITE_INGOT, Material.BELL, Material.CREAKING_HEART);
 
+    /** Ingrédients du Bedrock Breaker (1.4.0). */
+    private static final List<Material> BREAKER_INGREDIENTS = List.of(Material.TNT, Material.DIAMOND_HOE);
+
+    /** Recettes du livre de recettes débloquées à l'obtention d'un de leurs ingrédients (id -> ingrédients). */
+    private static final Map<String, List<Material>> LIVRE = Map.of(
+            "cle_de_l_end", CLE_INGREDIENTS,
+            "bedrock_breaker", BREAKER_INGREDIENTS);
+
     @Override
     public void onEnable() {
-        breakerKey = new NamespacedKey(this, "bedrock_breaker");
         getServer().getPluginManager().registerEvents(this, this);
 
         ring("red_sand", Material.SAND, new RecipeChoice.MaterialChoice(Material.ORANGE_DYE), new ItemStack(Material.RED_SAND, 8));
@@ -62,7 +62,6 @@ public final class KSCrafts extends JavaPlugin implements Listener {
                 Material.COPPER_BLOCK, Material.EXPOSED_COPPER, Material.WEATHERED_COPPER, Material.OXIDIZED_COPPER,
                 Material.WAXED_COPPER_BLOCK, Material.WAXED_EXPOSED_COPPER, Material.WAXED_WEATHERED_COPPER,
                 Material.WAXED_OXIDIZED_COPPER), 4));
-        ring("bedrock_breaker", Material.TNT, new RecipeChoice.MaterialChoice(Material.WOODEN_HOE), bedrockBreaker());
         shapeless("calcite", new ItemStack(Material.CALCITE, 9), concat(
                 repeat(new RecipeChoice.MaterialChoice(Material.DIORITE), 5),
                 repeat(new RecipeChoice.MaterialChoice(Material.QUARTZ_BLOCK), 4)));
@@ -101,6 +100,15 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             getLogger().warning("KS_EC_Extension absent : craft de la Clé de l'End ignoré.");
         }
 
+        // Bedrock Breaker (1.4.0) : objet de KS_BedrockBreaker (softdepend), 8 TNT autour de n'importe quelle houe en
+        // diamant (même renommée, enchantée ou abîmée : choix de Maxster33).
+        if (getServer().getPluginManager().isPluginEnabled("KS_BedrockBreaker")) {
+            ring("bedrock_breaker", Material.TNT, new RecipeChoice.MaterialChoice(Material.DIAMOND_HOE),
+                    fr.kalium.bedrockbreaker.KSBedrockBreaker.creerBreaker());
+        } else {
+            getLogger().warning("KS_BedrockBreaker absent : craft du Bedrock Breaker ignoré.");
+        }
+
         // Verrue du Nether : remplacee par le bloc de verrue (briques rouges), craft 9 verrues -> bloc retire.
         Bukkit.removeRecipe(NamespacedKey.minecraft("red_nether_bricks"));
         Bukkit.removeRecipe(NamespacedKey.minecraft("nether_wart_block"));
@@ -121,7 +129,7 @@ public final class KSCrafts extends JavaPlugin implements Listener {
                 new RecipeChoice.MaterialChoice(Material.NETHER_WART_BLOCK)));
 
         getLogger().info(added.size() + " crafts ajoutés.");
-        // Joueurs déjà connectés (rechargement du plugin) qui ont un ingrédient de la Clé de l'End.
+        // Joueurs déjà connectés (rechargement du plugin) qui ont un ingrédient d'une recette du livre.
         Bukkit.getOnlinePlayers().forEach(this::livreDeRecettes);
     }
 
@@ -134,23 +142,25 @@ public final class KSCrafts extends JavaPlugin implements Listener {
     // ------------------------------------------------------------------ livre de recettes
 
     /**
-     * Clé de l'End dans le livre de recettes (1.3.0) : comme une recette vanilla, débloquée quand le joueur obtient
-     * l'un de ses ingrédients (objet qui arrive dans son inventaire). Une recette de plugin n'apparaît dans le livre
-     * que si elle est débloquée pour le joueur ; une fois débloquée, elle le reste.
+     * Livre de recettes : comme une recette vanilla, une recette de LIVRE est débloquée quand le joueur obtient l'un de
+     * ses ingrédients (objet qui arrive dans son inventaire). Une recette de plugin n'apparaît dans le livre que si
+     * elle est débloquée pour le joueur ; une fois débloquée, elle le reste.
+     * Clé de l'End depuis 1.3.0 ; Bedrock Breaker (TNT ou houe en diamant) depuis 1.4.0.
      */
-    private void debloquerCle(Player player) {
-        NamespacedKey cle = key("cle_de_l_end");
-        if (added.contains(cle) && !player.hasDiscoveredRecipe(cle)) {
-            player.discoverRecipe(cle);
-        }
+    private void debloquer(Player player, Material obtenu) {
+        LIVRE.forEach((id, ingredients) -> {
+            NamespacedKey recette = key(id);
+            if (ingredients.contains(obtenu) && added.contains(recette) && !player.hasDiscoveredRecipe(recette)) {
+                player.discoverRecipe(recette);
+            }
+        });
     }
 
     /** Joueur qui a déjà un ingrédient (obtenu avant cette version, ou au démarrage du plugin). */
     private void livreDeRecettes(Player player) {
         for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && CLE_INGREDIENTS.contains(item.getType())) {
-                debloquerCle(player);
-                return;
+            if (item != null) {
+                debloquer(player, item.getType());
             }
         }
     }
@@ -162,9 +172,7 @@ public final class KSCrafts extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onSlotChange(PlayerInventorySlotChangeEvent event) {
-        if (CLE_INGREDIENTS.contains(event.getNewItemStack().getType())) {
-            debloquerCle(event.getPlayer());
-        }
+        debloquer(event.getPlayer(), event.getNewItemStack().getType());
     }
 
     // ------------------------------------------------------------------ recettes
@@ -226,39 +234,5 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             list.addAll(part);
         }
         return list;
-    }
-
-    // ------------------------------------------------------------------ Bedrock Breaker
-
-    private ItemStack bedrockBreaker() {
-        ItemStack item = new ItemStack(Material.WOODEN_HOE);
-        ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("Bedrock Breaker").decoration(TextDecoration.ITALIC, false));
-        meta.getPersistentDataContainer().set(breakerKey, PersistentDataType.BYTE, (byte) 1);
-        item.setItemMeta(meta);
-        return item;
-    }
-
-    private boolean isBreaker(ItemStack item) {
-        return item != null && item.getType() == Material.WOODEN_HOE && item.hasItemMeta()
-                && item.getItemMeta().getPersistentDataContainer().has(breakerKey, PersistentDataType.BYTE);
-    }
-
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onUseBreaker(PlayerInteractEvent event) {
-        Block block = event.getClickedBlock();
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || block == null || block.getType() != Material.BEDROCK
-                || event.getHand() == null) {
-            return;
-        }
-        Player player = event.getPlayer();
-        ItemStack hand = event.getHand() == EquipmentSlot.OFF_HAND
-                ? player.getInventory().getItemInOffHand() : player.getInventory().getItemInMainHand();
-        if (!isBreaker(hand)) {
-            return;
-        }
-        event.setCancelled(true);
-        block.setType(Material.AIR);
-        hand.setAmount(hand.getAmount() - 1);
     }
 }

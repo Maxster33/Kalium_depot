@@ -33,3 +33,11 @@ Complétion : `fiole_exp(` ; le message d'id inconnu cite `fiole_exp(<points>)`.
 compiler KS_FioleExp d'abord. Déployé avec KS_FioleExp 1.0.0 (nécessaire pour cet id).
 
 **Déployé sur Event le 29/09/2026 à 03:39 (1.1.0 dans `_removed-ks_kaliumgive-1.1.0/`). Statut : testé et confirmé par Maxster33 le 29/09/2026.**
+
+## 1.3.0 - id bedrock_breaker (29/09/2026)
+
+Demande de Maxster33 : id **`bedrock_breaker`** (objet créé par KS_BedrockBreaker, `KSBedrockBreaker.creerBreaker()`),
+ex. `/kaliumgive Maxster33 bedrock_breaker 5`. `softdepend` et `build.sh` : compiler KS_BedrockBreaker d'abord.
+À déployer avec KS_BedrockBreaker 1.0.0.
+
+**Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**

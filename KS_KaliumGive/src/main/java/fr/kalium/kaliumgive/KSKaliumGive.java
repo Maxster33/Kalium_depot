@@ -38,6 +38,8 @@ public final class KSKaliumGive extends JavaPlugin {
                 () -> fr.kalium.estomacgardien.KSEstomacGardien.creerEstomac()));
         OBJETS.put("cle_de_l_end", new ObjetCustom("KS_EC_Extension",
                 () -> fr.kalium.ecextension.KSECExtension.creerCle()));
+        OBJETS.put("bedrock_breaker", new ObjetCustom("KS_BedrockBreaker",
+                () -> fr.kalium.bedrockbreaker.KSBedrockBreaker.creerBreaker()));
     }
 
     /** Fiole d'experience de KS_FioleExp, avec son nombre de points : fiole_exp(1395). */

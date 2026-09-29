@@ -68,3 +68,16 @@ Correction de Maxster33 : « non pas à la connexion des joueurs mais à l'obten
 
 **Déployé sur Event le 29/09/2026 à 00:27 (1.2.0 dans `_removed-ks_crafts-1.2.0/` ; `_removed-ks_crafts-1.0.0/`
 supprimable par l'humain, 3 versions derrière). Statut : non testé en jeu.**
+
+## 1.4.0 - Bedrock Breaker : houe en diamant, objet dans KS_BedrockBreaker, livre de recettes (29/09/2026)
+
+Demande de Maxster33 (détail dans `KS_BedrockBreaker/JOURNAL.md`) :
+- Recette : **8 TNT autour d'une houe en diamant** (n'importe laquelle, même renommée, enchantée ou abîmée : choix de
+  Maxster33) → 1 Bedrock Breaker, objet créé par KS_BedrockBreaker (`softdepend` ; `build.sh` : compiler
+  KS_BedrockBreaker d'abord). Sans KS_BedrockBreaker activé : craft ignoré (avertissement dans la console).
+- L'objet et son utilisation (ancienne houe en bois nommée, clic droit sur la bedrock) sont retirés de KS_Crafts :
+  c'est KS_BedrockBreaker qui les gère (les anciens Bedrock Breaker y marchent encore).
+- Livre de recettes : la recette du Bedrock Breaker est débloquée dès qu'une **TNT ou une houe en diamant** arrive dans
+  l'inventaire du joueur, comme la Clé de l'End (même mécanisme, généralisé : liste `LIVRE`).
+
+**À déployer avec KS_BedrockBreaker 1.0.0. Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**

@@ -21,6 +21,16 @@
           "icon": "kalium.cle_de_l_end",
           "allow_offhand": true
         }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:blaze_rod",
+        "bedrock_identifier": "kalium:bedrock_breaker",
+        "display_name": "Bedrock Breaker",
+        "bedrock_options": {
+          "icon": "kalium.bedrock_breaker",
+          "allow_offhand": true
+        }
       }
     ]
   }
