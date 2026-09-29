@@ -43,4 +43,4 @@ fiole remplie correspond donc toujours à son contenu.
 Avec KS_Enclume 1.1.0 : au-delà de 39 niveaux, le coût affiché pour remplir une fiole est plafonné à 39 et le vrai
 coût est écrit en barre d'action (le prélèvement reste fait en points par KS_FioleExp).
 
-**Déployé sur Event le 29/09/2026 à 03:54 (1.0.0 dans `_removed-ks_fioleexp-1.0.0/`). Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 03:54 (1.0.0 dans `_removed-ks_fioleexp-1.0.0/`). Statut : testé et confirmé en Java par Maxster33 le 29/09/2026 ; Bedrock : problème de remplissage à l'enclume (voir REPRISE_PROJET.md).**

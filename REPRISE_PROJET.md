@@ -338,3 +338,8 @@ installés : le point de chute du lobby vers Kanvas fonctionne, boussole et éto
   résultat ; à la prise, le vrai coût est rendu à l'enclume, qui retire elle-même les niveaux. À tester : prise (bref
   clignotement possible), niveaux retirés, refus sans assez de niveaux, prise ratée (curseur occupé). **Nettoyage
   possible par l'humain** (règle des 3 versions) : sur Event, `/plugins/_removed-ks_enclume-1.0.0/`.
+- **Tests du 29/09/2026 (Maxster33)** : KS_Enclume 1.1.2 et KS_FioleExp 1.1.0 **OK en Java**. **Bedrock** : au-delà de 39
+  niveaux l'amélioration marche mais le vrai coût n'apparaît pas dans la description ; le remplissage d'une fiole
+  (nombre tapé dans le nom) renomme simplement la fiole, coût affiché 1. Cause probable : sur Bedrock, l'enclume calcule
+  et affiche son propre résultat (Geyser ne fait que corriger le coût) ; le résultat préparé par le serveur n'est pas
+  montré. En cours d'analyse.

@@ -59,4 +59,4 @@ ligne.
 - Limite possible : avec un coût de 0, le jeu Java croit ne pas pouvoir prendre l'objet ; le serveur accepte la prise et
   corrige l'affichage (bref clignotement possible). À vérifier en jeu.
 
-**Déployé sur Event le 29/09/2026 à 04:31 (1.1.1 dans `_removed-ks_enclume-1.1.1/`). Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 04:31 (1.1.1 dans `_removed-ks_enclume-1.1.1/`). Statut : testé et confirmé en Java par Maxster33 le 29/09/2026 ; Bedrock : vrai coût absent de la description (voir REPRISE_PROJET.md).**
