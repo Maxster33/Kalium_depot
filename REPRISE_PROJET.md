@@ -93,7 +93,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 ### Versions compilées, non déployées
 
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
-- **KS_FioleExp 1.4.0** (29/09/2026 11:00, Maxster33) : usure de l'enclume à chaque fiole remplie réduite de 12 % à 6 %,
+- **KS_FioleExp 1.4.0** (29/09/2026 10:55, Maxster33) : usure de l'enclume à chaque fiole remplie réduite de 12 % à 6 %,
   réglable (`config.yml` : `usure-enclume-pourcent`) ; non testé.
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
@@ -371,6 +371,6 @@ installés : le point de chute du lobby vers Kanvas fonctionne, boussole et éto
   **Actif après redémarrage d'Event (l'humain).** À tester (Java) : ouverture, textes, confirmation (points, fiole
   vide consommée, fiole reçue), erreurs ; Bedrock inchangé. **Nettoyage possible par l'humain** (règle des 3
   versions) : sur Event, `/plugins/_removed-ks_fioleexp-1.0.0/`.
-- **29/09/2026 11:00, compilé, non déployé, non testé** : **KS_FioleExp 1.4.0** : « la fabrication de fiole d'exp abîme
+- **29/09/2026 10:55, compilé, non déployé, non testé** : **KS_FioleExp 1.4.0** : « la fabrication de fiole d'exp abîme
   trop l'enclume » : 6 % de chance d'usure par fiole au lieu de 12 % (environ 50 fioles par enclume au lieu de 25),
   réglable dans le nouveau `config.yml` (`usure-enclume-pourcent`, créé au premier démarrage ; 0 = aucune usure).
