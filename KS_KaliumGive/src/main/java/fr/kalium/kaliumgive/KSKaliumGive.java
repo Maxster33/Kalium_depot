@@ -42,16 +42,16 @@ public final class KSKaliumGive extends JavaPlugin {
                 () -> fr.kalium.bedrockbreaker.KSBedrockBreaker.creerBreaker()));
     }
 
-    /** Fiole d'experience de KS_FioleExp, avec son nombre de points : fiole_exp(1395). */
+    /** Fiole d'experience de KS_FioleExp, avec son nombre de niveaux (1.4.0 ; points avant) : fiole_exp(50). */
     private static final Pattern FIOLE_EXP = Pattern.compile("fiole_exp\\((\\d{1,9})\\)");
 
     /** id_custom -> objet, ou null si l'id est inconnu. */
     private static ObjetCustom trouver(String id) {
         Matcher fiole = FIOLE_EXP.matcher(id);
         if (fiole.matches()) {
-            int points = Integer.parseInt(fiole.group(1));
-            return points > 0 ? new ObjetCustom("KS_FioleExp",
-                    () -> fr.kalium.fioleexp.KSFioleExp.creerFiole(points)) : null;
+            int niveaux = Integer.parseInt(fiole.group(1));
+            return niveaux > 0 && niveaux <= fr.kalium.fioleexp.KSFioleExp.NIVEAUX_MAX ? new ObjetCustom("KS_FioleExp",
+                    () -> fr.kalium.fioleexp.KSFioleExp.creerFioleNiveaux(niveaux)) : null;
         }
         return OBJETS.get(id);
     }
@@ -74,7 +74,7 @@ public final class KSKaliumGive extends JavaPlugin {
         ObjetCustom objet = trouver(args[1].toLowerCase());
         if (objet == null) {
             sender.sendMessage(Component.text("id_custom inconnu : " + args[1] + ". Liste : "
-                    + String.join(", ", OBJETS.keySet()) + ", fiole_exp(<points>)", NamedTextColor.RED));
+                    + String.join(", ", OBJETS.keySet()) + ", fiole_exp(<niveaux>)", NamedTextColor.RED));
             return true;
         }
         if (!getServer().getPluginManager().isPluginEnabled(objet.plugin())) {

@@ -23,12 +23,12 @@ final class FormulaireBedrock {
         return FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());
     }
 
-    /** 1er formulaire : nombre de points à stocker (erreur éventuelle en tête, en rouge). */
-    void demanderPoints(Player player, String erreur, String texte, Consumer<String> suite) {
+    /** 1er formulaire : nombre de niveaux à stocker (1.5.0 ; points avant), erreur éventuelle en tête, en rouge. */
+    void demanderNiveaux(Player player, String erreur, String texte, Consumer<String> suite) {
         CustomForm form = CustomForm.builder()
                 .title(MenuFiole.TITRE)
                 .label((erreur != null ? "§c" + erreur + "§r\n\n" : "") + texte)
-                .input(MenuFiole.CHAMP, "ex. 1395")
+                .input(MenuFiole.CHAMP, "ex. 30")
                 .validResultHandler(response -> suite.accept(response.asInput(1)))
                 .build();
         FloodgateApi.getInstance().sendForm(player.getUniqueId(), form);

@@ -1,8 +1,10 @@
 package fr.kalium.fioleexp;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -42,6 +44,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 1.1.0 : les fioles d'expérience (vanilla ou remplies) ne peuvent plus être renommées à l'enclume.
  * 1.2.0 / 1.3.0 : menu de remplissage (accroupi + clic droit sur une enclume avec une fiole vide), voir MenuFiole.
  * 1.4.0 : usure de l'enclume réduite à 6 % par fiole, réglable (config.yml : usure-enclume-pourcent).
+ * 1.5.0 : on tape un nombre de NIVEAUX (enclume et menus) : la fiole contient les points pour passer du niveau 0 à ce
+ * niveau, s'appelle « Fiole d'expérience (niveau 50) » et porte ses points en description. Les fioles faites avant
+ * (« (1 395 XP) ») gardent leur nom et leur contenu.
  *
  * Lancée, la fiole se brise comme une fiole vanilla et lâche exactement les points stockés en orbes.
  */
@@ -73,13 +78,22 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------ fiole remplie
 
-    /** Fiole d'experience vanilla marquee avec le nombre de points stockes. Necessite que le plugin soit active
-     * (utilisee aussi par KS_KaliumGive). */
-    public static ItemStack creerFiole(int points) {
+    /** 1.5.0 : nombre de niveaux maximal d'une fiole (ses points doivent tenir dans un int). */
+    public static final int NIVEAUX_MAX = 20000;
+
+    /**
+     * Fiole d'experience vanilla marquee, remplie des points pour passer du niveau 0 au niveau donne (1.5.0, demande de
+     * Maxster33 ; avant : nombre de points tape, nom « (1 395 XP) »). Nom « Fiole d'expérience (niveau 50) », description
+     * « 5 345 points d'expérience ». Necessite que le plugin soit active (utilisee aussi par KS_KaliumGive).
+     */
+    public static ItemStack creerFioleNiveaux(int niveaux) {
+        int points = (int) pointsForLevel(niveaux);
         ItemStack bottle = new ItemStack(Material.EXPERIENCE_BOTTLE);
         ItemMeta meta = bottle.getItemMeta();
-        meta.displayName(Component.text("Fiole d'expérience (" + groupDigits(points) + " XP)")
+        meta.displayName(Component.text("Fiole d'expérience (niveau " + niveaux + ")")
                 .decoration(TextDecoration.ITALIC, false));
+        meta.lore(List.of(Component.text(nombreDePoints(points) + " d'expérience", NamedTextColor.GRAY)
+                .decoration(TextDecoration.ITALIC, false)));
         meta.getPersistentDataContainer().set(pointsKey, PersistentDataType.INTEGER, points);
         bottle.setItemMeta(meta);
         return bottle;
@@ -105,8 +119,18 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
         return out.toString();
     }
 
-    /** Nombre de points tape dans le champ du nom (espaces toleres), ou null si ce n'est pas un nombre positif. */
-    static Integer parsePoints(String text) {
+    /** 1395 -> "1 395 points", 1 -> "1 point", 0 -> "0 point". */
+    static String nombreDePoints(int points) {
+        return groupDigits(points) + (points > 1 ? " points" : " point");
+    }
+
+    /** 1 -> "1 niveau", 7 -> "7 niveaux". */
+    static String nombreDeNiveaux(int niveaux) {
+        return groupDigits(niveaux) + (niveaux > 1 ? " niveaux" : " niveau");
+    }
+
+    /** 1.5.0 : nombre de NIVEAUX tape (espaces toleres), ou null si ce n'est pas un nombre de 1 a NIVEAUX_MAX. */
+    static Integer parseNiveaux(String text) {
         if (text == null) {
             return null;
         }
@@ -114,12 +138,12 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
         if (!digits.matches("\\d{1,9}")) {
             return null;
         }
-        int points = Integer.parseInt(digits);
-        return points > 0 ? points : null;
+        int niveaux = Integer.parseInt(digits);
+        return niveaux > 0 && niveaux <= NIVEAUX_MAX ? niveaux : null;
     }
 
     /** Points d'experience pour aller du niveau 0 au niveau donne (formule vanilla). */
-    private static long pointsForLevel(int level) {
+    static long pointsForLevel(int level) {
         if (level <= 16) {
             return (long) level * level + 6L * level;
         }
@@ -140,14 +164,15 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------ enclume
 
-    /** Fiole vide + 2e case vide + nombre valide ; null sinon (l'enclume garde alors son comportement vanilla). */
-    private Integer requestedPoints(AnvilInventory inventory, AnvilView view) {
+    /** Fiole vide + 2e case vide + nombre de niveaux valide ; null sinon (l'enclume garde alors son comportement
+     * vanilla). */
+    private Integer requestedNiveaux(AnvilInventory inventory, AnvilView view) {
         ItemStack first = inventory.getFirstItem();
         ItemStack second = inventory.getSecondItem();
         if (first == null || first.getType() != Material.GLASS_BOTTLE || (second != null && !second.isEmpty())) {
             return null;
         }
-        return parsePoints(view.getRenameText());
+        return parseNiveaux(view.getRenameText());
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -159,16 +184,17 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
             event.setResult(null);
             return;
         }
-        Integer points = requestedPoints(event.getInventory(), view);
-        if (points == null || !(view.getPlayer() instanceof Player player)) {
+        Integer niveaux = requestedNiveaux(event.getInventory(), view);
+        if (niveaux == null || !(view.getPlayer() instanceof Player player)) {
             return;
         }
         int current = player.calculateTotalExperiencePoints();
+        int points = (int) pointsForLevel(niveaux);
         if (points > current) {
             event.setResult(null); // pas assez d'XP
             return;
         }
-        event.setResult(creerFiole(points));
+        event.setResult(creerFioleNiveaux(niveaux));
         view.setRepairCost(Math.max(1, player.getLevel() - levelFor(current - points)));
     }
 
@@ -187,14 +213,15 @@ public final class KSFioleExp extends JavaPlugin implements Listener {
 
         // Verification au moment de la prise (l'XP ou les cases ont pu changer depuis le calcul).
         AnvilInventory inventory = (AnvilInventory) view.getTopInventory();
-        if (!points.equals(requestedPoints(inventory, view))) {
+        Integer niveaux = requestedNiveaux(inventory, view);
+        if (niveaux == null || points != pointsForLevel(niveaux)) {
             return;
         }
         int current = player.calculateTotalExperiencePoints();
         if (points > current) {
             return;
         }
-        ItemStack given = creerFiole(points);
+        ItemStack given = creerFioleNiveaux(niveaux);
         ClickType click = event.getClick();
         if (click.isShiftClick()) {
             if (!canFit(player.getInventory(), given)) {

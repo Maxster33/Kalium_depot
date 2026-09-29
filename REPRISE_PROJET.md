@@ -395,3 +395,7 @@ installés : le point de chute du lobby vers Kanvas fonctionne, boussole et éto
 - **29/09/2026 13:55, déployé sur Event à 13:59, non testé** : **KS_Crafts 1.5.0** : nouvelle recette du Bedrock Breaker
   (poudre de blaze aux 4 coins, charge de feu en haut, wagonnets à TNT à gauche et à droite, cristal de l'End au
   centre, ancre de réapparition en bas) ; débloquée dans le livre de recettes à l'obtention d'un de ces ingrédients.
+- **29/09/2026 14:20, compilé, non déployé, non testé** : **KS_FioleExp 1.5.0** + **KS_KaliumGive 1.4.0** (à déployer
+  ensemble) : fiole remplie en **niveaux** (niveau 50 = points du niveau 0 au niveau 50), à l'enclume et dans le menu
+  (Java et Bedrock) ; nom « Fiole d'expérience (niveau 50) », points en description ; confirmation du menu détaillée
+  (points de la fiole, points du joueur, coût en points et en niveaux perdus) ; `fiole_exp(N)` en niveaux.

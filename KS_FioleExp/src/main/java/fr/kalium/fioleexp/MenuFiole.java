@@ -33,17 +33,19 @@ import org.bukkit.inventory.PlayerInventory;
 
 /**
  * Menu de remplissage d'une fiole : accroupi + clic droit sur une enclume avec une fiole vide en main.
- * 1er menu : nombre de points ; 2e : « N points = X niveaux consommés (niveau A -> B) », Confirmer / Annuler.
+ * 1er menu : nombre de niveaux ; 2e : points de la fiole, points du joueur et coût (points, niveaux perdus, niveau
+ * A -> B), Confirmer / Annuler.
  * Même effet qu'à l'enclume : points exacts retirés, une fiole vide consommée, même usure de l'enclume.
  *
  * 1.2.0 : joueurs Bedrock seulement (formulaire Floodgate, voir FormulaireBedrock).
  * 1.3.0 - demande de Maxster33, 29/09/2026 (« uniformiser ») : joueurs Java aussi, par un dialogue natif (Paper), avec
  * les mêmes textes que le formulaire Bedrock. Le remplissage par le champ du nom de l'enclume reste possible.
+ * 1.5.0 - demande de Maxster33 : nombre de niveaux au lieu de points ; détail des points du joueur et du coût.
  */
 final class MenuFiole implements Listener {
 
     static final String TITRE = "Fiole d'expérience";
-    static final String CHAMP = "Nombre de points à stocker";
+    static final String CHAMP = "Nombre de niveaux à stocker";
 
     /** Distance maximale entre le joueur et l'enclume à la confirmation. */
     private static final double DISTANCE_MAX = 6;
@@ -83,7 +85,7 @@ final class MenuFiole implements Listener {
         if (dernier != null && maintenant - dernier < 1000) {
             return;
         }
-        demanderPoints(player, block.getLocation(), null);
+        demanderNiveaux(player, block.getLocation(), null);
     }
 
     private boolean estBedrock(Player player) {
@@ -97,39 +99,54 @@ final class MenuFiole implements Listener {
 
     // ------------------------------------------------------------------ étapes (communes Java / Bedrock)
 
-    /** 1er menu : nombre de points à stocker (erreur éventuelle en tête). */
-    private void demanderPoints(Player player, Location enclume, String erreur) {
-        String texte = "Tu as " + KSFioleExp.groupDigits(player.calculateTotalExperiencePoints())
-                + " points d'expérience (niveau " + player.getLevel() + ").\n"
+    /** « Tu as 2 920 points d'expérience (niveau 40). » */
+    private static String experienceDuJoueur(Player player) {
+        return "Tu as " + KSFioleExp.nombreDePoints(player.calculateTotalExperiencePoints()) + " d'expérience (niveau "
+                + player.getLevel() + ").";
+    }
+
+    /** 1er menu : nombre de niveaux à stocker (erreur éventuelle en tête). */
+    private void demanderNiveaux(Player player, Location enclume, String erreur) {
+        String texte = experienceDuJoueur(player) + "\n"
+                + "Une fiole de N niveaux contient les points d'expérience pour passer du niveau 0 au niveau N.\n"
                 + "Une fiole vide de ton inventaire sera remplie.";
-        Consumer<String> suite = saisie -> surServeur(() -> verifierPoints(player, enclume, saisie));
+        Consumer<String> suite = saisie -> surServeur(() -> verifierNiveaux(player, enclume, saisie));
         if (estBedrock(player)) {
-            bedrock.demanderPoints(player, erreur, texte, suite);
+            bedrock.demanderNiveaux(player, erreur, texte, suite);
         } else {
             dialogueDemande(player, erreur, texte, suite);
         }
     }
 
-    private void verifierPoints(Player player, Location enclume, String saisie) {
+    private void verifierNiveaux(Player player, Location enclume, String saisie) {
         if (!player.isOnline()) {
             return;
         }
-        Integer points = KSFioleExp.parsePoints(saisie);
-        if (points == null) {
-            demanderPoints(player, enclume, "Tape un nombre de points (ex. 1395).");
+        Integer niveaux = KSFioleExp.parseNiveaux(saisie);
+        if (niveaux == null) {
+            demanderNiveaux(player, enclume, "Tape un nombre de niveaux (ex. 30).");
             return;
         }
+        int points = (int) KSFioleExp.pointsForLevel(niveaux);
         String erreur = erreurPrise(player, enclume, points);
         if (erreur != null) {
-            demanderPoints(player, enclume, erreur);
+            demanderNiveaux(player, enclume, erreur);
             return;
         }
-        int niveauApres = KSFioleExp.levelFor(player.calculateTotalExperiencePoints() - points);
+        // 1.5.0 : détail des points du joueur et du coût (en points et en niveaux perdus).
+        int reste = player.calculateTotalExperiencePoints() - points;
+        int niveauApres = KSFioleExp.levelFor(reste);
         int consommes = player.getLevel() - niveauApres;
-        String texte = "Stocker " + KSFioleExp.groupDigits(points) + " points consommera " + consommes
-                + (consommes > 1 ? " niveaux" : " niveau") + " : tu passeras du niveau " + player.getLevel()
-                + " au niveau " + niveauApres + ".";
-        Runnable suite = () -> surServeur(() -> remplir(player, enclume, points));
+        String texte = "Fiole de " + KSFioleExp.nombreDeNiveaux(niveaux) + " : "
+                + KSFioleExp.nombreDePoints(points) + " d'expérience.\n"
+                + experienceDuJoueur(player) + "\n"
+                + "Coût : " + KSFioleExp.nombreDePoints(points)
+                + (consommes > 0
+                        ? ", soit " + KSFioleExp.nombreDeNiveaux(consommes) + " : tu passeras du niveau "
+                                + player.getLevel() + " au niveau " + niveauApres
+                        : " : tu resteras au niveau " + player.getLevel())
+                + " (" + KSFioleExp.nombreDePoints(reste) + (reste > 1 ? " restants)." : " restant).");
+        Runnable suite = () -> surServeur(() -> remplir(player, enclume, niveaux));
         if (estBedrock(player)) {
             bedrock.confirmer(player, texte, suite);
         } else {
@@ -139,8 +156,10 @@ final class MenuFiole implements Listener {
 
     /** Raison pour laquelle la fiole ne peut pas être remplie, ou null. */
     private static String erreurPrise(Player player, Location enclume, int points) {
-        if (points > player.calculateTotalExperiencePoints()) {
-            return "Tu n'as pas assez de points d'expérience.";
+        int total = player.calculateTotalExperiencePoints();
+        if (points > total) {
+            return "Tu n'as pas assez de points d'expérience : il en faut " + KSFioleExp.groupDigits(points)
+                    + ", tu en as " + KSFioleExp.groupDigits(total) + ".";
         }
         if (player.getInventory().first(Material.GLASS_BOTTLE) < 0) {
             return "Il te faut une fiole vide dans ton inventaire.";
@@ -153,13 +172,14 @@ final class MenuFiole implements Listener {
     }
 
     /** Confirmation : tout est revérifié (l'inventaire ou l'XP ont pu changer pendant le menu). */
-    private void remplir(Player player, Location enclume, int points) {
+    private void remplir(Player player, Location enclume, int niveaux) {
         if (!player.isOnline()) {
             return;
         }
+        int points = (int) KSFioleExp.pointsForLevel(niveaux);
         String erreur = erreurPrise(player, enclume, points);
         if (erreur != null) {
-            demanderPoints(player, enclume, erreur);
+            demanderNiveaux(player, enclume, erreur);
             return;
         }
         PlayerInventory inventory = player.getInventory();
@@ -168,7 +188,7 @@ final class MenuFiole implements Listener {
         vide.setAmount(vide.getAmount() - 1);
         inventory.setItem(slot, vide.getAmount() > 0 ? vide : null);
         player.setExperienceLevelAndProgress(player.calculateTotalExperiencePoints() - points);
-        for (ItemStack reste : inventory.addItem(KSFioleExp.creerFiole(points)).values()) {
+        for (ItemStack reste : inventory.addItem(KSFioleExp.creerFioleNiveaux(niveaux)).values()) {
             player.getWorld().dropItemNaturally(player.getLocation(), reste);
         }
         plugin.damageAnvil(enclume, player);
@@ -183,11 +203,11 @@ final class MenuFiole implements Listener {
         }
         corps.add(DialogBody.plainMessage(Component.text(texte)));
         DialogAction valider = DialogAction.customClick(
-                (reponse, audience) -> suite.accept(reponse.getText("points")), UNE_FOIS);
+                (reponse, audience) -> suite.accept(reponse.getText("niveaux")), UNE_FOIS);
         Dialog dialog = Dialog.create(builder -> builder.empty()
                 .base(DialogBase.builder(Component.text(TITRE))
                         .body(corps)
-                        .inputs(List.of(DialogInput.text("points", Component.text(CHAMP)).build()))
+                        .inputs(List.of(DialogInput.text("niveaux", Component.text(CHAMP)).build()))
                         .build())
                 .type(DialogType.confirmation(
                         ActionButton.builder(Component.text("Valider")).action(valider).build(),

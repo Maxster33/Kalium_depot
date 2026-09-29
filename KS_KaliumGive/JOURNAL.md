@@ -41,3 +41,11 @@ ex. `/kaliumgive Maxster33 bedrock_breaker 5`. `softdepend` et `build.sh` : comp
 À déployer avec KS_BedrockBreaker 1.0.0.
 
 **Déployé sur Event le 29/09/2026 à 12:55 avec KS_BedrockBreaker 1.0.0 (1.2.0 dans `_removed-ks_kaliumgive-1.2.0/` ; supprimable par l'humain, 3 versions derrière : `_removed-ks_kaliumgive-1.0.0/`). Statut : non testé en jeu.**
+
+## 1.4.0 - fiole_exp(N) en niveaux (29/09/2026)
+
+Choix de Maxster33 (avec KS_FioleExp 1.5.0) : `fiole_exp(N)` donne une fiole de **N niveaux** (points pour passer du
+niveau 0 au niveau N, 1 à 20 000), ex. `/kaliumgive Maxster33 fiole_exp(50) 1` → « Fiole d'expérience (niveau 50) »
+(5 345 points). Message d'id inconnu : `fiole_exp(<niveaux>)`. Utilise `KSFioleExp.creerFioleNiveaux(niveaux)`.
+
+**À déployer avec KS_FioleExp 1.5.0. Compilé le 29/09/2026, non déployé. Statut : non testé en jeu.**

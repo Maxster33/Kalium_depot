@@ -101,3 +101,35 @@ Demande de Maxster33 : « la fabrication de fiole d'exp abîme trop l'enclume, i
 
 **Déployé sur Event le 29/09/2026 à 10:57 (1.3.0 dans `_removed-ks_fioleexp-1.3.0/`), actif après redémarrage d'Event.
 Statut : non testé en jeu (1.3.0, menu Java, pas encore testée non plus).**
+
+## 1.5.0 - fiole remplie en niveaux (29/09/2026)
+
+Demande de Maxster33 : écrire un nombre de **niveaux** au lieu d'un nombre de points (niveau 50 = les points pour passer
+du niveau 0 au niveau 50), sur Java et Bedrock, par les deux méthodes (champ du nom de l'enclume et menu) ; renommer la
+fiole en niveaux et mettre ses points en description ; dans le menu, détailler les points du joueur et le coût.
+Choix de Maxster33 : nom « Fiole d'expérience (niveau 50) » (comme les fioles de KS_LootEntites, même contenu) ;
+`fiole_exp(N)` de KS_KaliumGive en niveaux aussi.
+- **Saisie** : nombre de niveaux de 1 à 20 000 (espaces acceptés), dans le champ du nom de l'enclume ou dans le menu.
+  La fiole contient les points pour passer du niveau 0 à ce niveau (formule vanilla : 30 → 1 395, 50 → 5 345).
+- **Fiole** : « Fiole d'expérience (niveau 50) », description (gris) « 5 345 points d'expérience ». Les fioles de même
+  niveau s'empilent. Remplacement de `creerFiole(points)` par `creerFioleNiveaux(niveaux)` (KS_KaliumGive 1.4.0).
+- **Menu** (Java et Bedrock, mêmes textes) :
+  - 1er menu : « Tu as 2 920 points d'expérience (niveau 40). / Une fiole de N niveaux contient les points d'expérience
+    pour passer du niveau 0 au niveau N. / Une fiole vide de ton inventaire sera remplie. », champ « Nombre de niveaux
+    à stocker » (Bedrock : exemple « ex. 30 ») ;
+  - confirmation : « Fiole de 30 niveaux : 1 395 points d'expérience. / Tu as 2 920 points d'expérience (niveau 40). /
+    Coût : 1 395 points, soit 7 niveaux : tu passeras du niveau 40 au niveau 33 (1 525 points restants). » (si aucun
+    niveau n'est perdu : « tu resteras au niveau 40 ») ;
+  - erreurs : « Tape un nombre de niveaux (ex. 30). », « Tu n'as pas assez de points d'expérience : il en faut 5 345,
+    tu en as 2 920. », fiole vide manquante, enclume hors de portée.
+- **Enclume** : coût affiché = niveaux que le joueur va perdre (inchangé), prélèvement exact des points.
+- Les fioles faites avant (« Fiole d'expérience (1 395 XP) ») gardent leur nom et leur contenu, et ne s'empilent pas
+  avec les nouvelles.
+
+Limites :
+- Stocker N niveaux ne fait pas perdre N niveaux : un joueur de niveau 40 qui stocke 30 niveaux (1 395 points) perd 7
+  niveaux (les niveaux hauts valent plus de points). La confirmation du menu le détaille ; à l'enclume, seul le nombre de
+  niveaux perdus est affiché.
+
+**À déployer avec KS_KaliumGive 1.4.0 (sinon `/kaliumgive ... fiole_exp(...)` échoue). Compilé le 29/09/2026, non
+déployé. Statut : non testé en jeu.**
