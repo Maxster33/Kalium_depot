@@ -76,3 +76,22 @@ le jeu écrit un nombre ; 39 à la place).
   pourtant la bonne). Un pack de ressources ne change pas ce calcul.
 
 **Déployé sur Event le 29/09/2026 à 05:15 (1.1.2 dans `_removed-ks_enclume-1.1.2/`). Statut : non testé en jeu.**
+
+## 1.1.4 - vrai coût visible sur Bedrock (29/09/2026)
+
+Test de Maxster33 (Bedrock) avec 1.1.3 : ça marche, mais au-delà de 40 niveaux on ne voit ni le coût ni si on a assez
+de niveaux. Demande : afficher le nombre de niveaux nécessaire. Choix de Maxster33 : ligne sur l'objet de la 1re case.
+- Le jeu Bedrock calcule lui-même l'aperçu du résultat (la ligne ajoutée au résultat par le serveur n'y apparaît pas),
+  mais affiche la description des objets d'entrée envoyée par le serveur, et son aperçu copie l'objet de la 1re case.
+- Joueurs Bedrock, coût > 39 : « Coût réel : N niveaux » (vert / rouge) ajouté en dernière ligne de l'objet de la
+  1re case, avec un marqueur invisible (`ks_enclume:ligne_cout`), au tick suivant le calcul ; retiré si le coût repasse
+  sous 40 ou si le résultat disparaît. Visible au survol de l'objet d'entrée et normalement dans l'aperçu du résultat.
+- Retrait de la ligne : résultat pris (le résultat donné est calculé sans elle) ; tout clic ou glisser dans une enclume
+  (inventaire et curseur du joueur nettoyés au tick suivant) ; fermeture de l'enclume, déconnexion comprise (cases
+  d'entrée nettoyées avant que le jeu ne rende ou fasse tomber les objets) ; par sécurité, à la connexion et à
+  l'ouverture d'une enclume. Joueurs Java : inchangés (jamais de ligne sur leurs objets).
+- Limites : poser l'objet marqué remet à zéro le champ du nom sur Bedrock (Geyser) : taper le nom après avoir posé les
+  deux objets. Le coût affiché ne tient pas compte d'un nom tapé sur Bedrock (envoyé au serveur seulement à la prise ;
+  le vrai coût est revérifié à ce moment).
+
+**Non déployé. Statut : non testé en jeu.**

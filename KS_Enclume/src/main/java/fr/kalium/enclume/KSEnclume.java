@@ -10,17 +10,23 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.GameMode;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.view.AnvilView;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -42,6 +48,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  * l'enclume au moment de la prise, qui retire elle-même les niveaux.
  *
  * 1.1.3 : joueurs Bedrock (leur jeu refuse la prise à coût 0) : 39 s'ils ont assez de niveaux, sinon « Trop cher ! ».
+ *
+ * 1.1.4 : joueurs Bedrock : leur jeu calcule lui-même l'aperçu du résultat (la ligne ajoutée au résultat n'y apparaît
+ * pas), mais montre la description des objets d'entrée envoyée par le serveur. La ligne « Coût réel » est donc ajoutée
+ * à l'objet de la 1re case (marqueur invisible), ce qui la fait aussi apparaître dans leur aperçu. Elle est retirée dès
+ * que l'objet quitte l'enclume : prise du résultat, clic ou glisser (inventaire et curseur nettoyés au tick suivant),
+ * fermeture (cases d'entrée nettoyées avant que le jeu ne rende les objets), et par sécurité à la connexion et à
+ * l'ouverture d'une enclume.
  */
 public final class KSEnclume extends JavaPlugin implements Listener {
 
@@ -57,8 +70,12 @@ public final class KSEnclume extends JavaPlugin implements Listener {
 
     private final Map<UUID, Etat> etats = new HashMap<>();
 
+    /** 1.1.4 : marque la ligne « Coût réel » ajoutée à l'objet de la 1re case (joueurs Bedrock). */
+    private NamespacedKey marque;
+
     @Override
     public void onEnable() {
+        marque = new NamespacedKey(this, "ligne_cout");
         getServer().getPluginManager().registerEvents(this, this);
     }
 
@@ -66,6 +83,9 @@ public final class KSEnclume extends JavaPlugin implements Listener {
     public void onOpen(InventoryOpenEvent event) {
         if (event.getView() instanceof AnvilView anvil) {
             anvil.setMaximumRepairCost(Integer.MAX_VALUE);
+            if (event.getPlayer() instanceof Player player) {
+                nettoyerJoueur(player);
+            }
         }
     }
 
@@ -88,15 +108,23 @@ public final class KSEnclume extends JavaPlugin implements Listener {
         int cout = view.getRepairCost();
         if (result == null || result.isEmpty() || cout <= MAX_AFFICHE) {
             etats.remove(player.getUniqueId());
+            planifierMarque(player, view);
             return;
         }
-        etats.put(player.getUniqueId(), new Etat(cout, result.clone()));
-        event.setResult(avecCout(result, cout, player.getLevel() >= cout));
+        // Le résultat vanilla copie l'objet de la 1re case : sans la ligne ajoutée pour Bedrock.
+        ItemStack propre = nettoyer(result.clone());
+        etats.put(player.getUniqueId(), new Etat(cout, propre));
+        event.setResult(avecCout(propre, cout, assez(player, cout)));
         view.setRepairCost(coutEnvoye(player, cout));
         // 1.1.1 : le jeu du joueur recalcule lui-même le résultat quand les cases changent et le vide dès 40 niveaux
         // (croix rouge). On lui renvoie tout le contenu de l'enclume au tick suivant : il recalcule les cases
         // d'entrée, puis reçoit le résultat et le coût du serveur, qui restent affichés.
         getServer().getScheduler().runTask(this, player::updateInventory);
+        planifierMarque(player, view);
+    }
+
+    private static boolean assez(Player player, int cout) {
+        return player.getLevel() >= cout || player.getGameMode() == GameMode.CREATIVE;
     }
 
     /**
@@ -108,7 +136,7 @@ public final class KSEnclume extends JavaPlugin implements Listener {
         if (!estBedrock(player)) {
             return COUT_ENVOYE;
         }
-        return player.getLevel() >= cout || player.getGameMode() == GameMode.CREATIVE ? MAX_AFFICHE : cout;
+        return assez(player, cout) ? MAX_AFFICHE : cout;
     }
 
     /** Joueur Bedrock (Floodgate, lu sans dépendance de compilation ; sinon UUID Floodgate : 64 premiers bits à 0). */
@@ -123,23 +151,125 @@ public final class KSEnclume extends JavaPlugin implements Listener {
         }
     }
 
+    private static Component ligneCout(int cout, boolean assez) {
+        return Component.text("Coût réel : " + cout + " niveaux", assez ? NamedTextColor.GREEN : NamedTextColor.RED)
+                .decoration(TextDecoration.ITALIC, false);
+    }
+
     /** Copie du résultat avec « Coût réel : N niveaux » en dernière ligne (vert si le joueur a assez de niveaux). */
     private static ItemStack avecCout(ItemStack result, int cout, boolean assez) {
         ItemStack affiche = result.clone();
         ItemMeta meta = affiche.getItemMeta();
         List<Component> lore = meta.lore() != null ? new ArrayList<>(meta.lore()) : new ArrayList<>();
-        lore.add(Component.text("Coût réel : " + cout + " niveaux", assez ? NamedTextColor.GREEN : NamedTextColor.RED)
-                .decoration(TextDecoration.ITALIC, false));
+        lore.add(ligneCout(cout, assez));
         meta.lore(lore);
         affiche.setItemMeta(meta);
         return affiche;
     }
 
+    // ------------------------------------------------------------------ 1.1.4 : ligne sur l'objet de la 1re case (Bedrock)
+
+    /** Copie de l'objet avec la ligne « Coût réel » en dernier et le marqueur. */
+    private ItemStack marquer(ItemStack item, int cout, boolean assez) {
+        ItemStack marquee = avecCout(item, cout, assez);
+        ItemMeta meta = marquee.getItemMeta();
+        meta.getPersistentDataContainer().set(marque, PersistentDataType.BYTE, (byte) 1);
+        marquee.setItemMeta(meta);
+        return marquee;
+    }
+
+    private boolean estMarque(ItemStack item) {
+        return item != null && !item.isEmpty() && item.hasItemMeta()
+                && item.getItemMeta().getPersistentDataContainer().has(marque, PersistentDataType.BYTE);
+    }
+
+    /** Retire la ligne ajoutée (la dernière) et le marqueur ; renvoie l'objet tel quel s'il n'est pas marqué. */
+    private ItemStack nettoyer(ItemStack item) {
+        if (!estMarque(item)) {
+            return item;
+        }
+        ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().remove(marque);
+        List<Component> lore = meta.lore();
+        if (lore != null && !lore.isEmpty()) {
+            List<Component> reste = new ArrayList<>(lore.subList(0, lore.size() - 1));
+            meta.lore(reste.isEmpty() ? null : reste);
+        }
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    /**
+     * Au tick suivant (on ne change pas une case pendant le calcul de l'enclume) : met la 1re case dans l'état voulu,
+     * avec la ligne si le coût dépasse 39 pour un joueur Bedrock, sans sinon. Le changement relance le calcul, qui
+     * retombe sur le même état : pas de boucle.
+     */
+    private void planifierMarque(Player player, AnvilView view) {
+        if (!estBedrock(player)) {
+            return;
+        }
+        getServer().getScheduler().runTask(this, () -> {
+            if (!player.getOpenInventory().getTopInventory().equals(view.getTopInventory())) {
+                return;
+            }
+            AnvilInventory inventory = (AnvilInventory) view.getTopInventory();
+            ItemStack premier = inventory.getFirstItem();
+            if (premier == null || premier.isEmpty()) {
+                return;
+            }
+            Etat etat = etats.get(player.getUniqueId());
+            ItemStack voulu = nettoyer(premier.clone());
+            if (etat != null) {
+                voulu = marquer(voulu, etat.cout(), assez(player, etat.cout()));
+            }
+            if (!voulu.equals(premier)) {
+                inventory.setFirstItem(voulu);
+            }
+        });
+    }
+
+    /** Retire la ligne de tous les objets marqués de l'inventaire du joueur et de son curseur. */
+    private void nettoyerJoueur(Player player) {
+        PlayerInventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack item = inventory.getItem(i);
+            if (estMarque(item)) {
+                inventory.setItem(i, nettoyer(item.clone()));
+            }
+        }
+        ItemStack curseur = player.getItemOnCursor();
+        if (estMarque(curseur)) {
+            player.setItemOnCursor(nettoyer(curseur.clone()));
+        }
+    }
+
+    /** Tout clic ou glisser dans une enclume : un objet marqué a pu passer dans l'inventaire ou sous le curseur. */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onClicEnclume(InventoryClickEvent event) {
+        if (event.getView() instanceof AnvilView && event.getWhoClicked() instanceof Player player) {
+            getServer().getScheduler().runTask(this, () -> nettoyerJoueur(player));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGlisserEnclume(InventoryDragEvent event) {
+        if (event.getView() instanceof AnvilView && event.getWhoClicked() instanceof Player player) {
+            getServer().getScheduler().runTask(this, () -> nettoyerJoueur(player));
+        }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        nettoyerJoueur(event.getPlayer());
+    }
+
+    // ------------------------------------------------------------------ prise et fermeture
+
     /**
      * Prise du résultat : le résultat sans la ligne ajoutée est remis dans la case et le vrai coût est rendu à l'enclume
      * juste avant la prise : l'enclume vanilla vérifie et retire elle-même les niveaux (1.1.2). Si la prise n'a pas eu
-     * lieu (ex. curseur occupé), l'affichage est remis au tick suivant. Refusée si le joueur n'a pas le vrai coût. Les prises gérées par un autre plugin (clic annulé, ex. KS_FioleExp, qui donne sa
-     * propre fiole) sont ignorées.
+     * lieu (ex. curseur occupé), l'affichage est remis au tick suivant. Refusée si le joueur n'a pas le vrai coût. Les
+     * prises gérées par un autre plugin (clic annulé, ex. KS_FioleExp, qui donne sa propre fiole) sont ignorées.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTake(InventoryClickEvent event) {
@@ -152,9 +282,7 @@ public final class KSEnclume extends JavaPlugin implements Listener {
         if (etat == null || result == null || result.isEmpty()) {
             return;
         }
-        int avant = player.getLevel();
-        boolean creatif = player.getGameMode() == GameMode.CREATIVE;
-        if (!creatif && avant < etat.cout()) {
+        if (!assez(player, etat.cout())) {
             event.setCancelled(true);
             return;
         }
@@ -165,17 +293,33 @@ public final class KSEnclume extends JavaPlugin implements Listener {
             // Pas pris : la case contient encore le résultat propre remis ci-dessus.
             if (player.getOpenInventory().getTopInventory().equals(view.getTopInventory())
                     && etat.resultat().equals(reste)) {
-                view.getTopInventory().setItem(RESULT_SLOT, avecCout(reste, etat.cout(), player.getLevel() >= etat.cout()));
+                view.getTopInventory().setItem(RESULT_SLOT, avecCout(reste, etat.cout(), assez(player, etat.cout())));
                 view.setRepairCost(coutEnvoye(player, etat.cout()));
                 player.updateInventory();
             }
         });
     }
 
+    /** Fermeture : les cases d'entrée sont nettoyées avant que le jeu ne rende les objets (ou les fasse tomber). */
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
-        if (event.getView() instanceof AnvilView) {
-            etats.remove(event.getPlayer().getUniqueId());
+        if (!(event.getView() instanceof AnvilView view)) {
+            return;
+        }
+        AnvilInventory inventory = (AnvilInventory) view.getTopInventory();
+        if (estMarque(inventory.getFirstItem())) {
+            inventory.setFirstItem(nettoyer(inventory.getFirstItem().clone()));
+        }
+        if (estMarque(inventory.getSecondItem())) {
+            inventory.setSecondItem(nettoyer(inventory.getSecondItem().clone()));
+        }
+        etats.remove(event.getPlayer().getUniqueId());
+        if (event.getPlayer() instanceof Player player) {
+            getServer().getScheduler().runTask(this, () -> {
+                if (player.isOnline()) {
+                    nettoyerJoueur(player);
+                }
+            });
         }
     }
 }
