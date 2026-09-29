@@ -64,4 +64,4 @@ voir le nombre de niveaux consommés. Choix de Maxster33 : formulaire Floodgate.
 - Technique : classe `FormulaireBedrock` chargée seulement si Floodgate est activé (`softdepend: [floodgate]`) ;
   compilé contre l'API Floodgate 2.2.5 et Cumulus 1.1.2, ajoutés à `telecharger-outils.sh` (à relancer sur chaque PC).
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 05:58 (1.1.0 dans `_removed-ks_fioleexp-1.1.0/`). Statut : non testé en jeu.**
