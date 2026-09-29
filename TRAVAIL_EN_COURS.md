@@ -19,7 +19,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KG_ScoreBoards — LeKiwi06 — depuis le 2026-09-29 01:58 — API HTTP en lecture pour le bot Discord (étape 1 de KLM_DiscordBot)
 - KLM_DiscordBot — LeKiwi06 — depuis le 2026-09-29 01:58 — nouveau : bot Discord Node.js, étape 1 (squelette, /classement)
 - KS_FioleExp — Maxster33 — depuis le 2026-09-29 14:04 — fiole remplie en niveaux (nom, description, menus)
-- KS_LootEntites — Maxster33 — depuis le 2026-09-29 14:09 — Warden : tirage de fioles d'expérience (niveaux 20 à 60)
+- KS_LootEntites — Maxster33 — depuis le 2026-09-29 14:09 — Warden et endermite : fioles d'expérience
 
 
 ## Requis parfois

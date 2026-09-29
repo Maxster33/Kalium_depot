@@ -38,15 +38,15 @@ Demande de Maxster33 : « Grand Gardien : ajouter 50 % de chance d'obtenir l'est
 ## 1.2.0 - Warden : tirage de fioles d'expérience (29/09/2026)
 
 Demande de Maxster33 : retirer la fiole d'expérience du Warden (10 % d'une fiole de niveau 10, 20, 30, 40 ou 50) et la
-remplacer par 1 tirage :
+remplacer par 1 tirage (niveaux revus à la baisse par Maxster33 avant déploiement : d'abord 20, 30, 40, 50, 60) :
 
 | Fiole d'expérience | Quantité | Poids | Chance |
 |---|---|---|---|
-| niveau 20 (550 points) | 1 | 15 | 42,9 % |
-| niveau 30 (1 395 points) | 1 | 10 | 28,6 % |
-| niveau 40 (2 920 points) | 1 | 6 | 17,1 % |
-| niveau 50 (5 345 points) | 1 | 3 | 8,6 % |
-| niveau 60 (8 670 points) | 1 | 1 | 2,9 % |
+| niveau 10 (160 points) | 1 | 15 | 42,9 % |
+| niveau 15 (315 points) | 1 | 10 | 28,6 % |
+| niveau 20 (550 points) | 1 | 6 | 17,1 % |
+| niveau 30 (1 395 points) | 1 | 3 | 8,6 % |
+| niveau 40 (2 920 points) | 1 | 1 | 2,9 % |
 
 - Chaque Warden tué par un joueur lâche **toujours** une de ces fioles (le tirage n'a pas d'entrée « rien »). Comme les
   autres ajouts du plugin : seulement s'il est tué par un joueur.
