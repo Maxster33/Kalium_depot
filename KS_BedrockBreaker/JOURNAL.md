@@ -35,7 +35,7 @@ Limites :
 - Le cassage simulé est aussi vu par les autres plugins qui écoutent les cassages de blocs (aucun sur Event ne traite
   la bedrock).
 
-**Déployé sur Event le 29/09/2026 à 12:55 (avec KS_Crafts 1.4.0 et KS_KaliumGive 1.3.0 ; apparence Bedrock : geyser-bedrock 1.1.0 sur le proxy à 12:56), actif après redémarrage d'Event et du proxy. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 12:55 (avec KS_Crafts 1.4.0 et KS_KaliumGive 1.3.0 ; apparence Bedrock : geyser-bedrock 1.1.0 sur le proxy à 12:56), actif après redémarrage d'Event et du proxy. Statut : testé par Maxster33 le 29/09/2026 : la bedrock est bien cassée, mais un clic répété cassait aussi le bloc juste derrière (corrigé en 1.0.1).**
 
 ## 1.0.1 - un bloc par seconde (29/09/2026)
 
