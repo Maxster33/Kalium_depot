@@ -27,3 +27,13 @@ Limites :
 - Un distributeur peut encore poser une tête (elle devient alors une tête de joueur ordinaire).
 
 **Déployé sur Event le 29/09/2026 à 17:22 avec KS_ItemSimple, KS_Spawners, KS_BiomeChanger, KS_Crafts 1.6.0, KS_KaliumGive 1.5.0 et KS_LootBlocs 1.1.0 (apparence Bedrock : geyser-bedrock 1.2.0 sur le proxy à 17:23), actifs après redémarrage d'Event et du proxy. Statut : non testé en jeu.**
+
+## 1.1.0 - têtes « Steve » retirées (30/09/2026)
+
+Demande de LeKiwi06 (catégorie 1 « Contenu survie ») : les têtes de mobs viennent maintenant de KS_Decapitator ; les
+5 têtes « Steve » (`tete_araignee`, `tete_blaze`, `tete_mouton`, `tete_vache`, `tete_poule`) sont retirées avec
+`TETES` et `creerTete` (aucune n'est en circulation selon LeKiwi06). Le refus de pose (qui ne servait qu'aux têtes)
+est retiré aussi : un livre de connaissances ne se pose pas. Fragment et Cœur de Spawner inchangés.
+
+**Non déployé. À déployer ensemble (règle 3.5) : KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
+KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0, KS_LootEntites 1.3.0. Statut : non testé en jeu.**

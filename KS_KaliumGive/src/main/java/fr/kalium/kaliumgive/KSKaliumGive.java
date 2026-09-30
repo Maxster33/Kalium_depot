@@ -52,9 +52,12 @@ public final class KSKaliumGive extends JavaPlugin {
             OBJETS.put("spawner_" + creature, new ObjetCustom("KS_Spawners",
                     () -> fr.kalium.spawners.KSSpawners.creerSpawner(creature)));
         }
-        for (String animal : List.of("araignee", "blaze", "mouton", "vache", "poule")) {
-            OBJETS.put("tete_" + animal, new ObjetCustom("KS_ItemSimple",
-                    () -> fr.kalium.itemsimple.KSItemSimple.creerTete(animal)));
+        // 1.6.0 (LeKiwi06) : les 5 têtes « Steve » de KS_ItemSimple sont retirées (têtes de KS_Decapitator, ajoutées
+        // au démarrage : voir onEnable) ; élixirs de KS_Elixir.
+        for (String elixir : List.of("super_gateau", "chauve_souris", "anguille", "ignifugation", "plume", "phenix",
+                "fantome", "titan", "vent", "rebond", "fortune")) {
+            OBJETS.put("elixir_" + elixir, new ObjetCustom("KS_Elixir",
+                    () -> fr.kalium.elixir.KSElixir.creerElixir(elixir)));
         }
     }
 
@@ -72,9 +75,18 @@ public final class KSKaliumGive extends JavaPlugin {
         return OBJETS.get(id);
     }
 
+    /** 1.6.0 : têtes de KS_Decapitator (tete_<id>, ex. tete_bebe_mouton_rouge) ; liste lue dans le plugin des têtes. */
+    private static final String TETE = "tete_";
+
     @Override
     public void onEnable() {
         getCommand("kaliumgive").setExecutor(this);
+        if (getServer().getPluginManager().isPluginEnabled("KS_Decapitator")) {
+            for (String id : fr.kalium.decapitator.KSDecapitator.ids()) {
+                OBJETS.put(TETE + id, new ObjetCustom("KS_Decapitator",
+                        () -> fr.kalium.decapitator.KSDecapitator.creerTete(id)));
+            }
+        }
     }
 
     @Override
@@ -89,8 +101,11 @@ public final class KSKaliumGive extends JavaPlugin {
         }
         ObjetCustom objet = trouver(args[1].toLowerCase());
         if (objet == null) {
+            List<String> liste = new ArrayList<>(OBJETS.keySet());
+            liste.removeIf(id -> id.startsWith(TETE));
             sender.sendMessage(Component.text("id_custom inconnu : " + args[1] + ". Liste : "
-                    + String.join(", ", OBJETS.keySet()) + ", fiole_exp(<niveaux>)", NamedTextColor.RED));
+                    + String.join(", ", liste) + ", fiole_exp(<niveaux>), " + TETE + "<tête> (liste : /tetes ou "
+                    + "complétion)", NamedTextColor.RED));
             return true;
         }
         if (!getServer().getPluginManager().isPluginEnabled(objet.plugin())) {

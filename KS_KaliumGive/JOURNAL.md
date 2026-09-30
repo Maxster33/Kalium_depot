@@ -60,3 +60,20 @@ araignée » de la demande écrit `spawner_araignee` (pas d'espace ni d'accent d
 compiler KS_ItemSimple, KS_BiomeChanger et KS_Spawners d'abord.
 
 **Déployé sur Event le 29/09/2026 à 17:22 avec KS_ItemSimple, KS_Spawners, KS_BiomeChanger, KS_Crafts 1.6.0, KS_KaliumGive 1.5.0 et KS_LootBlocs 1.1.0 (1.4.0 dans `_removed-ks_kaliumgive-1.4.0/` ; supprimables par l'humain : `_removed-ks_kaliumgive-1.0.0/` à `1.2.0/`). Statut : non testé en jeu.**
+
+## 1.6.0 - élixirs et têtes de mobs (30/09/2026)
+
+Demande de LeKiwi06 (catégorie 1 « Contenu survie ») :
+- **Élixirs** (KS_Elixir) : `elixir_super_gateau`, `elixir_chauve_souris`, `elixir_anguille`, `elixir_ignifugation`,
+  `elixir_plume`, `elixir_phenix`, `elixir_fantome`, `elixir_titan`, `elixir_vent`, `elixir_rebond`,
+  `elixir_fortune`.
+- **Têtes** (KS_Decapitator) : `tete_<id>` pour les 332 têtes (ex. `tete_mouton_rouge`, `tete_bebe_loup_cendre`),
+  liste lue dans KS_Decapitator au démarrage (complétion de la commande, ou `/tetes`).
+- Retirés : les 5 têtes « Steve » de KS_ItemSimple (même ids `tete_araignee`, `tete_blaze`... repris par les têtes de
+  KS_Decapitator ; `tete_mouton`, `tete_vache`, `tete_poule` n'existent plus : `tete_mouton_blanc`, `tete_vache_temperee`,
+  `tete_poule_temperee`...).
+- Message d'id inconnu : la liste n'affiche plus chaque tête (`tete_<tête>`).
+- `softdepend` et `build.sh` : KS_Decapitator, KS_Elixir (compiler d'abord).
+
+**Non déployé. À déployer ensemble (règle 3.5) : KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
+KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0, KS_LootEntites 1.3.0. Statut : non testé en jeu.**

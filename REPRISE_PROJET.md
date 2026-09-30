@@ -93,6 +93,12 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 ### Versions compilées, non déployées
 
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
+- **Catégorie 1 « Contenu survie » (30/09/2026, LeKiwi06), serveur Event, à déployer ensemble, non testé** :
+  **KS_Decapitator 1.0.0** (nouveau : 332 têtes de mobs, 1 % quand un joueur tue le mob, une tête par variante, état et
+  bébé, `/tetes` pour les ops), **KS_Elixir 1.0.0** (nouveau : 11 élixirs en anneau, bloqués à l'alambic ; Fortune en
+  attente de KS_Economy), **KS_Crafts 1.7.0** (spawners avec les têtes de KS_Decapitator), **KS_ItemSimple 1.1.0**
+  (têtes « Steve » retirées), **KS_KaliumGive 1.6.0** (`elixir_…`, `tete_…`), **KS_LootEntites 1.3.0** (Warden : fiole
+  de KS_FioleExp). Textures manquantes : 16 shulkers colorés, cube de soufre, bébé noyé (voir `KS_Decapitator/JOURNAL.md`).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »

@@ -5,6 +5,7 @@ import io.papermc.paper.potion.PotionMix;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,6 +29,7 @@ import java.util.Map;
  * étrange à l'alambic).
  * 1.4.0 : le Bedrock Breaker (objet et utilisation) est dans KS_BedrockBreaker ; seule sa recette reste ici.
  * 1.5.0 : nouvelle recette du Bedrock Breaker (voir onEnable).
+ * 1.7.0 : les recettes des spawners prennent les têtes de KS_Decapitator (voir onEnable).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -119,14 +121,25 @@ public final class KSCrafts extends JavaPlugin implements Listener {
         }
 
         // 1.6.0 (Maxster33) : spawners (KS_Spawners) et Changeur de Biome (KS_BiomeChanger), avec les objets de
-        // KS_ItemSimple ; sans forme (seuls les crafts « 8 + 1 » sont en anneau). Les têtes d'araignée, de blaze, de
-        // mouton, de vache et de poule sont les têtes « Steve » nommées de KS_ItemSimple.
+        // KS_ItemSimple ; sans forme (seuls les crafts « 8 + 1 » sont en anneau).
+        // 1.7.0 (LeKiwi06, catégorie 1 « Contenu survie ») : les têtes « Steve » de KS_ItemSimple sont remplacées par
+        // les têtes de KS_Decapitator, toutes variantes, états et bébés du mob acceptés ; zombie, squelette et creeper :
+        // tête vanilla (recette d'avant) ou tête de KS_Decapitator (2e recette « _tete »).
         if (actif("KS_ItemSimple") && actif("KS_Spawners")) {
             spawner("zombi", new RecipeChoice.MaterialChoice(Material.ZOMBIE_HEAD));
             spawner("squelette", new RecipeChoice.MaterialChoice(Material.SKELETON_SKULL));
             spawner("creeper", new RecipeChoice.MaterialChoice(Material.CREEPER_HEAD));
-            for (String animal : fr.kalium.itemsimple.KSItemSimple.TETES.keySet()) {
-                spawner(animal, new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerTete(animal)));
+            if (actif("KS_Decapitator")) {
+                spawnerTete("zombi_tete", "zombi", EntityType.ZOMBIE);
+                spawnerTete("squelette_tete", "squelette", EntityType.SKELETON);
+                spawnerTete("creeper_tete", "creeper", EntityType.CREEPER);
+                spawnerTete("araignee", "araignee", EntityType.SPIDER);
+                spawnerTete("blaze", "blaze", EntityType.BLAZE);
+                spawnerTete("mouton", "mouton", EntityType.SHEEP);
+                spawnerTete("vache", "vache", EntityType.COW);
+                spawnerTete("poule", "poule", EntityType.CHICKEN);
+            } else {
+                getLogger().warning("KS_Decapitator absent : crafts des spawners avec une tête de mob ignorés.");
             }
         } else {
             getLogger().warning("KS_ItemSimple ou KS_Spawners absent : crafts des spawners ignorés.");
@@ -250,6 +263,19 @@ public final class KSCrafts extends JavaPlugin implements Listener {
         shapeless("spawner_" + id, fr.kalium.spawners.KSSpawners.creerSpawner(id), concat(
                 repeat(new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerFragmentSpawner()), 7),
                 List.of(new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerCoeurSpawner()), tete)));
+    }
+
+    /** 1.7.0 : spawner (id de KS_Spawners) avec n'importe quelle tête de KS_Decapitator de la créature. */
+    private void spawnerTete(String recette, String id, EntityType creature) {
+        List<ItemStack> tetes = fr.kalium.decapitator.KSDecapitator.tetesDe(creature);
+        if (tetes.isEmpty()) {
+            getLogger().warning("Aucune tête de " + creature.getKey().getKey() + " dans KS_Decapitator : craft ignoré.");
+            return;
+        }
+        shapeless("spawner_" + recette, fr.kalium.spawners.KSSpawners.creerSpawner(id), concat(
+                repeat(new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerFragmentSpawner()), 7),
+                List.of(new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerCoeurSpawner()),
+                        new RecipeChoice.ExactChoice(tetes))));
     }
 
     private void add(org.bukkit.inventory.Recipe recipe) {

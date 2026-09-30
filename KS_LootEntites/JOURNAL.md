@@ -82,3 +82,16 @@ pèsent 35 au total : « rien » pèse 315 (35 / 350 = 10 %).
 Toujours seulement si le Warden est tué par un joueur. Endermite inchangée.
 
 **Déployé sur Event le 29/09/2026 à 14:22 (1.2.0 dans `_removed-ks_lootentites-1.2.0/` ; supprimable par l'humain, 3 versions derrière : `_removed-ks_lootentites-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.3.0 - une seule fiole : celle de KS_FioleExp (30/09/2026)
+
+Demande de LeKiwi06 (catégorie 1 « Contenu survie ») : un seul système de fiole, celui de Maxster33 (KS_FioleExp).
+- **Warden** : même tirage (10, 15, 20, 30 ou 40 niveaux, 10 % au total), mais fiole de KS_FioleExp au lieu de
+  l'ancienne fiole « niveau N » de ce plugin.
+- **Endermite** : la fiole de 10 niveaux était déjà celle de KS_FioleExp (1.2.0) ; l'ancienne fiole de secours (sans
+  KS_FioleExp) est retirée.
+- Sans KS_FioleExp : pas de fiole du tout (avertissement au démarrage).
+- Les anciennes fioles « niveau N » déjà en jeu restent utilisables (lecture gardée), mais ne sont plus créées.
+
+**Non déployé. À déployer ensemble (règle 3.5) : KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
+KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0, KS_LootEntites 1.3.0. Statut : non testé en jeu.**

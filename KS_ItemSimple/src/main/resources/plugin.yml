@@ -2,5 +2,5 @@ name: KS_ItemSimple
 version: '${project.version}'
 main: fr.kalium.itemsimple.KSItemSimple
 api-version: '26.2'
-description: Objets de craft du serveur Event (Fragment et Coeur de Spawner, tetes en attente du plugin des tetes).
+description: Objets de craft du serveur Event (Fragment et Coeur de Spawner).
 authors: [KaLium]

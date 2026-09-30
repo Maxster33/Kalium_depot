@@ -4,4 +4,4 @@ main: fr.kalium.crafts.KSCrafts
 api-version: '26.2'
 description: Crafts du serveur Event (sable rouge, blocs bruts, calcite, froglights, Bedrock Breaker, spawners, Changeur de Biome, bloc de verrue...).
 authors: [KaLium]
-softdepend: [KS_EC_Extension, KS_BedrockBreaker, KS_ItemSimple, KS_Spawners, KS_BiomeChanger]
+softdepend: [KS_EC_Extension, KS_BedrockBreaker, KS_ItemSimple, KS_Spawners, KS_BiomeChanger, KS_Decapitator]

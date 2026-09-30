@@ -1,0 +1,15 @@
+name: KS_Decapitator
+version: '${project.version}'
+main: fr.kalium.decapitator.KSDecapitator
+api-version: '26.2'
+description: Tetes de mobs du serveur Event (1 % quand un joueur tue le mob, une tete par variante, etat et bebe).
+authors: [KaLium]
+commands:
+  tetes:
+    description: Menu de toutes les tetes de mobs (verification des textures).
+    usage: /tetes
+    permission: ks.decapitator.tetes
+permissions:
+  ks.decapitator.tetes:
+    description: Ouvrir le menu /tetes.
+    default: op

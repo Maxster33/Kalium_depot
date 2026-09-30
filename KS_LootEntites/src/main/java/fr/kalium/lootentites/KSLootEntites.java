@@ -1,7 +1,5 @@
 package fr.kalium.lootentites;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
@@ -14,7 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ExpBottleEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,6 +28,10 @@ import java.util.concurrent.ThreadLocalRandom;
  * Réductions et remplacements : à toutes les morts (fermes comprises). Ajouts : seulement si un joueur tue ; Butin
  * (Looting) ne change pas les pourcentages. Les potions ajoutées sont dans KS_LootPotions, sauf celle du tirage de
  * l'endermite (un seul tirage de 6 objets).
+ *
+ * 1.3.0 (LeKiwi06, catégorie 1 « Contenu survie ») : un seul système de fiole, celui de KS_FioleExp ; le Warden et
+ * l'endermite ne créent plus l'ancienne fiole « niveau N » de ce plugin (rien sans KS_FioleExp). Les anciennes fioles
+ * déjà en jeu restent utilisables (onBottle).
  */
 public final class KSLootEntites extends JavaPlugin implements Listener {
 
@@ -52,6 +53,9 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
     public void onEnable() {
         xpLevelKey = new NamespacedKey(this, "xp_level");
         getServer().getPluginManager().registerEvents(this, this);
+        if (!fioleExpActif()) {
+            getLogger().warning("KS_FioleExp absent : le Warden et l'endermite ne donnent pas de fiole d'expérience.");
+        }
     }
 
     private static ThreadLocalRandom random() {
@@ -90,14 +94,15 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
             // Seul un capitaine (patrouille ou raid) lache une fiole sinistre.
             case PILLAGER -> drops.removeIf(stack -> stack.getType() == Material.OMINOUS_BOTTLE);
             case ENDERMITE -> {
-                if (byPlayer && chance(0.50)) {
-                    drops.add(endermiteLoot());
+                ItemStack loot = byPlayer && chance(0.50) ? endermiteLoot() : null;
+                if (loot != null) {
+                    drops.add(loot);
                 }
             }
             case WARDEN -> {
                 int level = byPlayer ? wardenLevel() : 0;
-                if (level > 0) {
-                    drops.add(xpBottle(level));
+                if (level > 0 && fioleExpActif()) {
+                    drops.add(fr.kalium.fioleexp.KSFioleExp.creerFioleNiveaux(level));
                 }
             }
             // Objet du plugin KS_EstomacGardien (ignore s'il n'est pas active).
@@ -111,6 +116,10 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
         }
         // Tous les mobs qui donnent de la chair putrefiee : chaque chair a 50 % de chance de devenir un os.
         fleshToBones(drops);
+    }
+
+    private boolean fioleExpActif() {
+        return getServer().getPluginManager().isPluginEnabled("KS_FioleExp");
     }
 
     private boolean estomacGardienActif() {
@@ -189,15 +198,14 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
         }
     }
 
-    /** Un des 6 objets, a chances egales. */
+    /** Un des 6 objets, a chances egales (null : fiole sans KS_FioleExp, 1.3.0). */
     private ItemStack endermiteLoot() {
         return switch (random().nextInt(6)) {
             case 0 -> new ItemStack(Material.BUDDING_AMETHYST);
             case 1 -> new ItemStack(Material.SHULKER_SHELL);
             case 2 -> basicPotion(PotionType.REGENERATION);
-            // 1.2.0 (Maxster33) : nouvelle fiole de KS_FioleExp (points en description) ; l'ancienne si absent.
-            case 3 -> getServer().getPluginManager().isPluginEnabled("KS_FioleExp")
-                    ? fr.kalium.fioleexp.KSFioleExp.creerFioleNiveaux(10) : xpBottle(10);
+            // 1.2.0 (Maxster33) : nouvelle fiole de KS_FioleExp (points en description) ; 1.3.0 : plus d'ancienne fiole.
+            case 3 -> fioleExpActif() ? fr.kalium.fioleexp.KSFioleExp.creerFioleNiveaux(10) : null;
             case 4 -> new ItemStack(Material.CHORUS_FRUIT);
             default -> new ItemStack(Material.ENDER_PEARL, 8);
         };
@@ -228,17 +236,7 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
         return potion;
     }
 
-    // ------------------------------------------------------------------ fioles d'experience a niveau
-
-    /** Fiole d'experience vanilla marquee : lancee, elle donne l'XP pour passer du niveau 0 au niveau indique. */
-    private ItemStack xpBottle(int level) {
-        ItemStack bottle = new ItemStack(Material.EXPERIENCE_BOTTLE);
-        ItemMeta meta = bottle.getItemMeta();
-        meta.displayName(Component.text("Fiole d'expérience (niveau " + level + ")").decoration(TextDecoration.ITALIC, false));
-        meta.getPersistentDataContainer().set(xpLevelKey, PersistentDataType.INTEGER, level);
-        bottle.setItemMeta(meta);
-        return bottle;
-    }
+    // ------------------------------------------------------------------ anciennes fioles d'experience a niveau (1.3.0 : lecture seule)
 
     /** Points d'experience pour aller du niveau 0 au niveau donne (formule vanilla). */
     static int pointsForLevel(int level) {
