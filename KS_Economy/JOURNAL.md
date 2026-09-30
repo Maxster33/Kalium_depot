@@ -45,5 +45,6 @@ Limites :
 - Pas de commande d'administration des soldes (pas demandée).
 - Un joueur peut toujours faire `/menu off` : le menu Économie reste ouvrable par `/economie`.
 
-**Non déployé. À déployer ensemble (règle 3.5) : KS_Menu 1.0.0, KS_Economy 1.0.0, KS_Elixir 1.1.0 et l'installation de
-VaultUnlocked 2.20.2 sur Event. Statut : non testé en jeu.**
+**Déployé sur Event le 01/10/2026 à 00:49 (LeKiwi06) avec KS_Menu 1.0.0, KS_Economy 1.0.0, KS_Elixir 1.1.0 et
+VaultUnlocked 2.20.2 (nouveau plugin tiers, `plugins/VaultUnlocked-2.20.2.jar`), actifs après redémarrage
+d'Event. Statut : non testé en jeu.**

@@ -16,11 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_Economy — LeKiwi06 — depuis le 2026-09-30 22:56 — nouveau : catégorie 2 Économie, 1re partie (score, blocs compressés, /echange, Vault) ; accord verbal de Maxster33 (29/09/2026) pour dépasser la limite de 2 plugins
-- KS_Menu — LeKiwi06 — depuis le 2026-09-30 22:56 — nouveau : menu du serveur Event (étoile, bouton Économie) ; accord verbal de Maxster33 (29/09/2026) pour dépasser la limite de 2 plugins
-- KS_Elixir — LeKiwi06 — depuis le 2026-09-30 22:56 — recette de l'Élixir de Fortune (bloc compressé tier 3) ; accord verbal de Maxster33 (29/09/2026) pour dépasser la limite de 2 plugins
 
 ## Requis parfois
 
-- KLM_Menu — LeKiwi06 — depuis le 2026-09-30 22:56 — compilation de KS_Menu contre (étoile d'interface), pas de modification prévue
 ## Demandes

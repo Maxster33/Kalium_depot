@@ -50,5 +50,6 @@ Suite de la catégorie 2 (KS_Economy existe) : 8 potions de chance autour d'un *
 (9 000 points) de KS_Economy. `softdepend` et `build.sh` : KS_Economy (compiler d'abord) ; sans lui, recette ignorée
 (avertissement). Livre de recettes : débloquée dès l'obtention d'une potion de chance ou d'un bloc tier 3.
 
-**Non déployé. À déployer ensemble (règle 3.5) : KS_Menu 1.0.0, KS_Economy 1.0.0, KS_Elixir 1.1.0 et l'installation de
-VaultUnlocked 2.20.2 sur Event. Statut : non testé en jeu.**
+**Déployé sur Event le 01/10/2026 à 00:49 (LeKiwi06) avec KS_Menu 1.0.0, KS_Economy 1.0.0, KS_Elixir 1.1.0 et
+VaultUnlocked 2.20.2 (nouveau plugin tiers, `plugins/VaultUnlocked-2.20.2.jar`) ; 1.0.0 dans `_removed-ks_elixir-1.0.0/`, actifs après redémarrage
+d'Event. Statut : non testé en jeu.**
