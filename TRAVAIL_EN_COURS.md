@@ -16,7 +16,17 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_Decapitator — LeKiwi06 — depuis le 2026-09-30 17:37 — nouveau : têtes de mobs ; catégorie 1 Contenu survie (têtes de mobs, élixirs) ; accord verbal de Maxster33 (29/09/2026) pour dépasser la limite de 2 plugins
+- KS_Elixir — LeKiwi06 — depuis le 2026-09-30 17:37 — nouveau : élixirs ; catégorie 1 Contenu survie (têtes de mobs, élixirs) ; accord verbal de Maxster33 (29/09/2026) pour dépasser la limite de 2 plugins
+- KS_Crafts — LeKiwi06 — depuis le 2026-09-30 17:37 — recettes des spawners avec les têtes de KS_Decapitator ; catégorie 1 Contenu survie (têtes de mobs, élixirs) ; accord verbal de Maxster33 (29/09/2026) pour dépasser la limite de 2 plugins
+- KS_ItemSimple — LeKiwi06 — depuis le 2026-09-30 17:37 — retrait des têtes « Steve » ; catégorie 1 Contenu survie (têtes de mobs, élixirs) ; accord verbal de Maxster33 (29/09/2026) pour dépasser la limite de 2 plugins
+- KS_KaliumGive — LeKiwi06 — depuis le 2026-09-30 17:37 — ajout des élixirs et des têtes, retrait des têtes « Steve » ; catégorie 1 Contenu survie (têtes de mobs, élixirs) ; accord verbal de Maxster33 (29/09/2026) pour dépasser la limite de 2 plugins
+- KS_LootEntites — LeKiwi06 — depuis le 2026-09-30 17:37 — Warden : fiole de KS_FioleExp ; catégorie 1 Contenu survie (têtes de mobs, élixirs) ; accord verbal de Maxster33 (29/09/2026) pour dépasser la limite de 2 plugins
 
 ## Requis parfois
+
+- KS_FioleExp — LeKiwi06 — depuis le 2026-09-30 17:37 — compilation contre (fiole de 10 niveaux de l'Élixir du Fantôme), pas de modification prévue
+- KS_Spawners — LeKiwi06 — depuis le 2026-09-30 17:37 — compilation de KS_Crafts contre, pas de modification prévue
+- geyser-bedrock — LeKiwi06 — depuis le 2026-09-30 17:37 — si besoin : affichage des têtes sur Bedrock
 
 ## Demandes
