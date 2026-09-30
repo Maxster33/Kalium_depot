@@ -48,8 +48,7 @@ import java.util.Map;
  * - Un élixir ne peut pas être mis dans un alambic (choix de LeKiwi06 : pas d'élixir jetable ni persistant).
  *
  * Élixir du Fantôme : la fiole de 10 niveaux de KS_FioleExp (recette ignorée sans ce plugin). Élixir de Fortune : le
- * bloc d'émeraude compressé tier 3 de KS_Economy (pas encore créé : recette ignorée, l'élixir existe déjà pour
- * /kaliumgive). Autres plugins : creerElixir(id), idElixir(objet), ids() (KS_KaliumGive).
+ * bloc d'émeraude compressé tier 3 de KS_Economy (1.1.0 ; recette ignorée sans ce plugin). Autres plugins : creerElixir(id), idElixir(objet), ids() (KS_KaliumGive).
  */
 public final class KSElixir extends JavaPlugin implements Listener {
 
@@ -117,7 +116,14 @@ public final class KSElixir extends JavaPlugin implements Listener {
         anneau("vent", potions(PotionType.LONG_SWIFTNESS), new RecipeChoice.MaterialChoice(
                 Arrays.stream(Material.values()).filter(m -> !m.isLegacy() && m.name().endsWith("_HARNESS")).toList()));
         anneau("rebond", potions(PotionType.LONG_LEAPING), new RecipeChoice.MaterialChoice(Material.SLIME_BLOCK));
-        getLogger().warning("KS_Economy absent (bloc d'émeraude compressé tier 3) : recette de l'Élixir de Fortune ignorée.");
+        // 1.1.0 : bloc d'émeraude compressé tier 3 de KS_Economy (catégorie 2).
+        if (getServer().getPluginManager().isPluginEnabled("KS_Economy")) {
+            anneau("fortune", potions(PotionType.LUCK),
+                    new RecipeChoice.ExactChoice(fr.kalium.economy.KSEconomy.creerBloc(3)));
+        } else {
+            getLogger().warning("KS_Economy absent (bloc d'émeraude compressé tier 3) : recette de l'Élixir de Fortune "
+                    + "ignorée.");
+        }
 
         getLogger().info(recettes.size() + " recettes d'élixirs ajoutées.");
         Bukkit.getOnlinePlayers().forEach(this::livreDeRecettes);

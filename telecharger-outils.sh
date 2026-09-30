@@ -49,4 +49,6 @@ get "$E/com/sk89q/worldedit/worldedit-bukkit/7.4.5/worldedit-bukkit-7.4.5.jar" "
 O=https://repo.opencollab.dev/main/org/geysermc
 get "$O/floodgate/api/2.2.5-SNAPSHOT/api-2.2.5-20260917.145236-21.jar" "$L/floodgate-api-2.2.5.jar"
 get "$O/cumulus/cumulus/1.1.2/cumulus-1.1.2.jar" "$L/cumulus-1.1.2.jar"
+# VaultUnlocked 2.20.2 (API Vault : KS_Economy s'y declare comme economie ; le meme jar est installe sur Event)
+get "https://cdn.modrinth.com/data/ayRaM8J7/versions/cLNipSgw/VaultUnlocked-2.20.2.jar" "$L/VaultUnlocked-2.20.2.jar"
 echo "Outils prets dans $DIR/outils-build"

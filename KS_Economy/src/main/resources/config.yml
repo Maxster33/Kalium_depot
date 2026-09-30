@@ -1,0 +1,11 @@
+# KS_Economy - reglages (valeurs par defaut aussi ecrites dans le code).
+
+conversion:
+  # Points recus par emeraude deposee (taxe de conversion ; 1 = 1:1, 0.9 = 10 % de taxe).
+  depot: 1.0
+  # Points payes par emeraude retiree (1 = 1:1, 1.1 = 10 % de taxe).
+  retrait: 1.0
+
+masquage:
+  # Part du solde prelevee chaque jour a minuit (heure de Paris) quand il est masque, en %.
+  pourcent-par-jour: 1.0

@@ -4,4 +4,4 @@ main: fr.kalium.elixir.KSElixir
 api-version: '26.2'
 description: Elixirs du serveur Event (8 potions allongees + un ingredient rare = une bouteille d'une heure).
 authors: [KaLium]
-softdepend: [KS_FioleExp]
+softdepend: [KS_FioleExp, KS_Economy]

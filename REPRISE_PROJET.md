@@ -93,6 +93,10 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 ### Versions compilées, non déployées
 
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
+- **Catégorie 2 « Économie », 1re partie (30/09/2026, LeKiwi06), serveur Event, à déployer ensemble, non testé** :
+  **KS_Menu 1.0.0** (nouveau : étoile du Nether, menu d'Event), **KS_Economy 1.0.0** (nouveau : score, blocs compressés,
+  menu Économie, solde dans la liste Tab, `/echange`, économie Vault), **KS_Elixir 1.1.0** (recette de Fortune) +
+  installation de **VaultUnlocked 2.20.2**. Magasins : après KS_Claim (catégorie 3).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »

@@ -43,3 +43,12 @@ Recette en anneau : 8 potions **à boire**, version **allongée**, niveau I, aut
 **Déployé sur Event le 30/09/2026 à 18:07 (LeKiwi06) avec KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
 KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0 et KS_LootEntites 1.3.0 (nouveau), actifs après redémarrage d'Event. Statut :
 **testé et confirmé par LeKiwi06 le 30/09/2026** (« tout est bon »).**
+
+## 1.1.0 - recette de l'Élixir de Fortune (30/09/2026)
+
+Suite de la catégorie 2 (KS_Economy existe) : 8 potions de chance autour d'un **bloc d'émeraude compressé tier 3**
+(9 000 points) de KS_Economy. `softdepend` et `build.sh` : KS_Economy (compiler d'abord) ; sans lui, recette ignorée
+(avertissement). Livre de recettes : débloquée dès l'obtention d'une potion de chance ou d'un bloc tier 3.
+
+**Non déployé. À déployer ensemble (règle 3.5) : KS_Menu 1.0.0, KS_Economy 1.0.0, KS_Elixir 1.1.0 et l'installation de
+VaultUnlocked 2.20.2 sur Event. Statut : non testé en jeu.**

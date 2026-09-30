@@ -1,0 +1,16 @@
+name: KS_Economy
+version: '${project.version}'
+main: fr.kalium.economy.KSEconomy
+api-version: '26.2'
+description: Economie du serveur Event (score en emeraudes dematerialisees, blocs compresses, /echange, economie Vault).
+authors: [KaLium]
+depend: [KLM_Menu]
+softdepend: [KS_Menu, Vault]
+commands:
+  economie:
+    description: Ouvre le menu Economie (solde, depot, retrait).
+    aliases: [eco]
+    usage: /economie
+  echange:
+    description: Echange d'objets et de points avec un joueur proche.
+    usage: /echange <joueur> | accepter | refuser
