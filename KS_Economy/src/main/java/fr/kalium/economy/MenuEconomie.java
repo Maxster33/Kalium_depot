@@ -65,21 +65,21 @@ final class MenuEconomie implements Listener {
                 : lang.c("menu.visible", "<gray>Ton solde est <green>visible</green> par les autres joueurs dans la "
                         + "liste des joueurs (Tab)."));
         List<ActionButton> boutons = new ArrayList<>();
-        boutons.add(gui.button(lang.c("menu.tout-deposer", "<green>Tout déposer"),
-                lang.c("menu.tout-deposer.info", "<gray>Émeraudes, blocs d'émeraude et blocs compressés de ton "
+        boutons.add(gui.button(lang.c("menu.bouton-tout-deposer", "<green>Tout déposer"),
+                lang.c("menu.info-tout-deposer", "<gray>Émeraudes, blocs d'émeraude et blocs compressés de ton "
                         + "inventaire"), this::toutDeposer));
-        boutons.add(gui.button(lang.c("menu.deposer", "<green>Déposer des objets"),
-                lang.c("menu.deposer.info", "<gray>Pose dans le coffre les émeraudes à déposer"), this::ouvrirDepot));
-        boutons.add(gui.button(lang.c("menu.retirer", "<yellow>Retirer"),
-                lang.c("menu.retirer.info", "<gray>Émeraudes, blocs ou blocs compressés"), this::ouvrirRetrait));
+        boutons.add(gui.button(lang.c("menu.bouton-deposer", "<green>Déposer des objets"),
+                lang.c("menu.info-deposer", "<gray>Pose dans le coffre les émeraudes à déposer"), this::ouvrirDepot));
+        boutons.add(gui.button(lang.c("menu.bouton-retirer", "<yellow>Retirer"),
+                lang.c("menu.info-retirer", "<gray>Émeraudes, blocs ou blocs compressés"), this::ouvrirRetrait));
         boutons.add(masque
-                ? gui.button(lang.c("menu.reveler", "<aqua>Révéler mon solde"),
-                lang.c("menu.reveler.info", "<gray>Gratuit, immédiat"), p -> {
+                ? gui.button(lang.c("menu.bouton-reveler", "<aqua>Révéler mon solde"),
+                lang.c("menu.info-reveler", "<gray>Gratuit, immédiat"), p -> {
                     plugin.masquer(p, false);
                     ouvrir(p);
                 })
-                : gui.button(lang.c("menu.masquer", "<red>Masquer mon solde"),
-                lang.c("menu.masquer.info", "<gray>Coûte <pourcent> % de ton solde par jour", "pourcent", pourcent()),
+                : gui.button(lang.c("menu.bouton-masquer", "<red>Masquer mon solde"),
+                lang.c("menu.info-masquer", "<gray>Coûte <pourcent> % de ton solde par jour", "pourcent", pourcent()),
                 this::confirmerMasquer));
         gui.open(joueur, lang.c("menu.titre", "<green><bold>Économie"), corps, List.of(), boutons, null, 2);
         lang.saveIfNeeded();

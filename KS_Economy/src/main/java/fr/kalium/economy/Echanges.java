@@ -278,16 +278,16 @@ final class Echanges implements Listener, TabExecutor {
         for (int i = 0; i < siens.size(); i++) {
             p.setItem(caseApercu(i, false), siens.get(i).clone());
         }
-        p.setItem(OBJETS, bouton(Material.CHEST, lang.c("echange.objets", "<yellow>Objets"),
-                lang.c("echange.objets.info", "<gray>Déposer ou reprendre tes objets")));
-        p.setItem(MONTANT, bouton(Material.GOLD_INGOT, lang.c("echange.montant", "<yellow>Montant : <montant>",
-                "montant", KSEconomy.points(part.montant)), lang.c("echange.montant.info", "<gray>Points que tu donnes "
+        p.setItem(OBJETS, bouton(Material.CHEST, lang.c("echange.bouton-objets", "<yellow>Objets"),
+                lang.c("echange.info-objets", "<gray>Déposer ou reprendre tes objets")));
+        p.setItem(MONTANT, bouton(Material.GOLD_INGOT, lang.c("echange.bouton-montant", "<yellow>Montant : <montant>",
+                "montant", KSEconomy.points(part.montant)), lang.c("echange.info-montant", "<gray>Points que tu donnes "
                 + "(solde : <solde>)", "solde", KSEconomy.points(KSEconomy.solde(part.joueur.getUniqueId())))));
         p.setItem(VALIDER, part.valide
-                ? bouton(Material.LIME_CONCRETE, lang.c("echange.valide", "<green><bold>Validé"),
-                lang.c("echange.valide.info", "<gray>Clic : retirer ta validation"))
-                : bouton(Material.WHITE_CONCRETE, lang.c("echange.valider", "<white><bold>Valider"),
-                lang.c("echange.valider.info", "<gray>L'échange a lieu quand vous avez validé tous les deux")));
+                ? bouton(Material.LIME_CONCRETE, lang.c("echange.bouton-valide", "<green><bold>Validé"),
+                lang.c("echange.info-valide", "<gray>Clic : retirer ta validation"))
+                : bouton(Material.WHITE_CONCRETE, lang.c("echange.bouton-valider", "<white><bold>Valider"),
+                lang.c("echange.info-valider", "<gray>L'échange a lieu quand vous avez validé tous les deux")));
         p.setItem(ANNULER, bouton(Material.BARRIER, lang.c("echange.annuler", "<red>Annuler l'échange")));
         p.setItem(MONTANT_AUTRE, bouton(Material.GOLD_NUGGET, lang.c("echange.montant-autre", "<gold>Montant de "
                 + "<autre> : <montant>", "autre", autre.joueur.getName(), "montant", KSEconomy.points(autre.montant))));

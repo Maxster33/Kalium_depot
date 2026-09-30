@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_Economy — LeKiwi06 — depuis le 2026-10-01 01:32 — correctif 1.0.1 (textes des boutons du menu Économie)
 
 ## Requis parfois
 
