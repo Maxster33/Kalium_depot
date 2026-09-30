@@ -125,5 +125,5 @@ diversité »), blocs du biome seulement, minerais extrêmement rares, 1 bloc, X
   - Poids 1 (0,01 %, demande de LeKiwi06) : minerai d'émeraude de deepslate (absent du Deep Dark en vanilla).
 - Un hurleur de sculk posé par un joueur n'appelle pas de Warden (comportement vanilla).
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 30/09/2026 à 22:44 (LeKiwi06 ; 1.3.0 dans `_removed-ks_lootentites-1.3.0/` ; supprimables par l'humain, 3 versions derrière ou plus : `_removed-ks_lootentites-1.0.0/`, `1.1.0/`, `1.2.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
 

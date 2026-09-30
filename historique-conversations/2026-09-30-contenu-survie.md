@@ -30,7 +30,14 @@ LeKiwi06 : « on attaque le code de la catégorie 1 (Contenu survie) », d'aprè
 - Choix de Claude signalés : lapin « Toast » et mouton « jeb_ » ont leur tête ; cheval : une tête par robe (pas par
   marquage) ; villageois : textures de la plaine ; poisson tropical : tête générique.
 
+## Suite (même session)
+- Catégorie 1 testée et confirmée par LeKiwi06 (« tout est bon »).
+- KS_LootEntites 1.4.0, déployé sur Event à 22:44 : Warden, fioles 50 % plus communes (15 %) ; catalyseur de sculk
+  remplacé par un bloc naturel du Deep Dark (minerais extrêmement rares, émeraude de deepslate à 0,01 % : LeKiwi06 a
+  d'abord demandé 0,001 % puis 0,01 %). Non testé.
+
 ## Reste à faire
+- Tester KS_LootEntites 1.4.0 (tuer des Wardens : bloc à la place du catalyseur, fioles plus fréquentes).
 - Redémarrer Event (l'humain), puis les tests en jeu (liste dans le compte rendu de `REPRISE_PROJET.md`).
 - Fournir les textures manquantes ; voir l'affichage des têtes sur Bedrock (Geyser `custom-skulls` si besoin).
 - Recette de l'Élixir de Fortune quand KS_Economy existera (catégorie 2).

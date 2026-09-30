@@ -16,7 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_LootEntites — LeKiwi06 — depuis le 2026-09-30 22:40 — Warden : fioles 50 % plus communes, catalyseur remplacé par un bloc du Deep Dark
 
 ## Requis parfois
 
