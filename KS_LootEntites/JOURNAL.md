@@ -94,5 +94,34 @@ Demande de LeKiwi06 (catégorie 1 « Contenu survie ») : un seul système de fi
 - Les anciennes fioles « niveau N » déjà en jeu restent utilisables (lecture gardée), mais ne sont plus créées.
 
 **Déployé sur Event le 30/09/2026 à 18:07 (LeKiwi06) avec KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
-KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0 et KS_LootEntites 1.3.0 (1.2.1 dans `_removed-ks_lootentites-1.2.1/` ; supprimables par l'humain : `_removed-ks_lootentites-1.0.0/` et `1.1.0/`), actifs après redémarrage d'Event. Statut : non
-testé en jeu.**
+KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0 et KS_LootEntites 1.3.0 (1.2.1 dans `_removed-ks_lootentites-1.2.1/` ; supprimables par l'humain : `_removed-ks_lootentites-1.0.0/` et `1.1.0/`), actifs après redémarrage d'Event. Statut :
+**testé et confirmé par LeKiwi06 le 30/09/2026** (« tout est bon »).**
+
+## 1.4.0 - Warden : fioles plus communes, catalyseur remplacé (30/09/2026)
+
+Demande de LeKiwi06 : « rendre les fioles d'xp dans le warden 50 % plus communes, et randomiser le loot du catalyst par
+tous les blocs du biome deep dark » ; précisions : le catalyseur est celui que lâche le Warden (« ça manque de
+diversité »), blocs du biome seulement, minerais extrêmement rares, 1 bloc, XP gardée.
+
+- **Fioles** : 15 % au lieu de 10 % (poids multipliés par 3, mêmes proportions entre niveaux), toujours si un joueur
+  tue le Warden.
+
+| Tirage (sur 700) | Poids | Chance |
+|---|---|---|
+| rien | 595 | 85 % |
+| fiole niveau 10 | 45 | 6,43 % |
+| fiole niveau 15 | 30 | 4,29 % |
+| fiole niveau 20 | 18 | 2,57 % |
+| fiole niveau 30 | 9 | 1,29 % |
+| fiole niveau 40 | 3 | 0,43 % |
+
+- **Catalyseur de sculk** du Warden (à toutes ses morts, comme les autres remplacements) : remplacé par **un** bloc au
+  hasard des blocs naturels du Deep Dark, sans la cité antique. XP du Warden inchangée.
+  - Poids 100 chacun (7,65 %) : sculk, veine de sculk, capteur de sculk, hurleur de sculk, catalyseur de sculk,
+    deepslate, deepslate pavée, tuf, gravier, pierre, granite, diorite, andésite.
+  - Poids 1 chacun (0,08 %, 0,54 % pour un minerai quelconque) : minerais de deepslate de charbon, fer, cuivre, or,
+    redstone, lapis, diamant (pas d'émeraude : absente du Deep Dark).
+- Un hurleur de sculk posé par un joueur n'appelle pas de Warden (comportement vanilla).
+
+**Non déployé. Statut : non testé en jeu.**
+

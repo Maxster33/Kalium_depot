@@ -36,5 +36,5 @@ Demande de LeKiwi06 (catégorie 1 « Contenu survie ») : les têtes de mobs vie
 est retiré aussi : un livre de connaissances ne se pose pas. Fragment et Cœur de Spawner inchangés.
 
 **Déployé sur Event le 30/09/2026 à 18:07 (LeKiwi06) avec KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
-KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0 et KS_LootEntites 1.3.0 (1.0.0 dans `_removed-ks_itemsimple-1.0.0/`), actifs après redémarrage d'Event. Statut : non
-testé en jeu.**
+KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0 et KS_LootEntites 1.3.0 (1.0.0 dans `_removed-ks_itemsimple-1.0.0/`), actifs après redémarrage d'Event. Statut :
+**testé et confirmé par LeKiwi06 le 30/09/2026** (« tout est bon »).**

@@ -41,5 +41,5 @@ Recette en anneau : 8 potions **à boire**, version **allongée**, niveau I, aut
 - **Autres plugins** : `creerElixir(id)`, `idElixir(objet)`, `ids()` (KS_KaliumGive 1.6.0).
 
 **Déployé sur Event le 30/09/2026 à 18:07 (LeKiwi06) avec KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
-KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0 et KS_LootEntites 1.3.0 (nouveau), actifs après redémarrage d'Event. Statut : non
-testé en jeu.**
+KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0 et KS_LootEntites 1.3.0 (nouveau), actifs après redémarrage d'Event. Statut :
+**testé et confirmé par LeKiwi06 le 30/09/2026** (« tout est bon »).**

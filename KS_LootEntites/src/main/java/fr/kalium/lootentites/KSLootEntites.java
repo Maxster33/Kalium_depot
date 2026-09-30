@@ -18,7 +18,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -43,9 +45,29 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
 
     /** 1.2.0 (Maxster33) : un tirage de fiole au Warden, niveaux et poids (avant : 10 % d'une fiole 10 à 50). */
     private static final int[] WARDEN_LEVELS = {10, 15, 20, 30, 40};
-    private static final int[] WARDEN_WEIGHTS = {15, 10, 6, 3, 1};
-    /** 1.2.1 (Maxster33) : ligne « rien » du tirage, pour 10 % de fiole (35 sur 350). */
-    private static final int WARDEN_RIEN = 315;
+    /** 1.4.0 (LeKiwi06) : fioles 50 % plus communes, 15 % au lieu de 10 % (poids x3 : 105 sur 700 ; mêmes proportions). */
+    private static final int[] WARDEN_WEIGHTS = {45, 30, 18, 9, 3};
+    /** 1.2.1 (Maxster33) : ligne « rien » du tirage (1.2.1 : 315 sur 350 ; 1.4.0 : 595 sur 700). */
+    private static final int WARDEN_RIEN = 595;
+
+    /**
+     * 1.4.0 (LeKiwi06) : le catalyseur de sculk du Warden est remplacé par un bloc au hasard des blocs naturels du biome
+     * Deep Dark (sans la cité antique) ; minerais extrêmement rares (poids 1 contre 100 pour les autres blocs).
+     */
+    private static final Map<Material, Integer> DEEP_DARK = new LinkedHashMap<>();
+
+    static {
+        for (Material bloc : List.of(Material.SCULK, Material.SCULK_VEIN, Material.SCULK_SENSOR,
+                Material.SCULK_SHRIEKER, Material.SCULK_CATALYST, Material.DEEPSLATE, Material.COBBLED_DEEPSLATE,
+                Material.TUFF, Material.GRAVEL, Material.STONE, Material.GRANITE, Material.DIORITE, Material.ANDESITE)) {
+            DEEP_DARK.put(bloc, 100);
+        }
+        for (Material minerai : List.of(Material.DEEPSLATE_COAL_ORE, Material.DEEPSLATE_IRON_ORE,
+                Material.DEEPSLATE_COPPER_ORE, Material.DEEPSLATE_GOLD_ORE, Material.DEEPSLATE_REDSTONE_ORE,
+                Material.DEEPSLATE_LAPIS_ORE, Material.DEEPSLATE_DIAMOND_ORE)) {
+            DEEP_DARK.put(minerai, 1);
+        }
+    }
 
     private NamespacedKey xpLevelKey;
 
@@ -100,6 +122,12 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
                 }
             }
             case WARDEN -> {
+                for (ItemStack stack : drops) {
+                    if (stack.getType() == Material.SCULK_CATALYST) {
+                        stack.setType(blocDeepDark());
+                        stack.setAmount(1);
+                    }
+                }
                 int level = byPlayer ? wardenLevel() : 0;
                 if (level > 0 && fioleExpActif()) {
                     drops.add(fr.kalium.fioleexp.KSFioleExp.creerFioleNiveaux(level));
@@ -211,8 +239,8 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
         };
     }
 
-    /** Niveau de la fiole du Warden, 0 pour « rien » : un tirage pondere (10 : 15, 15 : 10, 20 : 6, 30 : 3, 40 : 1,
-     * rien : 315, sur 350). */
+    /** Niveau de la fiole du Warden, 0 pour « rien » : un tirage pondere (1.4.0 : 10 : 45, 15 : 30, 20 : 18, 30 : 9,
+     * 40 : 3, rien : 595, sur 700). */
     private static int wardenLevel() {
         int total = WARDEN_RIEN;
         for (int weight : WARDEN_WEIGHTS) {
@@ -226,6 +254,19 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
             }
         }
         return 0;
+    }
+
+    /** 1.4.0 : un bloc du Deep Dark, tirage pondere (DEEP_DARK). */
+    private static Material blocDeepDark() {
+        int total = DEEP_DARK.values().stream().mapToInt(Integer::intValue).sum();
+        int roll = random().nextInt(total);
+        for (Map.Entry<Material, Integer> entree : DEEP_DARK.entrySet()) {
+            roll -= entree.getValue();
+            if (roll < 0) {
+                return entree.getKey();
+            }
+        }
+        return Material.SCULK;
     }
 
     private static ItemStack basicPotion(PotionType type) {
