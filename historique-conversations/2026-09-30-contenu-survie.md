@@ -34,10 +34,9 @@ LeKiwi06 : « on attaque le code de la catégorie 1 (Contenu survie) », d'aprè
 - Catégorie 1 testée et confirmée par LeKiwi06 (« tout est bon »).
 - KS_LootEntites 1.4.0, déployé sur Event à 22:44 : Warden, fioles 50 % plus communes (15 %) ; catalyseur de sculk
   remplacé par un bloc naturel du Deep Dark (minerais extrêmement rares, émeraude de deepslate à 0,01 % : LeKiwi06 a
-  d'abord demandé 0,001 % puis 0,01 %). Non testé.
+  d'abord demandé 0,001 % puis 0,01 %). Testé et confirmé par LeKiwi06.
 
 ## Reste à faire
-- Tester KS_LootEntites 1.4.0 (tuer des Wardens : bloc à la place du catalyseur, fioles plus fréquentes).
 - Fournir les textures manquantes ; voir l'affichage des têtes sur Bedrock (Geyser `custom-skulls` si besoin).
 - Recette de l'Élixir de Fortune quand KS_Economy existera (catégorie 2).
 - Supprimables par l'humain sur Event : `_removed-ks_crafts-1.0.0/` à `1.4.0/`, `_removed-ks_kaliumgive-1.0.0/` à

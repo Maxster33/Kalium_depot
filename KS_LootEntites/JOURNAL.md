@@ -81,7 +81,7 @@ pèsent 35 au total : « rien » pèse 315 (35 / 350 = 10 %).
 
 Toujours seulement si le Warden est tué par un joueur. Endermite inchangée.
 
-**Déployé sur Event le 29/09/2026 à 14:22 (1.2.0 dans `_removed-ks_lootentites-1.2.0/` ; supprimable par l'humain, 3 versions derrière : `_removed-ks_lootentites-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+**Déployé sur Event le 29/09/2026 à 14:22 (1.2.0 dans `_removed-ks_lootentites-1.2.0/` ; supprimable par l'humain, 3 versions derrière : `_removed-ks_lootentites-1.0.0/`), actif après redémarrage d'Event. Statut : **testé et confirmé par LeKiwi06 le 30/09/2026**.**
 
 ## 1.3.0 - une seule fiole : celle de KS_FioleExp (30/09/2026)
 
