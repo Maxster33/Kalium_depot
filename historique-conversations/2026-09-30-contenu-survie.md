@@ -38,8 +38,7 @@ LeKiwi06 : « on attaque le code de la catégorie 1 (Contenu survie) », d'aprè
 
 ## Reste à faire
 - Tester KS_LootEntites 1.4.0 (tuer des Wardens : bloc à la place du catalyseur, fioles plus fréquentes).
-- Redémarrer Event (l'humain), puis les tests en jeu (liste dans le compte rendu de `REPRISE_PROJET.md`).
 - Fournir les textures manquantes ; voir l'affichage des têtes sur Bedrock (Geyser `custom-skulls` si besoin).
 - Recette de l'Élixir de Fortune quand KS_Economy existera (catégorie 2).
 - Supprimables par l'humain sur Event : `_removed-ks_crafts-1.0.0/` à `1.4.0/`, `_removed-ks_kaliumgive-1.0.0/` à
-  `1.3.0/`, `_removed-ks_lootentites-1.0.0/` et `1.1.0/`.
+  `1.3.0/`, `_removed-ks_lootentites-1.0.0/`, `1.1.0/` et `1.2.0/`.
