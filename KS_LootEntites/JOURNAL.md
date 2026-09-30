@@ -117,10 +117,12 @@ diversité »), blocs du biome seulement, minerais extrêmement rares, 1 bloc, X
 
 - **Catalyseur de sculk** du Warden (à toutes ses morts, comme les autres remplacements) : remplacé par **un** bloc au
   hasard des blocs naturels du Deep Dark, sans la cité antique. XP du Warden inchangée.
-  - Poids 100 chacun (7,65 %) : sculk, veine de sculk, capteur de sculk, hurleur de sculk, catalyseur de sculk,
+  Tirage sur 99 990 :
+  - Poids 7 650 chacun (7,65 %) : sculk, veine de sculk, capteur de sculk, hurleur de sculk, catalyseur de sculk,
     deepslate, deepslate pavée, tuf, gravier, pierre, granite, diorite, andésite.
-  - Poids 1 chacun (0,08 %, 0,54 % pour un minerai quelconque) : minerais de deepslate de charbon, fer, cuivre, or,
-    redstone, lapis, diamant (pas d'émeraude : absente du Deep Dark).
+  - Poids 77 chacun (0,077 %, 0,54 % pour un minerai quelconque) : minerais de deepslate de charbon, fer, cuivre, or,
+    redstone, lapis, diamant.
+  - Poids 1 (0,001 %, demande de LeKiwi06) : minerai d'émeraude de deepslate (absent du Deep Dark en vanilla).
 - Un hurleur de sculk posé par un joueur n'appelle pas de Warden (comportement vanilla).
 
 **Non déployé. Statut : non testé en jeu.**

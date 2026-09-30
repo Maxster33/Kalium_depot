@@ -93,7 +93,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 ### Versions compilées, non déployées
 
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
-- **KS_LootEntites 1.4.0** (30/09/2026, LeKiwi06, non testé) : Warden : fioles à 15 % (au lieu de 10 %), catalyseur remplacé par un bloc du Deep Dark (minerais à 0,08 % chacun).
+- **KS_LootEntites 1.4.0** (30/09/2026, LeKiwi06, non testé) : Warden : fioles à 15 % (au lieu de 10 %), catalyseur remplacé par un bloc du Deep Dark (minerais à 0,08 % chacun, émeraude de deepslate à 0,001 %).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »

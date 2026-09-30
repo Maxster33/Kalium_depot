@@ -52,7 +52,8 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
 
     /**
      * 1.4.0 (LeKiwi06) : le catalyseur de sculk du Warden est remplacé par un bloc au hasard des blocs naturels du biome
-     * Deep Dark (sans la cité antique) ; minerais extrêmement rares (poids 1 contre 100 pour les autres blocs).
+     * Deep Dark (sans la cité antique) ; minerais extrêmement rares (77 contre 7 650 pour les autres blocs, ~0,08 %
+     * chacun) ; émeraude de deepslate : 1 sur 99 990 (0,001 %, demande de LeKiwi06).
      */
     private static final Map<Material, Integer> DEEP_DARK = new LinkedHashMap<>();
 
@@ -60,13 +61,14 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
         for (Material bloc : List.of(Material.SCULK, Material.SCULK_VEIN, Material.SCULK_SENSOR,
                 Material.SCULK_SHRIEKER, Material.SCULK_CATALYST, Material.DEEPSLATE, Material.COBBLED_DEEPSLATE,
                 Material.TUFF, Material.GRAVEL, Material.STONE, Material.GRANITE, Material.DIORITE, Material.ANDESITE)) {
-            DEEP_DARK.put(bloc, 100);
+            DEEP_DARK.put(bloc, 7650);
         }
         for (Material minerai : List.of(Material.DEEPSLATE_COAL_ORE, Material.DEEPSLATE_IRON_ORE,
                 Material.DEEPSLATE_COPPER_ORE, Material.DEEPSLATE_GOLD_ORE, Material.DEEPSLATE_REDSTONE_ORE,
                 Material.DEEPSLATE_LAPIS_ORE, Material.DEEPSLATE_DIAMOND_ORE)) {
-            DEEP_DARK.put(minerai, 1);
+            DEEP_DARK.put(minerai, 77);
         }
+        DEEP_DARK.put(Material.DEEPSLATE_EMERALD_ORE, 1);
     }
 
     private NamespacedKey xpLevelKey;
