@@ -93,5 +93,6 @@ Demande de LeKiwi06 (catégorie 1 « Contenu survie ») : un seul système de fi
 - Sans KS_FioleExp : pas de fiole du tout (avertissement au démarrage).
 - Les anciennes fioles « niveau N » déjà en jeu restent utilisables (lecture gardée), mais ne sont plus créées.
 
-**Non déployé. À déployer ensemble (règle 3.5) : KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
-KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0, KS_LootEntites 1.3.0. Statut : non testé en jeu.**
+**Déployé sur Event le 30/09/2026 à 18:07 (LeKiwi06) avec KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
+KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0 et KS_LootEntites 1.3.0 (1.2.1 dans `_removed-ks_lootentites-1.2.1/` ; supprimables par l'humain : `_removed-ks_lootentites-1.0.0/` et `1.1.0/`), actifs après redémarrage d'Event. Statut : non
+testé en jeu.**

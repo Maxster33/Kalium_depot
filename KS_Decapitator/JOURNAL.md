@@ -47,5 +47,6 @@ ajouter dans `tetes.txt`) :
 - Bedrock : les têtes posées s'affichent avec leur texture ; en inventaire, Geyser montre peut-être une tête de Steve
   (réglage `custom-skulls` de Geyser, à voir après le test).
 
-**Non déployé. À déployer ensemble (règle 3.5) : KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
-KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0, KS_LootEntites 1.3.0. Statut : non testé en jeu.**
+**Déployé sur Event le 30/09/2026 à 18:07 (LeKiwi06) avec KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
+KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0 et KS_LootEntites 1.3.0 (nouveau), actifs après redémarrage d'Event. Statut : non
+testé en jeu.**

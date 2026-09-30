@@ -143,5 +143,6 @@ n'importe quelle couleur). Aucun spawner ajouté.
   restent (avertissement).
 - Livre de recettes : inchangé (le premier Fragment de Spawner débloque toutes les recettes de spawners).
 
-**Non déployé. À déployer ensemble (règle 3.5) : KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
-KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0, KS_LootEntites 1.3.0. Statut : non testé en jeu.**
+**Déployé sur Event le 30/09/2026 à 18:07 (LeKiwi06) avec KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
+KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0 et KS_LootEntites 1.3.0 (1.6.0 dans `_removed-ks_crafts-1.6.0/` ; supprimables par l'humain, 3 versions derrière ou plus : `_removed-ks_crafts-1.0.0/` à `1.4.0/`), actifs après redémarrage d'Event. Statut : non
+testé en jeu.**
