@@ -16,7 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_LootBlocs — Maxster33 — depuis le 2026-10-01 19:54 — fer et or bruts : valeurs vanilla x2
 
 
 

@@ -21,3 +21,9 @@
 - Tester KS_Enclume 1.2.0 en jeu (Java, Bedrock) après redémarrage d'Event.
 - Paramètres inaccessibles sur PS5 : à préciser (symptôme exact, serveur).
 - Supprimables par l'humain sur Event : `_removed-ks_enclume-1.0.0/`, `1.1.0/`, `1.1.1/`, `1.1.2/`.
+
+## Suite : fer et or bruts (KS_LootBlocs 1.1.0 → 1.2.0)
+- Demandé : « Nous avions réglé de manière à ce qu'on en obtienne autant que du cuivre, mais il s'avère que c'est
+  trop. Nous allons alors reprendre les valeurs vanilla et faire multiplié par 2 », puis « installe ».
+- Fait : 2 minerais bruts (vanilla 1) puis Fortune vanilla ; déployé sur Event à 20:24 (1.1.0 dans
+  `_removed-ks_lootblocs-1.1.0/`). Non testé en jeu.

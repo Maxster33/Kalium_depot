@@ -39,4 +39,4 @@ c'est trop. Nous allons alors reprendre les valeurs vanilla et faire multiplié 
   Moyennes sans Fortune / I / II / III : 2 / 2,67 / 3,5 / 4,4 (avant : 3,5 / 4,67 / 6,1 / 7,7). Toucher de soie : inchangé.
 - Le reste (autres minerais, feuilles, verrue, fragments de spawner) : inchangé.
 
-**Compilé, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 01/10/2026 à 20:24 (Maxster33 ; 1.1.0 dans `_removed-ks_lootblocs-1.1.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
