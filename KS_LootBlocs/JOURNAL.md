@@ -36,7 +36,7 @@ Demande de Maxster33 : « Nous avions réglé de manière à ce qu'on en obtienn
 c'est trop. Nous allons alors reprendre les valeurs vanilla et faire multiplié par 2 ».
 - Fer et or (normaux et deepslate, pas l'or du Nether) : **2** minerais bruts au lieu de 2 à 5 (vanilla : 1), puis
   bonus de Fortune vanilla (multiplicateur) : Fortune I : 2 ou 4 ; Fortune II : 2, 4 ou 6 ; Fortune III : 2, 4, 6 ou 8.
-  Moyennes : 2 / 2,67 / 4 / 5,5 (avant : 3,5 / 4,67 / 7 / 9,6). Toucher de soie : inchangé.
+  Moyennes sans Fortune / I / II / III : 2 / 2,67 / 3,5 / 4,4 (avant : 3,5 / 4,67 / 6,1 / 7,7). Toucher de soie : inchangé.
 - Le reste (autres minerais, feuilles, verrue, fragments de spawner) : inchangé.
 
 **Compilé, non déployé. Statut : non testé en jeu.**
