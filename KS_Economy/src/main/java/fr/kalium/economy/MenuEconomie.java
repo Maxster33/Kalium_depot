@@ -137,7 +137,7 @@ final class MenuEconomie implements Listener {
     private void ouvrirDepot(Player joueur) {
         Depot depot = new Depot();
         depot.inventaire = Bukkit.createInventory(depot, 27,
-                lang.c("depot.titre", "Déposer : émeraudes, blocs, blocs compressés"));
+                lang.c("depot.titre-coffre", "Déposer des émeraudes"));
         joueur.openInventory(depot.inventaire);
     }
 
@@ -204,15 +204,15 @@ final class MenuEconomie implements Listener {
         };
     }
 
+    /**
+     * 1.0.2 : noms courts (le texte d'un bouton ou d'un champ ne doit jamais défiler, demande de LeKiwi06) ; les
+     * valeurs sont dans le texte du menu. Nouvelles clés : les anciennes, plus longues, restent dans lang.yml.
+     */
     private Component nomRetrait(String id) {
         return switch (id) {
-            case "emeraude" -> lang.c("retrait.emeraude", "Émeraude (1)");
-            case "bloc" -> lang.c("retrait.bloc", "Bloc d'émeraude (9)");
-            default -> {
-                int tier = Integer.parseInt(id.substring(4));
-                yield lang.c("retrait.tier", "Bloc compressé tier <tier> (<valeur>)", "tier", tier,
-                        "valeur", KSEconomy.nombre(KSEconomy.emeraudesDuTier(tier)));
-            }
+            case "emeraude" -> lang.c("retrait.nom-emeraude", "Émeraude");
+            case "bloc" -> lang.c("retrait.nom-bloc", "Bloc d'émeraude");
+            default -> lang.c("retrait.nom-tier", "Compressé tier <tier>", "tier", id.substring(4));
         };
     }
 
@@ -220,13 +220,16 @@ final class MenuEconomie implements Listener {
         List<Component> noms = new ArrayList<>();
         RETRAITS.forEach(id -> noms.add(nomRetrait(id)));
         List<DialogInput> champs = List.of(
-                gui.choice("objet", lang.c("retrait.objet", "Objet (valeur en émeraudes)"), RETRAITS, noms, "emeraude"),
+                gui.choice("objet", lang.c("retrait.champ-objet", "Objet"), RETRAITS, noms, "emeraude"),
                 gui.text("nombre", lang.c("retrait.nombre", "Nombre"), "1", 7));
         List<ActionButton> boutons = List.of(gui.form(lang.c("retrait.valider", "<yellow>Retirer"), null,
                 (p, vue) -> retirer(p, vue.getText("objet"), vue.getText("nombre"))));
         gui.open(joueur, lang.c("retrait.titre", "<yellow><bold>Retirer"),
                 List.of(lang.c("menu.solde", "<white>Solde : <green><bold><solde></bold>", "solde",
-                        pts(KSEconomy.solde(joueur.getUniqueId())))),
+                        pts(KSEconomy.solde(joueur.getUniqueId()))),
+                        lang.c("retrait.valeurs", "<gray>Valeur en points : émeraude 1, bloc d'émeraude 9, compressé "
+                                + "tier 1 : 90, tier 2 : 900, tier 3 : 9 000, tier 4 : 90 000, tier 5 : 900 000, "
+                                + "tier 6 : 9 000 000.")),
                 champs, boutons, gui.button(lang.c("gui.retour", "<gray>Retour"), null, this::ouvrir), 1);
         lang.saveIfNeeded();
     }
