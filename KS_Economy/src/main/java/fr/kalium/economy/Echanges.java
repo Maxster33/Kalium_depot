@@ -441,8 +441,11 @@ final class Echanges implements Listener, TabExecutor {
                 .canCloseWithEscape(false)
                 .build();
         part.joueur.closeInventory();
+        // 1.0.3 : boutons élargis à leur texte, qui ne défile jamais (Lisible de KLM_Menu 2.5.0).
+        fr.kalium.menu.api.Lisible.Fenetre fenetre = fr.kalium.menu.api.Lisible.ajuster(List.of(),
+                List.of(valider, retour), null, 2);
         part.joueur.showDialog(Dialog.create(f -> f.empty().base(base)
-                .type(DialogType.multiAction(List.of(valider, retour), null, 2))));
+                .type(DialogType.multiAction(fenetre.boutons(), null, fenetre.colonnes()))));
         lang.saveIfNeeded();
     }
 

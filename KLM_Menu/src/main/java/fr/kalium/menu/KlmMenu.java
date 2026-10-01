@@ -716,6 +716,10 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
 
         // Action nulle = ferme simplement le Dialog.
         ActionButton close = ActionButton.create(mm.deserialize(msg("close-button")), null, buttonWidth, null);
+        // 2.5.0 : boutons élargis à leur texte, qui ne défile jamais (voir Lisible).
+        fr.kalium.menu.api.Lisible.Fenetre fenetre = fr.kalium.menu.api.Lisible.ajuster(List.of(), buttons, close, 1);
+        buttons = fenetre.boutons();
+        close = fenetre.sortie();
         DialogBase base = DialogBase.builder(mm.deserialize(msg("menu-title")))
                 .body(List.of(DialogBody.plainMessage(mm.deserialize(msg("menu-header")))))
                 .build();

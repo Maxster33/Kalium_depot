@@ -75,3 +75,11 @@ du retrait débordait (« Objet (valeur en émeraudes): Bloc compressé tier 3 (
 **Déployé sur Event le 01/10/2026 à 18:54 (1.0.1 dans `_removed-ks_economy-1.0.1/`), actif après redémarrage d'Event.
 Statut : non testé en jeu.**
 
+## 1.0.3 - saisie du montant ajustée (01/10/2026)
+
+Suite de 1.0.2 (voir KLM_Menu 2.5.0) : la fenêtre de saisie du montant de `/echange`, construite à la main, ajuste
+aussi ses boutons avec `Lisible`. Le reste des menus passe par `Gui`, ajusté par KLM_Menu 2.5.0.
+
+**Non déployé. À déployer ensemble (règle 3.5) : KLM_Menu 2.5.0 sur les 6 serveurs Paper (lobby, Kal-Games, Serveur
+Jeux, Kixster, Event, Kanvas), KalGames 1.22.1 (Kal-Games), KG_BingoGame 0.8.4 (Serveur Jeux), KS_Economy 1.0.3
+(Event) : ces trois-là ne démarrent pas sans KLM_Menu 2.5.0. Statut : non testé en jeu.**

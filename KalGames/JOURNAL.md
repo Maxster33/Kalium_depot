@@ -848,3 +848,14 @@ KG_BuildBattle 0.2.0. Aucune clé de config nouvelle. **Statut : déployé le 28
 **Déploiement** : **avec KG_PvpKit 1.0.0** (obligatoire). KG_BoatRace, KG_Parkour recompilés sans changement. Aucune
 clé de config nouvelle. Attention : 1.21.0 n'est pas encore testée en jeu (on empile sur une version non testée, à la
 demande de LeKiwi06). **Déployé sur Kal-Games (7001) le 28/09/2026 à 21 h 44 avec KG_PvpKit 1.0.0** (1.21.0 et copies de config.yml, minigames.yml, arenas.yml, kits.yml dans `_removed-kalgames-1.21.0/` ; copies aussi dans ``Téléchargementskalgames-1.21.0-config`` du PC de LeKiwi06, la copie à distance n'étant pas acceptée par le serveur). Supprimables par l'humain (règle des 3 versions) : `_removed-kalgames-1.19.0/` et `_removed-kalgames-1.19.1/`. **Statut : non testé en jeu.**
+
+## 1.22.1 - aucun texte qui défile dans les menus (01/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (voir KLM_Menu 2.5.0) : la copie de `Gui` de KalGames (menus de KalGames, KG_Bingo, KG_PvpKit)
+ajuste ses boutons et ses champs avec `Lisible` de KLM_Menu 2.5.0 avant de les afficher (ex. création d'une partie de
+Bingo : « Mode de jeu: Bingos (lignes, colonnes, diagonales) avec chrono » dépassait les 260 pixels du champ).
+Aucun autre changement.
+
+**Non déployé. À déployer ensemble (règle 3.5) : KLM_Menu 2.5.0 sur les 6 serveurs Paper (lobby, Kal-Games, Serveur
+Jeux, Kixster, Event, Kanvas), KalGames 1.22.1 (Kal-Games), KG_BingoGame 0.8.4 (Serveur Jeux), KS_Economy 1.0.3
+(Event) : ces trois-là ne démarrent pas sans KLM_Menu 2.5.0. Statut : non testé en jeu.**

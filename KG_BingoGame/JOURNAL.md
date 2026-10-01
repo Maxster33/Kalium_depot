@@ -1647,3 +1647,12 @@ illisibles sur Bedrock.
   `/menu` est maintenant celui de KLM_Menu sur tous les serveurs. `/menu on | off` refusé dans les mondes du Bingo.
 
 **Déploiement** : avec **KLM_Menu 2.4.0 sur Serveur Jeux** (obligatoire : il y est en 2.0.0). **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**
+
+## 0.8.4 - aucun texte qui défile dans les menus (01/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (voir KLM_Menu 2.5.0) : `DialogGui` ajuste ses boutons avec `Lisible` de KLM_Menu 2.5.0 avant de
+les afficher (largeur fixe de 240 pixels avant). Aucun autre changement.
+
+**Non déployé. À déployer ensemble (règle 3.5) : KLM_Menu 2.5.0 sur les 6 serveurs Paper (lobby, Kal-Games, Serveur
+Jeux, Kixster, Event, Kanvas), KalGames 1.22.1 (Kal-Games), KG_BingoGame 0.8.4 (Serveur Jeux), KS_Economy 1.0.3
+(Event) : ces trois-là ne démarrent pas sans KLM_Menu 2.5.0. Statut : non testé en jeu.**

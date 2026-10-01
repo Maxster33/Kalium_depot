@@ -187,3 +187,29 @@ serveurs interdisait la boussole, même après `/menu on`.
 **Déployé sur Kixster et Event le 28/09/2026 à 4 h 03** (serveurs allumés, pris en compte au redémarrage ; 2.4.0 dans
 `/plugins/_removed-klm_menu-2.4.0/`). Lobby, kal-games, Serveur Jeux, Kanvas restent en 2.4.0 (même comportement sans la
 clé). **Statut : non testé en jeu.**
+
+## 2.5.0 - aucun texte qui défile dans les menus (01/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : des textes trop longs « défilent » dans les boutons et les jauges ; « il ne faut jamais que ça
+arrive, c'est illisible » ; « il faut régler ce problème sur tous les plugins ».
+
+- **Nouvelle classe `fr.kalium.menu.api.Lisible`** : mesure la largeur d'un texte avec la police de Minecraft (avance
+  de chaque caractère, gras +1, accents comme la lettre de base) et ajuste un menu avant de l'afficher :
+  - boutons d'un même menu élargis à la largeur du plus long texte (au moins la largeur prévue, 400 pixels au plus) ;
+    moins de colonnes si elles ne tiennent plus à l'écran (500 pixels) ;
+  - listes déroulantes (« libellé: option ») et curseurs (« libellé: valeur ») élargis à leur plus long texte ;
+  - un texte qui dépasserait encore 400 pixels est signalé une fois dans la console (« Texte trop long [...] à
+    raccourcir »).
+- Appliqué dans `Gui.open` (donc à **tous les plugins qui utilisent la boîte à outils** : KG_Menu, KG_ScoreBoards,
+  KG_BuildBattle, KLM_Portal, KV_Menu, KV_BuildBattle, KS_Menu, KS_Economy, KS_BiomeChanger, KS_Dimensions, sans les
+  recompiler : la classe est chargée depuis KLM_Menu) et dans le menu de la boussole (destinations).
+- Utilisable par les menus construits à la main : `Lisible.ajuster(champs, boutons, sortie, colonnes)` (KalGames
+  1.22.1, KG_BingoGame 0.8.4, KS_Economy 1.0.3).
+- Les textes déjà enregistrés dans les `lang.yml` des serveurs sont pris en compte (mesure à l'affichage).
+- Vérifié dans tout le dépôt : aucun libellé de bouton ou de champ ne dépasse 400 pixels (les plus longs textes sont
+  des info-bulles, qui passent à la ligne). KS_FioleExp : boutons courts, rien à changer. KaliumCore (hors service) :
+  non traité.
+
+**Non déployé. À déployer ensemble (règle 3.5) : KLM_Menu 2.5.0 sur les 6 serveurs Paper (lobby, Kal-Games, Serveur
+Jeux, Kixster, Event, Kanvas), KalGames 1.22.1 (Kal-Games), KG_BingoGame 0.8.4 (Serveur Jeux), KS_Economy 1.0.3
+(Event) : ces trois-là ne démarrent pas sans KLM_Menu 2.5.0. Statut : non testé en jeu.**

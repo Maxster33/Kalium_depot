@@ -93,6 +93,9 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 ### Versions compilées, non déployées
 
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
+- **Aucun texte qui défile dans les menus (01/10/2026, LeKiwi06), non testé** : **KLM_Menu 2.5.0** (outil `Lisible` :
+  boutons et champs élargis à leur texte, pour tous les plugins qui utilisent `Gui`), **KalGames 1.22.1**,
+  **KG_BingoGame 0.8.4**, **KS_Economy 1.0.3**. À déployer ensemble : KLM_Menu 2.5.0 sur les 6 serveurs Paper.
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »

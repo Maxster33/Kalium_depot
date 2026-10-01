@@ -79,14 +79,19 @@ public final class DialogGui {
             bodies.add(DialogBody.plainMessage(line, 320));
         }
         DialogBase built = DialogBase.builder(title).body(bodies).build();
+        // 0.8.4 : boutons élargis à leur texte, qui ne défile jamais (Lisible de KLM_Menu 2.5.0).
+        fr.kalium.menu.api.Lisible.Fenetre fenetre = fr.kalium.menu.api.Lisible.ajuster(List.of(), buttons, close(),
+                columns);
+        int colonnes = fenetre.colonnes();
         // 0.8.3 : couleurs trop claires assombries pour les joueurs Bedrock (KLM_Menu 2.4.0).
         boolean bedrock = fr.kalium.menu.api.BedrockColors.isBedrock(player);
         DialogBase base = bedrock ? fr.kalium.menu.api.BedrockColors.adapt(built) : built;
-        ActionButton exit = bedrock ? fr.kalium.menu.api.BedrockColors.adapt(close()) : close();
-        List<ActionButton> shown = bedrock ? fr.kalium.menu.api.BedrockColors.adaptButtons(buttons) : buttons;
+        ActionButton exit = bedrock ? fr.kalium.menu.api.BedrockColors.adapt(fenetre.sortie()) : fenetre.sortie();
+        List<ActionButton> shown = bedrock ? fr.kalium.menu.api.BedrockColors.adaptButtons(fenetre.boutons())
+                : fenetre.boutons();
         Dialog dialog = shown.isEmpty()
                 ? Dialog.create(factory -> factory.empty().base(base).type(DialogType.notice(exit)))
-                : Dialog.create(factory -> factory.empty().base(base).type(DialogType.multiAction(shown, exit, Math.max(1, columns))));
+                : Dialog.create(factory -> factory.empty().base(base).type(DialogType.multiAction(shown, exit, Math.max(1, colonnes))));
         player.showDialog(dialog);
     }
 }

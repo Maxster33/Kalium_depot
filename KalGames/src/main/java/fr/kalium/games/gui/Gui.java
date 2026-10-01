@@ -155,11 +155,16 @@ public final class Gui {
         for (Component line : body) {
             bodies.add(DialogBody.plainMessage(line, 320));
         }
+        // 1.22.1 : boutons et champs élargis à leur texte, qui ne défile jamais (Lisible de KLM_Menu 2.5.0).
+        fr.kalium.menu.api.Lisible.Fenetre fenetre = fr.kalium.menu.api.Lisible.ajuster(inputs, buttons,
+                exit == null ? close() : exit, columns);
+        buttons = fenetre.boutons();
+        int colonnes = fenetre.colonnes();
         DialogBase built = DialogBase.builder(title)
                 .body(bodies)
-                .inputs(inputs)
+                .inputs(fenetre.champs())
                 .build();
-        ActionButton exitChoice = exit == null ? close() : exit;
+        ActionButton exitChoice = fenetre.sortie();
         // 1.21.0 : couleurs trop claires assombries pour les joueurs Bedrock (boite a outils de KLM_Menu 2.4.0).
         boolean bedrock = fr.kalium.menu.api.BedrockColors.isBedrock(player);
         DialogBase base = bedrock ? fr.kalium.menu.api.BedrockColors.adapt(built) : built;
@@ -169,7 +174,7 @@ public final class Gui {
                 ? Dialog.create(factory -> factory.empty().base(base).type(DialogType.notice(exitButton)))
                 : Dialog.create(factory -> factory.empty()
                         .base(base)
-                        .type(DialogType.multiAction(shown, exitButton, Math.max(1, columns))));
+                        .type(DialogType.multiAction(shown, exitButton, Math.max(1, colonnes))));
         player.showDialog(dialog);
     }
 
