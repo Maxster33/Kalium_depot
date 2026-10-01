@@ -60,3 +60,18 @@ du panneau d'échange). Correctif : nouveaux noms (`menu.bouton-tout-deposer`, `
 **Déployé sur Event le 01/10/2026 à 01:33 (1.0.0 dans `_removed-ks_economy-1.0.0/`), actif après redémarrage d'Event.
 Statut : non testé en jeu.**
 
+## 1.0.2 - plus aucun texte qui défile (01/10/2026)
+
+Demande de LeKiwi06 : des textes trop longs « défilent » dans les boutons et les champs ; « il ne faut jamais que ça
+arrive, c'est illisible ». Largeur de chaque texte de bouton et de champ mesurée (police de Minecraft) : seule la liste
+du retrait débordait (« Objet (valeur en émeraudes): Bloc compressé tier 3 (9 000) », ~304 pixels pour un champ de 260).
+- Liste du retrait : « Objet » et « Émeraude », « Bloc d'émeraude », « Compressé tier 1 » à « Compressé tier 6 »
+  (120 pixels au plus) ; les valeurs en points sont écrites dans le texte du menu (qui passe à la ligne).
+- Titre du coffre de dépôt raccourci : « Déposer des émeraudes ».
+- Nouvelles clés de `lang.yml` (`retrait.champ-objet`, `retrait.nom-…`, `retrait.valeurs`, `depot.titre-coffre`) : le
+  `lang.yml` du serveur garde les anciens textes sous les anciennes clés, qui ne servent plus.
+- Boutons vérifiés : tous à moins de 110 pixels pour 240 (« Déposer des objets » : 102).
+
+**Déployé sur Event le 01/10/2026 à 18:54 (1.0.1 dans `_removed-ks_economy-1.0.1/`), actif après redémarrage d'Event.
+Statut : non testé en jeu.**
+
