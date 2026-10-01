@@ -31,7 +31,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * KS_LootBlocs (cahier des charges : KS_Event/CAHIER_DES_CHARGES.md, Maxster33, 25/09/2026) :
- * - minerais de fer et d'or : autant de minerai brut que le cuivre (2 à 5, Fortune comme en vanilla) ;
+ * - minerais de fer et d'or : minerai brut vanilla x2 (2, Fortune comme en vanilla ; 1.2.0, avant : 2 à 5 comme le cuivre) ;
  * - autres minerais : 1 % de chance que le drop soit remplacé par 2 blocs du minerai cassé (jamais avec Toucher de soie) ;
  * - feuilles (cassées ou dégradées) : pousses ×2 sur chêne noir, chêne pâle et acacia ; pommes sur toutes les feuilles
  *   (taux vanilla), chaque pomme : 1 % pomme dorée, 0,01 % pomme dorée enchantée ;
@@ -106,9 +106,9 @@ public final class KSLootBlocs extends JavaPlugin implements Listener {
         }
     }
 
-    /** Minerai brut « comme le cuivre » : 2 a 5, puis bonus de Fortune vanilla des minerais. */
+    /** 1.2.0 (Maxster33, 01/10/2026) : minerai brut vanilla x2 : 2 (au lieu de 1), puis bonus de Fortune vanilla. */
     private static int oreCount(int fortune) {
-        int count = 2 + random().nextInt(4);
+        int count = 2;
         if (fortune > 0) {
             count *= Math.max(0, random().nextInt(fortune + 2) - 1) + 1;
         }
