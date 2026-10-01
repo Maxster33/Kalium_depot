@@ -95,3 +95,17 @@ de niveaux. Demande : afficher le nombre de niveaux nécessaire. Choix de Maxste
   le vrai coût est revérifié à ce moment).
 
 **Déployé sur Event le 29/09/2026 à 05:43 (1.1.3 dans `_removed-ks_enclume-1.1.3/`). Statut : non testé en jeu.**
+
+## 1.2.0 - coût réduit au-delà de 50 niveaux (01/10/2026)
+
+Demande de Maxster33 : « l'augmentation du prix en expérience pour la réparation et l'amélioration d'objet sur
+l'enclume, soit réduite de moitié à partir du niveau 50 ». Choix de Maxster33 : coût vanilla jusqu'à 50 niveaux, la
+partie au-dessus de 50 compte pour moitié (arrondi à l'unité inférieure) : 51 → 50, 70 → 60, 100 → 75, 150 → 100,
+250 → 150.
+- Appliqué à tout calcul de l'enclume (réparation, fusion, renommage), à la priorité NORMAL du `PrepareAnvilEvent` ;
+  la pénalité des réparations successives enregistrée sur l'objet reste vanilla (seul le prix change).
+- Fioles de KS_FioleExp : inchangées (KS_FioleExp, priorité HIGH, impose ensuite son propre coût).
+- Affichage (Java : ligne « Coût réel », Bedrock : 39 ou « Trop cher ! » + ligne sur l'objet de la 1re case) et
+  vérification à la prise : inchangés, ils utilisent le coût réduit (toujours supérieur à 39).
+
+**Compilé, non déployé. Statut : non testé en jeu.**

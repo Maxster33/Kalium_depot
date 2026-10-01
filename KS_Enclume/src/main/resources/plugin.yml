@@ -2,6 +2,6 @@ name: KS_Enclume
 version: '${project.version}'
 main: fr.kalium.enclume.KSEnclume
 api-version: '26.2'
-description: Enclume sans plafond de prix (cout calcule comme en vanilla, plus de "Trop cher !").
+description: Enclume sans plafond de prix (cout vanilla, partie au-dessus de 50 niveaux comptee pour moitie, plus de "Trop cher !").
 authors: [KaLium]
 softdepend: [floodgate]

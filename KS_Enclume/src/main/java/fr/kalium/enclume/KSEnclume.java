@@ -55,6 +55,10 @@ import org.bukkit.plugin.java.JavaPlugin;
  * que l'objet quitte l'enclume : prise du résultat, clic ou glisser (inventaire et curseur nettoyés au tick suivant),
  * fermeture (cases d'entrée nettoyées avant que le jeu ne rende les objets), et par sécurité à la connexion et à
  * l'ouverture d'une enclume.
+ *
+ * 1.2.0 (Maxster33, 01/10/2026) : « l'augmentation du prix en expérience pour la réparation et l'amélioration d'objet
+ * [...] réduite de moitié à partir du niveau 50 » ; choix : coût vanilla jusqu'à 50, partie au-dessus comptée pour
+ * moitié (70 -> 60, 100 -> 75). Les fioles de KS_FioleExp gardent leur propre coût.
  */
 public final class KSEnclume extends JavaPlugin implements Listener {
 
@@ -63,6 +67,8 @@ public final class KSEnclume extends JavaPlugin implements Listener {
     /** 1.1.2 : coût envoyé au joueur au-delà de 39 niveaux ; à 0, son jeu n'écrit aucune ligne de coût. */
     private static final int COUT_ENVOYE = 0;
     private static final int RESULT_SLOT = 2;
+    /** 1.2.0 : au-delà de ce coût, la partie en plus compte pour moitié. */
+    private static final int SEUIL_REDUCTION = 50;
 
     /** Vrai coût (> 39) du résultat affiché dans l'enclume ouverte par chaque joueur, et le résultat sans la ligne ajoutée. */
     private record Etat(int cout, ItemStack resultat) {
@@ -92,6 +98,20 @@ public final class KSEnclume extends JavaPlugin implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPrepare(PrepareAnvilEvent event) {
         event.getView().setMaximumRepairCost(Integer.MAX_VALUE);
+    }
+
+    /**
+     * 1.2.0 : au-delà de 50 niveaux, la partie du coût vanilla au-dessus de 50 compte pour moitié (arrondi à l'unité
+     * inférieure). Priorité NORMAL : avant KS_FioleExp (HIGH), qui impose ensuite son propre coût pour une fiole, et avant
+     * l'affichage (HIGHEST), qui voit donc déjà le coût réduit.
+     */
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPrepareReduction(PrepareAnvilEvent event) {
+        AnvilView view = event.getView();
+        int cout = view.getRepairCost();
+        if (cout > SEUIL_REDUCTION) {
+            view.setRepairCost(SEUIL_REDUCTION + (cout - SEUIL_REDUCTION) / 2);
+        }
     }
 
     /**
