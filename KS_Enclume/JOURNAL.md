@@ -108,4 +108,4 @@ partie au-dessus de 50 compte pour moitié (arrondi à l'unité inférieure) : 5
 - Affichage (Java : ligne « Coût réel », Bedrock : 39 ou « Trop cher ! » + ligne sur l'objet de la 1re case) et
   vérification à la prise : inchangés, ils utilisent le coût réduit (toujours supérieur à 39).
 
-**Compilé, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 01/10/2026 à 19:50 (Maxster33 ; 1.1.4 dans `_removed-ks_enclume-1.1.4/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

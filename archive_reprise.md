@@ -479,3 +479,149 @@ commande) :
   déployés sur Event, non testés : KS_Enclume, KS_Villageois, KS_Crafts, KS_LootBlocs, KS_LootEntites, KS_LootPeche,
   KS_LootPotions (détail dans leurs JOURNAL.md). KS_Elixirs reporté (décision de Maxster33). Limite connue :
   4 blocs de cuivre en carré 2×2 donnent probablement le cuivre taillé vanilla (voir KS_Crafts/JOURNAL.md).
+
+---
+
+### 2026-09-28 — Maxster33
+
+*(Session du 28/09/2026, de 21 h 40 à 23 h 30, Claude de Maxster33. Fin de session : réservations libérées.)*
+
+**Serveur Event : estomac du gardien et loots des coffres de structures** (demande et réponses :
+`KS_Event/CAHIER_DES_CHARGES.md`, partie 4). Déployé sur Event le 28/09/2026 à 23:19 (WinSCP en ligne de commande),
+**non testé en jeu, redémarrage d'Event à faire par l'humain** :
+- **KS_EstomacGardien 1.3.0** (nouveau ; 1.1.0 avait `/estomac`, retirée à la demande de Maxster33 ; 1.3.0 : casque 20 %) : objet « Estomac du gardien » (image du sac noir, pas un vrai sac) ; clic
+  droit : consommé, donne son contenu (casque en diamant 20 %, puis 2 tirages : oeuf de tortue, bateau, corail,
+  algue, trident enchanté, armure de nautile en diamant, coeur de la mer).
+- **KS_LootCoffres 1.0.0** (nouveau) : cité antique, 4 bastions, trésor enfoui, cité de l'End, forteresse,
+  avant-poste, manoir, coffres-forts des chambres d'épreuve. Le loot vanilla (tables 26.2 lues dans le jeu) est
+  modifié après génération ; changements de poids exacts par remplacement (voir son JOURNAL). Seuls les coffres pas
+  encore ouverts sont concernés.
+- **KS_KaliumGive 1.0.0** (nouveau, 23:35) : `/kaliumgive <pseudo> <id_custom> <nombre>` (opérateurs) ; liste des
+  id_custom dans le code : `estomac_gardien`, `cle_de_l_end` (1.1.0).
+- **KS_EC_Extension 1.0.0** (nouveau, 23:47) : coffre de l'Ender à 6 lignes ; les 3 du bas sont bloquées (barrières) et se
+  débloquent case par case en déposant une Clé de l'End (consommée). Clé : image de la clé des épreuves sinistre,
+  empilable par 64, craft sans forme dans **KS_Crafts 1.1.0** (coeur de la mer, crâne de wither, totem, pomme de Notch,
+  capteur sculk calibré, éponge, lingot de netherite, cloche, coeur de grinceur). Couvercle non animé (limite connue).
+- **KS_LootEntites 1.1.0** : grand gardien 50 % d'estomac (tué par un joueur ; `softdepend` KS_EstomacGardien).
+- **KS_LootPotions 1.1.0** : potion de faiblesse 10 % pour le capitaine pillard seulement.
+- Anciens jars dans `/plugins/_removed-ks_lootentites-1.0.0/` et `/plugins/_removed-ks_lootpotions-1.0.0/`.
+- À savoir : la session WinSCP enregistrée d'Event s'appelle `Event@7021.mystrator.com` (port 2022) ; le nom
+  `kalgames@7021...` ne marche pas en ligne de commande (WinSCP essaie alors le port 22) ; tableau d'architecture corrigé.
+- À tester : estomac (clic droit, contenu, inventaire plein), drop du grand gardien, coffres de structures neufs,
+  coffres-forts normal et sinistre, capitaine / pillard, `/kaliumgive`, coffre de l'Ender (ouverture, déblocage,
+  contenu gardé après reconnexion), craft de la Clé de l'End.
+- **Apparence Bedrock (29/09/2026 00:18 ; testée et confirmée par Maxster33 le 29/09/2026 après redémarrage du proxy)** : nouveau dossier `geyser-bedrock/` (voir son README). Geyser
+  n'affichait pas l'image (`item_model`) des objets custom : sur Bedrock, l'Estomac du gardien et la Clé de l'End
+  étaient des livres. Correspondance Geyser `custom_mappings/kalium_objets.json` et pack `KaLium-objets-1.0.0.mcpack`
+  envoyés sur le proxy (dossiers `custom_mappings/` et `packs/` de Geyser-Velocity, vides avant) ; **actif après
+  redémarrage du proxy (l'humain)**. Aucun autre plugin n'utilise d'`item_model` (vérifié dans tout le dépôt).
+- **Fiole d'expérience remplie (29/09/2026 03:39, testée et confirmée par Maxster33 le 29/09/2026)** : **KS_FioleExp 1.0.0** (nouveau) : à l'enclume, fiole
+  vide en 1re case, 2e case vide, nombre de **points** d'XP tapé dans le champ du nom → « Fiole d'expérience (1 395 XP) »
+  (exactement ces points retirés, une fiole vide par opération, usure vanilla de l'enclume) ; lancée, elle lâche
+  exactement ces points en orbes. **KS_KaliumGive 1.2.0** : id `fiole_exp(<points>)` (ex. `fiole_exp(1395)`) ; 1.1.0
+  dans `_removed-ks_kaliumgive-1.1.0/`. Tests OK (remplissage, lancer, /kaliumgive).
+- **29/09/2026 03:54, non testés** : **KS_FioleExp 1.1.0** (aucune fiole d'expérience ne peut plus être renommée à
+  l'enclume) et **KS_Enclume 1.1.0** (le jeu du joueur affiche « Trop cher ! » dès 40 niveaux : au-delà de 39, 39 est
+  affiché, le vrai coût est écrit en barre d'action et le reste est retiré à la prise). À tester : renommer une fiole
+  (impossible), réparation / fusion à plus de 40 niveaux (niveaux retirés, refus si pas assez), fiole de plus de 40
+  niveaux.
+- **29/09/2026 04:17, non testé** : **KS_Enclume 1.1.1**. En 1.1.0, au-delà de 39 niveaux, la case résultat montrait une
+  croix rouge (le jeu Java recalcule lui-même le résultat et le vide dès 40 niveaux) : le serveur renvoie maintenant le
+  résultat au joueur. Le vrai coût est écrit en dernière ligne de la description du résultat (la barre d'action était
+  cachée par l'enclume ; retirée de l'objet à la prise). « + » à la place de 39 : impossible (nombre écrit par le jeu).
+  À tester : réparation / fusion et fiole à plus de 40 niveaux (résultat visible, ligne de coût, niveaux retirés, objet
+  sans la ligne), prise refusée sans assez de niveaux. Nettoyage possible par l'humain : rien.
+- **29/09/2026 04:31, non testé** : **KS_Enclume 1.1.2** : au-delà de 39 niveaux, l'enclume n'affiche plus aucun coût
+  (« + » ou « Coût : » seul impossibles : ligne écrite par le jeu) ; vrai coût en dernière ligne de la description du
+  résultat ; à la prise, le vrai coût est rendu à l'enclume, qui retire elle-même les niveaux. À tester : prise (bref
+  clignotement possible), niveaux retirés, refus sans assez de niveaux, prise ratée (curseur occupé). **Nettoyage
+  possible par l'humain** (règle des 3 versions) : sur Event, `/plugins/_removed-ks_enclume-1.0.0/`.
+- **Tests du 29/09/2026 (Maxster33)** : KS_Enclume 1.1.2 et KS_FioleExp 1.1.0 **OK en Java**. **Bedrock** : au-delà de 39
+  niveaux l'amélioration marche mais le vrai coût n'apparaît pas dans la description ; le remplissage d'une fiole
+  (nombre tapé dans le nom) renomme simplement la fiole, coût affiché 1. Cause probable : sur Bedrock, l'enclume calcule
+  et affiche son propre résultat (Geyser ne fait que corriger le coût) ; le résultat préparé par le serveur n'est pas
+  montré (non corrigeable côté serveur ni par un pack ; la fiole reçue est pourtant la bonne).
+- **29/09/2026 05:15, non testé** : **KS_Enclume 1.1.3** : sur Bedrock, la 1.1.2 (coût 0 envoyé) empêchait de prendre le
+  résultat. Joueurs Bedrock (Floodgate) : 39 affiché s'ils ont assez de niveaux, sinon le vrai coût (« Trop cher ! ») ;
+  Java inchangé. « 40+ » et relever la limite de 40 : impossibles (fixés dans le jeu du joueur). À tester sur Bedrock :
+  prise avec assez de niveaux (vrai coût retiré), « Trop cher ! » sans assez. **Nettoyage possible par l'humain** (règle
+  des 3 versions) : voir la ligne 1.1.4 ci-dessous.
+- **29/09/2026 05:43, non testé** : **KS_Enclume 1.1.4** : Bedrock, au-delà de 39 niveaux, « Coût réel : N niveaux »
+  (vert / rouge) ajouté en dernière ligne de l'objet de la 1re case (marqueur invisible), visible au survol et dans
+  l'aperçu du résultat ; retiré à la prise, à tout clic / glisser, à la fermeture (déconnexion comprise), et par sécurité
+  à la connexion et à l'ouverture d'une enclume. Sur Bedrock, taper le nom après avoir posé les deux objets. À tester
+  (Bedrock) : ligne visible, couleur, objet obtenu et objet repris / rendu **sans** la ligne. **Nettoyage possible par
+  l'humain** (règle des 3 versions) : sur Event, `/plugins/_removed-ks_enclume-1.0.0/`, `_removed-ks_enclume-1.1.0/`,
+  `_removed-ks_enclume-1.1.1/`.
+- **29/09/2026 05:58, non testé** : **KS_FioleExp 1.2.0** : sur Bedrock, le nombre tapé dans le champ du nom n'arrive au
+  serveur qu'à la prise (coût impossible à afficher avant). Joueurs Bedrock : **accroupi + clic droit sur une enclume
+  avec une fiole vide en main** → formulaire (nombre de points), puis confirmation « N points consommera X niveaux
+  (niveau A → B) ». Java inchangé. **`telecharger-outils.sh` modifié** (API Floodgate 2.2.5 + Cumulus 1.1.2, pour
+  compiler KS_FioleExp) : le relancer sur chaque PC. **Testé et confirmé en Bedrock par Maxster33 le 29/09/2026.**
+- **29/09/2026 matin (Maxster33)** : sur Bedrock, l'Estomac du gardien et la Clé de l'End avaient toujours l'apparence
+  d'un livre : le proxy n'avait pas été redémarré depuis l'envoi de `geyser-bedrock/`. Après redémarrage : **apparence
+  Bedrock testée et confirmée par Maxster33 le 29/09/2026**.
+- **29/09/2026 10:24, déployé sur Event, non testé** : **KS_FioleExp 1.3.0** : joueurs Java aussi, accroupi + clic
+  droit sur une enclume avec une fiole vide → dialogue natif (Paper) avec les mêmes textes que le formulaire Bedrock
+  (points, confirmation du coût en niveaux). Le champ du nom de l'enclume reste utilisable (choix de Maxster33).
+  **Actif après redémarrage d'Event (l'humain).** À tester (Java) : ouverture, textes, confirmation (points, fiole
+  vide consommée, fiole reçue), erreurs ; Bedrock inchangé. **Nettoyage possible par l'humain** (règle des 3
+  versions) : sur Event, `/plugins/_removed-ks_fioleexp-1.0.0/`.
+- **29/09/2026 10:55, déployé sur Event à 10:57, non testé** (actif après redémarrage d'Event, l'humain ; 1.3.0 dans
+  `_removed-ks_fioleexp-1.3.0/` ; **supprimables par l'humain** (règle des 3 versions) : `_removed-ks_fioleexp-1.0.0/`
+  et `_removed-ks_fioleexp-1.1.0/`) : **KS_FioleExp 1.4.0** : « la fabrication de fiole d'exp abîme
+  trop l'enclume » : 6 % de chance d'usure par fiole au lieu de 12 % (environ 50 fioles par enclume au lieu de 25),
+  réglable dans le nouveau `config.yml` (`usure-enclume-pourcent`, créé au premier démarrage ; 0 = aucune usure).
+- **29/09/2026 12:40, déployé à 12:55 (Event) et 12:56 (proxy), non testé** : **Bedrock Breaker** (détail : `KS_BedrockBreaker/JOURNAL.md`).
+  Nouveau plugin **KS_BedrockBreaker 1.0.0** : objet « Bedrock Breaker » (image du bâton de blaze, description
+  « Utilisation unique », empilable par 64), un bloc de bedrock par objet, sauf la couche du fond ; protections
+  WorldGuard respectées (cassage simulé) ; anciens Bedrock Breaker (houe en bois) encore utilisables. **KS_Crafts 1.4.0** :
+  8 TNT autour d'une houe en diamant (n'importe laquelle) ; recette débloquée dans le livre dès qu'on obtient une TNT
+  ou une houe en diamant. **KS_KaliumGive 1.3.0** : id `bedrock_breaker`. **geyser-bedrock 1.1.0** : apparence Bedrock.
+  Anciens jars dans `_removed-ks_crafts-1.3.0/` et `_removed-ks_kaliumgive-1.2.0/` ; sur le proxy, ancien
+  `kalium_objets.json` et pack 1.0.0 dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.0.0/` (hors de `packs/` et
+  `custom_mappings/`). **Actif après redémarrage d'Event et du proxy (l'humain).** À tester : craft (8 TNT + houe en
+  diamant), recette dans le livre à l'obtention d'une TNT ou d'une houe en diamant, apparence (Java et Bedrock),
+  description, pile de 64, bedrock cassée (1 objet consommé), couche du fond refusée, région WorldGuard refusée (objet
+  gardé), ancien Bedrock Breaker, `/kaliumgive <pseudo> bedrock_breaker 1`. **Nettoyage possible par l'humain** (règle
+  des 3 versions) : sur Event, `_removed-ks_crafts-1.0.0/`, `_removed-ks_crafts-1.1.0/`, `_removed-ks_kaliumgive-1.0.0/`.
+- **29/09/2026 13:20, déployé sur Event à 13:30, non testé (actif après redémarrage d'Event)** : **KS_BedrockBreaker 1.0.1** : un bloc par seconde au plus
+  par joueur (signalé par Maxster33 : un bloc de bedrock juste derrière était cassé aussi, avec un 2e Bedrock Breaker,
+  à cause du clic répété).
+- **29/09/2026 13:35, déployé sur Event à 13:59, non testé** : **KS_BedrockBreaker 1.0.2** : la couche du fond peut de nouveau
+  être cassée (demande de Maxster33 ; passage vers le vide possible).
+- **29/09/2026 13:55, déployé sur Event à 13:59, non testé** : **KS_Crafts 1.5.0** : nouvelle recette du Bedrock Breaker
+  (poudre de blaze aux 4 coins, charge de feu en haut, wagonnets à TNT à gauche et à droite, cristal de l'End au
+  centre, ancre de réapparition en bas) ; débloquée dans le livre de recettes à l'obtention d'un de ces ingrédients.
+- **29/09/2026 14:08, déployé sur Event à 14:18, non testé** : **KS_FioleExp 1.5.0** + **KS_KaliumGive 1.4.0** (à déployer
+  ensemble) : fiole remplie en **niveaux** (niveau 50 = points du niveau 0 au niveau 50), à l'enclume et dans le menu
+  (Java et Bedrock) ; nom « Fiole d'expérience (niveau 50) », points en description ; confirmation du menu détaillée
+  (points de la fiole, points du joueur, coût en points et en niveaux perdus) ; `fiole_exp(N)` en niveaux.
+- **29/09/2026 14:10, déployé sur Event à 14:18, non testé** : **KS_LootEntites 1.2.0** : Warden (tué par un joueur) : une
+  fiole d'expérience tirée au sort à chaque fois, niveau 10 (poids 15), 15 (10), 20 (6), 30 (3) ou 40 (1) ; l'ancienne
+  fiole (10 % d'une fiole de niveau 10 à 50) est retirée. Endermite : la fiole de niveau 10 de son tirage devient la
+  nouvelle fiole de KS_FioleExp (points en description) ; à déployer avec KS_FioleExp 1.5.0.
+  **Actif après redémarrage d'Event (l'humain).** À tester : fiole à l'enclume et au menu (Java, Bedrock) en niveaux, nom
+  et description, confirmation détaillée, `/kaliumgive <pseudo> fiole_exp(50) 1`, fiole du Warden et de l'endermite
+  (tués par un joueur). **Nettoyage possible par l'humain** (règle des 3 versions) : sur Event,
+  `_removed-ks_fioleexp-1.0.0/`, `1.1.0/`, `1.2.0/`, `_removed-ks_kaliumgive-1.0.0/`, `1.1.0/`.
+- **29/09/2026 14:21, déployé sur Event à 14:22, non testé (actif après redémarrage d'Event ; supprimable par l'humain : `_removed-ks_lootentites-1.0.0/`)** : **KS_LootEntites 1.2.1** : Warden, ligne « rien » de poids 315
+  dans le tirage : 10 % de chance d'une fiole (niveau 10 : 4,29 %, 15 : 2,86 %, 20 : 1,71 %, 30 : 0,86 %, 40 : 0,29 %).
+- **29/09/2026 17:10, déployé sur Event à 17:22 et sur le proxy à 17:23, non testé** : **spawners et Changeur de Biome** (à déployer ensemble ;
+  réservations au-delà de 2 plugins avec l'accord de LeKiwi06, selon Maxster33). Nouveaux plugins **KS_ItemSimple 1.0.0**
+  (Fragment de Spawner, Cœur de Spawner, 5 têtes « Steve » nommées en attendant un plugin des têtes), **KS_Spawners
+  1.0.0** (8 spawners avec leur créature, empilables par 64 ; posés par un joueur, ils tombent quand on les casse, sans
+  XP), **KS_BiomeChanger 1.0.0** (Changeur de Biome : menu des biomes de l'overworld, sphère de 32 blocs, historique,
+  téléportation pour les opérateurs ; dépend de KLM_Menu) ; **KS_Crafts 1.6.0** (8 spawners : 7 fragments + cœur + tête ;
+  Changeur de Biome ; recettes débloquées dans le livre à l'obtention d'un Fragment de Spawner) ; **KS_KaliumGive 1.5.0**
+  (16 nouveaux id) ; **KS_LootBlocs 1.1.0** (spawner naturel : 1 fragment + 5 % d'un 2e) ; **geyser-bedrock 1.2.0**
+  (apparence Bedrock, proxy). Détail dans chaque `JOURNAL.md`.
+  Compléments (demandes de Maxster33, avant déploiement) : Changeur de Biome au choix **sphère** (32 blocs de rayon) ou
+  **cube** (52 blocs de côté, même volume) ; **refusé si la zone touche une région WorldGuard** (même celles du joueur) ;
+  un spawner fabriqué détruit par une **explosion** tombe au sol. `outils-build` : lancer `sh telecharger-outils.sh` si
+  l'API WorldGuard / WorldEdit manque (déjà dans le script, pour KV_Plots).
+  **Actifs après redémarrage d'Event et du proxy (l'humain).** À tester : crafts (spawners, Changeur de Biome), livre de
+  recettes au 1er fragment, pose / cassage / explosion d'un spawner fabriqué, fragments d'un spawner naturel, menu du
+  Changeur de Biome (sphère / cube, biome, région WorldGuard refusée, historique, téléportation opérateur), apparence
+  Bedrock, `/kaliumgive`. **Nettoyage possible par l'humain** (règle des 3 versions) : sur Event,
+  `_removed-ks_crafts-1.0.0/` à `1.3.0/`, `_removed-ks_kaliumgive-1.0.0/` à `1.2.0/`.
