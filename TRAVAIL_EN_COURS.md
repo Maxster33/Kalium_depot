@@ -16,6 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_Enclume — Maxster33 — depuis le 2026-10-01 19:47 — coût de l'enclume : partie au-dessus de 50 niveaux comptée pour moitié
+
 
 ## Requis parfois
 
