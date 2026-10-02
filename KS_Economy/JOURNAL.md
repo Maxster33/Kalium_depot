@@ -163,4 +163,4 @@ Retours de LeKiwi06 après les premiers essais (cahier mis à jour : « Retours 
 Limite : un golem de cuivre du propriétaire, près d'une boutique en coffre de cuivre, peut en déplacer le stock (la
 protection des claims de SimpleClaimSystem s'applique aux golems des autres).
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 01:49 (LeKiwi06 ; 1.1.1 dans `_removed-ks_economy-1.1.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

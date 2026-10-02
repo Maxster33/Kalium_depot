@@ -16,7 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_Economy — LeKiwi06 — depuis le 2026-10-03 01:32 — retours sur les boutiques : noms en français, recherche d'objet, renommer, rupture de stock, coffres de cuivre
 
 
 

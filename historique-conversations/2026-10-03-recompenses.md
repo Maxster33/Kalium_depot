@@ -25,3 +25,12 @@ qui a trait au claim ne marche pas » ; « vas y déploie ».
   proxy, Event, Kal-Games, Kanvas ; remplir les tables de butin (`/kgrewards admin`, `/kvrewards admin`) ; tests au
   speedrun.
 - ConditionalEvents (Event) : `config.yml` illisible (signalé, non touché).
+
+## Suite : retours sur les boutiques (KS_Economy 1.1.1 → 1.1.2)
+- LeKiwi06 : noms anglais et coupés sur les panneaux, recherche « bloc de diamant » / « diamond_block » sans
+  résultat, boutiques numérotées, aucun indicateur de rupture, coffres en cuivre refusés ; puis : panneau à retirer
+  quand on supprime à distance, fermeture temporaire, délai de 3 h avant de reposer une boutique supprimée.
+- Cause de la recherche : `noms_objets.txt` non copié dans le jar par `build.sh`.
+- Choix de Claude signalés : délai de 3 h = la place de la boutique supprimée reste prise (les autres places libres
+  restent utilisables) ; panneau : nom, lot, prix, état ; panneau rendu au propriétaire.
+- Déployé sur Event le 03/10/2026 à 01:49.

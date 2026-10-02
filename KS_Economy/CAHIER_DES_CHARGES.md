@@ -154,6 +154,27 @@ boutiques** dans KS_Economy ; boutiques dans une **zone dédiée** ; prix en obj
   récupérer ses points ; pendant ce temps la boutique est **verrouillée** (ni achat ni ouverture, sur place ou à
   distance) jusqu'à la fermeture ou la déconnexion ; le chunk est chargé le temps de l'opération.
 
+### Retours de LeKiwi06 (03/10/2026, KS_Economy 1.1.2)
+
+> pour le plugin de magasin : le nom ne s'affiche pas en français sur les coffres , si il est composé de plusieurs mots un seul s'affiche , j'ai aussi essayé de chercher un item avec bloc de diamant , et diamond_block , aucun des 2 n'a marché , on ne peux pas renommer nos boutiques dans notre magasin elles sont numérotés c'est nul , aucun indicateur n'est présent visuellement pour voir des rupture de stock etc dans l'interface ou sur le coffre , et on ne peux pas utiliser les divers coffres de cuivre comme shop c'est dommage .
+>
+> il faut aussi que le panneau sur le coffre soit détruit si on supprime un shop a distance , ajouter aussi une option pour le fermer temporairement et ajouter un cooldown de 3h avant de pouvoir reposer un shop qu'on a supprimé ( pour eviter les switch abuse )
+
+Choix d'interprétation (Claude, à valider aux tests) :
+- **Noms français** écrits par le plugin (panneaux et menus), quelle que soit la langue du client ; la recherche par
+  nom français ou id refonctionne (fichier des noms oublié dans le jar jusqu'en 1.1.1).
+- **Panneau** : 4 lignes mesurées (le jeu n'affiche d'une ligne trop longue que les premiers mots ; sinon « … ») :
+  nom de la boutique (gras), lot vendu, « pour » + prix, **état** : « Stock : N lots » (vert), « Rupture de stock »
+  (rouge), « Coffre plein » (paiement en objet impossible, orange), « Fermée » (rouge). Tenu à jour après un achat,
+  une gestion à distance, la fermeture du coffre sur place et au chargement du chunk.
+- **Nom de boutique** (20 caractères) : choisi à la création (le nom de l'objet vendu par défaut), « Renommer » dans
+  la gestion ; les listes (mes boutiques, catalogue) montrent les noms, en couleur selon l'état, avec l'état écrit.
+- **Fermer temporairement / Rouvrir** (gestion de la boutique) : plus aucun achat, le panneau affiche « Fermée ».
+- **Suppression depuis le menu** (à distance ou non) : le panneau est retiré et rendu au propriétaire.
+- **Délai de 3 h** (`magasins.delai-suppression-heures`) : après la suppression d'une boutique (menu ou panneau /
+  contenant cassé), sa place dans le magasin reste prise 3 h ; message avec le temps restant.
+- **Coffres en cuivre** (tous les états d'oxydation, cirés ou non) acceptés comme contenants.
+
 ## Magasins (version du 29/09/2026, remplacée)
 
 - Un joueur déclare **un** magasin dans un de ses **groupes de claim** (KS_Claim, session 3). Prix du premier
