@@ -168,6 +168,40 @@ final class Api implements KanvasPlots {
     }
 
     @Override
+    public long notesRecues(java.util.UUID joueur, long depuis) {
+        Long n = notesParBatisseur(depuis).get(joueur);
+        return n == null ? 0 : n;
+    }
+
+    @Override
+    public java.util.Map<java.util.UUID, Long> notesParBatisseur(long depuis) {
+        java.util.Map<java.util.UUID, Long> total = new java.util.HashMap<>();
+        for (Plot p : plugin.plots().tous()) {
+            long somme = 0;
+            for (Plot.Vote v : p.votes.values()) {
+                if (v.heure() >= depuis) {
+                    somme += v.note();
+                }
+            }
+            if (somme == 0) {
+                continue;
+            }
+            java.util.Set<java.util.UUID> batisseurs = new java.util.LinkedHashSet<>();
+            batisseurs.add(p.createur);
+            batisseurs.addAll(p.editeurs);
+            for (java.util.UUID b : batisseurs) {
+                total.merge(b, somme, Long::sum);
+            }
+        }
+        return total;
+    }
+
+    /** 1.5.0 : vue publique d'un plot (signaux). */
+    static PlotInfo info(Plot p) {
+        return vue(p);
+    }
+
+    @Override
     public List<PlotInfo> plotsDuConcours(int id) {
         List<Plot> l = plugin.plotsDuConcours(id);
         Concours.Un c = plugin.concours().parId(id);

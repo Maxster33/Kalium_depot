@@ -1,0 +1,15 @@
+name: KV_Rewards
+version: '${project.version}'
+main: fr.kalium.kvrewards.KVRewards
+api-version: '26.2'
+description: Recompenses de Kanvas (notes recues, tops, prestige, concours de build, tables de butin), envoyees vers Event.
+authors: [KaLium]
+depend: [KV_Plots, KLM_Menu]
+commands:
+  kvrewards:
+    description: Progression des recompenses (et tables de butin pour les admins).
+    usage: /kvrewards [admin]
+permissions:
+  kvrewards.admin:
+    description: Modifier les tables de butin.
+    default: op

@@ -116,6 +116,15 @@ public interface KanvasPlots {
     /** Concours en cours ou en votes, ou null. */
     ConcoursInfo concoursActuel();
 
+    /**
+     * 1.5.0 (catégorie 4 « Récompenses ») : notes reçues par un joueur sur les plots dont il est créateur ou éditeur,
+     * données depuis cette date (millisecondes ; 0 = depuis toujours). Un vote remplacé compte à sa nouvelle date.
+     */
+    long notesRecues(UUID joueur, long depuis);
+
+    /** 1.5.0 : notes reçues par chaque bâtisseur (créateur et éditeurs) depuis cette date. */
+    java.util.Map<UUID, Long> notesParBatisseur(long depuis);
+
     /** Concours terminés, du plus récent au plus ancien. */
     List<ConcoursInfo> anciensConcours();
 

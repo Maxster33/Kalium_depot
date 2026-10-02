@@ -94,6 +94,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
+- **Catégorie 4 « Récompenses »** (30/09 au 03/10/2026, LeKiwi06, compilée, à déployer d'un coup) : KaliumRelay 1.3.0 (proxy : boîte aux lettres durable) ; KS_RewardsGUI 1.0.0 + KS_KaliumGive 1.7.0 + KLM_Menu 2.6.0 (Event : `/rewards`) ; KG_ScoreBoards 1.8.0 + KG_Rewards 1.0.0 + KLM_Menu 2.6.0 (Kal-Games) ; KV_Plots 1.5.0 + KV_Rewards 1.0.0 + KLM_Menu 2.6.0 (Kanvas). Après le déploiement, l'humain remplit `relay-token` dans les config de KS_RewardsGUI, KG_Rewards et KV_Rewards. Voir les JOURNAL.md.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »
 (case de gauche : Classements pour tous, Paramètres pour les admins, un bouton par jeu), boussole réduite à la

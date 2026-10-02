@@ -4,6 +4,18 @@ Serveur Kanvas (ex Kal-Test-Dev). Cahier des charges : `KV_Plots/CAHIER_DES_CHAR
 de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` télécharge aussi les API WorldGuard
 7.0.19 et WorldEdit 7.4.5 (compilation seulement ; en jeu, ce sont les plugins du serveur qui servent).
 
+## 1.5.0 - API des récompenses (03/10/2026)
+
+Catégorie 4 « Récompenses » (cahier de LeKiwi06, validé le 30/09/2026), pour KV_Rewards :
+- `notesRecues(joueur, depuis)` et `notesParBatisseur(depuis)` : somme des notes reçues par les plots dont le joueur
+  est créateur ou éditeur (tous les bâtisseurs, choix de LeKiwi06), votes donnés depuis cette date (0 = depuis
+  toujours ; un vote remplacé compte à sa nouvelle date).
+- Événements : `NoteRecueEvent` (plot, bâtisseurs) à chaque vote ; `ConcoursTermineEvent` (concours, classement des
+  plots : total des notes, puis moyenne) à la fin des votes d'un concours de build.
+- Aucun changement de comportement en jeu.
+
+**Non déployé (catégorie 4, étape 5). Statut : non testé en jeu.**
+
 ## 1.4.1 - la glace ne fond plus (27/09/2026)
 
 Demande de LeKiwi06 (glace fondue dans l'arène du Build Battle, posée dans le monde `Kanvas`) : au démarrage, la règle

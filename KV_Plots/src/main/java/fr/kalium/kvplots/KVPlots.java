@@ -502,6 +502,11 @@ public final class KVPlots extends JavaPlugin {
         plots.sauver();
         concours.sauver();
         modeVote.rafraichir();
+        // 1.5.0 (catégorie 4) : signal pour KV_Rewards (récompenses des places du concours).
+        getServer().getPluginManager().callEvent(new fr.kalium.kvplots.api.ConcoursTermineEvent(
+                new fr.kalium.kvplots.api.KanvasPlots.ConcoursInfo(c.id, c.theme, c.taille, c.phase, c.debut, c.fin,
+                        c.dureeVotes, c.finVotes, classement.size()),
+                classement.stream().map(Api::info).toList()));
         annoncer("Votes clos pour « " + c.theme + " » ! " + (classement.isEmpty() ? "Aucun participant."
                 : "Vainqueur : " + nom(classement.get(0).createur) + " (plot n°" + classement.get(0).id + ", "
                 + classement.get(0).points() + " points)."));
@@ -601,6 +606,15 @@ public final class KVPlots extends JavaPlugin {
         }
         p.votes.put(u, new Plot.Vote(note, System.currentTimeMillis()));
         plots.sauver();
+        // 1.5.0 (catégorie 4) : signal pour KV_Rewards (paliers des notes reçues).
+        java.util.List<UUID> batisseurs = new java.util.ArrayList<>();
+        batisseurs.add(p.createur);
+        p.editeurs.forEach(e -> {
+            if (!batisseurs.contains(e)) {
+                batisseurs.add(e);
+            }
+        });
+        getServer().getPluginManager().callEvent(new fr.kalium.kvplots.api.NoteRecueEvent(p.id, batisseurs));
     }
 
     ModeVote modeVote() {
