@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KG_Rewards — LeKiwi06 — depuis le 2026-10-03 00:23 — nouveau : catégorie 4, étape 3 (paliers, tops, prestige, butin, envoi vers Event)
 - KG_ScoreBoards — LeKiwi06 — depuis le 2026-10-03 00:11 — catégorie 4, étape 2 : classement hebdomadaire, mois aligné, affichage du prestige
 - KaliumRelay — LeKiwi06 — depuis le 2026-10-03 00:04 — catégorie 4 Récompenses, étape 1 : boîte aux lettres durable entre serveurs (récompenses vers Event)
 - KS_RewardsGUI — LeKiwi06 — depuis le 2026-10-03 00:04 — catégorie 4 Récompenses, étape 1 : nouveau : réception des récompenses sur Event, /rewards, journal
