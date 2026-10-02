@@ -16,6 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_Claim — LeKiwi06 — depuis le 2026-10-02 20:35 — nouveau : catégorie 3 Claims (interface, groupes, prix, sur SimpleClaimSystem)
+- KS_BiomeChanger — LeKiwi06 — depuis le 2026-10-02 20:35 — refus si la zone touche un claim dont le joueur n'est ni propriétaire ni membre (catégorie 3)
 
 
 
