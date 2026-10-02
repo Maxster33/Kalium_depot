@@ -147,4 +147,4 @@ Liste « Point de chute » : « non défini » (clé `landings.mode-none`) au li
 décide) » ; l'explication est écrite en haut du menu (`landings.mode-aide`).
 
 **Déployé sur le lobby et Kanvas le 02/10/2026 à 17:49 (LeKiwi06 ; 1.3.1 dans `_removed-klm_portal-1.3.1/`), actif après redémarrage.
-Statut : non testé en jeu.**
+Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**

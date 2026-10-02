@@ -64,4 +64,4 @@ Noms raccourcis : « Arènes préchargées », « Temps par point de contrôle (
 inchangées.
 
 **Déployé sur Kal-Games le 02/10/2026 à 17:49 (LeKiwi06 ; 1.1.0 dans `_removed-kg_parkour-1.1.0/`), actif après redémarrage.
-Statut : non testé en jeu.**
+Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**

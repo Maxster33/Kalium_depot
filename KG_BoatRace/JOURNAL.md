@@ -120,4 +120,4 @@ Noms raccourcis (détail dans l'explication, affichée au-dessus des champs par 
 max (s) », « Rayon des points de contrôle ». Clés des réglages inchangées (valeurs gardées).
 
 **Déployé sur Kal-Games le 02/10/2026 à 17:49 (LeKiwi06 ; 1.4.1 dans `_removed-kg_boatrace-1.4.1/`), actif après redémarrage.
-Statut : non testé en jeu.**
+Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**

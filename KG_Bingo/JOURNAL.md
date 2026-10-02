@@ -114,4 +114,4 @@ du menu. Nouvelles clés de langue (`bingo.create-duration-court`, `bingo.mode-b
 `bingo.create-aide`).
 
 **Déployé sur Kal-Games le 02/10/2026 à 17:49 (LeKiwi06 ; 1.6.0 dans `_removed-kg_bingo-1.6.0/`), actif après redémarrage.
-Statut : non testé en jeu.**
+Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**
