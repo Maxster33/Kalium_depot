@@ -126,6 +126,17 @@ public final class StatsService {
         void async(Runnable task);
 
         boolean enabled();
+
+        /** 1.8.0 (catégorie 4 « Récompenses ») : des points viennent d'être ajoutés (KG_Rewards : paliers). */
+        default void pointsAdded(String minigame, UUID uuid, String name, double points) {
+        }
+
+        /**
+         * 1.8.0 : une période vient de se terminer (type « semaine » ou « mois », clé de la période) ; classements finaux
+         * par mini-jeu, triés, avant la remise à zéro (KG_Rewards : tops hebdomadaires et mensuels).
+         */
+        default void periodClosed(String type, String key, Map<String, List<Row>> rankings) {
+        }
     }
 
     private final Host plugin;
@@ -135,6 +146,9 @@ public final class StatsService {
     private final Map<String, Map<UUID, Row>> all = new HashMap<>();
     private final Map<String, Map<UUID, Row>> monthly = new HashMap<>();
     private String monthKey;
+    /** 1.8.0 : classement de la semaine (samedi 15 h -> samedi 15 h) ; clé : date du samedi de début. */
+    private final Map<String, Map<UUID, Row>> weekly = new HashMap<>();
+    private String weekKey;
     /** Parties privees classees du jour : jeu -> joueur -> nombre (remis a zero au changement de jour). */
     private final Map<String, Map<UUID, Integer>> privateToday = new HashMap<>();
     private String privateDay;
@@ -171,8 +185,51 @@ public final class StatsService {
         return ZoneId.systemDefault();
     }
 
+    /**
+     * 1.8.0 (catégorie 4, LeKiwi06) : mois ALIGNÉ sur la validation des tops mensuels : du 1er vendredi du mois à 21 h au
+     * 1er vendredi du mois suivant à 21 h ; clé : le mois de son début (avant : mois du calendrier).
+     */
     private String currentMonth() {
-        return YearMonth.now(clock.withZone(zone())).toString();
+        java.time.ZonedDateTime now = java.time.ZonedDateTime.now(clock.withZone(zone()));
+        YearMonth month = YearMonth.from(now);
+        if (now.isBefore(monthStart(month, zone()))) {
+            month = month.minusMonths(1);
+        }
+        return month.toString();
+    }
+
+    /** Début d'un mois aligné : 1er vendredi à 21 h. */
+    public static java.time.ZonedDateTime monthStart(YearMonth month, ZoneId zone) {
+        return month.atDay(1).with(java.time.temporal.TemporalAdjusters.firstInMonth(java.time.DayOfWeek.FRIDAY))
+                .atTime(21, 0).atZone(zone);
+    }
+
+    /** 1.8.0 : semaine : du samedi 15 h au samedi suivant 15 h ; clé : date du samedi de début (aaaa-mm-jj). */
+    private String currentWeek() {
+        java.time.ZonedDateTime now = java.time.ZonedDateTime.now(clock.withZone(zone()));
+        java.time.ZonedDateTime start = now.toLocalDate()
+                .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.SATURDAY))
+                .atTime(15, 0).atZone(zone());
+        if (now.isBefore(start)) {
+            start = start.minusWeeks(1);
+        }
+        return start.toLocalDate().toString();
+    }
+
+    /** Semaine du classement hebdomadaire en cours (date du samedi de début). */
+    public String weekKey() {
+        return weekKey;
+    }
+
+    /** « semaine du 3 octobre ». */
+    public static String weekLabel(String key) {
+        try {
+            LocalDate start = LocalDate.parse(key);
+            return "semaine du " + start.getDayOfMonth() + " " + start.getMonth()
+                    .getDisplayName(java.time.format.TextStyle.FULL, Locale.FRANCE);
+        } catch (DateTimeException | NullPointerException e) {
+            return "semaine";
+        }
     }
 
     /** Mois du classement mensuel en cours (aaaa-mm). */
@@ -225,6 +282,9 @@ public final class StatsService {
         monthKey = yaml.getString("month", currentMonth());
         readSection(yaml.getConfigurationSection("all"), all);
         readSection(yaml.getConfigurationSection("monthly"), monthly);
+        weekly.clear();
+        weekKey = yaml.getString("week", currentWeek());
+        readSection(yaml.getConfigurationSection("weekly"), weekly);
         privateToday.clear();
         privateDay = yaml.getString("private-games.day", null);
         ConfigurationSection counts = yaml.getConfigurationSection("private-games.counts");
@@ -300,6 +360,8 @@ public final class StatsService {
         yaml.set("month", monthKey);
         writeSection(yaml, "all", all);
         writeSection(yaml, "monthly", monthly);
+        yaml.set("week", weekKey);
+        writeSection(yaml, "weekly", weekly);
         if (privateDay != null) {
             yaml.set("private-games.day", privateDay);
             for (Map.Entry<String, Map<UUID, Integer>> entry : privateToday.entrySet()) {
@@ -364,7 +426,9 @@ public final class StatsService {
         checkRollover();
         row(all, minigame, uuid, name).points += points;
         row(monthly, minigame, uuid, name).points += points;
+        row(weekly, minigame, uuid, name).points += points;
         changed();
+        plugin.pointsAdded(minigame, uuid, name, points);
     }
 
     /** Enregistre un temps : garde le meilleur (general et du mois). Renvoie true si c'est un record personnel. */
@@ -381,6 +445,10 @@ public final class StatsService {
         Row month = row(monthly, minigame, uuid, name);
         if (month.bestMs < 0 || millis < month.bestMs) {
             month.bestMs = millis;
+        }
+        Row week = row(weekly, minigame, uuid, name);
+        if (week.bestMs < 0 || millis < week.bestMs) {
+            week.bestMs = millis;
         }
         changed();
         return record;
@@ -401,6 +469,10 @@ public final class StatsService {
         if (month.bestLapMs < 0 || millis < month.bestLapMs) {
             month.bestLapMs = millis;
         }
+        Row week = row(weekly, minigame, uuid, name);
+        if (week.bestLapMs < 0 || millis < week.bestLapMs) {
+            week.bestLapMs = millis;
+        }
         changed();
         return record;
     }
@@ -408,7 +480,7 @@ public final class StatsService {
     /** Efface le meilleur temps sur 1 tour d'un joueur (general et du mois) ; ses points ne changent pas. */
     public boolean removeLap(String minigame, UUID uuid) {
         boolean removed = false;
-        for (Map<String, Map<UUID, Row>> source : List.of(all, monthly)) {
+        for (Map<String, Map<UUID, Row>> source : List.of(all, monthly, weekly)) {
             Map<UUID, Row> rows = source.get(minigame);
             Row row = rows == null ? null : rows.get(uuid);
             if (row != null && row.bestLapMs >= 0) {
@@ -431,6 +503,10 @@ public final class StatsService {
         }
         Map<UUID, Row> month = monthly.get(minigame);
         if (month != null && month.remove(uuid) != null) {
+            removed = true;
+        }
+        Map<UUID, Row> week = weekly.get(minigame);
+        if (week != null && week.remove(uuid) != null) {
             removed = true;
         }
         if (removed) {
@@ -535,6 +611,47 @@ public final class StatsService {
         return list.size() > limit ? new ArrayList<>(list.subList(0, limit)) : list;
     }
 
+    /** 1.8.0 : classement complet de la semaine en cours. */
+    public List<Row> weeklyRanking(String minigame) {
+        return sorted(weekly.get(minigame));
+    }
+
+    public List<Row> weeklyTop(String minigame, int limit) {
+        List<Row> list = weeklyRanking(minigame);
+        return list.size() > limit ? new ArrayList<>(list.subList(0, limit)) : list;
+    }
+
+    /** 1.8.0 : ligne d'un joueur pour une période (« general », « mois », « semaine »), ou null. */
+    public Row periodRow(String period, String minigame, UUID uuid) {
+        Map<String, Map<UUID, Row>> source = switch (period) {
+            case "semaine" -> weekly;
+            case "mois" -> monthly;
+            default -> all;
+        };
+        Map<UUID, Row> rows = source.get(minigame);
+        return rows == null ? null : rows.get(uuid);
+    }
+
+    /** 1.8.0 : classement complet d'une période (« general », « mois », « semaine »). */
+    public List<Row> periodRanking(String period, String minigame) {
+        return switch (period) {
+            case "semaine" -> weeklyRanking(minigame);
+            case "mois" -> ranking(minigame, true);
+            default -> ranking(minigame, false);
+        };
+    }
+
+    /** 1.8.0 : mini-jeux qui ont au moins un joueur classé dans le classement général. */
+    public java.util.Set<String> minigamesWithPlayers() {
+        java.util.Set<String> set = new java.util.TreeSet<>();
+        all.forEach((minigame, rows) -> {
+            if (hasData(rows)) {
+                set.add(minigame);
+            }
+        });
+        return set;
+    }
+
     /** Points et meilleur temps generaux d'un joueur. */
     public Row playerRow(String minigame, UUID uuid) {
         Map<UUID, Row> rows = all.get(minigame);
@@ -545,6 +662,13 @@ public final class StatsService {
 
     /** Verifie le changement de mois (appelee regulierement) ; archive et remet a zero le classement du mois. */
     public void checkRollover() {
+        String nowWeek = currentWeek();
+        if (weekKey == null) {
+            weekKey = nowWeek;
+            dirty = true;
+        } else if (!weekKey.equals(nowWeek)) {
+            closeWeek(nowWeek);
+        }
         String now = currentMonth();
         if (monthKey == null) {
             monthKey = now;
@@ -561,8 +685,59 @@ public final class StatsService {
         return archiveAndReset(monthKey == null ? currentMonth() : monthKey);
     }
 
+    /** 1.8.0 : classements finaux triés d'une période (avant remise à zéro). */
+    private static Map<String, List<Row>> finalRankings(Map<String, Map<UUID, Row>> source) {
+        Map<String, List<Row>> rankings = new LinkedHashMap<>();
+        source.forEach((minigame, rows) -> {
+            List<Row> ranked = sorted(rows);
+            if (!ranked.isEmpty()) {
+                rankings.put(minigame, ranked);
+            }
+        });
+        return rankings;
+    }
+
+    /** 1.8.0 : fin de semaine : signal (tops hebdomadaires), archive dans archives/semaines/, remise à zéro. */
+    private void closeWeek(String newWeekKey) {
+        String closing = weekKey;
+        Map<String, List<Row>> rankings = finalRankings(weekly);
+        try {
+            plugin.periodClosed("semaine", closing, rankings);
+        } catch (RuntimeException e) {
+            plugin.logger().warning("Fin de semaine : erreur d'un plugin à l'écoute : " + e);
+        }
+        if (!rankings.isEmpty()) {
+            YamlConfiguration yaml = new YamlConfiguration();
+            yaml.set("week", closing);
+            yaml.set("archived-at", Instant.now().toEpochMilli());
+            rankings.forEach((minigame, rows) -> {
+                List<Map<String, Object>> lines = new ArrayList<>();
+                for (Row row : rows) {
+                    Map<String, Object> line = new LinkedHashMap<>();
+                    line.put("uuid", row.uuid.toString());
+                    line.put("name", row.name);
+                    line.put("points", row.points);
+                    lines.add(line);
+                }
+                yaml.set("minigames." + minigame, lines);
+            });
+            writeFile(new File(new File(archiveDir, "semaines"), closing + ".yml"), yaml.saveToString());
+        }
+        weekly.clear();
+        weekKey = newWeekKey;
+        dirty = true;
+        saveIfNeeded(true);
+        plugin.logger().info("Classements de la " + weekLabel(closing) + " clôturés. Nouvelle semaine : " + newWeekKey + ".");
+        changeListener.run();
+    }
+
     private Archive archiveAndReset(String newMonthKey) {
         String closing = monthKey == null ? newMonthKey : monthKey;
+        try {
+            plugin.periodClosed("mois", closing, finalRankings(monthly));
+        } catch (RuntimeException e) {
+            plugin.logger().warning("Fin de mois : erreur d'un plugin à l'écoute : " + e);
+        }
         Archive result = null;
         boolean any = false;
         for (Map<UUID, Row> rows : monthly.values()) {

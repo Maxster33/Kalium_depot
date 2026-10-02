@@ -104,6 +104,8 @@ public final class RankingMenus {
         List<ActionButton> buttons = new ArrayList<>();
         buttons.add(gui.button(monthly ? t("rank.show-all", "<gold>Voir le classement général") : t("rank.show-month", "<gold>Voir le classement du mois"),
                 null, p -> openPlayer(p, minigame, !monthly, showLap, back)));
+        // 1.8.0 (catégorie 4) : classement de la semaine (samedi 15 h -> samedi 15 h).
+        buttons.add(gui.button(t("rank.show-week", "<gold>Voir la semaine"), null, p -> openPlayerWeek(p, minigame, back)));
         if (lapAvailable) {
             buttons.add(gui.button(showLap ? t("rank.show-points", "<aqua>Voir le classement des points")
                             : t("rank.show-lap", "<aqua>Voir les meilleurs temps sur 1 tour"),
@@ -114,6 +116,34 @@ public final class RankingMenus {
             buttons.add(adminButton(t("rank.moderation", "<red>Modération"),
                     t("rank.moderation-tip", "<gray>Classements complets, archives, panneaux du hub, clôture du mois."),
                     p -> openAdmin(p, minigame, q -> openPlayer(q, minigame, monthly, lap, back))));
+        }
+        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, back::accept));
+        gui.open(player, t("rank.title", "<light_purple><bold>Classements <name>", "name", name(minigame)), body, List.of(), buttons, gui.close(), 1);
+    }
+
+    /** 1.8.0 : top 10 de la semaine en cours (points) et position du joueur. */
+    public void openPlayerWeek(Player player, Category minigame, java.util.function.Consumer<Player> back) {
+        StatsService stats = plugin.stats();
+        BoardService boards = plugin.boards();
+        List<Component> body = new ArrayList<>();
+        body.add(t("rank.title-week", "<yellow>Top <n> de la semaine <gray>(<week>, jusqu'au samedi 15 h)", "n",
+                BoardService.TOP, "week", StatsService.weekLabel(stats.weekKey())));
+        body.add(boards.rows(stats.weeklyTop(minigame.id(), BoardService.TOP), 1, minigame));
+        List<Row> week = stats.weeklyRanking(minigame.id());
+        for (int i = 0; i < week.size(); i++) {
+            if (week.get(i).uuid().equals(player.getUniqueId())) {
+                body.add(t("rank.mine", "<gray>Votre position : <white><rank></white> <dark_gray>(<points> pts)", "rank", i + 1,
+                        "points", week.get(i).pointsText()));
+                break;
+            }
+        }
+        List<ActionButton> buttons = new ArrayList<>();
+        buttons.add(gui.button(t("rank.show-month", "<gold>Voir le classement du mois"), null,
+                p -> openPlayer(p, minigame, true, false, back)));
+        buttons.add(gui.button(t("rank.show-all", "<gold>Voir le classement général"), null,
+                p -> openPlayer(p, minigame, false, false, back)));
+        if (plugin.isAdmin(player)) {
+            buttons.add(adminButton(t("rank.admin-week", "<gold>Semaine (complet)"), null, p -> openFull(p, minigame, "week", 0)));
         }
         buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, back::accept));
         gui.open(player, t("rank.title", "<light_purple><bold>Classements <name>", "name", name(minigame)), body, List.of(), buttons, gui.close(), 1);
@@ -131,10 +161,13 @@ public final class RankingMenus {
         body.add(t("rank.admin-body", "<gray>Mois en cours : <white><month></white> - <white><players></white> joueur(s) classé(s) ce mois, <white><all></white> au total.",
                 "month", StatsService.monthLabel(stats.monthKey()),
                 "players", stats.ranking(minigame.id(), true).size(), "all", stats.ranking(minigame.id(), false).size()));
-        body.add(t("rank.admin-info", "<gray>À la fin du mois, le classement complet est archivé automatiquement puis remis à zéro."));
+        // 1.8.0 : mois aligné (1er vendredi 21 h) et semaine (samedi 15 h) ; nouvelle clé (texte changé).
+        body.add(t("rank.admin-info-periodes", "<gray>Le mois va du 1er vendredi 21 h au 1er vendredi suivant 21 h, la "
+                + "semaine du samedi 15 h au samedi suivant 15 h : à la fin, le classement est archivé puis remis à zéro."));
         List<ActionButton> buttons = new ArrayList<>();
         buttons.add(adminButton(t("rank.admin-all", "<gold>Classement général (complet)"), null, p -> openFull(p, minigame, "all", 0)));
         buttons.add(adminButton(t("rank.admin-month", "<gold>Classement du mois (complet)"), null, p -> openFull(p, minigame, "month", 0)));
+        buttons.add(adminButton(t("rank.admin-week", "<gold>Semaine (complet)"), null, p -> openFull(p, minigame, "week", 0)));
         if (plugin.boards().hasLapTimes(minigame)) {
             buttons.add(adminButton(t("rank.admin-lap-all", "<gold>Meilleurs temps sur 1 tour : général (complet)"), null, p -> openFull(p, minigame, "lap-all", 0)));
             buttons.add(adminButton(t("rank.admin-lap-month", "<gold>Meilleurs temps sur 1 tour : du mois (complet)"), null, p -> openFull(p, minigame, "lap-month", 0)));
@@ -178,6 +211,9 @@ public final class RankingMenus {
         } else if (source.equals("month")) {
             rows = stats.ranking(minigame.id(), true);
             title = t("rank.full-month", "<yellow>Classement de <month> (en cours)", "month", StatsService.monthLabel(stats.monthKey()));
+        } else if (source.equals("week")) {
+            rows = stats.weeklyRanking(minigame.id());
+            title = t("rank.full-week", "<yellow>Classement de la <week> (en cours)", "week", StatsService.weekLabel(stats.weekKey()));
         } else if (source.equals("lap-all")) {
             rows = stats.lapRanking(minigame.id(), false);
             title = t("rank.full-lap-all", "<yellow>Meilleurs temps sur 1 tour : général");
@@ -261,8 +297,8 @@ public final class RankingMenus {
                             "rank", i + 1, "name", row.name(), "time", StatsService.formatTime(row.bestLapMs()))
                     : t(showTime ? "rank.remove-line-time" : "rank.remove-line",
                             showTime ? "<yellow><rank>.</yellow> <white><name></white> <gray>- <points> pts - <time>" : "<yellow><rank>.</yellow> <white><name></white> <gray>- <points> pts",
-                            "rank", i + 1, "name", row.name(), "points", row.pointsText(),
-                            "time", showTime ? StatsService.formatTime(shown) : "");
+                            "rank", i + 1, "name", fr.kalium.scoreboards.api.Prestiges.nom(minigame.id(), row.uuid(), row.name()),
+                            "points", row.pointsText(), "time", showTime ? StatsService.formatTime(shown) : "");
             UUID target = row.uuid();
             String targetName = row.name();
             buttons.add(adminButton(label, null, p -> gui.confirm(p,

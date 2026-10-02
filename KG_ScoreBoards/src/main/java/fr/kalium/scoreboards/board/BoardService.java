@@ -199,7 +199,9 @@ public final class BoardService implements Listener {
             lines.add(plugin.t(showTime ? "board.line-time" : "board.line",
                     showTime ? "<yellow><rank>.</yellow> <white><name></white> <dark_gray>-</dark_gray> <green><points> pts</green> <dark_gray>-</dark_gray> <aqua><time></aqua>"
                             : "<yellow><rank>.</yellow> <white><name></white> <dark_gray>-</dark_gray> <green><points> pts</green>",
-                    "rank", rank, "name", row.name(), "points", row.pointsText(),
+                    // 1.8.0 : « Pseudo (prestige x) » (prestige de KG_Rewards pour ce mini-jeu).
+                    "rank", rank, "name", fr.kalium.scoreboards.api.Prestiges.nom(category == null ? null : category.id(),
+                            row.uuid(), row.name()), "points", row.pointsText(),
                     "time", showTime ? StatsService.formatTime(time) : ""));
             rank++;
         }

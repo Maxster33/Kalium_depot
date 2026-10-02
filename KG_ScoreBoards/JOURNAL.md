@@ -128,3 +128,23 @@ api:
 ```
 Au démarrage, vérifier dans la console « API du bot Discord à l'écoute sur le port 45347 ».
 **Statut : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (serveur allumé : actif au prochain redémarrage ; 1.6.0 et copie du `config.yml` dans `_removed-kg_scoreboards-1.6.0/`), non testé. Clés `api` à ajouter à la main.**
+
+## 1.8.0 - semaine, mois aligné, prestige (03/10/2026, LeKiwi06)
+
+Catégorie 4 « Récompenses » (cahier validé le 30/09/2026) :
+- **Classement de la semaine** : du samedi 15 h au samedi suivant 15 h (clé : date du samedi de début), points et
+  temps, comme le mois. Bouton « Voir la semaine » dans chaque classement ; modération : « Semaine (complet) ». À la fin
+  de la semaine : archive dans `plugins/KG_ScoreBoards/archives/semaines/<date>.yml`, puis remise à zéro.
+- **Mois aligné** : le classement du mois va désormais du **1er vendredi du mois à 21 h** au 1er vendredi suivant à 21 h
+  (avant : mois du calendrier). Au déploiement (octobre 2026), le mois en cours reste « octobre » ; la prochaine clôture
+  est le vendredi 6 novembre à 21 h.
+- **Signaux pour KG_Rewards** (Bukkit) : `PointsAjoutesEvent` (à chaque ajout de points) et `PeriodeClotureeEvent`
+  (fin de semaine ou de mois, classements finaux triés, avant la remise à zéro). Une clôture faite au démarrage (serveur
+  éteint au moment prévu) est envoyée au premier tick, quand KG_Rewards est chargé. Lecture :
+  `periodRow(période, jeu, joueur)`, `periodRanking(période, jeu)`, `minigamesWithPlayers()`.
+- **Prestige** : « Pseudo (prestige x) » dans les classements (panneaux, menus, listes complètes) si KG_Rewards fournit
+  un niveau pour ce mini-jeu (`Prestiges.fournisseur(...)`).
+- Pas de classement de la semaine dans l'API HTTP du bot Discord (pas demandé).
+
+**Non déployé (catégorie 4, étape 2 ; à déployer avec KG_Rewards). Statut : non testé.**
+

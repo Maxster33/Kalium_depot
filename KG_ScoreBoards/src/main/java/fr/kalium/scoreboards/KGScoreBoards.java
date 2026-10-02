@@ -49,6 +49,20 @@ public final class KGScoreBoards extends JavaPlugin {
     private Predicate<Player> adminCheck = p -> p.hasPermission("kalgames.admin");
     private Predicate<World> forbiddenWorld = w -> false;
 
+    /** 1.8.0 : signaux pour KG_Rewards ; mis en attente tant que le serveur démarre. */
+    private boolean demarre;
+    private final List<org.bukkit.event.Event> signauxEnAttente = new java.util.ArrayList<>();
+
+    private void envoyer(org.bukkit.event.Event evenement) {
+        if (demarre && Bukkit.isPrimaryThread()) {
+            Bukkit.getPluginManager().callEvent(evenement);
+        } else if (demarre) {
+            Bukkit.getScheduler().runTask(this, () -> Bukkit.getPluginManager().callEvent(evenement));
+        } else {
+            signauxEnAttente.add(evenement);
+        }
+    }
+
     @Override
     public void onEnable() {
         saveDefaultConfig();
@@ -78,8 +92,28 @@ public final class KGScoreBoards extends JavaPlugin {
             public boolean enabled() {
                 return isEnabled();
             }
+
+            // 1.8.0 (catégorie 4 « Récompenses ») : signaux pour KG_Rewards.
+            @Override
+            public void pointsAdded(String minigame, java.util.UUID uuid, String name, double points) {
+                envoyer(new fr.kalium.scoreboards.api.PointsAjoutesEvent(minigame, uuid, name, points));
+            }
+
+            @Override
+            public void periodClosed(String type, String key,
+                                     java.util.Map<String, java.util.List<fr.kalium.scoreboards.data.StatsService.Row>> rankings) {
+                envoyer(new fr.kalium.scoreboards.api.PeriodeClotureeEvent(type, key, rankings));
+            }
         });
         stats.load();
+        // 1.8.0 : signaux émis pendant le démarrage (clôture d'une période pendant que le serveur était éteint) :
+        // envoyés au premier tick, quand KG_Rewards est chargé.
+        Bukkit.getScheduler().runTask(this, () -> {
+            demarre = true;
+            List<org.bukkit.event.Event> attente = new java.util.ArrayList<>(signauxEnAttente);
+            signauxEnAttente.clear();
+            attente.forEach(e -> Bukkit.getPluginManager().callEvent(e));
+        });
         gameLog = new fr.kalium.scoreboards.data.GameLog(getDataFolder(), stats::zone, getLogger());
         boards = new BoardService(this);
         stats.onChange(boards::refreshSoon);
