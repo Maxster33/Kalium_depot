@@ -51,5 +51,6 @@ Statut : non testé en jeu.**
 Magasins de KS_Economy 1.1.0 : un claim qui porte des boutiques ne peut être ni supprimé, ni mis en vente, ni acheté
 (message) ; supprimé ou vendu sans boutique, il quitte le magasin de son ancien propriétaire.
 
-**Non déployé. À déployer ensemble sur Event : KS_Economy 1.1.0 et KS_Claim 1.1.0 ; puis région WorldGuard `zone_shop`
-(humain, drapeaux `build allow` et `scs-claim allow`). Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 00:02 (LeKiwi06) avec KS_Economy 1.1.0 et KS_Claim 1.1.0 (1.0.0 dans
+`_removed-ks_claim-1.0.0/`), actifs après redémarrage d'Event ; région `zone_shop` à créer par l'humain. Statut : non
+testé en jeu.**

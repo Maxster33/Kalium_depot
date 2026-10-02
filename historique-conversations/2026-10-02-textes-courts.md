@@ -26,6 +26,14 @@ alors » ; « tu peux déployer ».
 - Choix de Claude signalés : achat en se tenant dans le claim avec /ksclaim ; l'acheteur garde les membres (SCS) ; un
   claim acheté n'entre pas dans les prix remboursables (sinon création de points).
 
+## Suite : catégorie 2, magasins
+- TradeShop original sans mise à jour depuis 2023 : LeKiwi06 choisit nos propres boutiques. Région `zone_shop` (claims et
+  construction libres), `/magasin create` (45 000 points ou 5 blocs tier 3), `/magasin agrandir` (10 000, +1 boutique),
+  création au panneau, prix en objet ou en points en attente, achat avec nombre de lots. Partie « Magasins » du cahier
+  réécrite et validée par LeKiwi06.
+- KS_Economy 1.1.0 et KS_Claim 1.1.0 déployés sur Event le 03/10/2026 à 00:02.
+
 ## Reste à faire
+- Région `zone_shop` (humain) ; tests des magasins avec le speedrun.
 - Claims : redémarrer Event, commandes LuckPerms, région de l'île du dragon, tests (compte rendu du 02/10/2026).
 - Redémarrer Kal-Games, le lobby et Kanvas ; tester les menus (liste dans le compte rendu du 02/10/2026).

@@ -1,7 +1,6 @@
-# Cahier des charges - Catégorie 2 : Économie (KS_Economy, KS_Menu + Tradeshop, Vault) - LeKiwi06
+# Cahier des charges - Catégorie 2 : Économie (KS_Economy, KS_Menu, Vault ; magasins maison) - LeKiwi06
 
-Publié au déploiement de la 1re partie (01/10/2026) : score, blocs compressés, `/echange`, KS_Menu, Vault. Les
-magasins (partie « Magasins ») seront codés après KS_Claim (catégorie 3).
+Publié au déploiement (1re partie le 01/10/2026, magasins le 03/10/2026). Tradeshop abandonné le 02/10/2026 (voir « Magasins »).
 
 Serveur : **Event** uniquement (bêta ; destination future : Kixster SMP). État : **cahier validé par LeKiwi06 le 29/09/2026** (session 2).
 
@@ -107,7 +106,55 @@ Aucune.
 - L'échange a lieu quand les **deux** ont cliqué « Valider » ; toute modification d'une des parts annule les
   validations. Annulé (objets rendus) si un joueur s'éloigne à plus de 5 blocs, ferme le panneau ou se déconnecte.
 
-## Magasins (codés après KS_Claim)
+## Magasins (révisés le 02/10/2026, remplacent la version du 29/09 ci-dessous)
+
+Décisions de LeKiwi06 (02/10/2026) : Tradeshop abandonné (l'original n'est plus mis à jour depuis 2023) : **nos propres
+boutiques** dans KS_Economy ; boutiques dans une **zone dédiée** ; prix en objet **ou en monnaie**.
+
+| Question | Réponse (02/10/2026) |
+|---|---|
+| Plugin de boutiques | Nos propres boutiques (KS_Economy), pas de Tradeshop |
+| Création d'une boutique | Poser un panneau sur un contenant ouvre une interface « Créer une boutique » / « Fermer » ; puis l'objet à vendre (écrire son nom ou le choisir dans l'inventaire), sa quantité, puis le prix : **monnaie** ou **objet** (mêmes choix que l'objet à vendre) |
+| Lieu | Une région WorldGuard **`zone_shop`** pour tous les shops ; on peut y claimer ; **tout le monde construit** dans la zone |
+| Magasin | `/magasin create` dans un de ses claims de la zone_shop : 5 blocs compressés tier 3 **ou** 45 000 points prélevés, magasin créé ; 10 boutiques au plus ; **1 magasin par joueur** |
+| Agrandir | `/magasin agrandir` dans un autre de ses claims de la zone_shop : **10 000 points**, le claim rejoint le magasin et le magasin gagne **1 boutique** de plus |
+| Boutique hors magasin | Impossible de poser une boutique dans un claim qui n'est pas dans un magasin |
+| Nom de l'objet écrit | Nom français ou id du jeu, sans tenir compte des majuscules ni des accents |
+| Achat sur place | Clic sur le panneau : menu avec le nombre de lots |
+| Prix en monnaie | Les points payés **attendent dans la boutique** ; le propriétaire les récupère en la gérant |
+
+### Choix d'interprétation (validés par LeKiwi06 le 02/10/2026)
+
+- **Zone** : région WorldGuard `zone_shop` créée par LeKiwi06 avec les drapeaux `build allow` et `scs-claim allow`
+  (SimpleClaimSystem refuse sinon les claims dans une région). Un claim est « dans la zone » si le centre de son chunk
+  est dans la région. Nom de la région réglable (`magasins.region`).
+- **Magasin** (1 par joueur) : `/magasin create` dans un de ses claims de la zone, au choix 5 blocs tier 3 de
+  l'inventaire ou 45 000 points ; fiche : nom (32 caractères, unique), description (100), position (`/magasin position`,
+  dans un claim du magasin). `/magasin agrandir` : 10 000 points, claim ajouté, +1 boutique. `/magasin` : menu du
+  magasin. Prix réglables dans `config.yml`.
+- **Claims du magasin** : un claim qui porte des boutiques ne peut être ni supprimé ni vendu (KS_Claim refuse, avec un
+  message) ; sans boutique, le supprimer ou le vendre le retire du magasin (agrandissement non remboursé).
+- **Boutique** : panneau posé contre (ou sur) un coffre, coffre piégé, tonneau ou shulker (coffre double compris) ;
+  plusieurs panneaux sur le même contenant = plusieurs boutiques qui partagent le stock. Seul le propriétaire du
+  magasin crée une boutique, dans un claim de son magasin, dans la limite du magasin.
+  - Interface : « Créer une boutique » / « Fermer » (fermer : panneau ordinaire) ; objet vendu : « Écrire le nom »
+    (plusieurs résultats : liste à choisir) ou « Choisir dans l'inventaire » (objets custom compris : têtes, élixirs,
+    blocs compressés...) ; quantité (1 à 2 304) ; prix : « Monnaie » (points) ou « Objet » (mêmes choix + quantité) ;
+    récapitulatif puis « Créer ». Le panneau affiche l'offre (« [Troc] », objet et quantité, « contre », prix).
+  - Stock : le contenu du contenant ; les objets payés arrivent dans le contenant ; les points payés attendent dans la
+    boutique.
+  - Protection : le contenant d'une boutique ne peut pas être vidé par entonnoir ; le casser (ou casser le panneau)
+    supprime la boutique, seulement pour le propriétaire (les claims protègent déjà des visiteurs).
+- **Achat sur place** : clic droit sur le panneau : offre, stock (lots disponibles), nombre de lots à acheter ; refusé
+  si le stock, le paiement (objets de l'inventaire ou solde), la place dans l'inventaire de l'acheteur ou la place du
+  contenant pour le paiement manquent.
+- **Catalogue** (menu Économie, bouton « Magasins ») : tous les magasins (nom, propriétaire), puis les boutiques d'un
+  magasin (objet, prix, stock) ; **achat à distance** : même menu que sur place.
+- **Gestion à distance** (propriétaire, menu du magasin) : ouvrir le contenu d'une boutique (prélever, réassortir) et
+  récupérer ses points ; pendant ce temps la boutique est **verrouillée** (ni achat ni ouverture, sur place ou à
+  distance) jusqu'à la fermeture ou la déconnexion ; le chunk est chargé le temps de l'opération.
+
+## Magasins (version du 29/09/2026, remplacée)
 
 - Un joueur déclare **un** magasin dans un de ses **groupes de claim** (KS_Claim, session 3). Prix du premier
   magasin : 45 000 points, payés au choix avec le score ou 5 blocs compressés tier 3 de l'inventaire.

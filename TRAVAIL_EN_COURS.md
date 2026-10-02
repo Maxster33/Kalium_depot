@@ -16,8 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_Economy — LeKiwi06 — depuis le 2026-10-02 23:52 — catégorie 2, 2e partie : magasins et boutiques (zone_shop)
-- KS_Claim — LeKiwi06 — depuis le 2026-10-02 23:52 — refus de supprimer ou vendre un claim qui porte des boutiques
 
 
 

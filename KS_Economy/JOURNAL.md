@@ -125,5 +125,6 @@ Limites :
 - Un claim de la zone qui n'est pas dans un magasin reste un claim ordinaire (on peut y poser des panneaux normaux).
 - Les points en attente d'une boutique sont rendus au propriétaire si elle est supprimée.
 
-**Non déployé. À déployer ensemble sur Event : KS_Economy 1.1.0 et KS_Claim 1.1.0 ; puis région WorldGuard `zone_shop`
-(humain, drapeaux `build allow` et `scs-claim allow`). Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 00:02 (LeKiwi06) avec KS_Economy 1.1.0 et KS_Claim 1.1.0 (1.0.3 dans
+`_removed-ks_economy-1.0.3/`), actifs après redémarrage d'Event ; région `zone_shop` à créer par l'humain. Statut : non
+testé en jeu.**
