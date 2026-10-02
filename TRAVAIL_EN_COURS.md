@@ -16,6 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_Claim — LeKiwi06 — depuis le 2026-10-03 00:50 — correctif : initialiser l'API de SimpleClaimSystem (claims inutilisables)
+- KS_Economy — LeKiwi06 — depuis le 2026-10-03 00:50 — correctif : initialiser l'API de SimpleClaimSystem (magasins inutilisables)
 - KV_Plots — LeKiwi06 — depuis le 2026-10-03 00:38 — catégorie 4, étape 5 : notes reçues datées, signaux de note et de fin de concours
 - KV_Rewards — LeKiwi06 — depuis le 2026-10-03 00:38 — nouveau : catégorie 4, étape 5 (récompenses de Kanvas)
 - KLM_Menu — LeKiwi06 — depuis le 2026-10-03 00:29 — catégorie 4, étape 4 : bouton Récompenses dans « Informations »
