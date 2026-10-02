@@ -77,7 +77,8 @@ final class MenuBiome {
         }
         List<Component> corps = List.of(Component.text("Choisis le nouveau biome : il sera appliqué dans " + zone(forme)
                 + " autour de toi. Aucun bloc ne bouge.\n"
-                + "Impossible si la zone touche une zone protégée. Un Changeur de Biome sera consommé."));
+                + "Impossible si la zone touche une zone protégée ou le claim d'un autre joueur. Un Changeur de Biome sera "
+                + "consommé."));
         gui.open(player, Component.text("Changeur de Biome"), corps, List.of(), boutons, null, 2);
     }
 

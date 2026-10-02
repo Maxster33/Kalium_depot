@@ -1,0 +1,6 @@
+# KS_Claim - reglages (valeurs par defaut aussi ecrites dans le code).
+
+# Claims gratuits ; au-dela, le n-ieme claim coute 16n + n^2/2 points (arrondi au-dessus).
+claims-gratuits: 10
+# Nombre maximum de claims par joueur (a garder egal a max-claims de SimpleClaimSystem).
+claims-max: 100

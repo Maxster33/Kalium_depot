@@ -176,6 +176,13 @@ public final class KSBiomeChanger extends JavaPlugin implements Listener {
                     + " été utilisé.", NamedTextColor.RED));
             return;
         }
+        // 1.1.0 (LeKiwi06, catégorie 3) : refusé si la zone touche le claim d'un autre (sauf pour ses membres).
+        if (getServer().getPluginManager().isPluginEnabled("SimpleClaimSystem")
+                && ProtectionClaims.touche(centre.getWorld(), cellules, player)) {
+            player.sendMessage(Component.text("Impossible : la zone touche le claim d'un autre joueur. Ton Changeur de Biome"
+                    + " n'a pas été utilisé.", NamedTextColor.RED));
+            return;
+        }
         ItemStack item = player.getInventory().getItem(slot);
         item.setAmount(item.getAmount() - 1);
         player.getInventory().setItem(slot, item.getAmount() > 0 ? item : null);

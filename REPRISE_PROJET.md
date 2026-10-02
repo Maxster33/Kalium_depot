@@ -93,6 +93,10 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 ### Versions compilées, non déployées
 
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
+- **Catégorie 3 « Claims » (02/10/2026, LeKiwi06), serveur Event, à déployer ensemble, non testé** : **KS_Claim 1.0.0**
+  (nouveau : interface des claims, groupes, prix 16n + n²/2 après 10 gratuits, remboursement, vente), **KS_BiomeChanger
+  1.1.0** (refus dans le claim d'un autre) + installation de **SimpleClaimSystem 1.13.1** (config et traduction :
+  `KS_Claim/scs/README.md`).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »

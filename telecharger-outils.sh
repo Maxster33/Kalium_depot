@@ -51,4 +51,6 @@ get "$O/floodgate/api/2.2.5-SNAPSHOT/api-2.2.5-20260917.145236-21.jar" "$L/flood
 get "$O/cumulus/cumulus/1.1.2/cumulus-1.1.2.jar" "$L/cumulus-1.1.2.jar"
 # VaultUnlocked 2.20.2 (API Vault : KS_Economy s'y declare comme economie ; le meme jar est installe sur Event)
 get "https://cdn.modrinth.com/data/ayRaM8J7/versions/cLNipSgw/VaultUnlocked-2.20.2.jar" "$L/VaultUnlocked-2.20.2.jar"
+# SimpleClaimSystem 1.13.1 (API : KS_Claim et KS_BiomeChanger ; le meme jar est installe sur Event)
+get "https://cdn.modrinth.com/data/80Ke0mYG/versions/DRqwNblx/SimpleClaimSystem-1.13.1.jar" "$L/SimpleClaimSystem-1.13.1.jar"
 echo "Outils prets dans $DIR/outils-build"

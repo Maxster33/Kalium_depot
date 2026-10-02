@@ -5,4 +5,4 @@ api-version: '26.2'
 description: Changeur de Biome (serveur Event) - change le biome autour du joueur (overworld), avec historique.
 authors: [KaLium]
 depend: [KLM_Menu]
-softdepend: [WorldGuard]
+softdepend: [WorldGuard, SimpleClaimSystem]

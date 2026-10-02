@@ -1,10 +1,10 @@
 #!/bin/sh
-# Compile KS_BiomeChanger (ECJ, cible Java 21 : tourne sur Java 21+ / 25) et assemble le .jar
+# Compile KS_Claim (ECJ, cible Java 21 : tourne sur Java 21+ / 25) et assemble le .jar
 # Outils : <racine du depot>/outils-build si present (PC local, ignore par git), sinon /tmp/claude-0 (espace cloud).
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.1.0
+VERSION=1.0.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -17,15 +17,13 @@ case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) SEP=';'; win() { cygpath -w "$1"; } ;;
   *) SEP=':'; win() { printf '%s' "$1"; } ;;
 esac
-# Utilise KLM_Menu (depend : boite a outils des menus) : ses classes servent seulement a compiler.
-CP="$(win "$TOOLS/classes/KLM_Menu")$SEP"
-# WorldGuard / WorldEdit (softdepend) : API dans outils-build/libs (telecharger-outils.sh).
+CP="$(win "$TOOLS/classes/KLM_Menu")$SEP$(win "$TOOLS/classes/KS_Menu")$SEP$(win "$TOOLS/classes/KS_Economy")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
-OUT="$TOOLS/classes/KS_BiomeChanger"
+OUT="$TOOLS/classes/KS_Claim"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"
 java -jar "$(win "$TOOLS/ecj.jar")" -21 -proc:none -nowarn -encoding UTF-8 \
   -cp "$CP" -d "$(win "$OUT")" src/main/java
 [ -f src/main/resources/config.yml ] && cp src/main/resources/config.yml "$OUT/config.yml"
 sed "s/\${project.version}/$VERSION/" src/main/resources/plugin.yml > "$OUT/plugin.yml"
-jar cf "$DEST/KS_BiomeChanger-$VERSION.jar" -C "$OUT" .
-echo "OK -> $DEST/KS_BiomeChanger-$VERSION.jar"
+jar cf "$DEST/KS_Claim-$VERSION.jar" -C "$OUT" .
+echo "OK -> $DEST/KS_Claim-$VERSION.jar"

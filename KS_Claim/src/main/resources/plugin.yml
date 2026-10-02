@@ -1,0 +1,15 @@
+name: KS_Claim
+version: '${project.version}'
+main: fr.kalium.claim.KSClaim
+api-version: '26.2'
+description: Interface des claims du serveur Event (sur SimpleClaimSystem) - groupes, prix, remboursement, vente.
+authors: [KaLium]
+depend: [SimpleClaimSystem, KLM_Menu, KS_Economy]
+softdepend: [KS_Menu]
+commands:
+  ksclaim:
+    description: Claimer le chunk ou tu te trouves (ou acheter le claim en vente).
+    usage: /ksclaim
+  ksclaims:
+    description: Menu de tes claims.
+    usage: /ksclaims

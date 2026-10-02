@@ -46,3 +46,14 @@ Limites :
 - Les biomes des grottes (grottes luxuriantes, deep dark...) font partie des biomes de l'overworld proposés.
 
 **Déployé sur Event le 29/09/2026 à 17:22 avec KS_ItemSimple, KS_Spawners, KS_BiomeChanger, KS_Crafts 1.6.0, KS_KaliumGive 1.5.0 et KS_LootBlocs 1.1.0 (apparence Bedrock : geyser-bedrock 1.2.0 sur le proxy à 17:23), actifs après redémarrage d'Event et du proxy. Statut : non testé en jeu.**
+
+## 1.1.0 - claims : propriétaire et membres seulement (02/10/2026, LeKiwi06)
+
+Cahier des charges catégorie 3 « Claims » : le Changeur de Biome est refusé si la zone modifiée touche un claim de
+SimpleClaimSystem dont le joueur n'est ni le propriétaire ni un membre (message : « la zone touche le claim d'un autre
+joueur », objet non consommé). Vérification chunk par chunk de la zone (classe `ProtectionClaims`, chargée seulement si
+SimpleClaimSystem est activé ; `softdepend` SimpleClaimSystem). Les régions WorldGuard restent refusées comme avant.
+
+**Non déployé. À déployer ensemble sur Event : SimpleClaimSystem 1.13.1 (+ `config.yml` et `langs/fr_FR.yml`, voir
+`scs/README.md`), KS_Claim 1.0.0, KS_BiomeChanger 1.1.0 ; puis commandes LuckPerms et région de l'île du dragon
+(humain). Statut : non testé en jeu.**
