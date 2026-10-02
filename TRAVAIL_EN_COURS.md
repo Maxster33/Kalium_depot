@@ -16,6 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KV_Plots — LeKiwi06 — depuis le 2026-10-03 00:38 — catégorie 4, étape 5 : notes reçues datées, signaux de note et de fin de concours
+- KV_Rewards — LeKiwi06 — depuis le 2026-10-03 00:38 — nouveau : catégorie 4, étape 5 (récompenses de Kanvas)
 - KLM_Menu — LeKiwi06 — depuis le 2026-10-03 00:29 — catégorie 4, étape 4 : bouton Récompenses dans « Informations »
 - KG_Rewards — LeKiwi06 — depuis le 2026-10-03 00:23 — nouveau : catégorie 4, étape 3 (paliers, tops, prestige, butin, envoi vers Event)
 - KG_ScoreBoards — LeKiwi06 — depuis le 2026-10-03 00:11 — catégorie 4, étape 2 : classement hebdomadaire, mois aligné, affichage du prestige
