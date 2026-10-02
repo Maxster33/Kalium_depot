@@ -4,12 +4,16 @@ import fr.kalium.economy.Magasins.Boutique;
 import fr.kalium.economy.Magasins.Magasin;
 import fr.kalium.menu.api.Gui;
 import fr.kalium.menu.api.Lang;
+import fr.kalium.menu.api.Lisible;
 import io.papermc.paper.event.player.PlayerOpenSignEvent;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -26,10 +30,12 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -54,6 +60,10 @@ import java.util.UUID;
  * 1.1.0 - boutiques (cahier des charges, catégorie 2, « Magasins » révisés le 02/10/2026) : création en posant un
  * panneau sur un contenant d'un claim de son magasin, achat en cliquant sur le panneau (sur place ou depuis le
  * catalogue), protections du contenant et du panneau.
+ *
+ * 1.1.2 (retours de LeKiwi06, 03/10/2026) : noms français écrits par le plugin (panneau et menus) ; panneau en 4
+ * lignes mesurées (nom de la boutique, lot, prix, état : stock, rupture, coffre plein, fermée) tenu à jour ; nom de
+ * boutique choisi à la création et modifiable ; suppression depuis le menu : panneau retiré et rendu.
  */
 final class Boutiques implements Listener {
 
@@ -88,8 +98,13 @@ final class Boutiques implements Listener {
     private final Lang lang;
     private final Gui gui;
     private final Map<UUID, Creation> creations = new HashMap<>();
-    /** Id du jeu -> nom français (noms_objets.txt) ; nom simplifié -> id. */
-    private final Map<String, String> noms = new LinkedHashMap<>();
+    /** Id du jeu -> nom français (noms_objets.txt, dans le jar depuis 1.1.2). */
+    private static final Map<String, String> NOMS = new LinkedHashMap<>();
+    /** Largeur d'une ligne de panneau (pixels de la police ; suspendu : 60) : au-delà, le jeu coupe au dernier mot. */
+    private static final int LARGEUR_PANNEAU = 90, LARGEUR_SUSPENDU = 60;
+
+    /** 1.1.2 : état d'une boutique (panneau, menus). */
+    enum Etat { OUVERTE, RUPTURE, PLEIN, FERMEE, DISPARUE }
 
     Boutiques(KSEconomy plugin, Magasins magasins) {
         this.plugin = plugin;
@@ -97,6 +112,15 @@ final class Boutiques implements Listener {
         this.lang = plugin.lang();
         this.gui = plugin.gui();
         chargerNoms();
+        // Panneaux des chunks déjà chargés : nouvelle présentation (1.1.2) et état à jour.
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            for (Boutique b : List.copyOf(magasins.boutiques.values())) {
+                if (b.panneau.getWorld() != null
+                        && b.panneau.getWorld().isChunkLoaded(b.panneau.getBlockX() >> 4, b.panneau.getBlockZ() >> 4)) {
+                    ecrirePanneau(b);
+                }
+            }
+        });
     }
 
     private Component t(String cle, String defaut, Object... paires) {
@@ -111,6 +135,7 @@ final class Boutiques implements Listener {
     // ------------------------------------------------------------------ noms des objets
 
     private void chargerNoms() {
+        NOMS.clear();
         try (InputStream in = plugin.getResource("noms_objets.txt")) {
             if (in == null) {
                 return;
@@ -124,7 +149,7 @@ final class Boutiques implements Listener {
                 }
                 Material m = Material.matchMaterial(ligne.substring(0, sep));
                 if (m != null && m.isItem() && !m.isAir()) {
-                    noms.put(m.getKey().getKey(), ligne.substring(sep + 1));
+                    NOMS.put(m.getKey().getKey(), ligne.substring(sep + 1));
                 }
             }
         } catch (IOException e) {
@@ -142,7 +167,7 @@ final class Boutiques implements Listener {
         String cherche = simplifier(texte);
         List<Material> exacts = new ArrayList<>();
         List<Material> proches = new ArrayList<>();
-        for (Map.Entry<String, String> e : noms.entrySet()) {
+        for (Map.Entry<String, String> e : NOMS.entrySet()) {
             String id = simplifier(e.getKey());
             String nom = simplifier(e.getValue());
             Material m = Material.matchMaterial(e.getKey());
@@ -161,13 +186,44 @@ final class Boutiques implements Listener {
         return proches.subList(0, Math.min(20, proches.size()));
     }
 
-    /** Nom d'un objet : nom donné (objets custom) ou nom du jeu, traduit par le client. */
+    /**
+     * Nom d'un objet : nom donné (objets custom), sinon nom français (1.1.2 : écrit par le plugin, quelle que soit la
+     * langue du client ; avant, le nom anglais s'affichait sur les panneaux), sinon nom du jeu traduit par le client.
+     */
     static Component nomObjet(ItemStack objet) {
         ItemMeta meta = objet.hasItemMeta() ? objet.getItemMeta() : null;
         if (meta != null && meta.hasDisplayName()) {
             return meta.displayName();
         }
-        return Component.translatable(objet.translationKey());
+        String francais = NOMS.get(objet.getType().getKey().getKey());
+        return francais != null ? Component.text(francais) : Component.translatable(objet.translationKey());
+    }
+
+    /** Nom d'un objet en texte simple (panneaux, nom de boutique par défaut). */
+    static String texteObjet(ItemStack objet) {
+        Component nom = nomObjet(objet);
+        if (nom instanceof net.kyori.adventure.text.TranslatableComponent) {
+            return objet.getType().getKey().getKey().replace('_', ' ');
+        }
+        return PlainTextComponentSerializer.plainText().serialize(nom);
+    }
+
+    /** Nom d'une boutique : celui choisi par le propriétaire, sinon le nom de l'objet vendu. */
+    static String nomBoutique(Boutique b) {
+        return b.nom != null ? b.nom : texteObjet(b.objet);
+    }
+
+    /** Nom saisi : espaces réduits, 20 caractères au plus ; vide : null (nom de l'objet). */
+    static String nettoyerNom(String texte) {
+        String nom = texte == null ? "" : texte.replaceAll("\\s+", " ").trim();
+        if (nom.length() > Magasins.NOM_MAX) {
+            nom = nom.substring(0, Magasins.NOM_MAX).trim();
+        }
+        return nom.isEmpty() ? null : nom;
+    }
+
+    static String couper(String texte, int max) {
+        return texte.length() > max ? texte.substring(0, max).trim() : texte;
     }
 
     static Component lot(int quantite, ItemStack objet) {
@@ -201,6 +257,12 @@ final class Boutiques implements Listener {
     }
 
     private void proposer(Player joueur, Block panneau) {
+        Magasin magasin = magasins.magasinDuChunk(panneau.getChunk());
+        Component refus = magasin == null ? null : refusComplet(joueur, magasin);
+        if (refus != null) {
+            message(joueur, refus);
+            return;
+        }
         Creation c = new Creation();
         c.panneau = panneau;
         creations.put(joueur.getUniqueId(), c);
@@ -248,7 +310,7 @@ final class Boutiques implements Listener {
             } else {
                 List<ActionButton> boutons = new ArrayList<>();
                 for (Material m : trouves) {
-                    boutons.add(gui.button(Component.translatable(m.translationKey()), null,
+                    boutons.add(gui.button(nomObjet(new ItemStack(m)), null,
                             q -> choisi(q, etape, new ItemStack(m))));
                 }
                 boutons.add(gui.button(t("boutique.autre-nom", "<gray>Autre nom"), null, q -> ecrireNom(q, etape)));
@@ -383,19 +445,50 @@ final class Boutiques implements Listener {
         lang.saveIfNeeded();
     }
 
+    /** Récapitulatif et nom de la boutique (1.1.2 : nom choisi ici, l'objet vendu par défaut). */
     private void recapitulatif(Player joueur) {
         Creation c = creation(joueur);
         if (c == null) {
             return;
         }
         Component prix = c.prixEnPoints ? Component.text(KSEconomy.points(c.prixPoints)) : lot(c.prixQuantite, c.prixObjet);
-        gui.confirm(joueur, t("boutique.titre-recap", "<gold><bold>Nouvelle boutique"),
-                t("boutique.recap", "<white>Vend <lot> contre <prix>.", "lot", lot(c.quantite, c.objet), "prix", prix),
-                this::creer, p -> creations.remove(p.getUniqueId()));
+        ActionButton creer = gui.form(t("boutique.bouton-creer-nom", "<green>Créer la boutique"), null,
+                (p, vue) -> creer(p, vue.getText("nom")));
+        gui.open(joueur, t("boutique.titre-recap", "<gold><bold>Nouvelle boutique"),
+                List.of(t("boutique.recap", "<white>Vend <lot> contre <prix>.", "lot", lot(c.quantite, c.objet), "prix", prix)),
+                List.of(gui.text("nom", t("boutique.champ-nom-boutique", "Nom de la boutique (20 caractères)"),
+                        couper(texteObjet(c.objet), Magasins.NOM_MAX), Magasins.NOM_MAX)),
+                List.of(creer, gui.button(t("boutique.annuler", "<red>Annuler"), null, p -> creations.remove(p.getUniqueId()))),
+                gui.close(), 1);
         lang.saveIfNeeded();
     }
 
-    private void creer(Player joueur) {
+    /** Magasin complet (boutiques + places encore prises par des boutiques supprimées) : le refus, sinon null. */
+    Component refusComplet(Player joueur, Magasin magasin) {
+        UUID uuid = joueur.getUniqueId();
+        int max = magasins.boutiquesMax(magasin);
+        int attente = magasins.placesEnAttente(uuid);
+        if (magasins.nombreDeBoutiques(uuid) + attente < max) {
+            return null;
+        }
+        if (attente == 0) {
+            return t("boutique.limite", "<red>Ton magasin a déjà <max> boutiques. /magasin agrandir pour en "
+                    + "ajouter.", "max", max);
+        }
+        return t("boutique.limite-delai", "<red>Ton magasin est complet : <max> places, dont <attente> encore prise(s) "
+                        + "par des boutiques supprimées. Prochaine place libre dans <delai>.", "max", max,
+                "attente", attente, "delai", duree(magasins.avantLiberation(uuid)));
+    }
+
+    /** Durée lisible : « 2 h 15 min », « 40 min ». */
+    static String duree(long ms) {
+        long minutes = Math.max(1, (ms + 59_999) / 60_000);
+        long h = minutes / 60;
+        long min = minutes % 60;
+        return h == 0 ? min + " min" : min == 0 ? h + " h" : h + " h " + min + " min";
+    }
+
+    private void creer(Player joueur, String nom) {
         Creation c = creations.remove(joueur.getUniqueId());
         if (c == null || c.objet == null) {
             return;
@@ -407,9 +500,9 @@ final class Boutiques implements Listener {
             message(joueur, t("boutique.plus-possible", "<red>Ce panneau ne peut plus devenir une boutique."));
             return;
         }
-        if (magasins.nombreDeBoutiques(joueur.getUniqueId()) >= magasins.boutiquesMax(magasin)) {
-            message(joueur, t("boutique.limite", "<red>Ton magasin a déjà <max> boutiques. /magasin agrandir pour en "
-                    + "ajouter.", "max", magasins.boutiquesMax(magasin)));
+        Component refus = refusComplet(joueur, magasin);
+        if (refus != null) {
+            message(joueur, refus);
             return;
         }
         Boutique b = new Boutique();
@@ -418,6 +511,10 @@ final class Boutiques implements Listener {
         b.panneau = panneau.getLocation();
         b.objet = c.objet;
         b.quantite = c.quantite;
+        b.nom = nettoyerNom(nom);
+        if (b.nom != null && b.nom.equals(texteObjet(b.objet))) {
+            b.nom = null;
+        }
         if (c.prixEnPoints) {
             b.prixPoints = c.prixPoints;
         } else {
@@ -430,18 +527,129 @@ final class Boutiques implements Listener {
         message(joueur, t("boutique.creee", "<green>Boutique créée."));
     }
 
-    /** Panneau d'une boutique : « [Troc] », le lot vendu, « contre », le prix ; ciré (non modifiable). */
+    /**
+     * Panneau d'une boutique (1.1.2) : nom (gras), lot vendu, « pour » + prix, état ; chaque ligne mesurée et coupée
+     * avec « … » si elle dépasse (le jeu n'en affichait sinon que les premiers mots). Ciré (non modifiable).
+     */
     void ecrirePanneau(Boutique b) {
         if (!(b.panneau.getBlock().getState() instanceof Sign panneau)) {
             return;
         }
         SignSide face = panneau.getSide(Side.FRONT);
-        face.line(0, Component.text("[Troc]", NamedTextColor.DARK_BLUE).decoration(TextDecoration.BOLD, true));
-        face.line(1, lot(b.quantite, b.objet));
-        face.line(2, Component.text("contre", NamedTextColor.DARK_GRAY));
-        face.line(3, prix(b));
+        int largeur = panneau.getType().name().contains("HANGING") ? LARGEUR_SUSPENDU : LARGEUR_PANNEAU;
+        face.line(0, ligne(largeur, nomBoutique(b), Style.style(NamedTextColor.DARK_BLUE, TextDecoration.BOLD)));
+        face.line(1, ligne(largeur, b.quantite + " x " + texteObjet(b.objet), Style.empty()));
+        face.line(2, ligne(largeur, "pour " + (b.enPoints() ? KSEconomy.points(b.prixPoints)
+                : b.prixQuantite + " x " + texteObjet(b.prixObjet)), Style.style(NamedTextColor.DARK_GRAY)));
+        int lots = lotsEnStock(b);
+        face.line(3, switch (etat(b)) {
+            case OUVERTE -> ligne(largeur, "Stock : " + lots + (lots > 1 ? " lots" : " lot"), Style.style(NamedTextColor.DARK_GREEN));
+            case RUPTURE -> ligne(largeur, "Rupture de stock", Style.style(NamedTextColor.RED, TextDecoration.BOLD));
+            case PLEIN -> ligne(largeur, "Coffre plein", Style.style(NamedTextColor.GOLD, TextDecoration.BOLD));
+            case FERMEE -> ligne(largeur, "Fermée", Style.style(NamedTextColor.RED, TextDecoration.BOLD));
+            case DISPARUE -> ligne(largeur, "Hors service", Style.style(NamedTextColor.DARK_RED));
+        });
         panneau.setWaxed(true);
         panneau.update();
+    }
+
+    /** Ligne de panneau qui tient dans sa largeur (coupée avec « … » sinon). */
+    private static Component ligne(int largeur, String texte, Style style) {
+        if (Lisible.largeurTexte(Component.text(texte, style)) <= largeur) {
+            return Component.text(texte, style);
+        }
+        String court = texte;
+        while (!court.isEmpty() && Lisible.largeurTexte(Component.text(court + "…", style)) > largeur) {
+            court = court.substring(0, court.length() - 1);
+        }
+        return Component.text(court.trim() + "…", style);
+    }
+
+    /** Panneaux de toutes les boutiques de ce contenant (après un achat, une gestion, une fermeture du coffre). */
+    void actualiserPanneaux(Block contenant) {
+        if (contenant == null) {
+            return;
+        }
+        for (Boutique b : magasins.boutiquesDuContenant(contenant)) {
+            ecrirePanneau(b);
+        }
+    }
+
+    /** État : fermée, contenant disparu, rupture (moins d'un lot), coffre plein (paiement en objet impossible). */
+    Etat etat(Boutique b) {
+        if (b.fermee) {
+            return Etat.FERMEE;
+        }
+        Inventory inv = Magasins.inventaire(Magasins.contenantDu(b.panneau.getBlock()));
+        if (inv == null) {
+            return Etat.DISPARUE;
+        }
+        if (compter(inv.getContents(), b.objet) < b.quantite) {
+            return Etat.RUPTURE;
+        }
+        if (!b.enPoints()) {
+            Inventory essai = copie(inv.getContents());
+            piles(b.objet, b.quantite).forEach(a -> essai.removeItem(a.clone()));
+            if (!rentre(essai, piles(b.prixObjet, b.prixQuantite))) {
+                return Etat.PLEIN;
+            }
+        }
+        return Etat.OUVERTE;
+    }
+
+    /** État pour les menus (texte coloré). */
+    Component etatTexte(Boutique b) {
+        return switch (etat(b)) {
+            case OUVERTE -> t("etat.ouverte", "<green><lots> lot(s) en stock", "lots", lotsEnStock(b));
+            case RUPTURE -> t("etat.rupture", "<red><bold>Rupture de stock");
+            case PLEIN -> t("etat.plein", "<gold><bold>Coffre plein : paiement impossible");
+            case FERMEE -> t("etat.fermee", "<red>Fermée temporairement");
+            case DISPARUE -> t("etat.disparue", "<dark_red>Contenant disparu");
+        };
+    }
+
+    /** Nom d'une boutique pour un bouton, coloré selon son état. */
+    Component boutonBoutique(Boutique b) {
+        NamedTextColor couleur = switch (etat(b)) {
+            case OUVERTE -> NamedTextColor.WHITE;
+            case RUPTURE, FERMEE -> NamedTextColor.RED;
+            case PLEIN -> NamedTextColor.GOLD;
+            case DISPARUE -> NamedTextColor.DARK_RED;
+        };
+        return Component.text(couper(nomBoutique(b), 32), couleur);
+    }
+
+    /** Contenant d'une boutique refermé (propriétaire sur place) : état du panneau à jour. */
+    @EventHandler
+    public void onCloseContenant(InventoryCloseEvent event) {
+        Location lieu = event.getInventory().getLocation();
+        if (lieu == null || !Magasins.contenantAccepte(lieu.getBlock().getType())) {
+            return;
+        }
+        Block bloc = lieu.getBlock();
+        Bukkit.getScheduler().runTask(plugin, () -> actualiserPanneaux(bloc));
+    }
+
+    /** Chunk chargé : panneaux de ses boutiques à jour (ancienne présentation, stock changé). */
+    @EventHandler
+    public void onChunkLoad(ChunkLoadEvent event) {
+        String monde = event.getWorld().getName();
+        int x = event.getChunk().getX();
+        int z = event.getChunk().getZ();
+        List<Boutique> ici = new ArrayList<>();
+        for (Boutique b : magasins.boutiques.values()) {
+            if (b.panneau.getWorld() != null && b.panneau.getWorld().getName().equals(monde)
+                    && b.panneau.getBlockX() >> 4 == x && b.panneau.getBlockZ() >> 4 == z) {
+                ici.add(b);
+            }
+        }
+        if (!ici.isEmpty()) {
+            Bukkit.getScheduler().runTask(plugin, () -> ici.forEach(b -> {
+                if (magasins.boutiques.containsKey(b.id)) {
+                    ecrirePanneau(b);
+                }
+            }));
+        }
     }
 
     // ------------------------------------------------------------------ achat
@@ -487,12 +695,11 @@ final class Boutiques implements Listener {
             message(joueur, t("boutique.verrouillee", "<red>Le propriétaire gère cette boutique : réessaie dans un instant."));
             return;
         }
-        int stock = lotsEnStock(b);
         List<Component> corps = new ArrayList<>();
+        corps.add(t("achat.nom", "<gold><bold><nom>", "nom", nomBoutique(b)));
         corps.add(t("achat.vend", "<white>Vend : ").append(lot(b.quantite, b.objet)));
         corps.add(t("achat.contre", "<white>Contre : ").append(prix(b)));
-        corps.add(stock < 0 ? t("achat.ferme", "<red>Boutique fermée (contenant disparu).")
-                : t("achat.stock", "<white>Stock : <lots> lot(s)", "lots", stock));
+        corps.add(t("achat.etat", "<white>État : <etat>", "etat", etatTexte(b)));
         ActionButton acheter = gui.form(t("achat.bouton", "<green>Acheter"), null,
                 (p, vue) -> acheter(p, b, entier(vue.getText("lots"))));
         gui.open(joueur, t("achat.titre", "<gold><bold>Boutique de <proprio>", "proprio", nomJoueur(b.proprio)), corps,
@@ -513,6 +720,10 @@ final class Boutiques implements Listener {
         }
         if (magasins.verrouillee(b)) {
             message(joueur, t("boutique.verrouillee", "<red>Le propriétaire gère cette boutique : réessaie dans un instant."));
+            return;
+        }
+        if (b.fermee) {
+            message(joueur, t("achat.fermee", "<red>Cette boutique est fermée pour le moment."));
             return;
         }
         Inventory stock = Magasins.inventaire(Magasins.contenantDu(b.panneau.getBlock()));
@@ -564,6 +775,7 @@ final class Boutiques implements Listener {
         paiement.forEach(p -> stock.addItem(p.clone()));
         achetes.forEach(a -> joueur.getInventory().addItem(a.clone()));
         magasins.sauver();
+        actualiserPanneaux(Magasins.contenantDu(b.panneau.getBlock()));
         plugin.getLogger().info("Boutique " + b.id + " : " + joueur.getName() + " achète " + lots + " lot(s) à "
                 + nomJoueur(b.proprio));
         message(joueur, t("achat.fait", "<green>Acheté : <lots> lot(s).", "lots", lots));
@@ -640,24 +852,44 @@ final class Boutiques implements Listener {
             }
         }
         for (Boutique b : touchees) {
-            supprimer(b, joueur);
+            supprimer(b, joueur, false);
         }
     }
 
-    /** Supprime une boutique (les points en attente sont rendus au propriétaire). */
-    void supprimer(Boutique b, Player auteur) {
+    /**
+     * Supprime une boutique (les points en attente sont rendus au propriétaire). 1.1.2 : sa place dans le magasin
+     * reste prise pendant le délai (3 h, anti « switch ») ; retirerPanneau (suppression depuis le menu, même à
+     * distance) : le panneau est retiré et rendu à l'auteur (sinon il est cassé par le joueur, ou tombe avec son
+     * contenant).
+     */
+    void supprimer(Boutique b, Player auteur, boolean retirerPanneau) {
         magasins.boutiques.remove(b.id);
+        magasins.noterSuppression(b.proprio);
         if (b.pointsEnAttente > 0) {
             KSEconomy.crediter(b.proprio, b.pointsEnAttente);
         }
         magasins.sauver();
-        if (b.panneau.getBlock().getState() instanceof Sign panneau) {
+        Block bloc = b.panneau.getBlock();
+        boolean rendu = false;
+        if (retirerPanneau && bloc.getState() instanceof Sign) {
+            Material objet = Material.matchMaterial(bloc.getType().name().replace("_WALL_", "_"));
+            bloc.setType(Material.AIR, false);
+            if (objet != null && objet.isItem() && auteur != null) {
+                for (ItemStack reste : auteur.getInventory().addItem(new ItemStack(objet)).values()) {
+                    auteur.getWorld().dropItemNaturally(auteur.getLocation(), reste);
+                }
+                rendu = true;
+            }
+        } else if (bloc.getState() instanceof Sign panneau) {
             panneau.setWaxed(false);
             panneau.update();
         }
         if (auteur != null) {
-            auteur.sendMessage(t("boutique.supprimee", "<yellow>Boutique supprimée<points>.", "points",
-                    b.pointsEnAttente > 0 ? " (" + KSEconomy.points(b.pointsEnAttente) + " rendus)" : ""));
+            long delai = magasins.delaiSuppressionMs();
+            auteur.sendMessage(t("boutique.supprimee-2", "<yellow>Boutique supprimée<points><panneau>.<delai>",
+                    "points", b.pointsEnAttente > 0 ? " (" + KSEconomy.points(b.pointsEnAttente) + " rendus)" : "",
+                    "panneau", rendu ? ", panneau rendu" : "",
+                    "delai", delai > 0 ? " Sa place dans le magasin se libère dans " + duree(delai) + "." : ""));
         }
     }
 

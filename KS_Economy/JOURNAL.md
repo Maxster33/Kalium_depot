@@ -136,3 +136,31 @@ SimpleClaimSystem 1.13.1 ne crée pas son API lui-même : le plugin l'initialise
 (`SimpleClaimSystemAPI_Provider.initialize`, sans effet si c'est déjà fait). Aucun autre changement.
 
 **Déployé sur Event le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (ancienne version dans `_removed-ks_economy-1.1.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.1.2 - boutiques : noms français, état, nom, fermeture, délai de 3 h, coffres en cuivre (03/10/2026, LeKiwi06)
+
+Retours de LeKiwi06 après les premiers essais (cahier mis à jour : « Retours de LeKiwi06 (03/10/2026) ») :
+- **Recherche d'objet** (« bloc de diamant », « diamond_block ») : ne trouvait rien, `noms_objets.txt` n'était pas
+  copié dans le jar par `build.sh` ; corrigé.
+- **Noms français** écrits par le plugin sur les panneaux et dans les menus (avant : nom traduit par le client, en
+  anglais sur les panneaux).
+- **Panneau** en 4 lignes mesurées (le jeu ne gardait que les premiers mots d'une ligne trop longue ; sinon coupée
+  avec « … », 60 px pour un panneau suspendu) : nom de la boutique, lot, « pour » + prix, état (« Stock : N lots »,
+  « Rupture de stock », « Coffre plein », « Fermée », « Hors service »). Mis à jour après un achat, une gestion à
+  distance, la fermeture du contenant sur place, au chargement du chunk et au démarrage (anciens panneaux compris).
+- **Nom de boutique** (20 caractères) : à la création (nom de l'objet vendu par défaut), « Renommer » ; listes (mes
+  boutiques, catalogue) par nom, coloré selon l'état, avec l'état écrit et les points à récupérer.
+- **Fermer temporairement / Rouvrir** : aucun achat, panneau « Fermée ».
+- **Suppression depuis le menu** : le panneau est retiré et rendu au propriétaire (avant : panneau ordinaire laissé).
+- **Délai de 3 h** (`magasins.delai-suppression-heures`, nouveau, 3 par défaut) : la place d'une boutique supprimée
+  (menu, panneau ou contenant cassé) reste prise ; message avec le temps restant ; affiché dans le menu du magasin.
+  Enregistré dans `magasins.yml` (`suppressions`).
+- **Coffres en cuivre** (tous états, cirés ou non) acceptés comme contenants.
+- Recherche des boutiques d'un contenant limitée aux panneaux voisins : ne charge plus le chunk de toutes les boutiques.
+- Nouvelles clés de langue pour les textes changés (`magasin.aide-2`, `magasin.supprimer-texte-2`,
+  `boutique.supprimee-2`) ; les anciennes restent dans les `lang.yml` des serveurs sans servir.
+
+Limite : un golem de cuivre du propriétaire, près d'une boutique en coffre de cuivre, peut en déplacer le stock (la
+protection des claims de SimpleClaimSystem s'applique aux golems des autres).
+
+**Non déployé. Statut : non testé en jeu.**

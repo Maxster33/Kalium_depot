@@ -30,6 +30,8 @@ import java.util.UUID;
 /**
  * 1.1.0 - /magasin (créer, agrandir, position, fiche), catalogue des magasins (menu Économie) et gestion à distance des
  * boutiques (contenu ouvert dans une copie ; boutique verrouillée pendant ce temps ; chunk chargé).
+ * 1.1.2 : boutiques par leur nom (couleur selon l'état : rupture, coffre plein, fermée), renommer, fermer / rouvrir,
+ * suppression : panneau retiré et rendu, place prise 3 h.
  */
 final class MenuMagasin implements Listener, TabExecutor {
 
@@ -123,9 +125,15 @@ final class MenuMagasin implements Listener, TabExecutor {
         }
         corps.add(t("magasin.boutiques", "<white>Boutiques : <nombre> / <max> ; claims : <claims>", "nombre", mes.size(),
                 "max", magasins.boutiquesMax(m), "claims", m.claims.size()));
-        corps.add(t("magasin.aide", "<gray>Pose un panneau sur un coffre, un tonneau ou une shulker dans un claim du "
-                + "magasin pour créer une boutique. /magasin agrandir dans un autre de tes claims de la zone : "
-                + "<prix>, +1 boutique.", "prix", KSEconomy.points(magasins.prixAgrandissement())));
+        int attente = magasins.placesEnAttente(joueur.getUniqueId());
+        if (attente > 0) {
+            corps.add(t("magasin.places-attente", "<gold><attente> place(s) encore prise(s) par des boutiques "
+                    + "supprimées : prochaine libre dans <delai>.", "attente", attente,
+                    "delai", Boutiques.duree(magasins.avantLiberation(joueur.getUniqueId()))));
+        }
+        corps.add(t("magasin.aide-2", "<gray>Pose un panneau sur un coffre (en cuivre compris), un tonneau ou une "
+                + "shulker dans un claim du magasin pour créer une boutique. /magasin agrandir dans un autre de tes "
+                + "claims de la zone : <prix>, +1 boutique.", "prix", KSEconomy.points(magasins.prixAgrandissement())));
         List<ActionButton> boutons = new ArrayList<>();
         boutons.add(gui.button(t("magasin.bouton-boutiques", "<white>Mes boutiques"), null, p -> mesBoutiques(p, 0)));
         boutons.add(gui.button(t("magasin.bouton-fiche", "<white>Nom et description"), null, this::fiche));
@@ -305,9 +313,13 @@ final class MenuMagasin implements Listener, TabExecutor {
     // ------------------------------------------------------------------ mes boutiques
 
     private Component offre(Boutique b) {
-        int stock = boutiques.lotsEnStock(b);
         return Boutiques.lot(b.quantite, b.objet).append(Component.text(" contre ")).append(boutiques.prix(b))
-                .append(Component.text(stock < 0 ? " (fermée)" : " (stock : " + stock + ")"));
+                .append(Component.text(" - ")).append(boutiques.etatTexte(b));
+    }
+
+    /** Ligne d'une boutique dans une liste : nom, offre et état. */
+    private Component ligne(Boutique b) {
+        return Component.text(Boutiques.nomBoutique(b) + " : ").append(offre(b));
     }
 
     private void mesBoutiques(Player joueur, int page) {
@@ -318,9 +330,13 @@ final class MenuMagasin implements Listener, TabExecutor {
         List<ActionButton> boutons = new ArrayList<>();
         for (int i = p * PAR_PAGE; i < Math.min(mes.size(), (p + 1) * PAR_PAGE); i++) {
             Boutique b = mes.get(i);
-            corps.add(Component.text((i + 1) + ". ").append(offre(b)));
-            boutons.add(gui.button(t("magasin.bouton-boutique", "<white>Boutique <n>", "n", i + 1), null,
-                    j -> gererBoutique(j, b)));
+            Component l = ligne(b);
+            if (b.pointsEnAttente > 0) {
+                l = l.append(t("magasin.points-a-recuperer", "<yellow> (<points> à récupérer)", "points",
+                        KSEconomy.points(b.pointsEnAttente)));
+            }
+            corps.add(l);
+            boutons.add(gui.button(boutiques.boutonBoutique(b), boutiques.etatTexte(b), j -> gererBoutique(j, b)));
         }
         if (mes.isEmpty()) {
             corps.add(t("magasin.aucune-boutique", "<gray>Aucune boutique pour l'instant."));
@@ -342,11 +358,16 @@ final class MenuMagasin implements Listener, TabExecutor {
             ouvrir(joueur);
             return;
         }
-        List<Component> corps = List.of(offre(b),
+        List<Component> corps = List.of(t("achat.nom", "<gold><bold><nom>", "nom", Boutiques.nomBoutique(b)), offre(b),
                 t("magasin.points-attente", "<white>Points en attente : <yellow><points>", "points",
                         KSEconomy.points(b.pointsEnAttente)));
         List<ActionButton> boutons = new ArrayList<>();
         boutons.add(gui.button(t("magasin.bouton-stock", "<white>Gérer le stock"), null, p -> ouvrirStock(p, b)));
+        boutons.add(gui.button(t("magasin.bouton-renommer", "<white>Renommer"), null, p -> renommer(p, b)));
+        boutons.add(b.fermee
+                ? gui.button(t("magasin.bouton-rouvrir", "<green>Rouvrir la boutique"), null, p -> fermer(p, b, false))
+                : gui.button(t("magasin.bouton-fermer", "<gold>Fermer temporairement"),
+                        t("magasin.fermer-info", "<gray>Plus aucun achat jusqu'à la réouverture"), p -> fermer(p, b, true)));
         if (b.pointsEnAttente > 0) {
             boutons.add(gui.button(t("magasin.bouton-points", "<green>Récupérer les points"), null, p -> {
                 long points = b.pointsEnAttente;
@@ -358,14 +379,50 @@ final class MenuMagasin implements Listener, TabExecutor {
         }
         boutons.add(gui.button(t("magasin.bouton-supprimer", "<red>Supprimer la boutique"), null,
                 p -> gui.confirm(p, t("magasin.titre-supprimer", "<red><bold>Supprimer la boutique"),
-                        t("magasin.supprimer-texte", "<white>Le panneau redevient ordinaire ; le contenu du contenant et "
-                                + "les points en attente te restent."),
+                        t("magasin.supprimer-texte-2", "<white>Le panneau est retiré et rendu ; le contenu du contenant "
+                                + "et les points en attente te restent. <gold>La place de cette boutique reste prise "
+                                + "<delai> (pour la fermer un moment, utilise plutôt « Fermer temporairement »).",
+                                "delai", Boutiques.duree(magasins.delaiSuppressionMs())),
                         q -> {
-                            boutiques.supprimer(b, q);
+                            if (magasins.boutiques.containsKey(b.id)) {
+                                boutiques.supprimer(b, q, true);
+                            }
                             mesBoutiques(q, 0);
                         }, q -> gererBoutique(q, b))));
         gui.open(joueur, t("magasin.titre-gerer", "<gold><bold>Ma boutique"), corps, List.of(), boutons, gui.close(), 1);
         lang.saveIfNeeded();
+    }
+
+    /** 1.1.2 : nom de la boutique (20 caractères ; vide : nom de l'objet vendu), affiché sur le panneau et les menus. */
+    private void renommer(Player joueur, Boutique b) {
+        ActionButton enregistrer = gui.form(t("magasin.enregistrer", "<green>Enregistrer"), null, (p, vue) -> {
+            if (magasins.boutiques.containsKey(b.id)) {
+                b.nom = Boutiques.nettoyerNom(vue.getText("nom"));
+                if (b.nom != null && b.nom.equals(Boutiques.texteObjet(b.objet))) {
+                    b.nom = null;
+                }
+                magasins.sauver();
+                boutiques.ecrirePanneau(b);
+            }
+            gererBoutique(p, b);
+        });
+        gui.open(joueur, t("magasin.titre-renommer", "<gold><bold>Nom de la boutique"),
+                List.of(t("magasin.renommer-aide", "<gray>Vide : le nom de l'objet vendu.")),
+                List.of(gui.text("nom", t("boutique.champ-nom-boutique", "Nom de la boutique (20 caractères)"),
+                        Boutiques.couper(Boutiques.nomBoutique(b), Magasins.NOM_MAX), Magasins.NOM_MAX)),
+                List.of(enregistrer, gui.button(t("magasin.retour", "<gray>Retour"), null, p -> gererBoutique(p, b))),
+                gui.close(), 1);
+        lang.saveIfNeeded();
+    }
+
+    /** 1.1.2 : fermeture temporaire (aucun achat ; le panneau affiche « Fermée ») ou réouverture. */
+    private void fermer(Player joueur, Boutique b, boolean fermee) {
+        if (magasins.boutiques.containsKey(b.id)) {
+            b.fermee = fermee;
+            magasins.sauver();
+            boutiques.ecrirePanneau(b);
+        }
+        gererBoutique(joueur, b);
     }
 
     /** Contenu de la boutique, ouvert de n'importe où : copie verrouillée, recopiée à la fermeture. */
@@ -425,6 +482,7 @@ final class MenuMagasin implements Listener, TabExecutor {
             }
         }
         magasins.verrous.remove(Magasins.cleVerrou(g.boutique));
+        boutiques.actualiserPanneaux(Magasins.contenantDu(g.boutique.panneau.getBlock()));
         g.chunk.removePluginChunkTicket(plugin);
     }
 
@@ -496,9 +554,8 @@ final class MenuMagasin implements Listener, TabExecutor {
         List<ActionButton> boutons = new ArrayList<>();
         for (int i = 0; i < liste.size(); i++) {
             Boutique b = liste.get(i);
-            corps.add(Component.text((i + 1) + ". ").append(offre(b)));
-            boutons.add(gui.button(t("magasin.bouton-boutique", "<white>Boutique <n>", "n", i + 1), null,
-                    j -> boutiques.ouvrirAchat(j, b)));
+            corps.add(ligne(b));
+            boutons.add(gui.button(boutiques.boutonBoutique(b), boutiques.etatTexte(b), j -> boutiques.ouvrirAchat(j, b)));
         }
         boutons.add(gui.button(t("magasin.retour", "<gray>Retour"), null, j -> catalogue(j, 0)));
         gui.open(joueur, Component.text(m.nom), corps, List.of(), boutons, gui.close(), 2);

@@ -30,16 +30,20 @@ import java.util.UUID;
  *
  * - Magasin : 1 par joueur, créé dans un de ses claims de la région WorldGuard « zone_shop » ; des claims (les chunks
  *   où il peut poser des boutiques), 10 boutiques + 1 par agrandissement, une fiche (nom, description, position).
- * - Boutique : un panneau sur un contenant (coffre, coffre piégé, tonneau, shulker), dans un claim du magasin ; un objet
- *   vendu (quantité) contre un objet (quantité) ou des points ; les points payés attendent dans la boutique.
+ * - Boutique : un panneau sur un contenant (coffre, coffre piégé, tonneau, shulker, coffre en cuivre), dans un claim du
+ *   magasin ; un objet vendu (quantité) contre un objet (quantité) ou des points ; les points payés attendent dans la
+ *   boutique. 1.1.2 : nom, fermeture temporaire ; une boutique supprimée garde sa place 3 h (délai réglable).
  */
 final class Magasins {
 
-    /** Contenants acceptés pour une boutique. */
+    /** Contenants acceptés pour une boutique (1.1.2 : coffres en cuivre, tous états et cirés, compris). */
     static boolean contenantAccepte(Material type) {
         return type == Material.CHEST || type == Material.TRAPPED_CHEST || type == Material.BARREL
-                || type.name().endsWith("SHULKER_BOX");
+                || type.name().endsWith("SHULKER_BOX") || type.name().endsWith("COPPER_CHEST");
     }
+
+    /** 1.1.2 : longueur maximale du nom d'une boutique. */
+    static final int NOM_MAX = 20;
 
     static final class Magasin {
         UUID proprio;
@@ -62,6 +66,10 @@ final class Magasins {
         int prixQuantite;
         long prixPoints;
         long pointsEnAttente;
+        /** 1.1.2 : nom choisi par le propriétaire (null : nom de l'objet vendu). */
+        String nom;
+        /** 1.1.2 : fermée temporairement par son propriétaire (aucun achat). */
+        boolean fermee;
 
         boolean enPoints() {
             return prixObjet == null;
@@ -74,6 +82,8 @@ final class Magasins {
     final Map<String, Boutique> boutiques = new LinkedHashMap<>();
     /** Contenants verrouillés (gestion à distance en cours) : clé du bloc. */
     final Set<String> verrous = new HashSet<>();
+    /** 1.1.2 : propriétaire -> dates des boutiques supprimées (leur place reste prise pendant le délai). */
+    final Map<UUID, List<Long>> suppressions = new LinkedHashMap<>();
 
     Magasins(KSEconomy plugin) {
         this.plugin = plugin;
@@ -105,6 +115,41 @@ final class Magasins {
 
     int boutiquesMax(Magasin magasin) {
         return boutiquesDeBase() + magasin.agrandissements;
+    }
+
+    /** 1.1.2 : pendant ce délai après une suppression, la place de la boutique reste prise (anti « switch »). */
+    long delaiSuppressionMs() {
+        return (long) (Math.max(0, plugin.getConfig().getDouble("magasins.delai-suppression-heures", 3)) * 3_600_000L);
+    }
+
+    /** 1.1.2 : places encore prises par des boutiques supprimées il y a moins que le délai. */
+    int placesEnAttente(UUID proprio) {
+        List<Long> dates = suppressions.get(proprio);
+        if (dates == null) {
+            return 0;
+        }
+        long limite = System.currentTimeMillis() - delaiSuppressionMs();
+        dates.removeIf(d -> d <= limite);
+        if (dates.isEmpty()) {
+            suppressions.remove(proprio);
+            return 0;
+        }
+        return dates.size();
+    }
+
+    /** 1.1.2 : millisecondes avant que la prochaine place se libère (0 : aucune en attente). */
+    long avantLiberation(UUID proprio) {
+        if (placesEnAttente(proprio) == 0) {
+            return 0;
+        }
+        long premiere = suppressions.get(proprio).stream().mapToLong(Long::longValue).min().orElse(0);
+        return Math.max(0, premiere + delaiSuppressionMs() - System.currentTimeMillis());
+    }
+
+    void noterSuppression(UUID proprio) {
+        if (delaiSuppressionMs() > 0) {
+            suppressions.computeIfAbsent(proprio, u -> new ArrayList<>()).add(System.currentTimeMillis());
+        }
     }
 
     // ------------------------------------------------------------------ clés
@@ -222,6 +267,14 @@ final class Magasins {
         Inventory inv = inventaire(contenant);
         Location ici = inv == null ? null : inv.getLocation();
         for (Boutique b : boutiques.values()) {
+            // 1.1.2 : seulement les panneaux tout près (contre le contenant ou l'autre moitié d'un coffre double),
+            // sans charger le chunk des autres boutiques.
+            if (b.panneau.getWorld() == null || !b.panneau.getWorld().equals(contenant.getWorld())
+                    || Math.abs(b.panneau.getBlockX() - contenant.getX()) > 2
+                    || Math.abs(b.panneau.getBlockY() - contenant.getY()) > 2
+                    || Math.abs(b.panneau.getBlockZ() - contenant.getZ()) > 2) {
+                continue;
+            }
             Inventory autre = inventaire(contenantDu(b.panneau.getBlock()));
             if (autre != null && ici != null && ici.equals(autre.getLocation())) {
                 liste.add(b);
@@ -262,6 +315,19 @@ final class Magasins {
                 }
             }
         }
+        ConfigurationSection ss = yaml.getConfigurationSection("suppressions");
+        if (ss != null) {
+            for (String cle : ss.getKeys(false)) {
+                try {
+                    List<Long> dates = new ArrayList<>(ss.getLongList(cle));
+                    if (!dates.isEmpty()) {
+                        suppressions.put(UUID.fromString(cle), dates);
+                    }
+                } catch (IllegalArgumentException e) {
+                    plugin.getLogger().warning("Suppressions ignorées : " + cle);
+                }
+            }
+        }
         ConfigurationSection bs = yaml.getConfigurationSection("boutiques");
         if (bs != null) {
             for (String id : bs.getKeys(false)) {
@@ -276,6 +342,8 @@ final class Magasins {
                     b.prixQuantite = bs.getInt(id + ".prix-quantite", 1);
                     b.prixPoints = bs.getLong(id + ".prix-points");
                     b.pointsEnAttente = bs.getLong(id + ".points-en-attente");
+                    b.nom = bs.getString(id + ".nom", null);
+                    b.fermee = bs.getBoolean(id + ".fermee", false);
                     if (b.panneau == null || b.objet == null) {
                         throw new IllegalArgumentException("incomplète");
                     }
@@ -307,7 +375,10 @@ final class Magasins {
             yaml.set(cle + ".prix-quantite", b.prixQuantite);
             yaml.set(cle + ".prix-points", b.prixPoints);
             yaml.set(cle + ".points-en-attente", b.pointsEnAttente);
+            yaml.set(cle + ".nom", b.nom);
+            yaml.set(cle + ".fermee", b.fermee);
         });
+        suppressions.forEach((uuid, dates) -> yaml.set("suppressions." + uuid, dates));
         try {
             plugin.getDataFolder().mkdirs();
             yaml.save(fichier);

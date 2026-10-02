@@ -19,4 +19,6 @@ magasins:
   prix-agrandissement: 10000
   # Boutiques d'un magasin, +1 par agrandissement.
   boutiques: 10
+  # Heures pendant lesquelles la place d'une boutique supprimee reste prise (0 : aucune attente).
+  delai-suppression-heures: 3
 
