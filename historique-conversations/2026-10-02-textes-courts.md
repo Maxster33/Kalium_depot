@@ -20,5 +20,12 @@ alors » ; « tu peux déployer ».
 - 6 plugins réservés en même temps : accord de Maxster33 (transmis par LeKiwi06).
 - Nouvelles clés de langue pour les textes déjà déployés (les `lang.yml` des serveurs gardent les anciens).
 
+## Suite : catégorie 3 « Claims »
+- SimpleClaimSystem 1.13.1 téléchargé (accord de LeKiwi06), API et code source lus ; KS_Claim 1.0.0 (interface des
+  claims), KS_BiomeChanger 1.1.0, traduction française et configuration de SCS ; déployés sur Event à 22:26.
+- Choix de Claude signalés : achat en se tenant dans le claim avec /ksclaim ; l'acheteur garde les membres (SCS) ; un
+  claim acheté n'entre pas dans les prix remboursables (sinon création de points).
+
 ## Reste à faire
+- Claims : redémarrer Event, commandes LuckPerms, région de l'île du dragon, tests (compte rendu du 02/10/2026).
 - Redémarrer Kal-Games, le lobby et Kanvas ; tester les menus (liste dans le compte rendu du 02/10/2026).

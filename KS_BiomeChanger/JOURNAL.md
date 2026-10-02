@@ -54,6 +54,7 @@ SimpleClaimSystem dont le joueur n'est ni le propriétaire ni un membre (message
 joueur », objet non consommé). Vérification chunk par chunk de la zone (classe `ProtectionClaims`, chargée seulement si
 SimpleClaimSystem est activé ; `softdepend` SimpleClaimSystem). Les régions WorldGuard restent refusées comme avant.
 
-**Non déployé. À déployer ensemble sur Event : SimpleClaimSystem 1.13.1 (+ `config.yml` et `langs/fr_FR.yml`, voir
-`scs/README.md`), KS_Claim 1.0.0, KS_BiomeChanger 1.1.0 ; puis commandes LuckPerms et région de l'île du dragon
-(humain). Statut : non testé en jeu.**
+**Déployé sur Event le 02/10/2026 à 22:26 (LeKiwi06) avec SimpleClaimSystem 1.13.1 (nouveau, `config.yml` et
+`langs/fr_FR.yml` posés avant le premier démarrage), KS_Claim 1.0.0, KS_BiomeChanger 1.1.0 (1.0.0 dans `_removed-ks_biomechanger-1.0.0/`) ; actifs après
+redémarrage d'Event ; puis commandes LuckPerms et région de l'île du dragon (humain, voir `KS_Claim/scs/README.md`).
+Statut : non testé en jeu.**
