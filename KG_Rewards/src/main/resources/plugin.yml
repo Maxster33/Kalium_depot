@@ -1,0 +1,15 @@
+name: KG_Rewards
+version: '${project.version}'
+main: fr.kalium.rewards.KGRewards
+api-version: '26.2'
+description: Recompenses des mini-jeux de kal-games (paliers, tops, prestige, tables de butin), envoyees vers Event.
+authors: [KaLium]
+depend: [KG_ScoreBoards, KLM_Menu]
+commands:
+  kgrewards:
+    description: Progression des recompenses (et tables de butin pour les admins).
+    usage: /kgrewards [admin]
+permissions:
+  kgrewards.admin:
+    description: Modifier les tables de butin.
+    default: op
