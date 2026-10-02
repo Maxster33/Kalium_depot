@@ -119,5 +119,5 @@ Noms raccourcis (détail dans l'explication, affichée au-dessus des champs par 
 « Barème : longueur d'une série », « Palier 1 à 4 : tour en moins de (s) », « Blocs de piste », « Meilleurs temps : tour
 max (s) », « Rayon des points de contrôle ». Clés des réglages inchangées (valeurs gardées).
 
-**Non déployé. À déployer ensemble sur Kal-Games : KalGames 1.22.2, KG_BoatRace 1.4.2, KG_Parkour 1.1.1, KG_PvpKit
-1.0.1, KG_Bingo 1.6.1 ; KLM_Portal 1.3.2 sur le lobby et Kanvas. Statut : non testé en jeu.**
+**Déployé sur Kal-Games le 02/10/2026 à 17:49 (LeKiwi06 ; 1.4.1 dans `_removed-kg_boatrace-1.4.1/`), actif après redémarrage.
+Statut : non testé en jeu.**

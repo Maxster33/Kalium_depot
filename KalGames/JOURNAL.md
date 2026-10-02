@@ -873,5 +873,5 @@ Minecraft) : chaque champ et bouton tient maintenant dans sa largeur normale (26
 - Noms raccourcis (le détail passe dans l'explication) : « Attente avant lancement (s) », « Bronze / Silver / Gold :
   ticks par objet », « Arènes préchargées ».
 
-**Non déployé. À déployer ensemble sur Kal-Games : KalGames 1.22.2, KG_BoatRace 1.4.2, KG_Parkour 1.1.1, KG_PvpKit
-1.0.1, KG_Bingo 1.6.1 ; KLM_Portal 1.3.2 sur le lobby et Kanvas. Statut : non testé en jeu.**
+**Déployé sur Kal-Games le 02/10/2026 à 17:49 (LeKiwi06 ; 1.22.1 dans `_removed-kalgames-1.22.1/`), actif après redémarrage.
+Statut : non testé en jeu.**

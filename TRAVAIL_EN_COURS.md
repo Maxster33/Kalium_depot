@@ -16,12 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KalGames — LeKiwi06 — depuis le 2026-10-02 17:34 — textes plus courts dans les jauges, listes et boutons des menus (réglages : explications au-dessus des champs) ; accord de Maxster33 (02/10/2026, transmis par LeKiwi06) pour dépasser la limite de 2 plugins
-- KG_BoatRace — LeKiwi06 — depuis le 2026-10-02 17:34 — textes plus courts dans les jauges, listes et boutons des menus ; accord de Maxster33 (02/10/2026, transmis par LeKiwi06) pour dépasser la limite de 2 plugins
-- KG_Parkour — LeKiwi06 — depuis le 2026-10-02 17:34 — textes plus courts dans les jauges, listes et boutons des menus ; accord de Maxster33 (02/10/2026, transmis par LeKiwi06) pour dépasser la limite de 2 plugins
-- KG_PvpKit — LeKiwi06 — depuis le 2026-10-02 17:34 — textes plus courts dans les jauges, listes et boutons des menus ; accord de Maxster33 (02/10/2026, transmis par LeKiwi06) pour dépasser la limite de 2 plugins
-- KG_Bingo — LeKiwi06 — depuis le 2026-10-02 17:34 — textes plus courts dans les jauges, listes et boutons des menus ; accord de Maxster33 (02/10/2026, transmis par LeKiwi06) pour dépasser la limite de 2 plugins
-- KLM_Portal — LeKiwi06 — depuis le 2026-10-02 17:34 — textes plus courts dans les jauges, listes et boutons des menus ; accord de Maxster33 (02/10/2026, transmis par LeKiwi06) pour dépasser la limite de 2 plugins
 
 
 

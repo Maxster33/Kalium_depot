@@ -146,5 +146,5 @@ Minecraft) : chaque champ et bouton tient maintenant dans sa largeur normale (26
 Liste « Point de chute » : « non défini » (clé `landings.mode-none`) au lieu de « non défini (le serveur d'arrivée
 décide) » ; l'explication est écrite en haut du menu (`landings.mode-aide`).
 
-**Non déployé. À déployer ensemble sur Kal-Games : KalGames 1.22.2, KG_BoatRace 1.4.2, KG_Parkour 1.1.1, KG_PvpKit
-1.0.1, KG_Bingo 1.6.1 ; KLM_Portal 1.3.2 sur le lobby et Kanvas. Statut : non testé en jeu.**
+**Déployé sur le lobby et Kanvas le 02/10/2026 à 17:49 (LeKiwi06 ; 1.3.1 dans `_removed-klm_portal-1.3.1/`), actif après redémarrage.
+Statut : non testé en jeu.**
