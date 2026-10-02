@@ -105,6 +105,9 @@ public final class KSClaim extends JavaPlugin {
     // ------------------------------------------------------------------ SCS
 
     static SimpleClaimSystemAPI api() {
+        // 1.1.1 : SCS 1.13.1 ne crée pas son API lui-même ; c'est au plugin qui l'utilise de l'initialiser (sans
+        // effet si c'est déjà fait).
+        SimpleClaimSystemAPI_Provider.initialize(scs());
         return SimpleClaimSystemAPI_Provider.getAPI();
     }
 

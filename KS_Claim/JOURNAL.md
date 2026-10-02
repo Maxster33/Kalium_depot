@@ -54,3 +54,11 @@ Magasins de KS_Economy 1.1.0 : un claim qui porte des boutiques ne peut être ni
 **Déployé sur Event le 03/10/2026 à 00:02 (LeKiwi06) avec KS_Economy 1.1.0 et KS_Claim 1.1.0 (1.0.0 dans
 `_removed-ks_claim-1.0.0/`), actifs après redémarrage d'Event ; région `zone_shop` à créer par l'humain. Statut : non
 testé en jeu.**
+
+## 1.1.1 - API de SimpleClaimSystem initialisée (03/10/2026, LeKiwi06)
+
+Signalé par LeKiwi06 : `/ksclaim`, `/ksclaims`, bouton « Claims » : rien ne s'ouvrait, sans message (console : « API not initialized. Call initialize() first. »).
+SimpleClaimSystem 1.13.1 ne crée pas son API lui-même : le plugin l'initialise maintenant avant chaque utilisation
+(`SimpleClaimSystemAPI_Provider.initialize`, sans effet si c'est déjà fait). Aucun autre changement.
+
+**Non déployé. Statut : non testé en jeu.**

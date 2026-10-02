@@ -58,3 +58,11 @@ SimpleClaimSystem est activé ; `softdepend` SimpleClaimSystem). Les régions Wo
 `langs/fr_FR.yml` posés avant le premier démarrage), KS_Claim 1.0.0, KS_BiomeChanger 1.1.0 (1.0.0 dans `_removed-ks_biomechanger-1.0.0/`) ; actifs après
 redémarrage d'Event ; puis commandes LuckPerms et région de l'île du dragon (humain, voir `KS_Claim/scs/README.md`).
 Statut : non testé en jeu.**
+
+## 1.1.1 - API de SimpleClaimSystem initialisée (03/10/2026, LeKiwi06)
+
+Même défaut que celui signalé par LeKiwi06 sur KS_Claim : le Changeur de Biome plantait en vérifiant les claims (console : « API not initialized. Call initialize() first. »).
+SimpleClaimSystem 1.13.1 ne crée pas son API lui-même : le plugin l'initialise maintenant avant chaque utilisation
+(`SimpleClaimSystemAPI_Provider.initialize`, sans effet si c'est déjà fait). Aucun autre changement.
+
+**Non déployé. Statut : non testé en jeu.**

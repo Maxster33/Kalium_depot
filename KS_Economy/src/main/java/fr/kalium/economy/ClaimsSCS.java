@@ -13,6 +13,9 @@ final class ClaimsSCS {
     }
 
     static UUID proprio(Chunk chunk) {
+        // 1.1.1 : SCS 1.13.1 ne crée pas son API lui-même (sans effet si KS_Claim l'a déjà fait).
+        SimpleClaimSystemAPI_Provider.initialize((fr.xyness.SCS.SimpleClaimSystem)
+                org.bukkit.Bukkit.getPluginManager().getPlugin("SimpleClaimSystem"));
         Claim claim = SimpleClaimSystemAPI_Provider.getAPI().getClaimAtChunk(chunk);
         return claim == null ? null : claim.getUUID();
     }

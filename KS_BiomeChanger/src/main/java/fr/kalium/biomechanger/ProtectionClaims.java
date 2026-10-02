@@ -22,6 +22,9 @@ final class ProtectionClaims {
 
     /** Vrai si l'une des cellules de 4 x 4 x 4 blocs (qx, qy, qz) est dans un claim où le joueur n'est pas membre. */
     static boolean touche(World monde, List<int[]> cellules, Player joueur) {
+        // 1.1.1 : SCS 1.13.1 ne crée pas son API lui-même (sans effet si c'est déjà fait).
+        SimpleClaimSystemAPI_Provider.initialize((fr.xyness.SCS.SimpleClaimSystem)
+                org.bukkit.Bukkit.getPluginManager().getPlugin("SimpleClaimSystem"));
         Set<Long> vus = new HashSet<>();
         for (int[] cellule : cellules) {
             int chunkX = cellule[0] >> 2;
