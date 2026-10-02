@@ -45,17 +45,21 @@ final class RelayHttpServer {
     private final ActiveGameRegistry activeGameRegistry;
     private HttpServer server;
     private ScheduledExecutorService cleaner;
+    /** 1.3.0 : boites aux lettres durables (recompenses vers Event...). */
+    private final MailStore mail;
 
-    RelayHttpServer(RelayConfig config, Logger logger, ActiveGameRegistry activeGameRegistry) {
+    RelayHttpServer(RelayConfig config, Logger logger, ActiveGameRegistry activeGameRegistry, MailStore mail) {
         this.config = config;
         this.logger = logger;
         this.activeGameRegistry = activeGameRegistry;
+        this.mail = mail;
     }
 
     void start() throws IOException {
         server = HttpServer.create(new InetSocketAddress(config.port()), 0);
         server.createContext("/assignment/", this::handleAssignment);
         server.createContext("/active-game/", this::handleActiveGame);
+        server.createContext("/mail/", this::handleMail);
         server.setExecutor(Executors.newCachedThreadPool());
         server.start();
         cleaner = Executors.newSingleThreadScheduledExecutor();
@@ -139,6 +143,50 @@ final class RelayHttpServer {
             }
         } catch (Exception e) {
             logger.warn("[KaliumRelay] Erreur sur une requete relais (active-game) : " + e.getMessage());
+            respond(exchange, 500, "");
+        }
+    }
+
+    /**
+     * 1.3.0 - /mail/&lt;boite&gt; : POST depose un message (corps : texte, 256 Ko au plus ; reponse : son id) ; GET liste
+     * les messages en attente (lignes « id TAB corps en base64 ») ; DELETE /mail/&lt;boite&gt;/&lt;id&gt; confirme un message
+     * (il est retire). Rien n'expire : un message reste jusqu'a sa confirmation (voir MailStore).
+     */
+    private void handleMail(HttpExchange exchange) {
+        try {
+            String token = exchange.getRequestHeaders().getFirst("X-Kalium-Relay-Token");
+            if (token == null || config.token().isBlank() || !token.equals(config.token())) {
+                respond(exchange, 401, "");
+                return;
+            }
+            String[] parties = exchange.getRequestURI().getPath().substring("/mail/".length()).split("/");
+            String boite = parties.length > 0 ? parties[0] : "";
+            if (!MailStore.nomValide(boite)) {
+                respond(exchange, 400, "");
+                return;
+            }
+            switch (exchange.getRequestMethod()) {
+                case "POST" -> {
+                    byte[] corps = exchange.getRequestBody().readNBytes(MailStore.MAX_BODY_BYTES + 1);
+                    if (corps.length > MailStore.MAX_BODY_BYTES) {
+                        respond(exchange, 413, "");
+                        return;
+                    }
+                    String id = mail.deposer(boite, new String(corps, StandardCharsets.UTF_8));
+                    respond(exchange, id == null ? 507 : 200, id == null ? "" : id);
+                }
+                case "GET" -> respond(exchange, 200, mail.lister(boite));
+                case "DELETE" -> {
+                    if (parties.length < 2 || parties[1].isBlank()) {
+                        respond(exchange, 400, "");
+                        return;
+                    }
+                    respond(exchange, mail.confirmer(boite, parties[1]) ? 204 : 404, "");
+                }
+                default -> respond(exchange, 405, "");
+            }
+        } catch (Exception e) {
+            logger.warn("[KaliumRelay] Erreur sur une requete relais (mail) : " + e.getMessage());
             respond(exchange, 500, "");
         }
     }

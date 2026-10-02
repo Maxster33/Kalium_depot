@@ -78,3 +78,11 @@ Demande de LeKiwi06 (catégorie 1 « Contenu survie ») :
 **Déployé sur Event le 30/09/2026 à 18:07 (LeKiwi06) avec KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
 KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0 et KS_LootEntites 1.3.0 (1.5.0 dans `_removed-ks_kaliumgive-1.5.0/` ; supprimables par l'humain : `_removed-ks_kaliumgive-1.0.0/` à `1.3.0/`), actifs après redémarrage d'Event. Statut :
 **testé et confirmé par LeKiwi06 le 30/09/2026** (« tout est bon »).**
+
+## 1.7.0 - fonction publique de création (03/10/2026, LeKiwi06)
+
+Catégorie 4 « Récompenses » : `KSKaliumGive.creer(id)` crée un objet custom d'Event par son id_custom (comme
+`/kaliumgive`, fioles `fiole_exp(N)` comprises), ou null si l'id est inconnu ou son plugin désactivé. Utilisé par
+KS_RewardsGUI pour les récompenses en objets custom. Aucun autre changement.
+
+**Non déployé (catégorie 4, étape 1 ; déploiement prévu avec les étapes suivantes). Statut : non testé.**

@@ -1,10 +1,10 @@
 #!/bin/sh
-# Compile KS_KaliumGive (ECJ, cible Java 21 : tourne sur Java 21+ / 25) et assemble le .jar
+# Compile KS_RewardsGUI (ECJ, cible Java 21 : tourne sur Java 21+ / 25) et assemble le .jar
 # Outils : <racine du depot>/outils-build si present (PC local, ignore par git), sinon /tmp/claude-0 (espace cloud).
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.7.0
+VERSION=1.0.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -17,16 +17,13 @@ case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) SEP=';'; win() { cygpath -w "$1"; } ;;
   *) SEP=':'; win() { printf '%s' "$1"; } ;;
 esac
-# Utilise KS_EstomacGardien, KS_EC_Extension, KS_FioleExp, KS_BedrockBreaker, KS_ItemSimple, KS_BiomeChanger et
-# KS_Spawners (softdepend) : compiles d'abord, leurs classes servent seulement a compiler.
-CP="$(win "$TOOLS/classes/KS_EstomacGardien")$SEP$(win "$TOOLS/classes/KS_EC_Extension")$SEP$(win "$TOOLS/classes/KS_FioleExp")$SEP$(win "$TOOLS/classes/KS_BedrockBreaker")$SEP"
-for p in KS_ItemSimple KS_BiomeChanger KS_Spawners KS_Decapitator KS_Elixir; do CP="$CP$(win "$TOOLS/classes/$p")$SEP"; done
+CP="$(win "$TOOLS/classes/KLM_Menu")$SEP$(win "$TOOLS/classes/KS_Menu")$SEP$(win "$TOOLS/classes/KS_Economy")$SEP$(win "$TOOLS/classes/KS_KaliumGive")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
-OUT="$TOOLS/classes/KS_KaliumGive"
+OUT="$TOOLS/classes/KS_RewardsGUI"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"
 java -jar "$(win "$TOOLS/ecj.jar")" -21 -proc:none -nowarn -encoding UTF-8 \
   -cp "$CP" -d "$(win "$OUT")" src/main/java
 [ -f src/main/resources/config.yml ] && cp src/main/resources/config.yml "$OUT/config.yml"
 sed "s/\${project.version}/$VERSION/" src/main/resources/plugin.yml > "$OUT/plugin.yml"
-jar cf "$DEST/KS_KaliumGive-$VERSION.jar" -C "$OUT" .
-echo "OK -> $DEST/KS_KaliumGive-$VERSION.jar"
+jar cf "$DEST/KS_RewardsGUI-$VERSION.jar" -C "$OUT" .
+echo "OK -> $DEST/KS_RewardsGUI-$VERSION.jar"

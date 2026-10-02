@@ -1,0 +1,13 @@
+name: KS_RewardsGUI
+version: '${project.version}'
+main: fr.kalium.rewardsgui.KSRewardsGUI
+api-version: '26.2'
+description: Reception sur Event des recompenses des autres serveurs (/rewards), journal des recuperations.
+authors: [KaLium]
+depend: [KLM_Menu]
+softdepend: [KS_Menu, KS_Economy, KS_KaliumGive]
+commands:
+  rewards:
+    description: Recuperer ses recompenses.
+    aliases: [recompenses]
+    usage: /rewards

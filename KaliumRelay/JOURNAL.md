@@ -250,3 +250,15 @@ historiques.
 **Déployé sur le proxy le 26/09/2026 à 7 h 21** (1.1.1 dans `_removed-kaliumrelay-1.1.1/`). **Statut : testé et confirmé par LeKiwi06 le
 26/09/2026 (« /server est bien fix »).**
 
+## 1.3.0 - boîte aux lettres durable (03/10/2026, LeKiwi06)
+
+Catégorie 4 « Récompenses » (cahier : « KaliumRelay modifié si nécessaire ») : `/assignment` garde un message 2 minutes
+en mémoire, trop peu pour des récompenses. Nouveau `/mail/<boîte>` (même jeton `X-Kalium-Relay-Token`) :
+- `POST /mail/event` : dépose un message (texte, 256 Ko au plus) ; réponse : son id.
+- `GET /mail/event` : messages en attente, une ligne « id TAB texte en base64 » par message.
+- `DELETE /mail/event/<id>` : confirme (retire) un message.
+- Rien n'expire : un message reste jusqu'à sa confirmation, même après un redémarrage du proxy (un fichier par boîte dans
+  `plugins/kaliumrelay/mail/`, écriture atomique). 20 000 messages au plus par boîte. Refusé (401) si le jeton du relais
+  est vide.
+
+**Non déployé (catégorie 4, étape 1 ; déploiement prévu avec les étapes suivantes). Statut : non testé.**

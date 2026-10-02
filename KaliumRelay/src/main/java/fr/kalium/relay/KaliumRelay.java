@@ -29,7 +29,7 @@ import java.util.Optional;
  * plugins de Velocity repose entierement sur Guice : son propre Injector garantit que
  * com.google.inject.Inject est toujours present et correctement resolu, donc plus sur.
  */
-@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.2.0",
+@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.3.0",
         description = "Relais HTTP entre KalGames et KalBingo, independant de la presence d'un joueur.",
         authors = {"KaLium"})
 public final class KaliumRelay {
@@ -52,7 +52,7 @@ public final class KaliumRelay {
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
         config = RelayConfig.loadOrCreate(dataDirectory, logger);
-        http = new RelayHttpServer(config, logger, activeGameRegistry);
+        http = new RelayHttpServer(config, logger, activeGameRegistry, new MailStore(dataDirectory, logger));
         try {
             http.start();
             logger.info("[KaliumRelay] Serveur HTTP relais demarre sur le port " + config.port() + ".");

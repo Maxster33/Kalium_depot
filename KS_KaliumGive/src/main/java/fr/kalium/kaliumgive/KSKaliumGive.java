@@ -78,6 +78,18 @@ public final class KSKaliumGive extends JavaPlugin {
     /** 1.6.0 : têtes de KS_Decapitator (tete_<id>, ex. tete_bebe_mouton_rouge) ; liste lue dans le plugin des têtes. */
     private static final String TETE = "tete_";
 
+    /**
+     * 1.7.0 (catégorie 4 « Récompenses ») : un objet custom par son id_custom (comme /kaliumgive), ou null si l'id est
+     * inconnu ou si son plugin n'est pas activé. Utilisé par KS_RewardsGUI.
+     */
+    public static ItemStack creer(String id) {
+        ObjetCustom objet = id == null ? null : trouver(id.toLowerCase());
+        if (objet == null || !Bukkit.getPluginManager().isPluginEnabled(objet.plugin())) {
+            return null;
+        }
+        return objet.fabrique().get();
+    }
+
     @Override
     public void onEnable() {
         getCommand("kaliumgive").setExecutor(this);

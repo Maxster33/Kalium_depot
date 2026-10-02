@@ -1,0 +1,9 @@
+# KS_RewardsGUI - reception des recompenses (valeurs par defaut aussi dans le code).
+
+# Relais KaliumRelay (proxy). Le jeton n'est JAMAIS dans le depot : a remplir sur le serveur (relay.properties du proxy).
+relay-url: "http://7018.mystrator.com:46199"
+relay-token: ""
+# Boite aux lettres lue par ce serveur.
+boite: event
+# Releve de la boite (secondes).
+intervalle-secondes: 30
