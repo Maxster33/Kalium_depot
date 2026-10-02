@@ -9,3 +9,14 @@ conversion:
 masquage:
   # Part du solde prelevee chaque jour a minuit (heure de Paris) quand il est masque, en %.
   pourcent-par-jour: 1.0
+
+# 1.1.0 - magasins (a ajouter a la main dans le config.yml du serveur pour les modifier).
+magasins:
+  # Region WorldGuard de la zone des magasins (drapeaux build allow et scs-claim allow).
+  region: zone_shop
+  prix-creation: 45000
+  blocs-tier3-creation: 5
+  prix-agrandissement: 10000
+  # Boutiques d'un magasin, +1 par agrandissement.
+  boutiques: 10
+

@@ -738,9 +738,20 @@ final class Menus {
         lang.saveIfNeeded();
     }
 
+    /** 1.1.0 : un claim qui porte des boutiques (magasin de KS_Economy) ne peut être ni supprimé ni vendu. */
+    private static String refusMagasin(Claim claim) {
+        return KSEconomy.refusClaim(claim.getUUID(), claim.getChunks().iterator().next());
+    }
+
     // ------------------------------------------------------------------ vente et achat
 
     private void vendre(Player joueur, int id) {
+        Claim aVendre = claim(joueur, id);
+        String refus = aVendre == null ? null : refusMagasin(aVendre);
+        if (refus != null) {
+            message(joueur, Component.text(refus, net.kyori.adventure.text.format.NamedTextColor.RED), p -> menuClaim(p, id));
+            return;
+        }
         long max;
         try {
             max = Math.max(1, (long) Double.parseDouble(KSClaim.scs().getSettings().getSetting("max-sell-price")));
@@ -817,6 +828,12 @@ final class Menus {
             message(joueur, t("achat.change", "<red>Ce claim n'est plus en vente à ce prix."), this::ouvrir);
             return;
         }
+        if (refusMagasin(claim) != null) {
+            message(joueur, t("achat.magasin", "<red>Ce claim porte des boutiques : il ne peut pas être acheté pour "
+                    + "l'instant."), this::ouvrir);
+            return;
+        }
+        Chunk chunkVendu = claim.getChunks().iterator().next();
         if (!KSEconomy.debiter(acheteur, prix)) {
             message(joueur, t("claimer.solde", "<red>Solde insuffisant : ce claim coûte <prix>.", "prix", pts(prix)),
                     this::ouvrir);
@@ -830,6 +847,7 @@ final class Menus {
             if (ok[0]) {
                 KSEconomy.crediter(vendeur, prix);
                 plugin.ranger(vendeur, ancienId, null);
+                KSEconomy.claimRetire(vendeur, chunkVendu);
                 Player enLigne = Bukkit.getPlayer(vendeur);
                 if (enLigne != null) {
                     enLigne.sendMessage(t("achat.vendu", "<gold>Ton claim a été acheté par <acheteur> (<prix>).",
@@ -852,6 +870,11 @@ final class Menus {
             ouvrir(joueur);
             return;
         }
+        String refus = refusMagasin(claim);
+        if (refus != null) {
+            message(joueur, Component.text(refus, net.kyori.adventure.text.format.NamedTextColor.RED), p -> menuClaim(p, id));
+            return;
+        }
         List<Long> payes = plugin.joueur(joueur.getUniqueId()).prixPayes;
         long rembourse = payes.isEmpty() ? 0 : payes.get(payes.size() - 1);
         gui.confirm(joueur, t("supprimer.titre", "<red><bold>Supprimer ce claim"),
@@ -860,14 +883,16 @@ final class Menus {
                         "prix", rembourse == 0 ? "rien" : pts(rembourse)),
                 p -> {
                     Claim c = claim(p, id);
-                    if (c == null) {
+                    if (c == null || refusMagasin(c) != null) {
                         ouvrir(p);
                         return;
                     }
+                    Chunk chunkSupprime = c.getChunks().iterator().next();
                     boolean[] ok = {false};
                     plugin.async(() -> ok[0] = KSClaim.api().unclaim(c), () -> {
                         if (ok[0]) {
                             plugin.ranger(p.getUniqueId(), id, null);
+                            KSEconomy.claimRetire(p.getUniqueId(), chunkSupprime);
                             long montant = plugin.retirerDernierPrix(p.getUniqueId());
                             KSEconomy.crediter(p.getUniqueId(), montant);
                             message(p, t("supprimer.fait", "<green>Claim supprimé. Remboursé : <prix>.", "prix",

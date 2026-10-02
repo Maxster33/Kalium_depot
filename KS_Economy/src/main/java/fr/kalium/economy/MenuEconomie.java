@@ -72,6 +72,10 @@ final class MenuEconomie implements Listener {
                 lang.c("menu.info-deposer", "<gray>Pose dans le coffre les émeraudes à déposer"), this::ouvrirDepot));
         boutons.add(gui.button(lang.c("menu.bouton-retirer", "<yellow>Retirer"),
                 lang.c("menu.info-retirer", "<gray>Émeraudes, blocs ou blocs compressés"), this::ouvrirRetrait));
+        // 1.1.0 : catalogue des magasins.
+        boutons.add(gui.button(lang.c("menu.bouton-magasins", "<gold>Magasins"),
+                lang.c("menu.info-magasins", "<gray>Boutiques des joueurs, achat à distance, ton magasin"),
+                p -> plugin.menuMagasin().catalogue(p, 0)));
         boutons.add(masque
                 ? gui.button(lang.c("menu.bouton-reveler", "<aqua>Révéler mon solde"),
                 lang.c("menu.info-reveler", "<gray>Gratuit, immédiat"), p -> {

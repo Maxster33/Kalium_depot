@@ -84,3 +84,46 @@ aussi ses boutons avec `Lisible`. Le reste des menus passe par `Gui`, ajusté pa
 `_removed-klm_menu-2.4.0/` sur lobby, Kal-Games, Serveur Jeux, Kanvas ; 2.4.1 dans `_removed-klm_menu-2.4.1/` sur
 Kixster et Event), KalGames 1.22.1 (`_removed-kalgames-1.22.0/`), KG_BingoGame 0.8.4 (`_removed-kg_bingogame-0.8.3/`),
 KS_Economy 1.0.3 (`_removed-ks_economy-1.0.2/`) ; actifs après redémarrage de chaque serveur. Statut : **testé et confirmé par LeKiwi06 le 02/10/2026** (menus : plus aucun texte qui défile).**
+
+## 1.1.0 - magasins et boutiques (02/10/2026, LeKiwi06)
+
+2e partie de la catégorie 2. Décisions de LeKiwi06 (02/10/2026, partie « Magasins » du cahier révisée) : Tradeshop
+abandonné (l'original n'est plus mis à jour depuis 2023), nos propres boutiques ; une région WorldGuard `zone_shop` pour
+tous les shops, où l'on peut claimer et où tout le monde construit ; prix en objet ou en monnaie.
+
+- **Magasin** (1 par joueur) : `/magasin create` (ou le menu) dans un de ses claims de la zone (centre du chunk dans la
+  région) : **45 000 points** ou **5 blocs compressés tier 3** ; 10 boutiques. `/magasin agrandir` dans un autre de ses
+  claims de la zone : **10 000 points**, le claim rejoint le magasin, +1 boutique. `/magasin position` (dans un claim du
+  magasin). `/magasin` : menu (mes boutiques, nom et description (32 / 100 caractères, nom unique), position, agrandir).
+- **Boutique** : poser un panneau contre (ou sur) un coffre, coffre piégé, tonneau ou shulker d'un claim de son magasin
+  ouvre « Créer une boutique » / « Fermer » (au lieu de l'éditeur du panneau). Objet vendu : « Écrire le nom » (nom
+  français ou id du jeu, sans majuscules ni accents ; plusieurs résultats : liste, 20 au plus ; noms tirés du fichier
+  de langue fr_fr de Minecraft 26.2, `noms_objets.txt`) ou « Choisir dans l'inventaire » (objets custom compris) ;
+  quantité (1 à 2 304) ; prix : « Monnaie (points) » ou « Objet » (mêmes choix + quantité) ; récapitulatif, « Créer ».
+  Panneau : « [Troc] », le lot, « contre », le prix ; ciré (non modifiable). Plusieurs panneaux sur un même contenant :
+  plusieurs boutiques, même stock (coffre double compris).
+- **Achat** : clic droit sur le panneau (ou depuis le catalogue, à distance) : offre, stock en lots, nombre de lots.
+  Refusé si le stock, le paiement (objets de l'inventaire ou solde), la place de l'acheteur ou la place du contenant
+  manquent. Objets payés : dans le contenant ; points payés : **en attente dans la boutique**. Chaque achat est noté dans
+  la console.
+- **Propriétaire** : clic sur son panneau ou « Mes boutiques » : offre et stock, points en attente (« Récupérer les
+  points »), « Gérer le stock » (à distance : copie du contenu, recopiée à la fermeture ; boutique **verrouillée** pendant
+  ce temps (ni achat, ni ouverture sur place) ; chunk chargé), « Supprimer la boutique » (le panneau redevient ordinaire,
+  points en attente rendus).
+- **Catalogue** : bouton « Magasins » du menu Économie : tous les magasins, puis leurs boutiques (offre, prix, stock) et
+  l'achat à distance ; « Mon magasin ».
+- **Protections** : panneau et contenant d'une boutique : cassés seulement par le propriétaire (la boutique est alors
+  supprimée), ni explosions, ni pistons, ni entonnoirs.
+- **KS_Claim 1.1.0** (à déployer ensemble) : un claim qui porte des boutiques ne peut être ni supprimé, ni vendu, ni
+  acheté ; supprimé ou vendu sans boutique, il quitte le magasin. `refusClaim(proprio, chunk)`, `claimRetire(proprio,
+  chunk)`.
+- Données : `plugins/KS_Economy/magasins.yml`. Réglages : section `magasins` de `config.yml` (région, prix, nombre de
+  boutiques ; valeurs par défaut dans le code : le `config.yml` déjà présent sur Event n'a pas ces clés, à ajouter à la
+  main seulement pour les modifier). `softdepend` WorldGuard, SimpleClaimSystem (sans eux : pas de magasin).
+
+Limites :
+- Un claim de la zone qui n'est pas dans un magasin reste un claim ordinaire (on peut y poser des panneaux normaux).
+- Les points en attente d'une boutique sont rendus au propriétaire si elle est supprimée.
+
+**Non déployé. À déployer ensemble sur Event : KS_Economy 1.1.0 et KS_Claim 1.1.0 ; puis région WorldGuard `zone_shop`
+(humain, drapeaux `build allow` et `scs-claim allow`). Statut : non testé en jeu.**

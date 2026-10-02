@@ -73,6 +73,9 @@ public final class KSEconomy extends JavaPlugin implements Listener {
     private Gui gui;
     private MenuEconomie menu;
     private Echanges echanges;
+    private Magasins magasins;
+    private Boutiques boutiques;
+    private MenuMagasin menuMagasin;
 
     @Override
     public void onEnable() {
@@ -92,6 +95,18 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         getCommand("economie").setExecutor(this);
         getCommand("echange").setExecutor(echanges);
         getCommand("echange").setTabCompleter(echanges);
+        // 1.1.0 : magasins et boutiques (cahier, « Magasins » révisés le 02/10/2026).
+        magasins = new Magasins(this);
+        boutiques = new Boutiques(this, magasins);
+        menuMagasin = new MenuMagasin(this, magasins, boutiques);
+        getServer().getPluginManager().registerEvents(boutiques, this);
+        getServer().getPluginManager().registerEvents(menuMagasin, this);
+        getCommand("magasin").setExecutor(menuMagasin);
+        getCommand("magasin").setTabCompleter(menuMagasin);
+        if (!getServer().getPluginManager().isPluginEnabled("WorldGuard")
+                || !getServer().getPluginManager().isPluginEnabled("SimpleClaimSystem")) {
+            getLogger().warning("WorldGuard ou SimpleClaimSystem absent : aucun magasin ne peut être créé.");
+        }
 
         if (getServer().getPluginManager().isPluginEnabled("KS_Menu")) {
             fr.kalium.ksmenu.KSMenu.ajouterBouton(this, "economie", lang.c("bouton.nom", "<green><bold>Économie"),
@@ -118,6 +133,9 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         if (echanges != null) {
             echanges.toutAnnuler();
         }
+        if (menuMagasin != null) {
+            menuMagasin.toutFermer();
+        }
         if (menu != null) {
             menu.fermerDepots();
         }
@@ -131,6 +149,22 @@ public final class KSEconomy extends JavaPlugin implements Listener {
 
     Gui gui() {
         return gui;
+    }
+
+    MenuMagasin menuMagasin() {
+        return menuMagasin;
+    }
+
+    /** 1.1.0 (KS_Claim) : pourquoi refuser de supprimer ou vendre ce claim (il porte des boutiques), ou null. */
+    public static String refusClaim(UUID proprio, org.bukkit.Chunk chunk) {
+        return instance.magasins == null ? null : instance.magasins.refusClaim(proprio, chunk);
+    }
+
+    /** 1.1.0 (KS_Claim) : claim supprimé ou vendu ; il quitte le magasin de son ancien propriétaire. */
+    public static void claimRetire(UUID proprio, org.bukkit.Chunk chunk) {
+        if (instance.magasins != null) {
+            instance.magasins.claimRetire(proprio, chunk);
+        }
     }
 
     // ------------------------------------------------------------------ réglages

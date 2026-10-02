@@ -45,3 +45,11 @@ Limites :
 `langs/fr_FR.yml` posés avant le premier démarrage), KS_Claim 1.0.0, KS_BiomeChanger 1.1.0 ; actifs après
 redémarrage d'Event ; puis commandes LuckPerms et région de l'île du dragon (humain, voir `KS_Claim/scs/README.md`).
 Statut : non testé en jeu.**
+
+## 1.1.0 - claims des magasins (02/10/2026, LeKiwi06)
+
+Magasins de KS_Economy 1.1.0 : un claim qui porte des boutiques ne peut être ni supprimé, ni mis en vente, ni acheté
+(message) ; supprimé ou vendu sans boutique, il quitte le magasin de son ancien propriétaire.
+
+**Non déployé. À déployer ensemble sur Event : KS_Economy 1.1.0 et KS_Claim 1.1.0 ; puis région WorldGuard `zone_shop`
+(humain, drapeaux `build allow` et `scs-claim allow`). Statut : non testé en jeu.**
