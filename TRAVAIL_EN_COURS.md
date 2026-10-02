@@ -16,6 +16,9 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KaliumRelay — LeKiwi06 — depuis le 2026-10-03 00:04 — catégorie 4 Récompenses, étape 1 : boîte aux lettres durable entre serveurs (récompenses vers Event)
+- KS_RewardsGUI — LeKiwi06 — depuis le 2026-10-03 00:04 — catégorie 4 Récompenses, étape 1 : nouveau : réception des récompenses sur Event, /rewards, journal
+- KS_KaliumGive — LeKiwi06 — depuis le 2026-10-03 00:04 — catégorie 4 Récompenses, étape 1 : fonction publique pour créer un objet custom par son id
 
 
 
