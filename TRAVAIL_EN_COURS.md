@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_BiomeChanger — LeKiwi06 — depuis le 2026-10-03 00:55 — correctif : initialiser l'API de SimpleClaimSystem
 - KS_Claim — LeKiwi06 — depuis le 2026-10-03 00:50 — correctif : initialiser l'API de SimpleClaimSystem (claims inutilisables)
 - KS_Economy — LeKiwi06 — depuis le 2026-10-03 00:50 — correctif : initialiser l'API de SimpleClaimSystem (magasins inutilisables)
 - KV_Plots — LeKiwi06 — depuis le 2026-10-03 00:38 — catégorie 4, étape 5 : notes reçues datées, signaux de note et de fin de concours
