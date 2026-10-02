@@ -16,17 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_BiomeChanger — LeKiwi06 — depuis le 2026-10-03 00:55 — correctif : initialiser l'API de SimpleClaimSystem
-- KS_Claim — LeKiwi06 — depuis le 2026-10-03 00:50 — correctif : initialiser l'API de SimpleClaimSystem (claims inutilisables)
-- KS_Economy — LeKiwi06 — depuis le 2026-10-03 00:50 — correctif : initialiser l'API de SimpleClaimSystem (magasins inutilisables)
-- KV_Plots — LeKiwi06 — depuis le 2026-10-03 00:38 — catégorie 4, étape 5 : notes reçues datées, signaux de note et de fin de concours
-- KV_Rewards — LeKiwi06 — depuis le 2026-10-03 00:38 — nouveau : catégorie 4, étape 5 (récompenses de Kanvas)
-- KLM_Menu — LeKiwi06 — depuis le 2026-10-03 00:29 — catégorie 4, étape 4 : bouton Récompenses dans « Informations »
-- KG_Rewards — LeKiwi06 — depuis le 2026-10-03 00:23 — nouveau : catégorie 4, étape 3 (paliers, tops, prestige, butin, envoi vers Event)
-- KG_ScoreBoards — LeKiwi06 — depuis le 2026-10-03 00:11 — catégorie 4, étape 2 : classement hebdomadaire, mois aligné, affichage du prestige
-- KaliumRelay — LeKiwi06 — depuis le 2026-10-03 00:04 — catégorie 4 Récompenses, étape 1 : boîte aux lettres durable entre serveurs (récompenses vers Event)
-- KS_RewardsGUI — LeKiwi06 — depuis le 2026-10-03 00:04 — catégorie 4 Récompenses, étape 1 : nouveau : réception des récompenses sur Event, /rewards, journal
-- KS_KaliumGive — LeKiwi06 — depuis le 2026-10-03 00:04 — catégorie 4 Récompenses, étape 1 : fonction publique pour créer un objet custom par son id
 
 
 

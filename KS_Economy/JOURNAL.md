@@ -135,4 +135,4 @@ Signalé par LeKiwi06 : `/magasin` et la création de boutiques dans un claim : 
 SimpleClaimSystem 1.13.1 ne crée pas son API lui-même : le plugin l'initialise maintenant avant chaque utilisation
 (`SimpleClaimSystemAPI_Provider.initialize`, sans effet si c'est déjà fait). Aucun autre changement.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (ancienne version dans `_removed-ks_economy-1.1.0/`), actif après redémarrage. Statut : non testé en jeu.**

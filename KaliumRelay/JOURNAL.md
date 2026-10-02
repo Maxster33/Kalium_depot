@@ -261,4 +261,4 @@ en mémoire, trop peu pour des récompenses. Nouveau `/mail/<boîte>` (même jet
   `plugins/kaliumrelay/mail/`, écriture atomique). 20 000 messages au plus par boîte. Refusé (401) si le jeton du relais
   est vide.
 
-**Non déployé (catégorie 4, étape 1 ; déploiement prévu avec les étapes suivantes). Statut : non testé.**
+**Déployé sur proxy le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (ancienne version dans `_removed-kaliumrelay-1.2.0/`), actif après redémarrage. Statut : non testé en jeu.**

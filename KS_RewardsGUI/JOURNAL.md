@@ -24,4 +24,4 @@ Plugin du serveur Event : réception des récompenses des autres serveurs. Cahie
 
 - **Bouton « Récompenses »** de KLM_Menu 2.6.0 : déclaré (`Recompenses`) ; ouvre `/rewards`. **KLM_Menu 2.6.0 obligatoire sur Event.**
 
-**Non déployé (catégorie 4, étape 1 ; déploiement prévu avec les étapes suivantes). Statut : non testé.**
+**Déployé sur Event le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (nouveau), actif après redémarrage. Statut : non testé en jeu.**

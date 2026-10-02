@@ -37,4 +37,4 @@ Plugin de kal-games : récompenses des mini-jeux. Cahier des charges : catégori
 
 - **Bouton « Récompenses »** de KLM_Menu 2.6.0 : déclaré (`Recompenses`) ; ouvre la progression (bouton « Tables de butin » pour les admins). **KLM_Menu 2.6.0 obligatoire sur kal-games.**
 
-**Non déployé (catégorie 4, étape 3). Statut : non testé en jeu.**
+**Déployé sur Kal-Games le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (nouveau), actif après redémarrage. Statut : non testé en jeu.**

@@ -146,5 +146,5 @@ Catégorie 4 « Récompenses » (cahier validé le 30/09/2026) :
   un niveau pour ce mini-jeu (`Prestiges.fournisseur(...)`).
 - Pas de classement de la semaine dans l'API HTTP du bot Discord (pas demandé).
 
-**Non déployé (catégorie 4, étape 2 ; à déployer avec KG_Rewards). Statut : non testé.**
+**Déployé sur Kal-Games le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (ancienne version dans `_removed-kg_scoreboards-1.7.0/`), actif après redémarrage. Statut : non testé en jeu.**
 

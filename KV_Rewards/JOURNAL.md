@@ -27,4 +27,4 @@ au total des notes avec 3 places ; copié dans `CAHIER_DES_CHARGES.md` au déplo
 - Données : `plugins/KV_Rewards/joueurs.yml`. Configuration : `relay-url`, `relay-token` (**vide dans le dépôt**),
   `boite`, `origine` (Kanvas). `depend` KV_Plots (1.5.0), KLM_Menu.
 
-**Non déployé (catégorie 4, étape 5). Statut : non testé en jeu.**
+**Déployé sur Kanvas le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (nouveau), actif après redémarrage. Statut : non testé en jeu.**

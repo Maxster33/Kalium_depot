@@ -223,5 +223,4 @@ Récompenses **du serveur où l'on est** (progression des joueurs ; configuratio
 ServicesManager : KG_Rewards (kal-games), KS_RewardsGUI (Event), KV_Rewards (Kanvas, plus tard). Sans plugin de
 récompenses, rien ne change. Le comparateur est donné dès qu'un serveur a un plugin de récompenses.
 
-**Non déployé. À déployer avec KG_Rewards (kal-games) et KS_RewardsGUI (Event), qui en ont besoin (règle 3.5). Statut :
-non testé.**
+**Déployé sur Event, Kal-Games et Kanvas le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (ancienne version dans `_removed-klm_menu-2.5.0/`), actif après redémarrage. Statut : non testé en jeu.**

@@ -14,7 +14,7 @@ Catégorie 4 « Récompenses » (cahier de LeKiwi06, validé le 30/09/2026), pou
   plots : total des notes, puis moyenne) à la fin des votes d'un concours de build.
 - Aucun changement de comportement en jeu.
 
-**Non déployé (catégorie 4, étape 5). Statut : non testé en jeu.**
+**Déployé sur Kanvas le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (ancienne version dans `_removed-kv_plots-1.4.1/`), actif après redémarrage. Statut : non testé en jeu.**
 
 ## 1.4.1 - la glace ne fond plus (27/09/2026)
 
