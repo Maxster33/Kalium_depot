@@ -268,6 +268,9 @@ Format : `### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici 
 
 ### 2026-10-02 — LeKiwi06
 
+*Tests d'Event regroupés plus tard (LeKiwi06 : un « speedrun » du serveur pour tout tester) : catégorie 2, 1re partie, et
+catégorie 3 restent non testées d'ici là.*
+
 **Ajout (22:26) : catégorie 3 « Claims » déployée sur Event, non testée** : SimpleClaimSystem 1.13.1 (téléchargé avec
 l'accord de LeKiwi06 ; configuration et traduction posées avant le premier démarrage), KS_Claim 1.0.0, KS_BiomeChanger
 1.1.0. Cahier : `KS_Claim/CAHIER_DES_CHARGES.md` ; réglages de SCS : `KS_Claim/scs/README.md`. **Après le redémarrage
