@@ -261,9 +261,10 @@ public final class AdminMenus {
         }
         List<SettingSpec> specs = minigame.type().settings();
         for (SettingSpec spec : specs) {
-            Component label = spec.help().isBlank()
-                    ? Component.text(spec.label())
-                    : Component.text(spec.label() + " - " + spec.help());
+            // 1.22.2 (LeKiwi06) : le nom seul dans le champ, l'explication en texte au-dessus des champs (le texte
+            // d'une jauge ne doit jamais défiler).
+            Component label = Component.text(spec.label());
+            explication(body, spec);
             String key = "s_" + spec.key();
             switch (spec.kind()) {
                 case BOOL -> inputs.add(gui.toggle(key, label, minigame.getBool(spec.key(), (Boolean) spec.def())));
@@ -321,6 +322,14 @@ public final class AdminMenus {
         }));
         buttons.add(back(p -> openMinigame(p, minigame)));
         gui.open(player, t("admin.settings-title", "<gold><bold>Réglages"), body, inputs, buttons, gui.close(), 1);
+    }
+
+    /** 1.22.2 : « Nom : explication » au-dessus des champs (rien si le réglage n'a pas d'explication). */
+    private static void explication(List<Component> body, SettingSpec spec) {
+        if (!spec.help().isBlank()) {
+            body.add(Component.text(spec.label() + " : ", net.kyori.adventure.text.format.NamedTextColor.WHITE)
+                    .append(Component.text(spec.help(), net.kyori.adventure.text.format.NamedTextColor.GRAY)));
+        }
     }
 
     // ------------------------------------------------------------------ objets verrouilles
@@ -711,10 +720,11 @@ public final class AdminMenus {
     private void openPointSettings(Player player, Arena arena, PointSpec spec, int index) {
         Map<String, Object> values = arena.pointSettings(spec.key(), index);
         List<DialogInput> inputs = new ArrayList<>();
+        List<Component> body = new ArrayList<>();
         for (SettingSpec setting : spec.perPoint()) {
-            Component label = setting.help().isBlank()
-                    ? Component.text(setting.label())
-                    : Component.text(setting.label() + " - " + setting.help());
+            // 1.22.2 : nom seul dans le champ, explication au-dessus (voir openSettings).
+            Component label = Component.text(setting.label());
+            explication(body, setting);
             String key = "p_" + setting.key();
             Object value = values.getOrDefault(setting.key(), setting.def());
             switch (setting.kind()) {
@@ -763,7 +773,7 @@ public final class AdminMenus {
             openListPoint(p, arena, spec, index);
         }));
         buttons.add(back(p -> openListPoint(p, arena, spec, index)));
-        gui.open(player, Component.text(spec.label() + " n°" + (index + 1) + " : réglages"), List.of(), inputs, buttons, gui.close(), 1);
+        gui.open(player, Component.text(spec.label() + " n°" + (index + 1) + " : réglages"), body, inputs, buttons, gui.close(), 1);
     }
 
     private void setPoint(Player player, Arena arena, PointSpec spec, Location location) {

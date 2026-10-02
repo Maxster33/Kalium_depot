@@ -861,3 +861,17 @@ Aucun autre changement.
 Kixster et Event), KalGames 1.22.1 (`_removed-kalgames-1.22.0/`), KG_BingoGame 0.8.4 (`_removed-kg_bingogame-0.8.3/`),
 KS_Economy 1.0.3 (`_removed-ks_economy-1.0.2/`) ; actifs après redémarrage de chaque serveur. Statut : non testé en
 jeu.**
+
+## 1.22.2 - réglages : nom court dans la jauge, explication au-dessus (02/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (02/10/2026) : dans les réglages des jeux pour les opérateurs, les jauges étaient très longues
+(nom et explication dans la jauge, élargie par KLM_Menu 2.5.0) ; Minecraft ne permettant du texte qu'en haut d'une
+fenêtre, « écrit des textes plus courts dans les champs de jauge et boutons ». Mesure de tous les textes (police de
+Minecraft) : chaque champ et bouton tient maintenant dans sa largeur normale (260 / 240 pixels).
+- Réglages d'un mini-jeu et réglages d'un point (menus des opérateurs) : chaque champ n'affiche plus que le nom du
+  réglage ; les explications sont écrites en texte en haut du menu (« Nom : explication »).
+- Noms raccourcis (le détail passe dans l'explication) : « Attente avant lancement (s) », « Bronze / Silver / Gold :
+  ticks par objet », « Arènes préchargées ».
+
+**Non déployé. À déployer ensemble sur Kal-Games : KalGames 1.22.2, KG_BoatRace 1.4.2, KG_Parkour 1.1.1, KG_PvpKit
+1.0.1, KG_Bingo 1.6.1 ; KLM_Portal 1.3.2 sur le lobby et Kanvas. Statut : non testé en jeu.**

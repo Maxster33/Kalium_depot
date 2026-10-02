@@ -108,3 +108,16 @@ bateau et pas sous le bateau entier, comme ça le hors-piste ne compte que pour 
 - Détail des points du tour en gris clair (« trop foncé ») : nouvelle clé `race.lap-points-2` (l'ancienne
   `race.lap-points` est déjà figée dans le `lang.yml` du serveur, elle n'est plus utilisée).
 **Déploiement** : seul. **Statut : déployé sur Kal-Games le 25/09/2026 à 12 h 59 (1.4.0 dans `_removed-kg_boatrace-1.4.0/`), testé et confirmé par LeKiwi06 le 25/09/2026.**
+
+## 1.4.2 - noms de réglages plus courts (02/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (02/10/2026) : dans les réglages des jeux pour les opérateurs, les jauges étaient très longues
+(nom et explication dans la jauge, élargie par KLM_Menu 2.5.0) ; Minecraft ne permettant du texte qu'en haut d'une
+fenêtre, « écrit des textes plus courts dans les champs de jauge et boutons ». Mesure de tous les textes (police de
+Minecraft) : chaque champ et bouton tient maintenant dans sa largeur normale (260 / 240 pixels).
+Noms raccourcis (détail dans l'explication, affichée au-dessus des champs par KalGames 1.22.2) : « Tours par défaut »,
+« Barème : longueur d'une série », « Palier 1 à 4 : tour en moins de (s) », « Blocs de piste », « Meilleurs temps : tour
+max (s) », « Rayon des points de contrôle ». Clés des réglages inchangées (valeurs gardées).
+
+**Non déployé. À déployer ensemble sur Kal-Games : KalGames 1.22.2, KG_BoatRace 1.4.2, KG_Parkour 1.1.1, KG_PvpKit
+1.0.1, KG_Bingo 1.6.1 ; KLM_Portal 1.3.2 sur le lobby et Kanvas. Statut : non testé en jeu.**

@@ -67,3 +67,17 @@ pas celui du kit déclassé.
 Garder PlayerKits2 (ou au moins son dossier `kits`) jusqu'au premier démarrage de KG_PvpKit (conversion des kits), puis
 le ranger dans `_removed-playerkits2-…`. Nouvelles clés : valeurs par défaut du code tant qu'elles ne sont pas changées
 dans le panneau admin. **Statut : déployé sur Kal-Games (7001) le 28/09/2026 à 21 h 44 avec KalGames 1.22.0 (serveur éteint, par Claude de LeKiwi06 en ligne de commande WinSCP) ; non testé en jeu.**
+
+## 1.0.1 - textes plus courts (02/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (02/10/2026) : dans les réglages des jeux pour les opérateurs, les jauges étaient très longues
+(nom et explication dans la jauge, élargie par KLM_Menu 2.5.0) ; Minecraft ne permettant du texte qu'en haut d'une
+fenêtre, « écrit des textes plus courts dans les champs de jauge et boutons ». Mesure de tous les textes (police de
+Minecraft) : chaque champ et bouton tient maintenant dans sa largeur normale (260 / 240 pixels).
+- Réglages : « Série : 1er / 2e palier (manches) », « Déclassement : consommables (%) », « Attente avant lancement (s) »,
+  « Arènes préchargées » (détail dans l'explication). Clés inchangées.
+- Création d'une partie : « 3 manches (2 victoires) », « 5 manches (3 victoires) », « Kit aléatoire (même pour tous) »
+  (nouvelles clés de langue `menu.rounds-3-court`, `menu.rounds-5-court`, `menu.kitmode-random-court`).
+
+**Non déployé. À déployer ensemble sur Kal-Games : KalGames 1.22.2, KG_BoatRace 1.4.2, KG_Parkour 1.1.1, KG_PvpKit
+1.0.1, KG_Bingo 1.6.1 ; KLM_Portal 1.3.2 sur le lobby et Kanvas. Statut : non testé en jeu.**

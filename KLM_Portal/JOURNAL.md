@@ -136,3 +136,15 @@ cette interface pour éviter de futurs missclicks ».
 
 **Déployé sur le lobby et Kanvas le 28/09/2026 à 12 h 03** (serveurs allumés, pris en compte au redémarrage ; 1.3.0 dans
 `/plugins/_removed-klm_portal-1.3.0/`). **Statut : non testé en jeu.**
+
+## 1.3.2 - point de chute : option courte (02/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (02/10/2026) : dans les réglages des jeux pour les opérateurs, les jauges étaient très longues
+(nom et explication dans la jauge, élargie par KLM_Menu 2.5.0) ; Minecraft ne permettant du texte qu'en haut d'une
+fenêtre, « écrit des textes plus courts dans les champs de jauge et boutons ». Mesure de tous les textes (police de
+Minecraft) : chaque champ et bouton tient maintenant dans sa largeur normale (260 / 240 pixels).
+Liste « Point de chute » : « non défini » (clé `landings.mode-none`) au lieu de « non défini (le serveur d'arrivée
+décide) » ; l'explication est écrite en haut du menu (`landings.mode-aide`).
+
+**Non déployé. À déployer ensemble sur Kal-Games : KalGames 1.22.2, KG_BoatRace 1.4.2, KG_Parkour 1.1.1, KG_PvpKit
+1.0.1, KG_Bingo 1.6.1 ; KLM_Portal 1.3.2 sur le lobby et Kanvas. Statut : non testé en jeu.**

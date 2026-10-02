@@ -53,3 +53,15 @@ anti-collision à tester sur Bedrock. Le délai de grâce de 30 s après le 1er 
 **Déployé seul sur Kal-Games (7001) le 26/09/2026 20:56** (serveur éteint, accord de LeKiwi06) ; 1.0.0 dans
 `/plugins/_removed-kg_parkour-1.0.0/`. Nouveaux réglages : valeurs par défaut du code tant qu'ils ne sont pas changés
 dans le panneau admin. **Testé et confirmé par LeKiwi06 le 27/09/2026** (« tout fonctionne bien »).
+
+## 1.1.1 - noms de réglages plus courts (02/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (02/10/2026) : dans les réglages des jeux pour les opérateurs, les jauges étaient très longues
+(nom et explication dans la jauge, élargie par KLM_Menu 2.5.0) ; Minecraft ne permettant du texte qu'en haut d'une
+fenêtre, « écrit des textes plus courts dans les champs de jauge et boutons ». Mesure de tous les textes (police de
+Minecraft) : chaque champ et bouton tient maintenant dans sa largeur normale (260 / 240 pixels).
+Noms raccourcis : « Arènes préchargées », « Temps par point de contrôle (s) », « Temps au 2e palier (s) ». Clés
+inchangées.
+
+**Non déployé. À déployer ensemble sur Kal-Games : KalGames 1.22.2, KG_BoatRace 1.4.2, KG_Parkour 1.1.1, KG_PvpKit
+1.0.1, KG_Bingo 1.6.1 ; KLM_Portal 1.3.2 sur le lobby et Kanvas. Statut : non testé en jeu.**

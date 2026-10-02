@@ -77,18 +77,18 @@ public final class KGPvpKit extends JavaPlugin implements Listener {
                         integer("points-second", "Points de la 2e place", 4, 0, 100, "À 3 ou 4 équipes : dernière équipe éliminée."),
                         integer("points-third", "Points de la 3e place", 2, 0, 100, "À 4 équipes."),
                         integer("points-inferiority", "Bonus par joueur d'écart", 5, 0, 100, "Ajouté aux gagnants quand leur équipe était en infériorité numérique."),
-                        integer("streak-1-wins", "Série : 1er palier (manches gagnées d'affilée)", 3, 2, 50, "À partir de ce nombre de manches gagnées d'affilée."),
+                        integer("streak-1-wins", "Série : 1er palier (manches)", 3, 2, 50, "À partir de ce nombre de manches gagnées d'affilée."),
                         integer("streak-1-bonus-pct", "Série : bonus du 1er palier (%)", 25, 0, 200, "Multiplicateur ajouté (25 = x1,25)."),
-                        integer("streak-2-wins", "Série : 2e palier (manches gagnées d'affilée)", 5, 2, 50, "À partir de ce nombre de manches gagnées d'affilée."),
+                        integer("streak-2-wins", "Série : 2e palier (manches)", 5, 2, 50, "À partir de ce nombre de manches gagnées d'affilée."),
                         integer("streak-2-bonus-pct", "Série : bonus du 2e palier (%)", 50, 0, 200, "Multiplicateur ajouté (50 = x1,5)."),
                         integer("downgrade-max-level", "Déclassement : niveau maximum", 4, 0, 4, "0 = pas de déclassement."),
                         integer("downgrade-bonus-pct", "Déclassement : bonus par niveau (%)", 50, 0, 200, "Multiplicateur ajouté par niveau (50 : niveau 4 = x3)."),
-                        integer("downgrade-consumables-pct", "Déclassement : consommables retirés par niveau (%)", 20, 0, 25, "Aliments, potions, perles, flèches, totems..."),
+                        integer("downgrade-consumables-pct", "Déclassement : consommables (%)", 20, 0, 25, "Retirés par niveau : aliments, potions, perles, flèches, totems..."),
                         integer("public-team-size", "Partie publique : joueurs par équipe", 1, 1, 4, "1 = chacun pour soi."),
                         integer("public-min-teams", "Partie publique : équipes minimum", 2, 2, 4, "Nombre d'équipes pour lancer un match."),
                         integer("public-max-teams", "Partie publique : équipes maximum", 4, 2, 4, "Un match démarre dès que ce nombre est atteint."),
-                        integer("public-gather-seconds", "Partie publique : attente avant lancement (s)", 30, 5, 180, "Délai dès que le minimum est atteint."),
-                        integer("prewarm-arenas", "Copies de chaque arène préchargées au démarrage", 0, 0, 10, "Collées dès le démarrage du serveur et gardées de côté : aucune arène à charger au lancement d'une partie (0 = aucune)."),
+                        integer("public-gather-seconds", "Attente avant lancement (s)", 30, 5, 180, "Partie publique : délai dès que le minimum est atteint."),
+                        integer("prewarm-arenas", "Arènes préchargées", 0, 0, 10, "Copies de chaque arène, collées dès le démarrage du serveur et gardées de côté : aucune arène à charger au lancement d'une partie (0 = aucune)."),
                         integer("max-private-games", "Parties privées simultanées maximum", 0, 0, 40, "0 = pas de limite."),
                         bool("break-map", "Casser les blocs de la carte", false, "Non : seuls les blocs posés pendant le match sont cassables. Tout est restauré à la fin."),
                         bool("bedrock-option", "Option PvP Bedrock (Haste) proposée", true, "Propose la case Haste dans les parties privées."),
@@ -197,12 +197,12 @@ public final class KGPvpKit extends JavaPlugin implements Listener {
             }
             inputs.add(gui.choice("rounds", games.t("menu.create-rounds", "Nombre de manches"),
                     List.of("1", "3", "5"),
-                    List.of(games.t("menu.rounds-1", "1 manche"), games.t("menu.rounds-3", "3 manches (première équipe à 2 victoires)"),
-                            games.t("menu.rounds-5", "5 manches (première équipe à 3 victoires)")), "1"));
+                    List.of(games.t("menu.rounds-1", "1 manche"), games.t("menu.rounds-3-court", "3 manches (2 victoires)"),
+                            games.t("menu.rounds-5-court", "5 manches (3 victoires)")), "1"));
             inputs.add(gui.choice("kitMode", games.t("menu.create-kitmode", "Choix du kit"),
                     List.of("vote", "random"),
                     List.of(games.t("menu.kitmode-vote", "Vote avant chaque manche"),
-                            games.t("menu.kitmode-random", "Kit aléatoire à chaque manche (le même pour toutes les équipes)")), "vote"));
+                            games.t("menu.kitmode-random-court", "Kit aléatoire (même pour tous)")), "vote"));
             return inputs;
         }
 

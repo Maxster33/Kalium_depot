@@ -361,8 +361,9 @@ final class Landings implements Listener {
         ConfigurationSection current = landingSection(server);
         String mode = current == null ? NONE : current.getString("mode", NONE);
         List<DialogInput> inputs = new ArrayList<>();
+        // 1.3.2 : options courtes (le texte d'une liste ne doit jamais défiler) ; explication au-dessus des champs.
         inputs.add(gui.choice("mode", lang.c("landings.mode", "Point de chute"), List.of(NONE, LAST, POINT),
-                List.of(lang.c("state-none", "<gray>non défini (le serveur d'arrivée décide)"),
+                List.of(lang.c("landings.mode-none", "<gray>non défini"),
                         lang.c("state-last", "<white>dernière position"),
                         lang.c("landings.mode-point", "<white>coordonnées ci-dessous")), mode));
         inputs.add(gui.text("x", Component.text("X"), text(current, "x"), 16));
@@ -392,7 +393,8 @@ final class Landings implements Listener {
         });
         gui.open(player, lang.c("landings.server-title", "<#09add3><bold>Point de chute : <server>", "server", server),
                 List.of(lang.c("landings.server-body", "<gray>Coordonnées sur le serveur <white><server></white>.",
-                        "server", server)),
+                        "server", server), lang.c("landings.mode-aide", "<gray>Non défini : le serveur d'arrivée "
+                        + "décide.")),
                 inputs, List.of(save, gui.button(lang.c("add.back", "<gray>Retour"), null, p -> openMenu(p, back))),
                 null, 1);
         lang.saveIfNeeded();

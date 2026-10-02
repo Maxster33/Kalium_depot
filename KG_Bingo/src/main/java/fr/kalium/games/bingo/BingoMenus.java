@@ -140,14 +140,14 @@ final class BingoMenus {
         List<DialogInput> inputs = new ArrayList<>();
         inputs.add(gui.number("teamCount", t("bingo.create-teams", "Nombre d'équipes"), 1, maxTeamCount, defaultCount, 1));
         inputs.add(gui.number("teamSize", t("bingo.create-teamsize", "Joueurs par équipe"), 1, maxTeamSize, defaultSize, 1));
-        inputs.add(gui.number("duration", t("bingo.create-duration", "Durée de la partie (minutes, sauf blackout)"),
+        inputs.add(gui.number("duration", t("bingo.create-duration-court", "Durée (minutes)"),
                 minDurationMinutes, maxDurationMinutes, defaultDurationMinutes, 5));
         // 1.1.0 - demande explicite de LeKiwi06 (24/09/2026) : mode (bingos a achever, 3 a 12, avec chrono ; ou
         // blackout, grille complete sans chrono) et composition de la grille par difficulte (25 cases ; par defaut
         // 10 faciles, 10 normaux, 5 difficiles, 0 extreme - "trop dur pour des debutants").
         inputs.add(gui.choice("mode", t("bingo.create-mode", "Mode de jeu"), List.of("BINGOS", "BLACKOUT"),
-                List.of(t("bingo.mode-bingos", "Bingos (lignes, colonnes, diagonales) avec chrono"),
-                        t("bingo.mode-blackout", "Blackout : grille complète, sans chrono")), "BINGOS"));
+                List.of(t("bingo.mode-bingos-court", "Bingos, avec chrono"),
+                        t("bingo.mode-blackout-court", "Blackout, sans chrono")), "BINGOS"));
         inputs.add(gui.number("bingos", t("bingo.create-bingos", "Bingos à achever pour gagner"), 3, 12, 3, 1));
         inputs.add(gui.number("easy", t("bingo.create-easy", "Objectifs faciles"), 0, GRID_CELLS, 10, 1));
         inputs.add(gui.number("medium", t("bingo.create-medium", "Objectifs normaux"), 0, GRID_CELLS, 10, 1));
@@ -182,7 +182,10 @@ final class BingoMenus {
                             + hard + " D / " + extreme + " X");
         }));
         buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openBingoMenu));
-        List<Component> body = List.of(t("bingo.create-body", "<gray>Réglez la partie puis créez-la. Vous serez l'hôte."));
+        // 1.6.1 : textes courts dans les champs (ils ne doivent jamais défiler), explications ici.
+        List<Component> body = List.of(t("bingo.create-body", "<gray>Réglez la partie puis créez-la. Vous serez l'hôte."),
+                t("bingo.create-aide", "<gray>Bingos : lignes, colonnes ou diagonales à achever, avec chrono. "
+                        + "Blackout : grille complète, sans chrono (la durée ne compte pas)."));
         gui.open(player, t("bingo.create-title", "<gold><bold>Nouvelle partie Bingo"), body, inputs, buttons, gui.close(), 1);
     }
 

@@ -93,6 +93,9 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 ### Versions compilées, non déployées
 
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
+- **Textes plus courts dans les menus (02/10/2026, LeKiwi06), non testé** : KalGames 1.22.2 (réglages : nom seul dans
+  la jauge, explication au-dessus), KG_BoatRace 1.4.2, KG_Parkour 1.1.1, KG_PvpKit 1.0.1, KG_Bingo 1.6.1 (Kal-Games),
+  KLM_Portal 1.3.2 (lobby, Kanvas).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »
