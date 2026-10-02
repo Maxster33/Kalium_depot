@@ -214,3 +214,14 @@ arrive, c'est illisible » ; « il faut régler ce problème sur tous les plugin
 `_removed-klm_menu-2.4.0/` sur lobby, Kal-Games, Serveur Jeux, Kanvas ; 2.4.1 dans `_removed-klm_menu-2.4.1/` sur
 Kixster et Event), KalGames 1.22.1 (`_removed-kalgames-1.22.0/`), KG_BingoGame 0.8.4 (`_removed-kg_bingogame-0.8.3/`),
 KS_Economy 1.0.3 (`_removed-ks_economy-1.0.2/`) ; actifs après redémarrage de chaque serveur. Statut : **testé et confirmé par LeKiwi06 le 02/10/2026** (menus : plus aucun texte qui défile).**
+
+## 2.6.0 - bouton Récompenses (03/10/2026, LeKiwi06)
+
+Catégorie 4 « Récompenses » : bouton « Récompenses » dans le comparateur « Informations » ; il ouvre l'interface
+Récompenses **du serveur où l'on est** (progression des joueurs ; configuration pour les admins). Nouvelle API
+`fr.kalium.menu.api.Recompenses` (`owner()`, `ouvrir(joueur)`), déclarée par le plugin de récompenses du serveur dans le
+ServicesManager : KG_Rewards (kal-games), KS_RewardsGUI (Event), KV_Rewards (Kanvas, plus tard). Sans plugin de
+récompenses, rien ne change. Le comparateur est donné dès qu'un serveur a un plugin de récompenses.
+
+**Non déployé. À déployer avec KG_Rewards (kal-games) et KS_RewardsGUI (Event), qui en ont besoin (règle 3.5). Statut :
+non testé.**

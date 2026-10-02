@@ -22,4 +22,6 @@ Plugin du serveur Event : réception des récompenses des autres serveurs. Cahie
   `boite`, `intervalle-secondes`.
 - `depend` KLM_Menu ; `softdepend` KS_Menu, KS_Economy, KS_KaliumGive ; `build.sh` : compiler ces plugins d'abord.
 
+- **Bouton « Récompenses »** de KLM_Menu 2.6.0 : déclaré (`Recompenses`) ; ouvre `/rewards`. **KLM_Menu 2.6.0 obligatoire sur Event.**
+
 **Non déployé (catégorie 4, étape 1 ; déploiement prévu avec les étapes suivantes). Statut : non testé.**

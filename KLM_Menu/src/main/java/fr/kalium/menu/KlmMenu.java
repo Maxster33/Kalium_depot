@@ -277,7 +277,17 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
 
     /** Le joueur a-t-il quelque chose a voir dans « Informations » ? (sinon, pas de comparateur) */
     private boolean hasInformations(Player player) {
-        return isAdmin(player) || !rankingSections(player).isEmpty();
+        return isAdmin(player) || !rankingSections(player).isEmpty() || recompenses() != null;
+    }
+
+    /** 2.6.0 : interface Récompenses de ce serveur (KG_Rewards, KS_RewardsGUI, KV_Rewards...), ou null. */
+    private fr.kalium.menu.api.Recompenses recompenses() {
+        for (var service : getServer().getServicesManager().getRegistrations(fr.kalium.menu.api.Recompenses.class)) {
+            if (service.getPlugin().isEnabled()) {
+                return service.getProvider();
+            }
+        }
+        return null;
     }
 
     /** 2.4.0 - API : ouvre « Informations » (comparateur). */
@@ -292,6 +302,16 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
                             openSection(p, list.get(0), this::openInformations);
                         } else {
                             openRankings(p);
+                        }
+                    }));
+        }
+        // 2.6.0 (catégorie 4) : progression des récompenses (configuration pour les admins).
+        if (recompenses() != null) {
+            buttons.add(gui.button(lang.c("info.rewards", "<light_purple><bold>Récompenses"),
+                    lang.c("info.rewards-tip", "<gray>Ta progression dans les paliers et les tops de ce serveur."), p -> {
+                        fr.kalium.menu.api.Recompenses r = recompenses();
+                        if (r != null) {
+                            r.ouvrir(p);
                         }
                     }));
         }

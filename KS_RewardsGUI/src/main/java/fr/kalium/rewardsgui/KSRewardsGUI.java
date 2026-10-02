@@ -72,6 +72,18 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
         menu = new Menu(this);
         getServer().getPluginManager().registerEvents(this, this);
         getCommand("rewards").setExecutor(this);
+        // Bouton « Récompenses » du comparateur « Informations » de KLM_Menu 2.6.0 (s'il est présent).
+        if (getServer().getPluginManager().getPlugin("KLM_Menu") != null) {
+            getServer().getServicesManager().register(fr.kalium.menu.api.Recompenses.class, new fr.kalium.menu.api.Recompenses() {
+                public org.bukkit.plugin.Plugin owner() {
+                    return KSRewardsGUI.this;
+                }
+
+                public void ouvrir(Player joueur) {
+                    menu.ouvrir(joueur);
+                }
+            }, this, org.bukkit.plugin.ServicePriority.Normal);
+        }
         if (getServer().getPluginManager().isPluginEnabled("KS_Menu")) {
             fr.kalium.ksmenu.KSMenu.ajouterBouton(this, "rewards", lang.c("bouton.nom", "<light_purple><bold>Récompenses"),
                     lang.c("bouton.description", "<gray>Récompenses gagnées sur les autres serveurs"), 30, menu::ouvrir);

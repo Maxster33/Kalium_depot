@@ -35,4 +35,6 @@ Plugin de kal-games : récompenses des mini-jeux. Cahier des charges : catégori
 - Données : `plugins/KG_Rewards/joueurs.yml`. Configuration : `relay-url`, `relay-token` (**vide dans le dépôt**),
   `boite`, `origine`. `depend` KG_ScoreBoards, KLM_Menu.
 
+- **Bouton « Récompenses »** de KLM_Menu 2.6.0 : déclaré (`Recompenses`) ; ouvre la progression (bouton « Tables de butin » pour les admins). **KLM_Menu 2.6.0 obligatoire sur kal-games.**
+
 **Non déployé (catégorie 4, étape 3). Statut : non testé en jeu.**

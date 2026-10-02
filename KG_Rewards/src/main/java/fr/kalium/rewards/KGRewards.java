@@ -44,6 +44,16 @@ public final class KGRewards extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(menuAdmin, this);
         getCommand("kgrewards").setExecutor(this);
         Prestiges.fournisseur(moteur::prestige);
+        // Bouton « Récompenses » du comparateur « Informations » de KLM_Menu 2.6.0.
+        getServer().getServicesManager().register(fr.kalium.menu.api.Recompenses.class, new fr.kalium.menu.api.Recompenses() {
+            public org.bukkit.plugin.Plugin owner() {
+                return KGRewards.this;
+            }
+
+            public void ouvrir(Player joueur) {
+                KGRewards.this.ouvrir(joueur);
+            }
+        }, this, org.bukkit.plugin.ServicePriority.Normal);
         if (getConfig().getString("relay-token", "").isBlank()) {
             getLogger().warning("relay-token vide dans config.yml : les récompenses attendent dans envois.yml.");
         }
