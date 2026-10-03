@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_AntiCheat — LeKiwi06 — depuis le 2026-10-03 06:30 — nouveau : catégorie 6 Anti-triche (étape 1 : alertes, interface staff, suspension, invsee / ecsee, morts d'entités)
 
 
 
