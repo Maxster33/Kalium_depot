@@ -59,3 +59,4 @@ qui a trait au claim ne marche pas » ; « vas y déploie ».
   jusqu'à 128 ; `lava-obscures` laissé pour la catégorie 6.
 - Déployé sur Event le 03/10/2026 à 05:18.
 - Suite : « je ne vois pas le compteur de coffres » (compteurs.yml vide) : KS_FairPlay 1.0.1 (comptage au tick suivant, message en créatif), déployé à 05:45.
+- Suite : « Exploration journalière : n / 10 » (ne pas spoiler) et barre du temps de l'Élixir de Fortune : KS_FairPlay 1.0.2, déployé à 06:07.

@@ -128,3 +128,11 @@ non concernés (fermes). Chance III et créatif : libres.
 > il faut aussi avoir le compteur de coffres dans le tchat pour ceux qui perdent le fil
 
 Fait : à chaque ouverture comptée, « Limite du jour : n / 10 » dans la barre d'action et dans le tchat.
+
+> la limite doit juste afficher " Exploration journalière : n / 10" pour ne pas trop spoil les changements
+
+Fait (KS_FairPlay 1.0.2) : compteur « Exploration journalière : n / 10 » ; limite atteinte : « Exploration journalière : limite atteinte, reviens demain. » (sans la liste de ce qui compte).
+
+> il faut afficher clairement le timer de la potion sur l'écran du joueur aussi pour qu'il puisse suivre le temps qui lui reste plus facilement
+
+Fait (KS_FairPlay 1.0.2) : barre verte en haut de l'écran « Élixir de Fortune : m:ss » tant que le joueur a Chance III ou plus (jauge sur 10 minutes, mise à jour chaque seconde).
