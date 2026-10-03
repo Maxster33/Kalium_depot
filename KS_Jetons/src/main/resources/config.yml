@@ -1,0 +1,8 @@
+# KS_Jetons - valeurs par defaut aussi dans le code.
+
+# Prix d'un jeton en points du score (0 : pas en vente). A REGLER (LeKiwi06 : environ 15 minutes de farm pour une TP).
+prix:
+  tp: 0
+  emplacement: 0
+  claim: 0
+  mort: 0

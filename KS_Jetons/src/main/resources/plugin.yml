@@ -1,0 +1,12 @@
+name: KS_Jetons
+version: '${project.version}'
+main: fr.kalium.jetons.KSJetons
+api-version: '26.2'
+description: Jetons du serveur Event (teleportation, emplacement, claim, mort) et inventaire de jetons (/jetons).
+authors: [KaLium]
+depend: [KLM_Menu]
+softdepend: [KS_Menu, KS_Economy]
+commands:
+  jetons:
+    description: Ton inventaire de jetons (deposer, retirer, acheter).
+    usage: /jetons
