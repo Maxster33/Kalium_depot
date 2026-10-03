@@ -27,3 +27,10 @@ image de la barrière, clé empilable par 64, craft sans forme (dans KS_Crafts 1
   pendant que le coffre est ouvert, les changements faits depuis l'ouverture sont perdus (pas de duplication).
 
 **Déployé sur Event le 28/09/2026 à 23:47. Statut : non testé en jeu.**
+
+## 1.1.0 - fonctions pour l'ecsee de l'anti-triche (03/10/2026, LeKiwi06)
+
+Correctif de duplication par ecsee (KS_AntiCheat 1.1.1) : `coffreOuvert`, `fermerCoffre` (copie enregistrée puis
+fermée), `extension`, `casesDebloquees`, `ecrireExtension`, `imageCaseBloquee`. Aucun changement pour les joueurs.
+
+**Non déployé. Statut : non testé en jeu.**

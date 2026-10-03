@@ -142,3 +142,23 @@ regroupé sur 30 s (un filon miné en plusieurs fois compté plusieurs fois ou p
 - Comprend aussi les changements de 1.0.2 (jamais déployée).
 
 **Non déployé. Statut : non testé en jeu.**
+
+## 1.1.1 - correctif : duplication par invsee / ecsee (03/10/2026, LeKiwi06)
+
+Signalé par LeKiwi06 (tests avec Maxster33) : « quand je récupère un item, l'action n'est pas synchronisée sur celle du
+joueur dans son ec, donc on peut dupliquer des items si je le prends puis qu'il le prend à son tour ».
+- Cause (ecsee) : KS_EC_Extension fait travailler le joueur sur une **copie** de son coffre (pour l'extension), réécrite
+  à la fermeture ; l'ecsee modifiait le vrai coffre en même temps. Cause (invsee) : la vue entière était recopiée
+  dans l'inventaire du joueur à chaque clic du staff, ce qui pouvait faire réapparaître un objet jeté ou déplacé.
+- **Ecsee en ligne** : le coffre du joueur est fermé (copie enregistrée) ; tant que le staff le regarde, le joueur ne
+  peut pas l'ouvrir (« Ton coffre de l'Ender est indisponible un instant. ») ; la vue montre les 6 lignes (extension de
+  KS_EC_Extension 1.1.0 comprise, cases bloquées non modifiables) ; réécrite à la fermeture (aussi à la déconnexion du
+  joueur).
+- **Invsee en ligne** : synchronisé case par case à chaque tick ; même case changée des deux côtés : la version du
+  joueur gagne, et ce que le staff y avait pris ou posé lui est repris ou rendu (noté dans la console).
+- **Une seule vue à la fois** par joueur et par type (inventaire / coffre de l'Ender).
+- **Hors ligne** : l'extension est lue dans le fichier de sauvegarde (`BukkitValues`) et dans les instantanés, et
+  réappliquée à la connexion avec le reste.
+- Double-clic (ramasser tout) désactivé dans les vues. `softdepend` KS_EC_Extension.
+
+**Non déployé. Statut : non testé en jeu.**

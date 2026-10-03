@@ -39,6 +39,10 @@ import java.util.UUID;
  * Stockage : l'extension et les cases débloquées sont dans les données du joueur (PersistentDataContainer), le haut
  * reste le coffre de l'Ender vanilla. Le contenu est copié à l'ouverture et réécrit à la fermeture.
  *
+ * 1.1.0 : fonctions pour l'ecsee de KS_AntiCheat (coffreOuvert, fermerCoffre, extension, casesDebloquees,
+ * ecrireExtension, imageCaseBloquee) : l'ecsee travaille sur le vrai coffre, joueur empêché de l'ouvrir pendant ce
+ * temps (avant : il travaillait sur sa copie en même temps, ce qui dupliquait les objets).
+ *
  * Clé de l'End : livre de connaissances (aucun craft, pas de bloc) avec l'image de la clé des épreuves sinistre, qui
  * ne peut donc pas ouvrir les coffres-forts ; son clic droit vanilla est annulé. Autres plugins : creerCle()
  * (KS_Crafts, KS_KaliumGive).
@@ -180,6 +184,58 @@ public final class KSECExtension extends JavaPlugin implements Listener {
         PersistentDataContainer data = player.getPersistentDataContainer();
         data.set(contenu, PersistentDataType.BYTE_ARRAY, ItemStack.serializeItemsAsBytes(bas));
         data.set(debloquees, PersistentDataType.INTEGER, coffre.masque);
+    }
+
+    // ------------------------------------------------------------------ 1.1.0 : pour l'anti-triche (ecsee)
+
+    /**
+     * 1.1.0 (KS_AntiCheat, correctif de duplication) : le joueur a-t-il son coffre de l'Ender ouvert (copie de ce
+     * plugin) ? Pendant qu'il est ouvert, le vrai coffre ne doit pas être modifié par quelqu'un d'autre.
+     */
+    public static boolean coffreOuvert(Player player) {
+        return player.getOpenInventory().getTopInventory().getHolder() instanceof Coffre coffre
+                && coffre.joueur.equals(player.getUniqueId());
+    }
+
+    /** 1.1.0 : ferme le coffre de l'Ender du joueur s'il est ouvert (sa copie est enregistrée d'abord). */
+    public static void fermerCoffre(Player player) {
+        if (player.getOpenInventory().getTopInventory().getHolder() instanceof Coffre coffre
+                && coffre.joueur.equals(player.getUniqueId())) {
+            sauver(player, coffre);
+            player.closeInventory();
+        }
+    }
+
+    /** 1.1.0 : les 27 cases de l'extension (null : vide). */
+    public static ItemStack[] extension(Player player) {
+        ItemStack[] bas = lireExtension(player);
+        for (int i = 0; i < bas.length; i++) {
+            if (bas[i] != null && bas[i].isEmpty()) {
+                bas[i] = null;
+            }
+        }
+        return bas;
+    }
+
+    /** 1.1.0 : cases débloquées (bit i = case i de l'extension). */
+    public static int casesDebloquees(Player player) {
+        return player.getPersistentDataContainer().getOrDefault(debloquees, PersistentDataType.INTEGER, 0);
+    }
+
+    /** 1.1.0 : réécrit l'extension (les cases bloquées restent vides). */
+    public static void ecrireExtension(Player player, ItemStack[] contenuExtension) {
+        int masque = casesDebloquees(player);
+        ItemStack[] bas = new ItemStack[TAILLE];
+        for (int i = 0; i < TAILLE; i++) {
+            ItemStack item = (masque & (1 << i)) != 0 && i < contenuExtension.length ? contenuExtension[i] : null;
+            bas[i] = item == null ? ItemStack.empty() : item;
+        }
+        player.getPersistentDataContainer().set(contenu, PersistentDataType.BYTE_ARRAY, ItemStack.serializeItemsAsBytes(bas));
+    }
+
+    /** 1.1.0 : image d'une case bloquée (pour une vue du staff). */
+    public static ItemStack imageCaseBloquee() {
+        return caseBloquee();
     }
 
     // ------------------------------------------------------------------ cases bloquées

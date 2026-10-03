@@ -37,8 +37,11 @@ final class Sauvegardes {
     private record Liste(byte type, List<Tag> elements) {
     }
 
-    /** Contenu lu : inventaire au format de PlayerInventory#getContents (41 cases) et coffre de l'Ender (27). */
-    record Contenu(ItemStack[] inventaire, ItemStack[] ender) {
+    /**
+     * Contenu lu : inventaire au format de PlayerInventory#getContents (41 cases), coffre de l'Ender (27) ; 1.1.1 :
+     * extension de KS_EC_Extension (27, ou null si le joueur n'en a pas) et ses cases débloquées.
+     */
+    record Contenu(ItemStack[] inventaire, ItemStack[] ender, ItemStack[] extension, int masque) {
     }
 
     private Sauvegardes() {
@@ -95,7 +98,33 @@ final class Sauvegardes {
                 }
             }
         }
-        return new Contenu(inventaire, ender);
+        // 1.1.1 : extension du coffre de l'Ender (données du plugin KS_EC_Extension dans « BukkitValues »).
+        ItemStack[] extension = null;
+        int masque = 0;
+        Tag valeurs = racine.get("BukkitValues");
+        if (valeurs != null && valeurs.valeur() instanceof Map<?, ?> pdc) {
+            Object octets = pdc.get("ks_ec_extension:extension");
+            if (octets instanceof Tag t && t.valeur() instanceof byte[] b) {
+                try {
+                    extension = java.util.Arrays.copyOf(ItemStack.deserializeItemsFromBytes(b), 27);
+                    for (int i = 0; i < extension.length; i++) {
+                        if (extension[i] != null && extension[i].isEmpty()) {
+                            extension[i] = null;
+                        }
+                    }
+                } catch (RuntimeException e) {
+                    Bukkit.getLogger().warning("[KS_AntiCheat] Extension du coffre de l'Ender illisible : " + e);
+                }
+            }
+            Object m = pdc.get("ks_ec_extension:cases_debloquees");
+            if (m instanceof Tag t && t.valeur() instanceof Number n) {
+                masque = n.intValue();
+            }
+            if (extension == null && masque != 0) {
+                extension = new ItemStack[27];
+            }
+        }
+        return new Contenu(inventaire, ender, extension, masque);
     }
 
     @SuppressWarnings("unchecked")
