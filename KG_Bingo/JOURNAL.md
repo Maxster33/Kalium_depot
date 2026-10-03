@@ -130,4 +130,4 @@ Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**
   mois, semaine) avec `removePoints` de KG_ScoreBoards 1.9.0 ; inscrits au journal des parties comme les autres.
 
 **Déploiement** : **ensemble** avec KG_ScoreBoards 1.9.0 (obligatoire : `removePoints`) et KG_BingoGame 0.8.5 (Serveur
-Jeux). **Statut : compilé, non déployé, non testé en jeu.**
+Jeux). **Déployé le 03/10/2026 à 09:44 sur Kal-Games (Maxster33 ; 1.6.1 dans `_removed-kg_bingo-1.6.1/`), avec KG_ScoreBoards 1.9.0 ; KG_BingoGame 0.8.5 à 09:41. Actif après redémarrage. Statut : non testé en jeu.**

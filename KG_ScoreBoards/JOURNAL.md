@@ -159,5 +159,5 @@ Catégorie 4 « Récompenses » (cahier validé le 30/09/2026) :
   étaient listés.
 
 À noter : la 1.8.0 (déployée le 03/10/2026 à 01:05) n'est pas encore testée en jeu ; cette version s'ajoute par-dessus
-à la demande de Maxster33. **Déploiement** : ensemble avec KG_Bingo 1.7.0. **Statut : compilé, non déployé, non testé
+à la demande de Maxster33. **Déployé le 03/10/2026 à 09:44 sur Kal-Games (Maxster33 ; 1.8.0 dans `_removed-kg_scoreboards-1.8.0/`), avec KG_Bingo 1.7.0. Actif après redémarrage. Statut : non testé
 en jeu.**

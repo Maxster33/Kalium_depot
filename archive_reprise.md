@@ -5,6 +5,27 @@ d'oubli : l'état actuel du projet est dans `REPRISE_PROJET.md`.
 
 ---
 
+### 2026-10-01 — Maxster33
+
+*(Session du 01/10/2026, de 19 h 30 à 20 h 25. Fin de session : réservations libérées.)*
+
+- **Chat Bedrock (réglé)** : « Chat désactivé à cause de l'absence de la clé publique du profil » sur tous les
+  serveurs depuis toujours. Cause : `enforce-secure-profile=true` (valeur par défaut) dans `server.properties` des
+  serveurs Paper ; les joueurs Bedrock (Floodgate) n'ont pas de clé de profil. Réglé par Maxster33 (passé à `false`) ;
+  confirmé par Maxster33 le 01/10/2026. Pour tout nouveau serveur Paper : `enforce-secure-profile=false`.
+- **Paramètres inaccessibles sur PS5** (signalé par Maxster33, pas testé sur les autres plateformes) : non étudié ;
+  aucune cause trouvée dans notre code. À préciser : bouton grisé ou écran qui se referme, sur quel serveur.
+- **KS_Enclume 1.2.0** (Event, déployé à 19:50, non testé, actif après redémarrage d'Event) : coût vanilla jusqu'à
+  50 niveaux, partie au-dessus comptée pour moitié (70 → 60, 100 → 75) ; fioles de KS_FioleExp inchangées.
+  À tester : réparation / fusion à plus de 50 niveaux en vanilla (Java et Bedrock, « Coût réel » et niveaux retirés),
+  fiole remplie à l'enclume (coût inchangé).
+- **KS_LootBlocs 1.2.0** (Event, déployé à 20:24, non testé, actif après redémarrage d'Event) : fer et or bruts =
+  vanilla x2 (2, puis Fortune vanilla : jusqu'à 8 en Fortune III) au lieu de 2 à 5 « comme le cuivre » (trop). À tester :
+  minage sans Fortune (toujours 2), avec Fortune III (2 à 8), Toucher de soie (bloc de minerai).
+
+---
+
+
 ## Version complète de REPRISE_PROJET.md du 23/09/2026 (avant la restructuration du 24/09/2026)
 
 Auteur non précisé. Rédigée pour la sauvegarde `KalProjet-sauvegarde-2026-09-23.zip`, avant la création du dépôt git.

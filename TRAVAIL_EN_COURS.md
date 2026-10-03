@@ -16,9 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KG_BingoGame — Maxster33 — depuis le 2026-10-03 08:54 — 7 objectifs difficiles ; partie bloquée après un échec du lancement ; abandon puni, bonus du 1er en solo, mode contre la montre
-- KG_Bingo — Maxster33 — depuis le 2026-10-03 09:05 — 2 parties par heure, mode contre la montre, points négatifs (abandon)
-- KG_ScoreBoards — Maxster33 — depuis le 2026-10-03 09:05 — retrait de points (abandon du Bingo : -15)
 
 
 

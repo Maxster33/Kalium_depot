@@ -1711,8 +1711,8 @@ remplacer** (il n'est copié du jar qu'à la première installation), puis `/bin
 
 **Déploiement** : **ensemble** avec KG_Bingo 1.7.0 et KG_ScoreBoards 1.9.0 sur Kal-Games (le mode contre la montre
 et la pénalité passent par eux ; un KG_Bingo plus ancien n'envoie jamais `CHRONO` et ignore les points négatifs).
-Remplacer aussi `plugins/KG_BingoGame/objectives.yml` sur Serveur Jeux (voir plus haut). **Statut : compilé, non
-déployé, non testé en jeu.**
+Remplacer aussi `plugins/KG_BingoGame/objectives.yml` sur Serveur Jeux (voir plus haut). **Déployé le 03/10/2026 à 09:41 sur Serveur Jeux (Maxster33) avec le nouveau `objectives.yml` (0.8.4 et l'ancien `objectives.yml` dans `_removed-kg_bingogame-0.8.4/`) ; KG_Bingo 1.7.0 et KG_ScoreBoards 1.9.0 déployés à 09:44 sur Kal-Games. Actif après redémarrage. Statut : non
+testé en jeu.**
 
 ### 0.8.5 (suite) - plus de gel du serveur à la création d'une partie (03/10/2026, Maxster33)
 
