@@ -186,4 +186,4 @@ Demande de LeKiwi06 (cahier : « Demande de LeKiwi06 (03/10/2026, KS_Economy 1.1
 ouvert depuis `/menu` → « Modération », avec « Retour » vers la rubrique. `/magasin signalements` reste.
 **Nécessite KLM_Menu 2.7.0** (avec 2.6.0, le bouton irait dans « Paramètres »).
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 03:22 (LeKiwi06 ; 1.1.3 dans `_removed-ks_economy-1.1.3/`) avec KLM_Menu 2.7.0, actif après redémarrage d'Event. Statut : non testé en jeu.**

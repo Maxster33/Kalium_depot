@@ -42,3 +42,10 @@ qui a trait au claim ne marche pas » ; « vas y déploie ».
   signalement (arnaque, contenu inapproprié, thème non respecté, Autre) ; staff : `/magasin signalements`
   (se téléporter, supprimer la boutique, classer), permission `kseconomy.staff`.
 - Déployés sur Event le 03/10/2026 à 02:35.
+
+## Suite : rubrique « Modération » (KLM_Menu 2.7.0, KS_Economy 1.1.4)
+- LeKiwi06 : « il faut que les onglets de modération soit visible depuis le /menu dans le rubrique modération ,
+  c'est ici qu'on verra les invsee , ECsee , les proba de minage , les indices de suspicions etc ».
+- Fait : bouton « Modération » dans `/menu` (staff), outils déclarés par les plugins ; signalements des magasins
+  dedans. Le reste (invsee, ecsee...) viendra avec la catégorie 6. Déployés sur Event le 03/10/2026 à 03:22.
+- Correction : `jars-deployes/KLM_Menu-2.5.0.jar` remis (encore en service sur lobby, Serveur Jeux, Kixster).

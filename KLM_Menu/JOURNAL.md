@@ -237,4 +237,4 @@ modération , c'est ici qu'on verra les invsee , ECsee , les proba de minage , l
 - Compatible avec les plugins compilés pour 2.6.0 (méthode ajoutée avec une valeur par défaut). Cahier 6 mis à jour
   (l'interface staff de KS_AntiCheat ira dans cette rubrique, plus dans les Paramètres).
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event seulement le 03/10/2026 à 03:22 (LeKiwi06 ; 2.6.0 dans `_removed-klm_menu-2.6.0/`) avec KS_Economy 1.1.4, actif après redémarrage d'Event ; Kal-Games et Kanvas restent en 2.6.0, lobby, Serveur Jeux et Kixster en 2.5.0. Statut : non testé en jeu.**
