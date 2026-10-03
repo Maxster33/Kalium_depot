@@ -5,7 +5,7 @@ api-version: '26.2'
 description: Anti-triche du serveur Event (alertes, suspensions, invsee / ecsee, morts d'entites importantes, GrimAC, x-ray, macros, AFK).
 authors: [KaLium]
 depend: [KLM_Menu]
-softdepend: [GrimAC]
+softdepend: [GrimAC, KS_Economy, KS_RewardsGUI]
 commands:
   anticheat:
     description: Interface anti-triche du staff (alertes, joueurs, suspensions).

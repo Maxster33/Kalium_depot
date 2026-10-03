@@ -616,6 +616,9 @@ final class Echanges implements Listener, TabExecutor {
         b.objets.clear();
         donner(a.joueur, objetsB);
         donner(b.joueur, objetsA);
+        // 1.1.5 : signal pour l'anti-triche (revente suspecte).
+        Bukkit.getPluginManager().callEvent(new fr.kalium.economy.api.EchangeTermineEvent(a.joueur, b.joueur, objetsA,
+                objetsB, a.montant, b.montant));
         Component fait = lang.c("echange.fait", "<green>Échange effectué.");
         dire(a.joueur, fait);
         dire(b.joueur, fait);

@@ -25,3 +25,11 @@ Plugin du serveur Event : réception des récompenses des autres serveurs. Cahie
 - **Bouton « Récompenses »** de KLM_Menu 2.6.0 : déclaré (`Recompenses`) ; ouvre `/rewards`. **KLM_Menu 2.6.0 obligatoire sur Event.**
 
 **Déployé sur Event le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (nouveau), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.0.1 - signal de récupération (03/10/2026, LeKiwi06)
+
+Catégorie 6 (anti-triche, revente suspecte) : `fr.kalium.rewardsgui.api.RecompenseRecupereeEvent` (joueur, origine,
+raison, objets, points, date d'envoi) quand une récompense est récupérée ; `plusAnciennesEnAttente()` : date de la
+plus ancienne récompense en attente de chaque joueur. Aucun autre changement.
+
+**Non déployé (catégorie 6). Statut : non testé en jeu.**

@@ -31,3 +31,14 @@ macros:
 # AFK : expulsion apres X minutes sans vrai mouvement ni mouvement de camera (permission ksanticheat.afk-libre : jamais).
 afk:
   minutes: 60
+
+# Revente suspecte (alertes legeres) : objets de valeur (types ; aussi tous les objets custom de nos plugins),
+# contrepartie minimale en points, fenetre apres une recompense, dons en 7 jours, dons au meme joueur en 7 jours,
+# jours d'attente d'une recompense non recuperee.
+revente:
+  objets: [NETHERITE_INGOT, NETHERITE_BLOCK, NETHERITE_SCRAP, ANCIENT_DEBRIS, NETHERITE_SWORD, NETHERITE_PICKAXE, NETHERITE_AXE, NETHERITE_SHOVEL, NETHERITE_HOE, NETHERITE_HELMET, NETHERITE_CHESTPLATE, NETHERITE_LEGGINGS, NETHERITE_BOOTS, ELYTRA, NETHER_STAR, BEACON, TOTEM_OF_UNDYING, ENCHANTED_GOLDEN_APPLE, HEAVY_CORE, MACE, DRAGON_EGG, DIAMOND_BLOCK, EMERALD_BLOCK, SPAWNER, TRIDENT]
+  points-contrepartie: 1000
+  minutes-recompense: 30
+  dons: 5
+  sens-unique: 3
+  jours-attente: 14

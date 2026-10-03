@@ -187,3 +187,10 @@ ouvert depuis `/menu` → « Modération », avec « Retour » vers la rubrique.
 **Nécessite KLM_Menu 2.7.0** (avec 2.6.0, le bouton irait dans « Paramètres »).
 
 **Déployé sur Event le 03/10/2026 à 03:22 (LeKiwi06 ; 1.1.3 dans `_removed-ks_economy-1.1.3/`) avec KLM_Menu 2.7.0, actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.1.5 - signal de fin d'échange (03/10/2026, LeKiwi06)
+
+Catégorie 6 (anti-triche, revente suspecte) : `fr.kalium.economy.api.EchangeTermineEvent` (joueurs A et B, objets et
+points donnés par chacun) quand un `/echange` aboutit. Aucun autre changement.
+
+**Non déployé (catégorie 6). Statut : non testé en jeu.**

@@ -19,7 +19,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  * invsee / ecsee en ligne et hors ligne avec journal, morts d'entités importantes.
  * Étape 2 : détections (Detections : GrimAC, macros, AFK ; Minage : x-ray), suspension automatique des infractions
  * graves, onglet « Minage » de la rubrique Modération.
- * Étapes suivantes : duplication, revente suspecte, bannissement réseau.
+ * Étape 3 (duplication par identifiant) : reportée par LeKiwi06 le 03/10/2026.
+ * Étape 4 : revente suspecte (Revente).
+ * Étape suivante : bannissement réseau.
  *
  * Permission : ksanticheat.staff (opérateurs par défaut).
  */
@@ -36,6 +38,7 @@ public final class KSAntiCheat extends JavaPlugin {
     private Menus menus;
     private Detections detections;
     private Minage minage;
+    private Revente revente;
 
     @Override
     public void onEnable() {
@@ -51,6 +54,23 @@ public final class KSAntiCheat extends JavaPlugin {
         minage = new Minage(this);
         getServer().getPluginManager().registerEvents(detections, this);
         getServer().getPluginManager().registerEvents(minage, this);
+        // Étape 4 : revente suspecte (signaux de KS_Economy 1.1.5 et KS_RewardsGUI 1.0.1 s'ils sont là).
+        revente = new Revente(this);
+        getServer().getPluginManager().registerEvents(revente, this);
+        if (getServer().getPluginManager().isPluginEnabled("KS_Economy")) {
+            try {
+                getServer().getPluginManager().registerEvents(new Revente.EcouteEchanges(revente), this);
+            } catch (LinkageError e) {
+                getLogger().warning("KS_Economy trop ancien (1.1.5 nécessaire) : /echange non suivi.");
+            }
+        }
+        if (getServer().getPluginManager().isPluginEnabled("KS_RewardsGUI")) {
+            try {
+                getServer().getPluginManager().registerEvents(new Revente.EcouteRecompenses(revente), this);
+            } catch (LinkageError e) {
+                getLogger().warning("KS_RewardsGUI trop ancien (1.0.1 nécessaire) : /rewards non suivi.");
+            }
+        }
         // Une fois tous les plugins démarrés : signalements de GrimAC.
         getServer().getScheduler().runTask(this, detections::brancherGrim);
         getServer().getPluginManager().registerEvents(suspensions, this);

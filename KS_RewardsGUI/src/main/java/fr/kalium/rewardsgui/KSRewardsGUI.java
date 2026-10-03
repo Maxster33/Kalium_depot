@@ -197,6 +197,17 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------ récompenses en attente
 
+    /**
+     * 1.0.1 (anti-triche) : pour chaque joueur qui a des récompenses en attente, la date d'envoi de la plus ancienne
+     * (millisecondes).
+     */
+    public synchronized Map<UUID, Long> plusAnciennesEnAttente() {
+        Map<UUID, Long> r = new LinkedHashMap<>();
+        enAttente.forEach((joueur, liste) -> liste.values().forEach(rec ->
+                r.merge(joueur, rec.date, Math::min)));
+        return r;
+    }
+
     synchronized List<Map.Entry<String, Recompense>> enAttente(UUID joueur) {
         return new ArrayList<>(enAttente.getOrDefault(joueur, new LinkedHashMap<>()).entrySet());
     }

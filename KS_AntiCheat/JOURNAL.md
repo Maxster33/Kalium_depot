@@ -46,3 +46,28 @@ Plugin du serveur Event : anti-triche. Cahier des charges : catégorie 6 « Anti
   compte pas) ; « Expulsé après 60 minutes d'inactivité. » ; `ksanticheat.afk-libre` : jamais expulsé.
 
 **Non déployé (catégorie 6, étape 2). Statut : non testé en jeu.**
+
+## Étape 3 (duplication) : reportée (03/10/2026)
+
+Décision de LeKiwi06 : l'identifiant caché dans les objets de valeur empêcherait nos recettes et boutiques (KS_Crafts,
+KS_Elixir, magasins) de reconnaître les objets marqués ; la détection de duplication est reportée. En attendant : les
+réglages anti-duplication de Paper (étape 5).
+
+## 0.4.0 - étape 4 : revente suspecte (03/10/2026)
+
+Alertes légères (seuils `revente.*`) :
+- **Récompense jamais récupérée** : en attente sur /rewards depuis 14 jours (vérifié toutes les heures, une alerte
+  par semaine au plus) ; **récupérée puis donnée presque aussitôt** : dans les 30 minutes, donnée sans contrepartie.
+- **Dons répétés** : 5 dons d'objets de valeur sans contrepartie en 7 jours (puis toutes les 5).
+- **Sens unique** : 3 dons du même donneur au même receveur en 7 jours (puis tous les 3).
+- Don sans contrepartie : `/echange` où l'un donne un objet de valeur et ne reçoit ni objet de valeur ni au moins
+  1 000 points ; ou objet de valeur jeté au sol et ramassé par un autre joueur (dans les 10 minutes).
+- Objet de valeur : `revente.objets` (netherite, élytres, étoiles du Nether, balises, totems, pommes dorées
+  enchantées, cœur lourd, masse, œuf de dragon, blocs de diamant et d'émeraude, spawners, tridents) ou objet custom
+  de nos plugins (marqueur d'un espace `ks_...`, sauf les objets de menu).
+- Signaux : `EchangeTermineEvent` (KS_Economy 1.1.5) et `RecompenseRecupereeEvent` + `plusAnciennesEnAttente()`
+  (KS_RewardsGUI 1.0.1) ; sans eux (absents ou trop anciens), ces indices ne sont simplement pas suivis.
+  `revente.yml` : dons des 7 derniers jours. `softdepend` KS_Economy, KS_RewardsGUI.
+- Non suivi : ventes en magasin.
+
+**Non déployé (catégorie 6, étape 4). Statut : non testé en jeu.**
