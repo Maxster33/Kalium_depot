@@ -179,3 +179,11 @@ Demande de LeKiwi06 (cahier : « Demande de LeKiwi06 (03/10/2026, KS_Economy 1.1
   téléporter, supprimer la boutique (sans délai de 3 h), classer avec l'action faite.
 
 **Déployé sur Event le 03/10/2026 à 02:35 (LeKiwi06 ; ancienne version dans `_removed-ks_economy-1.1.2/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.1.4 - signalements dans la rubrique « Modération » de /menu (03/10/2026, LeKiwi06)
+
+« Signalements des magasins » déclaré comme outil de modération (KLM_Menu 2.7.0, permission `kseconomy.staff`) :
+ouvert depuis `/menu` → « Modération », avec « Retour » vers la rubrique. `/magasin signalements` reste.
+**Nécessite KLM_Menu 2.7.0** (avec 2.6.0, le bouton irait dans « Paramètres »).
+
+**Non déployé. Statut : non testé en jeu.**

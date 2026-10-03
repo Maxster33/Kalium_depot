@@ -224,3 +224,17 @@ ServicesManager : KG_Rewards (kal-games), KS_RewardsGUI (Event), KV_Rewards (Kan
 récompenses, rien ne change. Le comparateur est donné dès qu'un serveur a un plugin de récompenses.
 
 **Déployé sur Event, Kal-Games et Kanvas le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (ancienne version dans `_removed-klm_menu-2.5.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 2.7.0 - rubrique « Modération » dans /menu (03/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « il faut que les onglets de modération soit visible depuis le /menu dans le rubrique
+modération , c'est ici qu'on verra les invsee , ECsee , les proba de minage , les indices de suspicions etc ».
+- API : `MenuSection.moderation()` (défaut : non) et le raccourci `MenuSection.moderation(plugin, id, permission,
+  ordre, titre, description, ouverture)` : outil de modération visible avec la permission du plugin (et les
+  opérateurs). Ces outils ne vont jamais dans « Paramètres ».
+- `/menu` : bouton « Modération » (après les menus du serveur) dès qu'un outil est visible pour le joueur ; la
+  rubrique liste les outils, avec « Retour ». Sans outil : `/menu` inchangé.
+- Compatible avec les plugins compilés pour 2.6.0 (méthode ajoutée avec une valeur par défaut). Cahier 6 mis à jour
+  (l'interface staff de KS_AntiCheat ira dans cette rubrique, plus dans les Paramètres).
+
+**Non déployé. Statut : non testé en jeu.**

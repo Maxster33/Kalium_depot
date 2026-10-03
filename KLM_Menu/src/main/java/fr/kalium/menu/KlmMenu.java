@@ -262,7 +262,8 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
     private List<fr.kalium.menu.api.MenuSection> settingsSections(Player player) {
         List<fr.kalium.menu.api.MenuSection> list = new ArrayList<>();
         for (var section : visibleSections(player)) {
-            if (section.ranking() || section.audience() != fr.kalium.menu.api.MenuSection.Audience.ADMINS) {
+            if (section.ranking() || section.moderation()
+                    || section.audience() != fr.kalium.menu.api.MenuSection.Audience.ADMINS) {
                 continue;
             }
             try {
@@ -273,6 +274,35 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         }
         list.sort(SECTION_ORDER);
         return list;
+    }
+
+    /** 2.7.0 - outils de moderation visibles par ce joueur (rubrique « Moderation » de /menu). */
+    private List<fr.kalium.menu.api.MenuSection> moderationSections(Player player) {
+        List<fr.kalium.menu.api.MenuSection> list = new ArrayList<>();
+        for (var section : visibleSections(player)) {
+            if (section.moderation()) {
+                list.add(section);
+            }
+        }
+        list.sort(SECTION_ORDER);
+        return list;
+    }
+
+    /** 2.7.0 - rubrique « Moderation » : un bouton par outil de moderation des plugins de ce serveur. */
+    private void openModeration(Player player) {
+        List<fr.kalium.menu.api.MenuSection> list = moderationSections(player);
+        if (list.isEmpty()) {
+            openInterfaces(player);
+            return;
+        }
+        List<ActionButton> buttons = new ArrayList<>();
+        for (var section : list) {
+            buttons.add(gui.button(section.title(), section.description(), p -> openSection(p, section, this::openModeration)));
+        }
+        buttons.add(gui.button(lang.c("info.back", "<gray>Retour"), null, this::openInterfaces));
+        gui.open(player, lang.c("moderation.title", "<red><bold>Modération"),
+                List.of(lang.c("moderation.body", "<gray>Outils de modération de <white>ce serveur<gray>.")), List.of(),
+                buttons, null, 1);
     }
 
     /** Le joueur a-t-il quelque chose a voir dans « Informations » ? (sinon, pas de comparateur) */
@@ -1128,17 +1158,23 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
                 getLogger().warning("Objet d'interface " + item.owner().getName() + "/" + item.id() + " : " + e);
             }
         }
-        if (list.isEmpty()) {
+        // 2.7.0 : rubrique « Modération » (staff : outils de modération déclarés par les plugins de ce serveur).
+        boolean moderation = !moderationSections(player).isEmpty();
+        if (list.isEmpty() && !moderation) {
             player.sendMessage(lang.c("menu-cmd.none", "<red>Aucun menu n'est disponible ici."));
             return;
         }
-        if (list.size() == 1) {
+        if (list.size() == 1 && !moderation) {
             list.get(0).open(player);
             return;
         }
         List<ActionButton> buttons = new ArrayList<>();
         for (var item : list) {
             buttons.add(gui.button(item.name(), null, item::open));
+        }
+        if (moderation) {
+            buttons.add(gui.button(lang.c("moderation.button", "<red><bold>Modération"),
+                    lang.c("moderation.button-tip", "<gray>Signalements et outils du staff de ce serveur."), this::openModeration));
         }
         gui.open(player, lang.c("menu-cmd.title", "<#09add3><bold>Menus"),
                 List.of(lang.c("menu-cmd.body", "<gray>Choisis un menu.")), List.of(), buttons, null, 1);

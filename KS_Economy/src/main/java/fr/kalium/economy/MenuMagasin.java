@@ -89,7 +89,7 @@ final class MenuMagasin implements Listener, TabExecutor {
             case "position" -> position(joueur);
             case "signalements" -> {
                 if (Signalements.staff(joueur)) {
-                    plugin.signalements().ouvrirStaff(joueur, false, 0);
+                    plugin.signalements().ouvrirStaff(joueur, false, 0, null);
                 } else {
                     ouvrir(joueur);
                 }

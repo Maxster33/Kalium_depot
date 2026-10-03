@@ -101,6 +101,13 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         boutiques = new Boutiques(this, magasins);
         menuMagasin = new MenuMagasin(this, magasins, boutiques);
         signalements = new Signalements(this, magasins);
+        // 1.1.4 : signalements dans la rubrique « Modération » de /menu (KLM_Menu 2.7.0 ; avant : Paramètres).
+        getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
+                fr.kalium.menu.api.MenuSection.moderation(this, "signalements-magasins", Signalements.PERMISSION_STAFF, 50,
+                        lang.c("moderation.signalements", "<red>Signalements des magasins"),
+                        lang.c("moderation.signalements-info", "<gray>Boutiques et magasins signalés par les joueurs."),
+                        (p, retour) -> signalements.ouvrirStaff(p, false, 0, retour)),
+                this, org.bukkit.plugin.ServicePriority.Normal);
         getServer().getPluginManager().registerEvents(boutiques, this);
         getServer().getPluginManager().registerEvents(menuMagasin, this);
         getCommand("magasin").setExecutor(menuMagasin);

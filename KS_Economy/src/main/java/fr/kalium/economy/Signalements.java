@@ -206,8 +206,8 @@ final class Signalements {
 
     // ------------------------------------------------------------------ staff
 
-    /** /magasin signalements : non traités (ou classés), par pages. */
-    void ouvrirStaff(Player joueur, boolean classes, int page) {
+    /** /magasin signalements (ou rubrique « Modération » de /menu) : non traités (ou classés), par pages. */
+    void ouvrirStaff(Player joueur, boolean classes, int page, Consumer<Player> retour) {
         if (!staff(joueur)) {
             return;
         }
@@ -226,17 +226,20 @@ final class Signalements {
             boutons.add(gui.button(t("staff.bouton-signalement", "<white>n°<id> : <nom>", "id", s.id,
                             "nom", Boutiques.couper(s.nomCible, 24)),
                     t("staff.info-signalement", "<gray><type> de <proprio>", "type", typeAffiche(s),
-                            "proprio", Boutiques.nomJoueur(s.proprio)), j -> detail(j, s, classes)));
+                            "proprio", Boutiques.nomJoueur(s.proprio)), j -> detail(j, s, classes, retour)));
         }
         if (p > 0) {
-            boutons.add(gui.button(t("magasin.precedent", "<yellow>Page précédente"), null, j -> ouvrirStaff(j, classes, p - 1)));
+            boutons.add(gui.button(t("magasin.precedent", "<yellow>Page précédente"), null, j -> ouvrirStaff(j, classes, p - 1, retour)));
         }
         if (p < pages - 1) {
-            boutons.add(gui.button(t("magasin.suivant", "<yellow>Page suivante"), null, j -> ouvrirStaff(j, classes, p + 1)));
+            boutons.add(gui.button(t("magasin.suivant", "<yellow>Page suivante"), null, j -> ouvrirStaff(j, classes, p + 1, retour)));
         }
         boutons.add(classes
-                ? gui.button(t("staff.bouton-non-traites", "<yellow>Non traités"), null, j -> ouvrirStaff(j, false, 0))
-                : gui.button(t("staff.bouton-classes", "<gray>Classés"), null, j -> ouvrirStaff(j, true, 0)));
+                ? gui.button(t("staff.bouton-non-traites", "<yellow>Non traités"), null, j -> ouvrirStaff(j, false, 0, retour))
+                : gui.button(t("staff.bouton-classes", "<gray>Classés"), null, j -> ouvrirStaff(j, true, 0, retour)));
+        if (retour != null) {
+            boutons.add(gui.button(t("signalement.retour", "<gray>Retour"), null, retour::accept));
+        }
         List<Component> corps = List.of(choisis.isEmpty() ? t("staff.aucun", "<gray>Aucun signalement.")
                 : t("staff.nombre", "<white><nombre> signalement(s).", "nombre", choisis.size()));
         gui.open(joueur, classes ? t("staff.titre-classes", "<red><bold>Signalements classés")
@@ -244,7 +247,7 @@ final class Signalements {
         lang.saveIfNeeded();
     }
 
-    private void detail(Player joueur, Signalement s, boolean classes) {
+    private void detail(Player joueur, Signalement s, boolean classes, Consumer<Player> retour) {
         if (!staff(joueur)) {
             return;
         }
@@ -281,17 +284,17 @@ final class Signalements {
                                     plugin.boutiques().supprimer(b, null, false, false);
                                 }
                                 classer(q, s, "boutique supprimée");
-                                ouvrirStaff(q, false, 0);
-                            }, q -> detail(q, s, classes))));
+                                ouvrirStaff(q, false, 0, retour);
+                            }, q -> detail(q, s, classes, retour))));
         }
         if (!s.classe) {
             boutons.add(gui.form(t("staff.bouton-classer", "<green>Classer"), null, (p, vue) -> {
                 String action = vue.getText("action") == null ? "" : vue.getText("action").trim();
                 classer(p, s, action.isEmpty() ? "rien à faire" : action);
-                ouvrirStaff(p, false, 0);
+                ouvrirStaff(p, false, 0, retour);
             }));
         }
-        boutons.add(gui.button(t("signalement.retour", "<gray>Retour"), null, p -> ouvrirStaff(p, classes, 0)));
+        boutons.add(gui.button(t("signalement.retour", "<gray>Retour"), null, p -> ouvrirStaff(p, classes, 0, retour)));
         List<DialogInput> champs = s.classe ? List.of()
                 : List.of(gui.text("action", t("staff.champ-action", "Action faite (pour classer)"), "", 100));
         gui.open(joueur, t("staff.titre-detail", "<red><bold>Signalement n°<id>", "id", s.id), corps, champs, boutons,

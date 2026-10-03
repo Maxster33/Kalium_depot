@@ -71,6 +71,67 @@ public interface MenuSection {
         return false;
     }
 
+    /**
+     * 2.7.0 - outil de moderation (demande de LeKiwi06, 03/10/2026 : « les onglets de moderation [...] visibles depuis
+     * le /menu dans la rubrique moderation », ex. signalements, invsee, ecsee, indices de suspicion) : range dans la
+     * rubrique « Moderation » de /menu, pour les joueurs a qui {@link #visibleTo} l'autorise (permission du plugin) ;
+     * jamais dans « Parametres ».
+     */
+    default boolean moderation() {
+        return false;
+    }
+
+    /** 2.7.0 - raccourci pour un outil de moderation, visible avec cette permission (et pour les operateurs). */
+    static MenuSection moderation(Plugin owner, String id, String permission, int order, Component title,
+                                  Component description, java.util.function.BiConsumer<Player, Consumer<Player>> opener) {
+        return new MenuSection() {
+            @Override
+            public boolean moderation() {
+                return true;
+            }
+
+            @Override
+            public int order() {
+                return order;
+            }
+
+            @Override
+            public String id() {
+                return id;
+            }
+
+            @Override
+            public Plugin owner() {
+                return owner;
+            }
+
+            @Override
+            public Component title() {
+                return title;
+            }
+
+            @Override
+            public Component description() {
+                return description;
+            }
+
+            @Override
+            public Audience audience() {
+                return Audience.ADMINS;
+            }
+
+            @Override
+            public boolean visibleTo(Player player) {
+                return player.isOp() || player.hasPermission(permission);
+            }
+
+            @Override
+            public void open(Player player, Consumer<Player> back) {
+                opener.accept(player, back);
+            }
+        };
+    }
+
     /** 2.4.0 - ordre d'affichage dans « Informations » (plus petit = plus haut), puis ordre alphabetique du plugin. */
     default int order() {
         return 100;
