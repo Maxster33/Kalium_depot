@@ -45,4 +45,4 @@ Signalé par LeKiwi06 : « je ne vois pas le compteur de coffres » (coffres de 
 - En créatif : « Créatif : non compté (passe en survie pour tester la limite) » dans le tchat et la barre d'action
   (avant : aucun message).
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 05:52 (LeKiwi06 ; 1.0.0 dans `_removed-ks_fairplay-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
