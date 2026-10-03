@@ -1742,3 +1742,20 @@ Mondes créés avant cette version : inchangés.
 **À vérifier en jeu** (Paper 26.2, jamais essayé) : plus de « Prepared spawn area in 5000 ms » dans les logs ; terrain
 et structures normaux ; départ sur la terre ferme, identique pour toutes les équipes ; une 2e partie créée pendant
 une partie en cours démarre sans gel ; logs « Réserve : ... ».
+
+## 0.8.6 - point de départ dans l'océan (03/10/2026, Maxster33)
+
+**Constat de Maxster33** (après le déploiement de la 0.8.5) : « j'ai crée une partie de bingo et le point de spawn
+était au milieu de l'océan ».
+**Cause** : la 0.8.5 cherchait la terre ferme seulement dans les 160 blocs autour de (0, 0) (zone pré-générée) ; sur une
+carte d'océan il n'y en a pas, et le départ retombait en (0, 0), dans l'eau. Minecraft, lui, cherchait bien plus loin.
+(Le gel, lui, a bien disparu : « Prepared spawn area in 0 ms » dans les logs.)
+- Dès la création de l'overworld, le point provisoire est déplacé vers le **biome terrestre le plus proche de (0, 0)**
+  dans un rayon de 3000 blocs (recherche dans les biomes, sans générer de terrain, comme `/locate biome`, pas de 32
+  blocs) : plaines, plaines de tournesols, forêts (classique, fleurie, de bouleaux, sombre), taïga, savane, prairie,
+  cerisaie, plaines enneigées, désert. La pré-génération du terrain se fait autour de ce point, puis le bloc exact est
+  choisi sur la terre ferme (comme en 0.8.5). Rien de trouvé : départ au-dessus du point provisoire.
+- Le choix « point déjà placé ou non » ne dépend plus des coordonnées (0, 100, 0) : liste des mondes neufs non placés
+  (un monde rechargé d'une partie restaurée n'est jamais déplacé).
+
+Mondes de réserve déjà créés par la 0.8.5 : supprimés au redémarrage et refaits. **Statut : compilé, non déployé.**

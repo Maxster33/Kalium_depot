@@ -70,9 +70,13 @@ public class InstanceWorldManager {
         logger.info("[KG_BingoGame] Generation du monde d'instance '" + worldName
                 + "' (seed=" + seed + ")...");
 
+        boolean isNew = !existsOnDisk(worldName); // sinon : monde recharge (partie restauree), deja place
         World world = creator.createWorld();
         if (world == null) {
             throw new IllegalStateException("Echec de creation du monde '" + worldName + "'.");
+        }
+        if (isNew) {
+            moveSpawnTowardLand(world);
         }
 
         // Le point de depart doit etre le spawn naturel du monde, identique
@@ -162,18 +166,56 @@ public class InstanceWorldManager {
         return world.getSpawnLocation();
     }
 
+    /** 0.8.5 : overworlds neufs dont le point de depart n'est pas encore pose sur la terre ferme (placeSpawnOnLand). */
+    private final java.util.Set<String> provisionalSpawn = new java.util.HashSet<>();
+
+    /** Rayon de recherche d'un biome terrestre autour de (0, 0), comme /locate biome (sans generer de terrain). */
+    private static final int LAND_SEARCH_RADIUS = 3000;
+
+    /** Biomes de depart acceptes : terrestres et faciles a parcourir (pas d'ocean, riviere, plage, jungle, marais...). */
+    private static final org.bukkit.block.Biome[] LAND_BIOMES = {
+            org.bukkit.block.Biome.PLAINS, org.bukkit.block.Biome.SUNFLOWER_PLAINS, org.bukkit.block.Biome.FOREST,
+            org.bukkit.block.Biome.FLOWER_FOREST, org.bukkit.block.Biome.BIRCH_FOREST, org.bukkit.block.Biome.DARK_FOREST,
+            org.bukkit.block.Biome.TAIGA, org.bukkit.block.Biome.SAVANNA, org.bukkit.block.Biome.MEADOW,
+            org.bukkit.block.Biome.CHERRY_GROVE, org.bukkit.block.Biome.SNOWY_PLAINS, org.bukkit.block.Biome.DESERT
+    };
+
     /**
-     * 0.8.5 (voir FixedSpawnGenerator) : place le point d'apparition sur la terre ferme, au plus pres du centre (0, 0) :
-     * colonnes testees de 16 en 16 blocs, en anneaux, jusqu'a {@code radiusBlocks} ; refus de l'eau, de la lave et de
-     * la glace flottante. A appeler une fois le terrain pre-genere (chunks lus sur le disque, rapide). Deterministe :
-     * meme seed = meme point, donc meme depart pour toutes les equipes d'une partie. Sans terre trouvee : (0, 0).
-     * Monde deja place (spawn different du point provisoire) : rien a faire.
+     * 0.8.5 (correctif du jour, Maxster33 : « le point de spawn était au milieu de l'océan ») : juste apres la creation,
+     * le point d'apparition provisoire est deplace vers le biome terrestre le plus proche de (0, 0) - recherche dans les
+     * biomes, sans generer de terrain, comme /locate biome. La pre-generation du terrain se fait ensuite autour de ce
+     * point (voir InstanceWorldPreparer), puis placeSpawnOnLand choisit le bloc exact.
+     */
+    private void moveSpawnTowardLand(World world) {
+        provisionalSpawn.add(world.getName());
+        try {
+            var found = world.locateNearestBiome(new Location(world, 0, 64, 0), LAND_SEARCH_RADIUS, 32, 64, LAND_BIOMES);
+            if (found != null) {
+                Location land = found.getLocation();
+                world.setSpawnLocation(land.getBlockX(), FixedSpawnGenerator.PROVISIONAL_Y, land.getBlockZ());
+            } else {
+                logger.warning("[KG_BingoGame] Aucun biome terrestre à moins de " + LAND_SEARCH_RADIUS + " blocs dans '"
+                        + world.getName() + "' : départ cherché autour de (0, 0).");
+            }
+        } catch (RuntimeException e) {
+            logger.warning("[KG_BingoGame] Recherche d'un biome terrestre impossible dans '" + world.getName() + "' : " + e.getMessage());
+        }
+    }
+
+    /**
+     * 0.8.5 (voir FixedSpawnGenerator) : place le point d'apparition sur la terre ferme, au plus pres du point provisoire
+     * (biome terrestre trouve par moveSpawnTowardLand) : colonnes testees de 16 en 16 blocs, en anneaux, jusqu'a
+     * {@code radiusBlocks} ; refus de l'eau, de la lave et de la glace. A appeler une fois le terrain pre-genere (chunks
+     * lus sur le disque, rapide). Deterministe : meme seed = meme point, donc meme depart pour toutes les equipes d'une
+     * partie. Monde deja place (ou recharge) : rien a faire.
      */
     public void placeSpawnOnLand(World world, int radiusBlocks) {
-        Location current = world.getSpawnLocation();
-        if (current.getBlockX() != 0 || current.getBlockZ() != 0 || current.getBlockY() != FixedSpawnGenerator.PROVISIONAL_Y) {
+        if (!provisionalSpawn.remove(world.getName())) {
             return;
         }
+        Location current = world.getSpawnLocation();
+        int centerX = Math.floorDiv(current.getBlockX(), 16) * 16;
+        int centerZ = Math.floorDiv(current.getBlockZ(), 16) * 16;
         int maxRing = Math.max(0, radiusBlocks / 16);
         for (int ring = 0; ring <= maxRing; ring++) {
             for (int dx = -ring; dx <= ring; dx++) {
@@ -181,8 +223,8 @@ public class InstanceWorldManager {
                     if (Math.max(Math.abs(dx), Math.abs(dz)) != ring) {
                         continue;
                     }
-                    int x = dx * 16 + 8;
-                    int z = dz * 16 + 8;
+                    int x = centerX + dx * 16 + 8;
+                    int z = centerZ + dz * 16 + 8;
                     org.bukkit.block.Block top = world.getHighestBlockAt(x, z, org.bukkit.HeightMap.MOTION_BLOCKING_NO_LEAVES);
                     org.bukkit.Material type = top.getType();
                     if (top.isLiquid() || type == org.bukkit.Material.ICE || type == org.bukkit.Material.PACKED_ICE
@@ -194,7 +236,8 @@ public class InstanceWorldManager {
                 }
             }
         }
-        world.setSpawnLocation(0, world.getHighestBlockYAt(0, 0) + 1, 0);
+        world.setSpawnLocation(current.getBlockX(), world.getHighestBlockYAt(current.getBlockX(), current.getBlockZ()) + 1,
+                current.getBlockZ()); // aucune terre trouvee : au-dessus du point provisoire
     }
 
     /**
