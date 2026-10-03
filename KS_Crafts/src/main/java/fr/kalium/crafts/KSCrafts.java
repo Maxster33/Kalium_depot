@@ -41,14 +41,12 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             Material.ENCHANTED_GOLDEN_APPLE, Material.CALIBRATED_SCULK_SENSOR, Material.SPONGE,
             Material.NETHERITE_INGOT, Material.BELL, Material.CREAKING_HEART);
 
-    /** Ingrédients du Bedrock Breaker (1.5.0 ; en 1.4.0 : TNT et houe en diamant). */
-    private static final List<Material> BREAKER_INGREDIENTS = List.of(Material.BLAZE_POWDER, Material.FIRE_CHARGE,
-            Material.TNT_MINECART, Material.END_CRYSTAL, Material.RESPAWN_ANCHOR);
-
-    /** Recettes du livre de recettes débloquées à l'obtention d'un de leurs ingrédients (id -> ingrédients). */
-    private static final Map<String, List<Material>> LIVRE = Map.of(
-            "cle_de_l_end", CLE_INGREDIENTS,
-            "bedrock_breaker", BREAKER_INGREDIENTS);
+    /**
+     * 1.9.0 (LeKiwi06 : « ajoute les recettes de tous les crafts custom qui n'en ont pas encore, elles se débloquent quand
+     * on récupère au moins un des éléments du craft ») : chaque recette ajoutée -> ses ingrédients (avant : seulement la
+     * Clé de l'End, le Bedrock Breaker, les spawners et le Changeur de Biome).
+     */
+    private final Map<NamespacedKey, List<RecipeChoice>> ingredients = new java.util.LinkedHashMap<>();
 
     @Override
     public void onEnable() {
@@ -194,28 +192,21 @@ public final class KSCrafts extends JavaPlugin implements Listener {
     // ------------------------------------------------------------------ livre de recettes
 
     /**
-     * Livre de recettes : comme une recette vanilla, une recette de LIVRE est débloquée quand le joueur obtient l'un de
+     * Livre de recettes : comme une recette vanilla, une recette du plugin est débloquée quand le joueur obtient l'un de
      * ses ingrédients (objet qui arrive dans son inventaire). Une recette de plugin n'apparaît dans le livre que si
      * elle est débloquée pour le joueur ; une fois débloquée, elle le reste.
-     * Clé de l'End depuis 1.3.0 ; Bedrock Breaker depuis 1.4.0 (ses nouveaux ingrédients depuis 1.5.0).
-     * 1.6.0 (Maxster33) : un Fragment de Spawner débloque les recettes des spawners et du Changeur de Biome (le fragment
-     * est reconnu à son marqueur : c'est un livre de connaissances, comme d'autres objets custom).
+     * Clé de l'End depuis 1.3.0 ; Bedrock Breaker depuis 1.4.0 ; spawners et Changeur de Biome depuis 1.6.0 ;
+     * 1.9.0 : toutes les recettes du plugin (n'importe lequel de leurs ingrédients, objets custom reconnus exactement).
      */
     private void debloquer(Player player, ItemStack obtenu) {
-        Material type = obtenu.getType();
-        LIVRE.forEach((id, ingredients) -> {
-            if (ingredients.contains(type)) {
-                decouvrir(player, key(id));
+        if (obtenu == null || obtenu.getType().isAir()) {
+            return;
+        }
+        ingredients.forEach((recette, choix) -> {
+            if (!player.hasDiscoveredRecipe(recette) && choix.stream().anyMatch(c -> c.test(obtenu))) {
+                decouvrir(player, recette);
             }
         });
-        if (type == Material.KNOWLEDGE_BOOK && actif("KS_ItemSimple")
-                && "fragment_spawner".equals(fr.kalium.itemsimple.KSItemSimple.idObjet(obtenu))) {
-            for (NamespacedKey recette : added) {
-                if (recette.getKey().startsWith("spawner_") || recette.getKey().equals("changeur_biome")) {
-                    decouvrir(player, recette);
-                }
-            }
-        }
     }
 
     private void decouvrir(Player player, NamespacedKey recette) {
@@ -285,7 +276,16 @@ public final class KSCrafts extends JavaPlugin implements Listener {
 
     void add(org.bukkit.inventory.Recipe recipe) {
         Bukkit.addRecipe(recipe);
-        added.add(((org.bukkit.Keyed) recipe).getKey());
+        NamespacedKey cle = ((org.bukkit.Keyed) recipe).getKey();
+        added.add(cle);
+        // 1.9.0 : ingrédients, pour débloquer la recette dans le livre dès qu'on en obtient un.
+        List<RecipeChoice> choix = new ArrayList<>();
+        if (recipe instanceof ShapedRecipe shaped) {
+            shaped.getChoiceMap().values().stream().filter(java.util.Objects::nonNull).forEach(choix::add);
+        } else if (recipe instanceof ShapelessRecipe shapeless) {
+            choix.addAll(shapeless.getChoiceList());
+        }
+        ingredients.put(cle, choix);
     }
 
     /** 8 objets en anneau autour de l'objet central. */

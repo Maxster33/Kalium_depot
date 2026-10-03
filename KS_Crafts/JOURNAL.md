@@ -162,3 +162,16 @@ Demande de LeKiwi06 (tête de KS_Decapitator 1.1.0 ; un défaut par craft, dans 
   KS_Economy, KS_FioleExp ; « réactiver » ignoré sans eux.
 
 **Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.8.0 ; ancienne version dans `_removed-ks_crafts-1.7.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.9.0 - toutes les recettes dans le livre de recettes (03/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « ajoute les recettes de tous les crafts custom qui n'en ont pas encore, elles se débloquent quand
+on récupère au moins un des éléments du craft ». Chaque recette du plugin (sable rouge, sables, blocs bruts, calcite,
+obsidienne pleureuse, deepslate renforcée, graines, coraux, lumière, cadre invisible, grenouillères, briques du Nether
+rouges, Clé de l'End, Bedrock Breaker, spawners, Changeur de Biome, réparations de la tête de wither squelette, bloc de
+charbon de bois et son inverse) apparaît dans le livre dès que le joueur obtient l'un de ses ingrédients (objets custom
+reconnus exactement) ; une fois débloquée, elle le reste. Avant : seulement la Clé de l'End, le Bedrock Breaker, les
+spawners et le Changeur de Biome. Les élixirs (KS_Elixir) le faisaient déjà. Le mélange de l'alambic (bloc de verrue)
+n'est pas une recette d'établi : pas de livre.
+
+**Non déployé. Statut : non testé en jeu.**
