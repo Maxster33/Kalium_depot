@@ -34,7 +34,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
-import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.loot.Lootable;
 import org.bukkit.persistence.PersistentDataType;
@@ -176,6 +175,11 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
     /** Une ouverture / casse / brossage de plus pour aujourd'hui (rien en créatif ni sous Chance III). */
     private void compter(Player joueur) {
         if (joueur.getGameMode() == GameMode.CREATIVE) {
+            // 1.0.1 : dit clairement que rien n'est compté (avant : aucun message, on croyait le compteur absent).
+            Component creatif = lang.c("creatif", "<gray>Créatif : non compté (passe en survie pour tester la limite).");
+            joueur.sendActionBar(creatif);
+            joueur.sendMessage(creatif);
+            lang.saveIfNeeded();
             return;
         }
         if (chanceIII(joueur)) {
@@ -290,17 +294,41 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
         }
     }
 
-    /** Butin généré par un joueur (ouverture ou casse d'un contenant, wagonnet) : compté. */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onLoot(LootGenerateEvent event) {
-        InventoryHolder holder = event.getInventoryHolder();
-        if (event.isPlugin() || holder == null || !(event.getEntity() instanceof Player joueur)) {
+    /**
+     * 1.0.1 : contenant au butin non généré ouvert (clic pas refusé) : compté si, au tick suivant, son butin est sorti
+     * (avant : à l'événement de génération du butin, qui ne comptait pas). Un coffre double = 1.
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onOuvertureCompte(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getClickedBlock() == null
+                || event.useInteractedBlock() == org.bukkit.event.Event.Result.DENY) {
             return;
         }
-        if (holder instanceof BlockState || holder instanceof StorageMinecart
-                || holder instanceof org.bukkit.block.DoubleChest) {
-            compter(joueur);
+        Block bloc = event.getClickedBlock();
+        Player joueur = event.getPlayer();
+        if (suspect(bloc.getType()) || bloc.getType() == Material.SPAWNER || !protege(bloc)
+                || (joueur.isSneaking() && event.getItem() != null)) {
+            return;
         }
+        getServer().getScheduler().runTask(this, () -> {
+            if (joueur.isOnline() && !nonGenere(bloc.getState(false))) {
+                compter(joueur);
+            }
+        });
+    }
+
+    /** 1.0.1 : coffre de wagonnet ouvert : compté si son butin est sorti. */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onOuvertureWagonnet(PlayerInteractEntityEvent event) {
+        if (!(event.getRightClicked() instanceof StorageMinecart wagonnet) || !wagonnet.hasLootTable()) {
+            return;
+        }
+        Player joueur = event.getPlayer();
+        getServer().getScheduler().runTask(this, () -> {
+            if (joueur.isOnline() && (!wagonnet.isValid() || !wagonnet.hasLootTable())) {
+                compter(joueur);
+            }
+        });
     }
 
     /** Casser : refusé sans autorisation du jour ; un spawner naturel cassé compte. */
@@ -311,9 +339,11 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
         }
     }
 
+    /** Spawner naturel cassé, ou contenant au butin non généré cassé (son butin tombe) : compté. */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBreakCompte(BlockBreakEvent event) {
-        if (spawnerNaturel(event.getBlock())) {
+        Block bloc = event.getBlock();
+        if (spawnerNaturel(bloc) || (!suspect(bloc.getType()) && protege(bloc))) {
             compter(event.getPlayer());
         }
     }

@@ -34,3 +34,15 @@ plugins serveur JourneyMap et Legacy Freecam.
 sha256 vérifié) et Legacy Freecam (`legacyfreecam-paper-2.0.0.jar`, Modrinth, sha1 vérifié), téléchargés avec l'accord
 de LeKiwi06, et la configuration Paper (anti-xray, suivi des entités ; originaux dans `/_removed-config-2026-10-03/`) ;
 actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.0.1 - compteur des coffres (03/10/2026, LeKiwi06)
+
+Signalé par LeKiwi06 : « je ne vois pas le compteur de coffres » (coffres de test avec `container_loot` ;
+`compteurs.yml` resté vide alors que le butin était sorti).
+- Comptage revu : au clic sur un contenant au butin non généré (clic pas refusé), le plugin vérifie au tick suivant
+  que le butin est sorti, puis compte (avant : à l'événement de génération du butin, qui n'a rien compté). Même
+  chose pour le coffre d'un wagonnet ; un contenant au butin non généré cassé compte aussi.
+- En créatif : « Créatif : non compté (passe en survie pour tester la limite) » dans le tchat et la barre d'action
+  (avant : aucun message).
+
+**Non déployé. Statut : non testé en jeu.**
