@@ -46,3 +46,14 @@ Signalé par LeKiwi06 : « je ne vois pas le compteur de coffres » (coffres de 
   (avant : aucun message).
 
 **Déployé sur Event le 03/10/2026 à 05:45 (LeKiwi06 ; 1.0.0 dans `_removed-ks_fairplay-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.0.2 - texte du compteur (03/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « la limite doit juste afficher " Exploration journalière : n / 10" pour ne pas trop spoil
+les changements ».
+- Compteur (tchat et barre d'action) : « Exploration journalière : n / 10 » (clé `compte-3`).
+- Limite atteinte : « Exploration journalière : limite atteinte, reviens demain. » (clé `limite-3` ; la liste de ce
+  qui compte et la mention de l'Élixir de Fortune sont retirées, même raison).
+- Inchangés : « Chance III : ouverture libre, elle ne compte pas. », « Créatif : non compté ».
+
+**Non déployé. Statut : non testé en jeu.**

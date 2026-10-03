@@ -165,8 +165,7 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
             return false;
         }
         dernierMessage.put(joueur.getUniqueId(), maintenant);
-        joueur.sendMessage(lang.c("limite-2", "<red>Limite atteinte, reviens demain. <gray>(<limite> par jour : coffres "
-                + "de structure, spawners, blocs suspects, gardiens anciens ; l'Élixir de Fortune lève la limite)",
+        joueur.sendMessage(lang.c("limite-3", "<red>Exploration journalière : limite atteinte, reviens demain.",
                 "limite", limite()));
         lang.saveIfNeeded();
         return false;
@@ -197,8 +196,9 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
         verifierJour();
         int n = compteurs.merge(joueur.getUniqueId(), 1, Integer::sum);
         sauver();
-        Component compte = lang.c("compte-2", "<yellow>Limite du jour (coffres, spawners, blocs suspects, gardiens "
-                + "anciens) : <n> / <limite>", "n", n, "limite", limite());
+        // 1.0.2 (LeKiwi06) : texte court, sans détailler ce qui compte (« pour ne pas trop spoil les changements »).
+        Component compte = lang.c("compte-3", "<yellow>Exploration journalière : <n> / <limite>", "n", n,
+                "limite", limite());
         // Barre d'action et tchat (demande de LeKiwi06 : « pour ceux qui perdent le fil »).
         joueur.sendActionBar(compte);
         joueur.sendMessage(compte);
