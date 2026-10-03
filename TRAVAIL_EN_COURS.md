@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_FairPlay — LeKiwi06 — depuis le 2026-10-03 05:40 — compteur de coffres non visible (1.0.1)
 
 
 
