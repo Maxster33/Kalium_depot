@@ -290,6 +290,11 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
 
     /** 2.7.0 - rubrique « Moderation » : un bouton par outil de moderation des plugins de ce serveur. */
     private void openModeration(Player player) {
+        openModeration(player, this::openInterfaces);
+    }
+
+    /** 2.8.0 - meme rubrique, avec le « Retour » vers le menu d'ou elle a ete ouverte (/menu ou boussole). */
+    private void openModeration(Player player, java.util.function.Consumer<Player> back) {
         List<fr.kalium.menu.api.MenuSection> list = moderationSections(player);
         if (list.isEmpty()) {
             openInterfaces(player);
@@ -297,9 +302,10 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         }
         List<ActionButton> buttons = new ArrayList<>();
         for (var section : list) {
-            buttons.add(gui.button(section.title(), section.description(), p -> openSection(p, section, this::openModeration)));
+            buttons.add(gui.button(section.title(), section.description(),
+                    p -> openSection(p, section, q -> openModeration(q, back))));
         }
-        buttons.add(gui.button(lang.c("info.back", "<gray>Retour"), null, this::openInterfaces));
+        buttons.add(gui.button(lang.c("info.back", "<gray>Retour"), null, back::accept));
         gui.open(player, lang.c("moderation.title", "<red><bold>Modération"),
                 List.of(lang.c("moderation.body", "<gray>Outils de modération de <white>ce serveur<gray>.")), List.of(),
                 buttons, null, 1);
@@ -764,6 +770,12 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
                                     .build())));
         }
 
+        // 2.8.0 (LeKiwi06) : rubrique « Modération » aussi dans la navigation de la boussole (staff seulement).
+        if (!moderationSections(player).isEmpty()) {
+            buttons.add(gui.button(lang.c("moderation.button", "<red><bold>Modération"),
+                    lang.c("moderation.button-tip", "<gray>Signalements et outils du staff de ce serveur."),
+                    p -> openModeration(p, this::openMenu)));
+        }
         // Action nulle = ferme simplement le Dialog.
         ActionButton close = ActionButton.create(mm.deserialize(msg("close-button")), null, buttonWidth, null);
         // 2.5.0 : boutons élargis à leur texte, qui ne défile jamais (voir Lisible).

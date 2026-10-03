@@ -238,3 +238,12 @@ modération , c'est ici qu'on verra les invsee , ECsee , les proba de minage , l
   (l'interface staff de KS_AntiCheat ira dans cette rubrique, plus dans les Paramètres).
 
 **Déployé sur Event seulement le 03/10/2026 à 03:22 (LeKiwi06 ; 2.6.0 dans `_removed-klm_menu-2.6.0/`) avec KS_Economy 1.1.4, actif après redémarrage d'Event ; Kal-Games et Kanvas restent en 2.6.0, lobby, Serveur Jeux et Kixster en 2.5.0. Statut : non testé en jeu.**
+
+## 2.8.0 - Modération dans la navigation de la boussole (03/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « inclus le bouton de modération dans navigation sur la boussole, histoire qu'il ne soit plus
+seulement accessible par le /menu ». Le menu de navigation (boussole, /servers) affiche « Modération » (après les
+destinations) dès qu'un outil de modération est visible pour le joueur ; « Retour » ramène là d'où la rubrique a été
+ouverte (navigation ou /menu). Aucun autre changement.
+
+**Non déployé. Statut : non testé en jeu.**
