@@ -16,6 +16,9 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KLM_Chat — LeKiwi06 — depuis le 2026-10-03 20:52 — nouveau plugin : tchat inter-serveur (/global)
+- KLM_Hub — LeKiwi06 — depuis le 2026-10-03 20:52 — nouveau plugin : barre de boss du lobby, QR codes Discord / Twitch
+
 
 
 
@@ -25,6 +28,9 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 ## Requis parfois
+
+- KLM_Menu — LeKiwi06 — depuis le 2026-10-03 20:52 — bouton « Recherche de joueurs » dans la boussole
+- KLM_Portal — LeKiwi06 — depuis le 2026-10-03 20:52 — configuration du lobby seulement (vision nocturne dans les effets de zone)
 
 
 
