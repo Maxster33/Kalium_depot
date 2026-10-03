@@ -1,0 +1,22 @@
+name: KS_AntiCheat
+version: '${project.version}'
+main: fr.kalium.anticheat.KSAntiCheat
+api-version: '26.2'
+description: Anti-triche du serveur Event (alertes, suspensions, invsee / ecsee, morts d'entites importantes ; detections a venir).
+authors: [KaLium]
+depend: [KLM_Menu]
+softdepend: [GrimAC]
+commands:
+  anticheat:
+    description: Interface anti-triche du staff (alertes, joueurs, suspensions).
+    usage: /anticheat [joueur]
+  invsee:
+    description: Voir et modifier l'inventaire d'un joueur (en ligne ou hors ligne).
+    usage: /invsee <joueur>
+  ecsee:
+    description: Voir et modifier le coffre de l'Ender d'un joueur (en ligne ou hors ligne).
+    usage: /ecsee <joueur>
+permissions:
+  ksanticheat.staff:
+    description: Alertes, interface anti-triche, invsee, ecsee, suspensions.
+    default: op

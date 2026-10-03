@@ -1,0 +1,7 @@
+# KS_AntiCheat - valeurs par defaut aussi dans le code.
+
+# Morts d'entites importantes (journal plugins/KS_AntiCheat/morts.log) : types d'entites, mobs nommes, animaux apprivoises.
+morts:
+  types: [VILLAGER, IRON_GOLEM, SNOW_GOLEM, COPPER_GOLEM, ALLAY, WITHER, ENDER_DRAGON, ELDER_GUARDIAN, WARDEN]
+  nommes: true
+  apprivoises: true
