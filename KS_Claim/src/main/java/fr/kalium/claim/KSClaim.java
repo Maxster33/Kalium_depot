@@ -72,7 +72,27 @@ public final class KSClaim extends JavaPlugin {
             fr.kalium.ksmenu.KSMenu.ajouterBouton(this, "claims", lang.c("bouton.nom", "<aqua><bold>Claims"),
                     lang.c("bouton.description", "<gray>Tes claims, leurs membres et leurs réglages"), 20, menus::ouvrir);
         }
+        // 1.1.2 : plus de bannissement dans les claims (LeKiwi06, 03/10/2026) : ceux déjà posés sont levés au démarrage
+        // (sinon personne ne pourrait plus les lever).
+        getServer().getScheduler().runTaskLater(this, this::leverBannissements, 100L);
         lang.saveIfNeeded();
+    }
+
+    private void leverBannissements() {
+        java.util.List<java.util.Map.Entry<fr.xyness.SCS.Types.Claim, String>> bans = new java.util.ArrayList<>();
+        for (fr.xyness.SCS.Types.Claim claim : api().getAllClaims()) {
+            for (java.util.UUID banni : claim.getBans()) {
+                String pseudo = Bukkit.getOfflinePlayer(banni).getName();
+                if (pseudo != null) {
+                    bans.add(java.util.Map.entry(claim, pseudo));
+                }
+            }
+        }
+        if (bans.isEmpty()) {
+            return;
+        }
+        async(() -> bans.forEach(e -> api().unbanPlayerFromClaim(e.getKey(), e.getValue())),
+                () -> getLogger().info(bans.size() + " bannissement(s) de claim levé(s) (plus de bannissement depuis 1.1.2)."));
     }
 
     @Override

@@ -297,7 +297,8 @@ final class Menus {
         boutons.add(gui.button(t("bouton.nom-description", "<white>Nom et description"), null,
                 p -> nomDescription(p, id)));
         boutons.add(gui.button(t("bouton.membres", "<white>Membres"), null, p -> membresClaim(p, id)));
-        boutons.add(gui.button(t("bouton.bannis", "<white>Bannis"), null, p -> bannis(p, id)));
+        // 1.1.2 : plus de bannissement (demande de LeKiwi06) ; expulser reste (le joueur sort, sans interdiction).
+        boutons.add(gui.button(t("bouton.expulser", "<yellow>Expulser un joueur"), null, p -> expulser(p, id)));
         boutons.add(gui.button(t("bouton.groupe", "<white>Groupe"), null, p -> choisirGroupe(p, id)));
         boutons.add(gui.button(t("bouton.reglages-membres", "<white>Réglages des membres"), null,
                 p -> reglages(p, List.of(id), null, "members")));
@@ -352,7 +353,7 @@ final class Menus {
         lang.saveIfNeeded();
     }
 
-    // ------------------------------------------------------------------ membres et bannis
+    // ------------------------------------------------------------------ membres
 
     /** Membres d'un claim, sans le propriétaire. */
     private static List<UUID> membres(Claim claim) {
@@ -475,37 +476,9 @@ final class Menus {
         lang.saveIfNeeded();
     }
 
-    private void bannis(Player joueur, int id) {
-        Claim claim = claim(joueur, id);
-        if (claim == null) {
-            ouvrir(joueur);
-            return;
-        }
-        List<ActionButton> boutons = new ArrayList<>();
-        for (UUID banni : claim.getBans()) {
-            boutons.add(gui.button(t("bouton.debannir", "<green>Débannir <pseudo>", "pseudo", nom(banni)), null, p -> {
-                Claim c = claim(p, id);
-                String pseudo = nom(banni);
-                plugin.async(() -> {
-                    if (c != null) {
-                        KSClaim.api().unbanPlayerFromClaim(c, pseudo);
-                    }
-                }, () -> bannis(p, id));
-            }));
-        }
-        boutons.add(gui.button(t("bouton.bannir", "<red>Bannir un joueur"), null, p -> bannirOuExpulser(p, id, true)));
-        boutons.add(gui.button(t("bouton.expulser", "<yellow>Expulser un joueur"), null,
-                p -> bannirOuExpulser(p, id, false)));
-        boutons.add(retour(p -> menuClaim(p, id)));
-        gui.open(joueur, t("bannis.titre", "<aqua><bold>Bannis"),
-                List.of(t("bannis.aide", "<gray>Un joueur banni ne peut plus entrer dans le claim ; expulser le fait "
-                        + "seulement sortir.")), List.of(), boutons, null, 2);
-        lang.saveIfNeeded();
-    }
-
-    private void bannirOuExpulser(Player joueur, int id, boolean bannir) {
-        ActionButton valider = gui.form(bannir ? t("bouton.bannir-court", "<red>Bannir")
-                : t("bouton.expulser-court", "<yellow>Expulser"), null, (p, vue) -> {
+    /** Fait sortir un joueur du claim (sans l'empêcher d'y revenir). */
+    private void expulser(Player joueur, int id) {
+        ActionButton valider = gui.form(t("bouton.expulser-court", "<yellow>Expulser"), null, (p, vue) -> {
             OfflinePlayer cible = connu(vue.getText("pseudo"));
             Claim c = claim(p, id);
             if (c == null) {
@@ -514,24 +487,15 @@ final class Menus {
             }
             if (cible == null || cible.getName() == null || cible.getUniqueId().equals(p.getUniqueId())) {
                 message(p, t("membre.inconnu", "<red>Joueur inconnu (il doit être déjà venu sur le serveur)."),
-                        j -> bannis(j, id));
+                        j -> expulser(j, id));
                 return;
             }
-            String pseudo = cible.getName();
-            plugin.async(() -> {
-                if (bannir) {
-                    KSClaim.api().banPlayerFromClaim(c, pseudo);
-                }
-            }, () -> {
-                if (!bannir) {
-                    KSClaim.api().kickPlayerFromClaim(c, pseudo);
-                }
-                bannis(p, id);
-            });
+            KSClaim.api().kickPlayerFromClaim(c, cible.getName());
+            menuClaim(p, id);
         });
-        gui.open(joueur, bannir ? t("bannir.titre", "<aqua><bold>Bannir") : t("expulser.titre", "<aqua><bold>Expulser"),
+        gui.open(joueur, t("expulser.titre", "<aqua><bold>Expulser"),
                 List.of(), List.of(gui.text("pseudo", t("champ.pseudo", "Pseudo du joueur"), "", 16)),
-                List.of(valider, retour(p -> bannis(p, id))), null, 1);
+                List.of(valider, retour(p -> menuClaim(p, id))), null, 1);
         lang.saveIfNeeded();
     }
 

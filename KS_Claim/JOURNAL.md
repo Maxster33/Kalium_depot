@@ -62,3 +62,13 @@ SimpleClaimSystem 1.13.1 ne crée pas son API lui-même : le plugin l'initialise
 (`SimpleClaimSystemAPI_Provider.initialize`, sans effet si c'est déjà fait). Aucun autre changement.
 
 **Déployé sur Event le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (ancienne version dans `_removed-ks_claim-1.1.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.1.2 - plus de bannissement (03/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « supprime l'option de bannissement du claim ».
+- Menu du claim : le bouton « Bannis » (bannir, débannir) est retiré ; « Expulser un joueur » (le fait seulement
+  sortir, sans l'empêcher de revenir) devient un bouton direct du menu du claim.
+- Au démarrage, les bannissements déjà posés dans les claims sont levés (sinon personne ne pourrait plus les lever) ;
+  le nombre est noté dans la console. Les commandes de SimpleClaimSystem restent interdites aux joueurs (LuckPerms).
+
+**Non déployé. Statut : non testé en jeu.**
