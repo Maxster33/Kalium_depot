@@ -58,4 +58,4 @@ qui a trait au claim ne marche pas » ; « vas y déploie ».
 - Choix de Claude signalés : gardiens normaux non concernés ; suivi des entités 64 / 48 / 48 / 32 / 32 ; anti-xray
   jusqu'à 128 ; `lava-obscures` laissé pour la catégorie 6.
 - Déployé sur Event le 03/10/2026 à 05:18.
-- Suite : « je ne vois pas le compteur de coffres » (compteurs.yml vide) : KS_FairPlay 1.0.1 (comptage au tick suivant, message en créatif), déployé à 05:52.
+- Suite : « je ne vois pas le compteur de coffres » (compteurs.yml vide) : KS_FairPlay 1.0.1 (comptage au tick suivant, message en créatif), déployé à 05:45.
