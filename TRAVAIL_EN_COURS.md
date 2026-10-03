@@ -16,8 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_AntiCheat — LeKiwi06 — depuis le 2026-10-03 17:41 — correctif : duplication par invsee / ecsee
-- KS_EC_Extension — LeKiwi06 — depuis le 2026-10-03 17:41 — correctif : duplication par ecsee (fonctions pour l'anti-triche)
 
 
 
@@ -27,6 +25,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
+- KS_AntiCheat — LeKiwi06 — depuis le 2026-10-03 17:46 — 1.1.1 compilée (correctif de duplication), en attente du déploiement
+- KS_EC_Extension — LeKiwi06 — depuis le 2026-10-03 17:46 — 1.1.0 compilée (à déployer avec KS_AntiCheat 1.1.1)
 - KLM_Menu — LeKiwi06 — depuis le 2026-10-03 17:32 — 2.8.0 compilée, en attente du déploiement groupé
 - KS_Jetons — LeKiwi06 — depuis le 2026-10-03 17:14 — 1.0.0 compilée (nouveau, catégorie 7), en attente ; utilisée par KS_Teleport / KS_CoffreMort
 - KS_KaliumGive — LeKiwi06 — depuis le 2026-10-03 17:14 — 1.8.0 compilée, en attente du déploiement groupé
