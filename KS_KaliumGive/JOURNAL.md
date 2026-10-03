@@ -86,3 +86,10 @@ Catégorie 4 « Récompenses » : `KSKaliumGive.creer(id)` crée un objet custom
 KS_RewardsGUI pour les récompenses en objets custom. Aucun autre changement.
 
 **Déployé sur Event le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (ancienne version dans `_removed-ks_kaliumgive-1.6.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.8.0 - jetons (03/10/2026, LeKiwi06)
+
+Catégorie 7 : id_custom `jeton_tp`, `jeton_emplacement`, `jeton_claim`, `jeton_mort` (objets de KS_Jetons), pour
+`/kaliumgive` et les tables de butin des récompenses. `softdepend` KS_Jetons.
+
+**Non déployé (catégorie 7). Statut : non testé en jeu.**

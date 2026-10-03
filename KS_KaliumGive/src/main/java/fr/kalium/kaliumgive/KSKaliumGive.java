@@ -59,6 +59,10 @@ public final class KSKaliumGive extends JavaPlugin {
             OBJETS.put("elixir_" + elixir, new ObjetCustom("KS_Elixir",
                     () -> fr.kalium.elixir.KSElixir.creerElixir(elixir)));
         }
+        // 1.8.0 (catégorie 7) : jetons de KS_Jetons (pour les tables de butin des récompenses).
+        for (String jeton : List.of("tp", "emplacement", "claim", "mort")) {
+            OBJETS.put("jeton_" + jeton, new ObjetCustom("KS_Jetons", () -> fr.kalium.jetons.KSJetons.creer(jeton)));
+        }
     }
 
     /** Fiole d'experience de KS_FioleExp, avec son nombre de niveaux (1.4.0 ; points avant) : fiole_exp(50). */
