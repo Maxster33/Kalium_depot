@@ -70,6 +70,7 @@ final class Menus {
         boutons.add(gui.button(t("menu.bouton-joueurs", "<white>Joueurs avec alertes"), null, p -> joueurs(p, 0)));
         boutons.add(gui.button(t("menu.bouton-chercher", "<white>Chercher un joueur"), null, p -> chercher(p, false, false)));
         boutons.add(gui.button(t("menu.bouton-suspendus", "<red>Suspendus"), null, this::suspendus));
+        boutons.add(gui.button(t("menu.bouton-minage", "<gold>Minage (x-ray)"), null, p -> minage(p, null)));
         boutons.add(gui.button(t("menu.bouton-morts", "<white>Morts d'entités"), null, this::morts));
         boutons.add(gui.button(t("menu.bouton-consultations", "<white>Journal invsee / ecsee"), null, this::consultations));
         Consumer<Player> versModeration = retours.get(staff.getUniqueId());
@@ -262,6 +263,29 @@ final class Menus {
         }
         gui.open(staff, t("morts.titre", "<white><bold>Morts d'entités importantes"), corps, List.of(),
                 List.of(retour(this::accueil)), gui.close(), 1);
+        lang.saveIfNeeded();
+    }
+
+    /** Onglet « Minage » (rubrique Modération) : filons rares cachés par joueur, 24 dernières heures. */
+    void minage(Player staff, Consumer<Player> retourModeration) {
+        if (!KSAntiCheat.staff(staff)) {
+            return;
+        }
+        memoriserRetour(staff, retourModeration);
+        List<Component> corps = new ArrayList<>();
+        corps.add(t("minage.aide", "<gray>Seuls comptent les diamants, émeraudes et débris antiques cachés (pas à l'air "
+                + "libre) ; un filon compte une fois ; taux pour 1 000 blocs de roche minés. Du plus suspect au moins suspect."));
+        List<String> lignes = plugin.minage().resume24h();
+        for (int i = 0; i < Math.min(15, lignes.size()); i++) {
+            corps.add(Component.text(lignes.get(i)));
+        }
+        if (lignes.isEmpty()) {
+            corps.add(t("minage.aucun", "<gray>Aucun filon rare caché trouvé ces 24 dernières heures."));
+        }
+        List<ActionButton> boutons = new ArrayList<>();
+        Consumer<Player> versModeration = retours.get(staff.getUniqueId());
+        boutons.add(versModeration != null ? retour(versModeration) : retour(this::accueil));
+        gui.open(staff, t("minage.titre", "<gold><bold>Minage (x-ray)"), corps, List.of(), boutons, gui.close(), 1);
         lang.saveIfNeeded();
     }
 

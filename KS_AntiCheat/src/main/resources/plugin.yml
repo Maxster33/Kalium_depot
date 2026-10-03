@@ -2,7 +2,7 @@ name: KS_AntiCheat
 version: '${project.version}'
 main: fr.kalium.anticheat.KSAntiCheat
 api-version: '26.2'
-description: Anti-triche du serveur Event (alertes, suspensions, invsee / ecsee, morts d'entites importantes ; detections a venir).
+description: Anti-triche du serveur Event (alertes, suspensions, invsee / ecsee, morts d'entites importantes, GrimAC, x-ray, macros, AFK).
 authors: [KaLium]
 depend: [KLM_Menu]
 softdepend: [GrimAC]
@@ -20,3 +20,6 @@ permissions:
   ksanticheat.staff:
     description: Alertes, interface anti-triche, invsee, ecsee, suspensions.
     default: op
+  ksanticheat.afk-libre:
+    description: Jamais expulse pour inactivite.
+    default: false

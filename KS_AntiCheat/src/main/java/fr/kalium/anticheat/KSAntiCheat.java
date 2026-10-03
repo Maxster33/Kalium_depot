@@ -17,7 +17,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Étape 1 (03/10/2026) : alertes (historique, staff connecté), interface staff (rubrique « Modération » de /menu :
  * Anti-triche, Invsee, EcSee ; /anticheat, /invsee, /ecsee), suspension (connexion refusée, message neutre) et levée,
  * invsee / ecsee en ligne et hors ligne avec journal, morts d'entités importantes.
- * Étapes suivantes : détections (GrimAC, x-ray, macros, AFK), duplication, revente suspecte, bannissement réseau.
+ * Étape 2 : détections (Detections : GrimAC, macros, AFK ; Minage : x-ray), suspension automatique des infractions
+ * graves, onglet « Minage » de la rubrique Modération.
+ * Étapes suivantes : duplication, revente suspecte, bannissement réseau.
  *
  * Permission : ksanticheat.staff (opérateurs par défaut).
  */
@@ -32,6 +34,8 @@ public final class KSAntiCheat extends JavaPlugin {
     private Inventaires inventaires;
     private Morts morts;
     private Menus menus;
+    private Detections detections;
+    private Minage minage;
 
     @Override
     public void onEnable() {
@@ -43,6 +47,12 @@ public final class KSAntiCheat extends JavaPlugin {
         inventaires = new Inventaires(this);
         morts = new Morts(this);
         menus = new Menus(this);
+        detections = new Detections(this);
+        minage = new Minage(this);
+        getServer().getPluginManager().registerEvents(detections, this);
+        getServer().getPluginManager().registerEvents(minage, this);
+        // Une fois tous les plugins démarrés : signalements de GrimAC.
+        getServer().getScheduler().runTask(this, detections::brancherGrim);
         getServer().getPluginManager().registerEvents(suspensions, this);
         getServer().getPluginManager().registerEvents(inventaires, this);
         getServer().getPluginManager().registerEvents(morts, this);
@@ -69,7 +79,14 @@ public final class KSAntiCheat extends JavaPlugin {
                     menus.memoriserRetour(p, retour);
                     menus.chercher(p, true, true);
                 }), this, ServicePriority.Normal);
-        getServer().getScheduler().runTaskTimer(this, alertes::sauver, 20L * 30, 20L * 30);
+        services.register(MenuSection.class, MenuSection.moderation(this, "minage", PERMISSION_STAFF, 40,
+                lang.c("moderation.minage", "<gold>Minage (x-ray)"),
+                lang.c("moderation.minage-info", "<gray>Filons rares cachés trouvés par joueur (24 dernières heures)."),
+                menus::minage), this, ServicePriority.Normal);
+        getServer().getScheduler().runTaskTimer(this, () -> {
+            alertes.sauver();
+            minage.sauver();
+        }, 20L * 30, 20L * 30);
         lang.saveIfNeeded();
     }
 
@@ -80,6 +97,9 @@ public final class KSAntiCheat extends JavaPlugin {
         }
         if (alertes != null) {
             alertes.sauver();
+        }
+        if (minage != null) {
+            minage.sauver();
         }
     }
 
@@ -105,6 +125,18 @@ public final class KSAntiCheat extends JavaPlugin {
 
     Morts morts() {
         return morts;
+    }
+
+    Minage minage() {
+        return minage;
+    }
+
+    /** Infraction grave : alerte grave et suspension automatique. */
+    void infractionGrave(java.util.UUID joueur, String nom, String type, String detail) {
+        alertes.ajouter(joueur, nom, type, Alertes.Gravite.GRAVE, detail);
+        if (!suspensions.suspendu(joueur)) {
+            suspensions.suspendre(joueur, nom, type + " : " + detail, "automatique");
+        }
     }
 
     static boolean staff(Player joueur) {

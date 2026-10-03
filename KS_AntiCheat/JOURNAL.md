@@ -27,3 +27,22 @@ Plugin du serveur Event : anti-triche. Cahier des charges : catégorie 6 « Anti
 - `depend` KLM_Menu ; `softdepend` GrimAC (étape 2).
 
 **Non déployé (catégorie 6, étape 1). Statut : non testé en jeu.**
+
+## 0.2.0 - étape 2 : détections GrimAC, x-ray, macros, AFK (03/10/2026)
+
+- **Infraction grave** : alerte grave + **suspension automatique** (« automatique » comme auteur).
+- **GrimAC** (branché à son bus d'événements par réflexion : pas de dépendance à sa version) : une même vérification
+  qui signale un joueur `grimac.alerte-signalements` (10) fois en 10 minutes = alerte légère ; vérification
+  « lourde » (`grimac.lourdes` : Reach, Hitboxes, FastBreak, FarBreak, MultiBreak, Timer) au niveau de violation
+  `grimac.seuil-suspension` (100) = infraction grave. Seuils à ajuster après les tests.
+- **X-ray** : seuls les diamants, émeraudes et débris antiques **cachés** (au plus un bloc d'air autour, ni eau ni
+  lave) ; un filon compte une fois (voisin à 3 blocs, moins de 30 s) ; taux pour 1 000 blocs de roche minés ; par
+  heure : alerte (5 filons et 3 pour 1 000), heure extrême (10 filons et 8 pour 1 000), infraction grave si 3 heures
+  extrêmes sur les 6 dernières (`xray.*`). `minage.yml` : 24 dernières heures. Onglet **« Minage (x-ray) »** de la
+  rubrique Modération (et dans Anti-triche) : joueurs des dernières 24 h, du plus suspect au moins suspect.
+- **Macros** : alerte légère après 20 actions (casser, pêcher, frapper, utiliser un objet) sans bouger ni tourner la
+  caméra depuis 5 minutes (`macros.*`).
+- **AFK** : expulsion après 60 minutes sans vrai mouvement ni mouvement de caméra (dans l'eau ou un véhicule : ne
+  compte pas) ; « Expulsé après 60 minutes d'inactivité. » ; `ksanticheat.afk-libre` : jamais expulsé.
+
+**Non déployé (catégorie 6, étape 2). Statut : non testé en jeu.**

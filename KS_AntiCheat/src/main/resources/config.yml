@@ -5,3 +5,29 @@ morts:
   types: [VILLAGER, IRON_GOLEM, SNOW_GOLEM, COPPER_GOLEM, ALLAY, WITHER, ENDER_DRAGON, ELDER_GUARDIAN, WARDEN]
   nommes: true
   apprivoises: true
+
+# GrimAC : alerte legere quand une meme verification signale un joueur N fois en 10 minutes ; suspension automatique
+# si une verification « lourde » (debut du nom) atteint ce niveau de violation.
+grimac:
+  alerte-signalements: 10
+  seuil-suspension: 100
+  lourdes: [Reach, Hitboxes, FastBreak, FarBreak, MultiBreak, Timer]
+
+# X-ray : filons rares caches par heure, et taux pour 1 000 blocs de roche mines. Suspension : N heures extremes sur
+# les X dernieres heures (pas sur une seule heure chanceuse).
+xray:
+  alerte-filons: 5
+  alerte-taux: 3
+  extreme-filons: 10
+  extreme-taux: 8
+  extreme-heures: 3
+  fenetre-heures: 6
+
+# Macros : alerte si N actions sont faites sans bouger ni tourner la camera depuis X minutes.
+macros:
+  minutes: 5
+  actions: 20
+
+# AFK : expulsion apres X minutes sans vrai mouvement ni mouvement de camera (permission ksanticheat.afk-libre : jamais).
+afk:
+  minutes: 60
