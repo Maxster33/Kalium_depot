@@ -16,7 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_LootPotions — LeKiwi06 — depuis le 2026-10-03 16:33 — pas de potion sur les mobs de spawner
+- KS_Economy — LeKiwi06 — depuis le 2026-10-03 16:34 — score enregistré à chaque transaction, boutique utilisée par un seul joueur, ventes (notifications, stats, classement), favoris, recherche
 - KG_BingoGame — Maxster33 — depuis le 2026-10-03 15:08 — contre la montre : temps ajouté selon la difficulté
 - KG_Bingo — Maxster33 — depuis le 2026-10-03 15:08 — texte d'aide du contre la montre
 
@@ -28,6 +28,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
+- KS_LootPotions — LeKiwi06 — depuis le 2026-10-03 16:34 — 1.1.1 compilée, en attente du déploiement groupé
 - KS_AntiCheat — LeKiwi06 — depuis le 2026-10-03 16:33 — 1.0.2 compilée, en attente du déploiement groupé
 
 
