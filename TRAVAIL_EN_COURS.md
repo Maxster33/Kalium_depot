@@ -16,7 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_AntiCheat — LeKiwi06 — depuis le 2026-10-03 07:05 — invsee / ecsee hors ligne : lecture du fichier de sauvegarde du joueur (1.0.1)
 
 
 

@@ -69,3 +69,4 @@ qui a trait au claim ne marche pas » ; « vas y déploie ».
   bannissement (KaliumRelay 1.4.0 -> LibertyBans), règle TNT ; Paper (duplication par pistons gardée, lava-obscures).
 - Constaté : CoreProtect et LibertyBans n'étaient pas installés ; téléchargés avec l'accord de LeKiwi06.
 - Déployé le 03/10/2026 à 06:45 (proxy et Event).
+- Suite : « pourquoi je dois attendre que les joueurs se soient connectés pour consulter leur inventaire ? » : KS_AntiCheat 1.0.1 lit le fichier de sauvegarde du joueur (lecture seule), déployé à 07:46.

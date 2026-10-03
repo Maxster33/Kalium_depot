@@ -96,4 +96,4 @@ inventaire ? » (Paper ne donne aucun accès à l'inventaire d'un joueur déconn
 - Lecture seule du fichier : les changements du staff restent appliqués à la prochaine connexion (écrire dans la
   sauvegarde d'un joueur risquerait de l'abîmer). Message si aucune sauvegarde lisible.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 07:46 (LeKiwi06 ; 1.0.0 dans `_removed-ks_anticheat-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
