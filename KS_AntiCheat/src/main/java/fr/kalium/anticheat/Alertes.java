@@ -25,7 +25,8 @@ import java.util.UUID;
  */
 final class Alertes {
 
-    enum Gravite { LEGERE, GRAVE }
+    /** ACTION (1.0.2) : action du staff notée dans l'historique du joueur (suspension, levée, bannissement). */
+    enum Gravite { LEGERE, GRAVE, ACTION }
 
     static final class Alerte {
         long date;
@@ -52,8 +53,17 @@ final class Alertes {
         charger();
     }
 
+    /** 1.0.2 : action du staff notée dans l'historique du joueur, sans annonce. */
+    void noter(UUID joueur, String nom, String type, String detail) {
+        ajouter(joueur, nom, type, Gravite.ACTION, detail, false);
+    }
+
     /** Nouvelle alerte : historique, console, staff connecté. */
     void ajouter(UUID joueur, String nom, String type, Gravite gravite, String detail) {
+        ajouter(joueur, nom, type, gravite, detail, true);
+    }
+
+    private void ajouter(UUID joueur, String nom, String type, Gravite gravite, String detail, boolean annoncer) {
         Alerte a = new Alerte();
         a.date = System.currentTimeMillis();
         a.joueur = joueur;
@@ -66,8 +76,11 @@ final class Alertes {
             liste.subList(0, liste.size() - MAX).clear();
         }
         modifie = true;
-        plugin.getLogger().info("Alerte " + (gravite == Gravite.GRAVE ? "GRAVE" : "légère") + " : " + nom + " - " + type
-                + " - " + detail);
+        plugin.getLogger().info((gravite == Gravite.ACTION ? "Action du staff" : "Alerte " + (gravite == Gravite.GRAVE
+                ? "GRAVE" : "légère")) + " : " + nom + " - " + type + " - " + detail);
+        if (!annoncer) {
+            return;
+        }
         String cle = joueur + "|" + type;
         Long avant = derniereAnnonce.get(cle);
         if (gravite == Gravite.LEGERE && avant != null && a.date - avant < PAUSE_ANNONCE_MS) {
@@ -112,7 +125,8 @@ final class Alertes {
     }
 
     static String ligne(Alerte a) {
-        return DATE.format(Instant.ofEpochMilli(a.date)) + " " + (a.gravite == Gravite.GRAVE ? "[GRAVE] " : "") + a.type
+        return DATE.format(Instant.ofEpochMilli(a.date)) + " " + (a.gravite == Gravite.GRAVE ? "[GRAVE] "
+                : a.gravite == Gravite.ACTION ? "[STAFF] " : "") + a.type
                 + " : " + a.detail;
     }
 

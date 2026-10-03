@@ -62,7 +62,8 @@ final class Menus {
             retours.put(staff.getUniqueId(), retourModeration);
         }
         long jour = System.currentTimeMillis() - 24L * 3600_000;
-        long recentes = plugin.alertes().recentes(5000).stream().filter(a -> a.date >= jour).count();
+        long recentes = plugin.alertes().recentes(5000).stream()
+                .filter(a -> a.date >= jour && a.gravite != Alertes.Gravite.ACTION).count();
         List<Component> corps = List.of(t("menu.resume", "<white>Alertes des dernières 24 h : <yellow><n></yellow> ; "
                 + "suspendus : <red><s>", "n", recentes, "s", plugin.suspensions().toutes().size()));
         List<ActionButton> boutons = new ArrayList<>();
@@ -169,7 +170,8 @@ final class Menus {
         Suspension s = plugin.suspensions().suspension(uuid);
         List<Component> corps = new ArrayList<>();
         corps.add(t("joueur.etat", "<white><nom> <gray>- <etat> - <n> alerte(s)", "nom", nom,
-                "etat", cible.isOnline() ? "en ligne" : "hors ligne", "n", alertes.size()));
+                "etat", cible.isOnline() ? "en ligne" : "hors ligne",
+                "n", alertes.stream().filter(a -> a.gravite != Alertes.Gravite.ACTION).count()));
         if (s != null) {
             corps.add(t("joueur.suspendu", "<red>Suspendu le <date> (<par>) : <raison>", "date",
                     Alertes.DATE.format(Instant.ofEpochMilli(s.date)), "par", s.par, "raison", s.raison));
@@ -193,8 +195,10 @@ final class Menus {
                     }, q -> joueur(q, cible))));
         }
         boutons.add(gui.button(t("joueur.bouton-bannir", "<dark_red>Bannir de KaLium"), null, p -> bannir(p, cible)));
-        if (alertes.size() > 8) {
-            boutons.add(gui.button(t("joueur.bouton-toutes", "<yellow>Toutes les alertes"), null, p -> toutes(p, cible, 0)));
+        // 1.0.2 (LeKiwi06) : historique complet (alertes et actions du staff), dès la première entrée.
+        if (!alertes.isEmpty()) {
+            boutons.add(gui.button(t("joueur.bouton-historique", "<yellow>Historique des alertes"), null,
+                    p -> toutes(p, cible, 0)));
         }
         boutons.add(retour(this::accueil));
         gui.open(staff, t("joueur.titre", "<dark_red><bold><nom>", "nom", nom), corps, List.of(), boutons, gui.close(), 2);
@@ -203,11 +207,17 @@ final class Menus {
 
     private void toutes(Player staff, OfflinePlayer cible, int page) {
         List<Alerte> alertes = plugin.alertes().duJoueur(cible.getUniqueId());
-        int pages = Math.max(1, (alertes.size() + 15 - 1) / 15);
+        int pages = Math.max(1, (alertes.size() + PAR_PAGE - 1) / PAR_PAGE);
         int p = Math.max(0, Math.min(page, pages - 1));
         List<Component> corps = new ArrayList<>();
-        for (int i = p * 15; i < Math.min(alertes.size(), (p + 1) * 15); i++) {
-            corps.add(Component.text(Alertes.ligne(alertes.get(i))));
+        corps.add(t("historique.entete", "<gray>Page <page> / <pages> - <n> entrée(s), la plus récente d'abord. "
+                + "<red>[GRAVE]</red> : suspension automatique ; <aqua>[STAFF]</aqua> : action du staff.", "page", p + 1,
+                "pages", pages, "n", alertes.size()));
+        for (int i = p * PAR_PAGE; i < Math.min(alertes.size(), (p + 1) * PAR_PAGE); i++) {
+            Alerte a = alertes.get(i);
+            corps.add(Component.text(Alertes.ligne(a), a.gravite == Alertes.Gravite.GRAVE
+                    ? net.kyori.adventure.text.format.NamedTextColor.RED : a.gravite == Alertes.Gravite.ACTION
+                    ? net.kyori.adventure.text.format.NamedTextColor.AQUA : net.kyori.adventure.text.format.NamedTextColor.WHITE));
         }
         List<ActionButton> boutons = new ArrayList<>();
         if (p > 0) {
@@ -217,7 +227,7 @@ final class Menus {
             boutons.add(gui.button(t("menu.suivant", "<yellow>Page suivante"), null, j -> toutes(j, cible, p + 1)));
         }
         boutons.add(retour(j -> joueur(j, cible)));
-        gui.open(staff, t("joueur.titre-alertes", "<yellow><bold>Alertes de <nom>", "nom",
+        gui.open(staff, t("joueur.titre-historique", "<yellow><bold>Historique de <nom>", "nom",
                 cible.getName() == null ? "?" : cible.getName()), corps, List.of(), boutons, gui.close(), 1);
         lang.saveIfNeeded();
     }
@@ -249,8 +259,8 @@ final class Menus {
                             + "<gray>Raison : <raison>", "nom", nom, "raison", motif),
                     q -> plugin.bannirDeKalium(nom, motif, q.getName(), ok -> {
                         if (ok) {
-                            plugin.alertes().ajouter(cible.getUniqueId(), nom, "Banni de KaLium",
-                                    Alertes.Gravite.LEGERE, "par " + q.getName() + " : " + motif);
+                            plugin.alertes().noter(cible.getUniqueId(), nom, "Banni de KaLium",
+                                    "par " + q.getName() + " : " + motif);
                         }
                         gui.notice(q, t("joueur.titre-bannir", "<dark_red><bold>Bannir de KaLium"), ok
                                         ? t("joueur.banni", "<green><nom> est banni de KaLium.", "nom", nom)

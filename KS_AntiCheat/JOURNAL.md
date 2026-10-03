@@ -105,5 +105,10 @@ alerte n'arrive sur grim que si l'erreur de simulation est de 0,05 ou plus ».
 - Un signalement de GrimAC dont l'écart (premier nombre de son détail) est sous le minimum de sa vérification n'est
   plus compté (ni alerte, ni suspension) : `grimac.ecart-minimum` (`Simulation: 0.05` ; aussi la valeur par défaut du
   code si la clé manque, comme dans le `config.yml` déjà sur Event). Autres vérifications inchangées.
+- **Historique des alertes** (LeKiwi06 : « fait aussi un historique des alertes sur l'interface des joueurs ») :
+  bouton « Historique des alertes » sur la fiche d'un joueur dès sa première entrée (avant : « Toutes les alertes »
+  au-delà de 8) ; 10 par page, la plus récente d'abord, numéro de page ; en rouge les alertes graves, en bleu les
+  actions du staff. Les actions du staff y sont maintenant notées (sans annonce) : suspension (par qui, raison), levée,
+  bannissement de KaLium ; elles ne comptent pas dans le nombre d'alertes.
 
 **Non déployé. Statut : non testé en jeu.**

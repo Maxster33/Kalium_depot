@@ -68,6 +68,10 @@ final class Suspensions implements Listener {
         s.par = par;
         liste.put(joueur, s);
         sauver();
+        // 1.0.2 : dans l'historique du joueur (une suspension automatique y a déjà son alerte grave).
+        if (!"automatique".equals(par)) {
+            plugin.alertes().noter(joueur, nom, "Suspendu", "par " + par + " : " + raison);
+        }
         plugin.getLogger().warning("Suspension de " + nom + " (" + par + ") : " + raison);
         Player p = Bukkit.getPlayer(joueur);
         if (p != null) {
@@ -87,6 +91,7 @@ final class Suspensions implements Listener {
         Suspension s = liste.remove(joueur);
         if (s != null) {
             sauver();
+            plugin.alertes().noter(joueur, s.nom, "Suspension levée", "par " + par);
             plugin.getLogger().info("Suspension de " + s.nom + " levée par " + par + ".");
         }
     }
