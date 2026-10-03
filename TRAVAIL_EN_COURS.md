@@ -16,7 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KG_BingoGame — Maxster33 — depuis le 2026-10-03 12:49 — 0.8.6 : point de départ au milieu de l'océan
 
 
 

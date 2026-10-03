@@ -1758,4 +1758,4 @@ carte d'océan il n'y en a pas, et le départ retombait en (0, 0), dans l'eau. M
 - Le choix « point déjà placé ou non » ne dépend plus des coordonnées (0, 100, 0) : liste des mondes neufs non placés
   (un monde rechargé d'une partie restaurée n'est jamais déplacé).
 
-Mondes de réserve déjà créés par la 0.8.5 : supprimés au redémarrage et refaits. **Statut : compilé, non déployé.**
+Mondes de réserve déjà créés par la 0.8.5 : supprimés au redémarrage et refaits. **Déployé le 03/10/2026 à 12:51 sur Serveur Jeux (Maxster33 ; 0.8.5 dans `_removed-kg_bingogame-0.8.5/`), actif après redémarrage. Statut : non testé en jeu.**
