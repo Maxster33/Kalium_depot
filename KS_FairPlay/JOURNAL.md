@@ -59,7 +59,7 @@ les changements ».
   joueur ») : tant que le joueur a Chance III ou plus, barre verte en haut de l'écran « Élixir de Fortune : m:ss »,
   qui se vide (sur 10 minutes) ; mise à jour chaque seconde, retirée à la fin de l'effet.
 
-**Déployé sur Event le 03/10/2026 à 06:07 (LeKiwi06 ; 1.0.1 dans `_removed-ks_fairplay-1.0.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 06:07 (LeKiwi06 ; 1.0.1 dans `_removed-ks_fairplay-1.0.1/`), actif après redémarrage d'Event. Statut : testé par LeKiwi06 le 03/10/2026 : code Xaero, limite des coffres (affichage « Exploration journalière ») et barre de l'Élixir de Fortune validés ; reste à tester : JourneyMap, spawners, blocs suspects, gardien ancien, entonnoirs, anti-xray.**
 
 ## Configuration de JourneyMap (03/10/2026, 06:13)
 
