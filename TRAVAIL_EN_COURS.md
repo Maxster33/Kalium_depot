@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_FairPlay — LeKiwi06 — depuis le 2026-10-03 03:35 — nouveau : catégorie 5 FairPlay (code Xaero, limite des coffres de structure, spawners, blocs suspects, Chance III)
 
 
 
