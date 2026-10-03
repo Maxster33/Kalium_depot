@@ -1657,3 +1657,31 @@ les afficher (largeur fixe de 240 pixels avant). Aucun autre changement.
 `_removed-klm_menu-2.4.0/` sur lobby, Kal-Games, Serveur Jeux, Kanvas ; 2.4.1 dans `_removed-klm_menu-2.4.1/` sur
 Kixster et Event), KalGames 1.22.1 (`_removed-kalgames-1.22.0/`), KG_BingoGame 0.8.4 (`_removed-kg_bingogame-0.8.3/`),
 KS_Economy 1.0.3 (`_removed-ks_economy-1.0.2/`) ; actifs après redémarrage de chaque serveur. Statut : **testé et confirmé par LeKiwi06 le 02/10/2026** (menus : plus aucun texte qui défile).**
+
+## 0.8.5 - 7 objectifs difficiles ajoutés (03/10/2026, Maxster33)
+
+**Constat de Maxster33 (03/10/2026, logs de Serveur Jeux)** : deux parties créées avec 25 objectifs difficiles ne se
+lançaient pas (`Pas assez d'objectifs de difficulte Difficile dans objectives.yml (25 demandes, 18 disponibles)`) :
+depuis la 0.8.1, il n'y avait plus que 18 difficiles, alors que le menu de création de KG_Bingo en permet 25.
+
+**Demande de Maxster33** : ajouter à la liste Difficile :
+- bloc de cuivre ciré ×6 (`WAXED_COPPER_BLOCK`) ;
+- jambières en diamant (`DIAMOND_LEGGINGS`) ;
+- ghast desséché (`DRIED_GHAST`) ;
+- briques rouges du Nether ×16 (`RED_NETHER_BRICKS`) ;
+- briques de roche noire polie craquelées ×4 (`CRACKED_POLISHED_BLACKSTONE_BRICKS`, « pierre noire taillée
+  craquelée ») ;
+- seau de neige poudreuse (`POWDER_SNOW_BUCKET`) ;
+- axolotl dans un seau (`AXOLOTL_BUCKET`).
+
+Identifiants vérifiés dans Paper 26.2. Total : 207 objectifs (100 faciles, 57 normaux, **25 difficiles**, 25
+extrêmes) : une grille entièrement difficile est de nouveau possible. Icônes de la carte : déjà préparées pour tous
+les objets du jeu (`icons/<version>-22px/`), rien à refaire.
+
+**Déploiement** : le jar seul ne suffit pas, **le fichier du serveur `plugins/KG_BingoGame/objectives.yml` est à
+remplacer** (il n'est copié du jar qu'à la première installation), puis `/bingoadmin grid reload` ou redémarrage.
+**Statut : compilé, non déployé.**
+
+Non corrigé dans cette version (signalé, en attente de décision) : après un échec au lancement (grille impossible à
+tirer), la partie restait inscrite « en cours » sans démarrer ; chaque relance échouait (`Une partie '…' existe
+deja`), sans message au joueur, qui devait revenir à Kal-Games.

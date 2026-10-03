@@ -5,7 +5,10 @@
 # Liste VALIDEE par LeKiwi06 le 24/09/2026 : 100 faciles, 50 normaux, 25 difficiles, 25 extremes ;
 # 26/09/2026 (LeKiwi06) : 7 objets courants du Nether passes de difficile a normal (quartz, poudre lumineuse,
 # sable des ames, basalte, roche noire, tige biscornue, champignon carmin) -> 57 normaux, 18 difficiles
-# (tous les identifiants verifies dans Paper 26.2).
+# (tous les identifiants verifies dans Paper 26.2) ;
+# 03/10/2026 (Maxster33) : 7 difficiles ajoutes (cuivre cire, jambieres en diamant, ghast desseche, briques rouges
+# du Nether, briques de roche noire polie craquelees, seau de neige poudreuse, axolotl dans un seau) -> 207 objectifs :
+# 100 faciles, 57 normaux, 25 difficiles, 25 extremes.
 #
 # Ce fichier est charge depuis le dossier de donnees du plugin (pas depuis le .jar) : il peut
 # etre modifie librement sans recompiler ni remplacer le plugin. Utilisez
@@ -547,6 +550,28 @@ objectives:
     quantity: 2
     difficulty: HARD
   - material: GILDED_BLACKSTONE   # Roche noire dorée
+    quantity: 1
+    difficulty: HARD
+  # 03/10/2026 (Maxster33) : 7 difficiles ajoutes -> 25 difficiles (une grille entiere possible)
+  - material: WAXED_COPPER_BLOCK   # Bloc de cuivre ciré
+    quantity: 6
+    difficulty: HARD
+  - material: DIAMOND_LEGGINGS   # Jambières en diamant
+    quantity: 1
+    difficulty: HARD
+  - material: DRIED_GHAST   # Ghast desséché
+    quantity: 1
+    difficulty: HARD
+  - material: RED_NETHER_BRICKS   # Briques rouges du Nether
+    quantity: 16
+    difficulty: HARD
+  - material: CRACKED_POLISHED_BLACKSTONE_BRICKS   # Briques de roche noire polie craquelées
+    quantity: 4
+    difficulty: HARD
+  - material: POWDER_SNOW_BUCKET   # Seau de neige poudreuse
+    quantity: 1
+    difficulty: HARD
+  - material: AXOLOTL_BUCKET   # Axolotl dans un seau
     quantity: 1
     difficulty: HARD
   # ---- Extreme (25) ----
