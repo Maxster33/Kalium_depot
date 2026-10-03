@@ -206,8 +206,10 @@ final class BingoMenus {
         List<Component> body = List.of(t("bingo.create-body", "<gray>Réglez la partie puis créez-la. Vous serez l'hôte."),
                 t("bingo.create-aide", "<gray>Bingos : lignes, colonnes ou diagonales à achever, avec chrono. "
                         + "Blackout : grille complète, sans chrono (la durée ne compte pas)."),
-                t("bingo.create-aide-chrono", "<gray>Contre la montre (1 équipe) : 10 min au départ, +5 min par objectif ; "
-                        + "il faut remplir toute la grille, bonus selon le temps restant (la durée ne compte pas)."));
+                // 1.7.1 : nouvelle cle (l'ancienne, « +5 min par objectif », est deja figee dans le lang.yml du serveur).
+                t("bingo.create-aide-chrono-2", "<gray>Contre la montre (1 équipe) : 10 min au départ, puis par objectif "
+                        + "+2 min 30 (facile), +4 min (normal), +6 min 30 (difficile), +10 min (extrême) ; il faut remplir "
+                        + "toute la grille, bonus selon le temps restant (la durée ne compte pas)."));
         gui.open(player, t("bingo.create-title", "<gold><bold>Nouvelle partie Bingo"), body, inputs, buttons, gui.close(), 1);
     }
 

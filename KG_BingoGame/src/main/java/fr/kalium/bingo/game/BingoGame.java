@@ -77,7 +77,7 @@ public class BingoGame {
         return duration;
     }
 
-    /** 0.8.5 - contre la montre : ajoute du temps au chrono (+5 min par objectif valide). */
+    /** 0.8.5 - contre la montre : ajoute du temps au chrono (0.8.7 : selon la difficulte de l'objectif valide). */
     public void extend(Duration extra) {
         if (extra != null && !extra.isNegative()) {
             duration = duration.plus(extra);

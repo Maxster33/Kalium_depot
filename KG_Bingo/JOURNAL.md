@@ -131,3 +131,10 @@ Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**
 
 **Déploiement** : **ensemble** avec KG_ScoreBoards 1.9.0 (obligatoire : `removePoints`) et KG_BingoGame 0.8.5 (Serveur
 Jeux). **Déployé le 03/10/2026 à 09:44 sur Kal-Games (Maxster33 ; 1.6.1 dans `_removed-kg_bingo-1.6.1/`), avec KG_ScoreBoards 1.9.0 ; KG_BingoGame 0.8.5 à 09:41. Actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.7.1 - texte d'aide du contre la montre (03/10/2026, Maxster33)
+
+Suite de KG_BingoGame 0.8.7 (temps gagné selon la difficulté de l'objectif) : l'explication en haut du menu de
+création indique « +2 min 30 (facile), +4 min (normal), +6 min 30 (difficile), +10 min (extrême) ». Nouvelle clé de
+texte `bingo.create-aide-chrono-2` : l'ancienne (« +5 min par objectif ») est déjà écrite dans le `lang.yml` du
+serveur et ne serait pas remplacée. Aucun autre changement. **Statut : compilé, non déployé.**

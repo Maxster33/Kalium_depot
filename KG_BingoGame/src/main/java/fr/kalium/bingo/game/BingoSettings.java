@@ -21,7 +21,7 @@ import java.util.Map;
 public record BingoSettings(Mode mode, int bingosRequired, int easy, int medium, int hard, int extreme) {
 
     /**
-     * 0.8.5 - CHRONO (contre la montre, demande de Maxster33, 03/10/2026) : une seule equipe, 10 min au depart, +5 min
+     * 0.8.5 - CHRONO (contre la montre, demande de Maxster33, 03/10/2026) : une seule equipe, 10 min au depart, + temps
      * par objectif valide ; victoire seulement si toute la grille est remplie avant la fin du chrono (bonus de
      * victoire habituel + 1 point par tranche de 20 s restantes) ; sinon defaite, les points des objectifs restent.
      */
@@ -31,7 +31,24 @@ public record BingoSettings(Mode mode, int bingosRequired, int easy, int medium,
 
     /** Contre la montre : chrono de depart, temps gagne par objectif, secondes restantes par point de bonus. */
     public static final java.time.Duration CHRONO_START = java.time.Duration.ofMinutes(10);
-    public static final java.time.Duration CHRONO_PER_OBJECTIVE = java.time.Duration.ofMinutes(5);
+    /**
+     * 0.8.7 - temps gagne par objectif valide, selon sa difficulte (demande de Maxster33, 03/10/2026 ; avant : 5 min
+     * pour tous) : facile 2 min 30, normal 4 min, difficile 6 min 30, extreme 10 min.
+     */
+    public static java.time.Duration chronoBonus(fr.kalium.bingo.grid.Difficulty difficulty) {
+        return switch (difficulty) {
+            case EASY -> java.time.Duration.ofSeconds(150);
+            case MEDIUM -> java.time.Duration.ofMinutes(4);
+            case HARD -> java.time.Duration.ofSeconds(390);
+            case EXTREME -> java.time.Duration.ofMinutes(10);
+        };
+    }
+
+    /** Duree lisible pour les messages : « 2 min 30 », « 4 min ». */
+    public static String formatChrono(java.time.Duration duration) {
+        long seconds = duration.getSeconds();
+        return seconds % 60 == 0 ? (seconds / 60) + " min" : (seconds / 60) + " min " + String.format("%02d", seconds % 60);
+    }
     public static final int CHRONO_SECONDS_PER_POINT = 20;
 
     public static final int MIN_BINGOS = 3;
@@ -114,7 +131,7 @@ public record BingoSettings(Mode mode, int bingosRequired, int easy, int medium,
         String grid = easy + " facile" + (easy > 1 ? "s" : "") + ", " + medium + " norma" + (medium > 1 ? "ux" : "l")
                 + ", " + hard + " difficile" + (hard > 1 ? "s" : "") + ", " + extreme + " extrême" + (extreme > 1 ? "s" : "");
         String rules = isBlackout() ? "Blackout (grille complète, sans chrono)"
-                : isChrono() ? "Contre la montre (grille complète ; 10 min, +5 min par objectif)"
+                : isChrono() ? "Contre la montre (grille complète ; 10 min, puis +2 min 30 à +10 min par objectif selon sa difficulté)"
                 : bingosRequired + " bingos";
         return rules + " — " + grid;
     }

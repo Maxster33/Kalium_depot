@@ -1759,3 +1759,15 @@ carte d'océan il n'y en a pas, et le départ retombait en (0, 0), dans l'eau. M
   (un monde rechargé d'une partie restaurée n'est jamais déplacé).
 
 Mondes de réserve déjà créés par la 0.8.5 : supprimés au redémarrage et refaits. **Déployé le 03/10/2026 à 12:51 sur Serveur Jeux (Maxster33 ; 0.8.5 dans `_removed-kg_bingogame-0.8.5/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 0.8.7 - contre la montre : temps gagné selon la difficulté (03/10/2026, Maxster33)
+
+**Demande de Maxster33** : « il faut que le temps ajouté soit en fonction de la difficulté de l'objectif : facile =
+2 minutes et 30 secondes, moyen = 4 minutes, difficile = 6 minutes et 30 secondes, extrême = 10 minutes ».
+- `BingoSettings.chronoBonus(difficulté)` remplace les 5 min fixes de la 0.8.5 ; message « +2 min 30 au chrono ! »,
+  « +4 min au chrono ! »... Départ inchangé (10 min). Description de la partie mise à jour.
+- Partie en cours au moment de la mise à jour : le temps déjà gagné est gardé (sauvegardé), les objectifs suivants
+  rapportent le nouveau temps.
+
+**Déploiement** : avec KG_Bingo 1.7.1 (texte d'aide du menu de création, seulement un texte : pas obligatoire
+ensemble). **Statut : compilé, non déployé.**
