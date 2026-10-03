@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_Crafts — LeKiwi06 — depuis le 2026-10-03 19:04 — livre de recettes : toutes les recettes débloquées à l'obtention d'un ingrédient
 
 
 
