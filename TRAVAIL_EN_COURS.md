@@ -16,8 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_Decapitator — LeKiwi06 — depuis le 2026-10-03 18:27 — tête de wither squelette : sale, endommagée, désactivée
-- KS_Crafts — LeKiwi06 — depuis le 2026-10-03 18:27 — crafts de réparation de la tête de wither squelette, bloc de charbon de bois
 
 
 
@@ -28,6 +26,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
+- KS_Decapitator — LeKiwi06 — depuis le 2026-10-03 18:30 — 1.1.0 compilée, en attente du déploiement
+- KS_Crafts — LeKiwi06 — depuis le 2026-10-03 18:30 — 1.8.0 compilée, en attente du déploiement
 - KS_AntiCheat — LeKiwi06 — depuis le 2026-10-03 17:46 — 1.1.1 compilée (correctif de duplication), en attente du déploiement
 - KS_EC_Extension — LeKiwi06 — depuis le 2026-10-03 17:46 — 1.1.0 compilée (à déployer avec KS_AntiCheat 1.1.1)
 - KLM_Menu — LeKiwi06 — depuis le 2026-10-03 17:32 — 2.8.0 compilée, en attente du déploiement groupé
