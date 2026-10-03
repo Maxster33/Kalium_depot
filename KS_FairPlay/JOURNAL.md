@@ -55,5 +55,8 @@ les changements ».
 - Limite atteinte : « Exploration journalière : limite atteinte, reviens demain. » (clé `limite-3` ; la liste de ce
   qui compte et la mention de l'Élixir de Fortune sont retirées, même raison).
 - Inchangés : « Chance III : ouverture libre, elle ne compte pas. », « Créatif : non compté ».
+- **Temps restant de l'Élixir de Fortune** (LeKiwi06 : « afficher clairement le timer de la potion sur l'écran du
+  joueur ») : tant que le joueur a Chance III ou plus, barre verte en haut de l'écran « Élixir de Fortune : m:ss »,
+  qui se vide (sur 10 minutes) ; mise à jour chaque seconde, retirée à la fin de l'effet.
 
 **Non déployé. Statut : non testé en jeu.**

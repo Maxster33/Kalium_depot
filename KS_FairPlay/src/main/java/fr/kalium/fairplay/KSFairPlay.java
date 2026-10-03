@@ -1,6 +1,7 @@
 package fr.kalium.fairplay;
 
 import fr.kalium.menu.api.Lang;
+import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -87,6 +88,10 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
     /** Dernier tick compté par joueur : un coffre double (deux moitiés) ne compte qu'une fois. */
     private final Map<UUID, Integer> dernierTick = new HashMap<>();
     private final Map<UUID, Long> dernierMessage = new HashMap<>();
+    /** 1.0.2 : barre du temps restant de Chance III (Élixir de Fortune), par joueur. */
+    private final Map<UUID, BossBar> barres = new HashMap<>();
+    /** Durée de l'Élixir de Fortune (10 minutes) : sert à remplir la barre. */
+    private static final int DUREE_ELIXIR_TICKS = 10 * 60 * 20;
 
     @Override
     public void onEnable() {
@@ -97,11 +102,58 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
         spawnerPose = new NamespacedKey("ks_spawners", "pose");
         charger();
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getScheduler().runTaskTimer(this, this::actualiserBarres, 20L, 20L);
         lang.saveIfNeeded();
+    }
+
+    /**
+     * 1.0.2 (LeKiwi06 : « afficher clairement le timer de la potion sur l'écran du joueur ») : tant que le joueur a
+     * Chance III ou plus, barre en haut de l'écran « Élixir de Fortune : m:ss » qui se vide ; retirée à la fin.
+     */
+    private void actualiserBarres() {
+        for (Player joueur : getServer().getOnlinePlayers()) {
+            PotionEffect chance = joueur.getPotionEffect(PotionEffectType.LUCK);
+            BossBar barre = barres.get(joueur.getUniqueId());
+            if (chance == null || chance.getAmplifier() < 2) {
+                if (barre != null) {
+                    joueur.hideBossBar(barre);
+                    barres.remove(joueur.getUniqueId());
+                }
+                continue;
+            }
+            Component titre;
+            float progression;
+            if (chance.isInfinite()) {
+                titre = lang.c("barre-infinie", "<green>Élixir de Fortune");
+                progression = 1f;
+            } else {
+                int secondes = chance.getDuration() / 20;
+                titre = lang.c("barre", "<green>Élixir de Fortune : <white><temps>", "temps",
+                        secondes / 60 + ":" + String.format("%02d", secondes % 60));
+                progression = Math.max(0f, Math.min(1f, chance.getDuration() / (float) Math.max(DUREE_ELIXIR_TICKS,
+                        chance.getDuration())));
+            }
+            if (barre == null) {
+                barre = BossBar.bossBar(titre, progression, BossBar.Color.GREEN, BossBar.Overlay.PROGRESS);
+                barres.put(joueur.getUniqueId(), barre);
+                joueur.showBossBar(barre);
+            } else {
+                barre.name(titre);
+                barre.progress(progression);
+            }
+        }
+        barres.keySet().removeIf(uuid -> getServer().getPlayer(uuid) == null);
     }
 
     @Override
     public void onDisable() {
+        barres.forEach((uuid, barre) -> {
+            Player joueur = getServer().getPlayer(uuid);
+            if (joueur != null) {
+                joueur.hideBossBar(barre);
+            }
+        });
+        barres.clear();
         sauver();
     }
 
