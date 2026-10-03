@@ -1,0 +1,8 @@
+name: KS_FairPlay
+version: '${project.version}'
+main: fr.kalium.fairplay.KSFairPlay
+api-version: '26.2'
+description: Fair-play du serveur Event (code Xaero, limite journaliere des coffres de structure, spawners naturels, blocs suspects ; Chance III).
+authors: [KaLium]
+depend: [KLM_Menu]
+softdepend: [KS_Spawners]
