@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_AntiCheat — LeKiwi06 — depuis le 2026-10-03 17:28 — minage : tous les minerais par catégorie, compte par minerai (retours des tests de Maxster33)
 
 
 
@@ -31,7 +32,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_FairPlay — LeKiwi06 — depuis le 2026-10-03 16:40 — 1.0.3 compilée, en attente du déploiement groupé
 - KS_Economy — LeKiwi06 — depuis le 2026-10-03 16:38 — 1.2.0 compilée, en attente du déploiement groupé
 - KS_LootPotions — LeKiwi06 — depuis le 2026-10-03 16:34 — 1.1.1 compilée, en attente du déploiement groupé
-- KS_AntiCheat — LeKiwi06 — depuis le 2026-10-03 16:33 — 1.0.2 compilée, en attente du déploiement groupé
 
 
 ## Demandes
