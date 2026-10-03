@@ -16,6 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_Decapitator — LeKiwi06 — depuis le 2026-10-03 18:27 — tête de wither squelette : sale, endommagée, désactivée
+- KS_Crafts — LeKiwi06 — depuis le 2026-10-03 18:27 — crafts de réparation de la tête de wither squelette, bloc de charbon de bois
 
 
 
