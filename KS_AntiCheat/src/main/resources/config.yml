@@ -45,6 +45,8 @@ revente:
   dons: 5
   sens-unique: 3
   jours-attente: 14
+  # Tetes de mobs (KS_Decapitator) qui comptent comme objets de valeur (id ou debut d'id ; bebes compris).
+  tetes-rares: [axolotl.blue, panda.brown, sheep.pink, mooshroom.brown, rabbit.toast, sheep.jeb, creeper.charged, goat.screaming, skeleton_horse, zombie_horse, wither, elder_guardian, warden]
 
 # Bannir de KaLium (LibertyBans sur le proxy, par KaliumRelay 1.4.0). Le jeton n'est JAMAIS dans le depot : a remplir
 # sur le serveur (meme valeur que le proxy).

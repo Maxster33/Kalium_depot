@@ -44,6 +44,11 @@ final class Revente implements Listener {
             "BEACON", "TOTEM_OF_UNDYING", "ENCHANTED_GOLDEN_APPLE", "HEAVY_CORE", "MACE", "DRAGON_EGG", "DIAMOND_BLOCK",
             "EMERALD_BLOCK", "SPAWNER", "TRIDENT");
     private static final long SEPT_JOURS = 7L * 24 * 3600_000;
+    /** 1.0.2 (LeKiwi06) : têtes de KS_Decapitator qui restent des objets de valeur (variantes rares, boss). */
+    static final List<String> TETES_RARES_PAR_DEFAUT = List.of("axolotl.blue", "panda.brown", "sheep.pink",
+            "mooshroom.brown", "rabbit.toast", "sheep.jeb", "creeper.charged", "goat.screaming", "skeleton_horse",
+            "zombie_horse", "wither", "elder_guardian", "warden");
+    private static final NamespacedKey TETE = new NamespacedKey("ks_decapitator", "tete");
 
     private record Don(UUID donneur, String nomDonneur, UUID receveur, String nomReceveur, long date) {
     }
@@ -85,6 +90,21 @@ final class Revente implements Listener {
             return true;
         }
         if (!item.hasItemMeta()) {
+            return false;
+        }
+        // 1.0.2 : têtes de mobs : seulement les rares (sinon trop d'alertes de dons pour des têtes ordinaires).
+        String tete = item.getItemMeta().getPersistentDataContainer().get(TETE,
+                org.bukkit.persistence.PersistentDataType.STRING);
+        if (tete != null) {
+            List<String> rares = plugin.getConfig().getStringList("revente.tetes-rares");
+            if (rares.isEmpty()) {
+                rares = TETES_RARES_PAR_DEFAUT;
+            }
+            for (String r : rares) {
+                if (tete.equals(r) || tete.startsWith(r + ".")) {
+                    return true;
+                }
+            }
             return false;
         }
         for (NamespacedKey cle : item.getItemMeta().getPersistentDataContainer().getKeys()) {

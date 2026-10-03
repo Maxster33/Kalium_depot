@@ -110,5 +110,10 @@ alerte n'arrive sur grim que si l'erreur de simulation est de 0,05 ou plus ».
   au-delà de 8) ; 10 par page, la plus récente d'abord, numéro de page ; en rouge les alertes graves, en bleu les
   actions du staff. Les actions du staff y sont maintenant notées (sans annonce) : suspension (par qui, raison), levée,
   bannissement de KaLium ; elles ne comptent pas dans le nombre d'alertes.
+- **Revente : têtes de mobs** (LeKiwi06 : « laisse quand même les têtes des mobs rares, genre l'axolotl bleu, le panda
+  brun ») : une tête de KS_Decapitator ne compte comme objet de valeur que si elle est rare (`revente.tetes-rares` :
+  axolotl bleu, panda brun, mouton rose, mooshroom brune, lapin Toast, mouton jeb_, creeper chargé, chèvre hurleuse,
+  cheval-squelette, cheval-zombie, wither, gardien ancien, warden ; bébés compris). Les autres objets custom
+  restent de valeur.
 
 **Non déployé. Statut : non testé en jeu.**
