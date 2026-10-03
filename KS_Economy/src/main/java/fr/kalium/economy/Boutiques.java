@@ -67,6 +67,10 @@ import java.util.UUID;
  *
  * 1.1.3 (LeKiwi06, 03/10/2026) : on n'achète pas dans sa propre boutique (stats des magasins) ; « Voir l'objet » montre
  * l'objet exact vendu (et celui demandé) dans un coffre en lecture seule ; « Signaler la boutique ».
+ *
+ * 1.2.0 (LeKiwi06, 03/10/2026) : une boutique (son contenant) n'est utilisée que par un acheteur à la fois (menu
+ * d'achat, « Voir l'objet », achat ; libérée après l'achat, à la déconnexion ou après 30 s sans action) ; chaque vente
+ * est enregistrée (statistiques, notification au propriétaire) ; bouton favori.
  */
 final class Boutiques implements Listener {
 
@@ -87,6 +91,42 @@ final class Boutiques implements Listener {
 
     /** Étape de la création : choix de l'objet vendu ou de l'objet du prix. */
     private enum Etape { VENTE, PRIX }
+
+    /** 1.2.0 : acheteur qui utilise une boutique (clé du contenant) et fin de son utilisation. */
+    private record Utilisation(UUID joueur, long fin) {
+    }
+
+    private static final long DUREE_UTILISATION_MS = 30_000;
+    private final Map<String, Utilisation> utilisations = new HashMap<>();
+
+    /**
+     * 1.2.0 : réserve la boutique pour ce joueur (30 s, renouvelées à chaque action) ; faux si quelqu'un d'autre
+     * l'utilise (message). Un joueur n'utilise qu'une boutique à la fois.
+     */
+    private boolean utiliser(Player joueur, Boutique b) {
+        long maintenant = System.currentTimeMillis();
+        utilisations.values().removeIf(u -> u.fin() < maintenant);
+        String cle = Magasins.cleVerrou(b);
+        Utilisation u = utilisations.get(cle);
+        if (u != null && !u.joueur().equals(joueur.getUniqueId())) {
+            message(joueur, t("achat.occupee", "<red>Quelqu'un utilise cette boutique en ce moment : réessaie dans un "
+                    + "instant."));
+            return false;
+        }
+        liberer(joueur.getUniqueId());
+        utilisations.put(cle, new Utilisation(joueur.getUniqueId(), maintenant + DUREE_UTILISATION_MS));
+        return true;
+    }
+
+    /** 1.2.0 : le joueur n'utilise plus de boutique. */
+    void liberer(UUID joueur) {
+        utilisations.values().removeIf(u -> u.joueur().equals(joueur));
+    }
+
+    @EventHandler
+    public void onQuitUtilisation(org.bukkit.event.player.PlayerQuitEvent event) {
+        liberer(event.getPlayer().getUniqueId());
+    }
 
     /** 1.1.3 : coffre « Voir l'objet » (lecture seule) d'une boutique. */
     private record Vue(UUID joueur, String boutique) implements InventoryHolder {
@@ -711,6 +751,9 @@ final class Boutiques implements Listener {
             message(joueur, t("boutique.verrouillee", "<red>Le propriétaire gère cette boutique : réessaie dans un instant."));
             return;
         }
+        if (!utiliser(joueur, b)) {
+            return;
+        }
         List<Component> corps = new ArrayList<>();
         corps.add(t("achat.nom", "<gold><bold><nom>", "nom", nomBoutique(b)));
         corps.add(t("achat.vend", "<white>Vend : ").append(lot(b.quantite, b.objet)));
@@ -723,9 +766,16 @@ final class Boutiques implements Listener {
         ActionButton signaler = gui.button(t("achat.bouton-signaler", "<red>Signaler la boutique"),
                 t("achat.signaler-info", "<gray>Arnaque, contenu inapproprié..."),
                 p -> plugin.signalements().signalerBoutique(p, b, q -> ouvrirAchat(q, b)));
+        // 1.2.0 : favori.
+        boolean favori = plugin.favoris().contient(joueur.getUniqueId(), Favoris.boutique(b.id));
+        ActionButton etoile = gui.button(favori ? t("favoris.retirer", "<yellow>Retirer des favoris")
+                : t("favoris.ajouter", "<yellow>Ajouter aux favoris"), null, p -> {
+            plugin.favoris().basculer(p.getUniqueId(), Favoris.boutique(b.id));
+            ouvrirAchat(p, b);
+        });
         gui.open(joueur, t("achat.titre", "<gold><bold>Boutique de <proprio>", "proprio", nomJoueur(b.proprio)), corps,
-                List.of(gui.text("lots", t("achat.champ-lots", "Nombre de lots"), "1", 4)), List.of(acheter, voir, signaler),
-                gui.close(), 1);
+                List.of(gui.text("lots", t("achat.champ-lots", "Nombre de lots"), "1", 4)),
+                List.of(acheter, voir, etoile, signaler), gui.close(), 1);
         lang.saveIfNeeded();
     }
 
@@ -735,6 +785,9 @@ final class Boutiques implements Listener {
      * Refermé : retour au menu d'achat.
      */
     void voirObjet(Player joueur, Boutique b) {
+        if (!utiliser(joueur, b)) {
+            return;
+        }
         Inventory vue = Bukkit.createInventory(new Vue(joueur.getUniqueId(), b.id), 27,
                 t("voir.titre", "Ce que tu achètes"));
         ItemStack vendu = b.objet.clone();
@@ -817,6 +870,9 @@ final class Boutiques implements Listener {
             message(joueur, t("achat.fermee", "<red>Cette boutique est fermée pour le moment."));
             return;
         }
+        if (!utiliser(joueur, b)) {
+            return;
+        }
         Inventory stock = Magasins.inventaire(Magasins.contenantDu(b.panneau.getBlock()));
         if (lots < 1 || lots > 1000) {
             message(joueur, t("achat.lots-invalides", "<red>Nombre de lots invalide."));
@@ -869,6 +925,10 @@ final class Boutiques implements Listener {
         actualiserPanneaux(Magasins.contenantDu(b.panneau.getBlock()));
         plugin.getLogger().info("Boutique " + b.id + " : " + joueur.getName() + " achète " + lots + " lot(s) à "
                 + nomJoueur(b.proprio));
+        // 1.2.0 : vente enregistrée (statistiques, notification au propriétaire) ; boutique libérée.
+        plugin.ventes().enregistrer(b, joueur, lots, b.enPoints() ? Component.text(KSEconomy.points(points))
+                : lot(b.prixQuantite * lots, b.prixObjet));
+        liberer(joueur.getUniqueId());
         message(joueur, t("achat.fait", "<green>Acheté : <lots> lot(s).", "lots", lots));
     }
 

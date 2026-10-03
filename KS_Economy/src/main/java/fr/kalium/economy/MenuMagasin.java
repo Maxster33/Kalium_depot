@@ -33,6 +33,8 @@ import java.util.UUID;
  * 1.1.2 : boutiques par leur nom (couleur selon l'état : rupture, coffre plein, fermée), renommer, fermer / rouvrir,
  * suppression : panneau retiré et rendu, place prise 3 h.
  * 1.1.3 : le catalogue ne montre pas son propre magasin ; « Signaler le magasin » ; /magasin signalements (staff).
+ * 1.2.0 : statistiques de ventes (magasin, boutique) ; catalogue classé par ventes de la semaine, « Rechercher un
+ * objet » et « Favoris » ; magasin en favori.
  */
 final class MenuMagasin implements Listener, TabExecutor {
 
@@ -136,6 +138,7 @@ final class MenuMagasin implements Listener, TabExecutor {
         }
         corps.add(t("magasin.boutiques", "<white>Boutiques : <nombre> / <max> ; claims : <claims>", "nombre", mes.size(),
                 "max", magasins.boutiquesMax(m), "claims", m.claims.size()));
+        corps.add(stats(plugin.ventes().magasin(joueur.getUniqueId())));
         int attente = magasins.placesEnAttente(joueur.getUniqueId());
         if (attente > 0) {
             corps.add(t("magasin.places-attente", "<gold><attente> place(s) encore prise(s) par des boutiques "
@@ -328,6 +331,14 @@ final class MenuMagasin implements Listener, TabExecutor {
                 .append(Component.text(" - ")).append(boutiques.etatTexte(b));
     }
 
+    /** 1.2.0 : statistiques de ventes (lots, semaine, gains). */
+    private Component stats(Ventes.Stats st) {
+        return t("ventes.stats", "<gray>Ventes : <white><lots7></white> lot(s) cette semaine, <white><lots></white> au total "
+                        + "(<ventes> vente(s)) ; reçu : <white><points></white><objets>", "lots7", st.lots7j(), "lots", st.lots(),
+                "ventes", st.ventes(), "points", KSEconomy.points(st.points()),
+                "objets", st.objets() > 0 ? " et " + st.objets() + " objet(s) en paiement" : "");
+    }
+
     /** Ligne d'une boutique dans une liste : nom, offre et état. */
     private Component ligne(Boutique b) {
         return Component.text(Boutiques.nomBoutique(b) + " : ").append(offre(b));
@@ -371,7 +382,7 @@ final class MenuMagasin implements Listener, TabExecutor {
         }
         List<Component> corps = List.of(t("achat.nom", "<gold><bold><nom>", "nom", Boutiques.nomBoutique(b)), offre(b),
                 t("magasin.points-attente", "<white>Points en attente : <yellow><points>", "points",
-                        KSEconomy.points(b.pointsEnAttente)));
+                        KSEconomy.points(b.pointsEnAttente)), stats(plugin.ventes().boutique(b.id)));
         List<ActionButton> boutons = new ArrayList<>();
         boutons.add(gui.button(t("magasin.bouton-stock", "<white>Gérer le stock"), null, p -> ouvrirStock(p, b)));
         boutons.add(gui.button(t("magasin.bouton-renommer", "<white>Renommer"), null, p -> renommer(p, b)));
@@ -526,13 +537,23 @@ final class MenuMagasin implements Listener, TabExecutor {
         List<Magasin> liste = new ArrayList<>(magasins.magasins.values());
         // 1.1.3 : son propre magasin n'apparaît pas (il est dans « Mon magasin »).
         liste.removeIf(m -> m.proprio.equals(joueur.getUniqueId()));
+        // 1.2.0 : classement : les magasins qui ont le plus vendu ces 7 derniers jours d'abord.
+        java.util.Map<UUID, Integer> semaine = plugin.ventes().lotsDeLaSemaine();
+        liste.sort(java.util.Comparator.comparingInt((Magasin m) -> -semaine.getOrDefault(m.proprio, 0))
+                .thenComparing(m -> m.nom.toLowerCase(java.util.Locale.ROOT)));
         int pages = Math.max(1, (liste.size() + PAR_PAGE - 1) / PAR_PAGE);
         int p = Math.max(0, Math.min(page, pages - 1));
         List<ActionButton> boutons = new ArrayList<>();
+        boutons.add(gui.button(t("catalogue.bouton-recherche", "<green>Rechercher un objet"), null,
+                j -> plugin.recherche().ouvrir(j, Recherche.Criteres.parDefaut())));
+        boutons.add(gui.button(t("catalogue.bouton-favoris", "<yellow>Favoris (<n>)", "n",
+                plugin.favoris().de(joueur.getUniqueId()).size()), null, this::favoris));
         for (int i = p * PAR_PAGE; i < Math.min(liste.size(), (p + 1) * PAR_PAGE); i++) {
             Magasin m = liste.get(i);
-            boutons.add(gui.button(Component.text(m.nom), t("catalogue.info", "<gray>de <proprio>", "proprio",
-                    Boutiques.nomJoueur(m.proprio)), j -> magasinPublic(j, m.proprio)));
+            int rang = i + 1;
+            boutons.add(gui.button(Component.text(rang + ". " + m.nom), t("catalogue.info-2", "<gray>de <proprio> - "
+                            + "<lots> lot(s) vendu(s) cette semaine", "proprio", Boutiques.nomJoueur(m.proprio), "lots",
+                    semaine.getOrDefault(m.proprio, 0)), j -> magasinPublic(j, m.proprio)));
         }
         if (p > 0) {
             boutons.add(gui.button(t("magasin.precedent", "<yellow>Page précédente"), null, j -> catalogue(j, p - 1)));
@@ -542,7 +563,8 @@ final class MenuMagasin implements Listener, TabExecutor {
         }
         boutons.add(gui.button(t("catalogue.mon-magasin", "<white>Mon magasin"), null, this::ouvrir));
         List<Component> corps = liste.isEmpty() ? List.of(t("catalogue.vide", "<gray>Aucun magasin pour l'instant."))
-                : List.of(t("catalogue.aide", "<gray>Choisis un magasin pour voir ses boutiques et acheter à distance."));
+                : List.of(t("catalogue.aide-2", "<gray>Classement de la semaine (lots vendus). Choisis un magasin pour voir "
+                + "ses boutiques et acheter à distance, ou cherche un objet."));
         gui.open(joueur, t("catalogue.titre", "<gold><bold>Magasins"), corps, List.of(), boutons, gui.close(), 2);
         lang.saveIfNeeded();
     }
@@ -560,6 +582,8 @@ final class MenuMagasin implements Listener, TabExecutor {
         List<Boutique> liste = magasins.boutiquesDe(proprio);
         List<Component> corps = new ArrayList<>();
         corps.add(t("catalogue.proprio", "<white>Magasin de <proprio>", "proprio", Boutiques.nomJoueur(proprio)));
+        corps.add(t("catalogue.ventes", "<gray><lots> lot(s) vendu(s) cette semaine", "lots",
+                plugin.ventes().magasin(proprio).lots7j()));
         if (!m.description.isBlank()) {
             corps.add(t("magasin.description", "<gray><description>", "description", m.description));
         }
@@ -574,11 +598,56 @@ final class MenuMagasin implements Listener, TabExecutor {
             corps.add(ligne(b));
             boutons.add(gui.button(boutiques.boutonBoutique(b), boutiques.etatTexte(b), j -> boutiques.ouvrirAchat(j, b)));
         }
+        boolean favori = plugin.favoris().contient(joueur.getUniqueId(), Favoris.magasin(proprio));
+        boutons.add(gui.button(favori ? t("favoris.retirer", "<yellow>Retirer des favoris")
+                : t("favoris.ajouter", "<yellow>Ajouter aux favoris"), null, j -> {
+            plugin.favoris().basculer(j.getUniqueId(), Favoris.magasin(proprio));
+            magasinPublic(j, proprio);
+        }));
         boutons.add(gui.button(t("catalogue.bouton-signaler", "<red>Signaler le magasin"),
                 t("catalogue.signaler-info", "<gray>Arnaque, contenu inapproprié, thème..."),
                 j -> plugin.signalements().signalerMagasin(j, m, q -> magasinPublic(q, proprio))));
         boutons.add(gui.button(t("magasin.retour", "<gray>Retour"), null, j -> catalogue(j, 0)));
         gui.open(joueur, Component.text(m.nom), corps, List.of(), boutons, gui.close(), 2);
+        lang.saveIfNeeded();
+    }
+
+    /** 1.2.0 : favoris du joueur (magasins et boutiques) ; ceux qui n'existent plus sont retirés. */
+    private void favoris(Player joueur) {
+        List<ActionButton> boutons = new ArrayList<>();
+        List<Component> corps = new ArrayList<>();
+        for (String cle : plugin.favoris().de(joueur.getUniqueId())) {
+            if (cle.startsWith("m:")) {
+                UUID proprio;
+                try {
+                    proprio = UUID.fromString(cle.substring(2));
+                } catch (IllegalArgumentException e) {
+                    plugin.favoris().retirer(joueur.getUniqueId(), cle);
+                    continue;
+                }
+                Magasin m = magasins.magasins.get(proprio);
+                if (m == null) {
+                    plugin.favoris().retirer(joueur.getUniqueId(), cle);
+                    continue;
+                }
+                boutons.add(gui.button(t("favoris.magasin", "<gold>Magasin : <white><nom>", "nom", m.nom),
+                        t("catalogue.info", "<gray>de <proprio>", "proprio", Boutiques.nomJoueur(m.proprio)),
+                        j -> magasinPublic(j, proprio)));
+            } else if (cle.startsWith("b:")) {
+                Boutique b = magasins.boutiques.get(cle.substring(2));
+                if (b == null) {
+                    plugin.favoris().retirer(joueur.getUniqueId(), cle);
+                    continue;
+                }
+                corps.add(ligne(b));
+                boutons.add(gui.button(boutiques.boutonBoutique(b), boutiques.etatTexte(b), j -> boutiques.ouvrirAchat(j, b)));
+            }
+        }
+        if (boutons.isEmpty()) {
+            corps.add(t("favoris.vide", "<gray>Aucun favori : « Ajouter aux favoris » dans un magasin ou une boutique."));
+        }
+        boutons.add(gui.button(t("magasin.retour", "<gray>Retour"), null, j -> catalogue(j, 0)));
+        gui.open(joueur, t("favoris.titre", "<yellow><bold>Favoris"), corps, List.of(), boutons, gui.close(), 2);
         lang.saveIfNeeded();
     }
 }

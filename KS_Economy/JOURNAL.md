@@ -194,3 +194,28 @@ Catégorie 6 (anti-triche, revente suspecte) : `fr.kalium.economy.api.EchangeTer
 points donnés par chacun) quand un `/echange` aboutit. Aucun autre changement.
 
 **Déployé sur Event le 03/10/2026 à 06:45 (LeKiwi06 ; 1.1.4 dans `_removed-ks_economy-1.1.4/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.2.0 - ventes, boutique à un seul acheteur, classement, favoris, recherche (03/10/2026, LeKiwi06)
+
+Revue du 03/10/2026, points validés par LeKiwi06 :
+- **Score enregistré à chaque transaction** (au tick suivant le crédit ou le débit, regroupé ; avant : une fois par
+  minute, un crash pouvait défaire un paiement alors que les objets étaient livrés).
+- **Une boutique, un acheteur à la fois** (« si un joueur est en train d'utiliser une boutique, personne ne puisse le
+  faire en même temps ») : menu d'achat, « Voir l'objet » et achat réservent la boutique (son contenant, donc toutes
+  ses boutiques) au joueur ; libérée après l'achat, à la déconnexion ou après 30 s sans action ; sinon « Quelqu'un
+  utilise cette boutique en ce moment : réessaie dans un instant. ».
+- **Notification de vente** au propriétaire : message s'il est connecté ; sinon résumé à sa connexion (5 dernières,
+  50 gardées).
+- **Statistiques** : lots vendus cette semaine et au total, nombre de ventes, points et objets reçus : dans le menu
+  du magasin et dans la gestion de chaque boutique ; lots de la semaine sur la fiche publique d'un magasin.
+  `ventes.yml` (20 000 dernières ventes).
+- **Catalogue** : magasins classés par lots vendus ces 7 derniers jours (rang et ventes de la semaine) ; boutons
+  « Rechercher un objet » et « Favoris (n) ».
+- **Favoris** : « Ajouter aux favoris » / « Retirer des favoris » sur la fiche d'un magasin et dans le menu d'achat ;
+  page Favoris (magasins et boutiques ; ceux qui n'existent plus sont retirés). `favoris.yml`.
+- **Recherche** : nom français ou id (facultatif), catégorie (objets spéciaux, potions et élixirs, armures, outils et
+  armes, nourriture, minerais et ressources, redstone, blocs, autres), prix (tous, en points, en objet), en stock
+  seulement, tri (plus vendus, moins cher, plus cher, nom ; prix par objet, en points) ; boutiques des autres
+  joueurs ; 10 par page, « Modifier la recherche ».
+
+**Non déployé. Statut : non testé en jeu.**

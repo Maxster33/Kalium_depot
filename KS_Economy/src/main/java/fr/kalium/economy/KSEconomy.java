@@ -77,6 +77,11 @@ public final class KSEconomy extends JavaPlugin implements Listener {
     private Boutiques boutiques;
     private MenuMagasin menuMagasin;
     private Signalements signalements;
+    private Ventes ventes;
+    private Favoris favoris;
+    private Recherche recherche;
+    /** 1.2.0 : une sauvegarde des comptes est déjà prévue au tick suivant. */
+    private volatile boolean sauvegardePrevue;
 
     @Override
     public void onEnable() {
@@ -101,6 +106,11 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         boutiques = new Boutiques(this, magasins);
         menuMagasin = new MenuMagasin(this, magasins, boutiques);
         signalements = new Signalements(this, magasins);
+        // 1.2.0 : ventes (statistiques, notifications, classement), favoris, recherche.
+        ventes = new Ventes(this);
+        favoris = new Favoris(this);
+        recherche = new Recherche(this, magasins, boutiques);
+        getServer().getPluginManager().registerEvents(ventes, this);
         // 1.1.4 : signalements dans la rubrique « Modération » de /menu (KLM_Menu 2.7.0 ; avant : Paramètres).
         getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
                 fr.kalium.menu.api.MenuSection.moderation(this, "signalements-magasins", Signalements.PERMISSION_STAFF, 50,
@@ -139,6 +149,9 @@ public final class KSEconomy extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        if (ventes != null) {
+            ventes.sauver();
+        }
         if (echanges != null) {
             echanges.toutAnnuler();
         }
@@ -158,6 +171,34 @@ public final class KSEconomy extends JavaPlugin implements Listener {
 
     Gui gui() {
         return gui;
+    }
+
+    Ventes ventes() {
+        return ventes;
+    }
+
+    Favoris favoris() {
+        return favoris;
+    }
+
+    Recherche recherche() {
+        return recherche;
+    }
+
+    /**
+     * 1.2.0 (revue du 03/10/2026) : le score est enregistré au tick suivant chaque crédit ou débit (avant : une fois par
+     * minute ; un crash pouvait défaire un paiement alors que les objets étaient livrés). Les opérations d'un même
+     * tick sont regroupées.
+     */
+    private void planifierSauvegarde() {
+        if (sauvegardePrevue || !isEnabled()) {
+            return;
+        }
+        sauvegardePrevue = true;
+        getServer().getScheduler().runTask(this, () -> {
+            sauvegardePrevue = false;
+            sauverSiBesoin();
+        });
     }
 
     Boutiques boutiques() {
@@ -221,6 +262,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
             compte.solde = Math.addExact(compte.solde, points);
             instance.aSauver = true;
         }
+        instance.planifierSauvegarde();
         instance.majListePlusTard(joueur);
     }
 
@@ -237,6 +279,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
             compte.solde -= points;
             instance.aSauver = true;
         }
+        instance.planifierSauvegarde();
         instance.majListePlusTard(joueur);
         return true;
     }
