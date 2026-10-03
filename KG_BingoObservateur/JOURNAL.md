@@ -32,4 +32,5 @@ yeux) ; fin par `/observer quitter` avec retour à la position d'avant ; liste d
 Limites : un spectateur reste visible des autres spectateurs et apparaît en gris dans la liste Tab ; il compte dans le
 nombre de joueurs en Bingo affiché à Kal-Games (KG_BingoGame 0.8.3).
 
-**Statut : compilé, non déployé, non testé en jeu.**
+**Déployé le 03/10/2026 à 10:18 sur Serveur Jeux (Maxster33 ; nouveau, rien à ranger), actif après redémarrage.
+Statut : non testé en jeu.**
