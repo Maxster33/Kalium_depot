@@ -92,4 +92,4 @@ KS_RewardsGUI pour les récompenses en objets custom. Aucun autre changement.
 Catégorie 7 : id_custom `jeton_tp`, `jeton_emplacement`, `jeton_claim`, `jeton_mort` (objets de KS_Jetons), pour
 `/kaliumgive` et les tables de butin des récompenses. `softdepend` KS_Jetons.
 
-**Non déployé (catégorie 7). Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.8.0 ; ancienne version dans `_removed-ks_kaliumgive-1.7.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

@@ -136,3 +136,7 @@ Fait (KS_FairPlay 1.0.2) : compteur « Exploration journalière : n / 10 » ; li
 > il faut afficher clairement le timer de la potion sur l'écran du joueur aussi pour qu'il puisse suivre le temps qui lui reste plus facilement
 
 Fait (KS_FairPlay 1.0.2) : barre verte en haut de l'écran « Élixir de Fortune : m:ss » tant que le joueur a Chance III ou plus (jauge sur 10 minutes, mise à jour chaque seconde).
+
+> c'est redémarré, règle journeymap
+
+Fait : JourneyMap réglé le 03/10/2026 à 06:13 (`/journeymap/server/6.0/journeymap.server.global.config`) : `caveMapping`, `radarEnabled`, `worldPlayerRadar`, `seeUndergroundPlayers` à NONE, radars de joueurs / villageois / animaux / monstres coupés ; surface, relief, biomes, points de repère gardés. `plugins/journeymap/journeymap-server.json` : UUID de l'équipe JourneyMap (codé en dur dans le plugin) retiré des admins, opérateurs gardés. Originaux dans `/_removed-config-2026-10-03/journeymap/`. **Actif au prochain redémarrage d'Event ; vérifier ensuite que JourneyMap n'a pas réécrit ces fichiers.**

@@ -61,4 +61,4 @@ n'importe quel ordre ; réparée des 3, elle devient un **vrai crâne de wither 
   défauts (jamais réparée par erreur).
 - API : `estTeteWitherSquelette`, `defautsTete`, `reparer(tête, défaut)`.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.1.0 ; ancienne version dans `_removed-ks_decapitator-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

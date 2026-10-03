@@ -70,4 +70,4 @@ JourneyMap réglé le 03/10/2026 à 06:13 (`/journeymap/server/6.0/journeymap.se
 Pour KS_Tableau (tableau latéral d'Event) : `ouverturesDuJour(joueur)` et `limiteParJour()` publics. Aucun autre
 changement.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.0.3 ; ancienne version dans `_removed-ks_fairplay-1.0.2/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

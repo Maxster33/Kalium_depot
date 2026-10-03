@@ -161,4 +161,4 @@ Demande de LeKiwi06 (tête de KS_Decapitator 1.1.0 ; un défaut par craft, dans 
 - Recettes en forme (livre de recettes) ; ingrédients exacts et résultat vérifiés à chaque craft. `softdepend`
   KS_Economy, KS_FioleExp ; « réactiver » ignoré sans eux.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.8.0 ; ancienne version dans `_removed-ks_crafts-1.7.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

@@ -70,3 +70,13 @@ qui a trait au claim ne marche pas » ; « vas y déploie ».
 - Constaté : CoreProtect et LibertyBans n'étaient pas installés ; téléchargés avec l'accord de LeKiwi06.
 - Déployé le 03/10/2026 à 06:45 (proxy et Event).
 - Suite : « pourquoi je dois attendre que les joueurs se soient connectés pour consulter leur inventaire ? » : KS_AntiCheat 1.0.1 lit le fichier de sauvegarde du joueur (lecture seule), déployé à 07:46.
+
+## Suite : revue d'Event, catégorie 7 commencée, retours des tests de Maxster33
+- Revue des plugins d'Event (Kixster) : aucune erreur de nos plugins ; corrections validées par LeKiwi06 (potions de
+  spawner, score enregistré à chaque transaction, boutique à un acheteur, têtes rares) et ajouts (ventes, classement,
+  favoris, recherche, tableau latéral) ; ConditionalEvents et PyxelRegions retirés ; 32 archives en trop listées.
+- Catégorie 7 (cahier local `7_Deplacements_Mort.md`) : KS_Jetons et ids de KS_KaliumGive ; KS_Teleport et
+  KS_CoffreMort en attente de réponses.
+- Tests de Maxster33 : minage revu (comparé à CoreProtect), duplication par ecsee / invsee corrigée (copie de
+  KS_EC_Extension), Modération dans la boussole, tête de wither squelette à réparer.
+- Déployé sur Event le 03/10/2026 à 18:42 (11 plugins).

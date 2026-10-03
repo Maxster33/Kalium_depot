@@ -33,4 +33,4 @@ image de la barrière, clé empilable par 64, craft sans forme (dans KS_Crafts 1
 Correctif de duplication par ecsee (KS_AntiCheat 1.1.1) : `coffreOuvert`, `fermerCoffre` (copie enregistrée puis
 fermée), `extension`, `casesDebloquees`, `ecrireExtension`, `imageCaseBloquee`. Aucun changement pour les joueurs.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.1.0 ; ancienne version dans `_removed-ks_ec_extension-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

@@ -35,4 +35,4 @@ Revue du 03/10/2026 (validé par LeKiwi06) : une ferme à spawner (blazes : poti
 dont les spawners fabriqués avec KS_Spawners, donnait des potions à l'infini. Les mobs nés d'un spawner ne donnent
 plus de potion (comme KS_Decapitator pour les têtes). Spawners d'épreuve (trial spawners) non concernés.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.1.1 ; ancienne version dans `_removed-ks_lootpotions-1.1.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

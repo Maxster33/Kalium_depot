@@ -246,4 +246,4 @@ seulement accessible par le /menu ». Le menu de navigation (boussole, /servers)
 destinations) dès qu'un outil de modération est visible pour le joueur ; « Retour » ramène là d'où la rubrique a été
 ouverte (navigation ou /menu). Aucun autre changement.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 2.8.0 ; ancienne version dans `_removed-klm_menu-2.7.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

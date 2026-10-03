@@ -218,4 +218,4 @@ Revue du 03/10/2026, points validés par LeKiwi06 :
   seulement, tri (plus vendus, moins cher, plus cher, nom ; prix par objet, en points) ; boutiques des autres
   joueurs ; 10 par page, « Modifier la recherche ».
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.2.0 ; ancienne version dans `_removed-ks_economy-1.1.5/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

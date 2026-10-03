@@ -26,7 +26,7 @@ Plugin du serveur Event : anti-triche. Cahier des charges : catégorie 6 « Anti
   `morts.apprivoises`) : date, entité, nom, propriétaire, lieu, tué par (joueur, mob, cause).
 - `depend` KLM_Menu ; `softdepend` GrimAC (étape 2).
 
-**Non déployé (catégorie 6, étape 1). Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.1.1 ; ancienne version dans `_removed-ks_anticheat-1.0.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
 
 ## 0.2.0 - étape 2 : détections GrimAC, x-ray, macros, AFK (03/10/2026)
 
@@ -45,7 +45,7 @@ Plugin du serveur Event : anti-triche. Cahier des charges : catégorie 6 « Anti
 - **AFK** : expulsion après 60 minutes sans vrai mouvement ni mouvement de caméra (dans l'eau ou un véhicule : ne
   compte pas) ; « Expulsé après 60 minutes d'inactivité. » ; `ksanticheat.afk-libre` : jamais expulsé.
 
-**Non déployé (catégorie 6, étape 2). Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.1.1 ; ancienne version dans `_removed-ks_anticheat-1.0.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
 
 ## Étape 3 (duplication) : reportée (03/10/2026)
 
@@ -70,7 +70,7 @@ Alertes légères (seuils `revente.*`) :
   `revente.yml` : dons des 7 derniers jours. `softdepend` KS_Economy, KS_RewardsGUI.
 - Non suivi : ventes en magasin.
 
-**Non déployé (catégorie 6, étape 4). Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.1.1 ; ancienne version dans `_removed-ks_anticheat-1.0.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
 
 ## 1.0.0 - étape 5 : bannissement de KaLium, TNT ; première version à déployer (03/10/2026)
 
@@ -116,7 +116,7 @@ alerte n'arrive sur grim que si l'erreur de simulation est de 0,05 ou plus ».
   cheval-squelette, cheval-zombie, wither, gardien ancien, warden ; bébés compris). Les autres objets custom
   restent de valeur.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.1.1 ; ancienne version dans `_removed-ks_anticheat-1.0.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
 
 ## 1.1.0 - minage : tous les minerais, compte par minerai (03/10/2026, LeKiwi06)
 
@@ -141,7 +141,7 @@ regroupé sur 30 s (un filon miné en plusieurs fois compté plusieurs fois ou p
 - `minage.yml` : nouveau format (l'ancien, en filons, repart de zéro).
 - Comprend aussi les changements de 1.0.2 (jamais déployée).
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.1.1 ; ancienne version dans `_removed-ks_anticheat-1.0.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
 
 ## 1.1.1 - correctif : duplication par invsee / ecsee (03/10/2026, LeKiwi06)
 
@@ -161,4 +161,4 @@ joueur dans son ec, donc on peut dupliquer des items si je le prends puis qu'il 
   réappliquée à la connexion avec le reste.
 - Double-clic (ramasser tout) désactivé dans les vues. `softdepend` KS_EC_Extension.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.1.1 ; ancienne version dans `_removed-ks_anticheat-1.0.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

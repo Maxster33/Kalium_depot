@@ -13,4 +13,4 @@ trouve »).
   Mis à jour chaque seconde ; une ligne dont le plugin manque n'est pas affichée.
 - `depend` KLM_Menu ; `softdepend` KS_Economy, KS_FairPlay, SimpleClaimSystem.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.0.0 ; nouveau), actif après redémarrage d'Event. Statut : non testé en jeu.**

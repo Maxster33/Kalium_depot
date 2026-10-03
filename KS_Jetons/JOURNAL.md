@@ -16,4 +16,4 @@ LeKiwi06 (03/10/2026, en cours de rédaction ; copié dans `CAHIER_DES_CHARGES.m
   `consommer`, `ajouter`, `prix`.
 - `depend` KLM_Menu ; `softdepend` KS_Menu, KS_Economy. Joueurs Bedrock : apparence à ajouter dans `geyser-bedrock`.
 
-**Non déployé (catégorie 7). Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.0.0 ; nouveau), actif après redémarrage d'Event. Statut : non testé en jeu.**
