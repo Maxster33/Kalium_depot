@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_AntiCheat — LeKiwi06 — depuis le 2026-10-03 14:50 — GrimAC Simulation : ignorer les écarts sous 0,05 (1.0.2)
 - KG_BingoGame — Maxster33 — depuis le 2026-10-03 15:08 — contre la montre : temps ajouté selon la difficulté
 - KG_Bingo — Maxster33 — depuis le 2026-10-03 15:08 — texte d'aide du contre la montre
 
