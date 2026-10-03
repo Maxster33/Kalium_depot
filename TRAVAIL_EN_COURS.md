@@ -16,6 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KLM_Menu — LeKiwi06 — depuis le 2026-10-03 02:45 — rubrique « Modération » dans /menu (outils de modération des plugins)
+- KS_Economy — LeKiwi06 — depuis le 2026-10-03 02:45 — signalements des magasins dans la rubrique Modération
 
 
 
