@@ -85,3 +85,15 @@ Alertes légères (seuils `revente.*`) :
 - Versions 0.1.0 à 0.5.0 : étapes de codage, jamais déployées.
 
 **Déployé sur Event le 03/10/2026 à 06:45 (LeKiwi06, nouveau ; `config.yml` posé, `relay-token` à remplir) avec CoreProtect CE 24.1, CauldronInteract 1.4.0, Woodcutter 7.2 (datapack, `world/datapacks/`), téléchargés avec l'accord de LeKiwi06 (sha1 vérifiés), et la configuration Paper (`allow-piston-duplication: true`, `lava-obscures: true` ; originaux dans `/_removed-config-2026-10-03/cat6/`) ; LibertyBans 1.1.4 et KaliumRelay 1.4.0 sur le proxy. Actif après redémarrage du proxy et d'Event. Statut : non testé en jeu.**
+
+## 1.0.1 - invsee / ecsee hors ligne sans attendre une connexion (03/10/2026, LeKiwi06)
+
+Question de LeKiwi06 : « pourquoi je dois attendre que les joueurs se soient connectés pour consulter leur
+inventaire ? » (Paper ne donne aucun accès à l'inventaire d'un joueur déconnecté.)
+- Sans instantané (joueur pas revenu depuis l'installation), l'inventaire, l'armure, la seconde main et le coffre de
+  l'Ender sont lus dans son **fichier de sauvegarde** (`world/players/data/<uuid>.dat`, NBT compressé ; objets
+  reconstruits par Paper avec la version des données du fichier), puis gardés comme instantané.
+- Lecture seule du fichier : les changements du staff restent appliqués à la prochaine connexion (écrire dans la
+  sauvegarde d'un joueur risquerait de l'abîmer). Message si aucune sauvegarde lisible.
+
+**Non déployé. Statut : non testé en jeu.**

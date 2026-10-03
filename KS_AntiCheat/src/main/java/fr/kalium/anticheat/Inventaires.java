@@ -42,7 +42,8 @@ import java.util.UUID;
  * - En ligne : vue reliée à l'inventaire du joueur (les changements des deux côtés sont recopiés) ; coffre de l'Ender
  *   ouvert tel quel.
  * - Hors ligne : l'état enregistré à sa dernière déconnexion (instantané pris à chaque déconnexion et toutes les 5
- *   minutes) ; les changements du staff sont appliqués à sa prochaine connexion, avant qu'il puisse jouer.
+ *   minutes ; 1.0.1 : sans instantané, lu dans son fichier de sauvegarde, voir Sauvegardes) ; les changements du
+ *   staff sont appliqués à sa prochaine connexion, avant qu'il puisse jouer.
  * - Journal (plugins/KS_AntiCheat/consultations.log) : chaque ouverture et ce qui a été retiré / ajouté (qui, quel
  *   joueur, quoi, quand), pour éviter les abus et pouvoir se dédouaner.
  *
@@ -130,8 +131,11 @@ final class Inventaires implements Listener {
             } else {
                 YamlConfiguration inst = lireInstantane(cible.getUniqueId());
                 if (inst == null) {
-                    staff.sendMessage(t("inv.aucun", "<red>Aucun inventaire enregistré pour <nom> (pas encore venu depuis "
-                            + "l'installation de l'anti-triche).", "nom", v.nomCible));
+                    // 1.0.1 : pas encore d'instantané : lecture de son fichier de sauvegarde (world/players/data).
+                    inst = depuisSauvegarde(cible);
+                }
+                if (inst == null) {
+                    staff.sendMessage(t("inv.aucun-2", "<red>Aucune sauvegarde lisible pour <nom>.", "nom", v.nomCible));
                     plugin.lang().saveIfNeeded();
                     return;
                 }
@@ -374,6 +378,32 @@ final class Inventaires implements Listener {
         ecrireListe(yaml, "inventaire", joueur.getInventory().getContents());
         ecrireListe(yaml, "ender", joueur.getEnderChest().getContents());
         sauverInstantane(joueur.getUniqueId(), yaml);
+    }
+
+    /**
+     * 1.0.1 : instantané fait à partir du fichier de sauvegarde du joueur (Sauvegardes), enregistré pour la suite
+     * (changements du staff, consultations suivantes) ; null si pas de fichier ou illisible.
+     */
+    private YamlConfiguration depuisSauvegarde(OfflinePlayer cible) {
+        Sauvegardes.Contenu contenu;
+        try {
+            contenu = Sauvegardes.lire(cible.getUniqueId());
+        } catch (IOException | RuntimeException e) {
+            plugin.getLogger().warning("Sauvegarde de " + cible.getName() + " illisible : " + e);
+            return null;
+        }
+        if (contenu == null) {
+            return null;
+        }
+        YamlConfiguration yaml = new YamlConfiguration();
+        yaml.set("nom", cible.getName());
+        yaml.set("date", System.currentTimeMillis());
+        yaml.set("source", "fichier de sauvegarde du joueur");
+        ecrireListe(yaml, "inventaire", contenu.inventaire());
+        ecrireListe(yaml, "ender", contenu.ender());
+        sauverInstantane(cible.getUniqueId(), yaml);
+        plugin.getLogger().info("Inventaire de " + cible.getName() + " lu dans son fichier de sauvegarde.");
+        return yaml;
     }
 
     private static void ecrireListe(YamlConfiguration yaml, String cle, ItemStack[] contenu) {
