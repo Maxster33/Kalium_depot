@@ -16,6 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KG_BingoGame — Maxster33 — depuis le 2026-10-03 08:54 — 7 objectifs difficiles ajoutés ; partie bloquée après un échec du lancement
+
 
 
 
