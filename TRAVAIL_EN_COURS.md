@@ -16,7 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KG_Bingo — Maxster33 — depuis le 2026-10-03 18:01 — création en deux écrans, contre la montre par défaut à 1 équipe
 
 
 

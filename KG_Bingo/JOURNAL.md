@@ -151,4 +151,5 @@ doivent être visibles qu'à 1 équipe.
 - Nouvelles clés de texte : `bingo.create-next`, `bingo.create-body-equipes`, `bingo.create-aide-solo`,
   `bingo.create-body-regles`. Limite de 2 parties par heure vérifiée comme avant (ouverture et validation).
 
-**Statut : compilé, non déployé.**
+**Déployé le 03/10/2026 à 18:12 sur Kal-Games (Maxster33 ; 1.7.1 dans `_removed-kg_bingo-1.7.1/`), actif après
+redémarrage. Statut : non testé en jeu.**
