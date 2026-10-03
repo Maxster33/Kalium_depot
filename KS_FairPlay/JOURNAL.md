@@ -60,3 +60,7 @@ les changements ».
   qui se vide (sur 10 minutes) ; mise à jour chaque seconde, retirée à la fin de l'effet.
 
 **Déployé sur Event le 03/10/2026 à 06:07 (LeKiwi06 ; 1.0.1 dans `_removed-ks_fairplay-1.0.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## Configuration de JourneyMap (03/10/2026, 06:13)
+
+JourneyMap réglé le 03/10/2026 à 06:13 (`/journeymap/server/6.0/journeymap.server.global.config`) : `caveMapping`, `radarEnabled`, `worldPlayerRadar`, `seeUndergroundPlayers` à NONE, radars de joueurs / villageois / animaux / monstres coupés ; surface, relief, biomes, points de repère gardés. `plugins/journeymap/journeymap-server.json` : UUID de l'équipe JourneyMap (codé en dur dans le plugin) retiré des admins, opérateurs gardés. Originaux dans `/_removed-config-2026-10-03/journeymap/`. **Actif au prochain redémarrage d'Event ; vérifier ensuite que JourneyMap n'a pas réécrit ces fichiers.**
