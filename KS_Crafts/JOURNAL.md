@@ -174,4 +174,4 @@ reconnus exactement) ; une fois débloquée, elle le reste. Avant : seulement la
 spawners et le Changeur de Biome. Les élixirs (KS_Elixir) le faisaient déjà. Le mélange de l'alambic (bloc de verrue)
 n'est pas une recette d'établi : pas de livre.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 19:06 (LeKiwi06 ; 1.8.0 dans `_removed-ks_crafts-1.8.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

@@ -80,3 +80,4 @@ qui a trait au claim ne marche pas » ; « vas y déploie ».
 - Tests de Maxster33 : minage revu (comparé à CoreProtect), duplication par ecsee / invsee corrigée (copie de
   KS_EC_Extension), Modération dans la boussole, tête de wither squelette à réparer.
 - Déployé sur Event le 03/10/2026 à 18:42 (11 plugins).
+- Suite : « ajoute les recettes de tous les crafts custom… » : KS_Crafts 1.9.0 (livre de recettes pour toutes ses recettes), déployé à 19:06.

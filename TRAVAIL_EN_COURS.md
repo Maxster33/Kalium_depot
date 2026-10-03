@@ -26,7 +26,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
-- KS_Crafts — LeKiwi06 — depuis le 2026-10-03 19:05 — 1.9.0 compilée, en attente du déploiement
 
 
 ## Demandes
