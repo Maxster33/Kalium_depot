@@ -193,4 +193,4 @@ ouvert depuis `/menu` → « Modération », avec « Retour » vers la rubrique.
 Catégorie 6 (anti-triche, revente suspecte) : `fr.kalium.economy.api.EchangeTermineEvent` (joueurs A et B, objets et
 points donnés par chacun) quand un `/echange` aboutit. Aucun autre changement.
 
-**Non déployé (catégorie 6). Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 06:45 (LeKiwi06 ; 1.1.4 dans `_removed-ks_economy-1.1.4/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

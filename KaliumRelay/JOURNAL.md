@@ -270,4 +270,4 @@ Lance sur la console du proxy `libertybans ban <pseudo> <raison (staff)>` (sans 
 chemin ; pseudo vérifié (lettres, chiffres, _ ; 16 au plus), raison nettoyée (200 caractères) ; 200 : lancé, 503 :
 LibertyBans absent, 400 : pseudo invalide, 401 : jeton. Utilisé par le bouton « Bannir de KaLium » de KS_AntiCheat.
 
-**Non déployé (catégorie 6). Statut : non testé.**
+**Déployé sur le proxy le 03/10/2026 à 06:45 (LeKiwi06 ; 1.3.0 dans `_removed-kaliumrelay-1.3.0/`) avec LibertyBans 1.1.4 (nouveau), actif après redémarrage du proxy. Statut : non testé.**

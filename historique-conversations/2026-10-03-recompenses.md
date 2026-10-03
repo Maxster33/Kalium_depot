@@ -60,3 +60,12 @@ qui a trait au claim ne marche pas » ; « vas y déploie ».
 - Déployé sur Event le 03/10/2026 à 05:18.
 - Suite : « je ne vois pas le compteur de coffres » (compteurs.yml vide) : KS_FairPlay 1.0.1 (comptage au tick suivant, message en créatif), déployé à 05:45.
 - Suite : « Exploration journalière : n / 10 » (ne pas spoiler) et barre du temps de l'Élixir de Fortune : KS_FairPlay 1.0.2, déployé à 06:07.
+
+## Suite : catégorie 6 « Anti-triche » (KS_AntiCheat 1.0.0)
+- LeKiwi06 : « on attaque la catégorie 6 » ; duplication par identifiant : « Reporter » (les recettes et boutiques
+  maison ne reconnaîtraient plus les objets marqués).
+- 5 étapes : socle (alertes, Modération, suspensions, invsee / ecsee, morts), détections (GrimAC par réflexion,
+  x-ray sur minerais cachés, macros, AFK), revente (signaux ajoutés à KS_Economy 1.1.5 et KS_RewardsGUI 1.0.1),
+  bannissement (KaliumRelay 1.4.0 -> LibertyBans), règle TNT ; Paper (duplication par pistons gardée, lava-obscures).
+- Constaté : CoreProtect et LibertyBans n'étaient pas installés ; téléchargés avec l'accord de LeKiwi06.
+- Déployé le 03/10/2026 à 06:45 (proxy et Event).

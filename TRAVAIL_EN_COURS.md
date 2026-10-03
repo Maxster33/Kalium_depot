@@ -16,10 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KaliumRelay — LeKiwi06 — depuis le 2026-10-03 07:40 — catégorie 6, étape 5 : bannissement de KaLium (LibertyBans) demandé par l'anti-triche
-- KS_Economy — LeKiwi06 — depuis le 2026-10-03 07:10 — catégorie 6, étape 4 : signal « échange terminé » pour l'anti-triche
-- KS_RewardsGUI — LeKiwi06 — depuis le 2026-10-03 07:10 — catégorie 6, étape 4 : signal « récompense récupérée » pour l'anti-triche
-- KS_AntiCheat — LeKiwi06 — depuis le 2026-10-03 06:30 — nouveau : catégorie 6 Anti-triche (étape 1 : alertes, interface staff, suspension, invsee / ecsee, morts d'entités)
 
 
 

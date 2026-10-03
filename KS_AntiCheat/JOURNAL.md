@@ -84,4 +84,4 @@ Alertes légères (seuils `revente.*`) :
   réglages « non supportés » restent désactivés), `lava-obscures: true` (overworld et Nether).
 - Versions 0.1.0 à 0.5.0 : étapes de codage, jamais déployées.
 
-**Non déployé (catégorie 6). Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 06:45 (LeKiwi06, nouveau ; `config.yml` posé, `relay-token` à remplir) avec CoreProtect CE 24.1, CauldronInteract 1.4.0, Woodcutter 7.2 (datapack, `world/datapacks/`), téléchargés avec l'accord de LeKiwi06 (sha1 vérifiés), et la configuration Paper (`allow-piston-duplication: true`, `lava-obscures: true` ; originaux dans `/_removed-config-2026-10-03/cat6/`) ; LibertyBans 1.1.4 et KaliumRelay 1.4.0 sur le proxy. Actif après redémarrage du proxy et d'Event. Statut : non testé en jeu.**

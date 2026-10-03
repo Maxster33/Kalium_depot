@@ -32,4 +32,4 @@ Catégorie 6 (anti-triche, revente suspecte) : `fr.kalium.rewardsgui.api.Recompe
 raison, objets, points, date d'envoi) quand une récompense est récupérée ; `plusAnciennesEnAttente()` : date de la
 plus ancienne récompense en attente de chaque joueur. Aucun autre changement.
 
-**Non déployé (catégorie 6). Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 06:45 (LeKiwi06 ; 1.0.0 dans `_removed-ks_rewardsgui-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
