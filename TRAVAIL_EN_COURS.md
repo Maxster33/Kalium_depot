@@ -23,6 +23,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 ## Requis parfois
-n- KG_BingoGame — Maxster33 — depuis le 2026-10-03 10:10 — compilation de KG_BingoObservateur contre lui (aucune modification prévue)
+
+- KG_BingoGame — Maxster33 — depuis le 2026-10-03 10:10 — compilation de KG_BingoObservateur contre lui (aucune modification prévue)
 
 ## Demandes
