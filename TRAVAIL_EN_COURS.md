@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_Jetons — LeKiwi06 — depuis le 2026-10-03 17:11 — nouveau : catégorie 7, jetons et inventaire de jetons
 
 
 
