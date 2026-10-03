@@ -97,3 +97,13 @@ inventaire ? » (Paper ne donne aucun accès à l'inventaire d'un joueur déconn
   sauvegarde d'un joueur risquerait de l'abîmer). Message si aucune sauvegarde lisible.
 
 **Déployé sur Event le 03/10/2026 à 07:46 (LeKiwi06 ; 1.0.0 dans `_removed-ks_anticheat-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.0.2 - GrimAC Simulation : écarts sous 0,05 ignorés (03/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (alertes « GrimAC Simulation » sur lui-même, écarts de 0,003 et 0,025 bloc) : « que cette
+alerte n'arrive sur grim que si l'erreur de simulation est de 0,05 ou plus ».
+- Un signalement de GrimAC dont l'écart (premier nombre de son détail) est sous le minimum de sa vérification n'est
+  plus compté (ni alerte, ni suspension) : `grimac.ecart-minimum` (`Simulation: 0.05` ; aussi la valeur par défaut du
+  code si la clé manque, comme dans le `config.yml` déjà sur Event). Autres vérifications inchangées.
+
+**Non déployé. Statut : non testé en jeu.**

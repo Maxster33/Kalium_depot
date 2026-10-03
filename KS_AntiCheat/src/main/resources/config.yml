@@ -12,6 +12,9 @@ grimac:
   alerte-signalements: 10
   seuil-suspension: 100
   lourdes: [Reach, Hitboxes, FastBreak, FarBreak, MultiBreak, Timer]
+  # Ecart minimal (premier nombre du detail de GrimAC) pour compter un signalement de cette verification.
+  ecart-minimum:
+    Simulation: 0.05
 
 # X-ray : filons rares caches par heure, et taux pour 1 000 blocs de roche mines. Suspension : N heures extremes sur
 # les X dernieres heures (pas sur une seule heure chanceuse).

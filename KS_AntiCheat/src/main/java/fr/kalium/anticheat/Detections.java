@@ -233,6 +233,15 @@ final class Detections implements Listener {
 
     /** Signalement GrimAC (fil de GrimAC) : compté ; alerte / suspension sur le fil principal. */
     private void signalement(UUID joueur, String nom, String verification, double vl, String detail) {
+        // 1.0.2 (LeKiwi06) : écart minimal par vérification (grimac.ecart-minimum ; Simulation : 0,05 bloc) : les
+        // signalements plus petits (lag, recul, glace, mods client...) ne sont pas comptés.
+        Double minimum = ecartMinimum(verification);
+        if (minimum != null) {
+            Double ecart = premierNombre(detail);
+            if (ecart != null && Math.abs(ecart) < minimum) {
+                return;
+            }
+        }
         String cle = joueur + "|" + verification;
         long maintenant = System.currentTimeMillis();
         Deque<Long> dates = signalements.computeIfAbsent(cle, k -> new ArrayDeque<>());
@@ -261,6 +270,36 @@ final class Detections implements Listener {
                         n + " signalements en 10 min, niveau " + Math.round(vl) + court(detail));
             }
         });
+    }
+
+    /** Écart minimal réglé pour cette vérification (grimac.ecart-minimum), ou null. */
+    private Double ecartMinimum(String verification) {
+        var section = plugin.getConfig().getConfigurationSection("grimac.ecart-minimum");
+        if (section == null) {
+            return "simulation".equalsIgnoreCase(verification) ? 0.05 : null;
+        }
+        for (String cle : section.getKeys(false)) {
+            if (cle.equalsIgnoreCase(verification)) {
+                return section.getDouble(cle);
+            }
+        }
+        return null;
+    }
+
+    /** Premier nombre du détail de GrimAC (ex. « .024709 », « 0.12 /gl ») : l'écart ; null s'il n'y en a pas. */
+    private static Double premierNombre(String detail) {
+        if (detail == null) {
+            return null;
+        }
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("-?\\d*\\.?\\d+(?:[eE]-?\\d+)?").matcher(detail);
+        if (!m.find()) {
+            return null;
+        }
+        try {
+            return Double.parseDouble(m.group());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private static String court(String detail) {
