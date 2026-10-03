@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_KaliumGive — LeKiwi06 — depuis le 2026-10-03 17:14 — catégorie 7 : id_custom des jetons
 - KS_Jetons — LeKiwi06 — depuis le 2026-10-03 17:11 — nouveau : catégorie 7, jetons et inventaire de jetons
 
 
