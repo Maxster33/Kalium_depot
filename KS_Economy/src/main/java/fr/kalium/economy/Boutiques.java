@@ -64,6 +64,9 @@ import java.util.UUID;
  * 1.1.2 (retours de LeKiwi06, 03/10/2026) : noms français écrits par le plugin (panneau et menus) ; panneau en 4
  * lignes mesurées (nom de la boutique, lot, prix, état : stock, rupture, coffre plein, fermée) tenu à jour ; nom de
  * boutique choisi à la création et modifiable ; suppression depuis le menu : panneau retiré et rendu.
+ *
+ * 1.1.3 (LeKiwi06, 03/10/2026) : on n'achète pas dans sa propre boutique (stats des magasins) ; « Voir l'objet » montre
+ * l'objet exact vendu (et celui demandé) dans un coffre en lecture seule ; « Signaler la boutique ».
  */
 final class Boutiques implements Listener {
 
@@ -84,6 +87,14 @@ final class Boutiques implements Listener {
 
     /** Étape de la création : choix de l'objet vendu ou de l'objet du prix. */
     private enum Etape { VENTE, PRIX }
+
+    /** 1.1.3 : coffre « Voir l'objet » (lecture seule) d'une boutique. */
+    private record Vue(UUID joueur, String boutique) implements InventoryHolder {
+        @Override
+        public Inventory getInventory() {
+            return null;
+        }
+    }
 
     /** Coffre de choix d'un objet dans l'inventaire. */
     private record Selection(UUID joueur, Etape etape) implements InventoryHolder {
@@ -691,6 +702,11 @@ final class Boutiques implements Listener {
 
     /** Menu d'achat (sur place ou depuis le catalogue). */
     void ouvrirAchat(Player joueur, Boutique b) {
+        // 1.1.3 : pas d'achat dans sa propre boutique ; le propriétaire arrive sur sa gestion.
+        if (b.proprio.equals(joueur.getUniqueId())) {
+            plugin.menuMagasin().gererBoutique(joueur, b);
+            return;
+        }
         if (magasins.verrouillee(b)) {
             message(joueur, t("boutique.verrouillee", "<red>Le propriétaire gère cette boutique : réessaie dans un instant."));
             return;
@@ -702,10 +718,81 @@ final class Boutiques implements Listener {
         corps.add(t("achat.etat", "<white>État : <etat>", "etat", etatTexte(b)));
         ActionButton acheter = gui.form(t("achat.bouton", "<green>Acheter"), null,
                 (p, vue) -> acheter(p, b, entier(vue.getText("lots"))));
+        ActionButton voir = gui.button(t("achat.bouton-voir", "<aqua>Voir l'objet"),
+                t("achat.voir-info", "<gray>L'objet exact que tu vas recevoir"), p -> voirObjet(p, b));
+        ActionButton signaler = gui.button(t("achat.bouton-signaler", "<red>Signaler la boutique"),
+                t("achat.signaler-info", "<gray>Arnaque, contenu inapproprié..."),
+                p -> plugin.signalements().signalerBoutique(p, b, q -> ouvrirAchat(q, b)));
         gui.open(joueur, t("achat.titre", "<gold><bold>Boutique de <proprio>", "proprio", nomJoueur(b.proprio)), corps,
-                List.of(gui.text("lots", t("achat.champ-lots", "Nombre de lots"), "1", 4)), List.of(acheter), gui.close(),
-                1);
+                List.of(gui.text("lots", t("achat.champ-lots", "Nombre de lots"), "1", 4)), List.of(acheter, voir, signaler),
+                gui.close(), 1);
         lang.saveIfNeeded();
+    }
+
+    /**
+     * 1.1.3 : « Voir l'objet » : coffre en lecture seule avec l'objet vendu tel quel (nom, enchantements, description :
+     * l'achat donne exactement des objets identiques), le résumé de l'offre et l'objet demandé (ou les points).
+     * Refermé : retour au menu d'achat.
+     */
+    void voirObjet(Player joueur, Boutique b) {
+        Inventory vue = Bukkit.createInventory(new Vue(joueur.getUniqueId(), b.id), 27,
+                t("voir.titre", "Ce que tu achètes"));
+        ItemStack vendu = b.objet.clone();
+        vendu.setAmount(Math.max(1, Math.min(b.quantite, vendu.getMaxStackSize())));
+        vue.setItem(11, vendu);
+        ItemStack resume = new ItemStack(Material.PAPER);
+        ItemMeta meta = resume.getItemMeta();
+        meta.displayName(t("voir.resume", "<!italic><gold>Vend <lot>", "lot", lot(b.quantite, b.objet)));
+        meta.lore(List.of(t("voir.contre", "<!italic><white>contre <prix>", "prix", prix(b)),
+                t("voir.exact", "<!italic><gray>Tu reçois exactement l'objet de gauche"),
+                t("voir.exact-2", "<!italic><gray>(nom, enchantements, description)."),
+                t("voir.paiement", "<!italic><gray>À droite : ce que tu paies.")));
+        resume.setItemMeta(meta);
+        vue.setItem(13, resume);
+        ItemStack paye;
+        if (b.enPoints()) {
+            paye = new ItemStack(Material.EMERALD);
+            ItemMeta m = paye.getItemMeta();
+            m.displayName(t("voir.points", "<!italic><green><points>", "points", KSEconomy.points(b.prixPoints)));
+            paye.setItemMeta(m);
+        } else {
+            paye = b.prixObjet.clone();
+            paye.setAmount(Math.max(1, Math.min(b.prixQuantite, paye.getMaxStackSize())));
+        }
+        vue.setItem(15, paye);
+        joueur.openInventory(vue);
+        lang.saveIfNeeded();
+    }
+
+    @EventHandler
+    public void onClickVue(InventoryClickEvent event) {
+        if (event.getView().getTopInventory().getHolder() instanceof Vue) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onDragVue(InventoryDragEvent event) {
+        if (event.getView().getTopInventory().getHolder() instanceof Vue) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onCloseVue(InventoryCloseEvent event) {
+        if (!(event.getInventory().getHolder() instanceof Vue vue)
+                || event.getReason() != InventoryCloseEvent.Reason.PLAYER
+                || !(event.getPlayer() instanceof Player joueur)) {
+            return;
+        }
+        Boutique b = magasins.boutiques.get(vue.boutique());
+        if (b != null) {
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (joueur.isOnline()) {
+                    ouvrirAchat(joueur, b);
+                }
+            });
+        }
     }
 
     static String nomJoueur(UUID joueur) {
@@ -714,6 +801,10 @@ final class Boutiques implements Listener {
     }
 
     private void acheter(Player joueur, Boutique b, int lots) {
+        if (b.proprio.equals(joueur.getUniqueId())) {
+            message(joueur, t("achat.soi-meme", "<red>Tu ne peux pas acheter dans ta propre boutique."));
+            return;
+        }
         if (!magasins.boutiques.containsKey(b.id)) {
             message(joueur, t("achat.disparue", "<red>Cette boutique n'existe plus."));
             return;
@@ -863,8 +954,15 @@ final class Boutiques implements Listener {
      * contenant).
      */
     void supprimer(Boutique b, Player auteur, boolean retirerPanneau) {
+        supprimer(b, auteur, retirerPanneau, true);
+    }
+
+    /** delai false : suppression par le staff (1.1.3, signalements), la place n'est pas bloquée. */
+    void supprimer(Boutique b, Player auteur, boolean retirerPanneau, boolean delai) {
         magasins.boutiques.remove(b.id);
-        magasins.noterSuppression(b.proprio);
+        if (delai) {
+            magasins.noterSuppression(b.proprio);
+        }
         if (b.pointsEnAttente > 0) {
             KSEconomy.crediter(b.proprio, b.pointsEnAttente);
         }
@@ -885,11 +983,11 @@ final class Boutiques implements Listener {
             panneau.update();
         }
         if (auteur != null) {
-            long delai = magasins.delaiSuppressionMs();
+            long attente = delai ? magasins.delaiSuppressionMs() : 0;
             auteur.sendMessage(t("boutique.supprimee-2", "<yellow>Boutique supprimée<points><panneau>.<delai>",
                     "points", b.pointsEnAttente > 0 ? " (" + KSEconomy.points(b.pointsEnAttente) + " rendus)" : "",
                     "panneau", rendu ? ", panneau rendu" : "",
-                    "delai", delai > 0 ? " Sa place dans le magasin se libère dans " + duree(delai) + "." : ""));
+                    "delai", attente > 0 ? " Sa place dans le magasin se libère dans " + duree(attente) + "." : ""));
         }
     }
 

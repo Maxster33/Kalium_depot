@@ -32,6 +32,7 @@ import java.util.UUID;
  * boutiques (contenu ouvert dans une copie ; boutique verrouillée pendant ce temps ; chunk chargé).
  * 1.1.2 : boutiques par leur nom (couleur selon l'état : rupture, coffre plein, fermée), renommer, fermer / rouvrir,
  * suppression : panneau retiré et rendu, place prise 3 h.
+ * 1.1.3 : le catalogue ne montre pas son propre magasin ; « Signaler le magasin » ; /magasin signalements (staff).
  */
 final class MenuMagasin implements Listener, TabExecutor {
 
@@ -86,6 +87,13 @@ final class MenuMagasin implements Listener, TabExecutor {
             case "create", "creer", "créer" -> creer(joueur);
             case "agrandir" -> agrandir(joueur);
             case "position" -> position(joueur);
+            case "signalements" -> {
+                if (Signalements.staff(joueur)) {
+                    plugin.signalements().ouvrirStaff(joueur, false, 0);
+                } else {
+                    ouvrir(joueur);
+                }
+            }
             default -> ouvrir(joueur);
         }
         return true;
@@ -97,6 +105,9 @@ final class MenuMagasin implements Listener, TabExecutor {
             return List.of();
         }
         List<String> choix = new ArrayList<>(List.of("create", "agrandir", "position"));
+        if (sender instanceof Player p && Signalements.staff(p)) {
+            choix.add("signalements");
+        }
         choix.removeIf(c -> !c.startsWith(args[0].toLowerCase()));
         return choix;
     }
@@ -513,6 +524,8 @@ final class MenuMagasin implements Listener, TabExecutor {
 
     void catalogue(Player joueur, int page) {
         List<Magasin> liste = new ArrayList<>(magasins.magasins.values());
+        // 1.1.3 : son propre magasin n'apparaît pas (il est dans « Mon magasin »).
+        liste.removeIf(m -> m.proprio.equals(joueur.getUniqueId()));
         int pages = Math.max(1, (liste.size() + PAR_PAGE - 1) / PAR_PAGE);
         int p = Math.max(0, Math.min(page, pages - 1));
         List<ActionButton> boutons = new ArrayList<>();
@@ -540,6 +553,10 @@ final class MenuMagasin implements Listener, TabExecutor {
             catalogue(joueur, 0);
             return;
         }
+        if (proprio.equals(joueur.getUniqueId())) {
+            ouvrir(joueur);
+            return;
+        }
         List<Boutique> liste = magasins.boutiquesDe(proprio);
         List<Component> corps = new ArrayList<>();
         corps.add(t("catalogue.proprio", "<white>Magasin de <proprio>", "proprio", Boutiques.nomJoueur(proprio)));
@@ -557,6 +574,9 @@ final class MenuMagasin implements Listener, TabExecutor {
             corps.add(ligne(b));
             boutons.add(gui.button(boutiques.boutonBoutique(b), boutiques.etatTexte(b), j -> boutiques.ouvrirAchat(j, b)));
         }
+        boutons.add(gui.button(t("catalogue.bouton-signaler", "<red>Signaler le magasin"),
+                t("catalogue.signaler-info", "<gray>Arnaque, contenu inapproprié, thème..."),
+                j -> plugin.signalements().signalerMagasin(j, m, q -> magasinPublic(q, proprio))));
         boutons.add(gui.button(t("magasin.retour", "<gray>Retour"), null, j -> catalogue(j, 0)));
         gui.open(joueur, Component.text(m.nom), corps, List.of(), boutons, gui.close(), 2);
         lang.saveIfNeeded();

@@ -164,3 +164,18 @@ Limite : un golem de cuivre du propriétaire, près d'une boutique en coffre de 
 protection des claims de SimpleClaimSystem s'applique aux golems des autres).
 
 **Déployé sur Event le 03/10/2026 à 01:49 (LeKiwi06 ; 1.1.1 dans `_removed-ks_economy-1.1.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.1.3 - catalogue sans son magasin, pas d'achat chez soi, « Voir l'objet », signalements (03/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (cahier : « Demande de LeKiwi06 (03/10/2026, KS_Economy 1.1.3) ») :
+- **Catalogue** : son propre magasin n'apparaît plus. **Pas d'achat dans sa propre boutique** (stats des magasins) :
+  le propriétaire arrive sur la gestion ; achat refusé sinon.
+- **« Voir l'objet »** (menu d'achat) : coffre en lecture seule : objet vendu tel quel, résumé, objet demandé (ou
+  émeraude « N points ») ; refermé : retour au menu d'achat.
+- **Signalements** : « Signaler la boutique » (menu d'achat), « Signaler le magasin » (fiche dans le catalogue) ;
+  raisons à cocher (arnaque, contenu inapproprié, thème non respecté) + « Autre » ; 1 non traité par joueur et par
+  cible ; message au staff connecté (`kseconomy.staff`, nouvelle permission, opérateurs par défaut) et console ;
+  `plugins/KS_Economy/signalements.yml`. `/magasin signalements` (staff) : non traités / classés, détail, se
+  téléporter, supprimer la boutique (sans délai de 3 h), classer avec l'action faite.
+
+**Non déployé. Statut : non testé en jeu.**

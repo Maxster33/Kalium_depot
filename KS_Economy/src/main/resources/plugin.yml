@@ -16,4 +16,8 @@ commands:
     usage: /echange <joueur> | accepter | refuser
   magasin:
     description: Ton magasin (creer, agrandir, position).
-    usage: /magasin [create | agrandir | position]
+    usage: /magasin [create | agrandir | position | signalements]
+permissions:
+  kseconomy.staff:
+    description: Recevoir et traiter les signalements de boutiques et de magasins (/magasin signalements).
+    default: op

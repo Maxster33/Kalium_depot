@@ -76,6 +76,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
     private Magasins magasins;
     private Boutiques boutiques;
     private MenuMagasin menuMagasin;
+    private Signalements signalements;
 
     @Override
     public void onEnable() {
@@ -99,6 +100,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         magasins = new Magasins(this);
         boutiques = new Boutiques(this, magasins);
         menuMagasin = new MenuMagasin(this, magasins, boutiques);
+        signalements = new Signalements(this, magasins);
         getServer().getPluginManager().registerEvents(boutiques, this);
         getServer().getPluginManager().registerEvents(menuMagasin, this);
         getCommand("magasin").setExecutor(menuMagasin);
@@ -149,6 +151,14 @@ public final class KSEconomy extends JavaPlugin implements Listener {
 
     Gui gui() {
         return gui;
+    }
+
+    Boutiques boutiques() {
+        return boutiques;
+    }
+
+    Signalements signalements() {
+        return signalements;
     }
 
     MenuMagasin menuMagasin() {
