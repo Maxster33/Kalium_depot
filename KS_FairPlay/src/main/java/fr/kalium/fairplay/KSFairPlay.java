@@ -161,6 +161,17 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
         return Math.max(0, getConfig().getInt("limite-par-jour", 10));
     }
 
+    /** 1.0.3 (pour KS_Tableau) : ouvertures comptées aujourd'hui par ce joueur. */
+    public int ouverturesDuJour(UUID joueur) {
+        verifierJour();
+        return compteurs.getOrDefault(joueur, 0);
+    }
+
+    /** 1.0.3 (pour KS_Tableau) : limite journalière. */
+    public int limiteParJour() {
+        return limite();
+    }
+
     // ------------------------------------------------------------------ mini-cartes
 
     @EventHandler

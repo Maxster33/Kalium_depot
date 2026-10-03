@@ -64,3 +64,10 @@ les changements ».
 ## Configuration de JourneyMap (03/10/2026, 06:13)
 
 JourneyMap réglé le 03/10/2026 à 06:13 (`/journeymap/server/6.0/journeymap.server.global.config`) : `caveMapping`, `radarEnabled`, `worldPlayerRadar`, `seeUndergroundPlayers` à NONE, radars de joueurs / villageois / animaux / monstres coupés ; surface, relief, biomes, points de repère gardés. `plugins/journeymap/journeymap-server.json` : UUID de l'équipe JourneyMap (codé en dur dans le plugin) retiré des admins, opérateurs gardés. Originaux dans `/_removed-config-2026-10-03/journeymap/`. **Vérifié après le redémarrage d'Event (03/10/2026, 06:14) : réglages en place, JourneyMap et KS_FairPlay 1.0.2 chargés sans erreur.**
+
+## 1.0.3 - compteur lisible par d'autres plugins (03/10/2026, LeKiwi06)
+
+Pour KS_Tableau (tableau latéral d'Event) : `ouverturesDuJour(joueur)` et `limiteParJour()` publics. Aucun autre
+changement.
+
+**Non déployé. Statut : non testé en jeu.**

@@ -1,0 +1,12 @@
+name: KS_Tableau
+version: '${project.version}'
+main: fr.kalium.tableau.KSTableau
+api-version: '26.2'
+description: Tableau sur le cote de l'ecran (serveur Event) - score, exploration journaliere, claims, coordonnees, biome ; /tableau.
+authors: [KaLium]
+depend: [KLM_Menu]
+softdepend: [KS_Economy, KS_FairPlay, SimpleClaimSystem]
+commands:
+  tableau:
+    description: Affiche ou masque le tableau sur le cote de l'ecran.
+    usage: /tableau [on|off]
