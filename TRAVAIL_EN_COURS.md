@@ -16,7 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_AntiCheat — LeKiwi06 — depuis le 2026-10-03 17:28 — minage : tous les minerais par catégorie, compte par minerai (retours des tests de Maxster33)
+- KLM_Menu — LeKiwi06 — depuis le 2026-10-03 17:31 — bouton « Modération » dans la navigation (boussole)
 
 
 
@@ -26,6 +26,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
+- KS_AntiCheat — LeKiwi06 — depuis le 2026-10-03 17:31 — 1.1.0 compilée, en attente du déploiement groupé
 - KS_Jetons — LeKiwi06 — depuis le 2026-10-03 17:14 — 1.0.0 compilée (nouveau, catégorie 7), en attente ; utilisée par KS_Teleport / KS_CoffreMort
 - KS_KaliumGive — LeKiwi06 — depuis le 2026-10-03 17:14 — 1.8.0 compilée, en attente du déploiement groupé
 - KS_Tableau — LeKiwi06 — depuis le 2026-10-03 16:40 — 1.0.0 compilée (nouveau), en attente du déploiement groupé
