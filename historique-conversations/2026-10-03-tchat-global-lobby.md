@@ -27,7 +27,9 @@ LeKiwi06, pour « le serveur dans son ensemble » :
   temps. Générateur de QR code écrit dans le plugin, vérifié avec un décodeur (jsQR) hors serveur.
 - **KLM_Menu 2.9.0** : bouton « Recherche de joueurs » dans la boussole (moins de 4 joueurs sur le serveur), nouvelle
   API `QrCodes`.
-- Compilés (`sortie/`), **non déployés, non testés en jeu**.
+- **Déployés le 03/10/2026 à 22:46 - 22:47** (accord de LeKiwi06, WinSCP en ligne de commande) : KLM_Chat 1.0.0 et KLM_Menu
+  2.9.0 sur les 6 serveurs Paper, KLM_Hub 1.0.0 sur le lobby ; vision nocturne ajoutée à la config de KLM_Portal du
+  lobby. **Non testés en jeu**, actifs après redémarrage (l'humain).
 
 ## Décisions
 
@@ -47,10 +49,7 @@ LeKiwi06, pour « le serveur dans son ensemble » :
 
 ## Reste à faire
 
-- Déployer : KLM_Chat 1.0.0 et KLM_Menu 2.9.0 sur les 6 serveurs Paper, KLM_Hub 1.0.0 sur le lobby (avec KLM_Menu
-  2.9.0), puis redémarrages par l'humain.
-- Lobby : ajouter `night_vision: 0` sous `region-effects.lobby.effects` de `plugins/KLM_Portal/config.yml` (copie de
-  l'ancien fichier dans `_removed-…` avant), puis `/klmportal reload`.
+- Redémarrer les 6 serveurs Paper (l'humain).
 - Retirer l'ancienne barre du lobby si elle existe encore (`/bossbar list`, `/bossbar remove <id>`).
 - Tests en jeu : voir le compte rendu de `REPRISE_PROJET.md`.
 - Signalé, à décider : anti-spam et joueurs muets pour `/global` ; `/global true | false` commun à tous les serveurs.

@@ -16,8 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KLM_Chat — LeKiwi06 — depuis le 2026-10-03 20:52 — 1.0.0 compilée, en attente du déploiement (6 serveurs Paper)
-- KLM_Hub — LeKiwi06 — depuis le 2026-10-03 20:52 — 1.0.0 compilée, en attente du déploiement (lobby, avec KLM_Menu 2.9.0)
 
 
 
@@ -29,8 +27,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
-- KLM_Menu — LeKiwi06 — depuis le 2026-10-03 20:52 — 2.9.0 compilée (bouton « Recherche de joueurs »), en attente du déploiement (6 serveurs Paper)
-- KLM_Portal — LeKiwi06 — depuis le 2026-10-03 20:52 — configuration du lobby seulement (vision nocturne dans les effets de zone)
 
 
 

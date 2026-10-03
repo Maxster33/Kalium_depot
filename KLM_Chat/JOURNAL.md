@@ -42,4 +42,4 @@ rose, Bingo (serveur-jeux) jaune.
 LibertyBans peut encore écrire avec `/global` tant que la commande n'est pas ajoutée aux commandes bloquées de
 LibertyBans ; aucune modération ni historique en dehors de la console.
 
-**Statut : compilé le 03/10/2026, non déployé, non testé en jeu.**
+**Déployé sur les 6 serveurs Paper (lobby, Kal-Games, Kanvas, Kixster, Event, Serveur Jeux) le 03/10/2026 à 22:47 (LeKiwi06), actif après redémarrage de chacun. Statut : non testé en jeu.**

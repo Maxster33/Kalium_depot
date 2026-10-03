@@ -148,3 +148,10 @@ décide) » ; l'explication est écrite en haut du menu (`landings.mode-aide`).
 
 **Déployé sur le lobby et Kanvas le 02/10/2026 à 17:49 (LeKiwi06 ; 1.3.1 dans `_removed-klm_portal-1.3.1/`), actif après redémarrage.
 Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**
+
+## Configuration du lobby — vision nocturne (03/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « ajouter l'effet night vision permanent à tous dans le lobby » (sans clignotement sur Bedrock).
+Aucun changement de code : `night_vision: 0` ajouté à `region-effects.lobby.effects` dans `plugins/KLM_Portal/config.yml` du
+lobby le 03/10/2026 à 22:46 (durée infinie, comme speed et jump boost ; ancien fichier dans
+`_removed-klm_portal-config-2026-10-03/`). Actif après redémarrage du lobby ou `/klmportal reload`. **Non testé en jeu.**

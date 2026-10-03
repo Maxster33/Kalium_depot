@@ -265,5 +265,5 @@ live » (lien du Twitch + bouton QR code).
 Limite : le bouton n'apparaît que là où la boussole ou `/servers` sont utilisés (pas de boussole sur Serveur Jeux ;
 sur Kixster et Event, après `/menu on`). À déployer avec KLM_Hub 1.0.0 sur le lobby.
 
-**Statut : compilé le 03/10/2026, non déployé, non testé en jeu.** Les versions 2.6.0 à 2.8.0 n'ont pas encore été
+**Déployé sur les 6 serveurs Paper le 03/10/2026 à 22:47 (LeKiwi06 ; anciennes versions dans `_removed-klm_menu-2.5.0/` (lobby, Kixster, Serveur Jeux), `2.6.0/` (Kal-Games, Kanvas), `2.8.0/` (Event)), actif après redémarrage. Statut : non testé en jeu.** Les versions 2.6.0 à 2.8.0 n'ont pas encore été
 testées en jeu (signalé à LeKiwi06).

@@ -44,4 +44,4 @@ sur Bedrock, la couleur du texte est la plus proche disponible et la barre garde
 
 **À déployer avec KLM_Menu 2.9.0** (sur un serveur resté à une version plus ancienne, KLM_Hub ne se charge pas).
 
-**Statut : compilé le 03/10/2026, non déployé, non testé en jeu.**
+**Déployé sur le lobby le 03/10/2026 à 22:46 (LeKiwi06), avec KLM_Menu 2.9.0, actif après redémarrage. Statut : non testé en jeu.**
