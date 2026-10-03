@@ -267,6 +267,13 @@ serveurs** : KG_BingoGame 0.8.5 (+ nouveau `objectives.yml`), KG_Bingo 1.7.0, KG
 - Erreurs « Impossible de publier ... : null » cette nuit (00:55 à 01:13) : relais injoignable (proxy redémarré
   probablement), reparti seul ; pas un bug. Crédit des points sur Kal-Games non vérifié.
 
+**Correction des classements Bingo (17:04, Kal-Games arrêté)** : 27 parties à une seule équipe jouées avant la 0.8.5
+avaient les bonus « en 1er » (objectif, bingo). Détail impossible à recalculer (seuls les totaux sont gardés) : **40 %
+des points hors XP retirés** (choix de Maxster33), dans `stats.yml` (général, octobre), `archives/2026-09.yml` et
+`archives/semaines/2026-09-26.yml` : .MRMister7866 -2 426,6 (général), Maaxster -452,2, .PatientLime2170 -89,8,
+.TomHeroes57 -59,4. Originaux dans `/plugins/_removed-kg_scoreboards-stats-2026-10-03/`. Pas d'écriture dans le
+journal des parties ; paliers de récompenses déjà donnés non repris. Détail : `historique-conversations/2026-10-03-bingo.md`.
+
 **KG_BingoGame 0.8.6** (Serveur Jeux, déployé à 12:51, non testé) : en 0.8.5 le départ pouvait tomber au milieu de
 l'océan (terre cherchée seulement à 160 blocs du centre) ; désormais biome terrestre le plus proche, jusqu'à 3000 blocs.
 Le gel à la création a bien disparu (« Prepared spawn area in 0 ms »).
