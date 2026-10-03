@@ -1770,4 +1770,4 @@ Mondes de réserve déjà créés par la 0.8.5 : supprimés au redémarrage et r
   rapportent le nouveau temps.
 
 **Déploiement** : avec KG_Bingo 1.7.1 (texte d'aide du menu de création, seulement un texte : pas obligatoire
-ensemble). **Statut : compilé, non déployé.**
+ensemble). **Déployé le 03/10/2026 à 17:05 sur Serveur Jeux (Maxster33 ; 0.8.6 dans `_removed-kg_bingogame-0.8.6/`), actif après redémarrage. Statut : non testé en jeu.**

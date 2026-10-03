@@ -137,4 +137,4 @@ Jeux). **Déployé le 03/10/2026 à 09:44 sur Kal-Games (Maxster33 ; 1.6.1 dans 
 Suite de KG_BingoGame 0.8.7 (temps gagné selon la difficulté de l'objectif) : l'explication en haut du menu de
 création indique « +2 min 30 (facile), +4 min (normal), +6 min 30 (difficile), +10 min (extrême) ». Nouvelle clé de
 texte `bingo.create-aide-chrono-2` : l'ancienne (« +5 min par objectif ») est déjà écrite dans le `lang.yml` du
-serveur et ne serait pas remplacée. Aucun autre changement. **Statut : compilé, non déployé.**
+serveur et ne serait pas remplacée. Aucun autre changement. **Déployé le 03/10/2026 à 17:06 sur Kal-Games (Maxster33 ; 1.7.0 dans `_removed-kg_bingo-1.7.0/`), actif après redémarrage. Statut : non testé en jeu.**
