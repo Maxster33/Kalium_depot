@@ -16,10 +16,13 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KG_BingoObservateur — Maxster33 — depuis le 2026-10-03 10:10 — nouveau plugin : observer un joueur du Bingo en spectateur (opérateurs)
+
 
 
 
 
 ## Requis parfois
+n- KG_BingoGame — Maxster33 — depuis le 2026-10-03 10:10 — compilation de KG_BingoObservateur contre lui (aucune modification prévue)
 
 ## Demandes
