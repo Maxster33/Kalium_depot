@@ -1,7 +1,7 @@
 package fr.kalium.anticheat;
 
 import fr.kalium.anticheat.Alertes.Gravite;
-import org.bukkit.Location;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -12,57 +12,116 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 /**
- * X-ray (cahier, catégorie 6, étape 2) : ne comptent que les minerais rares (diamant, émeraude, débris antiques)
- * **cachés** au moment où le joueur les atteint : au plus un bloc d'air autour (le tunnel par lequel il arrive), ni
- * eau ni lave ; un mineur de grotte (minerai à l'air libre) n'est pas compté. Un filon = une fois (minerais voisins
- * cassés à la suite). Comparé à la roche minée (pierre, deepslate, netherrack, basalte...).
+ * Minage / x-ray (cahier, catégorie 6 ; 1.1.0 : retours des tests de Maxster33, LeKiwi06 03/10/2026 : « inclure tous
+ * les minerais avec une catégorie par minerai », « un score par minerai pas par filon », « compter ceux cassés avec la
+ * fortune et la délicatesse, et même sans enchantement »).
  *
- * Par heure (heures pleines, 24 dernières gardées dans minage.yml) :
- * - alerte légère si filons cachés >= xray.alerte-filons ET taux >= xray.alerte-taux (pour 1 000 blocs de roche) ;
- * - heure « extrême » si filons >= xray.extreme-filons ET taux >= xray.extreme-taux ;
- * - infraction grave (suspension) si xray.extreme-heures heures extrêmes dans les xray.fenetre-heures dernières heures
- *   (« sur plusieurs heures » : on ne suspend pas un joueur chanceux une fois).
- * Onglet « Minage » de la rubrique Modération : joueurs des dernières 24 h, du plus suspect au moins suspect.
+ * - Chaque minerai cassé compte (quel que soit l'outil), rangé par catégorie (charbon, cuivre, fer, or, or du Nether,
+ *   redstone, lapis, diamant, émeraude, quartz, débris antiques), comparé à la roche minée (pierre, deepslate, tuf,
+ *   netherrack...).
+ * - « Caché » : aucun voisin d'air, d'eau ou de lave d'origine (les blocs que le joueur a lui-même cassés dans les
+ *   15 dernières minutes ne comptent pas : tunnel et filon minés bloc par bloc comptent chaque minerai ; un minerai
+ *   vu dans une grotte reste « visible »). Avant (1.0.x) : un filon par 30 s et au plus 1 face d'air : compte faux.
+ * - Minerais posés par un joueur : ignorés.
+ * - Alertes : sur les minerais rares cachés (diamant, émeraude, débris antiques), par heure : alerte légère, heure
+ *   extrême, infraction grave si plusieurs heures extrêmes (seuils xray.*). Onglet « Minage » : 24 dernières heures.
  */
 final class Minage implements Listener {
 
-    static final Set<Material> RARES = EnumSet.of(Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE,
-            Material.EMERALD_ORE, Material.DEEPSLATE_EMERALD_ORE, Material.ANCIENT_DEBRIS);
+    /** Catégories de minerais, dans l'ordre d'affichage. */
+    enum Categorie {
+        DIAMANT("diamant", true), EMERAUDE("émeraude", true), DEBRIS("débris antiques", true), OR("or", false),
+        OR_NETHER("or du Nether", false), FER("fer", false), CUIVRE("cuivre", false), REDSTONE("redstone", false),
+        LAPIS("lapis", false), CHARBON("charbon", false), QUARTZ("quartz", false);
+
+        final String nom;
+        final boolean rare;
+
+        Categorie(String nom, boolean rare) {
+            this.nom = nom;
+            this.rare = rare;
+        }
+    }
+
+    private static final Map<Material, Categorie> MINERAIS = new EnumMap<>(Material.class);
+
+    static {
+        MINERAIS.put(Material.DIAMOND_ORE, Categorie.DIAMANT);
+        MINERAIS.put(Material.DEEPSLATE_DIAMOND_ORE, Categorie.DIAMANT);
+        MINERAIS.put(Material.EMERALD_ORE, Categorie.EMERAUDE);
+        MINERAIS.put(Material.DEEPSLATE_EMERALD_ORE, Categorie.EMERAUDE);
+        MINERAIS.put(Material.ANCIENT_DEBRIS, Categorie.DEBRIS);
+        MINERAIS.put(Material.GOLD_ORE, Categorie.OR);
+        MINERAIS.put(Material.DEEPSLATE_GOLD_ORE, Categorie.OR);
+        MINERAIS.put(Material.NETHER_GOLD_ORE, Categorie.OR_NETHER);
+        MINERAIS.put(Material.IRON_ORE, Categorie.FER);
+        MINERAIS.put(Material.DEEPSLATE_IRON_ORE, Categorie.FER);
+        MINERAIS.put(Material.COPPER_ORE, Categorie.CUIVRE);
+        MINERAIS.put(Material.DEEPSLATE_COPPER_ORE, Categorie.CUIVRE);
+        MINERAIS.put(Material.REDSTONE_ORE, Categorie.REDSTONE);
+        MINERAIS.put(Material.DEEPSLATE_REDSTONE_ORE, Categorie.REDSTONE);
+        MINERAIS.put(Material.LAPIS_ORE, Categorie.LAPIS);
+        MINERAIS.put(Material.DEEPSLATE_LAPIS_ORE, Categorie.LAPIS);
+        MINERAIS.put(Material.COAL_ORE, Categorie.CHARBON);
+        MINERAIS.put(Material.DEEPSLATE_COAL_ORE, Categorie.CHARBON);
+        MINERAIS.put(Material.NETHER_QUARTZ_ORE, Categorie.QUARTZ);
+    }
+
     private static final Set<Material> ROCHE = EnumSet.of(Material.STONE, Material.DEEPSLATE, Material.TUFF,
             Material.GRANITE, Material.DIORITE, Material.ANDESITE, Material.NETHERRACK, Material.BASALT,
             Material.BLACKSTONE, Material.CALCITE, Material.SMOOTH_BASALT);
     private static final BlockFace[] FACES = {BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.SOUTH,
             BlockFace.EAST, BlockFace.WEST};
+    private static final long QUINZE_MINUTES = 15 * 60_000L;
 
-    /** Une heure d'un joueur. */
+    /** Une heure d'un joueur : roche, minerais (total et cachés) par catégorie. */
     static final class Heure {
         int roche;
-        int filons;
+        final EnumMap<Categorie, int[]> minerais = new EnumMap<>(Categorie.class);
         boolean alerte;
         boolean extreme;
+
+        int rares() {
+            int n = 0;
+            for (Map.Entry<Categorie, int[]> e : minerais.entrySet()) {
+                if (e.getKey().rare) {
+                    n += e.getValue()[1];
+                }
+            }
+            return n;
+        }
+    }
+
+    private record Casse(String cle, long date) {
     }
 
     private final KSAntiCheat plugin;
     private final File fichier;
-    /** Joueur -> heure (numéro d'heure depuis 1970) -> compteurs. */
     private final Map<UUID, Map<Long, Heure>> heures = new HashMap<>();
     private final Map<UUID, String> noms = new HashMap<>();
-    /** Dernier minerai rare caché compté (filon en cours) : lieu et date. */
-    private final Map<UUID, Location> dernierFilon = new HashMap<>();
-    private final Map<UUID, Long> dateDernierFilon = new HashMap<>();
+    /** Blocs cassés récemment par chaque joueur (15 min) : ouvertures faites par lui, pas d'origine. */
+    private final Map<UUID, Deque<Casse>> casses = new HashMap<>();
+    private final Map<UUID, Set<String>> cassesIndex = new HashMap<>();
+    /** Minerais posés par un joueur (ignorés au cassage). */
+    private final Set<String> poses = new LinkedHashSet<>();
     private boolean modifie;
 
     Minage(KSAntiCheat plugin) {
@@ -75,73 +134,100 @@ final class Minage implements Listener {
         return System.currentTimeMillis() / 3_600_000L;
     }
 
+    private static String cle(Block b) {
+        return b.getWorld().getName() + ":" + b.getX() + ":" + b.getY() + ":" + b.getZ();
+    }
+
     private Heure heure(UUID joueur) {
         return heures.computeIfAbsent(joueur, u -> new LinkedHashMap<>()).computeIfAbsent(heureActuelle(), h -> new Heure());
     }
 
-    /** Minerai caché : au plus un bloc d'air autour, ni eau ni lave. */
-    private static boolean cache(Block bloc) {
-        int air = 0;
-        for (BlockFace f : FACES) {
-            Material t = bloc.getRelative(f).getType();
-            if (t == Material.WATER || t == Material.LAVA) {
-                return false;
+    /** Minerai posé par un joueur : ne comptera pas. */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlace(BlockPlaceEvent event) {
+        if (MINERAIS.containsKey(event.getBlockPlaced().getType())) {
+            poses.add(cle(event.getBlockPlaced()));
+            while (poses.size() > 20_000) {
+                poses.remove(poses.iterator().next());
             }
-            if (t.isAir()) {
-                air++;
-            }
+            modifie = true;
         }
-        return air <= 1;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
         Player p = event.getPlayer();
-        if (p.getGameMode() == org.bukkit.GameMode.CREATIVE) {
+        Block bloc = event.getBlock();
+        String ici = cle(bloc);
+        if (p.getGameMode() == GameMode.CREATIVE) {
+            poses.remove(ici);
             return;
         }
-        Block bloc = event.getBlock();
-        Material type = bloc.getType();
         UUID u = p.getUniqueId();
-        if (ROCHE.contains(type)) {
+        Material type = bloc.getType();
+        Categorie cat = MINERAIS.get(type);
+        boolean roche = ROCHE.contains(type);
+        if (cat != null && poses.remove(ici)) {
+            noterCasse(u, ici);
+            return;
+        }
+        if (roche) {
             heure(u).roche++;
             modifie = true;
-            return;
+        } else if (cat != null) {
+            noms.put(u, p.getName());
+            Heure h = heure(u);
+            int[] n = h.minerais.computeIfAbsent(cat, c -> new int[2]);
+            n[0]++;
+            if (cache(u, bloc)) {
+                n[1]++;
+            }
+            modifie = true;
+            if (cat.rare) {
+                verifier(u, p.getName(), h);
+            }
         }
-        if (!RARES.contains(type)) {
-            return;
-        }
-        // Même filon : minerai rare voisin (3 blocs) cassé moins de 30 s après le précédent.
-        Location ici = bloc.getLocation();
-        Location avant = dernierFilon.get(u);
-        long maintenant = System.currentTimeMillis();
-        boolean memeFilon = avant != null && avant.getWorld() == ici.getWorld() && avant.distanceSquared(ici) <= 9
-                && maintenant - dateDernierFilon.getOrDefault(u, 0L) < 30_000;
-        dernierFilon.put(u, ici);
-        dateDernierFilon.put(u, maintenant);
-        if (memeFilon || !cache(bloc)) {
-            return;
-        }
-        noms.put(u, p.getName());
-        Heure h = heure(u);
-        h.filons++;
-        modifie = true;
-        verifier(u, p.getName(), h);
+        noterCasse(u, ici);
     }
 
-    private double taux(Heure h) {
-        return h.filons * 1000.0 / Math.max(h.roche, 1);
+    private void noterCasse(UUID u, String cle) {
+        long maintenant = System.currentTimeMillis();
+        Deque<Casse> d = casses.computeIfAbsent(u, x -> new ArrayDeque<>());
+        Set<String> index = cassesIndex.computeIfAbsent(u, x -> new java.util.HashSet<>());
+        d.addLast(new Casse(cle, maintenant));
+        index.add(cle);
+        while (!d.isEmpty() && maintenant - d.peekFirst().date() > QUINZE_MINUTES) {
+            index.remove(d.removeFirst().cle());
+        }
+    }
+
+    /** Aucun voisin d'air, d'eau ou de lave d'origine (les ouvertures faites par le joueur ne comptent pas). */
+    private boolean cache(UUID joueur, Block bloc) {
+        Set<String> parLui = cassesIndex.getOrDefault(joueur, Set.of());
+        for (BlockFace f : FACES) {
+            Block voisin = bloc.getRelative(f);
+            Material t = voisin.getType();
+            if ((t.isAir() || t == Material.WATER || t == Material.LAVA) && !parLui.contains(cle(voisin))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static double taux(int n, int roche) {
+        return n * 1000.0 / Math.max(roche, 1);
     }
 
     private void verifier(UUID u, String nom, Heure h) {
         var c = plugin.getConfig();
-        double t = taux(h);
-        if (!h.alerte && h.filons >= c.getInt("xray.alerte-filons", 5) && t >= c.getDouble("xray.alerte-taux", 3)) {
+        int rares = h.rares();
+        double t = taux(rares, h.roche);
+        if (!h.alerte && rares >= c.getInt("xray.alerte-minerais", 15) && t >= c.getDouble("xray.alerte-taux-minerais", 12)) {
             h.alerte = true;
-            plugin.alertes().ajouter(u, nom, "X-ray ?", Gravite.LEGERE, h.filons + " filons rares cachés cette heure pour "
-                    + h.roche + " blocs de roche (" + String.format("%.1f", t) + " pour 1 000)");
+            plugin.alertes().ajouter(u, nom, "X-ray ?", Gravite.LEGERE, rares + " minerais rares cachés cette heure pour "
+                    + h.roche + " blocs de roche (" + String.format("%.1f", t) + " pour 1 000) - " + detail(h));
         }
-        if (!h.extreme && h.filons >= c.getInt("xray.extreme-filons", 10) && t >= c.getDouble("xray.extreme-taux", 8)) {
+        if (!h.extreme && rares >= c.getInt("xray.extreme-minerais", 30) && t >= c.getDouble("xray.extreme-taux-minerais", 30)) {
             h.extreme = true;
             int fenetre = Math.max(1, c.getInt("xray.fenetre-heures", 6));
             int requis = Math.max(1, c.getInt("xray.extreme-heures", 3));
@@ -154,14 +240,31 @@ final class Minage implements Listener {
             }
             if (extremes >= requis && !plugin.suspensions().suspendu(u)) {
                 plugin.infractionGrave(u, nom, "X-ray", extremes + " heures extrêmes sur les " + fenetre
-                        + " dernières (cette heure : " + h.filons + " filons cachés, " + String.format("%.1f", t)
+                        + " dernières (cette heure : " + rares + " minerais rares cachés, " + String.format("%.1f", t)
                         + " pour 1 000 blocs de roche)");
             } else {
                 plugin.alertes().ajouter(u, nom, "X-ray (heure extrême)", Gravite.LEGERE, extremes + " / " + requis
-                        + " heures extrêmes sur " + fenetre + " h (" + h.filons + " filons cachés, "
-                        + String.format("%.1f", t) + " pour 1 000)");
+                        + " heures extrêmes sur " + fenetre + " h (" + rares + " minerais rares cachés, "
+                        + String.format("%.1f", t) + " pour 1 000) - " + detail(h));
             }
         }
+    }
+
+    /** « diamant 12 (9 cachés, 1,4 %) ; or 6 (6, 0,7 %)... » (pourcentage : minerais / roche). */
+    private static String detail(Heure h) {
+        return detail(h.minerais, h.roche);
+    }
+
+    private static String detail(EnumMap<Categorie, int[]> minerais, int roche) {
+        List<String> parties = new ArrayList<>();
+        for (Categorie cat : Categorie.values()) {
+            int[] n = minerais.get(cat);
+            if (n != null && n[0] > 0) {
+                parties.add(cat.nom + " " + n[0] + " (" + n[1] + " cachés, "
+                        + String.format("%.1f", n[0] * 100.0 / Math.max(roche, 1)) + " %)");
+            }
+        }
+        return parties.isEmpty() ? "aucun minerai" : String.join(" ; ", parties);
     }
 
     /** Résumé des dernières 24 h, du plus suspect au moins suspect (onglet Minage). */
@@ -170,21 +273,33 @@ final class Minage implements Listener {
         List<Object[]> lignes = new ArrayList<>();
         heures.forEach((u, parHeure) -> {
             int roche = 0;
-            int filons = 0;
             int extremes = 0;
+            EnumMap<Categorie, int[]> total = new EnumMap<>(Categorie.class);
             for (Map.Entry<Long, Heure> e : parHeure.entrySet()) {
-                if (maintenant - e.getKey() < 24) {
-                    roche += e.getValue().roche;
-                    filons += e.getValue().filons;
-                    extremes += e.getValue().extreme ? 1 : 0;
+                if (maintenant - e.getKey() >= 24) {
+                    continue;
+                }
+                roche += e.getValue().roche;
+                extremes += e.getValue().extreme ? 1 : 0;
+                e.getValue().minerais.forEach((c, n) -> {
+                    int[] t = total.computeIfAbsent(c, x -> new int[2]);
+                    t[0] += n[0];
+                    t[1] += n[1];
+                });
+            }
+            if (roche == 0 && total.isEmpty()) {
+                return;
+            }
+            int rares = 0;
+            for (Map.Entry<Categorie, int[]> e : total.entrySet()) {
+                if (e.getKey().rare) {
+                    rares += e.getValue()[1];
                 }
             }
-            if (filons > 0) {
-                double t = filons * 1000.0 / Math.max(roche, 1);
-                lignes.add(new Object[]{t, noms.getOrDefault(u, "?") + " : " + filons + " filons cachés, " + roche
-                        + " roche, " + String.format("%.1f", t) + " pour 1 000" + (extremes > 0 ? ", " + extremes
-                        + " h extrême(s)" : "")});
-            }
+            double t = taux(rares, roche);
+            lignes.add(new Object[]{t, noms.getOrDefault(u, "?") + " : " + roche + " roche, rares cachés "
+                    + String.format("%.1f", t) + " pour 1 000" + (extremes > 0 ? ", " + extremes + " h extrême(s)" : "")
+                    + " - " + detail(total, roche)});
         });
         lignes.sort((a, b) -> Double.compare((double) b[0], (double) a[0]));
         List<String> r = new ArrayList<>();
@@ -198,15 +313,20 @@ final class Minage implements Listener {
 
     private void charger() {
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(fichier);
+        if (yaml.getInt("format", 1) < 2) {
+            // Ancien format (filons, 1.0.x) : remis à zéro.
+            return;
+        }
+        poses.addAll(yaml.getStringList("poses"));
         ConfigurationSection js = yaml.getConfigurationSection("joueurs");
         if (js == null) {
             return;
         }
-        for (String cle : js.getKeys(false)) {
+        for (String cleJ : js.getKeys(false)) {
             try {
-                UUID u = UUID.fromString(cle);
-                noms.put(u, js.getString(cle + ".nom", "?"));
-                ConfigurationSection hs = js.getConfigurationSection(cle + ".heures");
+                UUID u = UUID.fromString(cleJ);
+                noms.put(u, js.getString(cleJ + ".nom", "?"));
+                ConfigurationSection hs = js.getConfigurationSection(cleJ + ".heures");
                 if (hs == null) {
                     continue;
                 }
@@ -214,13 +334,22 @@ final class Minage implements Listener {
                 for (String hc : hs.getKeys(false)) {
                     Heure h = new Heure();
                     h.roche = hs.getInt(hc + ".roche");
-                    h.filons = hs.getInt(hc + ".filons");
                     h.alerte = hs.getBoolean(hc + ".alerte");
                     h.extreme = hs.getBoolean(hc + ".extreme");
+                    ConfigurationSection ms = hs.getConfigurationSection(hc + ".minerais");
+                    if (ms != null) {
+                        for (String c : ms.getKeys(false)) {
+                            try {
+                                h.minerais.put(Categorie.valueOf(c), new int[]{ms.getInt(c + ".total"), ms.getInt(c + ".caches")});
+                            } catch (IllegalArgumentException e) {
+                                // catégorie inconnue : ignorée
+                            }
+                        }
+                    }
                     m.put(Long.parseLong(hc), h);
                 }
             } catch (IllegalArgumentException e) {
-                plugin.getLogger().warning("Minage ignoré : " + cle);
+                plugin.getLogger().warning("Minage ignoré : " + cleJ);
             }
         }
     }
@@ -233,14 +362,19 @@ final class Minage implements Listener {
         modifie = false;
         long maintenant = heureActuelle();
         YamlConfiguration yaml = new YamlConfiguration();
+        yaml.set("format", 2);
+        yaml.set("poses", new ArrayList<>(poses));
         heures.forEach((u, m) -> {
             m.keySet().removeIf(h -> maintenant - h >= 24);
             m.forEach((h, v) -> {
                 String b = "joueurs." + u + ".heures." + h;
                 yaml.set(b + ".roche", v.roche);
-                yaml.set(b + ".filons", v.filons);
                 yaml.set(b + ".alerte", v.alerte);
                 yaml.set(b + ".extreme", v.extreme);
+                v.minerais.forEach((c, n) -> {
+                    yaml.set(b + ".minerais." + c.name() + ".total", n[0]);
+                    yaml.set(b + ".minerais." + c.name() + ".caches", n[1]);
+                });
             });
             if (!m.isEmpty()) {
                 yaml.set("joueurs." + u + ".nom", noms.getOrDefault(u, "?"));

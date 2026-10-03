@@ -117,3 +117,28 @@ alerte n'arrive sur grim que si l'erreur de simulation est de 0,05 ou plus ».
   restent de valeur.
 
 **Non déployé. Statut : non testé en jeu.**
+
+## 1.1.0 - minage : tous les minerais, compte par minerai (03/10/2026, LeKiwi06)
+
+Retours des tests de Maxster33 (LeKiwi06 : « inclure tous les minerais avec une catégorie par minerai », « le compte
+n'a pas l'air fiable », « un score par minerai pas par filon », « compter ceux cassés avec la fortune et la
+délicatesse, et même sans enchantement »). Vérifié avec CoreProtect (03/10, 17:13 à 17:27) : roche bien comptée
+(810 pour 836), mais 4 « filons » seulement pour 23 diamants, 6 or, 4 redstone et 1 fer cassés. Causes : filon
+regroupé sur 30 s (un filon miné en plusieurs fois compté plusieurs fois ou pas), minerai touchant 2 faces d'air
+(souvent à cause du tunnel du joueur) exclu, 7 diamants posés par lui comptés.
+- **Chaque minerai compte**, par catégorie : charbon, cuivre, fer, or, or du Nether, redstone, lapis, diamant,
+  émeraude, quartz, débris antiques ; quel que soit l'outil (Fortune, Délicatesse, sans enchantement) ; comparé à la
+  roche minée (pourcentage).
+- **Caché** : aucun voisin d'air, d'eau ou de lave d'origine ; les blocs cassés par le joueur lui-même dans les
+  15 dernières minutes ne comptent pas comme ouverture (tunnel, filon miné bloc par bloc).
+- **Minerais posés par un joueur ignorés** (liste gardée dans `minage.yml`).
+- Onglet Minage : par joueur (24 h), roche, puis chaque minerai : total, cachés, pourcentage ; classé par minerais
+  rares cachés pour 1 000 blocs de roche.
+- Alertes et suspension sur les minerais rares cachés (diamant, émeraude, débris), comptés par minerai : nouveaux
+  seuils (nouveaux noms, les anciens du `config.yml` d'Event ne servent plus) `xray.alerte-minerais` 15,
+  `alerte-taux-minerais` 12 pour 1 000, `extreme-minerais` 30, `extreme-taux-minerais` 30 ; `extreme-heures` 3,
+  `fenetre-heures` 6 inchangés. À ajuster après les tests.
+- `minage.yml` : nouveau format (l'ancien, en filons, repart de zéro).
+- Comprend aussi les changements de 1.0.2 (jamais déployée).
+
+**Non déployé. Statut : non testé en jeu.**

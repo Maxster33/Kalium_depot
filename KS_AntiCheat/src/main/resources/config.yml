@@ -16,13 +16,13 @@ grimac:
   ecart-minimum:
     Simulation: 0.05
 
-# X-ray : filons rares caches par heure, et taux pour 1 000 blocs de roche mines. Suspension : N heures extremes sur
-# les X dernieres heures (pas sur une seule heure chanceuse).
+# X-ray (1.1.0 : compte par minerai) : minerais rares caches (diamant, emeraude, debris antiques) par heure, et taux
+# pour 1 000 blocs de roche mines. Suspension : N heures extremes sur les X dernieres heures.
 xray:
-  alerte-filons: 5
-  alerte-taux: 3
-  extreme-filons: 10
-  extreme-taux: 8
+  alerte-minerais: 15
+  alerte-taux-minerais: 12
+  extreme-minerais: 30
+  extreme-taux-minerais: 30
   extreme-heures: 3
   fenetre-heures: 6
 

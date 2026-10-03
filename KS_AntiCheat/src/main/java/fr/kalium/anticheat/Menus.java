@@ -315,14 +315,15 @@ final class Menus {
         }
         memoriserRetour(staff, retourModeration);
         List<Component> corps = new ArrayList<>();
-        corps.add(t("minage.aide", "<gray>Seuls comptent les diamants, émeraudes et débris antiques cachés (pas à l'air "
-                + "libre) ; un filon compte une fois ; taux pour 1 000 blocs de roche minés. Du plus suspect au moins suspect."));
+        corps.add(t("minage.aide-2", "<gray>Par joueur (24 h) : roche minée, puis chaque minerai : total, cachés (sans "
+                + "air, eau ni lave d'origine autour), pourcentage de la roche. Classés par minerais rares cachés (diamant, "
+                + "émeraude, débris) pour 1 000 blocs de roche."));
         List<String> lignes = plugin.minage().resume24h();
         for (int i = 0; i < Math.min(15, lignes.size()); i++) {
             corps.add(Component.text(lignes.get(i)));
         }
         if (lignes.isEmpty()) {
-            corps.add(t("minage.aucun", "<gray>Aucun filon rare caché trouvé ces 24 dernières heures."));
+            corps.add(t("minage.aucun-2", "<gray>Aucun minage ces 24 dernières heures."));
         }
         List<ActionButton> boutons = new ArrayList<>();
         Consumer<Player> versModeration = retours.get(staff.getUniqueId());
