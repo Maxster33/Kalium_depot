@@ -115,3 +115,19 @@ du menu. Nouvelles clés de langue (`bingo.create-duration-court`, `bingo.mode-b
 
 **Déployé sur Kal-Games le 02/10/2026 à 17:49 (LeKiwi06 ; 1.6.0 dans `_removed-kg_bingo-1.6.0/`), actif après redémarrage.
 Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**
+
+## 1.7.0 - 2 parties par heure, contre la montre, pénalité d'abandon (03/10/2026, Maxster33)
+
+**Demandes de Maxster33 (03/10/2026)** :
+- **Un joueur crée au plus 2 parties par heure** : 60 dernières minutes, parties annulées comprises ; opérateurs non
+  limités (choix de Maxster33). Refus avec le temps restant (« Nouvelle partie possible dans N min »), à l'ouverture
+  du menu de création, à sa validation et pour `/bingo create`. Compteur en mémoire : remis à zéro au redémarrage
+  de Kal-Games.
+- **Mode « Contre la montre, 1 équipe »** dans le menu de création (`mode=CHRONO` envoyé à KG_BingoGame 0.8.5) :
+  refusé si « Nombre d'équipes » n'est pas 1 ; la durée choisie ne compte pas (10 min au départ, +5 min par
+  objectif) ; explication ajoutée en haut du menu.
+- **Points négatifs** (pénalité d'abandon de KG_BingoGame 0.8.5 : -15) : retirés du classement « bingo » (général,
+  mois, semaine) avec `removePoints` de KG_ScoreBoards 1.9.0 ; inscrits au journal des parties comme les autres.
+
+**Déploiement** : **ensemble** avec KG_ScoreBoards 1.9.0 (obligatoire : `removePoints`) et KG_BingoGame 0.8.5 (Serveur
+Jeux). **Statut : compilé, non déployé, non testé en jeu.**

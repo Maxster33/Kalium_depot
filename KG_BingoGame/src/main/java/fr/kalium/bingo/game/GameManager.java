@@ -236,6 +236,15 @@ public class GameManager {
         this.onCleanup = onCleanup;
     }
 
+    /**
+     * 0.8.5 : oublie une partie dont le lancement a echoue (grille impossible a tirer...) SANS toucher aux mondes : la
+     * salle d'attente reste en place et un nouveau lancement est possible (avant, la partie restait inscrite « en
+     * cours » et chaque relance echouait : « Une partie '...' existe deja », constat de Maxster33 le 03/10/2026).
+     */
+    public void discard(String gameId) {
+        activeGames.remove(gameId);
+    }
+
     public void cleanupGame(String gameId) {
         onCleanup.accept(gameId);
         BingoGame game = activeGames.get(gameId);

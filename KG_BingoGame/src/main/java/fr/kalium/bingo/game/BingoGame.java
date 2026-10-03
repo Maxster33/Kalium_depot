@@ -26,7 +26,7 @@ public class BingoGame {
 
     private final String gameId;
     private final long seed;
-    private final Duration duration;
+    private Duration duration; // 0.8.5 : allongee en contre la montre (extend)
     private final List<BingoInstance> instances = new ArrayList<>();
     private BingoGrid grid;
 
@@ -77,6 +77,13 @@ public class BingoGame {
         return duration;
     }
 
+    /** 0.8.5 - contre la montre : ajoute du temps au chrono (+5 min par objectif valide). */
+    public void extend(Duration extra) {
+        if (extra != null && !extra.isNegative()) {
+            duration = duration.plus(extra);
+        }
+    }
+
     public GameState getState() {
         return state;
     }
@@ -100,7 +107,7 @@ public class BingoGame {
     /** Attache la grille et (re)initialise la progression de chaque equipe a "aucune case validee". */
     public void setGrid(BingoGrid grid) {
         this.grid = grid;
-        this.scoreEngine = new ScoreEngine(grid);
+        this.scoreEngine = new ScoreEngine(grid, instances.size() > 1); // 0.8.5 : pas de bonus « en 1er » a une seule equipe
         teamProgress.clear();
         int cellCount = grid.getSize() * grid.getSize();
         for (BingoInstance instance : instances) {

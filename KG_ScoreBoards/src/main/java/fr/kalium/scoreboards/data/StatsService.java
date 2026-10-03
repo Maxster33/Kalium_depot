@@ -82,7 +82,7 @@ public final class StatsService {
         }
 
         boolean inPointsRanking() {
-            return points > 0 || bestMs >= 0;
+            return points != 0 || bestMs >= 0; // 1.9.0 : total negatif possible (abandon du Bingo)
         }
     }
 
@@ -429,6 +429,23 @@ public final class StatsService {
         row(weekly, minigame, uuid, name).points += points;
         changed();
         plugin.pointsAdded(minigame, uuid, name, points);
+    }
+
+    /**
+     * 1.9.0 : retire des points au joueur (general, mois, semaine) - penalite d'abandon du Bingo (-15, demande de
+     * Maxster33, 03/10/2026). Le total peut devenir negatif (choix de Maxster33). Pas de signal pointsAdded : les
+     * paliers de KG_Rewards ne reagissent qu'aux gains.
+     */
+    public void removePoints(String minigame, UUID uuid, String name, double points) {
+        points = Math.round(points * 100) / 100.0;
+        if (points <= 0) {
+            return;
+        }
+        checkRollover();
+        row(all, minigame, uuid, name).points -= points;
+        row(monthly, minigame, uuid, name).points -= points;
+        row(weekly, minigame, uuid, name).points -= points;
+        changed();
     }
 
     /** Enregistre un temps : garde le meilleur (general et du mois). Renvoie true si c'est un record personnel. */

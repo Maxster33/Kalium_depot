@@ -56,7 +56,10 @@ public final class GameHudService {
                 message = message.append(Component.text(" | ", NamedTextColor.DARK_GRAY))
                         .append(Component.text(TeamStyle.letter(team) + ":", TeamStyle.color(team)))
                         .append(Component.text(fr.kalium.bingo.score.ScoreEngine.format(game.score(team)) + "pts", NamedTextColor.WHITE))
-                        .append(blackout || game.getScoreEngine() == null ? Component.empty()
+                        .append(game.getSettings().isChrono() && game.getGrid() != null // 0.8.5 : contre la montre, cases remplies
+                            ? Component.text(" (" + game.countValidated(team) + "/" + game.getGrid().getSize() * game.getGrid().getSize()
+                            + " objectifs)", NamedTextColor.GRAY)
+                            : blackout || game.getScoreEngine() == null ? Component.empty()
                                 : Component.text("·" + game.getScoreEngine().bingoCount(team) + "/" + game.getSettings().bingosRequired(),
                                 NamedTextColor.GRAY));
             }
@@ -67,7 +70,10 @@ public final class GameHudService {
             message = message.append(Component.text("  |  ", NamedTextColor.DARK_GRAY))
                     .append(Component.text("Équipe " + TeamStyle.letter(team) + " : ", TeamStyle.color(team)))
                     .append(Component.text(fr.kalium.bingo.score.ScoreEngine.format(game.score(team)) + " pts", NamedTextColor.WHITE))
-                    .append(blackout || game.getScoreEngine() == null ? Component.empty()
+                    .append(game.getSettings().isChrono() && game.getGrid() != null // 0.8.5 : contre la montre, cases remplies
+                            ? Component.text(" (" + game.countValidated(team) + "/" + game.getGrid().getSize() * game.getGrid().getSize()
+                            + " objectifs)", NamedTextColor.GRAY)
+                            : blackout || game.getScoreEngine() == null ? Component.empty()
                             : Component.text(" (" + game.getScoreEngine().bingoCount(team) + "/" + game.getSettings().bingosRequired()
                             + " bingos)", NamedTextColor.GRAY));
         }

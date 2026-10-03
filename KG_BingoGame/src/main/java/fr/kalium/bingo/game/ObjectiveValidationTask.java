@@ -58,6 +58,11 @@ public final class ObjectiveValidationTask {
                 continue;
             }
             BingoGrid grid = game.getGrid();
+            // 0.8.5 : contre la montre, plus aucune validation une fois le chrono a zero (la fin est geree par
+            // GameEndService.tick).
+            if (game.getSettings().isChrono() && game.isTimeUp()) {
+                continue;
+            }
             if (grid == null) {
                 continue;
             }
@@ -77,6 +82,12 @@ public final class ObjectiveValidationTask {
                     var result = game.markValidated(team, i, holder.getUniqueId());
                     if (result != null) {
                         announce(game, team, holder, objective, result);
+                        if (game.getSettings().isChrono()) {
+                            // 0.8.5 : contre la montre, +5 min par objectif valide (demande de Maxster33).
+                            game.extend(BingoSettings.CHRONO_PER_OBJECTIVE);
+                            broadcast(game, Component.text("+" + BingoSettings.CHRONO_PER_OBJECTIVE.toMinutes()
+                                    + " minutes au chrono !", NamedTextColor.AQUA));
+                        }
                         // Sauvegarde la progression AVANT de verifier la victoire (voir GamePersistence) :
                         // si checkWin termine la partie a l'instant, GameEndService supprimera de toute
                         // facon ce fichier juste apres (scheduleCleanup) - sauvegarder d'abord est sans

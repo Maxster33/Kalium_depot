@@ -148,3 +148,16 @@ Catégorie 4 « Récompenses » (cahier validé le 30/09/2026) :
 
 **Déployé sur Kal-Games le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (ancienne version dans `_removed-kg_scoreboards-1.7.0/`), actif après redémarrage. Statut : non testé en jeu.**
 
+
+## 1.9.0 - retrait de points (03/10/2026, Maxster33)
+
+**Demande de Maxster33 (03/10/2026)** : un joueur qui abandonne une partie de Bingo prend -15 points au classement.
+- Nouveau `StatsService.removePoints(minijeu, joueur, pseudo, points)` : retire les points du classement général, du
+  mois et de la semaine. **Le total peut devenir négatif** (choix de Maxster33). Pas de signal
+  `PointsAjoutesEvent` : les paliers de KG_Rewards ne réagissent qu'aux gains.
+- Un joueur à total négatif apparaît dans les classements (en bas) : avant, seuls les totaux strictement positifs
+  étaient listés.
+
+À noter : la 1.8.0 (déployée le 03/10/2026 à 01:05) n'est pas encore testée en jeu ; cette version s'ajoute par-dessus
+à la demande de Maxster33. **Déploiement** : ensemble avec KG_Bingo 1.7.0. **Statut : compilé, non déployé, non testé
+en jeu.**

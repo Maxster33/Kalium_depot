@@ -45,6 +45,36 @@ public final class BingoPartyManager {
         this.plugin = plugin;
     }
 
+    // 1.7.0 - demande de Maxster33 (03/10/2026) : un joueur cree au plus 2 parties par heure (60 dernieres minutes,
+    // parties annulees comprises) ; operateurs non limites. En memoire : remis a zero au redemarrage de kal-games.
+    private static final int MAX_CREATIONS_PER_HOUR = 2;
+    private static final long HOUR_MILLIS = 60L * 60 * 1000;
+    private final Map<UUID, java.util.ArrayDeque<Long>> creations = new HashMap<>();
+
+    /** 0 si ce joueur peut creer une partie maintenant, sinon le nombre de secondes a attendre. */
+    public long creationWaitSeconds(Player player) {
+        if (player.isOp()) {
+            return 0;
+        }
+        java.util.ArrayDeque<Long> times = creations.get(player.getUniqueId());
+        if (times == null) {
+            return 0;
+        }
+        long now = System.currentTimeMillis();
+        times.removeIf(at -> now - at >= HOUR_MILLIS);
+        if (times.size() < MAX_CREATIONS_PER_HOUR) {
+            return 0;
+        }
+        return Math.max(1, (times.peekFirst() + HOUR_MILLIS - now + 999) / 1000);
+    }
+
+    /** Message de refus (2 parties dans l'heure) avec le temps restant, ex. « 12 min ». */
+    public static String creationWaitText(long seconds) {
+        long minutes = (seconds + 59) / 60;
+        return "§cVous avez déjà créé " + MAX_CREATIONS_PER_HOUR + " parties Bingo dans la dernière heure. "
+                + "Nouvelle partie possible dans " + minutes + " min.";
+    }
+
     /** Utilise les valeurs d'equipes/duree par defaut de config.yml (bingo.default-team-count/-size,
      *  bingo.duration-seconds) - voir /bingo create. */
     public BingoParty create(Player host) {
@@ -104,6 +134,7 @@ public final class BingoPartyManager {
         byCode.put(code, party);
         byGameId.put(gameId, party);
         byPlayer.put(host.getUniqueId(), party);
+        creations.computeIfAbsent(host.getUniqueId(), id -> new java.util.ArrayDeque<>()).addLast(System.currentTimeMillis());
         return party;
     }
 

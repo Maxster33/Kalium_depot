@@ -119,7 +119,7 @@ final class BingoResults {
             } catch (IllegalArgumentException e) {
                 continue;
             }
-            if (points <= 0) {
+            if (points == 0) { // 1.7.0 : points negatifs = penalite d'abandon (KG_BingoGame 0.8.5), retires du classement
                 continue;
             }
             String name = parts[1];
@@ -137,7 +137,11 @@ final class BingoResults {
             fields.put("reason", reason);
             ranking.log(CATEGORY, "points", fields);
             if (reason == null) {
-                ranking.stats().addPoints(CATEGORY, uuid, name, points);
+                if (points > 0) {
+                    ranking.stats().addPoints(CATEGORY, uuid, name, points);
+                } else {
+                    ranking.stats().removePoints(CATEGORY, uuid, name, -points); // KG_ScoreBoards 1.9.0
+                }
                 count++;
             }
         }

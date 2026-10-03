@@ -35,6 +35,11 @@ public final class BingoCommand implements CommandExecutor {
         }
         switch (args[0].toLowerCase()) {
             case "create" -> {
+                long wait = parties.creationWaitSeconds(player); // 1.7.0 : 2 parties par heure
+                if (wait > 0) {
+                    player.sendMessage(BingoPartyManager.creationWaitText(wait));
+                    return true;
+                }
                 BingoParty party = parties.create(player);
                 player.sendMessage("§aPartie Bingo créée. Code à partager : §f§l" + party.code());
                 parties.transferToBingo(player);

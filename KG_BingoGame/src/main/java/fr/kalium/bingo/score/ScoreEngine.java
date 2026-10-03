@@ -60,7 +60,18 @@ public final class ScoreEngine {
     /** Bonus de coefficient de chaque bingo acheve (equipe -> ligne -> 0,5 / 1), pour les points solo. */
     private final Map<Integer, Map<Integer, Double>> bingoFactors = new HashMap<>();
 
+    /**
+     * 0.8.5 - demande de Maxster33 (03/10/2026) : partie a une seule equipe = aucun bonus « en 1er » (ni objectif, ni
+     * bingo) ; le bonus des bingos uniquement difficiles / extremes reste.
+     */
+    private final boolean firstBonuses;
+
     public ScoreEngine(BingoGrid grid) {
+        this(grid, true);
+    }
+
+    public ScoreEngine(BingoGrid grid, boolean firstBonuses) {
+        this.firstBonuses = firstBonuses;
         this.grid = grid;
         this.size = grid.getSize();
         for (int r = 0; r < size; r++) {
@@ -138,7 +149,7 @@ public final class ScoreEngine {
         UUID[] o = owners.computeIfAbsent(team, t -> new UUID[size * size]);
         o[cell] = player;
         validated.computeIfAbsent(team, t -> new boolean[size * size])[cell] = true;
-        boolean first = firstTeam[cell] == -1;
+        boolean first = firstBonuses && firstTeam[cell] == -1;
         if (first) {
             firstTeam[cell] = team;
         }
@@ -151,7 +162,7 @@ public final class ScoreEngine {
                 continue;
             }
             completedLines.computeIfAbsent(team, t -> new LinkedHashSet<>()).add(line);
-            boolean firstBingo = firstBingoTeam[line] == -1;
+            boolean firstBingo = firstBonuses && firstBingoTeam[line] == -1;
             if (firstBingo) {
                 firstBingoTeam[line] = team;
             }

@@ -125,15 +125,24 @@ public final class PartyStarter {
         assignUnteamed(party);
         teams = party.teamsForGameCreation();
 
+        // 0.8.5 : contre la montre = 10 min au depart (la duree choisie a la creation ne compte pas).
+        BingoSettings settings = party.getSettings();
+        Duration duration = settings != null && settings.isChrono() ? BingoSettings.CHRONO_START : party.getDuration();
         BingoGame game;
         try {
-            game = gameManager.createGame(party.getGameId(), party.getSeed(), party.getDuration(), teams);
-            game.setSettings(party.getSettings()); // 0.3.0 - avant assignGrid (composition de la grille)
-            gameManager.prepareInstances(game);
-            gameManager.assignGrid(game);
+            game = gameManager.createGame(party.getGameId(), party.getSeed(), duration, teams);
         } catch (RuntimeException e) {
-            logger.warning("[KG_BingoGame] Impossible de démarrer la partie '" + gameId + "' : " + e.getMessage());
-            return Result.failure(Failure.CREATE_FAILED, e.getMessage());
+            return launchFailed(party, e);
+        }
+        try {
+            game.setSettings(settings); // 0.3.0 - avant assignGrid (composition de la grille)
+            // 0.8.5 : grille tiree AVANT de reclamer les mondes : si elle est impossible, rien n'est consomme et la
+            // partie peut etre relancee.
+            gameManager.assignGrid(game);
+            gameManager.prepareInstances(game);
+        } catch (RuntimeException e) {
+            gameManager.discard(gameId);
+            return launchFailed(party, e);
         }
 
         Player carrier = null;
@@ -186,6 +195,22 @@ public final class PartyStarter {
         // etait deja en cours pour ce gameId.
         countdownService.cancel(gameId);
         return Result.immediate(game);
+    }
+
+    /**
+     * 0.8.5 : echec du lancement - journal du serveur, et message aux joueurs de la salle d'attente (avant, rien ne
+     * s'affichait quand le lancement venait de l'attente des maps : les joueurs restaient sans explication).
+     */
+    private Result launchFailed(BingoParty party, RuntimeException e) {
+        logger.warning("[KG_BingoGame] Impossible de démarrer la partie '" + party.getGameId() + "' : " + e.getMessage());
+        for (UUID playerId : party.getConnected()) {
+            Player player = Bukkit.getPlayer(playerId);
+            if (player != null && player.isOnline()) {
+                player.sendMessage("§cLa partie n'a pas pu démarrer : " + e.getMessage());
+                player.sendMessage("§7L'hôte peut relancer la partie, ou revenir à Kal-Games pour en créer une autre.");
+            }
+        }
+        return Result.failure(Failure.CREATE_FAILED, e.getMessage());
     }
 
     private void assignUnteamed(BingoParty party) {

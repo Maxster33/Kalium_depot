@@ -1658,7 +1658,7 @@ les afficher (largeur fixe de 240 pixels avant). Aucun autre changement.
 Kixster et Event), KalGames 1.22.1 (`_removed-kalgames-1.22.0/`), KG_BingoGame 0.8.4 (`_removed-kg_bingogame-0.8.3/`),
 KS_Economy 1.0.3 (`_removed-ks_economy-1.0.2/`) ; actifs après redémarrage de chaque serveur. Statut : **testé et confirmé par LeKiwi06 le 02/10/2026** (menus : plus aucun texte qui défile).**
 
-## 0.8.5 - 7 objectifs difficiles ajoutés (03/10/2026, Maxster33)
+## 0.8.5 - objectifs difficiles, lancement bloqué, abandon puni, contre la montre (03/10/2026, Maxster33)
 
 **Constat de Maxster33 (03/10/2026, logs de Serveur Jeux)** : deux parties créées avec 25 objectifs difficiles ne se
 lançaient pas (`Pas assez d'objectifs de difficulte Difficile dans objectives.yml (25 demandes, 18 disponibles)`) :
@@ -1680,8 +1680,36 @@ les objets du jeu (`icons/<version>-22px/`), rien à refaire.
 
 **Déploiement** : le jar seul ne suffit pas, **le fichier du serveur `plugins/KG_BingoGame/objectives.yml` est à
 remplacer** (il n'est copié du jar qu'à la première installation), puis `/bingoadmin grid reload` ou redémarrage.
-**Statut : compilé, non déployé.**
+(voir la fin de la section pour le déploiement et le statut)
 
-Non corrigé dans cette version (signalé, en attente de décision) : après un échec au lancement (grille impossible à
-tirer), la partie restait inscrite « en cours » sans démarrer ; chaque relance échouait (`Une partie '…' existe
-deja`), sans message au joueur, qui devait revenir à Kal-Games.
+
+**Partie bloquée après un échec du lancement** (constat de Maxster33, logs du 03/10/2026) : la partie était inscrite
+« en cours » avant le tirage de la grille ; si le tirage échouait, rien n'était annulé et chaque relance échouait
+(`Une partie '…' existe deja`, puis `Un monde nomme '…' existe deja`), sans aucun message au joueur.
+- La grille est tirée **avant** de réclamer les mondes préparés ; en cas d'échec, la partie est oubliée
+  (`GameManager.discard`) sans toucher aux mondes : l'hôte peut relancer.
+- Les joueurs de la salle d'attente reçoivent la raison de l'échec dans le tchat (avant : console seulement).
+
+**Demandes de Maxster33 (03/10/2026)** :
+- **Abandon puni** (bouton « Abandonner » **et** déconnexion de plus de 10 min, choix de Maxster33) : le joueur perd
+  tous ses points de la partie (ils ne comptent plus non plus pour les joueurs classés devant lui) et reçoit
+  **-15** au classement (le résultat envoyé au hub vaut -15). Si plus personne ne reste en jeu (partie terminée
+  « sans joueur », ex. un joueur seul qui abandonne), la pénalité est quand même envoyée au hub. Le score
+  d'**équipe** affiché en fin de partie n'est pas modifié (seuls les points solo vont aux classements).
+- **Une seule équipe = aucun bonus « en 1er »** (objectif validé en 1er, bingo achevé en 1er ; choix de Maxster33 :
+  les deux). Le bonus des bingos uniquement difficiles / extrêmes reste.
+- **Mode contre la montre** (`mode=CHRONO`, choisi à la création sur Kal-Games, une seule équipe) :
+  - chrono à **10 min** au départ (la durée choisie à la création ne compte pas), **+5 min par objectif validé**
+    (message « +5 minutes au chrono ! ») ; barre d'action : temps restant et « n/25 objectifs » ;
+  - victoire **seulement si toute la grille est remplie** avant la fin du chrono : bonus de victoire habituel
+    **+ 1 point par tranche de 20 s restantes** (« + N temps » dans le résumé), pour l'équipe et chacun de ses
+    joueurs encore en jeu, sans multiplicateur (le multiplicateur de vitesse reste propre au blackout) ;
+  - chrono à zéro : **défaite** (« Temps écoulé »), les points des objectifs validés restent (choix de Maxster33) ;
+    plus aucune validation une fois le chrono à zéro ;
+  - pas de vote de nulle (comme le mode bingos). Partie restaurée après un redémarrage : la durée allongée et le
+    temps restant sont sauvegardés (inchangé).
+
+**Déploiement** : **ensemble** avec KG_Bingo 1.7.0 et KG_ScoreBoards 1.9.0 sur Kal-Games (le mode contre la montre
+et la pénalité passent par eux ; un KG_Bingo plus ancien n'envoie jamais `CHRONO` et ignore les points négatifs).
+Remplacer aussi `plugins/KG_BingoGame/objectives.yml` sur Serveur Jeux (voir plus haut). **Statut : compilé, non
+déployé, non testé en jeu.**

@@ -125,8 +125,15 @@ public final class GameEndService {
          *  "Egalite" (precision de LeKiwi06 : "ce n'est pas la meme chose semantiquement"). */
         EGALITE,
         /** Nulle acceptee par vote. */
-        NULLE
+        NULLE,
+        /** 0.8.5 - contre la montre : chrono a zero avant la grille complete = defaite ; les points des objectifs
+         *  valides restent (choix de Maxster33, 03/10/2026). */
+        TEMPS_ECOULE
     }
+
+    /** 0.8.5 - demande de Maxster33 (03/10/2026) : un joueur qui abandonne (volontairement ou deconnecte trop
+     *  longtemps) perd tous ses points de la partie et en perd 15 au classement. */
+    private static final double ABANDON_PENALTY = 15.0;
 
     private DrawVoteService drawVotes;
     /** 0.4.0 : resume de chaque partie terminee, consultable depuis la salle d'attente post-partie (SummaryMenu). */
@@ -160,7 +167,11 @@ public final class GameEndService {
             }
             if (game.isTimeUp()) {
                 emptySince.remove(game.getGameId());
-                endByTimeout(game);
+                if (game.getSettings().isChrono()) {
+                    finish(game, Outcome.TEMPS_ECOULE, -1, "Temps écoulé : la grille n'a pas été remplie à temps.");
+                } else {
+                    endByTimeout(game);
+                }
                 continue;
             }
             if (game.getSettings().isBlackout() && drawVotes != null) {
@@ -294,10 +305,12 @@ public final class GameEndService {
             return;
         }
         BingoSettings settings = game.getSettings();
-        if (settings.isBlackout()) {
+        if (settings.needsFullGrid()) { // 0.8.5 : blackout ou contre la montre
             int total = game.getGrid().getSize() * game.getGrid().getSize();
             if (game.countValidated(teamNumber) >= total) {
-                finish(game, Outcome.WIN, teamNumber, "L'équipe " + TeamStyle.letter(teamNumber) + " a rempli toute la grille en premier.");
+                finish(game, Outcome.WIN, teamNumber, settings.isChrono()
+                        ? "L'équipe " + TeamStyle.letter(teamNumber) + " a rempli toute la grille à temps."
+                        : "L'équipe " + TeamStyle.letter(teamNumber) + " a rempli toute la grille en premier.");
             }
         } else if (game.getScoreEngine().bingoCount(teamNumber) >= settings.bingosRequired()) {
             finish(game, Outcome.WIN, teamNumber, "L'équipe " + TeamStyle.letter(teamNumber) + " a achevé ses " + settings.bingosRequired()
@@ -396,6 +409,17 @@ public final class GameEndService {
             }
         }
 
+        // 0.8.5 - contre la montre gagne (demande de Maxster33, 03/10/2026) : bonus de victoire habituel + 1 point par
+        // tranche de 20 s restantes au chrono, ajoute tel quel a l'equipe et a chacun de ses joueurs encore en jeu
+        // (sans multiplicateur).
+        double timeBonus = 0;
+        if (win && game.getSettings().isChrono()) {
+            long seconds = Math.max(0, game.getRemaining().getSeconds());
+            timeBonus = seconds / BingoSettings.CHRONO_SECONDS_PER_POINT;
+            reason = reason + " — " + (seconds / 60) + " min " + String.format("%02d", seconds % 60) + " s restantes : +"
+                    + ScoreEngine.format(timeBonus) + " pts";
+        }
+
         // 0.7.8 : bonus d'XP (demande de LeKiwi06, 25/09/2026) - 0,1 point par niveau d'XP du joueur a la fin de la
         // partie (l'XP est remise a zero au lancement, voir PartyStarter). Joueurs presents a la fin seulement (pas
         // d'abandon, connectes). Ajoute tel quel au total final, solo et equipe (somme de ses joueurs), sans cumul
@@ -423,6 +447,7 @@ public final class GameEndService {
             case WIN -> "Victoire de l'équipe " + TeamStyle.letter(winner);
             case EGALITE -> "Égalité";
             case NULLE -> "Match nul";
+            case TEMPS_ECOULE -> "Temps écoulé";
         };
         summary.add(Component.text("===== " + title + " =====", NamedTextColor.GOLD));
         summary.add(Component.text(reason, NamedTextColor.YELLOW));
@@ -441,26 +466,33 @@ public final class GameEndService {
             }
             double mult = win && team == winner ? speed : 1.0;
             double xp = teamXp.getOrDefault(team, 0.0);
-            String line = (win ? (i + 1) + ". " : "- ") + "Équipe " + TeamStyle.letter(team) + " : " + ScoreEngine.format((mine + behind) * mult + xp) + " pts"
-                    + (behind > 0 || mult > 1.0 || xp > 0 ? " (" + (behind > 0 ? ScoreEngine.format(mine) + " + " + ScoreEngine.format(behind) : ScoreEngine.format(mine))
-                    + (mult > 1.0 ? " ×" + ScoreEngine.format(mult) : "") + (xp > 0 ? " + " + ScoreEngine.format(xp) + " XP" : "") + ")" : "")
+            double tb = win && team == winner ? timeBonus : 0; // 0.8.5 : contre la montre
+            String line = (win ? (i + 1) + ". " : "- ") + "Équipe " + TeamStyle.letter(team) + " : " + ScoreEngine.format((mine + behind) * mult + xp + tb) + " pts"
+                    + (behind > 0 || mult > 1.0 || xp > 0 || tb > 0 ? " (" + (behind > 0 ? ScoreEngine.format(mine) + " + " + ScoreEngine.format(behind) : ScoreEngine.format(mine))
+                    + (mult > 1.0 ? " ×" + ScoreEngine.format(mult) : "") + (xp > 0 ? " + " + ScoreEngine.format(xp) + " XP" : "")
+                    + (tb > 0 ? " + " + ScoreEngine.format(tb) + " temps" : "") + ")" : "")
                     + (instance.isFullyAbandoned() ? " — abandon" : "");
             summary.add(Component.text(line, TeamStyle.color(team)));
-            log.append(" equipe ").append(team).append('=').append(ScoreEngine.format((mine + behind) * mult + xp));
+            log.append(" equipe ").append(team).append('=').append(ScoreEngine.format((mine + behind) * mult + xp + tb));
         }
         // Classement SOLO : memes regles que les equipes (precision de LeKiwi06, 24/09/2026). Victoire : joueurs de
         // l'equipe gagnante en tete, puis les autres par score, ceux qui ont abandonne en dernier ; chacun gagne ses
         // points + ceux de tous les joueurs classes derriere lui. Egalite / nulle : chacun garde ses propres points.
-        record Solo(String name, double points, boolean winnerTeam, boolean abandoned, double xp, UUID id) {
+        // 0.8.5 : un joueur qui a abandonne ne compte plus aucun point de la partie (ni pour lui, ni pour ceux classes
+        // devant lui) et recoit -15 (ABANDON_PENALTY) ; bonus de temps du contre la montre pour les autres joueurs de
+        // l'equipe gagnante.
+        record Solo(String name, double points, boolean winnerTeam, boolean abandoned, double xp, UUID id, double time) {
         }
         List<Solo> soloList = new ArrayList<>();
         for (BingoInstance instance : game.getInstances()) {
             int team = instance.getTeam().getTeamNumber();
             for (UUID playerId : instance.getTeam().getPlayers()) {
                 String name = Bukkit.getOfflinePlayer(playerId).getName();
+                boolean abandoned = instance.hasAbandoned(playerId);
                 soloList.add(new Solo(name != null ? name : playerId.toString().substring(0, 8),
-                        engine.soloScore(team, playerId, win && team == winner), win && team == winner,
-                        instance.hasAbandoned(playerId), xpBonus.getOrDefault(playerId, 0.0), playerId));
+                        abandoned ? 0 : engine.soloScore(team, playerId, win && team == winner), win && team == winner,
+                        abandoned, xpBonus.getOrDefault(playerId, 0.0), playerId,
+                        !abandoned && win && team == winner ? timeBonus : 0));
             }
         }
         soloList.sort((a, b) -> {
@@ -481,11 +513,18 @@ public final class GameEndService {
                     behind += soloList.get(j).points();
                 }
             }
+            if (soloList.get(i).abandoned()) {
+                solos.add((win ? (i + 1) + ". " : "") + soloList.get(i).name() + " -" + ScoreEngine.format(ABANDON_PENALTY) + " (abandon)");
+                soloFinal.put(soloList.get(i).name(), -ABANDON_PENALTY);
+                continue;
+            }
             double mult = soloList.get(i).winnerTeam() ? speed : 1.0;
             double xp = soloList.get(i).xp();
-            solos.add((win ? (i + 1) + ". " : "") + soloList.get(i).name() + " " + ScoreEngine.format((soloList.get(i).points() + behind) * mult + xp)
-                    + (xp > 0 ? " (dont " + ScoreEngine.format(xp) + " XP)" : ""));
-            soloFinal.put(soloList.get(i).name(), (soloList.get(i).points() + behind) * mult + xp);
+            double time = soloList.get(i).time();
+            solos.add((win ? (i + 1) + ". " : "") + soloList.get(i).name() + " " + ScoreEngine.format((soloList.get(i).points() + behind) * mult + xp + time)
+                    + (xp > 0 || time > 0 ? " (dont " + (xp > 0 ? ScoreEngine.format(xp) + " XP" : "")
+                    + (xp > 0 && time > 0 ? ", " : "") + (time > 0 ? ScoreEngine.format(time) + " temps" : "") + ")" : ""));
+            soloFinal.put(soloList.get(i).name(), (soloList.get(i).points() + behind) * mult + xp + time);
         }
         summary.add(Component.text((win ? "Classement solo : " : "Points solo : ") + String.join(", ", solos), NamedTextColor.GRAY));
         logger.info(log + " ; solo : " + String.join(", ", solos));
@@ -531,7 +570,8 @@ public final class GameEndService {
             }
             double mult = win && team == winner ? speed : 1.0;
             double xpPts = teamXp.getOrDefault(team, 0.0);
-            teamLines.add(new fr.kalium.bingo.gui.SummaryMenu.TeamLine(team, win ? i + 1 : 0, (mine + behindPts) * mult + xpPts, mine,
+            double tbPts = win && team == winner ? timeBonus : 0; // 0.8.5
+            teamLines.add(new fr.kalium.bingo.gui.SummaryMenu.TeamLine(team, win ? i + 1 : 0, (mine + behindPts) * mult + xpPts + tbPts, mine,
                     behindPts, mult, instance.isFullyAbandoned(), players, xpPts));
         }
         summaries.put(game.getGameId(), new fr.kalium.bingo.gui.SummaryMenu.Summary(title, reason, teamLines));
@@ -542,6 +582,7 @@ public final class GameEndService {
                     : Component.text("L'équipe " + TeamStyle.letter(winner) + " remporte la partie.", TeamStyle.color(winner));
             case EGALITE -> Component.text("Égalité ! La partie est terminée.", NamedTextColor.YELLOW);
             case NULLE -> Component.text("Match nul : la partie est terminée.", NamedTextColor.YELLOW);
+            case TEMPS_ECOULE -> Component.text("Temps écoulé : partie perdue. Vos points d'objectifs sont gardés.", NamedTextColor.RED);
         }, summary);
     }
 
@@ -645,6 +686,23 @@ public final class GameEndService {
         game.setState(GameState.FINISHED);
         logger.info("[KG_BingoGame] Partie '" + game.getGameId() + "' terminee (abandonnée, plus aucun joueur connecté depuis "
                 + noPlayersAbandonAfter.toMinutes() + " min).");
+        // 0.8.5 : pas de classement pour cette partie, mais la penalite d'abandon (-15) est quand meme envoyee au hub
+        // pour chaque joueur qui a abandonne (ex. partie a un seul joueur, abandon volontaire).
+        StringBuilder penalties = new StringBuilder();
+        for (BingoInstance instance : game.getInstances()) {
+            for (UUID playerId : instance.getTeam().getPlayers()) {
+                if (instance.hasAbandoned(playerId)) {
+                    String name = Bukkit.getOfflinePlayer(playerId).getName();
+                    penalties.append(playerId).append(';').append(name != null ? name : playerId.toString().substring(0, 8))
+                            .append(';').append(-ABANDON_PENALTY).append("\n");
+                }
+            }
+        }
+        if (penalties.length() > 0) {
+            resultsOutbox.add(game.getGameId(), penalties.toString());
+            logger.info("[KG_BingoGame] Partie '" + game.getGameId() + "' : pénalité d'abandon envoyée au hub ("
+                    + penalties.toString().split("\n").length + " joueur(s)).");
+        }
         for (BingoInstance instance : game.getInstances()) {
             for (UUID playerId : instance.getTeam().getPlayers()) {
                 clearActiveGameAsync(playerId);
