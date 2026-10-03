@@ -34,3 +34,11 @@ qui a trait au claim ne marche pas » ; « vas y déploie ».
 - Choix de Claude signalés : délai de 3 h = la place de la boutique supprimée reste prise (les autres places libres
   restent utilisables) ; panneau : nom, lot, prix, état ; panneau rendu au propriétaire.
 - Déployé sur Event le 03/10/2026 à 01:49.
+
+## Suite : claims sans bannissement, magasins (KS_Claim 1.1.2, KS_Economy 1.1.3)
+- LeKiwi06 : « supprime l'option de bannissement du claim » ; puis : son magasin hors du catalogue, pas d'achat
+  chez soi, « voir l'item », signaler une boutique ou un magasin.
+- Choix de Claude signalés : « Expulser » gardé ; bannissements existants levés au démarrage ; raisons de
+  signalement (arnaque, contenu inapproprié, thème non respecté, Autre) ; staff : `/magasin signalements`
+  (se téléporter, supprimer la boutique, classer), permission `kseconomy.staff`.
+- Déployés sur Event le 03/10/2026 à 02:35.

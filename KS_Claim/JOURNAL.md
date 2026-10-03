@@ -71,4 +71,4 @@ Demande de LeKiwi06 : « supprime l'option de bannissement du claim ».
 - Au démarrage, les bannissements déjà posés dans les claims sont levés (sinon personne ne pourrait plus les lever) ;
   le nombre est noté dans la console. Les commandes de SimpleClaimSystem restent interdites aux joueurs (LuckPerms).
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 02:35 (LeKiwi06 ; ancienne version dans `_removed-ks_claim-1.1.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

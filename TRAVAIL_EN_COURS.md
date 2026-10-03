@@ -16,8 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_Economy — LeKiwi06 — depuis le 2026-10-03 02:00 — catalogue sans son magasin, pas d'achat chez soi, voir l'objet, signalements
-- KS_Claim — LeKiwi06 — depuis le 2026-10-03 01:55 — retirer le bannissement des claims
 
 
 

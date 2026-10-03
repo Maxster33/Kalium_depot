@@ -126,7 +126,7 @@ Aucune.
 ## Gérer ses claims
 
 - Liste de ses claims (nom, monde, coordonnées, groupe) ; pour chaque claim : nom et description, **membres** (5
-  maximum : ajouter, retirer), bannissements (bannir, débannir, expulser), **réglages**.
+  maximum : ajouter, retirer), ~~bannissements (bannir, débannir)~~ **retirés le 03/10/2026 (LeKiwi06 : « supprime l'option de bannissement du claim ») : les bannissements déjà posés sont levés au démarrage (KS_Claim 1.1.2)** ; expulser (le joueur sort, sans interdiction) reste ; **réglages**.
 - **Réglages** : valeurs de base dans le `config.yml` de SCS ; le propriétaire ne voit et ne modifie que les réglages
   (membres, visiteurs) que la configuration l'autorise à modifier. Rien n'est figé dans le code : LeKiwi06 règle
   lui-même cette liste.

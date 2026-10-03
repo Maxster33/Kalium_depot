@@ -178,4 +178,4 @@ Demande de LeKiwi06 (cahier : « Demande de LeKiwi06 (03/10/2026, KS_Economy 1.1
   `plugins/KS_Economy/signalements.yml`. `/magasin signalements` (staff) : non traités / classés, détail, se
   téléporter, supprimer la boutique (sans délai de 3 h), classer avec l'action faite.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 02:35 (LeKiwi06 ; ancienne version dans `_removed-ks_economy-1.1.2/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

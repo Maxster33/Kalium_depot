@@ -175,6 +175,25 @@ Choix d'interprétation (Claude, à valider aux tests) :
   contenant cassé), sa place dans le magasin reste prise 3 h ; message avec le temps restant.
 - **Coffres en cuivre** (tous les états d'oxydation, cirés ou non) acceptés comme contenants.
 
+### Demande de LeKiwi06 (03/10/2026, KS_Economy 1.1.3)
+
+> il ne faut pas que les joueurs voient leurs propre boutique dans l'onglet magasins de économie , et il ne peuvent pas acheter eux même pour eviter de fausser les stats de magasins . aussi , je veux une possibilité " voir l'item" qui nous montre clairement ce qu'on va acheter dans une contenant . pour éviter touts risques d'arnaques , il faut aussi un bouton pour signaler une boutique ou un magasin au complet , pour arnaque , contenue inaproprié , etc
+
+Choix d'interprétation (Claude, à valider aux tests) :
+- **Catalogue** (Économie, « Magasins ») : son propre magasin n'y est pas (il reste dans « Mon magasin »).
+- **Pas d'achat chez soi** : clic sur son panneau ou ouverture depuis un menu : la gestion de la boutique ; achat
+  refusé s'il passe quand même.
+- **« Voir l'objet »** (menu d'achat) : coffre en lecture seule : l'objet vendu tel quel (survol : nom,
+  enchantements, description ; l'achat donne exactement des objets identiques), le résumé de l'offre, l'objet demandé
+  (ou une émeraude avec le prix en points). Refermé : retour au menu d'achat.
+- **Signaler** : « Signaler la boutique » (menu d'achat) et « Signaler le magasin » (fiche du magasin dans le
+  catalogue) ; raisons à cocher : arnaque (objet ou prix trompeur), contenu inapproprié (nom, texte), thème du magasin
+  non respecté, et « Autre » (200 caractères) ; un seul signalement non traité par joueur et par cible ; pas sur les
+  siens. Message au staff connecté (`kseconomy.staff`, opérateurs par défaut) et dans la console ; enregistré dans
+  `plugins/KS_Economy/signalements.yml`.
+- **Staff** : `/magasin signalements` : non traités / classés ; détail (cible, auteur, date, raisons, offre) ; se
+  téléporter ; supprimer la boutique signalée (sans délai de 3 h pour le propriétaire) ; classer avec l'action faite.
+
 ## Magasins (version du 29/09/2026, remplacée)
 
 - Un joueur déclare **un** magasin dans un de ses **groupes de claim** (KS_Claim, session 3). Prix du premier
