@@ -30,4 +30,7 @@ Plugin du serveur Event : fair-play. Cahier des charges : catégorie 5 « FairPl
 Avec : configuration Paper d'Event (anti-xray en mode « cacher », suivi des entités réduit : voir le cahier),
 plugins serveur JourneyMap et Legacy Freecam.
 
-**Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 03/10/2026 à 05:18 (LeKiwi06, nouveau) avec JourneyMap (`journeymap-paper-26.2-6.0.9.jar`, Hangar,
+sha256 vérifié) et Legacy Freecam (`legacyfreecam-paper-2.0.0.jar`, Modrinth, sha1 vérifié), téléchargés avec l'accord
+de LeKiwi06, et la configuration Paper (anti-xray, suivi des entités ; originaux dans `/_removed-config-2026-10-03/`) ;
+actif après redémarrage d'Event. Statut : non testé en jeu.**

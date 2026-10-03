@@ -49,3 +49,12 @@ qui a trait au claim ne marche pas » ; « vas y déploie ».
 - Fait : bouton « Modération » dans `/menu` (staff), outils déclarés par les plugins ; signalements des magasins
   dedans. Le reste (invsee, ecsee...) viendra avec la catégorie 6. Déployés sur Event le 03/10/2026 à 03:22.
 - Correction : `jars-deployes/KLM_Menu-2.5.0.jar` remis (encore en service sur lobby, Serveur Jeux, Kixster).
+
+## Suite : catégorie 5 « FairPlay » (KS_FairPlay 1.0.0)
+- LeKiwi06 : « on attaque la catégorie 5 » ; ajouts : gardien ancien dans la limite (impossible de le frapper limite
+  atteinte), compteur dans le tchat.
+- Vérifié : Legacy Freecam a un plugin serveur Paper 26.2 (règles strictes par défaut) ; JourneyMap 26.2-6.0.9 ;
+  code Xaero. Téléchargements acceptés par LeKiwi06.
+- Choix de Claude signalés : gardiens normaux non concernés ; suivi des entités 64 / 48 / 48 / 32 / 32 ; anti-xray
+  jusqu'à 128 ; `lava-obscures` laissé pour la catégorie 6.
+- Déployé sur Event le 03/10/2026 à 05:18.
