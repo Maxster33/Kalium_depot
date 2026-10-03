@@ -115,10 +115,14 @@ final class BingoMenus {
     }
 
     /**
-     * Ecran de creation : nombre d'equipes / joueurs par equipe, choisis par l'hote pour CETTE
+     * Ecran de creation, etape 1 : nombre d'equipes / joueurs par equipe, choisis par l'hote pour CETTE
      * partie (bornes par bingo.max-team-count/-size de config.yml - 4x4 par defaut, confirme par
      * l'utilisateur). Demande explicite : "je puisse directement configurer le nombre d'équipe et
      * le nombre de personne par équipe" a la creation.
+     *
+     * 1.7.2 - demande de Maxster33 (03/10/2026) : a 1 equipe, le contre la montre doit etre le mode par defaut et son
+     * explication ne doit apparaitre qu'a 1 equipe. Un menu (Dialog natif) ne se met pas a jour pendant qu'on deplace un
+     * curseur : creation en deux ecrans (choix de Maxster33), equipes d'abord, puis le reste selon ce choix.
      */
     public void openBingoCreate(Player player) {
         long wait = plugin.parties().creationWaitSeconds(player); // 1.7.0 : 2 parties par heure (Maxster33)
@@ -131,6 +135,27 @@ final class BingoMenus {
         int defaultCount = Math.max(1, Math.min(maxTeamCount, plugin.getConfig().getInt("bingo.default-team-count", 2)));
         int defaultSize = Math.max(1, Math.min(maxTeamSize, plugin.getConfig().getInt("bingo.default-team-size", 4)));
 
+        List<DialogInput> inputs = new ArrayList<>();
+        inputs.add(gui.number("teamCount", t("bingo.create-teams", "Nombre d'équipes"), 1, maxTeamCount, defaultCount, 1));
+        inputs.add(gui.number("teamSize", t("bingo.create-teamsize", "Joueurs par équipe"), 1, maxTeamSize, defaultSize, 1));
+
+        List<ActionButton> buttons = new ArrayList<>();
+        buttons.add(gui.form(t("bingo.create-next", "<green>Suivant"), null, (p, view) -> {
+            Float teamCountValue = view.getFloat("teamCount");
+            Float teamSizeValue = view.getFloat("teamSize");
+            int teamCount = Math.max(1, Math.min(maxTeamCount, teamCountValue == null ? defaultCount : Math.round(teamCountValue)));
+            int teamSize = Math.max(1, Math.min(maxTeamSize, teamSizeValue == null ? defaultSize : Math.round(teamSizeValue)));
+            openBingoCreateRules(p, teamCount, teamSize);
+        }));
+        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openBingoMenu));
+        List<Component> body = List.of(t("bingo.create-body-equipes",
+                "<gray>Choisissez les équipes, puis « Suivant » pour régler la partie. Vous serez l'hôte."),
+                t("bingo.create-aide-solo", "<gray>Une seule équipe : le mode contre la montre est proposé par défaut."));
+        gui.open(player, t("bingo.create-title", "<gold><bold>Nouvelle partie Bingo"), body, inputs, buttons, gui.close(), 1);
+    }
+
+    /** Ecran de creation, etape 2 (1.7.2) : mode, duree, bingos, composition, selon le nombre d'equipes choisi. */
+    private void openBingoCreateRules(Player player, int teamCount, int teamSize) {
         // Duree de partie (demande explicite de l'utilisateur, 23/09/2026) : choisie par l'hote en
         // MINUTES (plus lisible qu'en secondes dans un formulaire), bornee par bingo.min/max-duration-
         // minutes - meme principe que teamCount/teamSize ci-dessus. Pre-remplie AVEC LE MAXIMUM admin
@@ -141,20 +166,24 @@ final class BingoMenus {
         int minDurationMinutes = Math.max(1, plugin.getConfig().getInt("bingo.min-duration-minutes", 5));
         int maxDurationMinutes = Math.max(minDurationMinutes, plugin.getConfig().getInt("bingo.max-duration-minutes", 60));
         int defaultDurationMinutes = maxDurationMinutes;
+        boolean solo = teamCount == 1;
 
         List<DialogInput> inputs = new ArrayList<>();
-        inputs.add(gui.number("teamCount", t("bingo.create-teams", "Nombre d'équipes"), 1, maxTeamCount, defaultCount, 1));
-        inputs.add(gui.number("teamSize", t("bingo.create-teamsize", "Joueurs par équipe"), 1, maxTeamSize, defaultSize, 1));
         inputs.add(gui.number("duration", t("bingo.create-duration-court", "Durée (minutes)"),
                 minDurationMinutes, maxDurationMinutes, defaultDurationMinutes, 5));
         // 1.1.0 - demande explicite de LeKiwi06 (24/09/2026) : mode (bingos a achever, 3 a 12, avec chrono ; ou
         // blackout, grille complete sans chrono) et composition de la grille par difficulte (25 cases ; par defaut
         // 10 faciles, 10 normaux, 5 difficiles, 0 extreme - "trop dur pour des debutants").
-        // 1.7.0 - demande de Maxster33 (03/10/2026) : mode contre la montre, une seule equipe.
-        inputs.add(gui.choice("mode", t("bingo.create-mode", "Mode de jeu"), List.of("BINGOS", "BLACKOUT", "CHRONO"),
-                List.of(t("bingo.mode-bingos-court", "Bingos, avec chrono"),
-                        t("bingo.mode-blackout-court", "Blackout, sans chrono"),
-                        t("bingo.mode-chrono-court", "Contre la montre, 1 équipe")), "BINGOS"));
+        // 1.7.0 - demande de Maxster33 (03/10/2026) : mode contre la montre, une seule equipe ; 1.7.2 : propose
+        // seulement a 1 equipe, et alors choisi par defaut.
+        List<String> modeIds = new ArrayList<>(List.of("BINGOS", "BLACKOUT"));
+        List<Component> modeLabels = new ArrayList<>(List.of(t("bingo.mode-bingos-court", "Bingos, avec chrono"),
+                t("bingo.mode-blackout-court", "Blackout, sans chrono")));
+        if (solo) {
+            modeIds.add("CHRONO");
+            modeLabels.add(t("bingo.mode-chrono-court", "Contre la montre, 1 équipe"));
+        }
+        inputs.add(gui.choice("mode", t("bingo.create-mode", "Mode de jeu"), modeIds, modeLabels, solo ? "CHRONO" : "BINGOS"));
         inputs.add(gui.number("bingos", t("bingo.create-bingos", "Bingos à achever pour gagner"), 3, 12, 3, 1));
         inputs.add(gui.number("easy", t("bingo.create-easy", "Objectifs faciles"), 0, GRID_CELLS, 10, 1));
         inputs.add(gui.number("medium", t("bingo.create-medium", "Objectifs normaux"), 0, GRID_CELLS, 10, 1));
@@ -163,23 +192,13 @@ final class BingoMenus {
 
         List<ActionButton> buttons = new ArrayList<>();
         buttons.add(gui.form(t("bingo.create-confirm", "<green>Créer la partie"), null, (p, view) -> {
-            Float teamCountValue = view.getFloat("teamCount");
-            Float teamSizeValue = view.getFloat("teamSize");
             Float durationValue = view.getFloat("duration");
-            int teamCount = teamCountValue == null ? defaultCount : Math.round(teamCountValue);
-            int teamSize = teamSizeValue == null ? defaultSize : Math.round(teamSizeValue);
             int durationMinutes = durationValue == null ? defaultDurationMinutes : Math.round(durationValue);
             String chosen = view.getText("mode");
-            String mode = "BLACKOUT".equals(chosen) || "CHRONO".equals(chosen) ? chosen : "BINGOS";
+            String mode = "BLACKOUT".equals(chosen) || (solo && "CHRONO".equals(chosen)) ? chosen : "BINGOS";
             long waitNow = plugin.parties().creationWaitSeconds(p); // 1.7.0 : reverifie a la validation
             if (waitNow > 0) {
                 p.sendMessage(BingoPartyManager.creationWaitText(waitNow));
-                return;
-            }
-            if ("CHRONO".equals(mode) && teamCount != 1) {
-                p.sendMessage(kg.prefix().append(t("bingo.create-chrono-teams",
-                        "<red>Le mode contre la montre se joue avec une seule équipe : mettez « Nombre d'équipes » à 1.")));
-                openBingoCreate(p);
                 return;
             }
             int bingos = intOf(view.getFloat("bingos"), 3);
@@ -191,7 +210,7 @@ final class BingoMenus {
                 p.sendMessage(kg.prefix().append(t("bingo.create-bad-grid",
                         "<red>La grille doit contenir exactement <cells> objectifs (vous en avez choisi <total>).",
                         "cells", GRID_CELLS, "total", easy + medium + hard + extreme)));
-                openBingoCreate(p);
+                openBingoCreateRules(p, teamCount, teamSize);
                 return;
             }
             String rules = "mode=" + mode + ";bingos=" + bingos + ";easy=" + easy + ";medium=" + medium
@@ -201,15 +220,19 @@ final class BingoMenus {
                             + ", " + easy + " F / " + medium + " N / "
                             + hard + " D / " + extreme + " X");
         }));
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openBingoMenu));
+        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openBingoCreate));
         // 1.6.1 : textes courts dans les champs (ils ne doivent jamais défiler), explications ici.
-        List<Component> body = List.of(t("bingo.create-body", "<gray>Réglez la partie puis créez-la. Vous serez l'hôte."),
-                t("bingo.create-aide", "<gray>Bingos : lignes, colonnes ou diagonales à achever, avec chrono. "
-                        + "Blackout : grille complète, sans chrono (la durée ne compte pas)."),
-                // 1.7.1 : nouvelle cle (l'ancienne, « +5 min par objectif », est deja figee dans le lang.yml du serveur).
-                t("bingo.create-aide-chrono-2", "<gray>Contre la montre (1 équipe) : 10 min au départ, puis par objectif "
-                        + "+2 min 30 (facile), +4 min (normal), +6 min 30 (difficile), +10 min (extrême) ; il faut remplir "
-                        + "toute la grille, bonus selon le temps restant (la durée ne compte pas)."));
+        List<Component> body = new ArrayList<>();
+        body.add(t("bingo.create-body-regles", "<gray><teams> équipe(s) de <size> joueur(s). Réglez la partie puis créez-la.",
+                "teams", teamCount, "size", teamSize));
+        body.add(t("bingo.create-aide", "<gray>Bingos : lignes, colonnes ou diagonales à achever, avec chrono. "
+                + "Blackout : grille complète, sans chrono (la durée ne compte pas)."));
+        if (solo) {
+            // 1.7.1 : nouvelle cle (l'ancienne, « +5 min par objectif », est deja figee dans le lang.yml du serveur).
+            body.add(t("bingo.create-aide-chrono-2", "<gray>Contre la montre (1 équipe) : 10 min au départ, puis par objectif "
+                    + "+2 min 30 (facile), +4 min (normal), +6 min 30 (difficile), +10 min (extrême) ; il faut remplir "
+                    + "toute la grille, bonus selon le temps restant (la durée ne compte pas)."));
+        }
         gui.open(player, t("bingo.create-title", "<gold><bold>Nouvelle partie Bingo"), body, inputs, buttons, gui.close(), 1);
     }
 

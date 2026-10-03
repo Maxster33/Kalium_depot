@@ -138,3 +138,17 @@ Suite de KG_BingoGame 0.8.7 (temps gagné selon la difficulté de l'objectif) : 
 création indique « +2 min 30 (facile), +4 min (normal), +6 min 30 (difficile), +10 min (extrême) ». Nouvelle clé de
 texte `bingo.create-aide-chrono-2` : l'ancienne (« +5 min par objectif ») est déjà écrite dans le `lang.yml` du
 serveur et ne serait pas remplacée. Aucun autre changement. **Déployé le 03/10/2026 à 17:06 sur Kal-Games (Maxster33 ; 1.7.0 dans `_removed-kg_bingo-1.7.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.7.2 - création en deux écrans, contre la montre par défaut à 1 équipe (03/10/2026, Maxster33)
+
+**Demande de Maxster33** : à 1 équipe, le mode par défaut doit devenir le contre la montre, et ses explications ne
+doivent être visibles qu'à 1 équipe.
+- Un menu (Dialog natif) ne se met pas à jour pendant qu'on déplace un curseur : **création en deux écrans** (choix de
+  Maxster33). Écran 1 : nombre d'équipes et joueurs par équipe, « Suivant ». Écran 2 : durée, mode, bingos,
+  composition (« Retour » revient à l'écran 1).
+- **1 équipe** : les 3 modes, **contre la montre présélectionné**, son explication affichée. **2 équipes ou plus** :
+  ni le mode contre la montre ni son explication (plus besoin du refus à la validation).
+- Nouvelles clés de texte : `bingo.create-next`, `bingo.create-body-equipes`, `bingo.create-aide-solo`,
+  `bingo.create-body-regles`. Limite de 2 parties par heure vérifiée comme avant (ouverture et validation).
+
+**Statut : compilé, non déployé.**
