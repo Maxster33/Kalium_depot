@@ -16,6 +16,9 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KG_BingoGame — Maxster33 — depuis le 2026-10-03 15:08 — contre la montre : temps ajouté selon la difficulté
+- KG_Bingo — Maxster33 — depuis le 2026-10-03 15:08 — texte d'aide du contre la montre
+
 
 
 
