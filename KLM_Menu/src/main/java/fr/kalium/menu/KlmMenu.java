@@ -770,6 +770,12 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
                                     .build())));
         }
 
+        // 2.9.0 (LeKiwi06) : « Recherche de joueurs » tant qu'il y a peu de monde sur ce serveur.
+        if (getServer().getOnlinePlayers().size() < getConfig().getInt("player-search.below", 4)) {
+            buttons.add(gui.button(lang.c("search.button", "<green><bold>Recherche de joueurs"),
+                    lang.c("search.button-tip", "<gray>Peu de monde ici ? Tchat global, Discord et lives de Kiwi."),
+                    this::openSearch));
+        }
         // 2.8.0 (LeKiwi06) : rubrique « Modération » aussi dans la navigation de la boussole (staff seulement).
         if (!moderationSections(player).isEmpty()) {
             buttons.add(gui.button(lang.c("moderation.button", "<red><bold>Modération"),
@@ -796,6 +802,67 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
                 .type(DialogType.multiAction(shownButtons, shownClose, 1)));
 
         player.showDialog(dialog);
+    }
+
+    // ------------------------------------------------------------------ recherche de joueurs (2.9.0)
+
+    /** QR codes de ce serveur (KLM_Hub sur le lobby), ou null. */
+    private fr.kalium.menu.api.QrCodes qrCodes() {
+        for (var service : getServer().getServicesManager().getRegistrations(fr.kalium.menu.api.QrCodes.class)) {
+            if (service.getPlugin().isEnabled()) {
+                return service.getProvider();
+            }
+        }
+        return null;
+    }
+
+    /** Lien affiche sans « https:// », cliquable. */
+    private Component link(String url) {
+        return Component.text(url.replaceFirst("^https?://", ""))
+                .clickEvent(net.kyori.adventure.text.event.ClickEvent.openUrl(url));
+    }
+
+    /**
+     * Demande de LeKiwi06 (03/10/2026) : « un bouton supplementaire dans la boussole "recherche de joueurs" s'il y a
+     * moins de 4 joueurs dans le serveur ou se trouve la personne » : la commande /global (KLM_Chat), le Discord et le
+     * Twitch de Kiwi, avec un bouton par QR code (main secondaire, 30 s) la ou un plugin les fournit (KLM_Hub).
+     */
+    private void openSearch(Player player) {
+        String discord = getConfig().getString("player-search.discord", "https://discord.gg/3PsEbZPpdW");
+        String twitch = getConfig().getString("player-search.twitch", "https://twitch.tv/lekiwi06");
+        List<Component> body = new ArrayList<>();
+        body.add(lang.c("search.body", "<gray>Peu de joueurs ici en ce moment ? Voici comment en trouver."));
+        body.add(lang.c("search.global", "<white><bold>Tchat inter-serveur</bold> <gray>: écris <white>/global send \\<message></white> pour parler aux joueurs de tous les serveurs. <white>/global false</white> le masque, <white>/global true</white> le réaffiche."));
+        body.add(lang.c("search.discord", "<white><bold>Rejoins le Discord</bold> <gray>pour trouver des joueurs : <aqua><link>", "link", link(discord)));
+        body.add(lang.c("search.twitch", "<white><bold>Repasse quand Kiwi est en live</bold> <gray>: <light_purple><link>", "link", link(twitch)));
+        List<ActionButton> buttons = new ArrayList<>();
+        if (qrCodes() != null) {
+            buttons.add(gui.button(lang.c("search.qr-discord", "<aqua>QR code du Discord"),
+                    lang.c("search.qr-tip", "<gray>Le QR code s'affiche 30 s dans ta main gauche."),
+                    p -> giveQr(p, discord, lang.c("search.qr-discord-name", "<aqua>QR code du Discord"))));
+            buttons.add(gui.button(lang.c("search.qr-twitch", "<light_purple>QR code du Twitch"),
+                    lang.c("search.qr-tip", "<gray>Le QR code s'affiche 30 s dans ta main gauche."),
+                    p -> giveQr(p, twitch, lang.c("search.qr-twitch-name", "<light_purple>QR code du Twitch"))));
+        }
+        buttons.add(gui.button(lang.c("info.back", "<gray>Retour"), null, this::showMenu));
+        gui.open(player, lang.c("search.title", "<green><bold>Recherche de joueurs"), body, List.of(), buttons, null, 1);
+    }
+
+    private void giveQr(Player player, String url, Component name) {
+        fr.kalium.menu.api.QrCodes qr = qrCodes();
+        if (qr != null) {
+            qr.donner(player, url, name);
+        }
+    }
+
+    /** Menu de navigation, sans le delai anti double clic de la boussole (bouton « Retour »). */
+    private void showMenu(Player player) {
+        List<ServerEntry> entries = menuEntriesFor(player);
+        if (entries.isEmpty()) {
+            player.sendMessage(mm.deserialize(msg("no-servers")));
+            return;
+        }
+        showDialog(player, entries);
     }
 
     // ------------------------------------------------------------------ parametres (1.5.0)

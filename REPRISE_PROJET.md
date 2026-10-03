@@ -93,6 +93,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 ### Versions compilées, non déployées
 
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
+- **KLM_Chat 1.0.0, KLM_Hub 1.0.0, KLM_Menu 2.9.0** (03/10/2026, LeKiwi06 ; compilés, non déployés, non testés) : tchat inter-serveur `/global send <message> | true | false` (KLM_Chat, à mettre sur les 6 serveurs Paper, rien sur le proxy) ; barre de boss violette du lobby « KaLium SMC | lien défilant Discord / Twitch » et QR codes 30 s en main secondaire (KLM_Hub, lobby seulement) ; bouton « Recherche de joueurs » de la boussole quand il y a moins de 4 joueurs sur le serveur (KLM_Menu 2.9.0, les 6 serveurs). **KLM_Hub 1.0.0 et KLM_Menu 2.9.0 se déploient ensemble sur le lobby.** Vision nocturne du lobby : une ligne à ajouter dans `plugins/KLM_Portal/config.yml` du lobby (`night_vision: 0` sous `region-effects.lobby.effects`), puis `/klmportal reload` ; pas de nouveau jar.
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »
@@ -290,6 +291,21 @@ victoire, temps écoulé, redémarrage), plus de « Prepared spawn area in 5000 
 « Réserve : ... », 2e partie pendant une autre sans gel.
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (03/10/2026, 21:27) : tchat global, barre de boss du lobby, recherche de joueurs — compilés, non déployés, non testés.**
+KLM_Chat 1.0.0 (nouveau : `/global send <message> | true | false`, préfixe du serveur dans la couleur de son portail, contenu
+gris clair, séparations `----- GLOBAL -----` / `----- <serveur> -----`), KLM_Hub 1.0.0 (nouveau, lobby : barre violette,
+titre vert pâle « KaLium SMC | » + lien défilant Discord / Twitch avec arrêt ; QR codes 30 s en main secondaire, la barre
+se vide pendant ce temps), KLM_Menu 2.9.0 (bouton « Recherche de joueurs » de la boussole sous 4 joueurs). Détail :
+chaque `JOURNAL.md` et `historique-conversations/2026-10-03-tchat-global-lobby.md`.
+**À déployer** : KLM_Chat et KLM_Menu 2.9.0 sur les 6 serveurs Paper ; KLM_Hub sur le lobby, en même temps que KLM_Menu
+2.9.0. **Vision nocturne du lobby** : ligne `night_vision: 0` à ajouter sous `region-effects.lobby.effects` de
+`plugins/KLM_Portal/config.yml` (lobby), puis `/klmportal reload`. Ancienne barre faite avec `/bossbar` : à retirer en jeu.
+À tester : barre du lobby (couleurs, défilement, arrêt sur chaque lien, Bedrock) ; boussole avec moins de 4 joueurs puis
+4 ou plus ; les deux QR codes (scan au téléphone, 30 s, barre qui se vide, impossible à jeter / déplacer, main gauche
+déjà prise, déconnexion pendant les 30 s) ; `/global send` entre deux serveurs (préfixe, couleurs, séparations dans les
+deux sens), `/global false` puis `true`, joueur Bedrock ; vision nocturne sans clignotement en Java et en Bedrock.
+Signalé à LeKiwi06 : pas d'anti-spam ni de lien avec les joueurs muets pour `/global` ; choix `true | false` par serveur.
 
 **Ajout (03/10/2026, 19:06) : KS_Crafts 1.9.0 déployé sur Event, non testé** (toutes ses recettes dans le livre de recettes, débloquées dès qu'on obtient un ingrédient).
 

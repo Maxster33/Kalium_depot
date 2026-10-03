@@ -47,6 +47,14 @@ informations:
   slot: 0
   material: COMPARATOR
 
+# 2.9.0 - bouton « Recherche de joueurs » de la boussole : affiche tant qu'il y a moins de "below" joueurs sur CE
+# serveur (0 = jamais). Il rappelle la commande /global (KLM_Chat) et donne les liens ci-dessous ; les QR codes ne sont
+# proposes que la ou KLM_Hub est installe (lobby). Cles facultatives : sans elles, 4 et ces deux liens.
+player-search:
+  below: 4
+  discord: "https://discord.gg/3PsEbZPpdW"
+  twitch: "https://twitch.tv/lekiwi06"
+
 # Operateurs autorises : ces joueurs voient dans le menu deux boutons -
 # un pour basculer rapidement entre operateur et joueur, un pour changer de mode de jeu
 # (survie -> creatif -> aventure -> spectateur -> survie) - sans passer par la console.

@@ -247,3 +247,23 @@ destinations) dès qu'un outil de modération est visible pour le joueur ; « Re
 ouverte (navigation ou /menu). Aucun autre changement.
 
 **Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 2.8.0 ; ancienne version dans `_removed-klm_menu-2.7.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 2.9.0 - bouton « Recherche de joueurs » dans la boussole (03/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « un bouton supplémentaire dans la boussole de KLM_menu "recherche de joueurs" : s'il y a moins
+de 4 joueurs dans le serveur où se trouve la personne », qui propose la commande `/global send/true/false <message>`,
+de « rejoindre le discord » (lien + bouton qui donne le QR code en main gauche) et de « repasser quand kiwi est en
+live » (lien du Twitch + bouton QR code).
+- Menu de navigation (boussole, `/servers`) : bouton « Recherche de joueurs » après les destinations, tant qu'il y a
+  **moins de 4 joueurs sur ce serveur** (`player-search.below`, 0 = jamais).
+- La fenêtre rappelle `/global send <message>`, `/global false` et `/global true` (plugin KLM_Chat), affiche le lien
+  du Discord et celui du Twitch (`player-search.discord`, `player-search.twitch`), puis « Retour ».
+- Nouvelle API `fr.kalium.menu.api.QrCodes` (`owner()`, `donner(joueur, lien, nom)`) : là où un plugin la fournit
+  (KLM_Hub, lobby), deux boutons « QR code du Discord » et « QR code du Twitch ». Sans ce plugin : les liens seulement.
+- Nouvelles clés facultatives (valeurs par défaut dans le code, rien à ajouter aux `config.yml` déjà en place).
+
+Limite : le bouton n'apparaît que là où la boussole ou `/servers` sont utilisés (pas de boussole sur Serveur Jeux ;
+sur Kixster et Event, après `/menu on`). À déployer avec KLM_Hub 1.0.0 sur le lobby.
+
+**Statut : compilé le 03/10/2026, non déployé, non testé en jeu.** Les versions 2.6.0 à 2.8.0 n'ont pas encore été
+testées en jeu (signalé à LeKiwi06).

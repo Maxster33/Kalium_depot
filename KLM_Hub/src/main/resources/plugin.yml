@@ -1,0 +1,7 @@
+name: KLM_Hub
+version: '${project.version}'
+main: fr.kalium.hub.KlmHub
+api-version: '26.2'
+description: Lobby du reseau KaLium - barre de boss (texte defilant Discord / Twitch) et QR codes en main secondaire pour le bouton « Recherche de joueurs » de KLM_Menu.
+authors: [KaLium]
+depend: [KLM_Menu]

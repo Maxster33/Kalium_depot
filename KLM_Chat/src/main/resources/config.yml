@@ -1,0 +1,41 @@
+# ============================================================
+#  KLM_Chat - tchat inter-serveur du reseau KaLium (/global)
+#  Le meme fichier .jar est installe sur tous les serveurs Paper, sans reglage a faire.
+#  Toutes les cles sont facultatives : sans elles, les valeurs ci-dessous s'appliquent.
+#  Applique au redemarrage du serveur.
+# ============================================================
+
+# Nom de CE serveur dans velocity.toml (ex. lobby, kal-games). Vide = demande au proxy a l'arrivee d'un joueur.
+server-name: ""
+
+# Longueur maximale d'un message global (1 a 256).
+max-length: 256
+
+# Prefixe de chaque serveur dans le tchat global : nom affiche et couleur de son portail au lobby.
+# Cle = nom du serveur dans velocity.toml ; couleur = nom Minecraft (gold, red, green...) ou "#rrggbb".
+# Un serveur absent de la liste garde son nom de velocity.toml, en blanc.
+servers:
+  lobby:
+    name: "Lobby"
+    color: "#09add3"
+  kal-games:
+    name: "Kal-Games"
+    color: gold
+  kixster:
+    name: "Kixster"
+    color: green
+  event:
+    name: "Event"
+    color: red
+  Kanvas:
+    name: "Kanvas"
+    color: light_purple
+  serveur-jeux:
+    name: "Bingo"
+    color: yellow
+
+# Textes (format MiniMessage). Le tchat du serveur reste blanc ; le contenu d'un message global est en gris clair.
+messages:
+  format: "<prefix> <gray><player> : <message>"
+  separator-global: "<dark_gray>----- <white>GLOBAL</white> -----"
+  separator-server: "<dark_gray>----- <server> -----"

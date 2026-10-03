@@ -1,0 +1,32 @@
+# ============================================================
+#  KLM_Hub - lobby du reseau KaLium (avec KLM_Menu 2.9.0 ou plus)
+#  Toutes les cles sont facultatives : sans elles, les valeurs ci-dessous s'appliquent.
+#  Applique au redemarrage du serveur.
+# ============================================================
+
+# Barre de boss affichee en permanence a tous les joueurs de CE serveur.
+bossbar:
+  # false : pas de barre permanente ; elle n'apparait alors que pendant un QR code (minuteur).
+  enabled: true
+  # Couleur de la barre : PINK, BLUE, RED, GREEN, YELLOW, PURPLE, WHITE.
+  color: PURPLE
+  # Titre (format MiniMessage). <texte> = le texte defilant ci-dessous.
+  format: "<#98fb98>KaLium SMC | <texte>"
+  # Textes montres tour a tour. Un seul texte = pas de defilement.
+  texts:
+    - "discord.gg/3PsEbZPpdW"
+    - "twitch.tv/lekiwi06"
+  scroll:
+    # Nombre de caracteres visibles. Agrandi tout seul jusqu'au plus long texte, pour qu'il s'affiche en entier.
+    width: 20
+    # Espaces entre deux textes.
+    gap: 4
+    # Vitesse : nombre de ticks (1/20 s) entre deux caracteres.
+    ticks-per-character: 3
+    # Arret quand un texte est affiche en entier.
+    pause-seconds: 3
+
+# QR codes du bouton « Recherche de joueurs » (boussole de KLM_Menu) : carte en main secondaire.
+qr:
+  # Duree d'affichage ; la barre de boss du joueur se vide pendant ce temps.
+  seconds: 30

@@ -1,0 +1,17 @@
+name: KLM_Chat
+version: '${project.version}'
+main: fr.kalium.chat.KlmChat
+api-version: '26.2'
+description: Tchat inter-serveur du reseau KaLium (/global). Present sur tous les serveurs Paper.
+authors: [KaLium]
+
+commands:
+  global:
+    description: Tchat inter-serveur - send <message> pour ecrire, false pour le masquer, true pour le reafficher.
+    usage: /<command> send <message> | true | false
+    permission: klmchat.global
+
+permissions:
+  klmchat.global:
+    description: Utiliser le tchat inter-serveur (/global).
+    default: true
