@@ -262,3 +262,12 @@ en mémoire, trop peu pour des récompenses. Nouveau `/mail/<boîte>` (même jet
   est vide.
 
 **Déployé sur proxy le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (ancienne version dans `_removed-kaliumrelay-1.2.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.4.0 - bannissement de KaLium (03/10/2026, LeKiwi06)
+
+Catégorie 6 (anti-triche) : `POST /ban` (jeton `X-Kalium-Relay-Token`), corps de 3 lignes : pseudo, raison, staff.
+Lance sur la console du proxy `libertybans ban <pseudo> <raison (staff)>` (sans durée) ; seule commande possible par ce
+chemin ; pseudo vérifié (lettres, chiffres, _ ; 16 au plus), raison nettoyée (200 caractères) ; 200 : lancé, 503 :
+LibertyBans absent, 400 : pseudo invalide, 401 : jeton. Utilisé par le bouton « Bannir de KaLium » de KS_AntiCheat.
+
+**Non déployé (catégorie 6). Statut : non testé.**

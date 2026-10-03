@@ -42,3 +42,11 @@ revente:
   dons: 5
   sens-unique: 3
   jours-attente: 14
+
+# Bannir de KaLium (LibertyBans sur le proxy, par KaliumRelay 1.4.0). Le jeton n'est JAMAIS dans le depot : a remplir
+# sur le serveur (meme valeur que le proxy).
+relay-url: "http://7018.mystrator.com:46199"
+relay-token: ""
+
+# Regle vanilla tntExplosionDropDecay activee dans les mondes d'Event (fermes a TNT moins efficaces).
+tnt-drop-decay: true

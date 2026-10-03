@@ -21,7 +21,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  * graves, onglet « Minage » de la rubrique Modération.
  * Étape 3 (duplication par identifiant) : reportée par LeKiwi06 le 03/10/2026.
  * Étape 4 : revente suspecte (Revente).
- * Étape suivante : bannissement réseau.
+ * Étape 5 : « Bannir de KaLium » (LibertyBans sur le proxy, par KaliumRelay 1.4.0) ; règle tntExplosionDropDecay
+ * activée dans les mondes d'Event (fermes à TNT moins efficaces, choix de LeKiwi06).
  *
  * Permission : ksanticheat.staff (opérateurs par défaut).
  */
@@ -73,6 +74,15 @@ public final class KSAntiCheat extends JavaPlugin {
         }
         // Une fois tous les plugins démarrés : signalements de GrimAC.
         getServer().getScheduler().runTask(this, detections::brancherGrim);
+        // Étape 5 : fermes à TNT moins efficaces (règle vanilla, environ divisé par 4 ; réglage tnt-drop-decay).
+        if (getConfig().getBoolean("tnt-drop-decay", true)) {
+            getServer().getScheduler().runTask(this, () -> getServer().getWorlds().forEach(w -> {
+                if (!Boolean.TRUE.equals(w.getGameRuleValue(org.bukkit.GameRule.TNT_EXPLOSION_DROP_DECAY))) {
+                    w.setGameRule(org.bukkit.GameRule.TNT_EXPLOSION_DROP_DECAY, true);
+                    getLogger().info("Règle tntExplosionDropDecay activée dans " + w.getName() + ".");
+                }
+            }));
+        }
         getServer().getPluginManager().registerEvents(suspensions, this);
         getServer().getPluginManager().registerEvents(inventaires, this);
         getServer().getPluginManager().registerEvents(morts, this);
@@ -149,6 +159,39 @@ public final class KSAntiCheat extends JavaPlugin {
 
     Minage minage() {
         return minage;
+    }
+
+    /**
+     * Étape 5 : bannit de tout KaLium (LibertyBans sur le proxy) par KaliumRelay 1.4.0 (POST /ban), hors du fil
+     * principal ; resultat : vrai si le proxy a lancé le bannissement.
+     */
+    void bannirDeKalium(String pseudo, String raison, String staff, java.util.function.Consumer<Boolean> resultat) {
+        String url = getConfig().getString("relay-url", "");
+        String jeton = getConfig().getString("relay-token", "");
+        if (url.isBlank() || jeton.isBlank()) {
+            resultat.accept(false);
+            return;
+        }
+        String corps = pseudo + "\n" + raison.replace('\n', ' ') + "\n" + staff;
+        getServer().getScheduler().runTaskAsynchronously(this, () -> {
+            boolean ok;
+            try {
+                var reponse = java.net.http.HttpClient.newHttpClient().send(java.net.http.HttpRequest.newBuilder(
+                                java.net.URI.create((url.endsWith("/") ? url.substring(0, url.length() - 1) : url) + "/ban"))
+                        .timeout(java.time.Duration.ofSeconds(10)).header("X-Kalium-Relay-Token", jeton)
+                        .POST(java.net.http.HttpRequest.BodyPublishers.ofString(corps)).build(),
+                        java.net.http.HttpResponse.BodyHandlers.discarding());
+                ok = reponse.statusCode() == 200;
+            } catch (java.io.IOException | InterruptedException e) {
+                ok = false;
+            }
+            boolean fin = ok;
+            getServer().getScheduler().runTask(this, () -> {
+                getLogger().info("Bannissement de KaLium de " + pseudo + " par " + staff + " : "
+                        + (fin ? "lancé" : "échec") + " (" + raison + ")");
+                resultat.accept(fin);
+            });
+        });
     }
 
     /** Infraction grave : alerte grave et suspension automatique. */

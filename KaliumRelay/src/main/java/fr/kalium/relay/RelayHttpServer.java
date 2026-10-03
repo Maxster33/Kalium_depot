@@ -47,12 +47,16 @@ final class RelayHttpServer {
     private ScheduledExecutorService cleaner;
     /** 1.3.0 : boites aux lettres durables (recompenses vers Event...). */
     private final MailStore mail;
+    /** 1.4.0 : bannissement de tout KaLium (LibertyBans) : pseudo, raison -> vrai si la commande est lancee. */
+    private final java.util.function.BiPredicate<String, String> bannir;
 
-    RelayHttpServer(RelayConfig config, Logger logger, ActiveGameRegistry activeGameRegistry, MailStore mail) {
+    RelayHttpServer(RelayConfig config, Logger logger, ActiveGameRegistry activeGameRegistry, MailStore mail,
+                    java.util.function.BiPredicate<String, String> bannir) {
         this.config = config;
         this.logger = logger;
         this.activeGameRegistry = activeGameRegistry;
         this.mail = mail;
+        this.bannir = bannir;
     }
 
     void start() throws IOException {
@@ -60,6 +64,7 @@ final class RelayHttpServer {
         server.createContext("/assignment/", this::handleAssignment);
         server.createContext("/active-game/", this::handleActiveGame);
         server.createContext("/mail/", this::handleMail);
+        server.createContext("/ban", this::handleBan);
         server.setExecutor(Executors.newCachedThreadPool());
         server.start();
         cleaner = Executors.newSingleThreadScheduledExecutor();
@@ -187,6 +192,49 @@ final class RelayHttpServer {
             }
         } catch (Exception e) {
             logger.warn("[KaliumRelay] Erreur sur une requete relais (mail) : " + e.getMessage());
+            respond(exchange, 500, "");
+        }
+    }
+
+    /**
+     * 1.4.0 (categorie 6, anti-triche) : POST /ban, corps de 3 lignes « pseudo », « raison », « staff » (UTF-8) :
+     * bannit de tout KaLium
+     * avec LibertyBans (« libertybans ban <pseudo> <raison> », sans duree). Seule commande possible par ce chemin ;
+     * pseudo verifie (lettres, chiffres, _ ; 16 au plus), raison nettoyee (200 caracteres). 200 : lancee ; 503 :
+     * LibertyBans absent.
+     */
+    private void handleBan(HttpExchange exchange) {
+        try {
+            String token = exchange.getRequestHeaders().getFirst("X-Kalium-Relay-Token");
+            if (token == null || config.token().isBlank() || !token.equals(config.token())) {
+                respond(exchange, 401, "");
+                return;
+            }
+            if (!"POST".equals(exchange.getRequestMethod())) {
+                respond(exchange, 405, "");
+                return;
+            }
+            String[] lignes = new String(exchange.getRequestBody().readNBytes(2048), StandardCharsets.UTF_8)
+                    .split("\n", -1);
+            String pseudo = lignes.length > 0 ? lignes[0].trim() : "";
+            String raison = lignes.length > 1 ? lignes[1].replaceAll("\\p{Cntrl}", " ").trim() : "";
+            String staff = lignes.length > 2 ? lignes[2].replaceAll("[^A-Za-z0-9_]", "") : "?";
+            if (!pseudo.matches("[A-Za-z0-9_]{1,16}")) {
+                respond(exchange, 400, "");
+                return;
+            }
+            if (raison.isEmpty()) {
+                raison = "Anti-triche";
+            }
+            if (raison.length() > 200) {
+                raison = raison.substring(0, 200);
+            }
+            boolean lance = bannir.test(pseudo, raison + " (" + staff + ")");
+            logger.info("[KaliumRelay] Bannissement de " + pseudo + " demande par " + staff + " : " + raison
+                    + (lance ? "" : " (LibertyBans absent)"));
+            respond(exchange, lance ? 200 : 503, "");
+        } catch (Exception e) {
+            logger.warn("[KaliumRelay] Erreur sur une requete relais (ban) : " + e.getMessage());
             respond(exchange, 500, "");
         }
     }

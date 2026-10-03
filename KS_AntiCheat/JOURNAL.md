@@ -71,3 +71,17 @@ Alertes légères (seuils `revente.*`) :
 - Non suivi : ventes en magasin.
 
 **Non déployé (catégorie 6, étape 4). Statut : non testé en jeu.**
+
+## 1.0.0 - étape 5 : bannissement de KaLium, TNT ; première version à déployer (03/10/2026)
+
+- **« Bannir de KaLium »** (fiche d'un joueur ; raison + confirmation) : POST `/ban` de KaliumRelay 1.4.0, qui lance
+  `libertybans ban <pseudo> <raison (staff)>` sur la console du proxy (LibertyBans). Message d'échec si le relais est
+  injoignable, `relay-token` vide ou LibertyBans absent. `relay-url`, `relay-token` (**vide dans le dépôt**).
+- **Règle `tntExplosionDropDecay`** activée au démarrage dans les mondes d'Event (`tnt-drop-decay`) : fermes à TNT
+  environ 4 fois moins efficaces (choix de LeKiwi06 : la TNT sert à casser, pas à récupérer).
+- Avec, à installer à part (voir le cahier) : CoreProtect (journaux du monde), LibertyBans (proxy), CauldronInteract,
+  Woodcutter (datapack) ; configuration de Paper : `allow-piston-duplication: true` (TNT, tapis, rails ; les autres
+  réglages « non supportés » restent désactivés), `lava-obscures: true` (overworld et Nether).
+- Versions 0.1.0 à 0.5.0 : étapes de codage, jamais déployées.
+
+**Non déployé (catégorie 6). Statut : non testé en jeu.**

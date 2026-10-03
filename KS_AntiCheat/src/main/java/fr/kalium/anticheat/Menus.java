@@ -192,6 +192,7 @@ final class Menus {
                         joueur(q, cible);
                     }, q -> joueur(q, cible))));
         }
+        boutons.add(gui.button(t("joueur.bouton-bannir", "<dark_red>Bannir de KaLium"), null, p -> bannir(p, cible)));
         if (alertes.size() > 8) {
             boutons.add(gui.button(t("joueur.bouton-toutes", "<yellow>Toutes les alertes"), null, p -> toutes(p, cible, 0)));
         }
@@ -233,6 +234,37 @@ final class Menus {
                 List.of(t("joueur.suspendre-aide", "<gray>Il ne pourra plus se connecter à Event (message : « Une erreur "
                         + "inhabituelle est survenue, contacte le staff. »), jusqu'à ce que le staff lève la suspension.")),
                 List.of(gui.text("raison", t("joueur.champ-raison", "Raison (pour le staff)"), "", 100)),
+                List.of(valider, retour(p -> joueur(p, cible))), gui.close(), 1);
+        lang.saveIfNeeded();
+    }
+
+    /** Étape 5 : bannissement de tout KaLium (LibertyBans, par le proxy), avec une raison et une confirmation. */
+    private void bannir(Player staff, OfflinePlayer cible) {
+        String nom = cible.getName() == null ? "?" : cible.getName();
+        ActionButton valider = gui.form(t("joueur.bouton-bannir-ok", "<dark_red>Bannir de KaLium"), null, (p, vue) -> {
+            String raison = vue.getText("raison") == null ? "" : vue.getText("raison").trim();
+            String motif = raison.isEmpty() ? "Anti-triche" : raison;
+            gui.confirm(p, t("joueur.titre-bannir-confirmer", "<dark_red><bold>Bannir <nom> ?", "nom", nom),
+                    t("joueur.bannir-confirmer", "<white><nom> ne pourra plus se connecter à aucun serveur de KaLium. "
+                            + "<gray>Raison : <raison>", "nom", nom, "raison", motif),
+                    q -> plugin.bannirDeKalium(nom, motif, q.getName(), ok -> {
+                        if (ok) {
+                            plugin.alertes().ajouter(cible.getUniqueId(), nom, "Banni de KaLium",
+                                    Alertes.Gravite.LEGERE, "par " + q.getName() + " : " + motif);
+                        }
+                        gui.notice(q, t("joueur.titre-bannir", "<dark_red><bold>Bannir de KaLium"), ok
+                                        ? t("joueur.banni", "<green><nom> est banni de KaLium.", "nom", nom)
+                                        : t("joueur.ban-echec", "<red>Échec : relais injoignable, relay-token vide ou "
+                                        + "LibertyBans absent du proxy."),
+                                r -> joueur(r, cible));
+                        lang.saveIfNeeded();
+                    }), q -> joueur(q, cible));
+            lang.saveIfNeeded();
+        });
+        gui.open(staff, t("joueur.titre-bannir", "<dark_red><bold>Bannir de KaLium"),
+                List.of(t("joueur.bannir-aide", "<gray>Bannissement de tous les serveurs de KaLium (LibertyBans, sur le "
+                        + "proxy), sans durée. À utiliser quand le joueur n'est pas clean ; sinon : lever la suspension.")),
+                List.of(gui.text("raison", t("joueur.champ-raison-ban", "Raison du bannissement"), "", 150)),
                 List.of(valider, retour(p -> joueur(p, cible))), gui.close(), 1);
         lang.saveIfNeeded();
     }
