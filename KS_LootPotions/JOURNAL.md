@@ -28,3 +28,11 @@ au capitaine pillard ».
 - **Capitaine** (patrouille ou raid) : 10 % faiblesse basique + 1 % potion basique aléatoire (inchangé).
 
 **Déployé sur Event le 28/09/2026 à 23:19. Statut : non testé en jeu.**
+
+## 1.1.1 - pas de potion sur les mobs de spawner (03/10/2026, LeKiwi06)
+
+Revue du 03/10/2026 (validé par LeKiwi06) : une ferme à spawner (blazes : potion de Force à 10 %, araignées...),
+dont les spawners fabriqués avec KS_Spawners, donnait des potions à l'infini. Les mobs nés d'un spawner ne donnent
+plus de potion (comme KS_Decapitator pour les têtes). Spawners d'épreuve (trial spawners) non concernés.
+
+**Non déployé. Statut : non testé en jeu.**

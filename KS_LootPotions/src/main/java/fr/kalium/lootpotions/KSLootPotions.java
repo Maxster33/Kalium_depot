@@ -77,7 +77,10 @@ public final class KSLootPotions extends JavaPlugin implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onDeath(EntityDeathEvent event) {
         LivingEntity entity = event.getEntity();
-        if (entity instanceof Player || entity.getKiller() == null) {
+        // 1.1.1 (LeKiwi06) : pas de potion sur les mobs de spawner (comme KS_Decapitator) : sinon une ferme à spawner
+        // (blazes, araignées...) donnerait des potions à l'infini.
+        if (entity instanceof Player || entity.getKiller() == null
+                || entity.getEntitySpawnReason() == org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER) {
             return;
         }
         List<ItemStack> drops = event.getDrops();
