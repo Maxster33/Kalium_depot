@@ -17,7 +17,7 @@ Plugin du serveur Event : fair-play. Cahier des charges : catégorie 5 « FairPl
   - tuer un **gardien ancien** (pour le tueur) ; limite atteinte : impossible de le frapper (corps à corps, flèche,
     trident, potion, nuage de potion, TNT allumée par le joueur). Gardiens normaux non concernés.
   - Limite atteinte : refus, bloc intact, « Limite atteinte, reviens demain » (au plus toutes les 3 s). Chaque
-    ouverture comptée : barre d'action « n / 10 ».
+    ouverture comptée : « n / 10 » dans la barre d'action **et dans le tchat** (demande de LeKiwi06 : « pour ceux qui perdent le fil »).
 - **Protection** tant que le butin n'est pas généré (spawner naturel : tant qu'il n'est pas cassé) : incassable sans
   autorisation du jour ; explosions, feu, pistons sans effet ; bloc suspect qui ne tombe pas ; entonnoirs (au-dessus
   ou à côté) qui ne le voient pas ; transferts automatiques refusés ; wagonnet de mineshaft indestructible sans

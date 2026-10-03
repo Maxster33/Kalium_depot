@@ -179,7 +179,9 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
             return;
         }
         if (chanceIII(joueur)) {
-            joueur.sendActionBar(lang.c("chance", "<green>Chance III : ouverture libre, elle ne compte pas."));
+            Component libre = lang.c("chance", "<green>Chance III : ouverture libre, elle ne compte pas.");
+            joueur.sendActionBar(libre);
+            joueur.sendMessage(libre);
             lang.saveIfNeeded();
             return;
         }
@@ -191,8 +193,11 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
         verifierJour();
         int n = compteurs.merge(joueur.getUniqueId(), 1, Integer::sum);
         sauver();
-        joueur.sendActionBar(lang.c("compte-2", "<yellow>Limite du jour (coffres, spawners, blocs suspects, gardiens "
-                + "anciens) : <n> / <limite>", "n", n, "limite", limite()));
+        Component compte = lang.c("compte-2", "<yellow>Limite du jour (coffres, spawners, blocs suspects, gardiens "
+                + "anciens) : <n> / <limite>", "n", n, "limite", limite());
+        // Barre d'action et tchat (demande de LeKiwi06 : « pour ceux qui perdent le fil »).
+        joueur.sendActionBar(compte);
+        joueur.sendMessage(compte);
         lang.saveIfNeeded();
     }
 
