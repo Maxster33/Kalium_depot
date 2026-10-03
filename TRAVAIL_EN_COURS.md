@@ -16,8 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_KaliumGive — LeKiwi06 — depuis le 2026-10-03 17:14 — catégorie 7 : id_custom des jetons
-- KS_Jetons — LeKiwi06 — depuis le 2026-10-03 17:11 — nouveau : catégorie 7, jetons et inventaire de jetons
 
 
 
@@ -27,6 +25,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
+- KS_Jetons — LeKiwi06 — depuis le 2026-10-03 17:14 — 1.0.0 compilée (nouveau, catégorie 7), en attente ; utilisée par KS_Teleport / KS_CoffreMort
+- KS_KaliumGive — LeKiwi06 — depuis le 2026-10-03 17:14 — 1.8.0 compilée, en attente du déploiement groupé
 - KS_Tableau — LeKiwi06 — depuis le 2026-10-03 16:40 — 1.0.0 compilée (nouveau), en attente du déploiement groupé
 - KS_FairPlay — LeKiwi06 — depuis le 2026-10-03 16:40 — 1.0.3 compilée, en attente du déploiement groupé
 - KS_Economy — LeKiwi06 — depuis le 2026-10-03 16:38 — 1.2.0 compilée, en attente du déploiement groupé
