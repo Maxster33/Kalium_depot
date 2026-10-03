@@ -1,0 +1,18 @@
+name: KG_BingoObservateur
+version: '${project.version}'
+main: fr.kalium.observateur.KGBingoObservateur
+api-version: '26.2'
+description: Serveur Jeux - les operateurs observent n'importe quel joueur du Bingo en spectateur.
+authors: [KaLium]
+depend: [KG_BingoGame, KLM_Menu]
+
+commands:
+  observer:
+    description: Observer un joueur du serveur Bingo en spectateur (opérateurs).
+    usage: /<command> [pseudo|quitter]
+    permission: kgbingoobservateur.use
+
+permissions:
+  kgbingoobservateur.use:
+    description: Utiliser /observer et la longue-vue d'observation.
+    default: op

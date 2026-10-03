@@ -92,6 +92,10 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KG_BingoObservateur 0.1.0** (03/10/2026, Maxster33, nouveau, Serveur Jeux) : `/observer` donne aux opérateurs une
+  longue-vue pour observer n'importe quel joueur en spectateur (vue libre ou dans ses yeux, `/observer quitter`) ;
+  dépend de KG_BingoGame et KLM_Menu ; non testé.
+
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
