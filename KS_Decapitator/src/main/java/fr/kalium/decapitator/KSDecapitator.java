@@ -110,6 +110,8 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
         }
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new MenuTetes(), this);
+        // 1.1.0 : tête de wither squelette sale, endommagée, désactivée (réparée par les crafts de KS_Crafts).
+        getServer().getPluginManager().registerEvents(new Defauts(this), this);
         getCommand("tetes").setExecutor(this);
         getLogger().info(PAR_ID.size() + " têtes chargées.");
     }
@@ -174,7 +176,40 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
         meta.displayName(Component.text(tete.nom(), NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
         meta.getPersistentDataContainer().set(marqueur, PersistentDataType.STRING, tete.id());
         item.setItemMeta(meta);
+        if (Defauts.concernee(tete.cle())) {
+            Defauts.appliquer(item, new java.util.LinkedHashSet<>(Defauts.NOMS.keySet()));
+        }
         return item;
+    }
+
+    // ------------------------------------------------------------------ 1.1.0 : tête de wither squelette à réparer
+
+    /** 1.1.0 (KS_Crafts) : la tête de wither squelette du plugin (abîmée) ? */
+    public static boolean estTeteWitherSquelette(ItemStack item) {
+        Tete tete = tete(item);
+        return tete != null && Defauts.concernee(tete.cle());
+    }
+
+    /** 1.1.0 (KS_Crafts) : défauts restants (« sale », « endommagee », « desactivee ») de la tête de wither squelette. */
+    public static java.util.Set<String> defautsTete(ItemStack item) {
+        return estTeteWitherSquelette(item) ? Defauts.lire(item) : java.util.Set.of();
+    }
+
+    /**
+     * 1.1.0 (KS_Crafts) : la tête réparée de ce défaut (une seule) ; sans défaut restant : un vrai crâne de wither
+     * squelette (qui invoque le Wither). Null si ce n'est pas la tête, ou si elle n'a pas ce défaut.
+     */
+    public static ItemStack reparer(ItemStack item, String defaut) {
+        java.util.Set<String> defauts = defautsTete(item);
+        if (!defauts.remove(defaut)) {
+            return null;
+        }
+        if (defauts.isEmpty()) {
+            return new ItemStack(Material.WITHER_SKELETON_SKULL);
+        }
+        ItemStack r = item.asOne();
+        Defauts.appliquer(r, defauts);
+        return r;
     }
 
     /** Id de la tête, ou null si ce n'est pas une tête du plugin (marqueur, ou profil pour une tête reposée). */
@@ -341,6 +376,10 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
         if (tete != null && !item.getItemMeta().getPersistentDataContainer().has(marqueur)) {
             ItemStack neuve = creer(tete);
             neuve.setAmount(item.getAmount());
+            // 1.1.0 : tête de wither squelette reposée : défauts du bloc cassé (sinon tous).
+            if (Defauts.concernee(tete.cle())) {
+                Defauts.appliquer(neuve, Defauts.pourTeteAuSol(event.getLocation()));
+            }
             event.getEntity().setItemStack(neuve);
         }
     }

@@ -50,3 +50,15 @@ ajouter dans `tetes.txt`) :
 **Déployé sur Event le 30/09/2026 à 18:07 (LeKiwi06) avec KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
 KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0 et KS_LootEntites 1.3.0 (nouveau), actifs après redémarrage d'Event. Statut :
 **testé et confirmé par LeKiwi06 le 30/09/2026** (« tout est bon »).**
+
+## 1.1.0 - tête de wither squelette sale, endommagée, désactivée (03/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : la tête de wither squelette a la description « Sale », « Endommagée », « Désactivée » (et
+« À réparer à l'établi pour invoquer le Wither ») ; chaque défaut se répare par un craft de KS_Crafts 1.8.0, dans
+n'importe quel ordre ; réparée des 3, elle devient un **vrai crâne de wither squelette** (qui invoque le Wither).
+- Abîmée, elle se pose comme décoration (sans invoquer) ; ses défauts restants sont gardés dans le bloc et rendus
+  quand elle est cassée (aussi par une explosion ou un piston). Sans information, elle redevient abîmée de ses 3
+  défauts (jamais réparée par erreur).
+- API : `estTeteWitherSquelette`, `defautsTete`, `reparer(tête, défaut)`.
+
+**Non déployé. Statut : non testé en jeu.**

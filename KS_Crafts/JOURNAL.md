@@ -146,3 +146,19 @@ n'importe quelle couleur). Aucun spawner ajouté.
 **Déployé sur Event le 30/09/2026 à 18:07 (LeKiwi06) avec KS_Decapitator 1.0.0, KS_Elixir 1.0.0, KS_Crafts 1.7.0,
 KS_ItemSimple 1.1.0, KS_KaliumGive 1.6.0 et KS_LootEntites 1.3.0 (1.6.0 dans `_removed-ks_crafts-1.6.0/` ; supprimables par l'humain, 3 versions derrière ou plus : `_removed-ks_crafts-1.0.0/` à `1.4.0/`), actifs après redémarrage d'Event. Statut :
 **testé et confirmé par LeKiwi06 le 30/09/2026** (« tout est bon »).**
+
+## 1.8.0 - réparation de la tête de wither squelette, bloc de charbon de bois (03/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (tête de KS_Decapitator 1.1.0 ; un défaut par craft, dans n'importe quel ordre) :
+- **Réactiver** (désactivée) : tête au centre, autour en alternance 4 blocs d'émeraude compressés **tier 2** et 4 fioles
+  d'expérience de **15 niveaux exactement** ; les deux façons (blocs aux coins ou aux côtés).
+- **Nettoyer** (sale) : 8 pinceaux **non endommagés** autour.
+- **Réparer** (endommagée) : en alternance 4 lingots de netherite et 4 blocs de charbon de bois ; les deux façons.
+- Réparée des 3 défauts : vrai crâne de wither squelette.
+- **Bloc de charbon de bois** : 9 charbons de bois ; apparence d'un bloc de charbon ; ingrédient et combustible
+  seulement (ne se pose pas ; jamais pris pour un bloc de charbon dans une autre recette) ; se redéfait en 9 charbons
+  de bois.
+- Recettes en forme (livre de recettes) ; ingrédients exacts et résultat vérifiés à chaque craft. `softdepend`
+  KS_Economy, KS_FioleExp ; « réactiver » ignoré sans eux.
+
+**Non déployé. Statut : non testé en jeu.**

@@ -156,6 +156,11 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             getLogger().warning("KS_ItemSimple ou KS_BiomeChanger absent : craft du Changeur de Biome ignoré.");
         }
 
+        // 1.8.0 (LeKiwi06) : réparation de la tête de wither squelette (KS_Decapitator 1.1.0), bloc de charbon de bois.
+        TeteWither teteWither = new TeteWither(this);
+        teteWither.enregistrer();
+        getServer().getPluginManager().registerEvents(teteWither, this);
+
         // Verrue du Nether : remplacee par le bloc de verrue (briques rouges), craft 9 verrues -> bloc retire.
         Bukkit.removeRecipe(NamespacedKey.minecraft("red_nether_bricks"));
         Bukkit.removeRecipe(NamespacedKey.minecraft("nether_wart_block"));
@@ -250,11 +255,11 @@ public final class KSCrafts extends JavaPlugin implements Listener {
         }
     }
 
-    private NamespacedKey key(String id) {
+    NamespacedKey key(String id) {
         return new NamespacedKey(this, id);
     }
 
-    private boolean actif(String plugin) {
+    boolean actif(String plugin) {
         return getServer().getPluginManager().isPluginEnabled(plugin);
     }
 
@@ -278,7 +283,7 @@ public final class KSCrafts extends JavaPlugin implements Listener {
                         new RecipeChoice.ExactChoice(tetes))));
     }
 
-    private void add(org.bukkit.inventory.Recipe recipe) {
+    void add(org.bukkit.inventory.Recipe recipe) {
         Bukkit.addRecipe(recipe);
         added.add(((org.bukkit.Keyed) recipe).getKey());
     }
