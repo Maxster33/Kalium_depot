@@ -22,7 +22,7 @@ import java.util.UUID;
 public final class BingoParty {
 
     private final String gameId;
-    private final long seed;
+    private long seed; // 0.8.5 : remplacee par celle des mondes de reserve pris (voir setSeed)
     private final Duration duration;
     private final UUID host;
     private final int teamCount;
@@ -98,6 +98,11 @@ public final class BingoParty {
 
     public long getSeed() {
         return seed;
+    }
+
+    /** 0.8.5 : seed des mondes de reserve attribues a cette partie (voir InstanceWorldPreparer.startPreGeneration). */
+    public void setSeed(long seed) {
+        this.seed = seed;
     }
 
     /** Reglages choisis par l'hote (0.3.0, voir BingoSettings). */

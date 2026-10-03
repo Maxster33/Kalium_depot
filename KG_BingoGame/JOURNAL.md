@@ -1713,3 +1713,32 @@ remplacer** (il n'est copié du jar qu'à la première installation), puis `/bin
 et la pénalité passent par eux ; un KG_Bingo plus ancien n'envoie jamais `CHRONO` et ignore les points négatifs).
 Remplacer aussi `plugins/KG_BingoGame/objectives.yml` sur Serveur Jeux (voir plus haut). **Statut : compilé, non
 déployé, non testé en jeu.**
+
+### 0.8.5 (suite) - plus de gel du serveur à la création d'une partie (03/10/2026, Maxster33)
+
+**Constat de Maxster33** : quand une partie est créée pendant qu'une autre est en cours, le serveur gèle 3 à 5 s.
+**Cause** (logs) : la création de l'overworld de chaque équipe bloque le thread principal 5 à 6,5 s (« Selecting spawn
+point ... Prepared spawn area in 5049 ms ») : Minecraft cherche le point d'apparition du nouveau monde en générant le
+terrain. Nether 0,3 s, End 0,1 s. Une partie à 4 équipes = 4 gels.
+
+**Solution 1 - point d'apparition fourni** (`FixedSpawnGenerator`) : les overworlds de partie sont créés avec un
+générateur qui garde toute la génération normale (même terrain, structures, créatures pour une même seed) mais fournit
+lui-même le point d'apparition : la recherche de 5 s est sautée. Le vrai point de départ est placé une fois le terrain
+pré-généré (`InstanceWorldManager.placeSpawnOnLand`) : colonne la plus proche de (0, 0), de 16 en 16 blocs, qui n'est
+ni de l'eau, ni de la lave, ni de la glace ; même seed = même point pour toutes les équipes. Différence avec avant : le
+point de départ ne tient plus compte du biome choisi par Minecraft (il peut tomber dans n'importe quel biome terrestre).
+Mondes créés avant cette version : inchangés.
+
+**Solution 2 - réserve de 2 mondes** (demande de Maxster33) :
+- 2 mondes d'avance (overworld + Nether + End + terrain pré-généré), même seed, créés **uniquement quand aucune partie
+  n'est en cours** (un monde à la fois, après les mondes des parties) ;
+- partie créée alors qu'**aucune partie n'est en cours** : mondes neufs, comme avant ; la réserve est gardée ;
+- partie créée **pendant une partie en cours** : elle prend les mondes de la réserve déjà créés (et leur seed) ; s'il en
+  manque (3-4 équipes), les autres sont créés comme avant (gel réduit par la solution 1) ;
+- monde de réserve d'une partie annulée ou d'une équipe restée vide : remis dans la réserve ;
+- noms `bingo_reserve-<uuid>_1` (gardés pendant la partie) ; mondes de réserve restés d'un arrêt du serveur supprimés au
+  démarrage, après la restauration des parties en cours (les leurs sont épargnés).
+
+**À vérifier en jeu** (Paper 26.2, jamais essayé) : plus de « Prepared spawn area in 5000 ms » dans les logs ; terrain
+et structures normaux ; départ sur la terre ferme, identique pour toutes les équipes ; une 2e partie créée pendant
+une partie en cours démarre sans gel ; logs « Réserve : ... ».

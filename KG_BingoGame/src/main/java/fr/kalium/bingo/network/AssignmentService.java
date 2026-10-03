@@ -236,8 +236,17 @@ public final class AssignmentService {
             return;
         }
 
+        // 0.8.5 : si la partie prend des mondes de la reserve, elle prend aussi leur seed.
+        long[] usedSeed = {seed};
+        boolean[] created = {false};
         BingoParty party = partyManager.getOrCreate(gameId, seed, Duration.ofSeconds(durationSeconds), host, teamCount, teamSize,
-                roster, () -> instanceWorldPreparer.startPreGeneration(gameId, seed, teamCount));
+                roster, () -> {
+                    created[0] = true;
+                    usedSeed[0] = instanceWorldPreparer.startPreGeneration(gameId, seed, teamCount);
+                });
+        if (created[0]) {
+            party.setSeed(usedSeed[0]);
+        }
         if (rules != null) {
             party.setSettings(fr.kalium.bingo.game.BingoSettings.parse(rules)); // 0.3.0 : mode, bingos, composition
         }

@@ -114,6 +114,9 @@ public class BingoPlugin extends JavaPlugin {
 
         this.gameManager = new GameManager(getLogger(), worldManager, instanceWorldPreparer, objectiveLibrary, gridGenerator,
                 maxTeams, maxTeamSize, defaultDuration, worldNamePrefix, abandonAfter, maxSimultaneousGames, gridSize);
+        // 0.8.5 : la reserve de mondes ne se remplit que quand aucune partie n'est en cours (voir InstanceWorldPreparer).
+        instanceWorldPreparer.setGameInProgress(() -> gameManager.getActiveGames().stream()
+                .anyMatch(g -> g.getState() == fr.kalium.bingo.game.GameState.IN_PROGRESS));
 
         // Persistance des parties EN COURS (voir GamePersistence) - demande explicite de
         // l'utilisateur, 23/09/2026 : "la partie doit continuer meme si le serveur est redémarré
@@ -142,6 +145,9 @@ public class BingoPlugin extends JavaPlugin {
                 // de monde (rechargement des mondes d'instance existants) est interdite pendant la
                 // phase STARTUP, d'ou ce report a ServerLoadEvent.
                 gamePersistence.loadAll();
+                // 0.8.5 : mondes de reserve d'avant le redemarrage supprimes APRES la restauration (les mondes d'une partie
+                // restauree sont alors charges, donc epargnes).
+                instanceWorldPreparer.cleanLeftoverReserves();
             }
         }, this);
 

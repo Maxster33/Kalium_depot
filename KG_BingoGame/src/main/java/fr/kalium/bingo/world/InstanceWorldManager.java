@@ -63,6 +63,9 @@ public class InstanceWorldManager {
         creator.type(WorldType.NORMAL);
         creator.environment(World.Environment.NORMAL);
         creator.keepSpawnLoaded(TriState.FALSE); // 0.6.0, voir en-tete
+        // 0.8.5 : terrain normal, point d'apparition fourni (plus de recherche de 5 s sur le thread principal) - voir
+        // FixedSpawnGenerator ; le vrai point de depart est place ensuite (placeSpawnOnLand).
+        creator.generator(new FixedSpawnGenerator());
 
         logger.info("[KG_BingoGame] Generation du monde d'instance '" + worldName
                 + "' (seed=" + seed + ")...");
@@ -160,6 +163,41 @@ public class InstanceWorldManager {
     }
 
     /**
+     * 0.8.5 (voir FixedSpawnGenerator) : place le point d'apparition sur la terre ferme, au plus pres du centre (0, 0) :
+     * colonnes testees de 16 en 16 blocs, en anneaux, jusqu'a {@code radiusBlocks} ; refus de l'eau, de la lave et de
+     * la glace flottante. A appeler une fois le terrain pre-genere (chunks lus sur le disque, rapide). Deterministe :
+     * meme seed = meme point, donc meme depart pour toutes les equipes d'une partie. Sans terre trouvee : (0, 0).
+     * Monde deja place (spawn different du point provisoire) : rien a faire.
+     */
+    public void placeSpawnOnLand(World world, int radiusBlocks) {
+        Location current = world.getSpawnLocation();
+        if (current.getBlockX() != 0 || current.getBlockZ() != 0 || current.getBlockY() != FixedSpawnGenerator.PROVISIONAL_Y) {
+            return;
+        }
+        int maxRing = Math.max(0, radiusBlocks / 16);
+        for (int ring = 0; ring <= maxRing; ring++) {
+            for (int dx = -ring; dx <= ring; dx++) {
+                for (int dz = -ring; dz <= ring; dz++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dz)) != ring) {
+                        continue;
+                    }
+                    int x = dx * 16 + 8;
+                    int z = dz * 16 + 8;
+                    org.bukkit.block.Block top = world.getHighestBlockAt(x, z, org.bukkit.HeightMap.MOTION_BLOCKING_NO_LEAVES);
+                    org.bukkit.Material type = top.getType();
+                    if (top.isLiquid() || type == org.bukkit.Material.ICE || type == org.bukkit.Material.PACKED_ICE
+                            || type == org.bukkit.Material.BLUE_ICE || !type.isSolid()) {
+                        continue;
+                    }
+                    world.setSpawnLocation(x, top.getY() + 1, z);
+                    return;
+                }
+            }
+        }
+        world.setSpawnLocation(0, world.getHighestBlockYAt(0, 0) + 1, 0);
+    }
+
+    /**
      * Decharge et supprime completement le dossier d'un monde d'instance
      * (section 1, etape 12 : "suppression des map utilisees").
      */
@@ -196,6 +234,40 @@ public class InstanceWorldManager {
             }
         }
         return candidates;
+    }
+
+    /**
+     * 0.8.5 : supprime du disque les mondes de reserve restes d'un arret du serveur (nom commencant par
+     * {@code namePrefix}, non charges) - la reserve est refaite apres chaque demarrage (voir InstanceWorldPreparer).
+     */
+    public void deleteLeftovers(String namePrefix) {
+        java.util.Set<String> names = new java.util.TreeSet<>();
+        java.util.Set<Path> parents = new java.util.LinkedHashSet<>();
+        parents.add(Bukkit.getWorldContainer().toPath().toAbsolutePath().normalize());
+        for (World loaded : Bukkit.getWorlds()) {
+            try {
+                Path parent = loaded.getWorldPath().toAbsolutePath().normalize().getParent();
+                if (parent != null) {
+                    parents.add(parent);
+                }
+            } catch (RuntimeException ignored) {
+                // monde sans dossier connu
+            }
+        }
+        for (Path parent : parents) {
+            try (var list = Files.list(parent)) {
+                list.filter(Files::isDirectory)
+                        .map(p -> p.getFileName().toString())
+                        .filter(n -> n.startsWith(namePrefix) && INSTANCE_NAME.matcher(n).matches() && Bukkit.getWorld(n) == null)
+                        .forEach(names::add);
+            } catch (IOException ignored) {
+                // dossier illisible : rien a nettoyer ici
+            }
+        }
+        for (String name : names) {
+            logger.info("[KG_BingoGame] Monde de réserve d'avant le redémarrage supprimé : '" + name + "'.");
+            deleteWorld(name);
+        }
     }
 
     /** true si le dossier de ce monde existe deja sur le disque (a la racine ou dans dimensions/minecraft). */

@@ -149,7 +149,7 @@ public class GameManager {
         int index = 1;
         for (List<UUID> teamPlayers : teams) {
             BingoTeam team = new BingoTeam(index, teamPlayers);
-            String worldName = worldNamePrefix + gameId + "_" + index;
+            String worldName = instanceWorldPreparer.instanceWorldName(gameId, index); // 0.8.5 : monde de reserve possible
             BingoInstance instance = new BingoInstance(worldName, team);
             game.addInstance(instance);
             index++;
@@ -171,6 +171,8 @@ public class GameManager {
             World world = instanceWorldPreparer.claim(instance.getInstanceId());
             if (world == null) {
                 world = worldManager.createInstanceWorld(instance.getInstanceId(), game.getSeed());
+                // 0.8.5 : point de depart sur la terre ferme (repli rare : le terrain est genere a l'instant).
+                worldManager.placeSpawnOnLand(world, 160);
                 // Pas pret a temps : le terrain autour du spawn est genere en arriere-plan (0.1.18).
                 instanceWorldPreparer.pregenerateChunks(world, null);
             }
