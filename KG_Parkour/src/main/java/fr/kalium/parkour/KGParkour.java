@@ -38,8 +38,19 @@ public final class KGParkour extends JavaPlugin {
                                 "Ajouté au chrono à chaque point de contrôle à partir du 2e palier."),
                         integer("ghost-radius", "Distance des bottes de proximité (blocs)", 3, 0, 16,
                                 "Plus près que ça, un adversaire n'est plus vu que sous forme de bottes en cuir colorées. 0 = désactivé."),
-                        integer("points-checkpoint", "Points par point de contrôle atteint", 1, 0, 50, "Gagnés à chaque point de contrôle (course uniquement, pas en entraînement)."),
-                        integer("points-win", "Points du 1er (2e = -1, 3e = -2)", 3, 0, 50, "Points attribués au podium."),
+                        // 1.2.0 : bareme (remplace « points-checkpoint » et « points-win »). Points de base : reglage de
+                        // chaque point de controle. Coefficients additifs, en dixiemes (15 = x1,5) ou centiemes (125 = x1,25).
+                        integer("first-coef-x10", "1er au checkpoint : coef x10", 15, 10, 100,
+                                "Premier à valider un point de contrôle ou l'arrivée : 15 = x1,5 sur ses points. Jamais en solo. Coefficients additifs : x1,5 et x1,5 = x2."),
+                        integer("clean-coef-x10", "Sans chute : coef x10", 15, 10, 100,
+                                "Point de contrôle atteint sans retour au précédent (chute, mort, objet de retour) : 15 = x1,5."),
+                        integer("time-coef-min-x100", "Temps : coef mini x100", 125, 100, 300,
+                                "Juste sous le temps du bonus (réglage de chaque point de contrôle) : 125 = x1,25."),
+                        integer("time-coef-max-x100", "Temps : coef maxi x100", 175, 100, 300,
+                                "À la moitié du temps du bonus ou moins : 175 = x1,75. Entre les deux : proportionnel."),
+                        integer("finish-time-seconds", "Arrivée : temps bonus (s)", 0, 0, 3600,
+                                "Temps du bonus entre le dernier point de contrôle et l'arrivée. 0 = pas de bonus de temps."),
+                        integer("points-first-finish", "Points du 1er arrivé", 25, 0, 200, "Ajoutés tels quels au premier arrivé. Jamais en solo."),
                         integer("void-y", "Hauteur de chute (Y absolu)", 1, -64, 320, "Sous cette hauteur : retour au dernier point de contrôle. -64 = automatique (juste sous l'arène)."),
                         integer("time-limit-seconds", "Temps limite de la course (s)", 0, 0, 7200, "Fin de la course pour tout le monde. 0 = pas de limite globale."),
                         integer("countdown-seconds", "Compte à rebours (s)", 5, 0, 15, "Avant le départ."),
@@ -51,7 +62,12 @@ public final class KGParkour extends JavaPlugin {
                 List.of(
                         single("stands", "Gradins (attente)", true, "Où attendent les joueurs."),
                         single("start", "Départ", true, "Position de départ de tous les joueurs."),
-                        list("checkpoints", "Points de contrôle (dans l'ordre)", false, "Ajoutez-les dans l'ordre du parcours."),
+                        list("checkpoints", "Points de contrôle (dans l'ordre)", false, "Ajoutez-les dans l'ordre du parcours.")
+                                .withPointSettings(List.of(
+                                        integer("points", "Points de base", 0, 0, 50,
+                                                "Avant les multiplicateurs. 0 = selon la position du point : 1, 1, 3, 3, 3, 5, 5, 7, 7, 7, 10 (10 ensuite)."),
+                                        integer("time-seconds", "Temps du bonus (s)", 0, 0, 3600,
+                                                "Temps depuis le point précédent (ou le départ). Juste en dessous : x1,25 ; à la moitié de ce temps ou moins : x1,75. 0 = pas de bonus de temps."))),
                         single("finish", "Arrivée", true, "Zone d'arrivée.")))
                 .engine(ParkourInstance::new)
                 .ranking(fr.kalium.scoreboards.Category.Kind.TIME)

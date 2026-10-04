@@ -26,6 +26,12 @@ anti-collision, et en plus (demande de LeKiwi06) adversaires vus sous forme de b
 
 ## Barème (même principe pour tous les jeux : d'abord les bonus, puis les multiplicateurs)
 
+**Remplacé le 04/10/2026 (LeKiwi06, KG_Parkour 1.2.0)** : points de base selon la position du checkpoint dans la map
+(or 1, fer 1, cuivre 3, améthyste 3, glace 3, netherite 5, diamant 5, émeraude 7, bloc invisible 7, eau 7,
+barrière 10) ; multiplicateurs additifs : 1er à valider x1,5, sans tomber x1,5, temps x1,25 à x1,75 (un seul temps par
+checkpoint : x1,25 juste en dessous, x1,75 à la moitié ou moins) ; 1er arrivé +25 ; rien de ce qui est « en 1er » en
+solo. Le tableau et les deux premiers points ci-dessous sont l'ancienne version, gardée pour mémoire.
+
 | Checkpoints | Difficulté | Points de base | Bonus « 1er à valider » |
 |---|---|---|---|
 | 1 à 3 | facile | 1 | +1 |

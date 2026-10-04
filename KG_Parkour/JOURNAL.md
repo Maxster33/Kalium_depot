@@ -65,3 +65,42 @@ inchangées.
 
 **Déployé sur Kal-Games le 02/10/2026 à 17:49 (LeKiwi06 ; 1.1.0 dans `_removed-kg_parkour-1.1.0/`), actif après redémarrage.
 Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**
+
+## 1.2.0 - nouveau barème (04/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (04/10/2026)** : points gagnés à chaque checkpoint validé, dans l'ordre de la map : or 1, fer 1,
+cuivre 3, améthyste 3, glace 3, netherite 5, diamant 5, émeraude 7, bloc invisible 7, eau 7, barrière 10. Bonus :
+finir un checkpoint en 1er x1,5 ; sans tomber x1,5 ; sous le barème de temps x1,25 à x1,75 selon le temps fait ;
+terminer le parkour en 1er +25. « Tout ce qui concerne "fait en 1er" n'est pas obtenable en solo. » Choix de
+LeKiwi06 : multiplicateurs **additifs** (comme la course de bateau) ; bonus de temps avec **un seul temps** par
+checkpoint.
+
+- **Points de base par section** (du point précédent au point de contrôle) selon sa position dans le parcours :
+  1, 1, 3, 3, 3, 5, 5, 7, 7, 7, 10 (10 pour les points suivants). Réglage « Points de base » de chaque point de
+  contrôle (arène > Points de contrôle > n° > Réglages de ce point) : 0 = selon la position.
+- **L'arrivée** valide la section qui suit le dernier point de contrôle : avec 10 points de contrôle, c'est la 11e
+  section (10 points) ; au-delà de la 11e position elle ne rapporte rien (reste le bonus du 1er arrivé).
+- **Multiplicateurs additifs** (x1,5 et x1,5 = x2 ; maximum x2,75) sur les points de la section :
+  - 1er à valider la section : x1,5 (`first-coef-x10`) ; jamais en solo (un seul coureur dans la partie) ;
+  - sans chute : x1,5 (`clean-coef-x10`) ; aucune chute, mort ni retour avec l'objet depuis le point précédent ;
+  - temps : réglage « Temps du bonus (s) » de chaque point de contrôle (`finish-time-seconds` pour l'arrivée) ; temps
+    de la section juste sous ce temps : x1,25 (`time-coef-min-x100`), jusqu'à x1,75 (`time-coef-max-x100`) à la moitié
+    de ce temps ou moins, proportionnel entre les deux. 0 (par défaut) = pas de bonus de temps.
+- **1er arrivé** : +25 (`points-first-finish`), ajoutés tels quels ; jamais en solo.
+- **Retirés** : 1 point par point de contrôle (`points-checkpoint`) et podium 3 / 2 / 1 (`points-win`, que recevaient
+  aussi les coureurs non arrivés).
+- Points **décimaux**, crédités à chaque section (comme avant : un joueur qui quitte garde ses points). Affichage :
+  barre d'action « +5,25 pts (x1,75 : 1er, sans chute, temps x1,25) », message à l'arrivée avec le total, points de
+  chacun dans les résultats.
+- Journal de KG_ScoreBoards : l'événement « points » porte le détail (`section`, `sectionMillis` = temps de la
+  section, `base`, `multiplier`, `first`, `clean`, `timeCoefficient`, `finishBonus`) : les temps par section servent
+  à régler les temps du bonus.
+
+Limites : `ScoreBridge.award` de KalGames ne prend que des entiers ; les points sont crédités directement dans
+KG_ScoreBoards (comme la course de bateau), la passerelle vers le datapack n'est donc plus appelée pour le Parcours.
+Le cumul du cahier des charges (ses points + ceux des joueurs en dessous) n'est pas fait. Le temps de l'arrivée est un
+réglage du jeu, pas de l'arène. En entraînement, rien n'est affiché ni compté ; les points restent inscrits au journal
+comme « non comptés » (comme avant). Nouveaux textes : `race.checkpoint-score`, `race.finish-score`,
+`race.result-chrono-out-points` (`race.result-line-points` et `race.result-dnf-points` sont ceux de la course de bateau).
+
+**Compilé le 04/10/2026, non déployé. Statut : non testé en jeu.**

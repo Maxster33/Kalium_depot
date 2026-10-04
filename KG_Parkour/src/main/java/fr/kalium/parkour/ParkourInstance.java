@@ -33,10 +33,16 @@ import java.util.UUID;
  * chrono qui s'allonge a chaque point de controle (remplace le temps maximum fixe entre deux points), a zero le joueur
  * "tombe au temps" (spectateur) ; pas de collision entre coureurs ; a moins de 3 blocs, chaque coureur voit ses
  * adversaires proches sous forme de bottes en cuir colorees (voir ProximityGhosts).
+ *
+ * 1.2.0 (demande de LeKiwi06, 04/10/2026) : nouveau bareme. Points de base de chaque section selon sa position dans le
+ * parcours (1, 1, 3, 3, 3, 5, 5, 7, 7, 7, 10), multiplicateurs additifs (1er a valider, sans chute, temps), +25 au 1er
+ * arrive ; rien de ce qui est « en 1er » en solo. Points decimaux, credites a chaque section (voir scoreSection).
  */
 public final class ParkourInstance extends GameInstance {
 
     private static final int GRACE_SECONDS = 30;
+    /** 1.2.0 : points de base des sections selon leur position dans le parcours (au-dela : comme la derniere). */
+    private static final int[] BASE_POINTS = {1, 1, 3, 3, 3, 5, 5, 7, 7, 7, 10};
 
     private static final class Racer {
         int next;
@@ -58,6 +64,10 @@ public final class ParkourInstance extends GameInstance {
         int runs;
         /** Jusqu'a cet instant, un message d'action bar (point de controle, retour...) reste affiche. */
         long noticeUntil;
+        /** 1.2.0 : points de la course (bareme), comptes ou non pour les classements. */
+        double points;
+        /** 1.2.0 : retour au point de controle depuis la derniere section validee (plus de bonus « sans chute »). */
+        boolean fell;
     }
 
     /** Parcours en partie privee : sans limite de temps, sans points ni classement. */
@@ -67,6 +77,8 @@ public final class ParkourInstance extends GameInstance {
     /** Joueurs en cours de teleportation par le jeu (retour au point de controle...). */
     private final java.util.Set<UUID> released = new java.util.HashSet<>();
     private final List<UUID> finishOrder = new ArrayList<>();
+    /** 1.2.0 : sections deja validees par un coureur (bonus du 1er a valider). */
+    private final java.util.BitSet sectionsTaken = new java.util.BitSet();
     /** Nombre de coureurs arrives (ne diminue pas si un arrive quitte la partie). */
     private int finishedCount;
     private long startMillis;
@@ -167,6 +179,7 @@ public final class ParkourInstance extends GameInstance {
     protected void beginMatch() {
         racers.clear();
         finishOrder.clear();
+        sectionsTaken.clear();
         finishedCount = 0;
         graceLeft = -1;
         elapsed = 0;
@@ -330,9 +343,12 @@ public final class ParkourInstance extends GameInstance {
     private void reached(Player player, Racer racer) {
         List<Pos> checkpoints = arena().list("checkpoints");
         if (racer.next < checkpoints.size()) {
+            long now = System.currentTimeMillis();
+            int section = racer.next;
+            SectionScore score = scoreSection(racer, section, now - racer.segmentStart);
             racer.lastCheckpoint = facing(loc(checkpoints.get(racer.next)), player);
             racer.next++;
-            racer.segmentStart = System.currentTimeMillis();
+            racer.segmentStart = now;
             racer.noticeUntil = racer.segmentStart + 1500;
             // 1.1.0 : chaque point de controle ajoute du temps au chrono (CP 1 a 6 : +30 s, ensuite +60 s par defaut).
             long added = 0;
@@ -343,14 +359,15 @@ public final class ParkourInstance extends GameInstance {
                         : minigame().getInt("chrono-add-seconds", 30));
                 racer.deadline += added * 1000L;
             }
-            int points = Math.max(0, minigame().getInt("points-checkpoint", 1));
-            // 1.19.0 (KalGames) : attribution toujours transmise (journal), comptee ou non selon la partie et le joueur.
-            if (!plugin.scores().award(this, player, points)) {
-                points = 0;
-            }
-            Component notice = points > 0
-                    ? t("race.checkpoint-points", "<green>Point de contrôle <white><n>/<total></white> <gold>+<points> pt(s)",
-                            "n", racer.next, "total", checkpoints.size(), "points", points)
+            // 1.2.0 : bareme de la section. Attribution toujours transmise (journal), comptee ou non selon la partie et
+            // le joueur ; en entrainement (ni points ni classement) rien n'est affiche.
+            racer.points += score.points();
+            credit(player, score.points(), journal(section, score));
+            String detail = detail(score);
+            Component notice = score.points() > 0 && !training
+                    ? t("race.checkpoint-score", "<green>Point de contrôle <white><n>/<total></white> <gold>+<points> pts<gray><detail>",
+                            "n", racer.next, "total", checkpoints.size(), "points", fmt(score.points()),
+                            "detail", detail.isEmpty() ? "" : " (" + detail + ")")
                     : t("race.checkpoint", "<green>Point de contrôle <white><n>/<total>",
                             "n", racer.next, "total", checkpoints.size());
             if (added > 0) {
@@ -459,18 +476,37 @@ public final class ParkourInstance extends GameInstance {
     private void racerFinished(Player player, Racer racer) {
         racer.finished = true;
         ghosts.leave(player.getUniqueId());
-        racer.finishMillis = System.currentTimeMillis() - racer.runStart;
+        long now = System.currentTimeMillis();
+        racer.finishMillis = now - racer.runStart;
         finishOrder.add(player.getUniqueId());
         racer.rank = ++finishedCount;
-        int points = Math.max(0, minigame().getInt("points-win", 3) - (racer.rank - 1));
+        // 1.2.0 : l'arrivee valide la derniere section ; le 1er arrive recoit en plus un bonus tel quel (jamais en solo).
+        int section = arena().list("checkpoints").size();
+        SectionScore score = scoreSection(racer, section, now - racer.segmentStart);
+        int bonus = racer.rank == 1 && racers.size() > 1 ? Math.max(0, minigame().getInt("points-first-finish", 25)) : 0;
+        double points = Math.round((score.points() + bonus) * 100) / 100.0;
+        racer.points += points;
         broadcast(t("race.finished", "<aqua><name></aqua> <green>termine <white>n°<rank></white> en <white><time></white>.",
                 "name", player.getName(), "rank", racer.rank, "time", formatTime(racer.finishMillis)));
         if (plugin.scores().recordTime(this, player, racer.finishMillis)) {
             player.sendMessage(plugin.prefix().append(t("race.record", "<light_purple>Nouveau record personnel : <white><time></white> !",
                     "time", formatTime(racer.finishMillis))));
         }
-        if (plugin.scores().award(this, player, points)) {
-            player.sendMessage(plugin.prefix().append(t("race.points", "<gold>+<points> point(s)", "points", points)));
+        Map<String, Object> fields = journal(section, score);
+        fields.put("finishBonus", bonus);
+        credit(player, points, fields);
+        if (points > 0) {
+            List<String> why = new ArrayList<>();
+            if (score.points() > 0) {
+                String detail = detail(score);
+                why.add("arrivée " + fmt(score.base()) + (detail.isEmpty() ? "" : " " + detail));
+            }
+            if (bonus > 0) {
+                why.add("1er arrivé +" + bonus);
+            }
+            player.sendMessage(plugin.prefix().append(t("race.finish-score",
+                    "<gold>+<points> pts <gray>(<detail>) - total <white><total></white> pts",
+                    "points", fmt(points), "detail", String.join(" ; ", why), "total", fmt(racer.points))));
         }
         player.showTitle(net.kyori.adventure.title.Title.title(
                 t("race.finish-title", "<gold><bold>Arrivée !"),
@@ -483,6 +519,135 @@ public final class ParkourInstance extends GameInstance {
         if (allDone()) {
             finishRace();
         }
+    }
+
+    // ------------------------------------------------------------------ bareme (1.2.0)
+
+    /** 1.2.0 : points d'une section (du point precedent a ce point de controle, ou a l'arrivee) et leur detail. */
+    private record SectionScore(double points, int base, double multiplier, boolean first, boolean clean,
+                                double timeCoefficient, long millis) {
+    }
+
+    /** Coefficient d'un reglage en dixiemes ou en centiemes (unit = 10 ou 100), jamais sous x1. */
+    private double coefficient(String key, int def, int unit) {
+        return Math.max(unit, minigame().getInt(key, def)) / (double) unit;
+    }
+
+    /**
+     * Points de base d'une section (0 = premiere) : reglage « points » du point de controle, sinon selon sa position
+     * (BASE_POINTS). L'arrivee compte comme la section qui suit le dernier point de controle ; au-dela du tableau elle
+     * ne rapporte rien (reste le bonus du 1er arrive).
+     */
+    private int basePoints(int section, int checkpoints) {
+        if (section >= checkpoints) {
+            return section < BASE_POINTS.length ? BASE_POINTS[section] : 0;
+        }
+        if (arena().pointSetting("checkpoints", section, "points") instanceof Number own && own.intValue() > 0) {
+            return own.intValue();
+        }
+        return BASE_POINTS[Math.min(section, BASE_POINTS.length - 1)];
+    }
+
+    /** Temps du bonus d'une section, en secondes (0 = pas de bonus de temps). */
+    private int bonusSeconds(int section, int checkpoints) {
+        if (section >= checkpoints) {
+            return Math.max(0, minigame().getInt("finish-time-seconds", 0));
+        }
+        return arena().pointSetting("checkpoints", section, "time-seconds") instanceof Number own ? Math.max(0, own.intValue()) : 0;
+    }
+
+    /**
+     * 1.2.0 : bareme d'une section (demande de LeKiwi06, 04/10/2026). Points de base selon la section, puis les
+     * multiplicateurs, ADDITIFS comme pour la course de bateau (x1,5 et x1,5 = x2) : 1er a valider la section (jamais
+     * en solo), section sans chute (aucun retour au point de controle), temps de la section sous le temps du bonus
+     * (x1,25 juste en dessous, jusqu'a x1,75 a la moitie de ce temps ou moins).
+     */
+    private SectionScore scoreSection(Racer racer, int section, long millis) {
+        int checkpoints = arena().list("checkpoints").size();
+        int base = basePoints(section, checkpoints);
+        boolean first = !training && racers.size() > 1 && !sectionsTaken.get(section);
+        sectionsTaken.set(section);
+        boolean clean = !racer.fell;
+        racer.fell = false;
+        double timeCoefficient = 1;
+        int seconds = bonusSeconds(section, checkpoints);
+        if (seconds > 0 && millis < seconds * 1000L) {
+            double min = coefficient("time-coef-min-x100", 125, 100);
+            double max = Math.max(min, coefficient("time-coef-max-x100", 175, 100));
+            double ratio = Math.min(1, (seconds * 1000L - millis) / (seconds * 500.0));
+            timeCoefficient = Math.round((min + (max - min) * ratio) * 100) / 100.0;
+        }
+        double multiplier = 1 + (first ? coefficient("first-coef-x10", 15, 10) - 1 : 0)
+                + (clean ? coefficient("clean-coef-x10", 15, 10) - 1 : 0) + (timeCoefficient - 1);
+        multiplier = Math.round(multiplier * 100) / 100.0;
+        double points = Math.round(base * multiplier * 100) / 100.0;
+        return new SectionScore(points, base, multiplier, first, clean, timeCoefficient, millis);
+    }
+
+    /** Detail des multiplicateurs d'une section, ex. « x2,25 : 1er, sans chute, temps x1,25 » (vide si x1). */
+    private static String detail(SectionScore score) {
+        if (score.multiplier() <= 1) {
+            return "";
+        }
+        List<String> why = new ArrayList<>();
+        if (score.first()) {
+            why.add("1er");
+        }
+        if (score.clean()) {
+            why.add("sans chute");
+        }
+        if (score.timeCoefficient() > 1) {
+            why.add("temps x" + fmt(score.timeCoefficient()));
+        }
+        return "x" + fmt(score.multiplier()) + " : " + String.join(", ", why);
+    }
+
+    /** Detail du bareme d'une section pour le journal de KG_ScoreBoards (section : 1 = premiere). */
+    private static Map<String, Object> journal(int section, SectionScore score) {
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("section", section + 1);
+        fields.put("sectionMillis", score.millis());
+        fields.put("base", score.base());
+        fields.put("multiplier", score.multiplier());
+        fields.put("first", score.first());
+        fields.put("clean", score.clean());
+        fields.put("timeCoefficient", score.timeCoefficient());
+        return fields;
+    }
+
+    /**
+     * 1.2.0 : credite des points decimaux (ScoreBridge.award de KalGames ne prend que des entiers) : meme evenement
+     * « points » du journal de KG_ScoreBoards, compte ou non selon la partie et le joueur, avec le detail du bareme.
+     * Renvoie true si les points ont ete comptes. La passerelle vers le datapack (points entiers) n'est pas appelee,
+     * comme pour la course de bateau.
+     */
+    private boolean credit(Player player, double points, Map<String, Object> detail) {
+        if (points <= 0) {
+            return false;
+        }
+        String reason = plugin.scores().excluded(player) ? "operateur" : !ranked(player) ? "partie-non-classee" : null;
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("match", matchId());
+        fields.put("arena", arena().id());
+        fields.put("public", isPublic());
+        fields.put("player", player.getUniqueId().toString());
+        fields.put("name", player.getName());
+        fields.put("platform", player.getUniqueId().getMostSignificantBits() == 0 ? "bedrock" : "java");
+        fields.put("points", points);
+        fields.put("counted", reason == null);
+        fields.put("reason", reason);
+        fields.putAll(detail);
+        plugin.ranking().log(minigame().id(), "points", fields);
+        if (reason != null) {
+            return false;
+        }
+        plugin.ranking().stats().addPoints(minigame().id(), player.getUniqueId(), player.getName(), points);
+        plugin.ranking().boards().refreshSoon();
+        return true;
+    }
+
+    private static String fmt(double value) {
+        return fr.kalium.scoreboards.data.StatsService.formatPoints(value);
     }
 
     @Override
@@ -509,6 +674,7 @@ public final class ParkourInstance extends GameInstance {
         player.setFallDistance(0);
         player.setVelocity(new Vector());
         racer.previous = spot.clone();
+        racer.fell = true;
         racer.noticeUntil = System.currentTimeMillis() + 1500;
         player.sendActionBar(t("race.respawn", "<yellow>Retour au dernier point de contrôle."));
     }
@@ -600,27 +766,20 @@ public final class ParkourInstance extends GameInstance {
         for (UUID uuid : finishOrder) {
             Racer racer = racers.get(uuid);
             String name = nameOf(uuid);
-            broadcast(t("race.result-line", "<gray><rank>. <white><name></white> <dark_gray>- <aqua><time>",
-                    "rank", position, "name", name, "time", formatTime(racer.finishMillis)));
+            broadcast(t("race.result-line-points", "<gray><rank>. <white><name></white> <dark_gray>- <aqua><time> <gray>(<points> pts)",
+                    "rank", position, "name", name, "time", formatTime(racer.finishMillis), "points", fmt(racer.points)));
             position++;
         }
-        // Les coureurs qui n'ont pas fini a temps (elimines ou temps ecoule) comptent quand meme dans le classement :
-        // ils recoivent des points de classement (comme un coureur arrive, en continuant la numerotation des rangs).
+        // Les coureurs qui n'ont pas fini a temps (elimines ou temps ecoule) restent classes a la suite des arrives.
+        // 1.2.0 : plus de points de podium ; chacun garde les points de ses sections, deja credites.
         for (Map.Entry<UUID, Racer> entry : unfinished) {
             Racer racer = entry.getValue();
             racer.rank = position;
-            Player player = Bukkit.getPlayer(entry.getKey());
-            if (player != null) {
-                int points = Math.max(0, minigame().getInt("points-win", 3) - (racer.rank - 1));
-                if (plugin.scores().award(this, player, points)) {
-                    player.sendMessage(plugin.prefix().append(t("race.points", "<gold>+<points> point(s)", "points", points)));
-                }
-            }
             broadcast(racer.out
-                    ? t("race.result-chrono-out", "<gray><rank>. <white><name></white> <dark_gray>- <red>tombé au temps",
-                            "rank", position, "name", nameOf(entry.getKey()))
-                    : t("race.result-dnf", "<gray><rank>. <white><name></white> <dark_gray>- <red>non arrivé",
-                            "rank", position, "name", nameOf(entry.getKey())));
+                    ? t("race.result-chrono-out-points", "<gray><rank>. <white><name></white> <dark_gray>- <red>tombé au temps <gray>(<points> pts)",
+                            "rank", position, "name", nameOf(entry.getKey()), "points", fmt(racer.points))
+                    : t("race.result-dnf-points", "<gray><rank>. <white><name></white> <dark_gray>- <red>non arrivé <gray>(<points> pts)",
+                            "rank", position, "name", nameOf(entry.getKey()), "points", fmt(racer.points)));
             position++;
         }
         for (UUID uuid : participants) {
@@ -703,6 +862,7 @@ public final class ParkourInstance extends GameInstance {
         ghosts.clear();
         racers.clear();
         finishOrder.clear();
+        sectionsTaken.clear();
         finishedCount = 0;
         graceLeft = -1;
     }

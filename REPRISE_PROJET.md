@@ -93,6 +93,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 ### Versions compilées, non déployées
 
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
+- **KG_Parkour 1.2.0** (04/10/2026, LeKiwi06, non testé) : nouveau barème (points de base 1 à 10 selon la position du checkpoint, 1er à valider x1,5, sans chute x1,5, temps x1,25 à x1,75, 1er arrivé +25, rien « en 1er » en solo ; podium 3 / 2 / 1 retiré). À déployer sur Kal-Games ; « Temps du bonus » à saisir pour chaque point de contrôle (sinon pas de bonus de temps).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »
@@ -116,9 +117,9 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
   du journal ; précision des temps au dixième (interpolation possible).
 - **KG_Parkour** (cahier des charges : `KG_Parkour/CAHIER_DES_CHARGES.md`) : **étape 0 faite** le 26/09/2026
   (KG_Parkour 1.0.0 + KalGames 1.20.0 : le Parcours sort de KalGames tel quel ; déployés sur Kal-Games, testés et confirmés par LeKiwi06 le 26/09/2026).
-  Restent : chrono rechargé à chaque checkpoint, barème (difficulté, 1er à valider, first try) calé sur la course de
-  bateau (voir `EQUILIBRAGE_POINTS.md`), réglages par checkpoint (`PointSpec.withPointSettings`), contre-la-montre
-  solo avec fantôme (Mannequin), anti-collision entre joueurs.
+  1.1.0 : chrono par checkpoint, anti-collision. **1.2.0 (04/10/2026, compilé, non déployé) : nouveau barème**
+  (voir son `JOURNAL.md`). Restent : cumul crédité en fin de partie, chrono réglable par checkpoint, barème calé sur la course de
+  bateau (voir `EQUILIBRAGE_POINTS.md`), contre-la-montre solo avec fantôme (Mannequin).
 - **Équilibrage des barèmes** (`EQUILIBRAGE_POINTS.md`, 26/09/2026) : 30 min à fond = autant de points dans chaque
   jeu, référence = course de bateau (~135 / 30 min). Bingo fait (barème doublé + classements, testé et confirmé par LeKiwi06 le 26/09/2026). Restent :
   Parcours (nouveau barème, parties « à fond » de LeKiwi06 pour mesurer), PvP Kit, Rush, recalcul du passé.
@@ -290,6 +291,8 @@ victoire, temps écoulé, redémarrage), plus de « Prepared spawn area in 5000 
 « Réserve : ... », 2e partie pendant une autre sans gel.
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (04/10/2026, 22:40) : KG_Parkour 1.2.0 compilé, non déployé, non testé** (demande de LeKiwi06 : nouveau barème du Parcours). Points de base selon la position du checkpoint dans la map (1, 1, 3, 3, 3, 5, 5, 7, 7, 7, 10 ; réglable par point de contrôle), multiplicateurs additifs (1er à valider x1,5, sans chute x1,5, temps x1,25 à x1,75 avec un seul temps par point de contrôle), +25 au 1er arrivé, rien « en 1er » en solo ; l'ancien point par checkpoint et le podium 3 / 2 / 1 sont retirés ; points décimaux crédités à chaque section. À faire après déploiement : saisir le « Temps du bonus » de chaque point de contrôle (les temps par section sont dans le journal de KG_ScoreBoards, événement « points », `sectionMillis`). À tester : points de chaque checkpoint, bonus du 1er à 2 joueurs et absent en solo, sans chute, temps, +25, résultats avec les points, crédit au classement (non-opérateur). Réservation de KG_Parkour gardée jusqu'au déploiement.
 
 **Ajout (04/10/2026, 22:01) : KS_Economy 1.3.0 et KS_LootPotions 1.1.3 déployés sur Event, non testés.** KS_Economy : le barème des prix (1 929 objets, `rachats.csv`, produit par un script hors dépôt) est dans le plugin ; « Rachats de la semaine » (`/rachat`, bouton du menu Économie) : 2 objets tirés par gamme de prix chaque lundi, par familles, jamais issus d'une dimension fermée dans KS_Dimensions ; lots de 1 / 10 / 64 / 320 émeraudes ; quota par objet et par jour au-dessus de 25 000 de cagnotte. À tester : le tirage au démarrage (console), vendre un lot et « Tout vendre », un objet enchanté ou abîmé refusé, le quota avec une cagnotte au-dessus de 25 000 (visible puis masquée), une tête et un élixir. Pour refaire un tirage : supprimer `plugins/KS_Economy/rachats.yml` serveur éteint. À décider par LeKiwi06 : prix du Cœur de Spawner, œuf de dragon et Cœur de Spawner dans le tirage ou non. KS_LootPotions : casser un minerai d'émeraude de deepslate (potion de chance à chaque fois, aucune avec Toucher de soie).
 
