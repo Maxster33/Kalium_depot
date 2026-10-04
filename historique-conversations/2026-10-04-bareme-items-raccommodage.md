@@ -24,11 +24,12 @@ LeKiwi06 :
   potion sur verrue mûre seulement, boîte de shulker au coffre de l'Ender. Déployés sur Event le 04/10/2026 à
   06:52, non testés, actifs après redémarrage.
 - KS_LootPotions 1.1.3 : potion de chance à 100 % sur le minerai d'émeraude de deepslate (10 % avant), jamais quand
-  le bloc tombe tel quel (Toucher de soie : on pouvait reposer le minerai et recommencer). Compilé, non déployé
-  (« pas maintenant », LeKiwi06).
+  le bloc tombe tel quel (Toucher de soie : on pouvait reposer le minerai et recommencer). Déployé sur Event le
+  04/10/2026 à 22:01, non testé, actif après redémarrage.
 - KS_Economy 1.3.0 : barème des prix dans le plugin (`rachats.csv`) et rachats de la semaine (10 objets tirés chaque
   lundi, 2 par gamme de prix, par familles ; lots de 1 / 10 / 64 / 320 émeraudes ; quota par objet et par jour
-  au-dessus de 25 000 de cagnotte). Compilé, non déployé.
+  au-dessus de 25 000 de cagnotte ; jamais d'objet issu d'une dimension fermée dans KS_Dimensions). Déployé sur
+  Event le 04/10/2026 à 22:01, non testé, actif après redémarrage.
 
 ## Décisions
 
@@ -53,7 +54,8 @@ LeKiwi06 :
 ## Reste à faire
 
 - Redémarrer Event (l'humain) ; tester un coffre de cité antique jamais ouvert.
-- Déployer KS_LootPotions 1.1.3 et KS_Economy 1.3.0 (accord de LeKiwi06 à demander), puis les tester.
+- Tester KS_LootPotions 1.1.3 et KS_Economy 1.3.0 après le redémarrage (liste dans REPRISE_PROJET.md).
+- À décider : œuf de dragon et Cœur de Spawner dans le tirage des rachats ou non ; prix de la tête de dragon.
 - Prix du Cœur de Spawner ; relecture des matières premières « estimées » du barème.
 - Signalé, à décider : craft « 9 verrues → bloc de verrue » toujours retiré ; carapace de shulker seulement si un
   joueur tue ; éclat d'écho sur les chauves-souris (aucun plugin ne le fait).

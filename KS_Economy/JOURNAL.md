@@ -264,4 +264,4 @@ Demande de LeKiwi06 : « enregistrer cette base de données dans le plugin d'éc
 - Limites connues : pas de commande pour refaire le tirage (supprimer `rachats.yml` serveur éteint) ; les lots de
   têtes demandent des têtes identiques ; l'œuf de dragon peut sortir (une seule vente possible, environ 150 000).
 
-**Statut : compilé le 04/10/2026, non déployé, non testé en jeu.**
+**Déployé sur Event le 04/10/2026 à 22:01 (LeKiwi06 ; 1.2.0 dans `_removed-ks_economy-1.2.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

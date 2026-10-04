@@ -57,4 +57,4 @@ Demande de LeKiwi06 (travail sur le barème des prix) : « la potion devrait don
   on pouvait reposer le même minerai et le recasser à volonté.
 - Le reste est inchangé.
 
-**Statut : compilé le 04/10/2026, non déployé, non testé en jeu.**
+**Déployé sur Event le 04/10/2026 à 22:01 (LeKiwi06 ; 1.1.2 dans `_removed-ks_lootpotions-1.1.2/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

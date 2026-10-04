@@ -194,6 +194,23 @@ Choix d'interprétation (Claude, à valider aux tests) :
 - **Staff** : `/magasin signalements` : non traités / classés ; détail (cible, auteur, date, raisons, offre) ; se
   téléporter ; supprimer la boutique signalée (sans délai de 3 h pour le propriétaire) ; classer avec l'action faite.
 
+## Rachats de la semaine (LeKiwi06, 04/10/2026, KS_Economy 1.3.0)
+
+> ok les prixs me paraissent bon , enregistrer cette base de donnée dans le plugin d'économie , et fait une interface ou on tire 10 items random par semaine et on les achètes aux joueurs
+
+| Point | Règle |
+|---|---|
+| Base | Le barème des prix (émeraudes à l'unité) est dans KS_Economy |
+| Tirage | 10 objets par semaine : 2 par gamme de prix ; on tire une famille puis un objet de la famille dans la gamme (les variantes d'un objet comptent pour un seul) |
+| Prix de rachat | Au hasard à plus ou moins 25 % du prix du barème, arrondi à l'unité |
+| Lot (objet empilable) | Moins de 0,1 : 1 émeraude ; 0,1 à 1 : 10 ; 1 à 10 : 64 ; 10 à 100 : 320 ; plus de 100 : à l'unité. Quantité arrondie à l'unité inférieure, payée à l'entier le plus proche |
+| Quota | Par objet, par joueur et par jour : aucun sous 25 000 de cagnotte ; au-dessus, 5 % de la cagnotte (7,5 % si elle est masquée) ; la vente qui fait dépasser passe, on bloque ensuite |
+
+Précisions de LeKiwi06 (réponses du 04/10/2026) : gamme 1 à 10 = 64 émeraudes (le tableau, pas l'exemple du
+diamant) ; « chaque famille d'item a son sous-tirage comme les têtes, il tire dans les items de sa famille qui
+correspondent à la gamme de prix qu'on lui demande » (familles : diorite, cuivre, fleur, terres, spruce, potion,
+améthyste, boue, terres cuites) ; ne pas compter les variantes non obtenables en survie dans l'inventaire.
+
 ## Magasins (version du 29/09/2026, remplacée)
 
 - Un joueur déclare **un** magasin dans un de ses **groupes de claim** (KS_Claim, session 3). Prix du premier
