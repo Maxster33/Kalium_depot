@@ -38,4 +38,8 @@ partie de Bingo préparation comprise), sans l'attente entre les parties.
    gardé (Parcours), ce sera une **règle de trois par jeu** (anciens points × nouveau rythme ÷ ancien rythme). Le journal
    ne remonte qu'au 24-25/09/2026. Bingo : les parties passées n'ont jamais été créditées ; elles sont dans les journaux
    de Serveur Jeux (points solo avec l'ancien barème) et pourraient être créditées ×2.
+   **Parcours : fait le 04/10/2026** (LeKiwi06) : parties du journal rejouées avec le barème de KG_Parkour 1.2.0,
+   fourchette haute (« sans chute » supposé partout), règle de trois pour les points d'avant le journal ; général,
+   octobre et semaine en cours de `stats.yml` (802 → 2 248 points au général) ; archives non touchées. Rythme sur le
+   journal : ancien barème ~48 points / 30 min de course, nouveau ~95 à 140 sans le bonus de temps.
 5. Vérifier les rythmes régulièrement : même calcul sur le journal (à automatiser dans KG_ScoreBoards si utile).

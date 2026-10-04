@@ -16,7 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KG_ScoreBoards — LeKiwi06 — depuis le 2026-10-04 22:27 — données seulement (stats.yml de Kal-Games) : recalcul des points du Parcours avec le nouveau barème, pas de changement de code
 
 
 
