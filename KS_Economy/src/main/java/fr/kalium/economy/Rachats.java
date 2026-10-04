@@ -21,6 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.Plugin;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,6 +49,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * - Tirage : dans chaque gamme (moins de 0,1 ; 0,1 à 1 ; 1 à 10 ; 10 à 100 ; 100 et plus), 2 familles au hasard, puis
  *   un objet de la famille dans cette gamme (les variantes d'un objet comptent pour un seul : têtes, cuivre, sapin...).
+ *   Jamais d'objet issu d'une dimension dont KS_Dimensions ferme les portails (Nether, End).
  * - Prix de la semaine : prix du barème à plus ou moins 25 %, arrondi à l'unité dès 1 émeraude.
  * - Lot : la quantité (arrondie à l'unité inférieure) qui approche 1 / 10 / 64 / 320 émeraudes selon la gamme du prix
  *   de la semaine, payée au nombre entier le plus proche ; à l'unité à partir de 100 et pour un objet non empilable.
@@ -57,7 +59,8 @@ import java.util.concurrent.ThreadLocalRandom;
 final class Rachats implements CommandExecutor {
 
     /** Une ligne du barème. cible : m, potion:TYPE, pdc:espace:clé:type[:valeur], ou - (jamais tirée). */
-    record Entree(String id, String famille, double prix, String cible, String nom, int pile, Material materiel) {
+    record Entree(String id, String famille, double prix, String cible, String nom, int pile, Material materiel,
+                  String dimensions) {
     }
 
     /** Un objet racheté cette semaine : quantité par lot et points payés par lot. */
@@ -123,7 +126,8 @@ final class Rachats implements CommandExecutor {
                         pile = materiel.getMaxStackSize();
                     }
                 }
-                base.put(c[0], new Entree(c[0], c[1], Double.parseDouble(c[2]), cible, c[4], pile, materiel));
+                base.put(c[0], new Entree(c[0], c[1], Double.parseDouble(c[2]), cible, c[4], pile, materiel,
+                        c.length > 6 ? c[6] : ""));
             }
         } catch (IOException | NumberFormatException e) {
             plugin.getLogger().warning("rachats.csv illisible : " + e.getMessage());
@@ -269,15 +273,25 @@ final class Rachats implements CommandExecutor {
         }
     }
 
+    /** Portails de cette dimension ouverts dans KS_Dimensions (clé de son config.yml) ; vrai sans ce plugin. */
+    private boolean ouverte(String cle) {
+        Plugin dimensions = plugin.getServer().getPluginManager().getPlugin("KS_Dimensions");
+        return dimensions == null || !dimensions.isEnabled() || dimensions.getConfig().getBoolean(cle, true);
+    }
+
     private void tirer() {
         offres.clear();
+        // Aucun objet issu d'une dimension fermée (KS_Dimensions) : il serait impossible à obtenir.
+        boolean nether = ouverte("nether-portals-enabled");
+        boolean end = ouverte("end-portals-enabled");
         ThreadLocalRandom hasard = ThreadLocalRandom.current();
         int parGamme = Math.max(1, plugin.getConfig().getInt("rachats.objets-par-gamme", 2));
         Set<String> prises = new HashSet<>();
         for (int g = 0; g <= BORNES.length; g++) {
             Map<String, List<Entree>> familles = new HashMap<>();
             for (Entree e : base.values()) {
-                if (tirable(e) && gamme(e.prix()) == g) {
+                if (tirable(e) && gamme(e.prix()) == g && (nether || !e.dimensions().contains("nether"))
+                        && (end || !e.dimensions().contains("end"))) {
                     familles.computeIfAbsent(e.famille(), f -> new ArrayList<>()).add(e);
                 }
             }
@@ -292,7 +306,8 @@ final class Rachats implements CommandExecutor {
                 prises.add(noms.get(k));
             }
         }
-        StringBuilder journal = new StringBuilder("Rachats de la semaine " + semaine + " :");
+        StringBuilder journal = new StringBuilder("Rachats de la semaine " + semaine
+                + (nether ? "" : " (Nether fermé)") + (end ? "" : " (End fermé)") + " :");
         for (Offre o : offres) {
             journal.append(' ').append(o.quantite()).append(" x ").append(o.entree().id()).append(" = ")
                     .append(o.points()).append(" ;");

@@ -233,6 +233,12 @@ Demande de LeKiwi06 : « enregistrer cette base de données dans le plugin d'éc
   cuivre, fleur, terres, sapin, potion, améthyste, boue, terres cuites, tête...), puis un objet de cette famille dans
   la gamme demandée : les variantes d'un objet comptent pour un seul. Une famille ne sort deux fois dans la semaine
   que s'il n'en reste pas d'autre.
+- **Dimensions fermées** (LeKiwi06 : « il ne faut pas tirer d'item issu de dimension qui sont fermées dans KS dimension ») :
+  quand KS_Dimensions désactive les portails du Nether ou de l'End, aucun objet issu de cette dimension n'est tiré
+  (état lu au moment du tirage ; un tirage déjà fait ne change pas). Chaque objet du barème porte sa dimension
+  d'origine : matières premières marquées à la main (netherrack, quartz, bâton de blaze, pierre de l'End,
+  carapace de shulker, élytres...), têtes selon la créature, objets fabriqués selon leurs ingrédients (comparateur
+  = quartz = Nether ; boîte de shulker = End et Nether, par l'œil de l'Ender du coffre de l'Ender).
 - **Prix de la semaine** : prix du barème à plus ou moins 25 %, arrondi à l'unité dès 1 émeraude.
 - **Lot** : selon la gamme du prix de la semaine, la quantité (arrondie à l'unité inférieure) qui approche 1 / 10 /
   64 / 320 émeraudes, payée au nombre entier le plus proche (un diamant tiré à 3 : 21 pour 63 ; à 4 : 16 pour 64 ;

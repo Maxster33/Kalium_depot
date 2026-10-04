@@ -5,7 +5,7 @@ api-version: '26.2'
 description: Economie du serveur Event (score en emeraudes dematerialisees, blocs compresses, /echange, economie Vault, rachats de la semaine).
 authors: [KaLium]
 depend: [KLM_Menu]
-softdepend: [KS_Menu, Vault, WorldGuard, SimpleClaimSystem]
+softdepend: [KS_Menu, Vault, WorldGuard, SimpleClaimSystem, KS_Dimensions]
 commands:
   economie:
     description: Ouvre le menu Economie (solde, depot, retrait).
