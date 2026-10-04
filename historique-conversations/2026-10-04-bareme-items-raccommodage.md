@@ -1,9 +1,9 @@
 # 2026-10-04 — Barème des items, Raccommodage
 
-- Plugin(s) concerné(s) : KS_LootCoffres, KS_Crafts, KS_LootBlocs, KS_LootPotions (KS_EstomacGardien réservé puis
-  libéré sans changement)
+- Plugin(s) concerné(s) : KS_LootCoffres, KS_Crafts, KS_LootBlocs, KS_LootPotions, KS_Economy (KS_EstomacGardien
+  réservé puis libéré sans changement)
 - Versions avant / après : KS_LootCoffres 1.0.0 / 1.1.0 ; KS_Crafts 1.9.0 / 1.10.0 ; KS_LootBlocs 1.2.0 / 1.3.0 ;
-  KS_LootPotions 1.1.1 / 1.1.2
+  KS_LootPotions 1.1.1 / 1.1.3 ; KS_Economy 1.2.0 / 1.3.0
 
 ## Demandé
 
@@ -23,6 +23,12 @@ LeKiwi06 :
 - KS_Crafts 1.10.0, KS_LootBlocs 1.3.0, KS_LootPotions 1.1.2 : plus de brassage à la verrue, verrue cultivable,
   potion sur verrue mûre seulement, boîte de shulker au coffre de l'Ender. Déployés sur Event le 04/10/2026 à
   06:52, non testés, actifs après redémarrage.
+- KS_LootPotions 1.1.3 : potion de chance à 100 % sur le minerai d'émeraude de deepslate (10 % avant), jamais quand
+  le bloc tombe tel quel (Toucher de soie : on pouvait reposer le minerai et recommencer). Compilé, non déployé
+  (« pas maintenant », LeKiwi06).
+- KS_Economy 1.3.0 : barème des prix dans le plugin (`rachats.csv`) et rachats de la semaine (10 objets tirés chaque
+  lundi, 2 par gamme de prix, par familles ; lots de 1 / 10 / 64 / 320 émeraudes ; quota par objet et par jour
+  au-dessus de 25 000 de cagnotte). Compilé, non déployé.
 
 ## Décisions
 
@@ -38,10 +44,16 @@ LeKiwi06 :
 - LeKiwi06 : le brassage au bloc de verrue était « une erreur » ; la verrue du Nether redevient cultivable mais ne se
   brasse plus ; boîte de shulker au coffre de l'Ender (casser la production automatique). Ces choix reviennent sur des
   demandes de Maxster33 du 25/09.
+- LeKiwi06 (série 12 du barème, anomalies relevées par Claude) : potions et élixirs revus à la baisse, livre enchanté
+  ordinaire au prix de la table d'enchantement, carte au trésor enfoui à 30, netherrack, briques, feuilles, graines,
+  bourgeons d'améthyste, boîte de shulker au prix de sa recette, têtes vanilla au prix des têtes de KS_Decapitator.
+- LeKiwi06 (rachats) : lot de 64 émeraudes pour la gamme 1 à 10 ; aucun quota sous 25 000 ; tirage par familles,
+  objets custom compris. Choix de Claude signalés : jetons, monnaie et objets au contenu variable jamais tirés.
 
 ## Reste à faire
 
 - Redémarrer Event (l'humain) ; tester un coffre de cité antique jamais ouvert.
+- Déployer KS_LootPotions 1.1.3 et KS_Economy 1.3.0 (accord de LeKiwi06 à demander), puis les tester.
 - Prix du Cœur de Spawner ; relecture des matières premières « estimées » du barème.
 - Signalé, à décider : craft « 9 verrues → bloc de verrue » toujours retiré ; carapace de shulker seulement si un
   joueur tue ; éclat d'écho sur les chauves-souris (aucun plugin ne le fait).

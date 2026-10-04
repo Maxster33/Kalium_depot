@@ -16,7 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_Economy — LeKiwi06 — depuis le 2026-10-04 08:00 — rachats de la semaine : barème des prix dans le plugin, 10 objets tirés par semaine et rachetés aux joueurs
+- KS_Economy — LeKiwi06 — depuis le 2026-10-04 18:11 — rachats de la semaine : barème des prix dans le plugin, 10 objets tirés par semaine et rachetés aux joueurs
 - KS_LootPotions — LeKiwi06 — depuis le 2026-10-04 07:20 — potion de chance à 100 % sur le minerai d'émeraude de deepslate, jamais avec Toucher de soie
 
 

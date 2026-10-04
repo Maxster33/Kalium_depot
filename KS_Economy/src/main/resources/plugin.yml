@@ -2,7 +2,7 @@ name: KS_Economy
 version: '${project.version}'
 main: fr.kalium.economy.KSEconomy
 api-version: '26.2'
-description: Economie du serveur Event (score en emeraudes dematerialisees, blocs compresses, /echange, economie Vault).
+description: Economie du serveur Event (score en emeraudes dematerialisees, blocs compresses, /echange, economie Vault, rachats de la semaine).
 authors: [KaLium]
 depend: [KLM_Menu]
 softdepend: [KS_Menu, Vault, WorldGuard, SimpleClaimSystem]
@@ -14,6 +14,10 @@ commands:
   echange:
     description: Echange d'objets et de points avec un joueur proche.
     usage: /echange <joueur> | accepter | refuser
+  rachat:
+    description: Rachats de la semaine (10 objets rachetes par le serveur).
+    aliases: [rachats]
+    usage: /rachat
   magasin:
     description: Ton magasin (creer, agrandir, position).
     usage: /magasin [create | agrandir | position | signalements]

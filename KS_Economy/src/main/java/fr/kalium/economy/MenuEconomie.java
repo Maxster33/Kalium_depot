@@ -76,6 +76,10 @@ final class MenuEconomie implements Listener {
         boutons.add(gui.button(lang.c("menu.bouton-magasins", "<gold>Magasins"),
                 lang.c("menu.info-magasins", "<gray>Boutiques des joueurs, achat à distance, ton magasin"),
                 p -> plugin.menuMagasin().catalogue(p, 0)));
+        // 1.3.0 : rachats de la semaine.
+        boutons.add(gui.button(lang.c("menu.bouton-rachats", "<gold>Rachats de la semaine"),
+                lang.c("menu.info-rachats", "<gray>10 objets rachetés par le serveur, tirés chaque lundi"),
+                p -> plugin.rachats().ouvrir(p)));
         boutons.add(masque
                 ? gui.button(lang.c("menu.bouton-reveler", "<aqua>Révéler mon solde"),
                 lang.c("menu.info-reveler", "<gray>Gratuit, immédiat"), p -> {

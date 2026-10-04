@@ -1,0 +1,1933 @@
+# KS_Economy : barème des prix d'Event (LeKiwi06, 04/10/2026), en émeraudes à l'unité.
+# id ; famille (une famille = un seul objet au tirage des rachats) ; prix ; cible ; nom ; pile (non vanilla)
+# cible : m = objet vanilla de cet id ; potion:<TYPE> ; pdc:<espace>:<clé>:<s|b|i>[:<valeur>] = objet custom ;
+#         - = dans la base, jamais tiré.
+abandoned_camp_map;carte au trésor;1.999;-;;
+acacia_boat;acacia;0.02712;m;;
+acacia_button;acacia;0.005424;m;;
+acacia_chest_boat;acacia;0.06712;m;;
+acacia_door;acacia;0.01085;m;;
+acacia_fence;acacia;0.008899;m;;
+acacia_fence_gate;acacia;0.02085;m;;
+acacia_hanging_sign;acacia;0.07044;m;;
+acacia_leaves;acacia;0.01085;m;;
+acacia_log;acacia;0.0217;m;;
+acacia_planks;acacia;0.005424;m;;
+acacia_pressure_plate;acacia;0.01085;m;;
+acacia_sapling;acacia;0.03386;m;;
+acacia_shelf;acacia;0.0297;m;;
+acacia_sign;acacia;0.01168;m;;
+acacia_slab;acacia;0.002712;m;;
+acacia_stairs;acacia;0.008136;m;;
+acacia_trapdoor;acacia;0.01627;m;;
+acacia_wood;acacia;0.02893;m;;
+activator_rail;rails et wagonnets;0.1179;m;;
+allium;fleur;0.03984;m;;
+amethyst_block;améthyste;0.2;m;;
+amethyst_cluster;améthyste;0.25;m;;
+amethyst_shard;améthyste;0.05;m;;
+ancient_debris;netherite;40;m;;
+andesite;andésite;0.01915;m;;
+andesite_slab;andésite;0.009575;m;;
+andesite_stairs;andésite;0.01915;m;;
+andesite_wall;andésite;0.01915;m;;
+angler_pottery_sherd;tesson de poterie;16.46;m;;
+anvil;enclume;3.1;m;;
+apple;pomme;0.03984;m;;
+archer_pottery_sherd;tesson de poterie;16.46;m;;
+armadillo_scute;tatou;0.1058;m;;
+armor_stand;armor_stand;0.03;m;;
+arms_up_pottery_sherd;tesson de poterie;16.46;m;;
+arrow;flèche;0.01758;m;;
+axolotl_bucket;seau;0.6313;m;;
+azalea;herbes et lianes;0.05086;m;;
+azalea_leaves;herbes et lianes;0.01;m;;
+azure_bluet;fleur;0.03984;m;;
+baked_potato;culture;0.0393;m;;
+bamboo;bambou;0.0125;m;;
+bamboo_block;bambou;0.1125;m;;
+bamboo_button;bambou;0.05625;m;;
+bamboo_chest_raft;bambou;0.3212;m;;
+bamboo_door;bambou;0.1125;m;;
+bamboo_fence;bambou;0.07667;m;;
+bamboo_fence_gate;bambou;0.1225;m;;
+bamboo_hanging_sign;bambou;0.1612;m;;
+bamboo_mosaic;bambou;0.05625;m;;
+bamboo_mosaic_slab;bambou;0.02813;m;;
+bamboo_mosaic_stairs;bambou;0.05625;m;;
+bamboo_planks;bambou;0.05625;m;;
+bamboo_pressure_plate;bambou;0.1125;m;;
+bamboo_raft;bambou;0.2812;m;;
+bamboo_shelf;bambou;0.1205;m;;
+bamboo_sign;bambou;0.1133;m;;
+bamboo_slab;bambou;0.02813;m;;
+bamboo_stairs;bambou;0.08438;m;;
+bamboo_trapdoor;bambou;0.1688;m;;
+barrel;barrel;0.035;m;;
+basalt;basalte;0.02448;m;;
+beacon;étoile du Nether;13120;m;;
+bee_nest;miel;0.2202;m;;
+beef;viande;0.03;m;;
+beehive;miel;0.3113;m;;
+beetroot;culture;0.04883;m;;
+beetroot_seeds;culture;0.0293;m;;
+beetroot_soup;culture;0.2967;m;;
+bell;bell;35;m;;
+big_dripleaf;herbes et lianes;0.08289;m;;
+birch_boat;bouleau;0.025;m;;
+birch_button;bouleau;0.005;m;;
+birch_chest_boat;bouleau;0.065;m;;
+birch_door;bouleau;0.01;m;;
+birch_fence;bouleau;0.008333;m;;
+birch_fence_gate;bouleau;0.02;m;;
+birch_hanging_sign;bouleau;0.06874;m;;
+birch_leaves;bouleau;0.01;m;;
+birch_log;bouleau;0.02;m;;
+birch_planks;bouleau;0.005;m;;
+birch_pressure_plate;bouleau;0.01;m;;
+birch_sapling;bouleau;0.02877;m;;
+birch_shelf;bouleau;0.028;m;;
+birch_sign;bouleau;0.01083;m;;
+birch_slab;bouleau;0.0025;m;;
+birch_stairs;bouleau;0.0075;m;;
+birch_trapdoor;bouleau;0.015;m;;
+birch_wood;bouleau;0.02667;m;;
+black_banner;bannière;0.3776;m;;
+black_bed;lit;0.2025;m;;
+black_bundle;sac;0.1765;m;;
+black_candle;bougie;0.2012;m;;
+black_carpet;laine;0.04167;m;;
+black_concrete;béton;0.0491;m;;
+black_concrete_powder;béton;0.0241;m;;
+black_concrete_slab;béton;0.02455;m;;
+black_concrete_stairs;béton;0.0491;m;;
+black_cushion;coussin;0.125;m;;
+black_dye;colorant;0.03907;m;;
+black_glazed_terracotta;terres cuites;0.05161;m;;
+black_harness;harnais;0.325;m;;
+black_shulker_box;shulker;17.49;m;;
+black_stained_glass;verre;0.03254;m;;
+black_stained_glass_pane;verre;0.0122;m;;
+black_terracotta;terres cuites;0.04161;m;;
+black_wool;laine;0.06251;m;;
+black_wool_slab;laine;0.03125;m;;
+black_wool_stairs;laine;0.06251;m;;
+blackstone;pierre noire;0.03673;m;;
+blackstone_slab;pierre noire;0.01836;m;;
+blackstone_stairs;pierre noire;0.03673;m;;
+blackstone_wall;pierre noire;0.03673;m;;
+blade_pottery_sherd;tesson de poterie;16.46;m;;
+blast_furnace;blast_furnace;0.67;m;;
+blaze_powder;blaze;0.15;m;;
+blaze_rod;blaze;0.3;m;;
+blue_banner;bannière;0.3592;m;;
+blue_bed;lit;0.1934;m;;
+blue_bundle;sac;0.1735;m;;
+blue_candle;bougie;0.1981;m;;
+blue_carpet;laine;0.03964;m;;
+blue_concrete;béton;0.04871;m;;
+blue_concrete_powder;béton;0.02371;m;;
+blue_concrete_slab;béton;0.02436;m;;
+blue_concrete_stairs;béton;0.04871;m;;
+blue_cushion;coussin;0.1189;m;;
+blue_dye;colorant;0.03602;m;;
+blue_egg;œuf;0.04322;m;;
+blue_glazed_terracotta;terres cuites;0.05123;m;;
+blue_harness;harnais;0.322;m;;
+blue_ice;glace;0.972;m;;
+blue_orchid;fleur;0.03984;m;;
+blue_shulker_box;shulker;17.49;m;;
+blue_stained_glass;verre;0.03215;m;;
+blue_stained_glass_pane;verre;0.01206;m;;
+blue_terracotta;terres cuites;0.04123;m;;
+blue_wool;laine;0.05945;m;;
+blue_wool_slab;laine;0.02973;m;;
+blue_wool_stairs;laine;0.05945;m;;
+bolt_armor_trim_smithing_template;modèle de forge;30;m;Modèle de forge (bolt);
+bone;os;0.05859;m;;
+bone_block;os;0.1758;m;;
+bone_meal;os;0.01953;m;;
+book;livre;0.116;m;;
+bookshelf;livre;0.3779;m;;
+bordure_indented_banner_pattern;motif de bannière;0.05547;m;Motif de bannière (bordure indented);
+bow;bow;0.2126;m;;
+bowl;bowl;0.00375;m;;
+brain_coral;corail;0.1245;m;;
+brain_coral_block;corail;0.4981;m;;
+brain_coral_fan;corail;0.1245;m;;
+bread;culture;0.1465;m;;
+breeze_rod;breeze;0.3;m;;
+brewer_pottery_sherd;tesson de poterie;16.46;m;;
+brewing_stand;brewing_stand;0.33;m;;
+brick;briques;0.02;m;;
+brick_slab;briques;0.04;m;;
+brick_stairs;briques;0.08;m;;
+brick_wall;briques;0.08;m;;
+bricks;briques;0.08;m;;
+brown_banner;bannière;0.4424;m;;
+brown_bed;lit;0.235;m;;
+brown_bundle;sac;0.1873;m;;
+brown_candle;bougie;0.212;m;;
+brown_carpet;laine;0.04888;m;;
+brown_concrete;béton;0.05045;m;;
+brown_concrete_powder;béton;0.02545;m;;
+brown_concrete_slab;béton;0.02522;m;;
+brown_concrete_stairs;béton;0.05045;m;;
+brown_cushion;coussin;0.1466;m;;
+brown_dye;colorant;0.04988;m;;
+brown_egg;œuf;0.04322;m;;
+brown_glazed_terracotta;terres cuites;0.05296;m;;
+brown_harness;harnais;0.3359;m;;
+brown_mushroom;champignon;0.05859;m;;
+brown_mushroom_block;champignon;0.06493;m;;
+brown_shulker_box;shulker;17.5;m;;
+brown_stained_glass;verre;0.03389;m;;
+brown_stained_glass_pane;verre;0.01271;m;;
+brown_terracotta;terres cuites;0.04296;m;;
+brown_wool;laine;0.07332;m;;
+brown_wool_slab;laine;0.03666;m;;
+brown_wool_stairs;laine;0.07332;m;;
+brush;brush;0.05656;m;;
+bubble_coral;corail;0.1245;m;;
+bubble_coral_block;corail;0.4981;m;;
+bubble_coral_fan;corail;0.1245;m;;
+bucket;seau;0.3;m;;
+budding_amethyst;améthyste;250;m;;
+bundle;sac;0.1374;m;;
+buried_ancient_city_map;carte au trésor;1.999;-;;
+buried_mineshaft_map;carte au trésor;1.999;-;;
+buried_treasure_map;carte au trésor;30;-;;
+buried_trial_chambers_map;carte au trésor;1.999;-;;
+burn_pottery_sherd;tesson de poterie;16.46;m;;
+bush;herbes et lianes;0.03386;m;;
+cactus;culture;0.02344;m;;
+cactus_flower;fleur;0.05518;m;;
+cake;cake;0.5055;m;;
+calcite;calcite;0.04689;m;;
+calibrated_sculk_sensor;sculk;1.47;m;;
+campfire;torche;0.1175;m;;
+candle;bougie;0.1621;m;;
+carrot;culture;0.0293;m;;
+carrot_on_a_stick;carrot_on_a_stick;0.1735;m;;
+cartography_table;cartography_table;0.05125;m;;
+carved_pumpkin;culture;0.02344;m;;
+cauldron;cauldron;0.7;m;;
+chainmail_boots;cotte de mailles;1.685;m;;
+chainmail_chestplate;cotte de mailles;1.685;m;;
+chainmail_helmet;cotte de mailles;1.685;m;;
+chainmail_leggings;cotte de mailles;1.685;m;;
+charcoal;charbon;0.03;m;;
+cherry_boat;cerisier;0.0625;m;;
+cherry_button;cerisier;0.0125;m;;
+cherry_chest_boat;cerisier;0.1025;m;;
+cherry_door;cerisier;0.025;m;;
+cherry_fence;cerisier;0.01833;m;;
+cherry_fence_gate;cerisier;0.035;m;;
+cherry_hanging_sign;cerisier;0.09874;m;;
+cherry_leaves;cerisier;0.025;m;;
+cherry_log;cerisier;0.05;m;;
+cherry_planks;cerisier;0.0125;m;;
+cherry_pressure_plate;cerisier;0.025;m;;
+cherry_sapling;cerisier;0.07641;m;;
+cherry_shelf;cerisier;0.058;m;;
+cherry_sign;cerisier;0.02583;m;;
+cherry_slab;cerisier;0.00625;m;;
+cherry_stairs;cerisier;0.01875;m;;
+cherry_trapdoor;cerisier;0.0375;m;;
+cherry_wood;cerisier;0.06667;m;;
+chest;chest;0.04;m;;
+chest_minecart;rails et wagonnets;0.54;m;;
+chicken;viande;0.03;m;;
+chipped_anvil;enclume;2;m;;
+chiseled_bookshelf;livre;0.0375;m;;
+chiseled_cinnabar;cinabre;0.07641;m;;
+chiseled_copper;cuivre;0.135;m;;
+chiseled_deepslate;ardoise;0.02254;m;;
+chiseled_nether_bricks;briques du Nether;0.072;m;;
+chiseled_polished_blackstone;pierre noire;0.03673;m;;
+chiseled_quartz_block;quartz;0.08;m;;
+chiseled_red_sandstone;grès rouge;0.1061;m;;
+chiseled_resin_bricks;résine;0.5804;m;;
+chiseled_sandstone;grès;0.07061;m;;
+chiseled_stone_bricks;pierre;0.02;m;;
+chiseled_sulfur;soufre;0.07641;m;;
+chiseled_tuff;tuf;0.02445;m;;
+chiseled_tuff_bricks;tuf;0.02445;m;;
+chorus_flower;chorus;0.5848;m;;
+chorus_fruit;chorus;0.06;m;;
+cinnabar;cinabre;0.07641;m;;
+cinnabar_brick_slab;cinabre;0.03821;m;;
+cinnabar_brick_stairs;cinabre;0.07641;m;;
+cinnabar_brick_wall;cinabre;0.07641;m;;
+cinnabar_bricks;cinabre;0.07641;m;;
+cinnabar_slab;cinabre;0.03821;m;;
+cinnabar_stairs;cinabre;0.07641;m;;
+cinnabar_wall;cinabre;0.07641;m;;
+clay;argile;0.04;m;;
+clay_ball;argile;0.01;m;;
+clock;clock;1.7;m;;
+closed_eyeblossom;fleur;0.1058;m;;
+coal;charbon;0.05;m;;
+coal_block;charbon;0.45;m;;
+coal_ore;charbon;0.09087;m;;
+coarse_dirt;terres;0.02254;m;;
+coast_armor_trim_smithing_template;modèle de forge;30;m;Modèle de forge (coast);
+cobbled_deepslate;ardoise;0.02254;m;;
+cobbled_deepslate_slab;ardoise;0.01127;m;;
+cobbled_deepslate_stairs;ardoise;0.02254;m;;
+cobbled_deepslate_wall;ardoise;0.02254;m;;
+cobblestone;pierre;0.01;m;;
+cobblestone_slab;pierre;0.005;m;;
+cobblestone_stairs;pierre;0.01;m;;
+cobblestone_wall;pierre;0.01;m;;
+cobweb;ficelle;0.1466;m;;
+cocoa_beans;culture;0.05859;m;;
+cod;poisson;0.04322;m;;
+cod_bucket;seau;0.3313;m;;
+comparator;redstone;0.3875;m;;
+compass;compass;0.5;m;;
+composter;composter;0.0175;m;;
+conduit;mer;44.98;m;;
+cooked_beef;viande;0.04;m;;
+cooked_chicken;viande;0.04;m;;
+cooked_cod;poisson;0.05322;m;;
+cooked_mutton;viande;0.04;m;;
+cooked_porkchop;viande;0.04;m;;
+cooked_rabbit;viande;0.04;m;;
+cooked_salmon;poisson;0.05322;m;;
+cookie;culture;0.01953;m;;
+copper_axe;cuivre;0.05;m;;
+copper_bars;cuivre;0.005625;m;;
+copper_block;cuivre;0.135;m;;
+copper_boots;cuivre;0.06;m;;
+copper_bulb;cuivre;0.2013;m;;
+copper_chain;cuivre;0.01833;m;;
+copper_chest;cuivre;0.16;m;;
+copper_chestplate;cuivre;0.12;m;;
+copper_door;cuivre;0.03;m;;
+copper_golem_statue;cuivre;0.1584;m;;
+copper_grate;cuivre;0.135;m;;
+copper_helmet;cuivre;0.075;m;;
+copper_hoe;cuivre;0.035;m;;
+copper_horse_armor;cuivre;2.151;m;;
+copper_ingot;cuivre;0.015;m;;
+copper_lantern;cuivre;0.02687;m;;
+copper_leggings;cuivre;0.105;m;;
+copper_nautilus_armor;cuivre;4.475;m;;
+copper_nugget;cuivre;0.001667;m;;
+copper_ore;cuivre;0.02;m;;
+copper_pickaxe;cuivre;0.05;m;;
+copper_shovel;cuivre;0.02;m;;
+copper_spear;cuivre;0.02;m;;
+copper_sword;cuivre;0.0325;m;;
+copper_torch;cuivre;0.01354;m;;
+copper_trapdoor;cuivre;0.045;m;;
+cornflower;fleur;0.03984;m;;
+cracked_deepslate_bricks;ardoise;0.03254;m;;
+cracked_deepslate_tiles;ardoise;0.03254;m;;
+cracked_nether_bricks;briques du Nether;0.082;m;;
+cracked_polished_blackstone_bricks;pierre noire;0.04673;m;;
+cracked_stone_bricks;pierre;0.03;m;;
+crafter;redstone;0.89;m;;
+crafting_table;crafting_table;0.02;m;;
+creaking_heart;creaking_heart;1.316;m;;
+creeper_banner_pattern;motif de bannière;29.17;m;Motif de bannière (creeper);
+creeper_head;tête;29.15;m;;
+crimson_button;carmin;0.006924;m;;
+crimson_door;carmin;0.01385;m;;
+crimson_fence;carmin;0.0109;m;;
+crimson_fence_gate;carmin;0.02385;m;;
+crimson_fungus;carmin;0.07044;m;;
+crimson_hanging_sign;carmin;0.07644;m;;
+crimson_hyphae;carmin;0.03693;m;;
+crimson_nylium;carmin;0.08992;m;;
+crimson_planks;carmin;0.006924;m;;
+crimson_pressure_plate;carmin;0.01385;m;;
+crimson_roots;carmin;0.05518;m;;
+crimson_shelf;carmin;0.0357;m;;
+crimson_sign;carmin;0.01468;m;;
+crimson_slab;carmin;0.003462;m;;
+crimson_stairs;carmin;0.01039;m;;
+crimson_stem;carmin;0.0277;m;;
+crimson_trapdoor;carmin;0.02077;m;;
+crossbow;crossbow;0.298;m;;
+crying_obsidian;obsidienne;0.3125;m;;
+cut_copper;cuivre;0.135;m;;
+cut_copper_slab;cuivre;0.0675;m;;
+cut_copper_stairs;cuivre;0.135;m;;
+cut_red_sandstone;grès rouge;0.1061;m;;
+cut_red_sandstone_slab;grès rouge;0.05304;m;;
+cut_sandstone;grès;0.07061;m;;
+cut_sandstone_slab;grès;0.0353;m;;
+cyan_banner;bannière;0.3423;m;;
+cyan_bed;lit;0.1849;m;;
+cyan_bundle;sac;0.1706;m;;
+cyan_candle;bougie;0.1953;m;;
+cyan_carpet;laine;0.03776;m;;
+cyan_concrete;béton;0.04836;m;;
+cyan_concrete_powder;béton;0.02336;m;;
+cyan_concrete_slab;béton;0.02418;m;;
+cyan_concrete_stairs;béton;0.04836;m;;
+cyan_cushion;coussin;0.1133;m;;
+cyan_dye;colorant;0.0332;m;;
+cyan_glazed_terracotta;terres cuites;0.05088;m;;
+cyan_harness;harnais;0.3192;m;;
+cyan_shulker_box;shulker;17.48;m;;
+cyan_stained_glass;verre;0.0318;m;;
+cyan_stained_glass_pane;verre;0.01193;m;;
+cyan_terracotta;terres cuites;0.04088;m;;
+cyan_wool;laine;0.05664;m;;
+cyan_wool_slab;laine;0.02832;m;;
+cyan_wool_stairs;laine;0.05664;m;;
+damaged_anvil;enclume;1;m;;
+dandelion;fleur;0.02037;m;;
+danger_pottery_sherd;tesson de poterie;16.46;m;;
+dark_oak_boat;chêne noir;0.02712;m;;
+dark_oak_button;chêne noir;0.005424;m;;
+dark_oak_chest_boat;chêne noir;0.06712;m;;
+dark_oak_door;chêne noir;0.01085;m;;
+dark_oak_fence;chêne noir;0.008899;m;;
+dark_oak_fence_gate;chêne noir;0.02085;m;;
+dark_oak_hanging_sign;chêne noir;0.07044;m;;
+dark_oak_leaves;chêne noir;0.01085;m;;
+dark_oak_log;chêne noir;0.0217;m;;
+dark_oak_planks;chêne noir;0.005424;m;;
+dark_oak_pressure_plate;chêne noir;0.01085;m;;
+dark_oak_sapling;chêne noir;0.03386;m;;
+dark_oak_shelf;chêne noir;0.0297;m;;
+dark_oak_sign;chêne noir;0.01168;m;;
+dark_oak_slab;chêne noir;0.002712;m;;
+dark_oak_stairs;chêne noir;0.008136;m;;
+dark_oak_trapdoor;chêne noir;0.01627;m;;
+dark_oak_wood;chêne noir;0.02893;m;;
+dark_prismarine;prismarine;0.1111;m;;
+dark_prismarine_slab;prismarine;0.05554;m;;
+dark_prismarine_stairs;prismarine;0.1111;m;;
+daylight_detector;redstone;0.1505;m;;
+dead_brain_coral;corail;0.08992;m;;
+dead_brain_coral_block;corail;0.08992;m;;
+dead_brain_coral_fan;corail;0.08992;m;;
+dead_bubble_coral;corail;0.08992;m;;
+dead_bubble_coral_block;corail;0.08992;m;;
+dead_bubble_coral_fan;corail;0.08992;m;;
+dead_bush;herbes et lianes;0.03386;m;;
+dead_fire_coral;corail;0.08992;m;;
+dead_fire_coral_block;corail;0.08992;m;;
+dead_fire_coral_fan;corail;0.08992;m;;
+dead_horn_coral;corail;0.08992;m;;
+dead_horn_coral_block;corail;0.08992;m;;
+dead_horn_coral_fan;corail;0.08992;m;;
+dead_tube_coral;corail;0.08992;m;;
+dead_tube_coral_block;corail;0.08992;m;;
+dead_tube_coral_fan;corail;0.08992;m;;
+decorated_pot;poterie;0.08;m;;
+deepslate;ardoise;0.03254;m;;
+deepslate_brick_slab;ardoise;0.01127;m;;
+deepslate_brick_stairs;ardoise;0.02254;m;;
+deepslate_brick_wall;ardoise;0.02254;m;;
+deepslate_bricks;ardoise;0.02254;m;;
+deepslate_coal_ore;charbon;2.531;m;;
+deepslate_copper_ore;cuivre;0.02;m;;
+deepslate_diamond_ore;diamant;6.079;m;;
+deepslate_emerald_ore;émeraude;1339;m;;
+deepslate_gold_ore;or;1.17;m;;
+deepslate_iron_ore;fer;0.27;m;;
+deepslate_lapis_ore;lapis;1.106;m;;
+deepslate_redstone_ore;redstone;0.5476;m;;
+deepslate_tile_slab;ardoise;0.01127;m;;
+deepslate_tile_stairs;ardoise;0.02254;m;;
+deepslate_tile_wall;ardoise;0.02254;m;;
+deepslate_tiles;ardoise;0.02254;m;;
+desert_pyramid_map;carte au trésor;1.999;-;;
+desert_village_map;carte au trésor;1.999;-;;
+detector_rail;rails et wagonnets;0.1233;m;;
+diamond;diamant;4;m;;
+diamond_axe;diamant;12.01;m;;
+diamond_block;diamant;36;m;;
+diamond_boots;diamant;16;m;;
+diamond_chestplate;diamant;32;m;;
+diamond_helmet;diamant;20;m;;
+diamond_hoe;diamant;8.005;m;;
+diamond_horse_armor;diamant;10.96;m;;
+diamond_leggings;diamant;28;m;;
+diamond_nautilus_armor;diamant;22.8;m;;
+diamond_ore;diamant;6.079;m;;
+diamond_pickaxe;diamant;12.01;m;;
+diamond_shovel;diamant;4.005;m;;
+diamond_spear;diamant;4.005;m;;
+diamond_sword;diamant;8.002;m;;
+diorite;diorite;0.01915;m;;
+diorite_slab;diorite;0.009575;m;;
+diorite_stairs;diorite;0.01915;m;;
+diorite_wall;diorite;0.01915;m;;
+dirt;terres;0.01;m;;
+disc_fragment_5;disque;15;m;;
+dispenser;redstone;0.3826;m;;
+dragon_breath;dragon_breath;1.2;m;;
+dragon_egg;dragon_egg;150000;m;;
+dragon_head;tête;148.3;m;;
+dried_ghast;ghast;5.713;m;;
+dried_kelp;culture;0.02563;m;;
+dried_kelp_block;culture;0.2306;m;;
+dripstone_block;spéléothème;0.02656;m;;
+dropper;redstone;0.17;m;;
+dune_armor_trim_smithing_template;modèle de forge;30;m;Modèle de forge (dune);
+echo_shard;sculk;29;m;;
+egg;œuf;0.03125;m;;
+elytra;elytra;480;m;;
+emerald;émeraude;1;-;;
+emerald_block;émeraude;9;-;;
+emerald_ore;émeraude;1.579;m;;
+enchanted_book;livre enchanté;6;-;;
+enchanted_book(tresor);livre enchanté;45;-;Livre enchanté (enchantement de trésor);
+enchanted_golden_apple;pomme;334.1;m;;
+enchanting_table;livre;8.516;m;;
+end_crystal;ender;2.544;m;;
+end_rod;pierre de l'End;0.0925;m;;
+end_stone;pierre de l'End;0.02344;m;;
+end_stone_brick_slab;pierre de l'End;0.01172;m;;
+end_stone_brick_stairs;pierre de l'End;0.02344;m;;
+end_stone_brick_wall;pierre de l'End;0.02344;m;;
+end_stone_bricks;pierre de l'End;0.02344;m;;
+ender_chest;ender;1.45;m;;
+ender_eye;ender;0.65;m;;
+ender_pearl;ender;0.5;m;;
+experience_bottle;expérience;0.1111;m;;
+explorer_pottery_sherd;tesson de poterie;16.46;m;;
+exposed_chiseled_copper;cuivre;0.235;m;;
+exposed_copper;cuivre;0.235;m;;
+exposed_copper_bars;cuivre;0.03562;m;;
+exposed_copper_bulb;cuivre;0.2313;m;;
+exposed_copper_chain;cuivre;0.04833;m;;
+exposed_copper_chest;cuivre;0.19;m;;
+exposed_copper_door;cuivre;0.06;m;;
+exposed_copper_golem_statue;cuivre;0.1884;m;;
+exposed_copper_grate;cuivre;0.235;m;;
+exposed_copper_lantern;cuivre;0.05687;m;;
+exposed_copper_trapdoor;cuivre;0.075;m;;
+exposed_cut_copper;cuivre;0.235;m;;
+exposed_cut_copper_slab;cuivre;0.1175;m;;
+exposed_cut_copper_stairs;cuivre;0.235;m;;
+exposed_lightning_rod;cuivre;0.075;m;;
+eye_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (eye);
+feather;feather;0.03906;m;;
+fermented_spider_eye;fermented_spider_eye;0.1719;m;;
+fern;herbes et lianes;0.02254;m;;
+field_masoned_banner_pattern;motif de bannière;0.09563;m;Motif de bannière (field masoned);
+filled_map;carte;0.1406;-;;
+fire_charge;poudre à canon;0.109;m;;
+fire_coral;corail;0.1245;m;;
+fire_coral_block;corail;0.4981;m;;
+fire_coral_fan;corail;0.1245;m;;
+firefly_bush;herbes et lianes;0.07641;m;;
+firework_rocket;poudre à canon;0.04753;m;;
+firework_star;poudre à canon;0.1491;m;;
+fishing_rod;fishing_rod;0.1442;m;;
+fletching_table;fletching_table;0.07754;m;;
+flint;gravier;0.02877;m;;
+flint_and_steel;flint_and_steel;0.1288;m;;
+flow_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (flow);
+flow_banner_pattern;motif de bannière;12.9;m;Motif de bannière (flow);
+flow_pottery_sherd;tesson de poterie;5.713;m;;
+flower_banner_pattern;motif de bannière;0.05547;m;Motif de bannière (flower);
+flower_pot;briques;0.06;m;;
+flowering_azalea;herbes et lianes;0.05086;m;;
+flowering_azalea_leaves;herbes et lianes;0.01;m;;
+friend_pottery_sherd;tesson de poterie;16.46;m;;
+furnace;pierre;0.08;m;;
+furnace_minecart;rails et wagonnets;0.58;m;;
+ghast_tear;ghast;1.7;m;;
+gilded_blackstone;pierre noire;8.584;m;;
+glass;verre;0.02765;m;;
+glass_bottle;verre;0.02765;m;;
+glass_pane;verre;0.01037;m;;
+glistering_melon_slice;culture;0.3681;m;;
+glow_berries;culture;0.06493;m;;
+glow_ink_sac;encre;0.07494;m;;
+glow_item_frame;cadre;0.164;m;;
+glow_lichen;herbes et lianes;0.05086;m;;
+glowstone;pierre lumineuse;0.3056;m;;
+glowstone_dust;pierre lumineuse;0.07641;m;;
+goat_horn;corne;3;m;;
+gold_block;or;3.6;m;;
+gold_ingot;or;0.4;m;;
+gold_nugget;or;0.04444;m;;
+gold_ore;or;1.17;m;;
+golden_apple;pomme;3.24;m;;
+golden_axe;or;1.205;m;;
+golden_boots;or;1.6;m;;
+golden_carrot;culture;0.3849;m;;
+golden_chestplate;or;3.2;m;;
+golden_dandelion;fleur;0.3759;m;;
+golden_helmet;or;2;m;;
+golden_hoe;or;0.805;m;;
+golden_horse_armor;or;3.232;m;;
+golden_leggings;or;2.8;m;;
+golden_nautilus_armor;or;4.475;m;;
+golden_pickaxe;or;1.205;m;;
+golden_shovel;or;0.405;m;;
+golden_spear;or;0.405;m;;
+golden_sword;or;0.8025;m;;
+granite;granite;0.01915;m;;
+granite_slab;granite;0.009575;m;;
+granite_stairs;granite;0.01915;m;;
+granite_wall;granite;0.01915;m;;
+grass_block;terres;0.02445;m;;
+gravel;gravier;0.02077;m;;
+gray_banner;bannière;0.3423;m;;
+gray_bed;lit;0.1849;m;;
+gray_bundle;sac;0.1706;m;;
+gray_candle;bougie;0.1953;m;;
+gray_carpet;laine;0.03776;m;;
+gray_concrete;béton;0.04836;m;;
+gray_concrete_powder;béton;0.02336;m;;
+gray_concrete_slab;béton;0.02418;m;;
+gray_concrete_stairs;béton;0.04836;m;;
+gray_cushion;coussin;0.1133;m;;
+gray_dye;colorant;0.0332;m;;
+gray_glazed_terracotta;terres cuites;0.05088;m;;
+gray_harness;harnais;0.3192;m;;
+gray_shulker_box;shulker;17.48;m;;
+gray_stained_glass;verre;0.0318;m;;
+gray_stained_glass_pane;verre;0.01193;m;;
+gray_terracotta;terres cuites;0.04088;m;;
+gray_wool;laine;0.05664;m;;
+gray_wool_slab;laine;0.02832;m;;
+gray_wool_stairs;laine;0.05664;m;;
+green_banner;bannière;0.3438;m;;
+green_bed;lit;0.1856;m;;
+green_bundle;sac;0.1709;m;;
+green_candle;bougie;0.1955;m;;
+green_carpet;laine;0.03792;m;;
+green_concrete;béton;0.04839;m;;
+green_concrete_powder;béton;0.02339;m;;
+green_concrete_slab;béton;0.0242;m;;
+green_concrete_stairs;béton;0.04839;m;;
+green_cushion;coussin;0.1138;m;;
+green_dye;colorant;0.03344;m;;
+green_glazed_terracotta;terres cuites;0.05091;m;;
+green_harness;harnais;0.3194;m;;
+green_shulker_box;shulker;17.48;m;;
+green_stained_glass;verre;0.03183;m;;
+green_stained_glass_pane;verre;0.01194;m;;
+green_terracotta;terres cuites;0.04091;m;;
+green_wool;laine;0.05688;m;;
+green_wool_slab;laine;0.02844;m;;
+green_wool_stairs;laine;0.05688;m;;
+grindstone;grindstone;0.025;m;;
+gunpowder;poudre à canon;0.127;m;;
+guster_banner_pattern;motif de bannière;12.9;m;Motif de bannière (guster);
+guster_pottery_sherd;tesson de poterie;5.713;m;;
+hanging_roots;herbes et lianes;0.05086;m;;
+hay_block;culture;0.4395;m;;
+heart_of_the_sea;mer;40;m;;
+heart_pottery_sherd;tesson de poterie;16.46;m;;
+heartbreak_pottery_sherd;tesson de poterie;16.46;m;;
+heavy_core;masse;385.6;m;;
+heavy_weighted_pressure_plate;redstone;0.2;m;;
+honey_block;miel;0.375;m;;
+honey_bottle;miel;0.1214;m;;
+honeycomb;miel;0.09375;m;;
+honeycomb_block;miel;0.375;m;;
+hopper;redstone;0.54;m;;
+hopper_minecart;rails et wagonnets;1.04;m;;
+horn_coral;corail;0.1245;m;;
+horn_coral_block;corail;0.4981;m;;
+horn_coral_fan;corail;0.1245;m;;
+host_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (host);
+howl_pottery_sherd;tesson de poterie;16.46;m;;
+ice;glace;0.012;m;;
+ink_sac;encre;0.04598;m;;
+iron_axe;fer;0.305;m;;
+iron_bars;fer;0.0375;m;;
+iron_block;fer;0.9;m;;
+iron_boots;fer;0.4;m;;
+iron_chain;fer;0.1222;m;;
+iron_chestplate;fer;0.8;m;;
+iron_door;fer;0.2;m;;
+iron_helmet;fer;0.5;m;;
+iron_hoe;fer;0.205;m;;
+iron_horse_armor;fer;2.151;m;;
+iron_ingot;fer;0.1;m;;
+iron_leggings;fer;0.7;m;;
+iron_nautilus_armor;fer;4.475;m;;
+iron_nugget;fer;0.01111;m;;
+iron_ore;fer;0.27;m;;
+iron_pickaxe;fer;0.305;m;;
+iron_shovel;fer;0.105;m;;
+iron_spear;fer;0.105;m;;
+iron_sword;fer;0.2025;m;;
+iron_trapdoor;fer;0.4;m;;
+item_frame;cadre;0.08908;m;;
+jack_o_lantern;culture;0.03656;m;;
+jukebox;jukebox;4.04;m;;
+jungle_boat;acajou;0.03192;m;;
+jungle_button;acajou;0.006383;m;;
+jungle_chest_boat;acajou;0.07192;m;;
+jungle_door;acajou;0.01277;m;;
+jungle_fence;acajou;0.01018;m;;
+jungle_fence_gate;acajou;0.02277;m;;
+jungle_hanging_sign;acajou;0.07427;m;;
+jungle_leaves;acajou;0.01277;m;;
+jungle_log;acajou;0.02553;m;;
+jungle_planks;acajou;0.006383;m;;
+jungle_pressure_plate;acajou;0.01277;m;;
+jungle_pyramid_map;carte au trésor;1.999;-;;
+jungle_sapling;acajou;0.05086;m;;
+jungle_shelf;acajou;0.03353;m;;
+jungle_sign;acajou;0.0136;m;;
+jungle_slab;acajou;0.003192;m;;
+jungle_stairs;acajou;0.009575;m;;
+jungle_trapdoor;acajou;0.01915;m;;
+jungle_wood;acajou;0.03404;m;;
+kelp;culture;0.01562;m;;
+ladder;ladder;0.005833;m;;
+lantern;torche;0.102;m;;
+lapis_block;lapis;1.35;m;;
+lapis_lazuli;lapis;0.15;m;;
+lapis_ore;lapis;1.106;m;;
+large_amethyst_bud;améthyste;0.15;m;;
+large_fern;herbes et lianes;0.02254;m;;
+lava_bucket;seau;0.3797;m;;
+lead;lead;0.1709;m;;
+leaf_litter;herbes et lianes;0.03121;m;;
+leather;cuir;0.06908;m;;
+leather_boots;cuir;0.2763;m;;
+leather_chestplate;cuir;0.5526;m;;
+leather_helmet;cuir;0.3454;m;;
+leather_horse_armor;cuir;0.4835;m;;
+leather_leggings;cuir;0.4835;m;;
+lectern;livre;0.3879;m;;
+lever;redstone;0.0125;m;;
+light;light;0.4083;m;;
+light_blue_banner;bannière;0.3423;m;;
+light_blue_bed;lit;0.1849;m;;
+light_blue_bundle;sac;0.1706;m;;
+light_blue_candle;bougie;0.1953;m;;
+light_blue_carpet;laine;0.03776;m;;
+light_blue_concrete;béton;0.04836;m;;
+light_blue_concrete_powder;béton;0.02336;m;;
+light_blue_concrete_slab;béton;0.02418;m;;
+light_blue_concrete_stairs;béton;0.04836;m;;
+light_blue_cushion;coussin;0.1133;m;;
+light_blue_dye;colorant;0.0332;m;;
+light_blue_glazed_terracotta;terres cuites;0.05088;m;;
+light_blue_harness;harnais;0.3192;m;;
+light_blue_shulker_box;shulker;17.48;m;;
+light_blue_stained_glass;verre;0.0318;m;;
+light_blue_stained_glass_pane;verre;0.01193;m;;
+light_blue_terracotta;terres cuites;0.04088;m;;
+light_blue_wool;laine;0.05664;m;;
+light_blue_wool_slab;laine;0.02832;m;;
+light_blue_wool_stairs;laine;0.05664;m;;
+light_gray_banner;bannière;0.3423;m;;
+light_gray_bed;lit;0.1849;m;;
+light_gray_bundle;sac;0.1706;m;;
+light_gray_candle;bougie;0.1953;m;;
+light_gray_carpet;laine;0.03776;m;;
+light_gray_concrete;béton;0.04836;m;;
+light_gray_concrete_powder;béton;0.02336;m;;
+light_gray_concrete_slab;béton;0.02418;m;;
+light_gray_concrete_stairs;béton;0.04836;m;;
+light_gray_cushion;coussin;0.1133;m;;
+light_gray_dye;colorant;0.0332;m;;
+light_gray_glazed_terracotta;terres cuites;0.05088;m;;
+light_gray_harness;harnais;0.3192;m;;
+light_gray_shulker_box;shulker;17.48;m;;
+light_gray_stained_glass;verre;0.0318;m;;
+light_gray_stained_glass_pane;verre;0.01193;m;;
+light_gray_terracotta;terres cuites;0.04088;m;;
+light_gray_wool;laine;0.05664;m;;
+light_gray_wool_slab;laine;0.02832;m;;
+light_gray_wool_stairs;laine;0.05664;m;;
+light_weighted_pressure_plate;redstone;0.8;m;;
+lightning_rod;cuivre;0.045;m;;
+lilac;fleur;0.03673;m;;
+lily_of_the_valley;fleur;0.03984;m;;
+lily_pad;herbes et lianes;0.03984;m;;
+lime_banner;bannière;0.3423;m;;
+lime_bed;lit;0.1849;m;;
+lime_bundle;sac;0.1706;m;;
+lime_candle;bougie;0.1953;m;;
+lime_carpet;laine;0.03776;m;;
+lime_concrete;béton;0.04836;m;;
+lime_concrete_powder;béton;0.02336;m;;
+lime_concrete_slab;béton;0.02418;m;;
+lime_concrete_stairs;béton;0.04836;m;;
+lime_cushion;coussin;0.1133;m;;
+lime_dye;colorant;0.0332;m;;
+lime_glazed_terracotta;terres cuites;0.05088;m;;
+lime_harness;harnais;0.3192;m;;
+lime_shulker_box;shulker;17.48;m;;
+lime_stained_glass;verre;0.0318;m;;
+lime_stained_glass_pane;verre;0.01193;m;;
+lime_terracotta;terres cuites;0.04088;m;;
+lime_wool;laine;0.05664;m;;
+lime_wool_slab;laine;0.02832;m;;
+lime_wool_stairs;laine;0.05664;m;;
+lingering_potion;potion;0.9423;-;;
+lodestone;lodestone;0.26;m;;
+loom;loom;0.1467;m;;
+mace;masse;385.9;m;;
+magenta_banner;bannière;0.3423;m;;
+magenta_bed;lit;0.1849;m;;
+magenta_bundle;sac;0.1706;m;;
+magenta_candle;bougie;0.1953;m;;
+magenta_carpet;laine;0.03776;m;;
+magenta_concrete;béton;0.04836;m;;
+magenta_concrete_powder;béton;0.02336;m;;
+magenta_concrete_slab;béton;0.02418;m;;
+magenta_concrete_stairs;béton;0.04836;m;;
+magenta_cushion;coussin;0.1133;m;;
+magenta_dye;colorant;0.0332;m;;
+magenta_glazed_terracotta;terres cuites;0.05088;m;;
+magenta_harness;harnais;0.3192;m;;
+magenta_shulker_box;shulker;17.48;m;;
+magenta_stained_glass;verre;0.0318;m;;
+magenta_stained_glass_pane;verre;0.01193;m;;
+magenta_terracotta;terres cuites;0.04088;m;;
+magenta_wool;laine;0.05664;m;;
+magenta_wool_slab;laine;0.02832;m;;
+magenta_wool_stairs;laine;0.05664;m;;
+magma_block;magma;0.03984;m;;
+magma_cream;blaze;0.1691;m;;
+mangrove_boat;palétuvier;0.0625;m;;
+mangrove_button;palétuvier;0.0125;m;;
+mangrove_chest_boat;palétuvier;0.1025;m;;
+mangrove_door;palétuvier;0.025;m;;
+mangrove_fence;palétuvier;0.01833;m;;
+mangrove_fence_gate;palétuvier;0.035;m;;
+mangrove_hanging_sign;palétuvier;0.09874;m;;
+mangrove_leaves;palétuvier;0.025;m;;
+mangrove_log;palétuvier;0.05;m;;
+mangrove_planks;palétuvier;0.0125;m;;
+mangrove_pressure_plate;palétuvier;0.025;m;;
+mangrove_propagule;palétuvier;0.05986;m;;
+mangrove_roots;palétuvier;0.05086;m;;
+mangrove_shelf;palétuvier;0.058;m;;
+mangrove_sign;palétuvier;0.02583;m;;
+mangrove_slab;palétuvier;0.00625;m;;
+mangrove_stairs;palétuvier;0.01875;m;;
+mangrove_trapdoor;palétuvier;0.0375;m;;
+mangrove_wood;palétuvier;0.06667;m;;
+map;carte;0.1406;m;;
+medium_amethyst_bud;améthyste;0.1;m;;
+melon;culture;0.1125;m;;
+melon_seeds;culture;0.0125;m;;
+melon_slice;culture;0.0125;m;;
+milk_bucket;seau;0.3488;m;;
+minecart;rails et wagonnets;0.5;m;;
+miner_pottery_sherd;tesson de poterie;16.46;m;;
+mojang_banner_pattern;motif de bannière;334.1;m;Motif de bannière (mojang);
+moss_block;herbes et lianes;0.03126;m;;
+moss_carpet;herbes et lianes;0.02084;m;;
+mossy_cobblestone;pierre;0.04984;m;;
+mossy_cobblestone_slab;pierre;0.02492;m;;
+mossy_cobblestone_stairs;pierre;0.04984;m;;
+mossy_cobblestone_wall;pierre;0.04984;m;;
+mossy_stone_brick_slab;pierre;0.02992;m;;
+mossy_stone_brick_stairs;pierre;0.05984;m;;
+mossy_stone_brick_wall;pierre;0.05984;m;;
+mossy_stone_bricks;pierre;0.05984;m;;
+mourner_pottery_sherd;tesson de poterie;16.46;m;;
+mud;boue;0.02877;m;;
+mud_brick_slab;boue;0.0388;m;;
+mud_brick_stairs;boue;0.0776;m;;
+mud_brick_wall;boue;0.0776;m;;
+mud_bricks;boue;0.0776;m;;
+muddy_mangrove_roots;palétuvier;0.07963;m;;
+mushroom_stem;champignon;0.06493;m;;
+mushroom_stew;champignon;0.1209;m;;
+music_disc_11;disque;5.713;m;Disque (11);
+music_disc_13;disque;5.713;m;Disque (13);
+music_disc_5;disque;135;m;Disque (5);
+music_disc_blocks;disque;5.713;m;Disque (blocks);
+music_disc_bounce;disque;22.8;m;Disque (bounce);
+music_disc_cat;disque;5.713;m;Disque (cat);
+music_disc_chirp;disque;5.713;m;Disque (chirp);
+music_disc_creator;disque;71.26;m;Disque (creator);
+music_disc_creator_music_box;disque;22.8;m;Disque (creator music box);
+music_disc_far;disque;5.713;m;Disque (far);
+music_disc_lava_chicken;disque;65.69;m;Disque (lava chicken);
+music_disc_mall;disque;5.713;m;Disque (mall);
+music_disc_mellohi;disque;5.713;m;Disque (mellohi);
+music_disc_otherside;disque;43.73;m;Disque (otherside);
+music_disc_pigstep;disque;43.73;m;Disque (pigstep);
+music_disc_precipice;disque;22.8;m;Disque (precipice);
+music_disc_relic;disque;83.86;m;Disque (relic);
+music_disc_stal;disque;5.713;m;Disque (stal);
+music_disc_strad;disque;5.713;m;Disque (strad);
+music_disc_tears;disque;8.584;m;Disque (tears);
+music_disc_wait;disque;5.713;m;Disque (wait);
+music_disc_ward;disque;5.713;m;Disque (ward);
+mutton;viande;0.03;m;;
+mycelium;terres;0.3049;m;;
+name_tag;name_tag;0.01729;m;;
+nautilus_shell;mer;0.6221;m;;
+nether_brick;briques du Nether;0.018;m;;
+nether_brick_fence;briques du Nether;0.054;m;;
+nether_brick_slab;briques du Nether;0.036;m;;
+nether_brick_stairs;briques du Nether;0.072;m;;
+nether_brick_wall;briques du Nether;0.072;m;;
+nether_bricks;briques du Nether;0.072;m;;
+nether_gold_ore;or;0.4;m;;
+nether_quartz_ore;quartz;0.08556;m;;
+nether_sprouts;herbes et lianes;0.05518;m;;
+nether_star;étoile du Nether;13119;m;;
+nether_wart;verrue;0.07266;m;;
+nether_wart_block;verrue;0.05086;m;;
+netherite_axe;netherite;201.7;m;;
+netherite_block;netherite;1455;m;;
+netherite_boots;netherite;205.6;m;;
+netherite_chestplate;netherite;221.6;m;;
+netherite_helmet;netherite;209.6;m;;
+netherite_hoe;netherite;197.7;m;;
+netherite_horse_armor;netherite;200.6;m;;
+netherite_ingot;netherite;161.6;m;;
+netherite_leggings;netherite;217.6;m;;
+netherite_nautilus_armor;netherite;212.4;m;;
+netherite_pickaxe;netherite;201.7;m;;
+netherite_scrap;netherite;40.01;m;;
+netherite_shovel;netherite;193.7;m;;
+netherite_spear;netherite;193.7;m;;
+netherite_sword;netherite;197.7;m;;
+netherite_upgrade_smithing_template;modèle de forge;28.01;m;Modèle de forge (netherite upgrade);
+netherrack;netherrack;0.008;m;;
+note_block;redstone;0.14;m;;
+oak_boat;chêne;0.025;m;;
+oak_button;chêne;0.005;m;;
+oak_chest_boat;chêne;0.065;m;;
+oak_door;chêne;0.01;m;;
+oak_fence;chêne;0.008333;m;;
+oak_fence_gate;chêne;0.02;m;;
+oak_hanging_sign;chêne;0.06874;m;;
+oak_leaves;chêne;0.01;m;;
+oak_log;chêne;0.02;m;;
+oak_planks;chêne;0.005;m;;
+oak_pressure_plate;chêne;0.01;m;;
+oak_sapling;chêne;0.02877;m;;
+oak_shelf;chêne;0.028;m;;
+oak_sign;chêne;0.01083;m;;
+oak_slab;chêne;0.0025;m;;
+oak_stairs;chêne;0.0075;m;;
+oak_trapdoor;chêne;0.015;m;;
+oak_wood;chêne;0.02667;m;;
+observer;redstone;0.28;m;;
+obsidian;obsidienne;0.1;m;;
+ocean_monument_map;carte au trésor;1.999;-;;
+ochre_froglight;grenouille;0.08798;m;;
+ominous_bottle;clé d'épreuve;240;m;;
+ominous_trial_key;clé d'épreuve;40.01;m;;
+open_eyeblossom;fleur;0.1058;m;;
+orange_banner;bannière;0.3423;m;;
+orange_bed;lit;0.1849;m;;
+orange_bundle;sac;0.1706;m;;
+orange_candle;bougie;0.1953;m;;
+orange_carpet;laine;0.03776;m;;
+orange_concrete;béton;0.04836;m;;
+orange_concrete_powder;béton;0.02336;m;;
+orange_concrete_slab;béton;0.02418;m;;
+orange_concrete_stairs;béton;0.04836;m;;
+orange_cushion;coussin;0.1133;m;;
+orange_dye;colorant;0.0332;m;;
+orange_glazed_terracotta;terres cuites;0.05088;m;;
+orange_harness;harnais;0.3192;m;;
+orange_poplar_leaves;peuplier;0.02;m;;
+orange_shulker_box;shulker;17.48;m;;
+orange_stained_glass;verre;0.0318;m;;
+orange_stained_glass_pane;verre;0.01193;m;;
+orange_terracotta;terres cuites;0.04088;m;;
+orange_tulip;fleur;0.03984;m;;
+orange_wool;laine;0.05664;m;;
+orange_wool_slab;laine;0.02832;m;;
+orange_wool_stairs;laine;0.05664;m;;
+oxeye_daisy;fleur;0.03984;m;;
+oxidized_chiseled_copper;cuivre;0.435;m;;
+oxidized_copper;cuivre;0.435;m;;
+oxidized_copper_bars;cuivre;0.09563;m;;
+oxidized_copper_bulb;cuivre;0.2913;m;;
+oxidized_copper_chain;cuivre;0.1083;m;;
+oxidized_copper_chest;cuivre;0.25;m;;
+oxidized_copper_door;cuivre;0.12;m;;
+oxidized_copper_golem_statue;cuivre;0.2484;m;;
+oxidized_copper_grate;cuivre;0.435;m;;
+oxidized_copper_lantern;cuivre;0.1169;m;;
+oxidized_copper_trapdoor;cuivre;0.135;m;;
+oxidized_cut_copper;cuivre;0.435;m;;
+oxidized_cut_copper_slab;cuivre;0.2175;m;;
+oxidized_cut_copper_stairs;cuivre;0.435;m;;
+oxidized_lightning_rod;cuivre;0.135;m;;
+packed_ice;glace;0.108;m;;
+packed_mud;boue;0.0776;m;;
+painting;painting;0.04344;m;;
+pale_hanging_moss;herbes et lianes;0.08992;m;;
+pale_moss_block;herbes et lianes;0.08992;m;;
+pale_moss_carpet;herbes et lianes;0.05995;m;;
+pale_oak_boat;chêne pâle;0.0625;m;;
+pale_oak_button;chêne pâle;0.0125;m;;
+pale_oak_chest_boat;chêne pâle;0.1025;m;;
+pale_oak_door;chêne pâle;0.025;m;;
+pale_oak_fence;chêne pâle;0.01833;m;;
+pale_oak_fence_gate;chêne pâle;0.035;m;;
+pale_oak_hanging_sign;chêne pâle;0.09874;m;;
+pale_oak_leaves;chêne pâle;0.025;m;;
+pale_oak_log;chêne pâle;0.05;m;;
+pale_oak_planks;chêne pâle;0.0125;m;;
+pale_oak_pressure_plate;chêne pâle;0.025;m;;
+pale_oak_sapling;chêne pâle;0.08289;m;;
+pale_oak_shelf;chêne pâle;0.058;m;;
+pale_oak_sign;chêne pâle;0.02583;m;;
+pale_oak_slab;chêne pâle;0.00625;m;;
+pale_oak_stairs;chêne pâle;0.01875;m;;
+pale_oak_trapdoor;chêne pâle;0.0375;m;;
+pale_oak_wood;chêne pâle;0.06667;m;;
+paper;culture;0.01562;m;;
+pearlescent_froglight;grenouille;0.08798;m;;
+peony;fleur;0.03673;m;;
+phantom_membrane;phantom_membrane;0.2;m;;
+piglin_banner_pattern;motif de bannière;43.73;m;Motif de bannière (piglin);
+piglin_head;tête;107.2;m;;
+pink_banner;bannière;0.3423;m;;
+pink_bed;lit;0.1849;m;;
+pink_bundle;sac;0.1706;m;;
+pink_candle;bougie;0.1953;m;;
+pink_carpet;laine;0.03776;m;;
+pink_concrete;béton;0.04836;m;;
+pink_concrete_powder;béton;0.02336;m;;
+pink_concrete_slab;béton;0.02418;m;;
+pink_concrete_stairs;béton;0.04836;m;;
+pink_cushion;coussin;0.1133;m;;
+pink_dye;colorant;0.0332;m;;
+pink_glazed_terracotta;terres cuites;0.05088;m;;
+pink_harness;harnais;0.3192;m;;
+pink_petals;fleur;0.05986;m;;
+pink_shulker_box;shulker;17.48;m;;
+pink_stained_glass;verre;0.0318;m;;
+pink_stained_glass_pane;verre;0.01193;m;;
+pink_terracotta;terres cuites;0.04088;m;;
+pink_tulip;fleur;0.03984;m;;
+pink_wool;laine;0.05664;m;;
+pink_wool_slab;laine;0.02832;m;;
+pink_wool_stairs;laine;0.05664;m;;
+piston;redstone;0.255;m;;
+pitcher_plant;fleur;0.04406;m;;
+pitcher_pod;fleur;0.02203;m;;
+plains_village_map;carte au trésor;1.999;-;;
+plenty_pottery_sherd;tesson de poterie;16.46;m;;
+podzol;terres;0.05518;m;;
+pointed_dripstone;spéléothème;0.02656;m;;
+poisonous_potato;culture;0.05086;m;;
+polished_andesite;andésite;0.01915;m;;
+polished_andesite_slab;andésite;0.009575;m;;
+polished_andesite_stairs;andésite;0.01915;m;;
+polished_basalt;basalte;0.02448;m;;
+polished_blackstone;pierre noire;0.03673;m;;
+polished_blackstone_brick_slab;pierre noire;0.01836;m;;
+polished_blackstone_brick_stairs;pierre noire;0.03673;m;;
+polished_blackstone_brick_wall;pierre noire;0.03673;m;;
+polished_blackstone_bricks;pierre noire;0.03673;m;;
+polished_blackstone_button;pierre noire;0.03673;m;;
+polished_blackstone_pressure_plate;pierre noire;0.07345;m;;
+polished_blackstone_slab;pierre noire;0.01836;m;;
+polished_blackstone_stairs;pierre noire;0.03673;m;;
+polished_blackstone_wall;pierre noire;0.03673;m;;
+polished_cinnabar;cinabre;0.07641;m;;
+polished_cinnabar_slab;cinabre;0.03821;m;;
+polished_cinnabar_stairs;cinabre;0.07641;m;;
+polished_cinnabar_wall;cinabre;0.07641;m;;
+polished_deepslate;ardoise;0.02254;m;;
+polished_deepslate_slab;ardoise;0.01127;m;;
+polished_deepslate_stairs;ardoise;0.02254;m;;
+polished_deepslate_wall;ardoise;0.02254;m;;
+polished_diorite;diorite;0.01915;m;;
+polished_diorite_slab;diorite;0.009575;m;;
+polished_diorite_stairs;diorite;0.01915;m;;
+polished_granite;granite;0.01915;m;;
+polished_granite_slab;granite;0.009575;m;;
+polished_granite_stairs;granite;0.01915;m;;
+polished_sulfur;soufre;0.07641;m;;
+polished_sulfur_slab;soufre;0.03821;m;;
+polished_sulfur_stairs;soufre;0.07641;m;;
+polished_sulfur_wall;soufre;0.07641;m;;
+polished_tuff;tuf;0.02445;m;;
+polished_tuff_slab;tuf;0.01222;m;;
+polished_tuff_stairs;tuf;0.02445;m;;
+polished_tuff_wall;tuf;0.02445;m;;
+poplar_boat;peuplier;0.05;m;;
+poplar_button;peuplier;0.01;m;;
+poplar_chest_boat;peuplier;0.09;m;;
+poplar_door;peuplier;0.02;m;;
+poplar_fence;peuplier;0.015;m;;
+poplar_fence_gate;peuplier;0.03;m;;
+poplar_hanging_sign;peuplier;0.08874;m;;
+poplar_log;peuplier;0.04;m;;
+poplar_planks;peuplier;0.01;m;;
+poplar_pressure_plate;peuplier;0.02;m;;
+poplar_sapling;peuplier;0.05986;m;;
+poplar_shelf;peuplier;0.048;m;;
+poplar_sign;peuplier;0.02083;m;;
+poplar_slab;peuplier;0.005;m;;
+poplar_stairs;peuplier;0.015;m;;
+poplar_trapdoor;peuplier;0.03;m;;
+poplar_wood;peuplier;0.05333;m;;
+popped_chorus_fruit;chorus;0.07;m;;
+poppy;fleur;0.02037;m;;
+porkchop;viande;0.03;m;;
+potato;culture;0.0293;m;;
+potent_sulfur;soufre;0.4969;m;;
+potion;potion;0.5;-;;
+potion(force);potion;6;potion:STRENGTH;Potion de force;1
+potion(vitesse);potion;6;potion:SWIFTNESS;Potion de rapidité;1
+potion(infestation);potion;6;potion:INFESTED;Potion d'infestation;1
+potion(chute_lente);potion;2;potion:SLOW_FALLING;Potion de chute lente;1
+potion(resistance_au_feu);potion;6;potion:FIRE_RESISTANCE;Potion de résistance au feu;1
+potion(saut);potion;6;potion:LEAPING;Potion de saut;1
+potion(vent);potion;5;potion:WIND_CHARGED;Potion de charge de vent;1
+potion(soin);potion;6;potion:HEALING;Potion de soin;1
+potion(tissage);potion;6;potion:WEAVING;Potion de tissage;1
+potion(poison);potion;6;potion:POISON;Potion de poison;1
+potion(respiration);potion;3;potion:WATER_BREATHING;Potion de respiration aquatique;1
+potion(regeneration);potion;6;potion:REGENERATION;Potion de régénération;1
+potion(faiblesse);potion;6;potion:WEAKNESS;Potion de faiblesse;1
+potion(invisibilite);potion;6;potion:INVISIBILITY;Potion d'invisibilité;1
+potion(vision_nocturne);potion;6;potion:NIGHT_VISION;Potion de vision nocturne;1
+potion(lenteur);potion;6;potion:SLOWNESS;Potion de lenteur;1
+potion(degats);potion;6;potion:HARMING;Potion de dégâts;1
+potion(maitre_tortue);potion;6;potion:TURTLE_MASTER;Potion du Maître Tortue;1
+potion(suintement);potion;6;potion:OOZING;Potion de suintement;1
+potion(chance);potion;1337;potion:LUCK;Potion de chance;1
+powder_snow_bucket;neige;0.5553;m;;
+powered_rail;rails et wagonnets;0.4171;m;;
+prismarine;prismarine;0.036;m;;
+prismarine_brick_slab;prismarine;0.0405;m;;
+prismarine_brick_stairs;prismarine;0.081;m;;
+prismarine_bricks;prismarine;0.081;m;;
+prismarine_crystals;prismarine;0.025;m;;
+prismarine_shard;prismarine;0.009;m;;
+prismarine_slab;prismarine;0.018;m;;
+prismarine_stairs;prismarine;0.036;m;;
+prismarine_wall;prismarine;0.036;m;;
+prize_pottery_sherd;tesson de poterie;16.46;m;;
+pufferfish;poisson;0.08992;m;;
+pufferfish_bucket;seau;0.3509;m;;
+pumpkin;culture;0.02344;m;;
+pumpkin_pie;culture;0.07031;m;;
+pumpkin_seeds;culture;0.005859;m;;
+purple_banner;bannière;0.3423;m;;
+purple_bed;lit;0.1849;m;;
+purple_bundle;sac;0.1706;m;;
+purple_candle;bougie;0.1953;m;;
+purple_carpet;laine;0.03776;m;;
+purple_concrete;béton;0.04836;m;;
+purple_concrete_powder;béton;0.02336;m;;
+purple_concrete_slab;béton;0.02418;m;;
+purple_concrete_stairs;béton;0.04836;m;;
+purple_cushion;coussin;0.1133;m;;
+purple_dye;colorant;0.0332;m;;
+purple_glazed_terracotta;terres cuites;0.05088;m;;
+purple_harness;harnais;0.3192;m;;
+purple_shulker_box;shulker;17.48;m;;
+purple_stained_glass;verre;0.0318;m;;
+purple_stained_glass_pane;verre;0.01193;m;;
+purple_terracotta;terres cuites;0.04088;m;;
+purple_wool;laine;0.05664;m;;
+purple_wool_slab;laine;0.02832;m;;
+purple_wool_stairs;laine;0.05664;m;;
+purpur_block;purpur;0.07;m;;
+purpur_pillar;purpur;0.07;m;;
+purpur_slab;purpur;0.035;m;;
+purpur_stairs;purpur;0.07;m;;
+quartz;quartz;0.02;m;;
+quartz_block;quartz;0.08;m;;
+quartz_bricks;quartz;0.08;m;;
+quartz_pillar;quartz;0.08;m;;
+quartz_slab;quartz;0.04;m;;
+quartz_stairs;quartz;0.08;m;;
+rabbit;viande;0.03;m;;
+rabbit_foot;rabbit_foot;0.15;m;;
+rabbit_hide;cuir;0.03984;m;;
+rabbit_stew;viande;0.1709;m;;
+rail;rails et wagonnets;0.03766;m;;
+raiser_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (raiser);
+raw_copper;cuivre;0.005;m;;
+raw_copper_block;cuivre;0.045;m;;
+raw_gold;or;0.39;m;;
+raw_gold_block;or;3.51;m;;
+raw_iron;fer;0.09;m;;
+raw_iron_block;fer;0.81;m;;
+recovery_compass;sculk;232.5;m;;
+red_banner;bannière;0.2757;m;;
+red_bed;lit;0.1516;m;;
+red_bundle;sac;0.1595;m;;
+red_candle;bougie;0.1842;m;;
+red_carpet;laine;0.03036;m;;
+red_concrete;béton;0.04698;m;;
+red_concrete_powder;béton;0.02198;m;;
+red_concrete_slab;béton;0.02349;m;;
+red_concrete_stairs;béton;0.04698;m;;
+red_cushion;coussin;0.09107;m;;
+red_dye;colorant;0.0221;m;;
+red_glazed_terracotta;terres cuites;0.04949;m;;
+red_harness;harnais;0.3081;m;;
+red_mushroom;champignon;0.05859;m;;
+red_mushroom_block;champignon;0.06493;m;;
+red_nether_brick_slab;briques du Nether;0.06886;m;;
+red_nether_brick_stairs;briques du Nether;0.1377;m;;
+red_nether_brick_wall;briques du Nether;0.1377;m;;
+red_nether_bricks;briques du Nether;0.1377;m;;
+red_poplar_leaves;peuplier;0.02;m;;
+red_sand;sable;0.02652;m;;
+red_sandstone;grès rouge;0.1061;m;;
+red_sandstone_slab;grès rouge;0.05304;m;;
+red_sandstone_stairs;grès rouge;0.1061;m;;
+red_sandstone_wall;grès rouge;0.1061;m;;
+red_shrub;herbes et lianes;0.05986;m;;
+red_shulker_box;shulker;17.47;m;;
+red_stained_glass;verre;0.03041;m;;
+red_stained_glass_pane;verre;0.01141;m;;
+red_terracotta;terres cuites;0.03949;m;;
+red_tulip;fleur;0.03984;m;;
+red_wool;laine;0.04554;m;;
+red_wool_slab;laine;0.02277;m;;
+red_wool_stairs;laine;0.04554;m;;
+redstone;redstone;0.1;m;;
+redstone_block;redstone;0.9;m;;
+redstone_lamp;redstone;0.7056;m;;
+redstone_ore;redstone;0.5476;m;;
+redstone_torch;redstone;0.1025;m;;
+reinforced_deepslate;ardoise;0.4166;m;;
+repeater;redstone;0.365;m;;
+resin_block;résine;1.216;m;;
+resin_brick;résine;0.1451;m;;
+resin_brick_slab;résine;0.2902;m;;
+resin_brick_stairs;résine;0.5804;m;;
+resin_brick_wall;résine;0.5804;m;;
+resin_bricks;résine;0.5804;m;;
+resin_clump;résine;0.1351;m;;
+respawn_anchor;obsidienne;2.792;m;;
+rib_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (rib);
+rooted_dirt;terres;0.04689;m;;
+rose_bush;fleur;0.03673;m;;
+rotten_flesh;viande;0.03906;m;;
+saddle;saddle;0.3072;m;;
+salmon;poisson;0.04322;m;;
+salmon_bucket;seau;0.3313;m;;
+sand;sable;0.01765;m;;
+sandstone;grès;0.07061;m;;
+sandstone_slab;grès;0.0353;m;;
+sandstone_stairs;grès;0.07061;m;;
+sandstone_wall;grès;0.07061;m;;
+savanna_village_map;carte au trésor;1.999;-;;
+scaffolding;scaffolding;0.02389;m;;
+scrape_pottery_sherd;tesson de poterie;5.713;m;;
+sculk;sculk;0.015;m;;
+sculk_catalyst;sculk;2.531;m;;
+sculk_sensor;sculk;1.32;m;;
+sculk_shrieker;sculk;3.803;m;;
+sculk_vein;sculk;0.015;m;;
+sea_lantern;prismarine;0.161;m;;
+sea_pickle;herbes et lianes;0.08819;m;;
+seagrass;herbes et lianes;0.03386;m;;
+sentry_armor_trim_smithing_template;modèle de forge;30;m;Modèle de forge (sentry);
+shaper_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (shaper);
+sheaf_pottery_sherd;tesson de poterie;16.46;m;;
+shears;shears;0.2;m;;
+shelf_mushroom;champignon;0.05986;m;;
+shelter_pottery_sherd;tesson de poterie;16.46;m;;
+shield;shield;0.13;m;;
+short_dry_grass;herbes et lianes;0.03386;m;;
+short_grass;herbes et lianes;0.02254;m;;
+shroomlight;shroomlight;0.09755;m;;
+shulker_box;shulker;17.45;m;;
+shulker_shell;shulker;8;m;;
+silence_armor_trim_smithing_template;modèle de forge;60;m;Modèle de forge (silence);
+skeleton_skull;tête;29.15;m;;
+skull_banner_pattern;motif de bannière;4368;m;Motif de bannière (skull);
+skull_pottery_sherd;tesson de poterie;16.46;m;;
+slime_ball;slime;0.1367;m;;
+slime_block;slime;1.23;m;;
+small_amethyst_bud;améthyste;0.05;m;;
+small_dripleaf;herbes et lianes;0.1725;m;;
+smithing_table;smithing_table;0.22;m;;
+smoker;smoker;0.16;m;;
+smooth_basalt;basalte;0.03448;m;;
+smooth_quartz;quartz;0.09;m;;
+smooth_quartz_slab;quartz;0.045;m;;
+smooth_quartz_stairs;quartz;0.09;m;;
+smooth_red_sandstone;grès rouge;0.1161;m;;
+smooth_red_sandstone_slab;grès rouge;0.05804;m;;
+smooth_red_sandstone_stairs;grès rouge;0.1161;m;;
+smooth_sandstone;grès;0.08061;m;;
+smooth_sandstone_slab;grès;0.0403;m;;
+smooth_sandstone_stairs;grès;0.08061;m;;
+smooth_stone;pierre;0.03;m;;
+smooth_stone_slab;pierre;0.015;m;;
+sniffer_egg;sniffer_egg;9.99;m;;
+snort_pottery_sherd;tesson de poterie;16.46;m;;
+snout_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (snout);
+snow;neige;0.03192;m;;
+snow_block;neige;0.06383;m;;
+snowball;neige;0.01596;m;;
+snowy_village_map;carte au trésor;1.999;-;;
+soul_campfire;torche;0.1107;m;;
+soul_lantern;torche;0.1128;m;;
+soul_sand;sable des âmes;0.04322;m;;
+soul_soil;sable des âmes;0.04322;m;;
+soul_torch;torche;0.02393;m;;
+spectral_arrow;flèche;0.1616;m;;
+spider_eye;spider_eye;0.09766;m;;
+spire_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (spire);
+splash_potion;potion;0.5423;-;;
+sponge;éponge;10.74;m;;
+spore_blossom;fleur;0.4223;m;;
+spruce_boat;sapin;0.025;m;;
+spruce_button;sapin;0.005;m;;
+spruce_chest_boat;sapin;0.065;m;;
+spruce_door;sapin;0.01;m;;
+spruce_fence;sapin;0.008333;m;;
+spruce_fence_gate;sapin;0.02;m;;
+spruce_hanging_sign;sapin;0.06874;m;;
+spruce_leaves;sapin;0.01;m;;
+spruce_log;sapin;0.02;m;;
+spruce_planks;sapin;0.005;m;;
+spruce_pressure_plate;sapin;0.01;m;;
+spruce_sapling;sapin;0.02877;m;;
+spruce_shelf;sapin;0.028;m;;
+spruce_sign;sapin;0.01083;m;;
+spruce_slab;sapin;0.0025;m;;
+spruce_stairs;sapin;0.0075;m;;
+spruce_trapdoor;sapin;0.015;m;;
+spruce_wood;sapin;0.02667;m;;
+spyglass;améthyste;0.08;m;;
+stick;stick;0.0025;m;;
+sticky_piston;redstone;0.3917;m;;
+stone;pierre;0.02;m;;
+stone_axe;pierre;0.035;m;;
+stone_brick_slab;pierre;0.01;m;;
+stone_brick_stairs;pierre;0.02;m;;
+stone_brick_wall;pierre;0.02;m;;
+stone_bricks;pierre;0.02;m;;
+stone_button;pierre;0.02;m;;
+stone_hoe;pierre;0.025;m;;
+stone_pickaxe;pierre;0.035;m;;
+stone_pressure_plate;pierre;0.04;m;;
+stone_shovel;pierre;0.015;m;;
+stone_slab;pierre;0.01;m;;
+stone_spear;pierre;0.015;m;;
+stone_stairs;pierre;0.02;m;;
+stone_sword;pierre;0.0225;m;;
+stonecutter;pierre;0.16;m;;
+straw_bed;lit;1.333;m;;
+string;ficelle;0.06836;m;;
+stripped_acacia_log;acacia;0.0297;m;;
+stripped_acacia_wood;acacia;0.03693;m;;
+stripped_bamboo_block;bambou;0.1205;m;;
+stripped_birch_log;bouleau;0.028;m;;
+stripped_birch_wood;bouleau;0.03467;m;;
+stripped_cherry_log;cerisier;0.058;m;;
+stripped_cherry_wood;cerisier;0.07467;m;;
+stripped_crimson_hyphae;carmin;0.04493;m;;
+stripped_crimson_stem;carmin;0.0357;m;;
+stripped_dark_oak_log;chêne noir;0.0297;m;;
+stripped_dark_oak_wood;chêne noir;0.03693;m;;
+stripped_jungle_log;acajou;0.03353;m;;
+stripped_jungle_wood;acajou;0.04204;m;;
+stripped_mangrove_log;palétuvier;0.058;m;;
+stripped_mangrove_wood;palétuvier;0.07467;m;;
+stripped_oak_log;chêne;0.028;m;;
+stripped_oak_wood;chêne;0.03467;m;;
+stripped_pale_oak_log;chêne pâle;0.058;m;;
+stripped_pale_oak_wood;chêne pâle;0.07467;m;;
+stripped_poplar_log;peuplier;0.048;m;;
+stripped_poplar_wood;peuplier;0.06133;m;;
+stripped_spruce_log;sapin;0.028;m;;
+stripped_spruce_wood;sapin;0.03467;m;;
+stripped_warped_hyphae;biscornu;0.04493;m;;
+stripped_warped_stem;biscornu;0.0357;m;;
+sugar;culture;0.01562;m;;
+sugar_cane;culture;0.01562;m;;
+sulfur;soufre;0.07641;m;;
+sulfur_brick_slab;soufre;0.03821;m;;
+sulfur_brick_stairs;soufre;0.07641;m;;
+sulfur_brick_wall;soufre;0.07641;m;;
+sulfur_bricks;soufre;0.07641;m;;
+sulfur_cube_bucket;seau;0.5595;m;;
+sulfur_slab;soufre;0.03821;m;;
+sulfur_spike;soufre;0.1351;m;;
+sulfur_stairs;soufre;0.07641;m;;
+sulfur_wall;soufre;0.07641;m;;
+sunflower;fleur;0.03673;m;;
+suspicious_stew;suspicious_stew;0.1413;-;;
+swamp_hut_map;carte au trésor;1.999;-;;
+sweet_berries;culture;0.0293;m;;
+tadpole_bucket;seau;0.4247;m;;
+taiga_village_map;carte au trésor;1.999;-;;
+tall_dry_grass;herbes et lianes;0.03386;m;;
+tall_grass;herbes et lianes;0.02254;m;;
+target;redstone;0.8395;m;;
+terracotta;terres cuites;0.03673;m;;
+tide_armor_trim_smithing_template;modèle de forge;50;m;Modèle de forge (tide);
+tinted_glass;verre;0.1277;m;;
+tipped_arrow;potion;0.1354;-;;
+tnt;poudre à canon;0.7054;m;;
+tnt_minecart;rails et wagonnets;1.205;m;;
+torch;torche;0.01313;m;;
+torchflower;fleur;0.04406;m;;
+torchflower_seeds;fleur;0.02203;m;;
+totem_of_undying;totem_of_undying;120;m;;
+trapped_chest;redstone;0.09375;m;;
+trial_key;clé d'épreuve;4.992;m;;
+trident;trident;28.5;m;;
+tripwire_hook;redstone;0.05375;m;;
+tropical_fish;poisson;0.08992;m;;
+tropical_fish_bucket;seau;0.3509;m;;
+tube_coral;corail;0.1245;m;;
+tube_coral_block;corail;0.4981;m;;
+tube_coral_fan;corail;0.1245;m;;
+tuff;tuf;0.02445;m;;
+tuff_brick_slab;tuf;0.01222;m;;
+tuff_brick_stairs;tuf;0.02445;m;;
+tuff_brick_wall;tuf;0.02445;m;;
+tuff_bricks;tuf;0.02445;m;;
+tuff_slab;tuf;0.01222;m;;
+tuff_stairs;tuf;0.02445;m;;
+tuff_wall;tuf;0.02445;m;;
+turtle_egg;tortue;0.15;m;;
+turtle_helmet;tortue;1.654;m;;
+turtle_scute;tortue;0.3308;m;;
+twisting_vines;herbes et lianes;0.05518;m;;
+verdant_froglight;grenouille;0.08804;m;;
+vex_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (vex);
+vine;herbes et lianes;0.03984;m;;
+ward_armor_trim_smithing_template;modèle de forge;50;m;Modèle de forge (ward);
+warm_ocean_ruins_map;carte au trésor;1.999;-;;
+warped_button;biscornu;0.006924;m;;
+warped_door;biscornu;0.01385;m;;
+warped_fence;biscornu;0.0109;m;;
+warped_fence_gate;biscornu;0.02385;m;;
+warped_fungus;biscornu;0.07044;m;;
+warped_fungus_on_a_stick;biscornu;0.2147;m;;
+warped_hanging_sign;biscornu;0.07644;m;;
+warped_hyphae;biscornu;0.03693;m;;
+warped_nylium;biscornu;0.08992;m;;
+warped_planks;biscornu;0.006924;m;;
+warped_pressure_plate;biscornu;0.01385;m;;
+warped_roots;biscornu;0.05518;m;;
+warped_shelf;biscornu;0.0357;m;;
+warped_sign;biscornu;0.01468;m;;
+warped_slab;biscornu;0.003462;m;;
+warped_stairs;biscornu;0.01039;m;;
+warped_stem;biscornu;0.0277;m;;
+warped_trapdoor;biscornu;0.02077;m;;
+warped_wart_block;biscornu;0.05086;m;;
+water_bucket;seau;0.3;m;;
+waxed_chiseled_copper;cuivre;0.2288;m;;
+waxed_copper_bars;cuivre;0.09938;m;;
+waxed_copper_block;cuivre;0.2288;m;;
+waxed_copper_bulb;cuivre;0.295;m;;
+waxed_copper_chain;cuivre;0.1121;m;;
+waxed_copper_chest;cuivre;0.2538;m;;
+waxed_copper_door;cuivre;0.1237;m;;
+waxed_copper_golem_statue;cuivre;0.2522;m;;
+waxed_copper_grate;cuivre;0.2288;m;;
+waxed_copper_lantern;cuivre;0.1206;m;;
+waxed_copper_trapdoor;cuivre;0.1387;m;;
+waxed_cut_copper;cuivre;0.2288;m;;
+waxed_cut_copper_slab;cuivre;0.1613;m;;
+waxed_cut_copper_stairs;cuivre;0.2288;m;;
+waxed_exposed_chiseled_copper;cuivre;0.3287;m;;
+waxed_exposed_copper;cuivre;0.3287;m;;
+waxed_exposed_copper_bars;cuivre;0.1294;m;;
+waxed_exposed_copper_bulb;cuivre;0.325;m;;
+waxed_exposed_copper_chain;cuivre;0.1421;m;;
+waxed_exposed_copper_chest;cuivre;0.2838;m;;
+waxed_exposed_copper_door;cuivre;0.1537;m;;
+waxed_exposed_copper_golem_statue;cuivre;0.2822;m;;
+waxed_exposed_copper_grate;cuivre;0.3287;m;;
+waxed_exposed_copper_lantern;cuivre;0.1506;m;;
+waxed_exposed_copper_trapdoor;cuivre;0.1688;m;;
+waxed_exposed_cut_copper;cuivre;0.3287;m;;
+waxed_exposed_cut_copper_slab;cuivre;0.2112;m;;
+waxed_exposed_cut_copper_stairs;cuivre;0.3287;m;;
+waxed_exposed_lightning_rod;cuivre;0.1688;m;;
+waxed_lightning_rod;cuivre;0.1387;m;;
+waxed_oxidized_chiseled_copper;cuivre;0.5288;m;;
+waxed_oxidized_copper;cuivre;0.5288;m;;
+waxed_oxidized_copper_bars;cuivre;0.1894;m;;
+waxed_oxidized_copper_bulb;cuivre;0.385;m;;
+waxed_oxidized_copper_chain;cuivre;0.2021;m;;
+waxed_oxidized_copper_chest;cuivre;0.3438;m;;
+waxed_oxidized_copper_door;cuivre;0.2137;m;;
+waxed_oxidized_copper_golem_statue;cuivre;0.3422;m;;
+waxed_oxidized_copper_grate;cuivre;0.5288;m;;
+waxed_oxidized_copper_lantern;cuivre;0.2106;m;;
+waxed_oxidized_copper_trapdoor;cuivre;0.2288;m;;
+waxed_oxidized_cut_copper;cuivre;0.5288;m;;
+waxed_oxidized_cut_copper_slab;cuivre;0.3113;m;;
+waxed_oxidized_cut_copper_stairs;cuivre;0.5288;m;;
+waxed_oxidized_lightning_rod;cuivre;0.2288;m;;
+waxed_weathered_chiseled_copper;cuivre;0.4288;m;;
+waxed_weathered_copper;cuivre;0.4288;m;;
+waxed_weathered_copper_bars;cuivre;0.1594;m;;
+waxed_weathered_copper_bulb;cuivre;0.355;m;;
+waxed_weathered_copper_chain;cuivre;0.1721;m;;
+waxed_weathered_copper_chest;cuivre;0.3137;m;;
+waxed_weathered_copper_door;cuivre;0.1837;m;;
+waxed_weathered_copper_golem_statue;cuivre;0.3122;m;;
+waxed_weathered_copper_grate;cuivre;0.4288;m;;
+waxed_weathered_copper_lantern;cuivre;0.1806;m;;
+waxed_weathered_copper_trapdoor;cuivre;0.1987;m;;
+waxed_weathered_cut_copper;cuivre;0.4288;m;;
+waxed_weathered_cut_copper_slab;cuivre;0.2612;m;;
+waxed_weathered_cut_copper_stairs;cuivre;0.4288;m;;
+waxed_weathered_lightning_rod;cuivre;0.1987;m;;
+wayfinder_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (wayfinder);
+weathered_chiseled_copper;cuivre;0.335;m;;
+weathered_copper;cuivre;0.335;m;;
+weathered_copper_bars;cuivre;0.06563;m;;
+weathered_copper_bulb;cuivre;0.2612;m;;
+weathered_copper_chain;cuivre;0.07833;m;;
+weathered_copper_chest;cuivre;0.22;m;;
+weathered_copper_door;cuivre;0.09;m;;
+weathered_copper_golem_statue;cuivre;0.2184;m;;
+weathered_copper_grate;cuivre;0.335;m;;
+weathered_copper_lantern;cuivre;0.08687;m;;
+weathered_copper_trapdoor;cuivre;0.105;m;;
+weathered_cut_copper;cuivre;0.335;m;;
+weathered_cut_copper_slab;cuivre;0.1675;m;;
+weathered_cut_copper_stairs;cuivre;0.335;m;;
+weathered_lightning_rod;cuivre;0.105;m;;
+weeping_vines;herbes et lianes;0.05518;m;;
+wet_sponge;éponge;10.73;m;;
+wheat;culture;0.04883;m;;
+wheat_seeds;culture;0.01953;m;;
+white_banner;bannière;0.1431;m;;
+white_bed;lit;0.08531;m;;
+white_bundle;sac;0.1595;m;;
+white_candle;bougie;0.1842;m;;
+white_carpet;laine;0.01562;m;;
+white_concrete;béton;0.04698;m;;
+white_concrete_powder;béton;0.02198;m;;
+white_concrete_slab;béton;0.02349;m;;
+white_concrete_stairs;béton;0.04698;m;;
+white_cushion;coussin;0.04688;m;;
+white_dye;colorant;0.0221;m;;
+white_glazed_terracotta;terres cuites;0.04949;m;;
+white_harness;harnais;0.286;m;;
+white_shulker_box;shulker;17.47;m;;
+white_stained_glass;verre;0.03041;m;;
+white_stained_glass_pane;verre;0.01141;m;;
+white_terracotta;terres cuites;0.03949;m;;
+white_tulip;fleur;0.03984;m;;
+white_wool;laine;0.02344;m;;
+white_wool_slab;laine;0.01172;m;;
+white_wool_stairs;laine;0.02344;m;;
+wild_armor_trim_smithing_template;modèle de forge;30;m;Modèle de forge (wild);
+wildflowers;fleur;0.05986;m;;
+wind_charge;breeze;0.075;m;;
+wither_rose;fleur;2.531;m;;
+wither_skeleton_skull;tête;4368;m;;
+wolf_armor;tatou;0.6349;m;;
+wooden_axe;outils en bois;0.02;m;;
+wooden_hoe;outils en bois;0.015;m;;
+wooden_pickaxe;outils en bois;0.02;m;;
+wooden_shovel;outils en bois;0.01;m;;
+wooden_spear;outils en bois;0.01;m;;
+wooden_sword;outils en bois;0.0125;m;;
+woodland_mansion_map;carte au trésor;1.999;-;;
+writable_book;livre;0.201;m;;
+written_book;written_book;0.201;-;;
+yellow_banner;bannière;0.2757;m;;
+yellow_bed;lit;0.1516;m;;
+yellow_bundle;sac;0.1595;m;;
+yellow_candle;bougie;0.1842;m;;
+yellow_carpet;laine;0.03036;m;;
+yellow_concrete;béton;0.04698;m;;
+yellow_concrete_powder;béton;0.02198;m;;
+yellow_concrete_slab;béton;0.02349;m;;
+yellow_concrete_stairs;béton;0.04698;m;;
+yellow_cushion;coussin;0.09107;m;;
+yellow_dye;colorant;0.0221;m;;
+yellow_glazed_terracotta;terres cuites;0.04949;m;;
+yellow_harness;harnais;0.3081;m;;
+yellow_poplar_leaves;peuplier;0.02;m;;
+yellow_shulker_box;shulker;17.47;m;;
+yellow_stained_glass;verre;0.03041;m;;
+yellow_stained_glass_pane;verre;0.01141;m;;
+yellow_terracotta;terres cuites;0.03949;m;;
+yellow_wool;laine;0.04554;m;;
+yellow_wool_slab;laine;0.02277;m;;
+yellow_wool_stairs;laine;0.04554;m;;
+zombie_head;tête;29.15;m;;
+estomac_gardien;estomac_gardien;155.6;pdc:ks_estomacgardien:estomac:b;Estomac du gardien;1
+fragment_spawner;spawner;128;pdc:ks_itemsimple:objet:s:fragment_spawner;Fragment de Spawner;1
+coeur_spawner;spawner;10235;pdc:ks_itemsimple:objet:s:coeur_spawner;Cœur de Spawner;1
+cle_de_l_end;cle_de_l_end;5072;pdc:ks_ec_extension:cle_de_l_end:b;Clé de l'End;1
+bedrock_breaker;bedrock_breaker;8.455;pdc:ks_bedrockbreaker:bedrock_breaker:b;Bedrock Breaker;1
+changeur_biome;changeur_biome;522.7;pdc:ks_biomechanger:changeur_biome:b;Changeur de Biome;1
+tete_allay;tête;642.8;pdc:ks_decapitator:tete:s:allay;Tête d'allay;64
+tete_chauve_souris;tête;107.2;pdc:ks_decapitator:tete:s:chauve_souris;Tête de chauve-souris;64
+tete_blaze;tête;107.2;pdc:ks_decapitator:tete:s:blaze;Tête de blaze;64
+tete_embourbe;tête;107.2;pdc:ks_decapitator:tete:s:embourbe;Tête d'embourbé;64
+tete_breeze;tête;642.8;pdc:ks_decapitator:tete:s:breeze;Tête de breeze;64
+tete_dromadaire_momifie;tête;642.8;pdc:ks_decapitator:tete:s:dromadaire_momifie;Tête de dromadaire momifié;64
+tete_araignee_venimeuse;tête;642.8;pdc:ks_decapitator:tete:s:araignee_venimeuse;Tête d'araignée venimeuse;64
+tete_morue;tête;29.15;pdc:ks_decapitator:tete:s:morue;Tête de morue;64
+tete_noye;tête;29.15;pdc:ks_decapitator:tete:s:noye;Tête de noyé;64
+tete_grand_gardien;tête;1405;pdc:ks_decapitator:tete:s:grand_gardien;Tête de grand gardien;64
+tete_enderman;tête;29.15;pdc:ks_decapitator:tete:s:enderman;Tête d'enderman;64
+tete_endermite;tête;642.8;pdc:ks_decapitator:tete:s:endermite;Tête d'endermite;64
+tete_evocateur;tête;642.8;pdc:ks_decapitator:tete:s:evocateur;Tête d'évocateur;64
+tete_ghast;tête;107.2;pdc:ks_decapitator:tete:s:ghast;Tête de ghast;64
+tete_gardien;tête;107.2;pdc:ks_decapitator:tete:s:gardien;Tête de gardien;64
+tete_golem_de_fer;tête;107.2;pdc:ks_decapitator:tete:s:golem_de_fer;Tête de golem de fer;64
+tete_cube_de_magma;tête;107.2;pdc:ks_decapitator:tete:s:cube_de_magma;Tête de cube de magma;64
+tete_desseche;tête;107.2;pdc:ks_decapitator:tete:s:desseche;Tête de desséché;64
+tete_phantom;tête;107.2;pdc:ks_decapitator:tete:s:phantom;Tête de phantom;64
+tete_piglin_barbare;tête;642.8;pdc:ks_decapitator:tete:s:piglin_barbare;Tête de piglin barbare;64
+tete_pillard;tête;107.2;pdc:ks_decapitator:tete:s:pillard;Tête de pillard;64
+tete_poisson_globe;tête;107.2;pdc:ks_decapitator:tete:s:poisson_globe;Tête de poisson-globe;64
+tete_ravageur;tête;642.8;pdc:ks_decapitator:tete:s:ravageur;Tête de ravageur;64
+tete_saumon;tête;29.15;pdc:ks_decapitator:tete:s:saumon;Tête de saumon;64
+tete_shulker;tête;642.8;pdc:ks_decapitator:tete:s:shulker;Tête de shulker;64
+tete_poisson_d_argent;tête;107.2;pdc:ks_decapitator:tete:s:poisson_d_argent;Tête de poisson d'argent;64
+tete_squelette;tête;29.15;pdc:ks_decapitator:tete:s:squelette;Tête de squelette;64
+tete_cheval_squelette;tête;642.8;pdc:ks_decapitator:tete:s:cheval_squelette;Tête de cheval-squelette;64
+tete_slime;tête;29.15;pdc:ks_decapitator:tete:s:slime;Tête de slime;64
+tete_renifleur;tête;1614;pdc:ks_decapitator:tete:s:renifleur;Tête de renifleur;64
+tete_golem_de_neige;tête;12.92;pdc:ks_decapitator:tete:s:golem_de_neige;Tête de golem de neige;64
+tete_araignee;tête;29.15;pdc:ks_decapitator:tete:s:araignee;Tête d'araignée;64
+tete_vagabond;tête;29.15;pdc:ks_decapitator:tete:s:vagabond;Tête de vagabond;64
+tete_tetard;tête;107.2;pdc:ks_decapitator:tete:s:tetard;Tête de têtard;64
+tete_vindicateur;tête;107.2;pdc:ks_decapitator:tete:s:vindicateur;Tête de vindicateur;64
+tete_marchand_ambulant;tête;107.2;pdc:ks_decapitator:tete:s:marchand_ambulant;Tête de marchand ambulant;64
+tete_warden;tête;1705;pdc:ks_decapitator:tete:s:warden;Tête de warden;64
+tete_sorciere;tête;107.2;pdc:ks_decapitator:tete:s:sorciere;Tête de sorcière;64
+tete_wither_squelette;tête;100;-;Tête de wither squelette;
+tete_cheval_zombie;tête;642.8;pdc:ks_decapitator:tete:s:cheval_zombie;Tête de cheval-zombie;64
+tete_ghast_joyeux;tête;1614;pdc:ks_decapitator:tete:s:ghast_joyeux;Tête de ghast joyeux;64
+tete_bebe_renifleur;tête;1682;pdc:ks_decapitator:tete:s:bebe_renifleur;Tête de bébé renifleur;64
+tete_bebe_ghast_joyeux;tête;1682;pdc:ks_decapitator:tete:s:bebe_ghast_joyeux;Tête de bébé ghast joyeux;64
+tete_poisson_tropical;tête;107.2;pdc:ks_decapitator:tete:s:poisson_tropical;Tête de poisson tropical;64
+tete_wither;tête;2013;pdc:ks_decapitator:tete:s:wither;Tête de Wither;64
+tete_tatou;tête;107.2;pdc:ks_decapitator:tete:s:tatou;Tête de tatou;64
+tete_bebe_tatou;tête;136.9;pdc:ks_decapitator:tete:s:bebe_tatou;Tête de bébé tatou;64
+tete_dromadaire;tête;107.2;pdc:ks_decapitator:tete:s:dromadaire;Tête de dromadaire;64
+tete_bebe_dromadaire;tête;136.9;pdc:ks_decapitator:tete:s:bebe_dromadaire;Tête de bébé dromadaire;64
+tete_dauphin;tête;107.2;pdc:ks_decapitator:tete:s:dauphin;Tête de dauphin;64
+tete_bebe_dauphin;tête;136.9;pdc:ks_decapitator:tete:s:bebe_dauphin;Tête de bébé dauphin;64
+tete_ane;tête;107.2;pdc:ks_decapitator:tete:s:ane;Tête d'âne;64
+tete_bebe_ane;tête;136.9;pdc:ks_decapitator:tete:s:bebe_ane;Tête de bébé âne;64
+tete_poulpe_luisant;tête;107.2;pdc:ks_decapitator:tete:s:poulpe_luisant;Tête de poulpe luisant;64
+tete_bebe_poulpe_luisant;tête;136.9;pdc:ks_decapitator:tete:s:bebe_poulpe_luisant;Tête de bébé poulpe luisant;64
+tete_hoglin;tête;107.2;pdc:ks_decapitator:tete:s:hoglin;Tête de hoglin;64
+tete_bebe_hoglin;tête;136.9;pdc:ks_decapitator:tete:s:bebe_hoglin;Tête de bébé hoglin;64
+tete_momifie;tête;29.15;pdc:ks_decapitator:tete:s:momifie;Tête de momifié;64
+tete_bebe_momifie;tête;65.79;pdc:ks_decapitator:tete:s:bebe_momifie;Tête de bébé momifié;64
+tete_mule;tête;107.2;pdc:ks_decapitator:tete:s:mule;Tête de mule;64
+tete_bebe_mule;tête;136.9;pdc:ks_decapitator:tete:s:bebe_mule;Tête de bébé mule;64
+tete_ocelot;tête;107.2;pdc:ks_decapitator:tete:s:ocelot;Tête d'ocelot;64
+tete_bebe_ocelot;tête;136.9;pdc:ks_decapitator:tete:s:bebe_ocelot;Tête de bébé ocelot;64
+tete_piglin;tête;107.2;pdc:ks_decapitator:tete:s:piglin;Tête de piglin;64
+tete_bebe_piglin;tête;242;pdc:ks_decapitator:tete:s:bebe_piglin;Tête de bébé piglin;64
+tete_ours_blanc;tête;107.2;pdc:ks_decapitator:tete:s:ours_blanc;Tête d'ours blanc;64
+tete_bebe_ours_blanc;tête;136.9;pdc:ks_decapitator:tete:s:bebe_ours_blanc;Tête de bébé ours blanc;64
+tete_poulpe;tête;29.15;pdc:ks_decapitator:tete:s:poulpe;Tête de poulpe;64
+tete_bebe_poulpe;tête;37.21;pdc:ks_decapitator:tete:s:bebe_poulpe;Tête de bébé poulpe;64
+tete_tortue;tête;107.2;pdc:ks_decapitator:tete:s:tortue;Tête de tortue;64
+tete_bebe_tortue;tête;136.9;pdc:ks_decapitator:tete:s:bebe_tortue;Tête de bébé tortue;64
+tete_zoglin;tête;642.8;pdc:ks_decapitator:tete:s:zoglin;Tête de zoglin;64
+tete_bebe_zoglin;tête;1065;pdc:ks_decapitator:tete:s:bebe_zoglin;Tête de bébé zoglin;64
+tete_zombie;tête;29.15;pdc:ks_decapitator:tete:s:zombie;Tête de zombie;64
+tete_bebe_zombie;tête;65.79;pdc:ks_decapitator:tete:s:bebe_zombie;Tête de bébé zombie;64
+tete_piglin_zombifie;tête;29.15;pdc:ks_decapitator:tete:s:piglin_zombifie;Tête de piglin zombifié;64
+tete_bebe_piglin_zombifie;tête;65.79;pdc:ks_decapitator:tete:s:bebe_piglin_zombifie;Tête de bébé piglin zombifié;64
+tete_nautile;tête;642.8;pdc:ks_decapitator:tete:s:nautile;Tête de nautile;64
+tete_bebe_nautile;tête;820.6;pdc:ks_decapitator:tete:s:bebe_nautile;Tête de bébé nautile;64
+tete_axolotl_rose;tête;126.2;pdc:ks_decapitator:tete:s:axolotl_rose;Tête d'axolotl rose;64
+tete_bebe_axolotl_rose;tête;161.1;pdc:ks_decapitator:tete:s:bebe_axolotl_rose;Tête de bébé axolotl rose;64
+tete_axolotl_brun;tête;126.2;pdc:ks_decapitator:tete:s:axolotl_brun;Tête d'axolotl brun;64
+tete_bebe_axolotl_brun;tête;161.1;pdc:ks_decapitator:tete:s:bebe_axolotl_brun;Tête de bébé axolotl brun;64
+tete_axolotl_dore;tête;126.2;pdc:ks_decapitator:tete:s:axolotl_dore;Tête d'axolotl doré;64
+tete_bebe_axolotl_dore;tête;161.1;pdc:ks_decapitator:tete:s:bebe_axolotl_dore;Tête de bébé axolotl doré;64
+tete_axolotl_cyan;tête;126.2;pdc:ks_decapitator:tete:s:axolotl_cyan;Tête d'axolotl cyan;64
+tete_bebe_axolotl_cyan;tête;161.1;pdc:ks_decapitator:tete:s:bebe_axolotl_cyan;Tête de bébé axolotl cyan;64
+tete_axolotl_bleu;tête;464.2;pdc:ks_decapitator:tete:s:axolotl_bleu;Tête d'axolotl bleu;64
+tete_bebe_axolotl_bleu;tête;592.6;pdc:ks_decapitator:tete:s:bebe_axolotl_bleu;Tête de bébé axolotl bleu;64
+tete_chat_tigre;tête;126.2;pdc:ks_decapitator:tete:s:chat_tigre;Tête de chat tigré;64
+tete_bebe_chat_tigre;tête;161.1;pdc:ks_decapitator:tete:s:bebe_chat_tigre;Tête de bébé chat tigré;64
+tete_chat_noir_et_blanc;tête;148.5;pdc:ks_decapitator:tete:s:chat_noir_et_blanc;Tête de chat noir et blanc;64
+tete_bebe_chat_noir_et_blanc;tête;189.6;pdc:ks_decapitator:tete:s:bebe_chat_noir_et_blanc;Tête de bébé chat noir et blanc;64
+tete_chat_roux;tête;126.2;pdc:ks_decapitator:tete:s:chat_roux;Tête de chat roux;64
+tete_bebe_chat_roux;tête;161.1;pdc:ks_decapitator:tete:s:bebe_chat_roux;Tête de bébé chat roux;64
+tete_chat_siamois;tête;126.2;pdc:ks_decapitator:tete:s:chat_siamois;Tête de chat siamois;64
+tete_bebe_chat_siamois;tête;161.1;pdc:ks_decapitator:tete:s:bebe_chat_siamois;Tête de bébé chat siamois;64
+tete_chat_british_shorthair;tête;126.2;pdc:ks_decapitator:tete:s:chat_british_shorthair;Tête de chat british shorthair;64
+tete_bebe_chat_british_shorthair;tête;161.1;pdc:ks_decapitator:tete:s:bebe_chat_british_shorthair;Tête de bébé chat british shorthair;64
+tete_chat_calico;tête;126.2;pdc:ks_decapitator:tete:s:chat_calico;Tête de chat calico;64
+tete_bebe_chat_calico;tête;161.1;pdc:ks_decapitator:tete:s:bebe_chat_calico;Tête de bébé chat calico;64
+tete_chat_persan;tête;126.2;pdc:ks_decapitator:tete:s:chat_persan;Tête de chat persan;64
+tete_bebe_chat_persan;tête;161.1;pdc:ks_decapitator:tete:s:bebe_chat_persan;Tête de bébé chat persan;64
+tete_chat_ragdoll;tête;126.2;pdc:ks_decapitator:tete:s:chat_ragdoll;Tête de chat ragdoll;64
+tete_bebe_chat_ragdoll;tête;161.1;pdc:ks_decapitator:tete:s:bebe_chat_ragdoll;Tête de bébé chat ragdoll;64
+tete_chat_blanc;tête;126.2;pdc:ks_decapitator:tete:s:chat_blanc;Tête de chat blanc;64
+tete_bebe_chat_blanc;tête;161.1;pdc:ks_decapitator:tete:s:bebe_chat_blanc;Tête de bébé chat blanc;64
+tete_chat_jellie;tête;126.2;pdc:ks_decapitator:tete:s:chat_jellie;Tête de chat Jellie;64
+tete_bebe_chat_jellie;tête;161.1;pdc:ks_decapitator:tete:s:bebe_chat_jellie;Tête de bébé chat Jellie;64
+tete_chat_noir;tête;205.7;pdc:ks_decapitator:tete:s:chat_noir;Tête de chat noir;64
+tete_bebe_chat_noir;tête;262.5;pdc:ks_decapitator:tete:s:bebe_chat_noir;Tête de bébé chat noir;64
+tete_poule_temperee;tête;12.92;pdc:ks_decapitator:tete:s:poule_temperee;Tête de poule tempérée;64
+tete_bebe_poule_temperee;tête;16.49;pdc:ks_decapitator:tete:s:bebe_poule_temperee;Tête de bébé poule tempérée;64
+tete_poule_chaude;tête;17.89;pdc:ks_decapitator:tete:s:poule_chaude;Tête de poule chaude;64
+tete_bebe_poule_chaude;tête;22.83;pdc:ks_decapitator:tete:s:bebe_poule_chaude;Tête de bébé poule chaude;64
+tete_poule_froide;tête;17.89;pdc:ks_decapitator:tete:s:poule_froide;Tête de poule froide;64
+tete_bebe_poule_froide;tête;22.83;pdc:ks_decapitator:tete:s:bebe_poule_froide;Tête de bébé poule froide;64
+tete_vache_temperee;tête;12.92;pdc:ks_decapitator:tete:s:vache_temperee;Tête de vache tempérée;64
+tete_bebe_vache_temperee;tête;16.49;pdc:ks_decapitator:tete:s:bebe_vache_temperee;Tête de bébé vache tempérée;64
+tete_vache_chaude;tête;17.89;pdc:ks_decapitator:tete:s:vache_chaude;Tête de vache chaude;64
+tete_bebe_vache_chaude;tête;22.83;pdc:ks_decapitator:tete:s:bebe_vache_chaude;Tête de bébé vache chaude;64
+tete_vache_froide;tête;17.89;pdc:ks_decapitator:tete:s:vache_froide;Tête de vache froide;64
+tete_bebe_vache_froide;tête;22.83;pdc:ks_decapitator:tete:s:bebe_vache_froide;Tête de bébé vache froide;64
+tete_cochon_tempere;tête;12.92;pdc:ks_decapitator:tete:s:cochon_tempere;Tête de cochon tempéré;64
+tete_bebe_cochon_tempere;tête;16.49;pdc:ks_decapitator:tete:s:bebe_cochon_tempere;Tête de bébé cochon tempéré;64
+tete_cochon_chaud;tête;17.89;pdc:ks_decapitator:tete:s:cochon_chaud;Tête de cochon chaud;64
+tete_bebe_cochon_chaud;tête;22.83;pdc:ks_decapitator:tete:s:bebe_cochon_chaud;Tête de bébé cochon chaud;64
+tete_cochon_froid;tête;17.89;pdc:ks_decapitator:tete:s:cochon_froid;Tête de cochon froid;64
+tete_bebe_cochon_froid;tête;22.83;pdc:ks_decapitator:tete:s:bebe_cochon_froid;Tête de bébé cochon froid;64
+tete_grenouille_temperee;tête;126.2;pdc:ks_decapitator:tete:s:grenouille_temperee;Tête de grenouille tempérée;64
+tete_grenouille_chaude;tête;148.5;pdc:ks_decapitator:tete:s:grenouille_chaude;Tête de grenouille chaude;64
+tete_grenouille_froide;tête;148.5;pdc:ks_decapitator:tete:s:grenouille_froide;Tête de grenouille froide;64
+tete_golem_de_cuivre;tête;12.92;pdc:ks_decapitator:tete:s:golem_de_cuivre;Tête de golem de cuivre;64
+tete_golem_de_cuivre_expose;tête;16.49;pdc:ks_decapitator:tete:s:golem_de_cuivre_expose;Tête de golem de cuivre exposé;64
+tete_golem_de_cuivre_erode;tête;19.4;pdc:ks_decapitator:tete:s:golem_de_cuivre_erode;Tête de golem de cuivre érodé;64
+tete_golem_de_cuivre_oxyde;tête;22.83;pdc:ks_decapitator:tete:s:golem_de_cuivre_oxyde;Tête de golem de cuivre oxydé;64
+tete_renard_roux;tête;107.2;pdc:ks_decapitator:tete:s:renard_roux;Tête de renard roux;64
+tete_bebe_renard_roux;tête;136.9;pdc:ks_decapitator:tete:s:bebe_renard_roux;Tête de bébé renard roux;64
+tete_renard_des_neiges;tête;161.1;pdc:ks_decapitator:tete:s:renard_des_neiges;Tête de renard des neiges;64
+tete_bebe_renard_des_neiges;tête;205.7;pdc:ks_decapitator:tete:s:bebe_renard_des_neiges;Tête de bébé renard des neiges;64
+tete_cheval_blanc;tête;126.2;pdc:ks_decapitator:tete:s:cheval_blanc;Tête de cheval blanc;64
+tete_bebe_cheval_blanc;tête;161.1;pdc:ks_decapitator:tete:s:bebe_cheval_blanc;Tête de bébé cheval blanc;64
+tete_cheval_creme;tête;126.2;pdc:ks_decapitator:tete:s:cheval_creme;Tête de cheval crème;64
+tete_bebe_cheval_creme;tête;161.1;pdc:ks_decapitator:tete:s:bebe_cheval_creme;Tête de bébé cheval crème;64
+tete_cheval_alezan;tête;174.8;pdc:ks_decapitator:tete:s:cheval_alezan;Tête de cheval alezan;64
+tete_bebe_cheval_alezan;tête;223.1;pdc:ks_decapitator:tete:s:bebe_cheval_alezan;Tête de bébé cheval alezan;64
+tete_cheval_bai;tête;126.2;pdc:ks_decapitator:tete:s:cheval_bai;Tête de cheval bai;64
+tete_bebe_cheval_bai;tête;161.1;pdc:ks_decapitator:tete:s:bebe_cheval_bai;Tête de bébé cheval bai;64
+tete_cheval_noir;tête;126.2;pdc:ks_decapitator:tete:s:cheval_noir;Tête de cheval noir;64
+tete_bebe_cheval_noir;tête;161.1;pdc:ks_decapitator:tete:s:bebe_cheval_noir;Tête de bébé cheval noir;64
+tete_cheval_gris;tête;126.2;pdc:ks_decapitator:tete:s:cheval_gris;Tête de cheval gris;64
+tete_bebe_cheval_gris;tête;161.1;pdc:ks_decapitator:tete:s:bebe_cheval_gris;Tête de bébé cheval gris;64
+tete_cheval_bai_brun;tête;126.2;pdc:ks_decapitator:tete:s:cheval_bai_brun;Tête de cheval bai brun;64
+tete_bebe_cheval_bai_brun;tête;161.1;pdc:ks_decapitator:tete:s:bebe_cheval_bai_brun;Tête de bébé cheval bai brun;64
+tete_lama_creme;tête;126.2;pdc:ks_decapitator:tete:s:lama_creme;Tête de lama crème;64
+tete_bebe_lama_creme;tête;161.1;pdc:ks_decapitator:tete:s:bebe_lama_creme;Tête de bébé lama crème;64
+tete_lama_blanc;tête;126.2;pdc:ks_decapitator:tete:s:lama_blanc;Tête de lama blanc;64
+tete_bebe_lama_blanc;tête;161.1;pdc:ks_decapitator:tete:s:bebe_lama_blanc;Tête de bébé lama blanc;64
+tete_lama_marron;tête;126.2;pdc:ks_decapitator:tete:s:lama_marron;Tête de lama marron;64
+tete_bebe_lama_marron;tête;161.1;pdc:ks_decapitator:tete:s:bebe_lama_marron;Tête de bébé lama marron;64
+tete_lama_gris;tête;126.2;pdc:ks_decapitator:tete:s:lama_gris;Tête de lama gris;64
+tete_bebe_lama_gris;tête;161.1;pdc:ks_decapitator:tete:s:bebe_lama_gris;Tête de bébé lama gris;64
+tete_lama_de_marchand_creme;tête;126.2;pdc:ks_decapitator:tete:s:lama_de_marchand_creme;Tête de lama de marchand crème;64
+tete_bebe_lama_de_marchand_creme;tête;161.1;pdc:ks_decapitator:tete:s:bebe_lama_de_marchand_creme;Tête de bébé lama de marchand crème;64
+tete_lama_de_marchand_blanc;tête;126.2;pdc:ks_decapitator:tete:s:lama_de_marchand_blanc;Tête de lama de marchand blanc;64
+tete_bebe_lama_de_marchand_blanc;tête;161.1;pdc:ks_decapitator:tete:s:bebe_lama_de_marchand_blanc;Tête de bébé lama de marchand blanc;64
+tete_lama_de_marchand_marron;tête;126.2;pdc:ks_decapitator:tete:s:lama_de_marchand_marron;Tête de lama de marchand marron;64
+tete_bebe_lama_de_marchand_marron;tête;161.1;pdc:ks_decapitator:tete:s:bebe_lama_de_marchand_marron;Tête de bébé lama de marchand marron;64
+tete_lama_de_marchand_gris;tête;126.2;pdc:ks_decapitator:tete:s:lama_de_marchand_gris;Tête de lama de marchand gris;64
+tete_bebe_lama_de_marchand_gris;tête;161.1;pdc:ks_decapitator:tete:s:bebe_lama_de_marchand_gris;Tête de bébé lama de marchand gris;64
+tete_mooshroom_rouge;tête;107.2;pdc:ks_decapitator:tete:s:mooshroom_rouge;Tête de mooshroom rouge;64
+tete_bebe_mooshroom_rouge;tête;136.9;pdc:ks_decapitator:tete:s:bebe_mooshroom_rouge;Tête de bébé mooshroom rouge;64
+tete_mooshroom_marron;tête;242;pdc:ks_decapitator:tete:s:mooshroom_marron;Tête de mooshroom marron;64
+tete_bebe_mooshroom_marron;tête;309;pdc:ks_decapitator:tete:s:bebe_mooshroom_marron;Tête de bébé mooshroom marron;64
+tete_panda;tête;107.2;pdc:ks_decapitator:tete:s:panda;Tête de panda;64
+tete_bebe_panda;tête;136.9;pdc:ks_decapitator:tete:s:bebe_panda;Tête de bébé panda;64
+tete_panda_paresseux;tête;174.8;pdc:ks_decapitator:tete:s:panda_paresseux;Tête de panda paresseux;64
+tete_bebe_panda_paresseux;tête;223.1;pdc:ks_decapitator:tete:s:bebe_panda_paresseux;Tête de bébé panda paresseux;64
+tete_panda_inquiet;tête;174.8;pdc:ks_decapitator:tete:s:panda_inquiet;Tête de panda inquiet;64
+tete_bebe_panda_inquiet;tête;223.1;pdc:ks_decapitator:tete:s:bebe_panda_inquiet;Tête de bébé panda inquiet;64
+tete_panda_joueur;tête;174.8;pdc:ks_decapitator:tete:s:panda_joueur;Tête de panda joueur;64
+tete_bebe_panda_joueur;tête;223.1;pdc:ks_decapitator:tete:s:bebe_panda_joueur;Tête de bébé panda joueur;64
+tete_panda_brun;tête;335.2;pdc:ks_decapitator:tete:s:panda_brun;Tête de panda brun;64
+tete_bebe_panda_brun;tête;427.9;pdc:ks_decapitator:tete:s:bebe_panda_brun;Tête de bébé panda brun;64
+tete_panda_faible;tête;205.7;pdc:ks_decapitator:tete:s:panda_faible;Tête de panda faible;64
+tete_bebe_panda_faible;tête;262.5;pdc:ks_decapitator:tete:s:bebe_panda_faible;Tête de bébé panda faible;64
+tete_panda_agressif;tête;174.8;pdc:ks_decapitator:tete:s:panda_agressif;Tête de panda agressif;64
+tete_bebe_panda_agressif;tête;223.1;pdc:ks_decapitator:tete:s:bebe_panda_agressif;Tête de bébé panda agressif;64
+tete_perroquet_rouge;tête;126.2;pdc:ks_decapitator:tete:s:perroquet_rouge;Tête de perroquet rouge;64
+tete_perroquet_bleu;tête;126.2;pdc:ks_decapitator:tete:s:perroquet_bleu;Tête de perroquet bleu;64
+tete_perroquet_vert;tête;126.2;pdc:ks_decapitator:tete:s:perroquet_vert;Tête de perroquet vert;64
+tete_perroquet_cyan;tête;126.2;pdc:ks_decapitator:tete:s:perroquet_cyan;Tête de perroquet cyan;64
+tete_perroquet_gris;tête;126.2;pdc:ks_decapitator:tete:s:perroquet_gris;Tête de perroquet gris;64
+tete_lapin_brun;tête;16.49;pdc:ks_decapitator:tete:s:lapin_brun;Tête de lapin brun;64
+tete_bebe_lapin_brun;tête;21.05;pdc:ks_decapitator:tete:s:bebe_lapin_brun;Tête de bébé lapin brun;64
+tete_lapin_blanc;tête;15.2;pdc:ks_decapitator:tete:s:lapin_blanc;Tête de lapin blanc;64
+tete_bebe_lapin_blanc;tête;19.4;pdc:ks_decapitator:tete:s:bebe_lapin_blanc;Tête de bébé lapin blanc;64
+tete_lapin_noir;tête;16.49;pdc:ks_decapitator:tete:s:lapin_noir;Tête de lapin noir;64
+tete_bebe_lapin_noir;tête;21.05;pdc:ks_decapitator:tete:s:bebe_lapin_noir;Tête de bébé lapin noir;64
+tete_lapin_noir_et_blanc;tête;15.2;pdc:ks_decapitator:tete:s:lapin_noir_et_blanc;Tête de lapin noir et blanc;64
+tete_bebe_lapin_noir_et_blanc;tête;19.4;pdc:ks_decapitator:tete:s:bebe_lapin_noir_et_blanc;Tête de bébé lapin noir et blanc;64
+tete_lapin_dore;tête;15.2;pdc:ks_decapitator:tete:s:lapin_dore;Tête de lapin doré;64
+tete_bebe_lapin_dore;tête;19.4;pdc:ks_decapitator:tete:s:bebe_lapin_dore;Tête de bébé lapin doré;64
+tete_lapin_poivre_et_sel;tête;15.2;pdc:ks_decapitator:tete:s:lapin_poivre_et_sel;Tête de lapin poivre et sel;64
+tete_bebe_lapin_poivre_et_sel;tête;19.4;pdc:ks_decapitator:tete:s:bebe_lapin_poivre_et_sel;Tête de bébé lapin poivre et sel;64
+tete_lapin_toast;tête;24.77;pdc:ks_decapitator:tete:s:lapin_toast;Tête de lapin Toast;64
+tete_bebe_lapin_toast;tête;31.62;pdc:ks_decapitator:tete:s:bebe_lapin_toast;Tête de bébé lapin Toast;64
+tete_mouton_blanc;tête;15.2;pdc:ks_decapitator:tete:s:mouton_blanc;Tête de mouton blanc;64
+tete_bebe_mouton_blanc;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_blanc;Tête de bébé mouton blanc;64
+tete_mouton_orange;tête;15.2;pdc:ks_decapitator:tete:s:mouton_orange;Tête de mouton orange;64
+tete_bebe_mouton_orange;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_orange;Tête de bébé mouton orange;64
+tete_mouton_magenta;tête;15.2;pdc:ks_decapitator:tete:s:mouton_magenta;Tête de mouton magenta;64
+tete_bebe_mouton_magenta;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_magenta;Tête de bébé mouton magenta;64
+tete_mouton_bleu_clair;tête;15.2;pdc:ks_decapitator:tete:s:mouton_bleu_clair;Tête de mouton bleu clair;64
+tete_bebe_mouton_bleu_clair;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_bleu_clair;Tête de bébé mouton bleu clair;64
+tete_mouton_jaune;tête;15.2;pdc:ks_decapitator:tete:s:mouton_jaune;Tête de mouton jaune;64
+tete_bebe_mouton_jaune;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_jaune;Tête de bébé mouton jaune;64
+tete_mouton_vert_clair;tête;15.2;pdc:ks_decapitator:tete:s:mouton_vert_clair;Tête de mouton vert clair;64
+tete_bebe_mouton_vert_clair;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_vert_clair;Tête de bébé mouton vert clair;64
+tete_mouton_rose;tête;15.2;pdc:ks_decapitator:tete:s:mouton_rose;Tête de mouton rose;64
+tete_bebe_mouton_rose;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_rose;Tête de bébé mouton rose;64
+tete_mouton_gris;tête;15.2;pdc:ks_decapitator:tete:s:mouton_gris;Tête de mouton gris;64
+tete_bebe_mouton_gris;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_gris;Tête de bébé mouton gris;64
+tete_mouton_gris_clair;tête;15.2;pdc:ks_decapitator:tete:s:mouton_gris_clair;Tête de mouton gris clair;64
+tete_bebe_mouton_gris_clair;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_gris_clair;Tête de bébé mouton gris clair;64
+tete_mouton_cyan;tête;15.2;pdc:ks_decapitator:tete:s:mouton_cyan;Tête de mouton cyan;64
+tete_bebe_mouton_cyan;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_cyan;Tête de bébé mouton cyan;64
+tete_mouton_violet;tête;15.2;pdc:ks_decapitator:tete:s:mouton_violet;Tête de mouton violet;64
+tete_bebe_mouton_violet;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_violet;Tête de bébé mouton violet;64
+tete_mouton_bleu;tête;15.2;pdc:ks_decapitator:tete:s:mouton_bleu;Tête de mouton bleu;64
+tete_bebe_mouton_bleu;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_bleu;Tête de bébé mouton bleu;64
+tete_mouton_marron;tête;15.2;pdc:ks_decapitator:tete:s:mouton_marron;Tête de mouton marron;64
+tete_bebe_mouton_marron;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_marron;Tête de bébé mouton marron;64
+tete_mouton_vert;tête;15.2;pdc:ks_decapitator:tete:s:mouton_vert;Tête de mouton vert;64
+tete_bebe_mouton_vert;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_vert;Tête de bébé mouton vert;64
+tete_mouton_rouge;tête;15.2;pdc:ks_decapitator:tete:s:mouton_rouge;Tête de mouton rouge;64
+tete_bebe_mouton_rouge;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_rouge;Tête de bébé mouton rouge;64
+tete_mouton_noir;tête;15.2;pdc:ks_decapitator:tete:s:mouton_noir;Tête de mouton noir;64
+tete_bebe_mouton_noir;tête;19.4;pdc:ks_decapitator:tete:s:bebe_mouton_noir;Tête de bébé mouton noir;64
+tete_mouton_arc_en_ciel;tête;21.05;pdc:ks_decapitator:tete:s:mouton_arc_en_ciel;Tête de mouton arc-en-ciel;64
+tete_bebe_mouton_arc_en_ciel;tête;26.87;pdc:ks_decapitator:tete:s:bebe_mouton_arc_en_ciel;Tête de bébé mouton arc-en-ciel;64
+tete_loup_pale;tête;107.2;pdc:ks_decapitator:tete:s:loup_pale;Tête de loup pâle;64
+tete_loup_pale_en_colere;tête;126.2;pdc:ks_decapitator:tete:s:loup_pale_en_colere;Tête de loup pâle en colère;64
+tete_bebe_loup_pale;tête;136.9;pdc:ks_decapitator:tete:s:bebe_loup_pale;Tête de bébé loup pâle;64
+tete_bebe_loup_pale_en_colere;tête;161.1;pdc:ks_decapitator:tete:s:bebe_loup_pale_en_colere;Tête de bébé loup pâle en colère;64
+tete_loup_cendre;tête;174.8;pdc:ks_decapitator:tete:s:loup_cendre;Tête de loup cendré;64
+tete_loup_cendre_en_colere;tête;205.7;pdc:ks_decapitator:tete:s:loup_cendre_en_colere;Tête de loup cendré en colère;64
+tete_bebe_loup_cendre;tête;223.1;pdc:ks_decapitator:tete:s:bebe_loup_cendre;Tête de bébé loup cendré;64
+tete_bebe_loup_cendre_en_colere;tête;262.5;pdc:ks_decapitator:tete:s:bebe_loup_cendre_en_colere;Tête de bébé loup cendré en colère;64
+tete_loup_noir;tête;174.8;pdc:ks_decapitator:tete:s:loup_noir;Tête de loup noir;64
+tete_loup_noir_en_colere;tête;205.7;pdc:ks_decapitator:tete:s:loup_noir_en_colere;Tête de loup noir en colère;64
+tete_bebe_loup_noir;tête;223.1;pdc:ks_decapitator:tete:s:bebe_loup_noir;Tête de bébé loup noir;64
+tete_bebe_loup_noir_en_colere;tête;262.5;pdc:ks_decapitator:tete:s:bebe_loup_noir_en_colere;Tête de bébé loup noir en colère;64
+tete_loup_chataigne;tête;174.8;pdc:ks_decapitator:tete:s:loup_chataigne;Tête de loup châtaigne;64
+tete_loup_chataigne_en_colere;tête;205.7;pdc:ks_decapitator:tete:s:loup_chataigne_en_colere;Tête de loup châtaigne en colère;64
+tete_bebe_loup_chataigne;tête;223.1;pdc:ks_decapitator:tete:s:bebe_loup_chataigne;Tête de bébé loup châtaigne;64
+tete_bebe_loup_chataigne_en_colere;tête;262.5;pdc:ks_decapitator:tete:s:bebe_loup_chataigne_en_colere;Tête de bébé loup châtaigne en colère;64
+tete_loup_roux;tête;174.8;pdc:ks_decapitator:tete:s:loup_roux;Tête de loup roux;64
+tete_loup_roux_en_colere;tête;205.7;pdc:ks_decapitator:tete:s:loup_roux_en_colere;Tête de loup roux en colère;64
+tete_bebe_loup_roux;tête;223.1;pdc:ks_decapitator:tete:s:bebe_loup_roux;Tête de bébé loup roux;64
+tete_bebe_loup_roux_en_colere;tête;262.5;pdc:ks_decapitator:tete:s:bebe_loup_roux_en_colere;Tête de bébé loup roux en colère;64
+tete_loup_des_neiges;tête;174.8;pdc:ks_decapitator:tete:s:loup_des_neiges;Tête de loup des neiges;64
+tete_loup_des_neiges_en_colere;tête;205.7;pdc:ks_decapitator:tete:s:loup_des_neiges_en_colere;Tête de loup des neiges en colère;64
+tete_bebe_loup_des_neiges;tête;223.1;pdc:ks_decapitator:tete:s:bebe_loup_des_neiges;Tête de bébé loup des neiges;64
+tete_bebe_loup_des_neiges_en_colere;tête;262.5;pdc:ks_decapitator:tete:s:bebe_loup_des_neiges_en_colere;Tête de bébé loup des neiges en colère;64
+tete_loup_tachete;tête;174.8;pdc:ks_decapitator:tete:s:loup_tachete;Tête de loup tacheté;64
+tete_loup_tachete_en_colere;tête;205.7;pdc:ks_decapitator:tete:s:loup_tachete_en_colere;Tête de loup tacheté en colère;64
+tete_bebe_loup_tachete;tête;223.1;pdc:ks_decapitator:tete:s:bebe_loup_tachete;Tête de bébé loup tacheté;64
+tete_bebe_loup_tachete_en_colere;tête;262.5;pdc:ks_decapitator:tete:s:bebe_loup_tachete_en_colere;Tête de bébé loup tacheté en colère;64
+tete_loup_raye;tête;174.8;pdc:ks_decapitator:tete:s:loup_raye;Tête de loup rayé;64
+tete_loup_raye_en_colere;tête;205.7;pdc:ks_decapitator:tete:s:loup_raye_en_colere;Tête de loup rayé en colère;64
+tete_bebe_loup_raye;tête;223.1;pdc:ks_decapitator:tete:s:bebe_loup_raye;Tête de bébé loup rayé;64
+tete_bebe_loup_raye_en_colere;tête;262.5;pdc:ks_decapitator:tete:s:bebe_loup_raye_en_colere;Tête de bébé loup rayé en colère;64
+tete_loup_des_bois;tête;174.8;pdc:ks_decapitator:tete:s:loup_des_bois;Tête de loup des bois;64
+tete_loup_des_bois_en_colere;tête;205.7;pdc:ks_decapitator:tete:s:loup_des_bois_en_colere;Tête de loup des bois en colère;64
+tete_bebe_loup_des_bois;tête;223.1;pdc:ks_decapitator:tete:s:bebe_loup_des_bois;Tête de bébé loup des bois;64
+tete_bebe_loup_des_bois_en_colere;tête;262.5;pdc:ks_decapitator:tete:s:bebe_loup_des_bois_en_colere;Tête de bébé loup des bois en colère;64
+tete_nautile_zombie;tête;642.8;pdc:ks_decapitator:tete:s:nautile_zombie;Tête de nautile-zombie;64
+tete_nautile_zombie_des_coraux;tête;890.2;pdc:ks_decapitator:tete:s:nautile_zombie_des_coraux;Tête de nautile-zombie des coraux;64
+tete_abeille;tête;107.2;pdc:ks_decapitator:tete:s:abeille;Tête d'abeille;64
+tete_bebe_abeille;tête;136.9;pdc:ks_decapitator:tete:s:bebe_abeille;Tête de bébé abeille;64
+tete_abeille_pollinisee;tête;136.9;pdc:ks_decapitator:tete:s:abeille_pollinisee;Tête d'abeille pollinisée;64
+tete_bebe_abeille_pollinisee;tête;174.8;pdc:ks_decapitator:tete:s:bebe_abeille_pollinisee;Tête de bébé abeille pollinisée;64
+tete_abeille_en_colere;tête;126.2;pdc:ks_decapitator:tete:s:abeille_en_colere;Tête d'abeille en colère;64
+tete_bebe_abeille_en_colere;tête;161.1;pdc:ks_decapitator:tete:s:bebe_abeille_en_colere;Tête de bébé abeille en colère;64
+tete_abeille_pollinisee_en_colere;tête;161.1;pdc:ks_decapitator:tete:s:abeille_pollinisee_en_colere;Tête d'abeille pollinisée en colère;64
+tete_bebe_abeille_pollinisee_en_colere;tête;205.7;pdc:ks_decapitator:tete:s:bebe_abeille_pollinisee_en_colere;Tête de bébé abeille pollinisée en colère;64
+tete_arpenteur;tête;107.2;pdc:ks_decapitator:tete:s:arpenteur;Tête d'arpenteur;64
+tete_bebe_arpenteur;tête;136.9;pdc:ks_decapitator:tete:s:bebe_arpenteur;Tête de bébé arpenteur;64
+tete_arpenteur_frigorifie;tête;126.2;pdc:ks_decapitator:tete:s:arpenteur_frigorifie;Tête d'arpenteur frigorifié;64
+tete_bebe_arpenteur_frigorifie;tête;161.1;pdc:ks_decapitator:tete:s:bebe_arpenteur_frigorifie;Tête de bébé arpenteur frigorifié;64
+tete_chevre;tête;107.2;pdc:ks_decapitator:tete:s:chevre;Tête de chèvre;64
+tete_bebe_chevre;tête;136.9;pdc:ks_decapitator:tete:s:bebe_chevre;Tête de bébé chèvre;64
+tete_chevre_hurleuse;tête;242;pdc:ks_decapitator:tete:s:chevre_hurleuse;Tête de chèvre hurleuse;64
+tete_bebe_chevre_hurleuse;tête;309;pdc:ks_decapitator:tete:s:bebe_chevre_hurleuse;Tête de bébé chèvre hurleuse;64
+tete_vex;tête;642.8;pdc:ks_decapitator:tete:s:vex;Tête de vex;64
+tete_vex_en_charge;tête;756.5;pdc:ks_decapitator:tete:s:vex_en_charge;Tête de vex en charge;64
+tete_creeper;tête;29.15;pdc:ks_decapitator:tete:s:creeper;Tête de creeper;64
+tete_creeper_charge;tête;98.84;pdc:ks_decapitator:tete:s:creeper_charge;Tête de creeper chargé;64
+tete_villageois;tête;136.9;pdc:ks_decapitator:tete:s:villageois;Tête de villageois;64
+tete_villageois_armurier;tête;136.9;pdc:ks_decapitator:tete:s:villageois_armurier;Tête de villageois armurier;64
+tete_villageois_boucher;tête;136.9;pdc:ks_decapitator:tete:s:villageois_boucher;Tête de villageois boucher;64
+tete_villageois_cartographe;tête;136.9;pdc:ks_decapitator:tete:s:villageois_cartographe;Tête de villageois cartographe;64
+tete_villageois_pretre;tête;136.9;pdc:ks_decapitator:tete:s:villageois_pretre;Tête de villageois prêtre;64
+tete_villageois_fermier;tête;136.9;pdc:ks_decapitator:tete:s:villageois_fermier;Tête de villageois fermier;64
+tete_villageois_pecheur;tête;136.9;pdc:ks_decapitator:tete:s:villageois_pecheur;Tête de villageois pêcheur;64
+tete_villageois_flechier;tête;136.9;pdc:ks_decapitator:tete:s:villageois_flechier;Tête de villageois fléchier;64
+tete_villageois_tanneur;tête;136.9;pdc:ks_decapitator:tete:s:villageois_tanneur;Tête de villageois tanneur;64
+tete_villageois_bibliothecaire;tête;136.9;pdc:ks_decapitator:tete:s:villageois_bibliothecaire;Tête de villageois bibliothécaire;64
+tete_villageois_macon;tête;136.9;pdc:ks_decapitator:tete:s:villageois_macon;Tête de villageois maçon;64
+tete_villageois_idiot;tête;136.9;pdc:ks_decapitator:tete:s:villageois_idiot;Tête de villageois idiot;64
+tete_villageois_berger;tête;136.9;pdc:ks_decapitator:tete:s:villageois_berger;Tête de villageois berger;64
+tete_villageois_forgeron_d_outils;tête;136.9;pdc:ks_decapitator:tete:s:villageois_forgeron_d_outils;Tête de villageois forgeron d'outils;64
+tete_villageois_forgeron_d_armes;tête;136.9;pdc:ks_decapitator:tete:s:villageois_forgeron_d_armes;Tête de villageois forgeron d'armes;64
+tete_bebe_villageois;tête;136.9;pdc:ks_decapitator:tete:s:bebe_villageois;Tête de bébé villageois;64
+tete_zombie_villageois;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois;Tête de zombie-villageois;64
+tete_zombie_villageois_armurier;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_armurier;Tête de zombie-villageois armurier;64
+tete_zombie_villageois_boucher;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_boucher;Tête de zombie-villageois boucher;64
+tete_zombie_villageois_cartographe;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_cartographe;Tête de zombie-villageois cartographe;64
+tete_zombie_villageois_pretre;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_pretre;Tête de zombie-villageois prêtre;64
+tete_zombie_villageois_fermier;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_fermier;Tête de zombie-villageois fermier;64
+tete_zombie_villageois_pecheur;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_pecheur;Tête de zombie-villageois pêcheur;64
+tete_zombie_villageois_flechier;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_flechier;Tête de zombie-villageois fléchier;64
+tete_zombie_villageois_tanneur;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_tanneur;Tête de zombie-villageois tanneur;64
+tete_zombie_villageois_bibliothecaire;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_bibliothecaire;Tête de zombie-villageois bibliothécaire;64
+tete_zombie_villageois_macon;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_macon;Tête de zombie-villageois maçon;64
+tete_zombie_villageois_idiot;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_idiot;Tête de zombie-villageois idiot;64
+tete_zombie_villageois_berger;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_berger;Tête de zombie-villageois berger;64
+tete_zombie_villageois_forgeron_d_outils;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_forgeron_d_outils;Tête de zombie-villageois forgeron d'outils;64
+tete_zombie_villageois_forgeron_d_armes;tête;136.9;pdc:ks_decapitator:tete:s:zombie_villageois_forgeron_d_armes;Tête de zombie-villageois forgeron d'armes;64
+tete_bebe_zombie_villageois;tête;242;pdc:ks_decapitator:tete:s:bebe_zombie_villageois;Tête de bébé zombie-villageois;64
+spawner_zombi;spawner;11160;pdc:ks_spawners:creature:s:zombi;Spawner à zombi;64
+spawner_squelette;spawner;11160;pdc:ks_spawners:creature:s:squelette;Spawner à squelette;64
+spawner_araignee;spawner;11160;pdc:ks_spawners:creature:s:araignee;Spawner à araignée;64
+spawner_creeper;spawner;11160;pdc:ks_spawners:creature:s:creeper;Spawner à creeper;64
+spawner_blaze;spawner;11239;pdc:ks_spawners:creature:s:blaze;Spawner à blaze;64
+spawner_mouton;spawner;11147;pdc:ks_spawners:creature:s:mouton;Spawner à mouton;64
+spawner_vache;spawner;11144;pdc:ks_spawners:creature:s:vache;Spawner à vache;64
+spawner_poule;spawner;11144;pdc:ks_spawners:creature:s:poule;Spawner à poule;64
+elixir_super_gateau;élixir;15.07;pdc:ks_elixir:elixir:s:super_gateau;Super Gâteau;1
+elixir_chauve_souris;élixir;97.25;pdc:ks_elixir:elixir:s:chauve_souris;Élixir de chauve-souris;1
+elixir_anguille;élixir;31.78;pdc:ks_elixir:elixir:s:anguille;Élixir d'anguille;1
+elixir_ignifugation;élixir;74.66;pdc:ks_elixir:elixir:s:ignifugation;Élixir d'ignifugation;1
+elixir_plume;élixir;31;pdc:ks_elixir:elixir:s:plume;Élixir de Plume;1
+elixir_phenix;élixir;77.39;pdc:ks_elixir:elixir:s:phenix;Élixir de Phénix;1
+elixir_fantome;élixir;64.17;pdc:ks_elixir:elixir:s:fantome;Élixir du Fantôme;1
+elixir_titan;élixir;78.6;pdc:ks_elixir:elixir:s:titan;Élixir de Titan;1
+elixir_vent;élixir;73.63;pdc:ks_elixir:elixir:s:vent;Élixir du Vent;1
+elixir_rebond;élixir;62.54;pdc:ks_elixir:elixir:s:rebond;Élixir de Rebond;1
+elixir_fortune;élixir;19699;pdc:ks_elixir:elixir:s:fortune;Élixir de Fortune;1
+jeton_tp;jeton;16;-;Jeton de téléportation;
+jeton_emplacement;jeton;250;-;Jeton d'emplacement;
+jeton_claim;jeton;5000;-;Jeton de claim;
+jeton_mort;jeton;150;-;Jeton de la mort;
+fiole_exp(10);expérience;2.54;pdc:ks_fioleexp:points:i:160;Fiole d'expérience (10 niveaux);64
+fiole_exp(15);expérience;5;pdc:ks_fioleexp:points:i:315;Fiole d'expérience (15 niveaux);64
+fiole_exp(20);expérience;8.73;pdc:ks_fioleexp:points:i:550;Fiole d'expérience (20 niveaux);64
+fiole_exp(30);expérience;22.14;pdc:ks_fioleexp:points:i:1395;Fiole d'expérience (30 niveaux);64
+fiole_exp(40);expérience;46.35;pdc:ks_fioleexp:points:i:2920;Fiole d'expérience (40 niveaux);64
+bloc_emeraude_compresse_tier_1;émeraude;90;-;Bloc d'émeraude compressé (tier 1);
+bloc_emeraude_compresse_tier_2;émeraude;900;-;Bloc d'émeraude compressé (tier 2);
+bloc_emeraude_compresse_tier_3;émeraude;9000;-;Bloc d'émeraude compressé (tier 3);
+bloc_emeraude_compresse_tier_4;émeraude;90000;-;Bloc d'émeraude compressé (tier 4);
+bloc_emeraude_compresse_tier_5;émeraude;900000;-;Bloc d'émeraude compressé (tier 5);
+bloc_emeraude_compresse_tier_6;émeraude;9000000;-;Bloc d'émeraude compressé (tier 6);
+bloc_charbon_de_bois;charbon;0.27;pdc:ks_crafts:bloc_charbon_de_bois:b;Bloc de charbon de bois;64

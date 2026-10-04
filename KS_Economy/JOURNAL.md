@@ -219,3 +219,43 @@ Revue du 03/10/2026, points validés par LeKiwi06 :
   joueurs ; 10 par page, « Modifier la recherche ».
 
 **Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.2.0 ; ancienne version dans `_removed-ks_economy-1.1.5/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.3.0 - barème des prix et rachats de la semaine (04/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « enregistrer cette base de données dans le plugin d'économie, et fait une interface où on tire
+10 items random par semaine et on les achète aux joueurs ».
+
+- **Barème** : `rachats.csv` (dans le jar), 1 929 objets (vanilla 26.3 et objets custom) : id, famille, prix en
+  émeraudes à l'unité, façon de reconnaître l'objet, nom. Autres plugins : `KSEconomy.prixBareme(id)`. Le fichier est
+  produit par le script du barème (hors dépôt) : pour changer un prix, régénérer le fichier puis recompiler.
+- **Tirage** chaque lundi (heure de Paris), ou au premier démarrage qui suit : 2 objets dans chacune des 5 gammes de
+  prix (moins de 0,1 ; 0,1 à 1 ; 1 à 10 ; 10 à 100 ; 100 et plus). On tire d'abord une **famille** (179 : diorite,
+  cuivre, fleur, terres, sapin, potion, améthyste, boue, terres cuites, tête...), puis un objet de cette famille dans
+  la gamme demandée : les variantes d'un objet comptent pour un seul. Une famille ne sort deux fois dans la semaine
+  que s'il n'en reste pas d'autre.
+- **Prix de la semaine** : prix du barème à plus ou moins 25 %, arrondi à l'unité dès 1 émeraude.
+- **Lot** : selon la gamme du prix de la semaine, la quantité (arrondie à l'unité inférieure) qui approche 1 / 10 /
+  64 / 320 émeraudes, payée au nombre entier le plus proche (un diamant tiré à 3 : 21 pour 63 ; à 4 : 16 pour 64 ;
+  à 5 : 12 pour 60). À l'unité à partir de 100 émeraudes et pour un objet non empilable.
+- **Quota** par objet, par joueur et par jour (minuit, heure de Paris) : aucun tant que la cagnotte ne dépasse pas
+  25 000 ; au-dessus, un objet ne rapporte pas plus de 5 % de la cagnotte (7,5 % si elle est masquée). La vente qui
+  fait dépasser passe, les suivantes sont refusées jusqu'au lendemain. Le quota suit la cagnotte pendant la vente.
+- **Menu** : `/rachat` (ou `/rachats`) et bouton « Rachats de la semaine » du menu Économie : les 10 lots (quantité,
+  objet, points, ce que le joueur possède) ; par objet : « Vendre 1 lot », « Tout vendre ». Les points sont crédités
+  sur le score (créés par le serveur).
+- Objets acceptés : objet vanilla sans marque de plugin, sans enchantement, sans usure, conteneur vide (un nom donné
+  à l'enclume est accepté) ; potion de base de l'effet demandé ; objet custom reconnu par la marque de son plugin
+  (têtes, élixirs, spawners, fioles d'expérience de 10 / 15 / 20 / 30 / 40 niveaux, Estomac du gardien...). Seul
+  l'inventaire compte (ni armure, ni main secondaire).
+- **Dans la base mais jamais tirés** (choix de Claude, signalés à LeKiwi06) : émeraude et blocs d'émeraude
+  (monnaie) ; jetons (ils s'achètent en points : les racheter jusqu'à 25 % plus cher créerait des points à volonté) ;
+  potion / potion jetable / persistante / flèche à effet sans effet précisé, livres enchantés, cartes au trésor, livre
+  écrit, soupe suspecte, tête de wither squelette abîmée (prix variable selon le contenu) ; objet non empilable de
+  moins de 1 émeraude (il serait payé 1 émeraude pièce, bien au-dessus de son prix) ; objets de la 26.3 que le serveur
+  ne connaît pas encore.
+- `rachats.yml` : tirage de la semaine et gains du jour. Réglages (`config.yml`, section `rachats`, à ajouter à la
+  main sur le serveur pour les modifier) : objets par gamme, écart du prix, seuil et parts du quota.
+- Limites connues : pas de commande pour refaire le tirage (supprimer `rachats.yml` serveur éteint) ; les lots de
+  têtes demandent des têtes identiques ; l'œuf de dragon peut sortir (une seule vente possible, environ 150 000).
+
+**Statut : compilé le 04/10/2026, non déployé, non testé en jeu.**

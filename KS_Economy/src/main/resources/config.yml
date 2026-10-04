@@ -22,3 +22,15 @@ magasins:
   # Heures pendant lesquelles la place d'une boutique supprimee reste prise (0 : aucune attente).
   delai-suppression-heures: 3
 
+# 1.3.0 - rachats de la semaine (a ajouter a la main dans le config.yml du serveur pour les modifier).
+rachats:
+  # Objets tires dans chacune des 5 gammes de prix (2 : 10 objets par semaine).
+  objets-par-gamme: 2
+  # Ecart maximal du prix de la semaine autour du prix du bareme, en %.
+  variation-pourcent: 25
+  quota:
+    # Au-dessus de cette cagnotte, un objet ne rapporte par jour qu'une part de la cagnotte du joueur.
+    seuil: 25000
+    pourcent: 5.0
+    # Part quand le joueur masque sa cagnotte.
+    pourcent-masque: 7.5

@@ -4,7 +4,7 @@
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.2.0
+VERSION=1.3.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -26,6 +26,8 @@ java -jar "$(win "$TOOLS/ecj.jar")" -21 -proc:none -nowarn -encoding UTF-8 \
 [ -f src/main/resources/config.yml ] && cp src/main/resources/config.yml "$OUT/config.yml"
 # 1.1.2 : noms français des objets (recherche, panneaux) ; oublié jusqu'en 1.1.1, la recherche ne trouvait rien.
 cp src/main/resources/noms_objets.txt "$OUT/noms_objets.txt"
+# 1.3.0 : barème des prix (rachats de la semaine).
+cp src/main/resources/rachats.csv "$OUT/rachats.csv"
 sed "s/\${project.version}/$VERSION/" src/main/resources/plugin.yml > "$OUT/plugin.yml"
 jar cf "$DEST/KS_Economy-$VERSION.jar" -C "$OUT" .
 echo "OK -> $DEST/KS_Economy-$VERSION.jar"

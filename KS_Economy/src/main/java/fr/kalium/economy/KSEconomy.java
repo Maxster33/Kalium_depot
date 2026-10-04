@@ -46,7 +46,7 @@ import java.util.UUID;
  * - Blocs compressés tier 1 à 6 (10^n blocs d'émeraude = 9 x 10^n points) : ni posables, ni décraftables.
  *
  * Autres plugins : solde(uuid), crediter(uuid, points), debiter(uuid, points), creerBloc(tier), tierBloc(objet)
- * (KS_Elixir : bloc tier 3 de l'Élixir de Fortune).
+ * (KS_Elixir : bloc tier 3 de l'Élixir de Fortune), prixBareme(id) (1.3.0 : barème des prix, voir Rachats).
  */
 public final class KSEconomy extends JavaPlugin implements Listener {
 
@@ -80,6 +80,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
     private Ventes ventes;
     private Favoris favoris;
     private Recherche recherche;
+    private Rachats rachats;
     /** 1.2.0 : une sauvegarde des comptes est déjà prévue au tick suivant. */
     private volatile boolean sauvegardePrevue;
 
@@ -111,6 +112,9 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         favoris = new Favoris(this);
         recherche = new Recherche(this, magasins, boutiques);
         getServer().getPluginManager().registerEvents(ventes, this);
+        // 1.3.0 : barème des prix et rachats de la semaine (après Boutiques : noms français des objets).
+        rachats = new Rachats(this);
+        getCommand("rachat").setExecutor(rachats);
         // 1.1.4 : signalements dans la rubrique « Modération » de /menu (KLM_Menu 2.7.0 ; avant : Paramètres).
         getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
                 fr.kalium.menu.api.MenuSection.moderation(this, "signalements-magasins", Signalements.PERMISSION_STAFF, 50,
@@ -142,6 +146,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         getServer().getScheduler().runTaskTimer(this, () -> {
             prelevementDuJour();
             sauverSiBesoin();
+            rachats.verifier();
         }, 20L * 60, 20L * 60);
         Bukkit.getOnlinePlayers().forEach(this::majListe);
         lang.saveIfNeeded();
@@ -151,6 +156,9 @@ public final class KSEconomy extends JavaPlugin implements Listener {
     public void onDisable() {
         if (ventes != null) {
             ventes.sauver();
+        }
+        if (rachats != null) {
+            rachats.sauver();
         }
         if (echanges != null) {
             echanges.toutAnnuler();
@@ -183,6 +191,19 @@ public final class KSEconomy extends JavaPlugin implements Listener {
 
     Recherche recherche() {
         return recherche;
+    }
+
+    Rachats rachats() {
+        return rachats;
+    }
+
+    MenuEconomie menuEconomie() {
+        return menu;
+    }
+
+    /** 1.3.0 : prix du barème d'Event (émeraudes à l'unité) pour un id du barème, 0 s'il est inconnu. */
+    public static double prixBareme(String id) {
+        return instance.rachats == null ? 0 : instance.rachats.prix(id);
     }
 
     /**
