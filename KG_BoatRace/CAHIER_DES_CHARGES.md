@@ -49,6 +49,7 @@ KalGames 1.16.0 (compilé, pas encore déployé ni testé ; accord de LeKiwi06).
 5. Résultats de la course (même règle que le Parkour, choix laissé à Claude le 24/09/2026, modifiable) : deux
    classements, au TEMPS (ordre d'arrivée) et aux POINTS (trié par points individuels ; entre parenthèses le cumul
    = ses points + ceux de tous les joueurs en dessous, c'est le cumul qui est crédité).
+   **Depuis la 1.5.0 (LeKiwi06, 04/10/2026)** : ses points + la MOYENNE des points des joueurs en dessous.
 6. Limite « 5 parties privées comptées par jour » supprimée (obsolète).
 
 **Hors-piste** : dès que le bateau touche un bloc autre que de la glace compacte ou de la glace bleue d'une façon

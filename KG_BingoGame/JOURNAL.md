@@ -1771,3 +1771,19 @@ Mondes de réserve déjà créés par la 0.8.5 : supprimés au redémarrage et r
 
 **Déploiement** : avec KG_Bingo 1.7.1 (texte d'aide du menu de création, seulement un texte : pas obligatoire
 ensemble). **Déployé le 03/10/2026 à 17:05 sur Serveur Jeux (Maxster33 ; 0.8.6 dans `_removed-kg_bingogame-0.8.6/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 0.9.0 - moyenne des équipes et des joueurs classés derrière au lieu de leur somme (04/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (04/10/2026)** : « nouvelle règle pour tous les jeux : en multijoueur on ne gagne plus la somme des
+joueurs en dessous de nous, mais la moyenne ; fais en sorte que ce changement soit rétroactif ».
+- Victoire : chaque équipe gagne ses points + la **moyenne** des points des équipes classées derrière elle (avant : leur
+  somme) ; classement solo (celui qui est crédité dans les classements du hub) : ses points + la **moyenne** des points
+  des joueurs classés derrière. Multiplicateur de vitesse du blackout, XP et bonus de temps inchangés, appliqués après.
+- Tous ceux classés derrière comptent dans la moyenne, y compris un joueur qui a abandonné (0 point) : un abandon fait
+  donc toujours baisser le gain de ceux classés devant, comme avant.
+- À 2 joueurs (ou 2 équipes), rien ne change. Égalité, nulle, temps écoulé : inchangé (chacun garde ses points).
+- Texte du résumé : « Classement des équipes (points + moyenne des équipes derrière) ».
+
+Même règle dans KG_BoatRace 1.5.0. Rétroactif : fait dans les classements de Kal-Games, voir `REPRISE_PROJET.md`.
+
+**Compilé le 04/10/2026, non déployé. Statut : non testé en jeu.**

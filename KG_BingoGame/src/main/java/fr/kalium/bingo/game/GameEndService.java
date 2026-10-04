@@ -350,10 +350,18 @@ public final class GameEndService {
      * traitement commun (inventaires, salle d'attente, nettoyage).
      *
      * Victoire : bonus de victoire pour l'equipe gagnante, puis classement CUMULE - chaque equipe gagne ses points
-     * + ceux de toutes les equipes classees derriere elle (demande explicite de LeKiwi06). Ordre : gagnante, puis
+     * + ceux des equipes classees derriere elle (demande explicite de LeKiwi06). Ordre : gagnante, puis
      * les autres par score, les equipes ayant abandonne toujours en dernier.
+     * 0.9.0 (demande de LeKiwi06, 04/10/2026, pour tous les jeux) : la MOYENNE des points des equipes (et des joueurs,
+     * au classement solo) classes derriere, au lieu de leur somme. Tous ceux classes derriere comptent dans la
+     * moyenne, y compris un joueur qui a abandonne (0 point).
      * Egalite / nulle : chaque equipe ne garde que ses propres points d'equipe.
      */
+    /** 0.9.0 : moyenne des points de ceux classes derriere (0 s'il n'y a personne). */
+    private static double average(double sum, int count) {
+        return count > 0 ? sum / count : 0;
+    }
+
     public void finish(BingoGame game, Outcome outcome, int winner, String reason) {
         if (game.getState() != GameState.IN_PROGRESS) {
             return;
@@ -451,7 +459,7 @@ public final class GameEndService {
         };
         summary.add(Component.text("===== " + title + " =====", NamedTextColor.GOLD));
         summary.add(Component.text(reason, NamedTextColor.YELLOW));
-        summary.add(Component.text(win ? "Classement des équipes (points + ceux des équipes derrière) :"
+        summary.add(Component.text(win ? "Classement des équipes (points + moyenne des équipes derrière) :"
                 : "Points des équipes (chacune garde ses propres points) :", NamedTextColor.AQUA));
         StringBuilder log = new StringBuilder("[KG_BingoGame] Partie '" + game.getGameId() + "' terminee (" + title + ") :");
         for (int i = 0; i < order.size(); i++) {
@@ -463,6 +471,7 @@ public final class GameEndService {
                 for (int j = i + 1; j < order.size(); j++) {
                     behind += own.get(order.get(j).getTeam().getTeamNumber());
                 }
+                behind = average(behind, order.size() - 1 - i); // 0.9.0 : moyenne au lieu de la somme
             }
             double mult = win && team == winner ? speed : 1.0;
             double xp = teamXp.getOrDefault(team, 0.0);
@@ -512,6 +521,7 @@ public final class GameEndService {
                 for (int j = i + 1; j < soloList.size(); j++) {
                     behind += soloList.get(j).points();
                 }
+                behind = average(behind, soloList.size() - 1 - i); // 0.9.0 : moyenne au lieu de la somme
             }
             if (soloList.get(i).abandoned()) {
                 solos.add((win ? (i + 1) + ". " : "") + soloList.get(i).name() + " -" + ScoreEngine.format(ABANDON_PENALTY) + " (abandon)");
@@ -547,6 +557,7 @@ public final class GameEndService {
                 for (int j = i + 1; j < order.size(); j++) {
                     behindPts += own.get(order.get(j).getTeam().getTeamNumber());
                 }
+                behindPts = average(behindPts, order.size() - 1 - i); // 0.9.0 : moyenne au lieu de la somme
             }
             List<fr.kalium.bingo.gui.SummaryMenu.PlayerLine> players = new ArrayList<>();
             for (UUID playerId : instance.getTeam().getPlayers()) {

@@ -903,13 +903,14 @@ public final class BoatRaceInstance extends GameInstance {
                     "rank", position, "name", nameOf(entry.getKey()), "points", fmt(racer.points)));
             position++;
         }
-        // Classement aux points : points de la course, et entre parentheses le cumul credite (ses points + ceux de tous
-        // les joueurs en dessous dans ce classement) - meme regle que le Bingo, recompense la meilleure course.
+        // Classement aux points : points de la course, et entre parentheses le total credite (1.5.0 : ses points + la
+        // MOYENNE de ceux des joueurs en dessous dans ce classement) - meme regle que le Bingo.
         broadcast(t("race.results-points", "<gold><bold>Classement aux points"));
         int line = 1;
         for (Map.Entry<UUID, Double> entry : cumulative.entrySet()) {
             Racer racer = racers.get(entry.getKey());
-            broadcast(t("race.points-line", "<gray><rank>. <white><name></white> <dark_gray>- <gold><points> pts <gray>(cumul <white><total></white>)",
+            // 1.5.0 : nouvelle cle (« credite » au lieu de « cumul »), l'ancienne etant figee dans le lang.yml du serveur.
+            broadcast(t("race.points-line-2", "<gray><rank>. <white><name></white> <dark_gray>- <gold><points> pts <gray>(crédité <white><total></white>)",
                     "rank", line++, "name", nameOf(entry.getKey()), "points", fmt(racer.points), "total", fmt(entry.getValue())));
             Player player = Bukkit.getPlayer(entry.getKey());
             if (player != null && entry.getValue() > 0 && ranked(player) && !plugin.scores().excluded(player)) {
@@ -929,8 +930,9 @@ public final class BoatRaceInstance extends GameInstance {
     }
 
     /**
-     * 1.3.0 : classement aux points (points de la course decroissants) avec, pour chacun, le cumul credite : ses points
-     * + ceux de tous les joueurs en dessous.
+     * 1.3.0 : classement aux points (points de la course decroissants) avec, pour chacun, le total credite.
+     * 1.5.0 (demande de LeKiwi06, 04/10/2026, pour tous les jeux) : ses points + la MOYENNE de ceux des joueurs en
+     * dessous, au lieu de leur somme. Le dernier (ou un joueur seul) ne gagne que ses points.
      */
     private Map<UUID, Double> cumulativePoints() {
         List<Map.Entry<UUID, Racer>> ordered = new ArrayList<>(racers.entrySet());
@@ -938,8 +940,10 @@ public final class BoatRaceInstance extends GameInstance {
         Map<UUID, Double> result = new LinkedHashMap<>();
         double below = 0;
         for (int i = ordered.size() - 1; i >= 0; i--) {
-            below += ordered.get(i).getValue().points;
-            result.put(ordered.get(i).getKey(), Math.round(below * 100) / 100.0);
+            int count = ordered.size() - 1 - i;
+            double own = ordered.get(i).getValue().points;
+            result.put(ordered.get(i).getKey(), Math.round((own + (count > 0 ? below / count : 0)) * 100) / 100.0);
+            below += own;
         }
         Map<UUID, Double> inOrder = new LinkedHashMap<>();
         for (Map.Entry<UUID, Racer> entry : ordered) {

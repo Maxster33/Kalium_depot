@@ -121,3 +121,18 @@ max (s) », « Rayon des points de contrôle ». Clés des réglages inchangées
 
 **Déployé sur Kal-Games le 02/10/2026 à 17:49 (LeKiwi06 ; 1.4.1 dans `_removed-kg_boatrace-1.4.1/`), actif après redémarrage.
 Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**
+
+## 1.5.0 - moyenne des joueurs en dessous au lieu de leur somme (04/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (04/10/2026)** : « nouvelle règle pour tous les jeux : en multijoueur on ne gagne plus la somme des
+joueurs en dessous de nous, mais la moyenne ; fais en sorte que ce changement soit rétroactif ».
+- Classement aux points de fin de course : le total crédité est **ses points + la moyenne des points des joueurs classés
+  en dessous** (avant : + leur somme). Le dernier, ou un joueur seul, ne gagne que ses points ; à 2 joueurs rien ne
+  change (la moyenne d'un seul joueur = ses points). Exemple à 4 joueurs (10, 8, 5, 2) : 15 / 11,5 / 7 / 2 au lieu de
+  25 / 15 / 7 / 2.
+- Texte des résultats : « (crédité n) » au lieu de « (cumul n) » (nouvelle clé `race.points-line-2`).
+- Journal de KG_ScoreBoards : le champ `cumulative` du résultat garde son nom et contient le nouveau total.
+
+Même règle dans KG_BingoGame 0.9.0. Rétroactif : fait dans les classements de Kal-Games, voir `REPRISE_PROJET.md`.
+
+**Compilé le 04/10/2026, non déployé. Statut : non testé en jeu.**
