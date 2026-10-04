@@ -53,4 +53,4 @@ rien.
 - Le reste (minerais, feuilles, fragments de spawner) est inchangé.
 - **À déployer avec KS_Crafts 1.10.0 et KS_LootPotions 1.1.2.**
 
-**Statut : compilé le 04/10/2026, non déployé, non testé en jeu.**
+**Déployé sur Event le 04/10/2026 à 06:52 (LeKiwi06 ; 1.2.0 dans `_removed-ks_lootblocs-1.2.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

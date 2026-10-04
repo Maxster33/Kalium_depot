@@ -197,4 +197,4 @@ casser la chaîne de production automatique des shulker ».
 
 Limite : une verrue déjà posée dans un alambic avant cette version y reste, sans effet (brassage annulé).
 
-**Statut : compilé le 04/10/2026, non déployé, non testé en jeu.**
+**Déployé sur Event le 04/10/2026 à 06:52 (LeKiwi06 ; 1.9.0 dans `_removed-ks_crafts-1.9.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

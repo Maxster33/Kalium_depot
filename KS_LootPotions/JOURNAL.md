@@ -46,4 +46,4 @@ on peut la replanter. Sans condition, poser puis casser aussitôt une verrue aur
   stade de croissance). Le reste est inchangé.
 - **À déployer avec KS_LootBlocs 1.3.0 et KS_Crafts 1.10.0.**
 
-**Statut : compilé le 04/10/2026, non déployé, non testé en jeu.**
+**Déployé sur Event le 04/10/2026 à 06:52 (LeKiwi06 ; 1.1.1 dans `_removed-ks_lootpotions-1.1.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

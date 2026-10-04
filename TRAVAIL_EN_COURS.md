@@ -16,9 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_Crafts — LeKiwi06 — depuis le 2026-10-04 06:52 — plus de brassage au bloc de verrue, verrue bloquée à l'alambic, boîte de shulker au coffre de l'Ender
-- KS_LootBlocs — LeKiwi06 — depuis le 2026-10-04 06:52 — verrue du Nether de nouveau cultivable
-- KS_LootPotions — LeKiwi06 — depuis le 2026-10-04 06:52 — potion de la verrue : seulement sur une verrue mûre
 
 
 

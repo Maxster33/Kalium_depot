@@ -1,7 +1,9 @@
 # 2026-10-04 — Barème des items, Raccommodage
 
-- Plugin(s) concerné(s) : KS_LootCoffres (KS_EstomacGardien réservé puis libéré sans changement)
-- Versions avant / après : KS_LootCoffres 1.0.0 / 1.1.0
+- Plugin(s) concerné(s) : KS_LootCoffres, KS_Crafts, KS_LootBlocs, KS_LootPotions (KS_EstomacGardien réservé puis
+  libéré sans changement)
+- Versions avant / après : KS_LootCoffres 1.0.0 / 1.1.0 ; KS_Crafts 1.9.0 / 1.10.0 ; KS_LootBlocs 1.2.0 / 1.3.0 ;
+  KS_LootPotions 1.1.1 / 1.1.2
 
 ## Demandé
 
@@ -18,6 +20,9 @@ LeKiwi06 :
   l'automatisation et la demande.
 - KS_LootCoffres 1.1.0 : jambières en diamant de la cité antique enchantées niveau 30 à 50 (au lieu de 10 à 32).
   Déployé sur Event le 04/10/2026 à 06:05, non testé, actif après redémarrage.
+- KS_Crafts 1.10.0, KS_LootBlocs 1.3.0, KS_LootPotions 1.1.2 : plus de brassage à la verrue, verrue cultivable,
+  potion sur verrue mûre seulement, boîte de shulker au coffre de l'Ender. Déployés sur Event le 04/10/2026 à
+  06:52, non testés, actifs après redémarrage.
 
 ## Décisions
 
@@ -30,9 +35,13 @@ LeKiwi06 :
   Claude, non mesurées en jeu.
 - LeKiwi06 : Fragment de Spawner 128 émeraudes ; Cœur de Spawner = récompense d'événement uniquement (prix à fixer).
 
+- LeKiwi06 : le brassage au bloc de verrue était « une erreur » ; la verrue du Nether redevient cultivable mais ne se
+  brasse plus ; boîte de shulker au coffre de l'Ender (casser la production automatique). Ces choix reviennent sur des
+  demandes de Maxster33 du 25/09.
+
 ## Reste à faire
 
 - Redémarrer Event (l'humain) ; tester un coffre de cité antique jamais ouvert.
 - Prix du Cœur de Spawner ; relecture des matières premières « estimées » du barème.
-- Signalé, à décider : verrue du Nether de nouveau cultivable et bloquée à l'alambic (KS_LootBlocs, KS_Crafts) ;
-  carapace de shulker seulement si un joueur tue ; éclat d'écho sur les chauves-souris (aucun plugin ne le fait).
+- Signalé, à décider : craft « 9 verrues → bloc de verrue » toujours retiré ; carapace de shulker seulement si un
+  joueur tue ; éclat d'écho sur les chauves-souris (aucun plugin ne le fait).
