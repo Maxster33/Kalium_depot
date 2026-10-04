@@ -29,7 +29,7 @@ partie de Bingo préparation comprise), sans l'attente entre les parties.
    checkpoint, 1 / 3 / 5 points selon la difficulté, bonus du 1er, first try ×2, paliers de temps), puis caler les
    valeurs sur ~135 / 30 min. **Il faut des parties « à fond » de LeKiwi06** pour mesurer (temps par checkpoint).
    **04/10/2026 : barème remplacé par celui de KG_Parkour 1.2.0** (1 à 10 points selon la position du checkpoint, 1er
-   x1,5, sans tomber x1,5, temps x1,25 à x1,75, 1er arrivé +25 ; compilé, non déployé) ; rythme à mesurer ensuite.
+   x1,5, sans tomber x1,5, temps x1,25 à x1,75, 1er arrivé +25 ; déployé le 04/10/2026, non testé) ; rythme à mesurer ensuite.
 3. **PvP Kit** (KG_PvpKit 1.0.0, déployé le 28/09/2026, non testé) : barème par estimation (élimination 5, victoire 10,
    2e / 3e 4 / 2, infériorité 5 par joueur d'écart, série x1,25 / x1,5, déclassement +50 % par niveau) ; ~135 / 30 min
    en 1 contre 1 avec 60 % de victoires. À corriger avec les vraies parties (événement « round » du journal).

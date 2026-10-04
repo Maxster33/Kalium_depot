@@ -16,7 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KG_Parkour — LeKiwi06 — depuis le 2026-10-04 22:08 — nouveau barème : points par checkpoint selon sa position (1 à 10), bonus 1er / sans tomber / temps, +25 au 1er arrivé
 
 
 

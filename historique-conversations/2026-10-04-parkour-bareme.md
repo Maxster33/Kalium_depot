@@ -1,7 +1,7 @@
 # 2026-10-04 — Nouveau barème du Parcours
 
 - Plugin(s) concerné(s) : KG_Parkour (serveur Kal-Games).
-- Versions avant / après : KG_Parkour 1.1.1 → 1.2.0 (compilé, non déployé).
+- Versions avant / après : KG_Parkour 1.1.1 → 1.2.0 (déployé sur Kal-Games le 04/10/2026 à 22:16, non testé).
 
 ## Demandé
 - « J'aimerais modifier kg_parkour : globalement les points gagnés pour avoir validé chaque checkpoint ce sera : or 1,
@@ -12,7 +12,7 @@
 ## Fait
 - KG_Parkour 1.2.0 : points de base par section selon sa position (réglable par point de contrôle), multiplicateurs
   additifs, +25 au 1er arrivé, points décimaux crédités à chaque section, détail dans le journal de KG_ScoreBoards.
-  Détail : `KG_Parkour/JOURNAL.md`. Cahier des charges, `EQUILIBRAGE_POINTS.md` et `REPRISE_PROJET.md` mis à jour.
+  Déployé sur Kal-Games (« vas-y déploie », LeKiwi06). Détail : `KG_Parkour/JOURNAL.md`. Cahier des charges, `EQUILIBRAGE_POINTS.md` et `REPRISE_PROJET.md` mis à jour.
 
 ## Décisions
 - Les blocs (or, fer...) ne sont que l'ordre des checkpoints dans la map (LeKiwi06) : pas de détection de bloc.
@@ -23,7 +23,8 @@
   l'arrivée compte comme la section qui suit le dernier point de contrôle ; valeurs réglables dans les réglages du jeu.
 
 ## Reste à faire
-- Déployer sur Kal-Games, puis saisir le « Temps du bonus » de chaque point de contrôle.
+- Redémarrer Kal-Games (l'humain), puis saisir le « Temps du bonus » de chaque point de contrôle.
+- Supprimable par l'humain sur Kal-Games : `/plugins/_removed-kg_parkour-1.0.0/`.
 - Tester : points de chaque checkpoint, bonus du 1er (2 joueurs) et absent en solo, sans chute, temps, +25, résultats,
   crédit au classement avec un non-opérateur.
 - Mesurer le rythme de points (~135 / 30 min visés, `EQUILIBRAGE_POINTS.md`).

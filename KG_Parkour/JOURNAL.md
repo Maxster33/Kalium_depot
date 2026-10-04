@@ -103,4 +103,5 @@ réglage du jeu, pas de l'arène. En entraînement, rien n'est affiché ni compt
 comme « non comptés » (comme avant). Nouveaux textes : `race.checkpoint-score`, `race.finish-score`,
 `race.result-chrono-out-points` (`race.result-line-points` et `race.result-dnf-points` sont ceux de la course de bateau).
 
-**Compilé le 04/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kal-Games le 04/10/2026 à 22:16 (LeKiwi06 ; 1.1.1 dans `_removed-kg_parkour-1.1.1/`), actif après
+redémarrage. Statut : non testé en jeu.**
