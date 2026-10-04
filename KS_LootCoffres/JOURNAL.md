@@ -55,4 +55,4 @@ depuis la 1.0.0 (demande de Maxster33), n'en avaient qu'environ 8 fois sur 100, 
 
 La 1.0.0 n'a jamais été testée en jeu : fonctionnalité ajoutée à la demande explicite de LeKiwi06.
 
-**Statut : compilé le 04/10/2026, non déployé, non testé en jeu.**
+**Déployé sur Event le 04/10/2026 à 06:05 (LeKiwi06 ; 1.0.0 dans `_removed-ks_lootcoffres-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
