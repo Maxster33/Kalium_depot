@@ -16,8 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KG_ScoreBoards — LeKiwi06 — depuis le 2026-10-04 22:41 — données et config seulement (Kal-Games) : crédit des points d'opérateur jamais crédités, règle « les opérateurs ne comptent pas » désactivée
-- KalGames — LeKiwi06 — depuis le 2026-10-04 22:41 — config seulement (Kal-Games) : stats.exclude-operators à false, pas de changement de code
+- KG_BoatRace — LeKiwi06 — depuis le 2026-10-04 22:50 — en multijoueur, moyenne des joueurs classés en dessous au lieu de leur somme
+- KG_BingoGame — LeKiwi06 — depuis le 2026-10-04 22:50 — en multijoueur, moyenne des équipes et joueurs classés derrière au lieu de leur somme
 
 
 
@@ -31,6 +31,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
+- KG_ScoreBoards — LeKiwi06 — depuis le 2026-10-04 22:41 — données et config seulement (Kal-Games) : crédit des points d'opérateur jamais crédités, règle « les opérateurs ne comptent pas » désactivée
+- KalGames — LeKiwi06 — depuis le 2026-10-04 22:41 — config seulement (Kal-Games) : stats.exclude-operators à false, pas de changement de code
 
 
 
