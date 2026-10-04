@@ -47,3 +47,14 @@ on peut la replanter. Sans condition, poser puis casser aussitôt une verrue aur
 - **À déployer avec KS_LootBlocs 1.3.0 et KS_Crafts 1.10.0.**
 
 **Déployé sur Event le 04/10/2026 à 06:52 (LeKiwi06 ; 1.1.1 dans `_removed-ks_lootpotions-1.1.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.1.3 - potion de chance à 100 % sur le minerai d'émeraude de deepslate (04/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (travail sur le barème des prix) : « la potion devrait donner à 100 % ». Avant : 10 %.
+- Minerai d'émeraude de deepslate : **une potion de chance à chaque minerai miné** par un joueur.
+- Techniquement nécessaire (signalé à LeKiwi06) : **aucune potion quand le bloc tombe tel quel** (Toucher de soie, ou
+  les 2 minerais de KS_LootBlocs à 1 %). Depuis la 1.0.0, le Toucher de soie donnait quand même sa chance de potion :
+  on pouvait reposer le même minerai et le recasser à volonté.
+- Le reste est inchangé.
+
+**Statut : compilé le 04/10/2026, non déployé, non testé en jeu.**
