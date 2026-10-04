@@ -40,3 +40,17 @@ c'est trop. Nous allons alors reprendre les valeurs vanilla et faire multiplié 
 - Le reste (autres minerais, feuilles, verrue, fragments de spawner) : inchangé.
 
 **Déployé sur Event le 01/10/2026 à 20:24 (Maxster33 ; 1.1.0 dans `_removed-ks_lootblocs-1.1.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.3.0 - la verrue du Nether redevient cultivable (04/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « on va le rechanger pour la nether wart [...] elle sera farmable comme une patate ou carotte,
+mais elle peut drop des potions de façon rare ». Depuis la 1.0.0 (demande de Maxster33), la verrue ne lâchait plus
+rien.
+- La verrue du Nether lâche de nouveau ses verrues (drop vanilla), quelle que soit la façon dont elle est cassée
+  (joueur, eau, piston, explosion).
+- Elle ne se brasse plus (KS_Crafts 1.10.0) ; sa potion aléatoire à 5 % reste dans KS_LootPotions (1.1.2 : verrue
+  mûre seulement).
+- Le reste (minerais, feuilles, fragments de spawner) est inchangé.
+- **À déployer avec KS_Crafts 1.10.0 et KS_LootPotions 1.1.2.**
+
+**Statut : compilé le 04/10/2026, non déployé, non testé en jeu.**

@@ -1,7 +1,8 @@
 package fr.kalium.crafts;
 
 import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
-import io.papermc.paper.potion.PotionMix;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -9,14 +10,18 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.BrewEvent;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +30,12 @@ import java.util.Map;
 /**
  * KS_Crafts - crafts du serveur Event (cahier des charges : KS_Event/CAHIER_DES_CHARGES.md, Maxster33, 25/09/2026).
  * Les crafts « 8 + 1 » sont en anneau autour de l'objet central, les autres sans forme (réponse de Maxster33).
- * Contient aussi le remplacement de la verrue du Nether par le bloc de verrue (briques rouges du Nether, potion
- * étrange à l'alambic).
+ * Contient aussi le remplacement de la verrue du Nether par le bloc de verrue dans les briques rouges du Nether.
  * 1.4.0 : le Bedrock Breaker (objet et utilisation) est dans KS_BedrockBreaker ; seule sa recette reste ici.
  * 1.5.0 : nouvelle recette du Bedrock Breaker (voir onEnable).
  * 1.7.0 : les recettes des spawners prennent les têtes de KS_Decapitator (voir onEnable).
+ * 1.10.0 (LeKiwi06) : plus de brassage au bloc de verrue (« une erreur ») et verrue du Nether refusée à l'alambic :
+ * les potions ne viennent plus que du butin et de /rewards ; boîte de shulker fabriquée avec un coffre de l'Ender.
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -168,15 +174,14 @@ public final class KSCrafts extends JavaPlugin implements Listener {
         bricks.setIngredient('B', Material.NETHER_BRICK);
         add(bricks);
 
-        // Alambic : bouteille d'eau + bloc de verrue -> potion etrange.
-        ItemStack awkward = new ItemStack(Material.POTION);
-        PotionMeta awkwardMeta = (PotionMeta) awkward.getItemMeta();
-        awkwardMeta.setBasePotionType(PotionType.AWKWARD);
-        awkward.setItemMeta(awkwardMeta);
-        Bukkit.getPotionBrewer().addPotionMix(new PotionMix(key("awkward_from_nether_wart_block"), awkward,
-                PotionMix.createPredicateChoice(item -> item != null && item.getType() == Material.POTION
-                        && item.getItemMeta() instanceof PotionMeta meta && meta.getBasePotionType() == PotionType.WATER),
-                new RecipeChoice.MaterialChoice(Material.NETHER_WART_BLOCK)));
+        // 1.10.0 (LeKiwi06) : boite de shulker avec un coffre de l'Ender a la place du coffre, pour casser la
+        // production automatique des boites (meme forme que la recette vanilla, qui est retiree).
+        Bukkit.removeRecipe(NamespacedKey.minecraft("shulker_box"));
+        ShapedRecipe shulker = new ShapedRecipe(key("shulker_box"), new ItemStack(Material.SHULKER_BOX));
+        shulker.shape("S", "E", "S");
+        shulker.setIngredient('S', Material.SHULKER_SHELL);
+        shulker.setIngredient('E', Material.ENDER_CHEST);
+        add(shulker);
 
         getLogger().info(added.size() + " crafts ajoutés.");
         // Joueurs déjà connectés (rechargement du plugin) qui ont un ingrédient d'une recette du livre.
@@ -186,7 +191,63 @@ public final class KSCrafts extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         added.forEach(Bukkit::removeRecipe);
-        Bukkit.getPotionBrewer().removePotionMix(key("awkward_from_nether_wart_block"));
+    }
+
+    // ------------------------------------------------------------------ verrue du Nether refusee a l'alambic
+
+    /**
+     * 1.10.0 (LeKiwi06) : la verrue du Nether redevient cultivable (KS_LootBlocs 1.3.0) mais ne se brasse plus : sans
+     * elle, aucune potion etrange, donc aucune potion de base a l'alambic. Les potions trouvees se modifient
+     * toujours (redstone, glowstone, poudre a canon...). La verrue ne peut pas etre posee dans un alambic (clic,
+     * glisser, entonnoir) ; par securite, un brassage a la verrue est annule.
+     */
+    private static boolean verrue(ItemStack item) {
+        return item != null && item.getType() == Material.NETHER_WART;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBrewClick(InventoryClickEvent event) {
+        if (!(event.getView().getTopInventory() instanceof BrewerInventory)) {
+            return;
+        }
+        boolean alambic = event.getClickedInventory() instanceof BrewerInventory;
+        boolean refuse;
+        if (alambic) {
+            refuse = verrue(event.getCursor())
+                    || (event.getClick() == ClickType.NUMBER_KEY
+                            && verrue(event.getWhoClicked().getInventory().getItem(event.getHotbarButton())))
+                    || (event.getClick() == ClickType.SWAP_OFFHAND
+                            && verrue(event.getWhoClicked().getInventory().getItemInOffHand()));
+        } else {
+            refuse = event.isShiftClick() && verrue(event.getCurrentItem());
+        }
+        if (refuse) {
+            event.setCancelled(true);
+            event.getWhoClicked().sendActionBar(Component.text("La verrue du Nether ne se brasse plus.",
+                    NamedTextColor.RED));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBrewDrag(InventoryDragEvent event) {
+        if (event.getView().getTopInventory() instanceof BrewerInventory top && verrue(event.getOldCursor())
+                && event.getRawSlots().stream().anyMatch(slot -> slot < top.getSize())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBrewHopper(InventoryMoveItemEvent event) {
+        if (event.getDestination() instanceof BrewerInventory && verrue(event.getItem())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBrew(BrewEvent event) {
+        if (verrue(event.getContents().getIngredient())) {
+            event.setCancelled(true);
+        }
     }
 
     // ------------------------------------------------------------------ livre de recettes

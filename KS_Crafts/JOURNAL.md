@@ -175,3 +175,26 @@ spawners et le Changeur de Biome. Les élixirs (KS_Elixir) le faisaient déjà. 
 n'est pas une recette d'établi : pas de livre.
 
 **Déployé sur Event le 03/10/2026 à 19:06 (LeKiwi06 ; 1.8.0 dans `_removed-ks_crafts-1.8.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.10.0 - plus de brassage à la verrue, boîte de shulker au coffre de l'Ender (04/10/2026, LeKiwi06)
+
+Demandes de LeKiwi06 (pendant le travail sur le barème des prix) : « il faut supprimer le brassage par bloc de verrue
+c'est une erreur » ; « on va simplement bloquer le fait que la verrue aille dans l'alambic, donc elle sera farmable
+comme une patate ou carotte » ; « on va remplacer le coffre dans le craft de la shulker box par un enderchest pour
+casser la chaîne de production automatique des shulker ».
+
+- **Alambic** : le mélange « bouteille d'eau + bloc de verrue → potion étrange » (1.0.0) est retiré. La **verrue du
+  Nether** ne peut plus être posée dans un alambic (clic, raccourci clavier, glisser, entonnoir : refusé, message
+  « La verrue du Nether ne se brasse plus. ») ; par sécurité, un brassage à la verrue est annulé. Conséquence voulue :
+  plus aucune potion étrange, donc plus aucune potion de base à l'alambic ; les potions viennent du butin
+  (KS_LootPotions, KS_LootEntites) et de /rewards. Les potions trouvées se modifient toujours (redstone, glowstone,
+  poudre à canon, souffle de dragon, œil d'araignée fermenté).
+- **Boîte de shulker** : la recette vanilla est retirée ; nouvelle recette de même forme (carapace, **coffre de
+  l'Ender**, carapace), dans le livre de recettes dès qu'on obtient un ingrédient. La teinture des boîtes est inchangée.
+- Inchangé : briques rouges du Nether au bloc de verrue, craft « 9 verrues → bloc de verrue » toujours retiré (non
+  demandé ; à voir maintenant que la verrue redevient cultivable).
+- **À déployer avec KS_LootBlocs 1.3.0 et KS_LootPotions 1.1.2.**
+
+Limite : une verrue déjà posée dans un alambic avant cette version y reste, sans effet (brassage annulé).
+
+**Statut : compilé le 04/10/2026, non déployé, non testé en jeu.**

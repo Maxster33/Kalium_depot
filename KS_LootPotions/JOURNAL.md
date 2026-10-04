@@ -36,3 +36,14 @@ dont les spawners fabriqués avec KS_Spawners, donnait des potions à l'infini. 
 plus de potion (comme KS_Decapitator pour les têtes). Spawners d'épreuve (trial spawners) non concernés.
 
 **Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.1.1 ; ancienne version dans `_removed-ks_lootpotions-1.1.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.1.2 - potion de la verrue : verrue mûre seulement (04/10/2026, LeKiwi06)
+
+Techniquement nécessaire avec KS_LootBlocs 1.3.0 (signalé à LeKiwi06) : la verrue du Nether redevient cultivable, donc
+on peut la replanter. Sans condition, poser puis casser aussitôt une verrue aurait donné 5 % de potion à chaque fois,
+à volonté.
+- Verrue du Nether : la potion aléatoire à 5 % ne tombe que si la verrue cassée par le joueur est **mûre** (dernier
+  stade de croissance). Le reste est inchangé.
+- **À déployer avec KS_LootBlocs 1.3.0 et KS_Crafts 1.10.0.**
+
+**Statut : compilé le 04/10/2026, non déployé, non testé en jeu.**

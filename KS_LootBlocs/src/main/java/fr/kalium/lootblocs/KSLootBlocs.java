@@ -1,6 +1,5 @@
 package fr.kalium.lootblocs;
 
-import io.papermc.paper.event.block.BlockBreakBlockEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,9 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -35,7 +32,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * - autres minerais : 1 % de chance que le drop soit remplacé par 2 blocs du minerai cassé (jamais avec Toucher de soie) ;
  * - feuilles (cassées ou dégradées) : pousses ×2 sur chêne noir, chêne pâle et acacia ; pommes sur toutes les feuilles
  *   (taux vanilla), chaque pomme : 1 % pomme dorée, 0,01 % pomme dorée enchantée ;
- * - verrue du Nether : plus aucun drop de verrue ;
+ * - verrue du Nether : drop vanilla depuis la 1.3.0 (1.0.0 à 1.2.0 : plus aucun drop) ;
  * - spawners naturels (1.1.0) : 1 Fragment de Spawner + 5 % de chance d'un 2e.
  * Les potions (émeraude deepslate, chorus, verrue) sont dans KS_LootPotions.
  */
@@ -82,9 +79,9 @@ public final class KSLootBlocs extends JavaPlugin implements Listener {
         boolean silk = tool.getEnchantmentLevel(Enchantment.SILK_TOUCH) > 0;
         int fortune = Math.min(3, tool.getEnchantmentLevel(Enchantment.FORTUNE));
 
-        if (type == Material.NETHER_WART) {
-            items.removeIf(item -> item.getItemStack().getType() == Material.NETHER_WART);
-        } else if (IRON_GOLD.containsKey(type) && !silk) {
+        // 1.3.0 (LeKiwi06) : la verrue du Nether lache de nouveau ses verrues (cultivable) ; elle ne se brasse plus
+        // (KS_Crafts 1.10.0).
+        if (IRON_GOLD.containsKey(type) && !silk) {
             Material raw = IRON_GOLD.get(type);
             for (Item item : items) {
                 if (item.getItemStack().getType() == raw) {
@@ -212,34 +209,5 @@ public final class KSLootBlocs extends JavaPlugin implements Listener {
         ItemStack fragments = fr.kalium.itemsimple.KSItemSimple.creerFragmentSpawner();
         fragments.setAmount(random().nextDouble() < 0.05 ? 2 : 1);
         drop(block.getLocation(), List.of(fragments));
-    }
-
-    // ------------------------------------------------------------------ verrue cassee autrement que par un joueur
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onBreakByBlock(BlockBreakBlockEvent event) {
-        if (event.getBlock().getType() == Material.NETHER_WART) {
-            event.getDrops().removeIf(stack -> stack.getType() == Material.NETHER_WART);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onEntityExplode(EntityExplodeEvent event) {
-        clearWart(event.blockList());
-    }
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onBlockExplode(BlockExplodeEvent event) {
-        clearWart(event.blockList());
-    }
-
-    private static void clearWart(List<Block> blocks) {
-        blocks.removeIf(block -> {
-            if (block.getType() == Material.NETHER_WART) {
-                block.setType(Material.AIR, false);
-                return true;
-            }
-            return false;
-        });
     }
 }

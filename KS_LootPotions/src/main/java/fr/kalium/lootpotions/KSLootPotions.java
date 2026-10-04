@@ -48,6 +48,10 @@ public final class KSLootPotions extends JavaPlugin implements Listener {
         return RANDOM_POOL.get(ThreadLocalRandom.current().nextInt(RANDOM_POOL.size()));
     }
 
+    private static boolean mure(org.bukkit.block.data.BlockData donnees) {
+        return donnees instanceof org.bukkit.block.data.Ageable age && age.getAge() >= age.getMaximumAge();
+    }
+
     static ItemStack basicPotion(PotionType type) {
         ItemStack potion = new ItemStack(Material.POTION);
         PotionMeta meta = (PotionMeta) potion.getItemMeta();
@@ -63,7 +67,9 @@ public final class KSLootPotions extends JavaPlugin implements Listener {
         PotionType potion = switch (event.getBlockState().getType()) {
             case DEEPSLATE_EMERALD_ORE -> !event.getItems().isEmpty() && chance(0.10) ? PotionType.LUCK : null;
             case CHORUS_PLANT -> chance(0.01) ? PotionType.SLOW_FALLING : null;
-            case NETHER_WART -> chance(0.05) ? randomPotion() : null;
+            // 1.1.2 (LeKiwi06) : la verrue est de nouveau cultivable (KS_LootBlocs 1.3.0) : seulement une verrue
+            // mure, sinon poser puis casser une verrue donnerait des potions a volonte
+            case NETHER_WART -> mure(event.getBlockState().getBlockData()) && chance(0.05) ? randomPotion() : null;
             default -> null;
         };
         if (potion != null) {
