@@ -109,7 +109,8 @@ public final class KSLootCoffres extends JavaPlugin implements Listener {
     }
 
     /**
-     * Jambières en diamant : niveau 10 à 32 (au lieu de 30 à 50). Pomme dorée enchantée : poids divisé par 2 et totem
+     * Jambières en diamant : niveau 30 à 50, comme le plastron des bastions, les bottes des cités de l'End et le
+     * casque de l'Estomac du gardien (1.1.0, LeKiwi06 ; 1.0.0 : 10 à 32). Pomme dorée enchantée : poids divisé par 2 et totem
      * au même poids. Vanilla : pomme 1 sur 84 ; voulu : tous les autres poids x2 (168 au total), pomme 1, totem 1.
      * Les autres objets gardent donc leur chance (2w/168 = w/84) : il suffit qu'une pomme sur deux devienne un totem.
      */
@@ -117,7 +118,7 @@ public final class KSLootCoffres extends JavaPlugin implements Listener {
         for (int i = 0; i < loot.size(); i++) {
             ItemStack stack = loot.get(i);
             if (stack.getType() == Material.DIAMOND_LEGGINGS && !stack.getEnchantments().isEmpty()) {
-                loot.set(i, reEnchanter(stack, 10, 32));
+                loot.set(i, reEnchanter(stack, 30, 50));
             } else if (stack.getType() == Material.ENCHANTED_GOLDEN_APPLE && chance(0.50)) {
                 loot.set(i, new ItemStack(Material.TOTEM_OF_UNDYING));
             }

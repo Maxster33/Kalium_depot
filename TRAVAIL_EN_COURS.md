@@ -16,8 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_LootCoffres — LeKiwi06 — depuis le 2026-10-04 05:56 — plastron de bastion et bottes de cité de l'End : enchantement niveau 10 à 32
-- KS_EstomacGardien — LeKiwi06 — depuis le 2026-10-04 05:56 — casque en diamant : enchantement niveau 10 à 32
+- KS_LootCoffres — LeKiwi06 — depuis le 2026-10-04 05:56 — 1.1.0 compilée, en attente du déploiement (Event)
 
 
 

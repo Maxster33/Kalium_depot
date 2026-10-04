@@ -39,3 +39,20 @@ poids (calcul en commentaire dans le code) :
   l'usure vanilla des objets est gardée.
 
 **Déployé sur Event le 28/09/2026 à 23:19. Statut : non testé en jeu.**
+
+## 1.1.0 - jambières de la cité antique : niveau 30 à 50 (04/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « je veux que les joueurs puissent avoir l'item avec mending en 10 à 20 tirages de loot
+table ». Les trois autres pièces en diamant enchantées « niveau 30 à 50 » (plastron de la salle au trésor des bastions,
+bottes des cités de l'End, casque de l'Estomac du gardien) sortent avec Raccommodage environ 4 fois sur 10, soit une
+pièce avec Raccommodage tous les 12 à 19 coffres ou estomacs. Les jambières de la cité antique, au niveau 10 à 32
+depuis la 1.0.0 (demande de Maxster33), n'en avaient qu'environ 8 fois sur 100, soit une tous les 75 coffres.
+- **Cité antique** : jambières en diamant enchantées **niveau 30 à 50** (valeur vanilla ; 1.0.0 : 10 à 32). Le reste
+  (pomme dorée enchantée, totem) est inchangé.
+- Chances estimées par Claude (simulation du tirage d'enchantement vanilla et tables de butin de mémoire) : ordres de
+  grandeur, pas mesurés en jeu.
+- Seuls les coffres pas encore ouverts sont concernés.
+
+La 1.0.0 n'a jamais été testée en jeu : fonctionnalité ajoutée à la demande explicite de LeKiwi06.
+
+**Statut : compilé le 04/10/2026, non déployé, non testé en jeu.**
