@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KG_BoatRace — LeKiwi06 — depuis le 2026-10-05 15:05 — en solo : plus de bonus de tour en tête, bonus de tour propre réduit de moitié
 
 
 
