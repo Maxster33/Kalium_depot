@@ -168,4 +168,4 @@ envoyé pour ce mode.
 
 À déployer avec **KG_BingoGame 0.10.0** (Serveur Jeux).
 
-**Compilé le 05/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé le 05/10/2026 à 13:34 sur Kal-Games (Maxster33 ; 1.7.2 dans `_removed-kg_bingo-1.7.2/`), actif après redémarrage. Statut : non testé en jeu.**

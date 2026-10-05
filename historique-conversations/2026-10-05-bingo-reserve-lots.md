@@ -61,3 +61,10 @@
 - Bonus (rang + difficultés) / 2 et son message retirés (jamais déployés) : bonus de temps seul, les bingos rapportent
   comme dans toute partie à 1 équipe.
 - 10 bingos au plus à 1 équipe : menu de KG_Bingo 1.7.3 (3 à 10) et borne dans KG_BingoGame 0.10.0.
+
+## Déploiement (13 h 34, demande « installe »)
+- Serveur Jeux : `KG_BingoGame-0.10.0.jar` ; 0.9.0 dans `/plugins/_removed-kg_bingogame-0.9.0/`.
+- Kal-Games : `KG_Bingo-1.7.3.jar` ; 1.7.2 dans `/plugins/_removed-kg_bingo-1.7.2/`.
+- Jars en place vérifiés identiques à `jars-deployes/` avant l'envoi. Actifs après redémarrage des deux serveurs
+  (l'humain). Supprimables par l'humain : `_removed-kg_bingogame-0.8.0/` à `0.8.6/`, `_removed-kg_bingo-1.3.0/` à
+  `1.7.0/`. Réservations libérées.

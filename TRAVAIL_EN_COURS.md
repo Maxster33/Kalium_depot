@@ -33,8 +33,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
-- KG_BingoGame — Maxster33 — depuis le 2026-10-05 12:54 — 0.10.0 compilée (réserve par lots, contre la montre en bingos, 10 au plus en solo), en attente du déploiement avec KG_Bingo 1.7.3
-- KG_Bingo — Maxster33 — depuis le 2026-10-05 13:17 — 1.7.3 compilée (contre la montre : bingos, 10 au plus en solo), en attente du déploiement avec KG_BingoGame 0.10.0
 
 
 

@@ -1863,7 +1863,7 @@ une équipe depuis la 0.8.5 : seul le bonus des bingos uniquement difficiles / e
 À déployer avec **KG_Bingo 1.7.3** (menu de création : 10 bingos au plus à 1 équipe, texte d'aide). Avec KG_Bingo
 1.7.2, la règle s'applique quand même mais l'aide parle encore de la grille complète.
 
-**Compilé le 05/10/2026, non déployé. Statut : non testé en jeu.** À tester : logs « Réserve : préparation d'un lot »
+**Compilé le 05/10/2026. Déployé sur Serveur Jeux le 05/10/2026 à 13:34 (Maxster33 ; 0.9.0 dans `_removed-kg_bingogame-0.9.0/`), actif après redémarrage. Statut : non testé en jeu.** À tester : logs « Réserve : préparation d'un lot »
 au démarrage (6 lots) ; une partie seule sur le serveur (pas de lot pris, mondes neufs) ; une partie créée pendant une
 autre (« lot de réserve ... attribué », seed différente, pas de gel) ; fin de partie puis « son lot de réserve sera
 remplacé » et nouveau lot. Contre la montre à 3 bingos : victoire au 3e bingo avec le bonus de temps ; défaite au
