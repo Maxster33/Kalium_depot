@@ -150,8 +150,10 @@ sortir de la piste en solo ».
 - **Tour sans hors-piste** (`points-clean-lap`, +1) : +0,5 en solo. Un tour propre solo vaut donc 1,5 point avant le
   chrono, au lieu de 2 puis x1,5.
 - Inchangés : point du tour, bonus de série (+n toutes les 3 séries de tours propres), paliers de chrono, Grand Prix.
-- Pas de rétroactif (non demandé).
+- Rétroactif (demandé ensuite par LeKiwi06 : « si, il faut que ce changement soit rétroactif ») : les 45 courses solo
+  du journal recalculées tour par tour dans les classements de Kal-Games le 05/10/2026, voir `REPRISE_PROJET.md`.
 
 Empilé sur la 1.5.0 non testée, à la demande explicite de LeKiwi06.
 
-**Compilé le 05/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kal-Games le 05/10/2026 à 15:21 (LeKiwi06, serveur arrêté ; 1.5.0 dans `_removed-kg_boatrace-1.5.0/`).
+Statut : non testé en jeu.**

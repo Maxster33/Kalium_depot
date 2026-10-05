@@ -45,4 +45,7 @@ partie de Bingo préparation comprise), sans l'attente entre les parties.
    **05/10/2026 (LeKiwi06) : en multijoueur, moyenne des joueurs classés en dessous au lieu de leur somme** (KG_BoatRace
    1.5.0, KG_BingoGame 0.9.0), appliquée aussi au passé. La référence « ~135 / 30 min en médiane (cumul crédité) » de la
    course de bateau a été mesurée avec la somme : à remesurer pour les courses à 3 joueurs ou plus.
+   **05/10/2026 (LeKiwi06) : course de bateau en solo** (KG_BoatRace 1.5.1) : plus de tour en tête, bonus de tour
+   propre +0,5 ; appliqué aussi au passé (45 courses solo : 5 622 → 3 693,38 points, soit environ un tiers de moins).
+   La référence de ~135 / 30 min avait été mesurée surtout sur des courses solo : à remesurer.
 5. Vérifier les rythmes régulièrement : même calcul sur le journal (à automatiser dans KG_ScoreBoards si utile).
