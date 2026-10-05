@@ -91,9 +91,15 @@ public class BingoPlugin extends JavaPlugin {
         int pregenerationChunksPerSecond = config.getInt("instances.pregeneration-chunks-per-second", 20);
         // 0.7.2 : 8 par defaut (au lieu de 2) : c'etait la vraie limite de vitesse (~94 s par map de 441 chunks).
         int pregenerationChunksInFlight = config.getInt("instances.pregeneration-max-chunks-in-flight", 8);
+        // 0.10.0 : lots de mondes de reserve (demande de Maxster33, 05/10/2026, voir InstanceWorldPreparer). Cles absentes
+        // du config.yml deja deploye : valeurs par defaut ci-dessous.
+        int reserveFullLots = config.getInt("instances.reserve-lots-4-teams", 3);
+        int reserveSoloLots = config.getInt("instances.reserve-lots-solo", 3);
+        int reserveChunksDuringGames = config.getInt("instances.reserve-chunks-per-second-during-games", 5);
         InstanceWorldPreparer instanceWorldPreparer = new InstanceWorldPreparer(this, getLogger(), worldManager,
                 worldNamePrefix, pregenerationStagger, pregenerationRadius,
-                pregenerationChunksPerSecond, pregenerationChunksInFlight);
+                pregenerationChunksPerSecond, pregenerationChunksInFlight,
+                reserveFullLots, reserveSoloLots, reserveChunksDuringGames);
 
         // Liste d'objectifs (objectives.yml, dossier de donnees - PAS le .jar) et generation de
         // grille (section 2 du cahier des charges, etape 4 de l'ordre de priorite). load() copie
@@ -114,9 +120,10 @@ public class BingoPlugin extends JavaPlugin {
 
         this.gameManager = new GameManager(getLogger(), worldManager, instanceWorldPreparer, objectiveLibrary, gridGenerator,
                 maxTeams, maxTeamSize, defaultDuration, worldNamePrefix, abandonAfter, maxSimultaneousGames, gridSize);
-        // 0.8.5 : la reserve de mondes ne se remplit que quand aucune partie n'est en cours (voir InstanceWorldPreparer).
-        instanceWorldPreparer.setGameInProgress(() -> gameManager.getActiveGames().stream()
-                .anyMatch(g -> g.getState() == fr.kalium.bingo.game.GameState.IN_PROGRESS));
+        // 0.8.5 : la reserve de mondes ne cree ses mondes que quand aucune partie n'est en cours (voir
+        // InstanceWorldPreparer). 0.10.0 : en pause complete a max-simultaneous-games parties en cours.
+        instanceWorldPreparer.setGamesInProgress(() -> (int) gameManager.getActiveGames().stream()
+                .filter(g -> g.getState() == fr.kalium.bingo.game.GameState.IN_PROGRESS).count(), maxSimultaneousGames);
 
         // Persistance des parties EN COURS (voir GamePersistence) - demande explicite de
         // l'utilisateur, 23/09/2026 : "la partie doit continuer meme si le serveur est redémarré

@@ -92,6 +92,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KG_BingoGame 0.10.0** (05/10/2026, Maxster33, Serveur Jeux) : réserve de mondes par lots (3 lots de 4, 3 lots solo, une seed neuve par lot, jamais rejouée) ; non testé.
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
@@ -248,46 +249,20 @@ une recherche, pas une navigation ; autoriser `Textinputhost` (clavier tactile W
 Format : `### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici ; les précédents vont dans
 `archive_reprise.md`.
 
-### 2026-10-03 — Maxster33
+### 2026-10-05 — Maxster33
 
-*(Session du 03/10/2026, de 8 h 40 à 9 h 50. Fin de session : réservations libérées.)*
+*(Session du 05/10/2026, à partir de 12 h 54.)*
 
-**Bingo, déployé à 09:41 (Serveur Jeux) et 09:44 (Kal-Games), non testé, actif après redémarrage des deux
-serveurs** : KG_BingoGame 0.8.5 (+ nouveau `objectives.yml`), KG_Bingo 1.7.0, KG_ScoreBoards 1.9.0 (à garder ensemble).
-- 2 lancements ratés ce matin : grille à 25 difficiles alors qu'il n'en existait que 18 -> **7 difficiles ajoutés** (25) ;
-  la partie restait ensuite bloquée (« existe deja ») -> corrigé, l'hôte peut relancer et voit la raison.
-- **2 parties par heure** et par joueur (60 dernières minutes, opérateurs non limités).
-- **Abandon** (bouton ou déconnexion > 10 min) : 0 point de la partie et **-15 au classement** (total négatif possible).
-- **Une seule équipe** : aucun bonus « en 1er ».
-- **Contre la montre** (1 équipe) : 10 min, +5 min par objectif, grille complète obligatoire ; victoire = bonus habituel
-  + 1 pt par 20 s restantes ; temps écoulé = défaite, points des objectifs gardés.
-- **Gel de 5 à 6 s à la création d'une partie** (création de l'overworld de chaque équipe sur le thread principal) :
-  point d'apparition fourni par un générateur (terrain normal) puis placé sur la terre ferme ; **réserve de 2 mondes**
-  créée seulement sans partie en cours, utilisée par une partie créée pendant une autre.
-- Erreurs « Impossible de publier ... : null » cette nuit (00:55 à 01:13) : relais injoignable (proxy redémarré
-  probablement), reparti seul ; pas un bug. Crédit des points sur Kal-Games non vérifié.
-
-**Correction des classements Bingo (17:04, Kal-Games arrêté)** : 27 parties à une seule équipe jouées avant la 0.8.5
-avaient les bonus « en 1er » (objectif, bingo). Détail impossible à recalculer (seuls les totaux sont gardés) : **40 %
-des points hors XP retirés** (choix de Maxster33), dans `stats.yml` (général, octobre), `archives/2026-09.yml` et
-`archives/semaines/2026-09-26.yml` : .MRMister7866 -2 426,6 (général), Maaxster -452,2, .PatientLime2170 -89,8,
-.TomHeroes57 -59,4. Originaux dans `/plugins/_removed-kg_scoreboards-stats-2026-10-03/`. Pas d'écriture dans le
-journal des parties ; paliers de récompenses déjà donnés non repris. Détail : `historique-conversations/2026-10-03-bingo.md`.
-
-**KG_BingoGame 0.8.6** (Serveur Jeux, déployé à 12:51, non testé) : en 0.8.5 le départ pouvait tomber au milieu de
-l'océan (terre cherchée seulement à 160 blocs du centre) ; désormais biome terrestre le plus proche, jusqu'à 3000 blocs.
-Le gel à la création a bien disparu (« Prepared spawn area in 0 ms »).
-
-**KG_BingoObservateur 0.1.0** (nouveau, Serveur Jeux, déployé à 10:18, non testé, actif après redémarrage) :
-`/observer` donne aux opérateurs une longue-vue « Observer un joueur » (liste groupée par partie, vue libre ou dans ses
-yeux, `/observer quitter`, retour automatique en fin de partie).
-
-À tester (liste complète dans `historique-conversations/2026-10-03-bingo.md`) : observateur (longue-vue, deux vues,
-Nether / mort du joueur suivi, `/observer quitter`, retour en fin de partie et mondes bien supprimés, refus pour un
-non-opérateur) ; grille à 25 difficiles, limite de
-création, -15 à l'abandon (bouton, déconnexion, joueur seul), pas de « en 1er » à une équipe, contre la montre (chrono,
-victoire, temps écoulé, redémarrage), plus de « Prepared spawn area in 5000 ms », départ sur la terre ferme, logs
-« Réserve : ... », 2e partie pendant une autre sans gel.
+**KG_BingoGame 0.10.0, compilé, non déployé, non testé** : réserve de mondes par lots. Constat de Maxster33 : deux
+parties à deux jours d'écart sur la même seed. Cause : en 0.8.5, le monde ajouté à la réserve reprenait la seed du
+monde restant, qui pouvait donc revenir indéfiniment jusqu'au redémarrage (parties créées pendant une autre partie).
+Désormais : au démarrage, mondes de réserve supprimés puis 3 lots de 4 mondes et 3 lots solo préparés (une seed neuve
+par lot) ; toute partie prend un lot (mondes en trop, équipes vides, partie annulée : supprimés) ; le lot est remplacé
+à la fin de la partie, une fois ses mondes effacés du disque ; pendant une partie, seul le terrain de la réserve avance
+(5 chunks/s) ; à 4 parties en cours, réserve en pause ; aucun lot libre : mondes créés pour la partie. Nouvelles clés
+(valeurs par défaut dans le code) : `instances.reserve-lots-4-teams`, `reserve-lots-solo`,
+`reserve-chunks-per-second-during-games`. Détail : `KG_BingoGame/JOURNAL.md`,
+`historique-conversations/2026-10-05-bingo-reserve-lots.md`.
 
 ### 2026-10-02 — LeKiwi06
 

@@ -1789,3 +1789,57 @@ Même règle dans KG_BoatRace 1.5.0. Rétroactif : fait dans les classements de 
 
 **Déployé sur Serveur Jeux le 05/10/2026 à 12:33 (LeKiwi06 ; 0.8.7 dans `_removed-kg_bingogame-0.8.7/`), actif après
 redémarrage. Statut : non testé en jeu.**
+
+## 0.10.0 - réserve de mondes par lots : plus jamais deux parties sur la même seed (05/10/2026, Maxster33)
+
+**Constat de Maxster33 (05/10/2026)** : « hier soir j'ai lancé une partie et je me suis retrouvé avec exactement la même
+seed que avant hier soir ».
+
+**Cause** (0.8.5) : le monde ajouté à la réserve reprenait la seed du monde qui y restait (pour qu'une partie à 2 équipes
+puisse prendre les 2 mondes). Une partie à 1 équipe créée pendant une autre partie prenait 1 monde, le monde restant
+gardait la seed et le nouveau la reprenait : la même seed revenait à chaque partie de ce genre jusqu'au redémarrage (ou
+jusqu'à ce qu'une partie prenne les 2 mondes d'un coup). La seed tirée par kal-games (`SecureRandom`) n'est pas en cause.
+
+**Demande de Maxster33** : au redémarrage, supprimer toutes les seeds en réserve puis prégénérer 3 lots de seeds pour
+4 équipes et 3 lots pour des parties en solo ; à la fin d'une partie, supprimer sa seed puis en générer une nouvelle
+pour la réserve, lentement ; à 4 parties en cours, mettre en pause suppressions et générations.
+
+**Choix de Maxster33** (questions posées) :
+- suppression en arrière-plan (comme avant : monde déchargé puis fichiers effacés hors du fil du jeu, sans lag) plutôt
+  qu'au rythme d'1 ou 6 chunks par seconde, qui n'apportait rien côté lag ;
+- pendant une partie : seulement le terrain de la réserve, pas de création de monde (gel court du serveur) ;
+- une partie à 2 ou 3 équipes prend un lot de 4 : les mondes en trop sont supprimés tout de suite ;
+- aucun lot libre : mondes créés pour la partie, comme avant.
+
+**Changements** (`InstanceWorldPreparer`, `InstanceWorldManager`, `BingoPlugin`) :
+- La réserve est faite de **lots** : un lot = une seed neuve, jamais rejouée. `instances.reserve-lots-4-teams` lots de
+  4 mondes (parties de 2 à 4 équipes) et `instances.reserve-lots-solo` lots de 1 monde (parties à 1 équipe), 3 et 3 par
+  défaut. Chaque monde a son Nether et son End. Préparés dès le démarrage, après la suppression des mondes de réserve
+  restés d'avant le redémarrage (lots solo et lots de 4 en alternance).
+- **Toute partie prend un lot** (avant : seulement si une autre partie était en cours), le plus avancé de sa taille ;
+  ses mondes encore en file deviennent des tâches de la partie (servies en priorité). Mondes en trop du lot, équipes
+  restées vides au lancement, partie annulée avant le lancement : mondes supprimés (avant : remis en réserve).
+- **Remplacement** : le lot d'une partie est remplacé quand elle se termine (ou est annulée), une fois tous les
+  effacements en cours terminés (nouveau compteur `InstanceWorldManager.pendingDeletions`). Une partie lancée sans lot
+  (aucun libre) ne déclenche pas de remplacement.
+- **Pendant une partie** : les mondes de réserve ne sont toujours pas créés (comme en 0.8.5) ; leur terrain avance à
+  `instances.reserve-chunks-per-second-during-games` (5 par défaut), après celui des parties.
+- **À `instances.max-simultaneous-games` parties en cours (4)** : réserve en pause (ni nouveau lot, ni terrain).
+- Un lot dont un monde n'a pas pu être créé est abandonné en entier (mondes supprimés) et remplacé.
+
+**Nouvelles clés** (absentes du `config.yml` déjà déployé : valeurs par défaut dans le code, à ajouter à la main pour
+les modifier) : `instances.reserve-lots-4-teams: 3`, `instances.reserve-lots-solo: 3`,
+`instances.reserve-chunks-per-second-during-games: 5`.
+
+**Limites** :
+- 15 mondes en réserve, soit 45 avec leur Nether et leur End, chargés et pré-générés : plus de mémoire et de disque
+  qu'avec les 2 mondes de la 0.8.5. Avec les réglages du serveur (rayon 150, 40 chunks/s, un monde toutes les 5 s),
+  environ 4 min de création de mondes et 8 min de terrain après le démarrage, sans partie en cours.
+- Une partie à 1 équipe sans lot solo libre ne prend pas un lot de 4 : ses mondes sont créés pour elle.
+- Les parties restaurées après un redémarrage n'ont pas de lot : à leur fin, rien n'est remplacé (la réserve est
+  déjà complète).
+- La pause à 4 parties ne concerne pas les effacements (en arrière-plan, sans lag).
+
+**Compilé le 05/10/2026, non déployé. Statut : non testé en jeu.** À tester : logs « Réserve : préparation d'un lot »
+au démarrage (6 lots), une partie solo puis une partie à 2 équipes (seeds différentes, « lot de réserve ... attribué »),
+fin de partie puis « son lot de réserve sera remplacé » et nouveau lot, partie lancée pendant une autre sans gel.

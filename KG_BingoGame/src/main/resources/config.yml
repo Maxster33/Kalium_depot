@@ -83,6 +83,13 @@ instances:
   # lancement des parties plus long (la partie attend que ses maps soient pretes).
   pregeneration-chunks-per-second: 20
   pregeneration-max-chunks-in-flight: 8
+  # AJOUTE en 0.10.0 : reserve de mondes prets a l'avance, par lots (un lot = une seed neuve, jamais rejouee).
+  # Lots de 4 mondes (parties de 2 a 4 equipes) et lots de 1 monde (parties a 1 equipe), prepares des le
+  # demarrage ; un lot est remplace a la fin de la partie qui l'a pris. Pendant une partie, seul le terrain de la
+  # reserve avance, a ce debit (chunks par seconde) ; a max-simultaneous-games parties en cours, reserve en pause.
+  reserve-lots-4-teams: 3
+  reserve-lots-solo: 3
+  reserve-chunks-per-second-during-games: 5
 
 reconnect-during-game:
   # Delai d'attente maximum, a l'arrivee sur ce serveur, pour un joueur dont la partie

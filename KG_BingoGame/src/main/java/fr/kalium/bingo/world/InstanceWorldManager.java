@@ -323,6 +323,13 @@ public class InstanceWorldManager {
         return false;
     }
 
+    /** 0.10.0 : effacements du disque programmes et pas encore termines (la reserve attend qu'ils soient finis). */
+    private final java.util.concurrent.atomic.AtomicInteger pendingDeletions = new java.util.concurrent.atomic.AtomicInteger();
+
+    public int pendingDeletions() {
+        return pendingDeletions.get();
+    }
+
     private void deleteWorld(String worldName) {
         if (!INSTANCE_NAME.matcher(worldName).matches()) {
             logger.severe("[KG_BingoGame] Suppression refusee : '" + worldName + "' n'est pas un monde de partie.");
@@ -347,18 +354,23 @@ public class InstanceWorldManager {
 
         folders.addAll(candidateFolders(worldName));
         boolean wasLoaded = world != null;
+        pendingDeletions.incrementAndGet();
         Runnable delete = () -> {
-            boolean deleted = false;
-            for (Path folder : folders) {
-                Path name = folder.getFileName();
-                if (name != null && name.toString().equals(worldName) && Files.isDirectory(folder)) {
-                    deleteDirectoryRecursively(folder);
-                    deleted = true;
-                    logger.info("[KG_BingoGame] Monde '" + worldName + "' supprime du disque (" + folder + ").");
+            try {
+                boolean deleted = false;
+                for (Path folder : folders) {
+                    Path name = folder.getFileName();
+                    if (name != null && name.toString().equals(worldName) && Files.isDirectory(folder)) {
+                        deleteDirectoryRecursively(folder);
+                        deleted = true;
+                        logger.info("[KG_BingoGame] Monde '" + worldName + "' supprime du disque (" + folder + ").");
+                    }
                 }
-            }
-            if (!deleted && wasLoaded) {
-                logger.warning("[KG_BingoGame] Dossier du monde '" + worldName + "' introuvable : rien n'a ete supprime du disque.");
+                if (!deleted && wasLoaded) {
+                    logger.warning("[KG_BingoGame] Dossier du monde '" + worldName + "' introuvable : rien n'a ete supprime du disque.");
+                }
+            } finally {
+                pendingDeletions.decrementAndGet();
             }
         };
         // 0.6.0 : effacement des fichiers en arriere-plan (5 s apres le dechargement, le temps que le serveur

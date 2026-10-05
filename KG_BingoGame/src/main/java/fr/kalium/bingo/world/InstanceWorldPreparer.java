@@ -91,26 +91,69 @@ public final class InstanceWorldPreparer {
      *    personne) et la reserve est gardee pour les parties simultanees ;
      *  - une partie creee pendant qu'une autre est en cours prend des mondes de la reserve (memes seed pour toutes ses
      *    equipes) ; s'il en manque (3-4 equipes), les autres sont crees comme avant.
-     * Un monde de reserve attribue a une partie annulee, ou a une equipe restee vide, retourne dans la reserve (personne
-     * n'y est entre). Noms : <prefixe>reserve-<uuid>_1 (le monde garde ce nom pendant la partie). La reserve n'est pas
-     * gardee d'un demarrage a l'autre (mondes restants supprimes au demarrage).
+     * Noms : <prefixe>reserve-<uuid>_<n> (le monde garde ce nom pendant la partie). La reserve n'est pas gardee d'un
+     * demarrage a l'autre (mondes restants supprimes au demarrage).
+     *
+     * 0.10.0 - LOTS DE MONDES (demande de Maxster33, 05/10/2026 : deux parties a deux jours d'ecart sur la meme seed ;
+     * en 0.8.5 un monde ajoute a la reserve reprenait la seed du monde restant, qui pouvait donc revenir indefiniment) :
+     *  - la reserve est faite de LOTS : un lot = une seed neuve, jamais rejouee ; instances.reserve-lots-4-teams lots
+     *    de 4 mondes (parties de 2 a 4 equipes) et instances.reserve-lots-solo lots de 1 monde (parties a 1 equipe),
+     *    3 et 3 par defaut, prepares des le demarrage (mondes de reserve d'avant le redemarrage supprimes d'abord) ;
+     *  - toute partie prend un lot (meme si aucune autre partie n'est en cours) ; une partie a 2 ou 3 equipes prend un
+     *    lot de 4 et les mondes en trop sont supprimes tout de suite (choix de Maxster33 : jamais deux parties sur la
+     *    meme seed) ; equipes restees vides au lancement et partie annulee : mondes supprimes aussi ;
+     *  - le lot n'est remplace qu'a la fin de la partie qui l'utilise, une fois ses mondes effaces du disque (en
+     *    arriere-plan, sans lag : choix de Maxster33) ;
+     *  - pendant une partie : pas de creation de monde de reserve (petit gel du serveur), seulement le terrain des
+     *    mondes deja crees, au debit reduit instances.reserve-chunks-per-second-during-games (choix de Maxster33) ;
+     *  - a instances.max-simultaneous-games parties en cours (4) : reserve en pause (ni remplacement, ni terrain) ;
+     *  - aucun lot libre : mondes crees pour la partie, avec la seed tiree par kal-games (comme avant).
      */
-    private static final int RESERVE_SIZE = 2;
-    /** Overworlds de reserve libres (crees ou encore en file), dans l'ordre de creation. */
-    private final List<String> reserve = new ArrayList<>();
-    private final Map<String, Long> reserveSeeds = new HashMap<>();
-    /** "gameId:equipe" -> overworld de reserve attribue a cette equipe. */
-    private final Map<String, String> assigned = new HashMap<>();
-    private java.util.function.BooleanSupplier gameInProgress = () -> false;
+    private static final int FULL_LOT_SIZE = 4;
 
-    /** A appeler une fois GameManager construit : true si au moins une partie est EN COURS. */
-    public void setGameInProgress(java.util.function.BooleanSupplier gameInProgress) {
-        this.gameInProgress = gameInProgress;
+    /** 0.10.0 : un lot de mondes de reserve partageant une seed neuve (1 monde pour le solo, 4 sinon). */
+    private record Lot(long seed, List<String> worlds) {
     }
 
-    /** 0.8.5 : supprime les mondes de reserve d'avant le redemarrage (a appeler apres la restauration des parties). */
+    private final int fullLots;
+    private final int soloLots;
+    private final double reserveChunksPerTickDuringGames;
+    private double reserveChunkCredit;
+    /** Lots libres (en file ou crees), dans l'ordre de creation. */
+    private final List<Lot> freeLots = new ArrayList<>();
+    /** gameId -> lot pris par cette partie : remplace a la fin de la partie (voir refillReserve). */
+    private final Map<String, Lot> usedLots = new HashMap<>();
+    /** "gameId:equipe" -> overworld de reserve attribue a cette equipe. */
+    private final Map<String, String> assigned = new HashMap<>();
+    private java.util.function.IntSupplier gamesInProgress = () -> 0;
+    private int pauseAtGames = Integer.MAX_VALUE;
+    /** 0.10.0 : la reserve ne se remplit qu'apres le nettoyage du demarrage (voir cleanLeftoverReserves). */
+    private boolean reserveStarted;
+
+    /**
+     * A appeler une fois GameManager construit : nombre de parties EN COURS ; a {@code pauseAtGames} parties en cours,
+     * la reserve est en pause (0.10.0).
+     */
+    public void setGamesInProgress(java.util.function.IntSupplier gamesInProgress, int pauseAtGames) {
+        this.gamesInProgress = gamesInProgress;
+        this.pauseAtGames = Math.max(1, pauseAtGames);
+    }
+
+    private boolean gameInProgress() {
+        return gamesInProgress.getAsInt() > 0;
+    }
+
+    private boolean reservePaused() {
+        return gamesInProgress.getAsInt() >= pauseAtGames;
+    }
+
+    /**
+     * 0.8.5 : supprime les mondes de reserve d'avant le redemarrage (a appeler apres la restauration des parties).
+     * 0.10.0 : la preparation des lots commence ensuite, une fois ces mondes effaces du disque.
+     */
     public void cleanLeftoverReserves() {
         worldManager.deleteLeftovers(reservePrefix());
+        reserveStarted = true;
     }
 
     private String reservePrefix() {
@@ -119,7 +162,11 @@ public final class InstanceWorldPreparer {
 
     public InstanceWorldPreparer(JavaPlugin plugin, Logger logger, InstanceWorldManager worldManager,
                                   String worldNamePrefix, Duration stagger, int radiusBlocks,
-                                  int chunksPerSecond, int maxChunksInFlight) {
+                                  int chunksPerSecond, int maxChunksInFlight,
+                                  int fullLots, int soloLots, int reserveChunksPerSecondDuringGames) {
+        this.fullLots = Math.max(0, fullLots);
+        this.soloLots = Math.max(0, soloLots);
+        this.reserveChunksPerTickDuringGames = Math.max(1, reserveChunksPerSecondDuringGames) / 20.0;
         this.plugin = plugin;
         this.logger = logger;
         this.worldManager = worldManager;
@@ -134,34 +181,43 @@ public final class InstanceWorldPreparer {
     /**
      * A appeler UNE SEULE FOIS, des la creation d'une nouvelle BingoParty (voir PartyManager).
      *
-     * @return la seed a utiliser pour cette partie : celle des mondes de reserve pris (0.8.5), sinon {@code seed}
+     * @return la seed a utiliser pour cette partie : celle du lot de reserve pris (0.8.5, 0.10.0), sinon {@code seed}
      */
     public long startPreGeneration(String gameId, long seed, int teamCount) {
-        // 0.8.5 : une partie est en cours -> mondes de la reserve deja crees (meme seed pour toutes les equipes).
-        if (gameInProgress.getAsBoolean()) {
-            List<String> group = largestReadyReserveGroup();
-            if (!group.isEmpty()) {
-                seed = reserveSeeds.get(group.get(0));
-                for (int team = 1; team <= Math.min(teamCount, group.size()); team++) {
-                    String name = group.get(team - 1);
-                    reserve.remove(name);
+        // 0.10.0 : toute partie prend un lot libre (lot solo a 1 equipe, lot de 4 sinon), meme sans autre partie en cours.
+        Lot lot = teamCount >= 1 && teamCount <= FULL_LOT_SIZE ? bestFreeLot(teamCount == 1 ? 1 : FULL_LOT_SIZE) : null;
+        if (lot != null) {
+            freeLots.remove(lot);
+            usedLots.put(gameId, lot);
+            seed = lot.seed();
+            Map<String, Integer> teamOf = new HashMap<>();
+            for (int team = 1; team <= lot.worlds().size(); team++) {
+                String name = lot.worlds().get(team - 1);
+                if (team <= teamCount) {
                     assigned.put(gameId + ":" + team, name);
+                    teamOf.put(name, team);
+                } else {
+                    discardWorld(name); // monde en trop du lot : supprime, sa seed ne doit pas resservir
                 }
-                logger.info("[KG_BingoGame] Partie '" + gameId + "' : " + Math.min(teamCount, group.size())
-                        + " monde(s) de réserve attribué(s) (une partie est en cours).");
-                // Nether / End de ces mondes encore en file : ils deviennent des taches de la partie (crees meme
-                // pendant une partie en cours, ~0,3 s chacun).
-                java.util.Set<String> taken = new java.util.HashSet<>(assigned.values());
+            }
+            // Mondes du lot encore en file (overworld, Nether, End) : ils deviennent des taches de la partie, servies
+            // avant la reserve et creees meme pendant une partie en cours (comme les mondes crees pour une partie).
+            for (Deque<WorldTask> queue : List.of(overworldQueue, dimensionQueue)) {
                 List<WorldTask> moved = new ArrayList<>();
-                dimensionQueue.removeIf(task -> {
-                    if (task.isReserve() && taken.contains(task.name())) {
-                        moved.add(new WorldTask(gameId, task.seed(), 0, task.environment(), task.name()));
+                queue.removeIf(task -> {
+                    Integer team = teamOf.get(task.name());
+                    if (task.isReserve() && team != null) {
+                        moved.add(new WorldTask(gameId, task.seed(), team, task.environment(), task.name()));
                         return true;
                     }
                     return false;
                 });
-                dimensionQueue.addAll(moved);
+                queue.addAll(moved);
             }
+            logger.info("[KG_BingoGame] Partie '" + gameId + "' : lot de réserve de " + lot.worlds().size()
+                    + " monde(s) attribué(s) (" + teamCount + " équipe(s), seed=" + seed + ").");
+        } else {
+            logger.info("[KG_BingoGame] Partie '" + gameId + "' : aucun lot de réserve libre, mondes créés pour la partie.");
         }
         // Ordre (0.1.22) : overworlds de toutes les equipes, puis leurs Nether, puis leurs End.
         for (int team = 1; team <= teamCount; team++) {
@@ -179,50 +235,97 @@ public final class InstanceWorldPreparer {
         return seed;
     }
 
-    /** Overworlds de reserve deja crees partageant la seed la plus representee (ordre de creation). */
-    private List<String> largestReadyReserveGroup() {
-        Map<Long, List<String>> bySeed = new java.util.LinkedHashMap<>();
-        for (String name : reserve) {
-            if (ready.containsKey(name)) {
-                bySeed.computeIfAbsent(reserveSeeds.get(name), s -> new ArrayList<>()).add(name);
+    /** 0.10.0 : lot libre de cette taille le plus avance (terrains prets, puis mondes crees), le plus ancien a egalite. */
+    private Lot bestFreeLot(int size) {
+        Lot best = null;
+        int bestScore = -1;
+        for (Lot lot : freeLots) {
+            if (lot.worlds().size() != size) {
+                continue;
             }
-        }
-        List<String> best = List.of();
-        for (List<String> group : bySeed.values()) {
-            if (group.size() > best.size()) {
-                best = group;
+            int score = 0;
+            for (String name : lot.worlds()) {
+                score += terrainDone.contains(name) ? 2 : ready.containsKey(name) ? 1 : 0;
+            }
+            if (score > bestScore) {
+                best = lot;
+                bestScore = score;
             }
         }
         return best;
     }
 
-    /** Complete la reserve (un overworld + son Nether + son End a la fois), seulement si aucune partie n'est en cours. */
+    /**
+     * 0.10.0 : complete la reserve, un lot a la fois (une seed neuve par lot), jusqu'a fullLots lots de 4 et soloLots
+     * lots solo, en comptant les lots pris par des parties pas encore terminees. Attend que les mondes supprimes soient
+     * effaces du disque, et ne fait rien a pauseAtGames parties en cours. Les mondes eux-memes ne sont crees qu'en
+     * l'absence de partie en cours (voir nextWorldTask).
+     */
     private void refillReserve() {
-        if (reserve.size() >= RESERVE_SIZE || gameInProgress.getAsBoolean()) {
+        if (!reserveStarted || reservePaused() || worldManager.pendingDeletions() > 0) {
             return;
         }
-        // Meme seed que la reserve existante : une partie a 2 equipes peut prendre les 2 mondes.
-        long seed = reserve.isEmpty() ? new java.util.Random().nextLong() : reserveSeeds.get(reserve.get(0));
-        String name = reservePrefix() + java.util.UUID.randomUUID() + "_1";
-        reserve.add(name);
-        reserveSeeds.put(name, seed);
-        overworldQueue.add(new WorldTask(null, seed, 0, World.Environment.NORMAL, name));
-        dimensionQueue.add(new WorldTask(null, seed, 0, World.Environment.NETHER, name));
-        dimensionQueue.add(new WorldTask(null, seed, 0, World.Environment.THE_END, name));
-        logger.info("[KG_BingoGame] Réserve : préparation du monde '" + name + "' (" + reserve.size() + "/" + RESERVE_SIZE + ").");
-    }
-
-    /** true si ce monde (overworld de reserve) n'est attribue a aucune partie. */
-    private boolean isFreeReserve(String name) {
-        return reserve.contains(name);
-    }
-
-    /** Remet dans la reserve un monde attribue mais jamais utilise (partie annulee, equipe restee vide). */
-    private void giveBack(String name) {
-        if (!reserve.contains(name)) {
-            reserve.add(name);
-            logger.info("[KG_BingoGame] Réserve : monde '" + name + "' remis dans la réserve (" + reserve.size() + ").");
+        int solo = countLots(1);
+        int full = countLots(FULL_LOT_SIZE);
+        int size;
+        if (solo < soloLots && (solo <= full || full >= fullLots)) {
+            size = 1;
+        } else if (full < fullLots) {
+            size = FULL_LOT_SIZE;
+        } else {
+            return;
         }
+        long seed = new java.util.Random().nextLong();
+        String base = reservePrefix() + java.util.UUID.randomUUID() + "_";
+        List<String> worlds = new ArrayList<>();
+        for (int n = 1; n <= size; n++) {
+            String name = base + n;
+            worlds.add(name);
+            overworldQueue.add(new WorldTask(null, seed, 0, World.Environment.NORMAL, name));
+            dimensionQueue.add(new WorldTask(null, seed, 0, World.Environment.NETHER, name));
+            dimensionQueue.add(new WorldTask(null, seed, 0, World.Environment.THE_END, name));
+        }
+        freeLots.add(new Lot(seed, worlds));
+        logger.info("[KG_BingoGame] Réserve : préparation d'un lot " + (size == 1 ? "solo" : "de " + size + " mondes")
+                + " (seed=" + seed + ") - lots solo " + countLots(1) + "/" + soloLots + ", lots de " + FULL_LOT_SIZE + " "
+                + countLots(FULL_LOT_SIZE) + "/" + fullLots + ".");
+    }
+
+    /** Lots de cette taille, libres ou pris par une partie pas encore terminee. */
+    private int countLots(int size) {
+        int count = 0;
+        for (Lot lot : freeLots) {
+            count += lot.worlds().size() == size ? 1 : 0;
+        }
+        for (Lot lot : usedLots.values()) {
+            count += lot.worlds().size() == size ? 1 : 0;
+        }
+        return count;
+    }
+
+    /** true si ce monde (overworld de reserve) fait partie d'un lot libre. */
+    private boolean isFreeReserve(String name) {
+        for (Lot lot : freeLots) {
+            if (lot.worlds().contains(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 0.10.0 : supprime un monde de reserve jamais joue (monde en trop d'un lot, equipe restee vide, partie annulee,
+     * lot en echec) : retire de la file et du suivi, efface du disque s'il existe deja (avec son Nether et son End).
+     */
+    private void discardWorld(String name) {
+        for (Deque<WorldTask> queue : List.of(overworldQueue, dimensionQueue)) {
+            queue.removeIf(task -> name.equals(task.name()));
+        }
+        ready.remove(name);
+        overworldJobs.remove(name);
+        terrainDone.remove(name);
+        failed.remove(name);
+        worldManager.deleteInstanceWorld(name);
     }
 
     /** Nom de l'overworld de cette equipe : monde de reserve attribue (0.8.5), sinon &lt;prefixe&gt;&lt;gameId&gt;_&lt;n&gt;. */
@@ -291,7 +394,7 @@ public final class InstanceWorldPreparer {
                 }
             }
         }
-        if (gameInProgress.getAsBoolean()) {
+        if (gameInProgress()) {
             return null;
         }
         for (Deque<WorldTask> queue : List.of(overworldQueue, dimensionQueue)) {
@@ -356,7 +459,13 @@ public final class InstanceWorldPreparer {
             if (task.environment() == World.Environment.NORMAL) {
                 failed.add(worldName); // le lancement ne l'attend pas : repli de GameManager.prepareInstances
                 if (task.isReserve()) {
-                    reserve.remove(worldName); // 0.8.5 : sera remplace au prochain remplissage
+                    // 0.10.0 : tout le lot est abandonne (mondes supprimes) ; il sera remplace au prochain remplissage.
+                    for (Lot lot : new ArrayList<>(freeLots)) {
+                        if (lot.worlds().contains(worldName)) {
+                            freeLots.remove(lot);
+                            lot.worlds().forEach(this::discardWorld);
+                        }
+                    }
                 }
             }
         }
@@ -419,10 +528,20 @@ public final class InstanceWorldPreparer {
         }
         jobs.removeIf(job -> job.stopped || (job.queue.isEmpty() && job.pending() == 0));
         chunkCredit = Math.min(chunkCredit + chunksPerTick, Math.max(1.0, chunksPerTick));
+        // 0.10.0 : pendant une partie, le terrain de la reserve avance a un debit reduit (credit separe).
+        reserveChunkCredit = Math.min(reserveChunkCredit + reserveChunksPerTickDuringGames,
+                Math.max(1.0, reserveChunksPerTickDuringGames));
+        boolean slowReserve = gameInProgress();
         while (chunkCredit >= 1.0 && chunksInFlight() < maxChunksInFlight) {
             ChunkJob job = nextJob();
             if (job == null) {
                 return;
+            }
+            if (slowReserve && job.isFreeReserve()) {
+                if (reserveChunkCredit < 1.0) {
+                    return;
+                }
+                reserveChunkCredit -= 1.0;
             }
             job.requestNext();
             chunkCredit -= 1.0;
@@ -431,8 +550,8 @@ public final class InstanceWorldPreparer {
 
     /** Prochain terrain a servir : les overworlds d'abord, puis Nether / End, dans l'ordre d'arrivee. */
     private ChunkJob nextJob() {
-        // 0.8.5 : terrains des parties avant ceux de la reserve.
-        for (boolean reserveJobs : new boolean[] {false, true}) {
+        // 0.8.5 : terrains des parties avant ceux de la reserve. 0.10.0 : reserve en pause a pauseAtGames parties.
+        for (boolean reserveJobs : reservePaused() ? new boolean[] {false} : new boolean[] {false, true}) {
             for (ChunkJob job : jobs) {
                 if (job.overworld && !job.queue.isEmpty() && job.isFreeReserve() == reserveJobs) {
                     return job;
@@ -592,7 +711,8 @@ public final class InstanceWorldPreparer {
      */
     public void forget(String gameId, int usedTeams) {
         cancelledGameIds.remove(gameId);
-        // 0.8.5 : mondes de reserve attribues - utilises : plus suivis ici ; equipes restees vides : remis en reserve.
+        // 0.8.5 : mondes de reserve attribues - utilises : plus suivis ici. 0.10.0 : equipes restees vides : mondes
+        // supprimes (plus remis en reserve : leur seed est celle de la partie).
         Iterator<Map.Entry<String, String>> reserved = assigned.entrySet().iterator();
         while (reserved.hasNext()) {
             Map.Entry<String, String> entry = reserved.next();
@@ -601,8 +721,8 @@ public final class InstanceWorldPreparer {
             }
             int team = Integer.parseInt(entry.getKey().substring(gameId.length() + 1));
             String name = entry.getValue();
-            if (team > usedTeams && ready.containsKey(name)) {
-                giveBack(name);
+            if (team > usedTeams) {
+                discardWorld(name);
             } else {
                 overworldJobs.remove(name);
                 terrainDone.remove(name);
@@ -633,16 +753,19 @@ public final class InstanceWorldPreparer {
      */
     public void cancel(String gameId) {
         cancelledGameIds.add(gameId);
-        // 0.8.5 : mondes de reserve attribues et pas encore utilises (toujours dans ready) : remis en reserve.
+        // 0.10.0 : mondes de reserve attribues a une partie jamais lancee : supprimes (avant : remis en reserve). Ceux
+        // d'une partie lancee ne sont plus ici (voir forget) : GameManager.cleanupGame les supprime.
         Iterator<Map.Entry<String, String>> reserved = assigned.entrySet().iterator();
         while (reserved.hasNext()) {
             Map.Entry<String, String> entry = reserved.next();
             if (entry.getKey().startsWith(gameId + ":")) {
-                if (ready.containsKey(entry.getValue())) {
-                    giveBack(entry.getValue());
-                }
+                discardWorld(entry.getValue());
                 reserved.remove();
             }
+        }
+        // 0.10.0 : le lot de la partie est libere : un lot neuf le remplace une fois ses mondes effaces du disque.
+        if (usedLots.remove(gameId) != null) {
+            logger.info("[KG_BingoGame] Partie '" + gameId + "' terminée ou annulée : son lot de réserve sera remplacé.");
         }
         for (Deque<WorldTask> queue : List.of(overworldQueue, dimensionQueue)) {
             queue.removeIf(task -> gameId.equals(task.gameId()));
