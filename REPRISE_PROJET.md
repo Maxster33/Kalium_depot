@@ -92,7 +92,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-- **KG_BingoGame 0.10.0** (05/10/2026, Maxster33, Serveur Jeux) : réserve de mondes par lots (3 lots de 4, 3 lots solo, une seed neuve par lot, jamais rejouée, entamée seulement pendant une autre partie) ; contre la montre en N bingos avec bonus des bingos ; non testé. À déployer avec **KG_Bingo 1.7.3** (Kal-Games, texte d'aide du menu de création).
+- **KG_BingoGame 0.10.0** (05/10/2026, Maxster33, Serveur Jeux) : réserve de mondes par lots (3 lots de 4, 3 lots solo, une seed neuve par lot, jamais rejouée, entamée seulement pendant une autre partie) ; contre la montre en N bingos (10 au plus à 1 équipe) ; non testé. À déployer avec **KG_Bingo 1.7.3** (Kal-Games, texte d'aide du menu de création).
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
@@ -266,9 +266,9 @@ sans autre partie en cours : mondes neufs, réserve non entamée) ; le lot est r
 `historique-conversations/2026-10-05-bingo-reserve-lots.md`.
 
 **Contre la montre en bingos (KG_BingoGame 0.10.0 + KG_Bingo 1.7.3, compilés, non déployés, non testés, à déployer
-ensemble)** : victoire avec le nombre de bingos choisi (3 à 12, 3 par défaut) au lieu de toute la grille ; en cas de
-victoire, bonus de temps + bonus des bingos (pour chaque bingo : (rang + difficultés de ses objectifs, facile 1 à
-extrême 4) / 2), annoncé dans le tchat à chaque bingo. Réserve de mondes : une partie créée sans autre partie en cours
+ensemble)** : victoire avec le nombre de bingos choisi (3 par défaut) au lieu de toute la grille ; 10 bingos au plus
+à 1 équipe (tous modes), 12 à plusieurs ; bonus inchangés (temps restant ; bingos comme dans toute partie à 1 équipe,
+sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre partie en cours
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06

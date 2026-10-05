@@ -184,7 +184,8 @@ final class BingoMenus {
             modeLabels.add(t("bingo.mode-chrono-court", "Contre la montre, 1 équipe"));
         }
         inputs.add(gui.choice("mode", t("bingo.create-mode", "Mode de jeu"), modeIds, modeLabels, solo ? "CHRONO" : "BINGOS"));
-        inputs.add(gui.number("bingos", t("bingo.create-bingos", "Bingos à achever pour gagner"), 3, 12, 3, 1));
+        // 1.7.3 : 10 bingos au plus a une seule equipe (demande de Maxster33, 05/10/2026 ; aussi borne par KG_BingoGame).
+        inputs.add(gui.number("bingos", t("bingo.create-bingos", "Bingos à achever pour gagner"), 3, solo ? 10 : 12, 3, 1));
         inputs.add(gui.number("easy", t("bingo.create-easy", "Objectifs faciles"), 0, GRID_CELLS, 10, 1));
         inputs.add(gui.number("medium", t("bingo.create-medium", "Objectifs normaux"), 0, GRID_CELLS, 10, 1));
         inputs.add(gui.number("hard", t("bingo.create-hard", "Objectifs difficiles"), 0, GRID_CELLS, 5, 1));
@@ -201,7 +202,7 @@ final class BingoMenus {
                 p.sendMessage(BingoPartyManager.creationWaitText(waitNow));
                 return;
             }
-            int bingos = intOf(view.getFloat("bingos"), 3);
+            int bingos = Math.min(solo ? 10 : 12, intOf(view.getFloat("bingos"), 3));
             int easy = intOf(view.getFloat("easy"), 10);
             int medium = intOf(view.getFloat("medium"), 10);
             int hard = intOf(view.getFloat("hard"), 5);
@@ -233,8 +234,7 @@ final class BingoMenus {
             // (avant : toute la grille) ; nouvelle cle, la precedente etant figee dans le lang.yml du serveur.
             body.add(t("bingo.create-aide-chrono-3", "<gray>Contre la montre (1 équipe) : 10 min au départ, puis par objectif "
                     + "+2 min 30 (facile), +4 min (normal), +6 min 30 (difficile), +10 min (extrême) ; il faut achever "
-                    + "le nombre de bingos choisi. Victoire : bonus selon le temps restant et selon chaque bingo "
-                    + "(son rang et la difficulté de ses objectifs) ; la durée ne compte pas."));
+                    + "le nombre de bingos choisi (10 au plus), bonus selon le temps restant (la durée ne compte pas)."));
         }
         gui.open(player, t("bingo.create-title", "<gold><bold>Nouvelle partie Bingo"), body, inputs, buttons, gui.close(), 1);
     }

@@ -1842,31 +1842,29 @@ les modifier) : `instances.reserve-lots-4-teams: 3`, `instances.reserve-lots-sol
   déjà complète).
 - La pause à 4 parties ne concerne pas les effacements (en arrière-plan, sans lag).
 
-### Contre la montre : nombre de bingos à choisir, bonus des bingos
+### Contre la montre : nombre de bingos à choisir, 10 au plus en solo
 
 **Demande de Maxster33 (05/10/2026)** : « il faut que l'on puisse choisir le nombre de bingo à réaliser pour remporter
-la partie, et adapter le bonus de fin de partie en fonction du nombre de bingo ». Bonus précisé par Maxster33 : pour
-chaque bingo, (son rang + la difficulté de chacun de ses objectifs) / 2, avec facile 1, normal 2, difficile 3,
-extrême 4. Exemples donnés : 1er bingo, 3 faciles et 2 normaux = (1 + 3x1 + 2x2) / 2 ; 4e bingo, 2 normaux,
-2 difficiles, 1 extrême = (4 + 2x2 + 2x3 + 1x4) / 2. Ce bonus **s'ajoute** au bonus de temps, **en cas de victoire
-seulement**, et il est **annoncé dans le tchat dès qu'un bingo est achevé**.
+la partie, et adapter le bonus de fin de partie en fonction du nombre de bingo ». Un bonus propre au contre la montre
+(rang du bingo + difficulté de ses objectifs, divisé par 2) a d'abord été codé, puis abandonné par Maxster33 le même
+jour : « pour les bonus de bingo finalement on va reprendre les règles de bonus de bingo des parties à plusieurs
+équipes », précisé « mêmes règles qu'à plusieurs équipes sans le bonus en 1er » (c'est déjà la règle de toute partie à
+une équipe depuis la 0.8.5 : seul le bonus des bingos uniquement difficiles / extrêmes, +0,5 au coefficient). Et :
+« Limite le nombre de bingo à 10 pour les parties en solo ».
 
-- Victoire : le nombre de bingos choisi à la création (3 à 12, réglage « Bingos à achever » déjà envoyé par KG_Bingo ;
-  3 par défaut) au lieu de toute la grille (12 bingos = grille complète, l'ancienne règle).
+- Victoire : le nombre de bingos choisi à la création (réglage « Bingos à achever » déjà envoyé par KG_Bingo ; 3 par
+  défaut) au lieu de toute la grille.
+- **Partie à 1 équipe (tous modes) : 10 bingos au plus** (`BingoSettings.MAX_BINGOS_SOLO`, appliqué à l'arrivée des
+  réglages de la partie, quelle que soit la version de KG_Bingo) ; 12 au plus à plusieurs équipes, comme avant.
 - Chrono à zéro avant : défaite, « les N bingos n'ont pas été achevés à temps » ; les points des objectifs restent.
-- Bonus de victoire : bonus habituel + 1 point par tranche de 20 s restantes + **bonus des bingos**
-  (`ScoreEngine.chronoBingoBonus`), ajoutés comme avant à l'équipe et à chacun de ses joueurs encore en jeu ; le message
-  de fin donne le détail des deux bonus.
-- Tchat, après chaque bingo : « Bingo k/N : bonus de +X pts si victoire (bonus des bingos : Y pts). »
+- Bonus de victoire inchangés : bonus habituel + 1 point par tranche de 20 s restantes.
 - Barre d'action : bingos achevés / demandés (comme le mode Bingos) au lieu des objectifs remplis.
-- Rang d'un bingo : ordre dans lequel l'équipe les a achevés ; deux bingos achevés par le même objectif sont classés
-  dans l'ordre lignes, colonnes, diagonales.
 
-À déployer avec **KG_Bingo 1.7.3** (texte d'aide du menu de création). Avec KG_Bingo 1.7.2, la règle s'applique quand
-même (le nombre de bingos était déjà envoyé) mais l'aide parle encore de la grille complète.
+À déployer avec **KG_Bingo 1.7.3** (menu de création : 10 bingos au plus à 1 équipe, texte d'aide). Avec KG_Bingo
+1.7.2, la règle s'applique quand même mais l'aide parle encore de la grille complète.
 
 **Compilé le 05/10/2026, non déployé. Statut : non testé en jeu.** À tester : logs « Réserve : préparation d'un lot »
 au démarrage (6 lots) ; une partie seule sur le serveur (pas de lot pris, mondes neufs) ; une partie créée pendant une
 autre (« lot de réserve ... attribué », seed différente, pas de gel) ; fin de partie puis « son lot de réserve sera
-remplacé » et nouveau lot. Contre la montre à 3 bingos : message de bonus à chaque bingo, victoire au 3e, bonus des
-bingos dans le résultat ; défaite au chrono sans bonus.
+remplacé » et nouveau lot. Contre la montre à 3 bingos : victoire au 3e bingo avec le bonus de temps ; défaite au
+chrono ; menu de création limité à 10 bingos à 1 équipe.

@@ -154,14 +154,16 @@ doivent être visibles qu'à 1 équipe.
 **Déployé le 03/10/2026 à 18:12 sur Kal-Games (Maxster33 ; 1.7.1 dans `_removed-kg_bingo-1.7.1/`), actif après
 redémarrage. Statut : non testé en jeu.**
 
-## 1.7.3 - contre la montre : nombre de bingos à achever (05/10/2026, Maxster33)
+## 1.7.3 - contre la montre : nombre de bingos à achever, 10 au plus en solo (05/10/2026, Maxster33)
 
-**Demande de Maxster33 (05/10/2026)** : « il faut que l'on puisse choisir le nombre de bingo à réaliser pour remporter
-la partie » au contre la montre (avant : toute la grille). La règle est dans KG_BingoGame 0.10.0 ; le réglage « Bingos à
-achever pour gagner » (3 à 12, 3 par défaut) était déjà dans l'écran 2 et déjà envoyé pour ce mode.
-- Texte d'aide du contre la montre : il faut achever le nombre de bingos choisi ; bonus de victoire selon le temps
-  restant et selon chaque bingo (rang et difficulté de ses objectifs). Nouvelle clé `bingo.create-aide-chrono-3` (la
-  précédente est figée dans le `lang.yml` du serveur).
+**Demandes de Maxster33 (05/10/2026)** : « il faut que l'on puisse choisir le nombre de bingo à réaliser pour remporter
+la partie » au contre la montre (avant : toute la grille) ; « Limite le nombre de bingo à 10 pour les parties en solo ».
+La règle est dans KG_BingoGame 0.10.0 ; le réglage « Bingos à achever pour gagner » était déjà dans l'écran 2 et déjà
+envoyé pour ce mode.
+- À 1 équipe (tous modes), « Bingos à achever » va de 3 à **10** (12 à plusieurs équipes) ; valeur bornée aussi à la
+  validation. 3 par défaut.
+- Texte d'aide du contre la montre : il faut achever le nombre de bingos choisi (10 au plus), bonus selon le temps
+  restant. Nouvelle clé `bingo.create-aide-chrono-3` (la précédente est figée dans le `lang.yml` du serveur).
 - Résumé de la partie créée : « contre la montre, N bingos » (avant : « contre la montre »).
 
 À déployer avec **KG_BingoGame 0.10.0** (Serveur Jeux).

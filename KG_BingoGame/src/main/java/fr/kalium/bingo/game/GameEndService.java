@@ -426,16 +426,12 @@ public final class GameEndService {
         // 0.8.5 - contre la montre gagne (demande de Maxster33, 03/10/2026) : bonus de victoire habituel + 1 point par
         // tranche de 20 s restantes au chrono, ajoute tel quel a l'equipe et a chacun de ses joueurs encore en jeu
         // (sans multiplicateur).
-        // 0.10.0 (demande de Maxster33, 05/10/2026) : + bonus des bingos acheves (voir ScoreEngine.chronoBingoBonus),
-        // victoire seulement, ajoute de la meme facon que le bonus de temps.
         double timeBonus = 0;
         if (win && game.getSettings().isChrono()) {
             long seconds = Math.max(0, game.getRemaining().getSeconds());
-            double secondsBonus = seconds / BingoSettings.CHRONO_SECONDS_PER_POINT;
-            double bingoBonus = engine.chronoBingoBonus(winner);
-            timeBonus = secondsBonus + bingoBonus;
+            timeBonus = seconds / BingoSettings.CHRONO_SECONDS_PER_POINT;
             reason = reason + " — " + (seconds / 60) + " min " + String.format("%02d", seconds % 60) + " s restantes : +"
-                    + ScoreEngine.format(secondsBonus) + " pts ; bonus des bingos : +" + ScoreEngine.format(bingoBonus) + " pts";
+                    + ScoreEngine.format(timeBonus) + " pts";
         }
 
         // 0.7.8 : bonus d'XP (demande de LeKiwi06, 25/09/2026) - 0,1 point par niveau d'XP du joueur a la fin de la

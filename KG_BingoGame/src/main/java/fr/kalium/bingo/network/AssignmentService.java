@@ -248,7 +248,11 @@ public final class AssignmentService {
             party.setSeed(usedSeed[0]);
         }
         if (rules != null) {
-            party.setSettings(fr.kalium.bingo.game.BingoSettings.parse(rules)); // 0.3.0 : mode, bingos, composition
+            fr.kalium.bingo.game.BingoSettings settings = fr.kalium.bingo.game.BingoSettings.parse(rules); // 0.3.0 : mode, bingos, composition
+            if (party.getTeamCount() == 1) { // 0.10.0 : 10 bingos au plus en solo (demande de Maxster33)
+                settings = settings.withMaxBingos(fr.kalium.bingo.game.BingoSettings.MAX_BINGOS_SOLO);
+            }
+            party.setSettings(settings);
         }
         Player player = Bukkit.getPlayer(playerId);
         if (player == null || !player.isOnline()) {

@@ -49,3 +49,15 @@
 
 ### Reste à faire
 - Déployer ensemble KG_BingoGame 0.10.0 (Serveur Jeux) et KG_Bingo 1.7.3 (Kal-Games), sur demande, puis tester.
+
+## Suite (13 h 45)
+
+### Demandé
+- « Pour les bonus de bingo finalement on va reprendre les règles de bonus de bingo des parties à plusieurs équipes »,
+  précisé : « mêmes règles qu'à plusieurs équipes sans le bonus en 1er ».
+- « Limite le nombre de bingo à 10 pour les parties en solo ».
+
+### Fait
+- Bonus (rang + difficultés) / 2 et son message retirés (jamais déployés) : bonus de temps seul, les bingos rapportent
+  comme dans toute partie à 1 équipe.
+- 10 bingos au plus à 1 équipe : menu de KG_Bingo 1.7.3 (3 à 10) et borne dans KG_BingoGame 0.10.0.

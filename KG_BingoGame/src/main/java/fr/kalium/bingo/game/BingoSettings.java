@@ -25,7 +25,8 @@ public record BingoSettings(Mode mode, int bingosRequired, int easy, int medium,
      * par objectif valide ; victoire seulement si toute la grille est remplie avant la fin du chrono (bonus de
      * victoire habituel + 1 point par tranche de 20 s restantes) ; sinon defaite, les points des objectifs restent.
      * 0.10.0 (demande de Maxster33, 05/10/2026) : victoire avec le nombre de bingos choisi (bingosRequired, 3 a 12) au
-     * lieu de toute la grille ; bonus de victoire + bonus de temps + bonus des bingos (ScoreEngine.chronoBingoBonus).
+     * lieu de toute la grille ; bonus de victoire + bonus de temps, inchanges ; les bingos rapportent comme dans toute
+     * partie a une equipe (bareme des parties a plusieurs equipes, sans les bonus « en 1er »).
      */
     public enum Mode {
         BINGOS, BLACKOUT, CHRONO
@@ -55,6 +56,13 @@ public record BingoSettings(Mode mode, int bingosRequired, int easy, int medium,
 
     public static final int MIN_BINGOS = 3;
     public static final int MAX_BINGOS = 12;
+    /** 0.10.0 - partie a une seule equipe : 10 bingos au plus (demande de Maxster33, 05/10/2026). */
+    public static final int MAX_BINGOS_SOLO = 10;
+
+    /** 0.10.0 : memes reglages avec au plus {@code max} bingos a achever. */
+    public BingoSettings withMaxBingos(int max) {
+        return bingosRequired <= max ? this : new BingoSettings(mode, max, easy, medium, hard, extreme);
+    }
 
     public static BingoSettings defaults() {
         return new BingoSettings(Mode.BINGOS, MIN_BINGOS, 10, 10, 5, 0);
