@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KG_BingoGame — Maxster33 — depuis le 2026-10-05 12:54 — réserve de mondes : lots pré-générés au démarrage, suppression et régénération après chaque partie (seed répétée)
 
 
 
