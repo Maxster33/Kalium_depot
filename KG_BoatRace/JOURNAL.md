@@ -138,3 +138,20 @@ Même règle dans KG_BingoGame 0.9.0. Rétroactif : fait dans les classements de
 
 **Déployé sur Kal-Games le 05/10/2026 à 12:33 (LeKiwi06, serveur arrêté ; 1.4.2 dans `_removed-kg_boatrace-1.4.2/`).
 Statut : non testé en jeu.**
+
+## 1.5.1 - solo : pas de tour en tête, bonus de tour propre réduit de moitié (05/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (05/10/2026)** : « pour le mode solo du boat race, il faut retirer le tour en tête, comme on est
+forcément en tête, et réduire de moitié le bonus de tour propre en solo également, car c'est plus facile de ne pas
+sortir de la piste en solo ».
+- **Solo** = un seul coureur dans la course au moment où le tour se termine (un adversaire qui quitte la course la
+  rend solo pour les tours suivants).
+- **Tour en tête** (`lead-coef-x10`, x1,5) : plus jamais accordé en solo.
+- **Tour sans hors-piste** (`points-clean-lap`, +1) : +0,5 en solo. Un tour propre solo vaut donc 1,5 point avant le
+  chrono, au lieu de 2 puis x1,5.
+- Inchangés : point du tour, bonus de série (+n toutes les 3 séries de tours propres), paliers de chrono, Grand Prix.
+- Pas de rétroactif (non demandé).
+
+Empilé sur la 1.5.0 non testée, à la demande explicite de LeKiwi06.
+
+**Compilé le 05/10/2026, non déployé. Statut : non testé en jeu.**

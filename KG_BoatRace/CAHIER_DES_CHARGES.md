@@ -37,12 +37,12 @@ KalGames 1.16.0 (compilé, pas encore déployé ni testé ; accord de LeKiwi06).
 
 1. On additionne d'abord les points du tour :
    - 1 point par tour ;
-   - +1 si le tour est sans hors-piste ;
+   - +1 si le tour est sans hors-piste (**+0,5 en solo depuis la 1.5.1**, LeKiwi06, 05/10/2026) ;
    - série de 3 tours consécutifs sans hors-piste : +n (n = numéro de la série validée d'affilée). Après une
      validation, il faut 3 nouveaux tours complets sans hors-piste pour la suivante ; un hors-piste remet n à 1.
 2. Puis on applique la somme des multiplicateurs obtenus (coefficients ADDITIFS : ×1,5 et ×1,5 = ×2) :
    - temps du tour : > 45 s aucun bonus ; 45-40 s ×1,5 ; 40-35 s ×2 ; 35-30 s ×3 ; < 30 s ×5 ;
-   - tour en tête (tous les checkpoints du tour passés en étant 1er) : ×1,5.
+   - tour en tête (tous les checkpoints du tour passés en étant 1er) : ×1,5 (**jamais en solo depuis la 1.5.1**).
    Paliers de temps et coefficients réglables dans le menu admin de la course.
 3. Grand Prix de 40 tours terminé en entier : ×1,5 sur le total de la course.
 4. Points décimaux autorisés ; affichage au-delà de 1 000 en K / M / Md (KG_ScoreBoards à mettre à jour).

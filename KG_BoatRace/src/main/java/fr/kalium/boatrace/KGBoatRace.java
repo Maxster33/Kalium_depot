@@ -32,7 +32,7 @@ public final class KGBoatRace extends JavaPlugin {
                         text("boat-type", "Type de bateau", "OAK_BOAT", "Ex. OAK_BOAT, BIRCH_BOAT, CHERRY_BOAT."),
                         // 1.3.0 : bareme (remplace les points du podium et par checkpoint). Coefficients en dixiemes : 15 = x1,5.
                         integer("points-lap", "Barème : points par tour", 1, 0, 50, "Avant les multiplicateurs."),
-                        integer("points-clean-lap", "Barème : bonus tour sans hors-piste", 1, 0, 50, "Avant les multiplicateurs."),
+                        integer("points-clean-lap", "Barème : bonus tour sans hors-piste", 1, 0, 50, "Avant les multiplicateurs. Réduit de moitié en solo."),
                         integer("series-length", "Barème : longueur d'une série", 3, 1, 10,
                                 "Tours propres d'affilée pour une série. Chaque série validée rapporte +n (n = numéro de la série d'affilée) ; un hors-piste remet à zéro."),
                         integer("tier1-seconds", "Palier 1 : tour en moins de (s)", 45, 0, 600, "0 = palier désactivé."),
@@ -44,7 +44,7 @@ public final class KGBoatRace extends JavaPlugin {
                         integer("tier4-seconds", "Palier 4 : tour en moins de (s)", 30, 0, 600, "0 = palier désactivé."),
                         integer("tier4-coef-x10", "Chrono palier 4 : coefficient x10", 50, 10, 100, "50 = x5."),
                         integer("lead-coef-x10", "Tour en tête : coefficient x10", 15, 10, 100,
-                                "Tous les checkpoints du tour passés en 1er. Coefficients additifs : x1,5 et x1,5 = x2."),
+                                "Tous les checkpoints du tour passés en 1er. Jamais en solo. Coefficients additifs : x1,5 et x1,5 = x2."),
                         integer("gp-laps", "Grand Prix : nombre de tours", 40, 0, 40, "Course de ce nombre de tours terminée : bonus sur le total. 0 = jamais."),
                         integer("gp-coef-x10", "Grand Prix : coefficient x10", 15, 10, 100, "15 = x1,5 sur le total de la course."),
                         text("track-blocks", "Blocs de piste", "PACKED_ICE,BLUE_ICE",

@@ -601,10 +601,14 @@ public final class BoatRaceInstance extends GameInstance {
      * chaque serie de 3 tours propres d'affilee, n = numero de la serie ; un hors-piste remet la serie a zero), puis
      * les multiplicateurs, ADDITIFS (x1,5 et x1,5 = x2) : chrono du tour (paliers reglables) et tour en tete (tous les
      * checkpoints du tour passes en 1er).
+     * 1.5.1 (demande de LeKiwi06, 05/10/2026) : en solo (un seul coureur dans la course), pas de tour en tete (on est
+     * forcement en tete) et bonus du tour sans hors-piste reduit de moitie (plus facile de rester en piste seul).
      */
     private LapScore scoreLap(Racer racer, long lapTime) {
+        boolean solo = racers.size() <= 1;
         boolean clean = !racer.lapOffTrack;
-        double base = minigame().getInt("points-lap", 1) + (clean ? minigame().getInt("points-clean-lap", 1) : 0);
+        double base = minigame().getInt("points-lap", 1)
+                + (clean ? minigame().getInt("points-clean-lap", 1) * (solo ? 0.5 : 1) : 0);
         int seriesBonus = 0;
         if (clean) {
             racer.cleanStreak++;
@@ -626,7 +630,7 @@ public final class BoatRaceInstance extends GameInstance {
                 break;
             }
         }
-        boolean lead = !racer.splits.isEmpty();
+        boolean lead = !solo && !racer.splits.isEmpty();
         for (Split split : racer.splits) {
             lead &= split.place() == 1;
         }
