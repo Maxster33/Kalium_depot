@@ -133,6 +133,8 @@ joueurs en dessous de nous, mais la moyenne ; fais en sorte que ce changement so
 - Texte des résultats : « (crédité n) » au lieu de « (cumul n) » (nouvelle clé `race.points-line-2`).
 - Journal de KG_ScoreBoards : le champ `cumulative` du résultat garde son nom et contient le nouveau total.
 
-Même règle dans KG_BingoGame 0.9.0. Rétroactif : fait dans les classements de Kal-Games, voir `REPRISE_PROJET.md`.
+Même règle dans KG_BingoGame 0.9.0. Rétroactif : fait dans les classements de Kal-Games le 05/10/2026, voir
+`REPRISE_PROJET.md`.
 
-**Compilé le 04/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kal-Games le 05/10/2026 à 12:33 (LeKiwi06, serveur arrêté ; 1.4.2 dans `_removed-kg_boatrace-1.4.2/`).
+Statut : non testé en jeu.**

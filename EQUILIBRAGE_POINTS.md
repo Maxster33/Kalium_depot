@@ -42,4 +42,7 @@ partie de Bingo préparation comprise), sans l'attente entre les parties.
    fourchette haute (« sans chute » supposé partout), règle de trois pour les points d'avant le journal ; général,
    octobre et semaine en cours de `stats.yml` (802 → 2 248 points au général) ; archives non touchées. Rythme sur le
    journal : ancien barème ~48 points / 30 min de course, nouveau ~95 à 140 sans le bonus de temps.
+   **05/10/2026 (LeKiwi06) : en multijoueur, moyenne des joueurs classés en dessous au lieu de leur somme** (KG_BoatRace
+   1.5.0, KG_BingoGame 0.9.0), appliquée aussi au passé. La référence « ~135 / 30 min en médiane (cumul crédité) » de la
+   course de bateau a été mesurée avec la somme : à remesurer pour les courses à 3 joueurs ou plus.
 5. Vérifier les rythmes régulièrement : même calcul sur le journal (à automatiser dans KG_ScoreBoards si utile).

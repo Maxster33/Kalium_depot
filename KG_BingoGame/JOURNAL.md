@@ -1784,6 +1784,8 @@ joueurs en dessous de nous, mais la moyenne ; fais en sorte que ce changement so
 - À 2 joueurs (ou 2 équipes), rien ne change. Égalité, nulle, temps écoulé : inchangé (chacun garde ses points).
 - Texte du résumé : « Classement des équipes (points + moyenne des équipes derrière) ».
 
-Même règle dans KG_BoatRace 1.5.0. Rétroactif : fait dans les classements de Kal-Games, voir `REPRISE_PROJET.md`.
+Même règle dans KG_BoatRace 1.5.0. Rétroactif : fait dans les classements de Kal-Games le 05/10/2026, voir
+`REPRISE_PROJET.md`.
 
-**Compilé le 04/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Serveur Jeux le 05/10/2026 à 12:33 (LeKiwi06 ; 0.8.7 dans `_removed-kg_bingogame-0.8.7/`), actif après
+redémarrage. Statut : non testé en jeu.**
