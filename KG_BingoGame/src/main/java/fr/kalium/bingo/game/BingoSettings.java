@@ -24,6 +24,8 @@ public record BingoSettings(Mode mode, int bingosRequired, int easy, int medium,
      * 0.8.5 - CHRONO (contre la montre, demande de Maxster33, 03/10/2026) : une seule equipe, 10 min au depart, + temps
      * par objectif valide ; victoire seulement si toute la grille est remplie avant la fin du chrono (bonus de
      * victoire habituel + 1 point par tranche de 20 s restantes) ; sinon defaite, les points des objectifs restent.
+     * 0.10.0 (demande de Maxster33, 05/10/2026) : victoire avec le nombre de bingos choisi (bingosRequired, 3 a 12) au
+     * lieu de toute la grille ; bonus de victoire + bonus de temps + bonus des bingos (ScoreEngine.chronoBingoBonus).
      */
     public enum Mode {
         BINGOS, BLACKOUT, CHRONO
@@ -78,9 +80,9 @@ public record BingoSettings(Mode mode, int bingosRequired, int easy, int medium,
         return mode == Mode.CHRONO;
     }
 
-    /** 0.8.5 : la victoire demande toute la grille (blackout, contre la montre). */
+    /** 0.8.5 : la victoire demande toute la grille (blackout ; 0.10.0 : plus le contre la montre). */
     public boolean needsFullGrid() {
-        return mode == Mode.BLACKOUT || mode == Mode.CHRONO;
+        return mode == Mode.BLACKOUT;
     }
 
     public int total() {
@@ -131,7 +133,7 @@ public record BingoSettings(Mode mode, int bingosRequired, int easy, int medium,
         String grid = easy + " facile" + (easy > 1 ? "s" : "") + ", " + medium + " norma" + (medium > 1 ? "ux" : "l")
                 + ", " + hard + " difficile" + (hard > 1 ? "s" : "") + ", " + extreme + " extrême" + (extreme > 1 ? "s" : "");
         String rules = isBlackout() ? "Blackout (grille complète, sans chrono)"
-                : isChrono() ? "Contre la montre (grille complète ; 10 min, puis +2 min 30 à +10 min par objectif selon sa difficulté)"
+                : isChrono() ? "Contre la montre (" + bingosRequired + " bingos ; 10 min, puis +2 min 30 à +10 min par objectif selon sa difficulté)"
                 : bingosRequired + " bingos";
         return rules + " — " + grid;
     }

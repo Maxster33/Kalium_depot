@@ -27,3 +27,25 @@
 ## Reste à faire
 - Déployer KG_BingoGame 0.10.0 sur Serveur Jeux (sur demande de Maxster33), puis tester (voir le journal).
 - Surveiller la mémoire et le disque de Serveur Jeux avec 45 mondes en réserve.
+
+## Suite (13 h 15)
+
+### Demandé
+- « Il faut conserver la règle disant que si aucune partie est en cours et que quelqu'un crée une partie alors on
+  génère une seed. On n'entame pas la réserve si aucune autre partie est en cours. »
+- « Il faut changer la règle du contre la montre : il faut que l'on puisse choisir le nombre de bingo à réaliser pour
+  remporter la partie, et adapter le bonus de fin de partie en fonction du nombre de bingo. » Bonus précisé : pour
+  chaque bingo, (rang + difficulté de ses objectifs : facile 1, normal 2, difficile 3, extrême 4) / 2.
+
+### Fait
+- KG_BingoGame 0.10.0 (même version, pas encore déployée) : lot pris seulement si une autre partie est en cours ;
+  contre la montre gagné avec N bingos ; bonus des bingos en plus du bonus de temps, victoire seulement, annoncé dans
+  le tchat à chaque bingo ; barre d'action en bingos.
+- KG_Bingo 1.7.3 : texte d'aide et résumé de création du contre la montre. KG_Bingo réservé à 13:17.
+
+### Décisions (Maxster33)
+- Le bonus des bingos s'ajoute au bonus de temps ; victoire seulement, mais annoncé dans le tchat dès chaque bingo.
+- « Bingos à achever » : 3 par défaut, comme le mode Bingos.
+
+### Reste à faire
+- Déployer ensemble KG_BingoGame 0.10.0 (Serveur Jeux) et KG_Bingo 1.7.3 (Kal-Games), sur demande, puis tester.

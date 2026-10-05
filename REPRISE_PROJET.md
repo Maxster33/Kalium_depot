@@ -92,7 +92,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-- **KG_BingoGame 0.10.0** (05/10/2026, Maxster33, Serveur Jeux) : réserve de mondes par lots (3 lots de 4, 3 lots solo, une seed neuve par lot, jamais rejouée) ; non testé.
+- **KG_BingoGame 0.10.0** (05/10/2026, Maxster33, Serveur Jeux) : réserve de mondes par lots (3 lots de 4, 3 lots solo, une seed neuve par lot, jamais rejouée, entamée seulement pendant une autre partie) ; contre la montre en N bingos avec bonus des bingos ; non testé. À déployer avec **KG_Bingo 1.7.3** (Kal-Games, texte d'aide du menu de création).
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
@@ -257,12 +257,19 @@ Format : `### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici 
 parties à deux jours d'écart sur la même seed. Cause : en 0.8.5, le monde ajouté à la réserve reprenait la seed du
 monde restant, qui pouvait donc revenir indéfiniment jusqu'au redémarrage (parties créées pendant une autre partie).
 Désormais : au démarrage, mondes de réserve supprimés puis 3 lots de 4 mondes et 3 lots solo préparés (une seed neuve
-par lot) ; toute partie prend un lot (mondes en trop, équipes vides, partie annulée : supprimés) ; le lot est remplacé
+par lot) ; une partie créée pendant une autre prend un lot (mondes en trop, équipes vides, partie annulée : supprimés ;
+sans autre partie en cours : mondes neufs, réserve non entamée) ; le lot est remplacé
 à la fin de la partie, une fois ses mondes effacés du disque ; pendant une partie, seul le terrain de la réserve avance
 (5 chunks/s) ; à 4 parties en cours, réserve en pause ; aucun lot libre : mondes créés pour la partie. Nouvelles clés
 (valeurs par défaut dans le code) : `instances.reserve-lots-4-teams`, `reserve-lots-solo`,
 `reserve-chunks-per-second-during-games`. Détail : `KG_BingoGame/JOURNAL.md`,
 `historique-conversations/2026-10-05-bingo-reserve-lots.md`.
+
+**Contre la montre en bingos (KG_BingoGame 0.10.0 + KG_Bingo 1.7.3, compilés, non déployés, non testés, à déployer
+ensemble)** : victoire avec le nombre de bingos choisi (3 à 12, 3 par défaut) au lieu de toute la grille ; en cas de
+victoire, bonus de temps + bonus des bingos (pour chaque bingo : (rang + difficultés de ses objectifs, facile 1 à
+extrême 4) / 2), annoncé dans le tchat à chaque bingo. Réserve de mondes : une partie créée sans autre partie en cours
+garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
 

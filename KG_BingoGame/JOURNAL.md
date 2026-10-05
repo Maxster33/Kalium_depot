@@ -1816,9 +1816,11 @@ pour la réserve, lentement ; à 4 parties en cours, mettre en pause suppression
   4 mondes (parties de 2 à 4 équipes) et `instances.reserve-lots-solo` lots de 1 monde (parties à 1 équipe), 3 et 3 par
   défaut. Chaque monde a son Nether et son End. Préparés dès le démarrage, après la suppression des mondes de réserve
   restés d'avant le redémarrage (lots solo et lots de 4 en alternance).
-- **Toute partie prend un lot** (avant : seulement si une autre partie était en cours), le plus avancé de sa taille ;
-  ses mondes encore en file deviennent des tâches de la partie (servies en priorité). Mondes en trop du lot, équipes
-  restées vides au lancement, partie annulée avant le lancement : mondes supprimés (avant : remis en réserve).
+- **Une partie créée pendant qu'une autre est en cours prend un lot**, le plus avancé de sa taille ; ses mondes encore
+  en file deviennent des tâches de la partie (servies en priorité). **Aucune partie en cours : mondes neufs créés pour
+  elle avec la seed de kal-games, la réserve n'est pas entamée** (règle de la 0.8.5 conservée, demande de Maxster33).
+  Mondes en trop du lot, équipes restées vides au lancement, partie annulée avant le lancement : mondes supprimés
+  (avant : remis en réserve).
 - **Remplacement** : le lot d'une partie est remplacé quand elle se termine (ou est annulée), une fois tous les
   effacements en cours terminés (nouveau compteur `InstanceWorldManager.pendingDeletions`). Une partie lancée sans lot
   (aucun libre) ne déclenche pas de remplacement.
@@ -1840,6 +1842,31 @@ les modifier) : `instances.reserve-lots-4-teams: 3`, `instances.reserve-lots-sol
   déjà complète).
 - La pause à 4 parties ne concerne pas les effacements (en arrière-plan, sans lag).
 
+### Contre la montre : nombre de bingos à choisir, bonus des bingos
+
+**Demande de Maxster33 (05/10/2026)** : « il faut que l'on puisse choisir le nombre de bingo à réaliser pour remporter
+la partie, et adapter le bonus de fin de partie en fonction du nombre de bingo ». Bonus précisé par Maxster33 : pour
+chaque bingo, (son rang + la difficulté de chacun de ses objectifs) / 2, avec facile 1, normal 2, difficile 3,
+extrême 4. Exemples donnés : 1er bingo, 3 faciles et 2 normaux = (1 + 3x1 + 2x2) / 2 ; 4e bingo, 2 normaux,
+2 difficiles, 1 extrême = (4 + 2x2 + 2x3 + 1x4) / 2. Ce bonus **s'ajoute** au bonus de temps, **en cas de victoire
+seulement**, et il est **annoncé dans le tchat dès qu'un bingo est achevé**.
+
+- Victoire : le nombre de bingos choisi à la création (3 à 12, réglage « Bingos à achever » déjà envoyé par KG_Bingo ;
+  3 par défaut) au lieu de toute la grille (12 bingos = grille complète, l'ancienne règle).
+- Chrono à zéro avant : défaite, « les N bingos n'ont pas été achevés à temps » ; les points des objectifs restent.
+- Bonus de victoire : bonus habituel + 1 point par tranche de 20 s restantes + **bonus des bingos**
+  (`ScoreEngine.chronoBingoBonus`), ajoutés comme avant à l'équipe et à chacun de ses joueurs encore en jeu ; le message
+  de fin donne le détail des deux bonus.
+- Tchat, après chaque bingo : « Bingo k/N : bonus de +X pts si victoire (bonus des bingos : Y pts). »
+- Barre d'action : bingos achevés / demandés (comme le mode Bingos) au lieu des objectifs remplis.
+- Rang d'un bingo : ordre dans lequel l'équipe les a achevés ; deux bingos achevés par le même objectif sont classés
+  dans l'ordre lignes, colonnes, diagonales.
+
+À déployer avec **KG_Bingo 1.7.3** (texte d'aide du menu de création). Avec KG_Bingo 1.7.2, la règle s'applique quand
+même (le nombre de bingos était déjà envoyé) mais l'aide parle encore de la grille complète.
+
 **Compilé le 05/10/2026, non déployé. Statut : non testé en jeu.** À tester : logs « Réserve : préparation d'un lot »
-au démarrage (6 lots), une partie solo puis une partie à 2 équipes (seeds différentes, « lot de réserve ... attribué »),
-fin de partie puis « son lot de réserve sera remplacé » et nouveau lot, partie lancée pendant une autre sans gel.
+au démarrage (6 lots) ; une partie seule sur le serveur (pas de lot pris, mondes neufs) ; une partie créée pendant une
+autre (« lot de réserve ... attribué », seed différente, pas de gel) ; fin de partie puis « son lot de réserve sera
+remplacé » et nouveau lot. Contre la montre à 3 bingos : message de bonus à chaque bingo, victoire au 3e, bonus des
+bingos dans le résultat ; défaite au chrono sans bonus.

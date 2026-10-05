@@ -216,7 +216,7 @@ final class BingoMenus {
             String rules = "mode=" + mode + ";bingos=" + bingos + ";easy=" + easy + ";medium=" + medium
                     + ";hard=" + hard + ";extreme=" + extreme;
             bingoCreate(p, teamCount, teamSize, durationMinutes, rules,
-                    ("BLACKOUT".equals(mode) ? "blackout" : "CHRONO".equals(mode) ? "contre la montre" : bingos + " bingos")
+                    ("BLACKOUT".equals(mode) ? "blackout" : "CHRONO".equals(mode) ? "contre la montre, " + bingos + " bingos" : bingos + " bingos")
                             + ", " + easy + " F / " + medium + " N / "
                             + hard + " D / " + extreme + " X");
         }));
@@ -229,9 +229,12 @@ final class BingoMenus {
                 + "Blackout : grille complète, sans chrono (la durée ne compte pas)."));
         if (solo) {
             // 1.7.1 : nouvelle cle (l'ancienne, « +5 min par objectif », est deja figee dans le lang.yml du serveur).
-            body.add(t("bingo.create-aide-chrono-2", "<gray>Contre la montre (1 équipe) : 10 min au départ, puis par objectif "
-                    + "+2 min 30 (facile), +4 min (normal), +6 min 30 (difficile), +10 min (extrême) ; il faut remplir "
-                    + "toute la grille, bonus selon le temps restant (la durée ne compte pas)."));
+            // 1.7.3 (demande de Maxster33, 05/10/2026) : le contre la montre se gagne avec le nombre de bingos choisi
+            // (avant : toute la grille) ; nouvelle cle, la precedente etant figee dans le lang.yml du serveur.
+            body.add(t("bingo.create-aide-chrono-3", "<gray>Contre la montre (1 équipe) : 10 min au départ, puis par objectif "
+                    + "+2 min 30 (facile), +4 min (normal), +6 min 30 (difficile), +10 min (extrême) ; il faut achever "
+                    + "le nombre de bingos choisi. Victoire : bonus selon le temps restant et selon chaque bingo "
+                    + "(son rang et la difficulté de ses objectifs) ; la durée ne compte pas."));
         }
         gui.open(player, t("bingo.create-title", "<gold><bold>Nouvelle partie Bingo"), body, inputs, buttons, gui.close(), 1);
     }

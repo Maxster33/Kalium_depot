@@ -127,7 +127,7 @@ public final class GameEndService {
         /** Nulle acceptee par vote. */
         NULLE,
         /** 0.8.5 - contre la montre : chrono a zero avant la grille complete = defaite ; les points des objectifs
-         *  valides restent (choix de Maxster33, 03/10/2026). */
+         *  valides restent (choix de Maxster33, 03/10/2026). 0.10.0 : avant les bingos demandes. */
         TEMPS_ECOULE
     }
 
@@ -168,7 +168,8 @@ public final class GameEndService {
             if (game.isTimeUp()) {
                 emptySince.remove(game.getGameId());
                 if (game.getSettings().isChrono()) {
-                    finish(game, Outcome.TEMPS_ECOULE, -1, "Temps écoulé : la grille n'a pas été remplie à temps.");
+                    finish(game, Outcome.TEMPS_ECOULE, -1, "Temps écoulé : les " + game.getSettings().bingosRequired()
+                            + " bingos n'ont pas été achevés à temps.");
                 } else {
                     endByTimeout(game);
                 }
@@ -305,12 +306,17 @@ public final class GameEndService {
             return;
         }
         BingoSettings settings = game.getSettings();
-        if (settings.needsFullGrid()) { // 0.8.5 : blackout ou contre la montre
+        if (settings.needsFullGrid()) { // blackout
             int total = game.getGrid().getSize() * game.getGrid().getSize();
             if (game.countValidated(teamNumber) >= total) {
-                finish(game, Outcome.WIN, teamNumber, settings.isChrono()
-                        ? "L'équipe " + TeamStyle.letter(teamNumber) + " a rempli toute la grille à temps."
-                        : "L'équipe " + TeamStyle.letter(teamNumber) + " a rempli toute la grille en premier.");
+                finish(game, Outcome.WIN, teamNumber, "L'équipe " + TeamStyle.letter(teamNumber) + " a rempli toute la grille en premier.");
+            }
+        } else if (settings.isChrono()) {
+            // 0.10.0 (demande de Maxster33, 05/10/2026) : le contre la montre se gagne avec le nombre de bingos choisi
+            // (avant : toute la grille).
+            if (game.getScoreEngine().bingoCount(teamNumber) >= settings.bingosRequired()) {
+                finish(game, Outcome.WIN, teamNumber, "L'équipe " + TeamStyle.letter(teamNumber) + " a achevé ses "
+                        + settings.bingosRequired() + " bingos à temps.");
             }
         } else if (game.getScoreEngine().bingoCount(teamNumber) >= settings.bingosRequired()) {
             finish(game, Outcome.WIN, teamNumber, "L'équipe " + TeamStyle.letter(teamNumber) + " a achevé ses " + settings.bingosRequired()
@@ -420,12 +426,16 @@ public final class GameEndService {
         // 0.8.5 - contre la montre gagne (demande de Maxster33, 03/10/2026) : bonus de victoire habituel + 1 point par
         // tranche de 20 s restantes au chrono, ajoute tel quel a l'equipe et a chacun de ses joueurs encore en jeu
         // (sans multiplicateur).
+        // 0.10.0 (demande de Maxster33, 05/10/2026) : + bonus des bingos acheves (voir ScoreEngine.chronoBingoBonus),
+        // victoire seulement, ajoute de la meme facon que le bonus de temps.
         double timeBonus = 0;
         if (win && game.getSettings().isChrono()) {
             long seconds = Math.max(0, game.getRemaining().getSeconds());
-            timeBonus = seconds / BingoSettings.CHRONO_SECONDS_PER_POINT;
+            double secondsBonus = seconds / BingoSettings.CHRONO_SECONDS_PER_POINT;
+            double bingoBonus = engine.chronoBingoBonus(winner);
+            timeBonus = secondsBonus + bingoBonus;
             reason = reason + " — " + (seconds / 60) + " min " + String.format("%02d", seconds % 60) + " s restantes : +"
-                    + ScoreEngine.format(timeBonus) + " pts";
+                    + ScoreEngine.format(secondsBonus) + " pts ; bonus des bingos : +" + ScoreEngine.format(bingoBonus) + " pts";
         }
 
         // 0.7.8 : bonus d'XP (demande de LeKiwi06, 25/09/2026) - 0,1 point par niveau d'XP du joueur a la fin de la

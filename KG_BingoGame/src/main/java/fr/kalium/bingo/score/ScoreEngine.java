@@ -321,6 +321,29 @@ public final class ScoreEngine {
         return completedLines.getOrDefault(team, Set.of()).size();
     }
 
+    /**
+     * 0.10.0 - bonus d'un bingo au contre la montre (demande de Maxster33, 05/10/2026) : (numero du bingo dans l'ordre
+     * ou l'equipe les a acheves + difficulte de chacun de ses objectifs : facile 1, normal 2, difficile 3, extreme 4) / 2.
+     * Ex. 1er bingo, 3 faciles et 2 normaux : (1 + 3x1 + 2x2) / 2 = 4.
+     */
+    public double chronoBingoBonus(int rank, int line) {
+        double total = rank;
+        for (int cell : lines.get(line)) {
+            total += difficulty(cell).ordinal() + 1;
+        }
+        return total / 2;
+    }
+
+    /** 0.10.0 : somme des bonus de contre la montre de tous les bingos acheves par l'equipe (voir chronoBingoBonus). */
+    public double chronoBingoBonus(int team) {
+        double total = 0;
+        int rank = 0;
+        for (int line : completedLines.getOrDefault(team, Set.of())) {
+            total += chronoBingoBonus(++rank, line);
+        }
+        return total;
+    }
+
     /** Equipe qui a valide cette case en premier (-1 si personne). */
     public int firstTeamOf(int cell) {
         return firstTeam[cell];

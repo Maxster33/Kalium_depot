@@ -99,9 +99,10 @@ public final class InstanceWorldPreparer {
      *  - la reserve est faite de LOTS : un lot = une seed neuve, jamais rejouee ; instances.reserve-lots-4-teams lots
      *    de 4 mondes (parties de 2 a 4 equipes) et instances.reserve-lots-solo lots de 1 monde (parties a 1 equipe),
      *    3 et 3 par defaut, prepares des le demarrage (mondes de reserve d'avant le redemarrage supprimes d'abord) ;
-     *  - toute partie prend un lot (meme si aucune autre partie n'est en cours) ; une partie a 2 ou 3 equipes prend un
-     *    lot de 4 et les mondes en trop sont supprimes tout de suite (choix de Maxster33 : jamais deux parties sur la
-     *    meme seed) ; equipes restees vides au lancement et partie annulee : mondes supprimes aussi ;
+     *  - une partie creee pendant qu'une autre est en cours prend un lot (sans partie en cours : mondes neufs, comme
+     *    en 0.8.5) ; une partie a 2 ou 3 equipes prend un lot de 4 et les mondes en trop sont supprimes tout de suite
+     *    (choix de Maxster33 : jamais deux parties sur la meme seed) ; equipes restees vides au lancement et partie
+     *    annulee : mondes supprimes aussi ;
      *  - le lot n'est remplace qu'a la fin de la partie qui l'utilise, une fois ses mondes effaces du disque (en
      *    arriere-plan, sans lag : choix de Maxster33) ;
      *  - pendant une partie : pas de creation de monde de reserve (petit gel du serveur), seulement le terrain des
@@ -184,8 +185,11 @@ public final class InstanceWorldPreparer {
      * @return la seed a utiliser pour cette partie : celle du lot de reserve pris (0.8.5, 0.10.0), sinon {@code seed}
      */
     public long startPreGeneration(String gameId, long seed, int teamCount) {
-        // 0.10.0 : toute partie prend un lot libre (lot solo a 1 equipe, lot de 4 sinon), meme sans autre partie en cours.
-        Lot lot = teamCount >= 1 && teamCount <= FULL_LOT_SIZE ? bestFreeLot(teamCount == 1 ? 1 : FULL_LOT_SIZE) : null;
+        // 0.10.0 : une partie creee pendant qu'une autre est en cours prend un lot libre (lot solo a 1 equipe, lot de 4
+        // sinon). Aucune partie en cours : mondes neufs crees pour elle avec la seed de kal-games, la reserve n'est pas
+        // entamee (regle de la 0.8.5 conservee, demande de Maxster33 du 05/10/2026).
+        Lot lot = gameInProgress() && teamCount >= 1 && teamCount <= FULL_LOT_SIZE
+                ? bestFreeLot(teamCount == 1 ? 1 : FULL_LOT_SIZE) : null;
         if (lot != null) {
             freeLots.remove(lot);
             usedLots.put(gameId, lot);
@@ -216,7 +220,7 @@ public final class InstanceWorldPreparer {
             }
             logger.info("[KG_BingoGame] Partie '" + gameId + "' : lot de réserve de " + lot.worlds().size()
                     + " monde(s) attribué(s) (" + teamCount + " équipe(s), seed=" + seed + ").");
-        } else {
+        } else if (gameInProgress()) {
             logger.info("[KG_BingoGame] Partie '" + gameId + "' : aucun lot de réserve libre, mondes créés pour la partie.");
         }
         // Ordre (0.1.22) : overworlds de toutes les equipes, puis leurs Nether, puis leurs End.

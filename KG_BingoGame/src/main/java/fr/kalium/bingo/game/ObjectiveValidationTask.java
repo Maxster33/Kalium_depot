@@ -151,7 +151,10 @@ public final class ObjectiveValidationTask {
                 .append(Component.text(solo(game, team) ? " " : " (" + holder.getName() + ") ", NamedTextColor.GRAY))
                 .append(Component.text("+" + ScoreEngine.format(result.itemPoints()) + " points !", NamedTextColor.YELLOW));
         broadcast(game, line);
+        // 0.10.0 : rang du 1er bingo de cette validation dans l'ordre de l'equipe (bonus du contre la montre).
+        int rank = game.getScoreEngine().bingoCount(team) - result.bingos().size();
         for (ScoreEngine.BingoEvent bingo : result.bingos()) {
+            rank++;
             StringBuilder names = new StringBuilder();
             for (UUID id : bingo.participants()) {
                 String name = Bukkit.getOfflinePlayer(id).getName();
@@ -169,6 +172,15 @@ public final class ObjectiveValidationTask {
                             ? Component.text("+" + ScoreEngine.format(bingo.gain()) + " points !", NamedTextColor.YELLOW)
                             : Component.text("(pas de bonus)", NamedTextColor.DARK_GRAY));
             broadcast(game, bingoLine);
+            // 0.10.0 - contre la montre (demande de Maxster33, 05/10/2026) : bonus de ce bingo, gagne seulement en cas de
+            // victoire, annonce des qu'il est acheve.
+            if (game.getSettings().isChrono()) {
+                var engine = game.getScoreEngine();
+                broadcast(game, Component.text("Bingo " + rank + "/" + game.getSettings().bingosRequired()
+                        + " : bonus de +" + ScoreEngine.format(engine.chronoBingoBonus(rank, bingo.line()))
+                        + " pts si victoire (bonus des bingos : " + ScoreEngine.format(engine.chronoBingoBonus(team))
+                        + " pts).", NamedTextColor.LIGHT_PURPLE));
+            }
         }
     }
 
