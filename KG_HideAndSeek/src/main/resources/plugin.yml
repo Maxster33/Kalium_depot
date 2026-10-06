@@ -1,0 +1,7 @@
+name: KG_HideAndSeek
+version: '${project.version}'
+main: fr.kalium.hideandseek.KGHideAndSeek
+api-version: '26.2'
+description: Hide and Seek de Kal-Games (les hiders imitent un bloc du decor), branche sur le moteur de parties de KalGames.
+authors: [KaLium]
+depend: [KalGames, KG_ScoreBoards]
