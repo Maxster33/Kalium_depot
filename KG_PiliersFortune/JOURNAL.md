@@ -253,6 +253,13 @@ autres joueurs. »
 - Tableau de droite : score actuel pendant la partie, points définitifs à la fin. Tchat : « Autre gagne +25 % (4 → 5
   pts) et récupère son inventaire », puis « +3 points pour chaque joueur encore en vie (n) ».
 
+- **Piliers espacés** (demande de Maxster33 : « les positions des piliers ont été configurées en cercle, donc le 1 est en
+  face du 5 ; il faut que les joueurs soient à un écart équivalent en début de partie en fonction du nombre de
+  joueurs ») : avec n joueurs, n piliers aussi espacés que possible autour du cercle, à partir d'un pilier tiré au
+  hasard ; les joueurs y sont placés au hasard. Avec 8 piliers : 4 joueurs = un pilier sur deux ; 3 joueurs = écarts de
+  3, 3 et 2 ; 5 joueurs = écarts de 2, 2, 2, 1, 1 (dans un ordre fixe) ; 8 joueurs = tous. **Suppose que les points
+  « Piliers » sont posés dans l'ordre du cercle** (1, 2, 3... en tournant).
+
 ### Choix techniques à signaler
 
 - La bûche est une bûche de chêne.

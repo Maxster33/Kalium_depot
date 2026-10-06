@@ -213,7 +213,8 @@ public final class PiliersInstance extends GameInstance {
             endMatch();
             return;
         }
-        Collections.shuffle(spots);
+        spots = spreadPillars(spots, players.size());
+        Collections.shuffle(players);
         phase = Phase.COUNTDOWN;
         secondsLeft = Math.max(1, setting("countdown-seconds", 5));
         startCount = players.size();
@@ -250,6 +251,21 @@ public final class PiliersInstance extends GameInstance {
         } catch (RuntimeException e) {
             piliers.getLogger().warning("Propagation du feu non rétablie : " + e.getMessage());
         }
+    }
+
+    /**
+     * 0.2.0 (demande de Maxster33) : les piliers sont poses en cercle, dans l'ordre de la liste (le 1 en face du 5 avec
+     * 8 piliers). Avec n joueurs, on prend n piliers aussi espaces que possible autour du cercle, a partir d'un pilier
+     * tire au hasard : 4 joueurs sur 8 piliers = un pilier sur deux ; 3 joueurs = ecarts de 3, 3 et 2.
+     */
+    private static List<Pos> spreadPillars(List<Pos> all, int count) {
+        int total = all.size();
+        int start = java.util.concurrent.ThreadLocalRandom.current().nextInt(total);
+        List<Pos> chosen = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            chosen.add(all.get((start + (int) Math.floor((double) i * total / count)) % total));
+        }
+        return chosen;
     }
 
     /** Chiffre du decompte au milieu de l'ecran. */
