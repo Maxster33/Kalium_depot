@@ -49,6 +49,12 @@ les sources d'eau et de lave contre les blocs barrière. Mort par creeper : revi
 bloc retiré sous les pieds d'un joueur : revient à celui qui a cassé le bloc. Objet envoyé par un distributeur ou un
 dropper : revient à celui qui a mis l'objet dedans. »
 
+**Barème final (même jour)** : « Pour toutes les créatures sorties d'un œuf, l'élimination revient au joueur qui a utilisé
+l'œuf. » Puis, après plusieurs propositions de calcul : « 1. +0,25 toutes les 30 secondes ; 2. + nombre fixe de points
+pour chaque élimination ; 3. x rang ; 4. x1,5 pour le gagnant s'il gagne avant la fin », avec **7 points par
+élimination** (le même nombre quel que soit le nombre de joueurs). Les joueurs encore en vie à la fin ont aussi un rang
+de mort : **le rang qui suit le dernier éliminé, partagé** (choix de Maxster33).
+
 ### Règles codées
 
 - **Partie** : 4 à 8 joueurs (`min-players`, `max-players`, limité au nombre de piliers), publique ou privée. Attente
@@ -64,17 +70,23 @@ dropper : revient à celui qui a mis l'objet dedans. »
   (déconnexion, `/hub`). L'éliminé passe en **mode spectateur** au-dessus de son pilier, jusqu'à la fin.
 - **Fin** : plus qu'un joueur en vie (il gagne) ; plus personne (pas de gagnant) ; ou 10 min écoulées (`duration-seconds`,
   égalité des survivants). Classement aux points dans le tchat, puis retour au hub après 8 s (`end-delay-seconds`).
-- **Points** : **+2 par minute complète en vie** (`points-minute`, la 10e minute comprise) ; +5 par joueur éliminé
-  (`points-kill`). En fin de partie, le total est multiplié : x(rang d'élimination) pour les éliminés, x3 pour le
-  gagnant seul (`winner-multiplier`), x1 pour les survivants à égalité (affiché « 57 pts (19 x3) »). Plus de division
-  par 3. Calage : voir « Calage des points » plus bas. Crédité au classement du jeu (`piliers-fortune`) ; tous les
-  joueurs du départ sont crédités, même déconnectés.
-- **Qui a éliminé qui** (+5) : le tueur direct, sinon le joueur crédité du dernier « coup » reçu dans les 10 s
+- **Points** : **(0,25 point par tranche de 30 s en vie + 7 points par élimination) x rang de mort**, puis **x1,5 pour
+  le gagnant s'il gagne avant la fin du temps**.
+  - Temps : +0,25 toutes les 30 s passées en vie pendant la partie (`time-interval-seconds` 30,
+    `points-time-hundredths` 25), soit 5 points au plus en 10 minutes.
+  - Élimination : 7 points (`points-kill`), le même nombre quel que soit le nombre de joueurs.
+  - Rang de mort : x1 pour le premier éliminé, x2 pour le deuxième... ; les joueurs encore en vie à la fin partagent le
+    rang qui suit le dernier éliminé (gagnant seul : rang = nombre de joueurs).
+  - Bonus x1,5 (`winner-multiplier-tenths` 15) : seulement si le dernier joueur en vie gagne avant les 10 minutes ; un
+    joueur seul encore en vie au bout des 10 minutes a son rang, sans le bonus.
+  - Affiché dans le tchat : « 63 pts (3,5 temps + 1 élim. = 10,5 x4 x1,5) ». Crédité au classement du jeu
+    (`piliers-fortune`) ; tous les joueurs du départ sont crédités, même déconnectés.
+- **Qui a éliminé qui** (+7) : le tueur direct, sinon le joueur crédité du dernier « coup » reçu dans les 10 s
   (`kill-credit-seconds`) avant l'élimination (chute, mort ou départ). Un « coup » :
   - un coup au corps à corps ou un projectile (flèche, boule de neige, œuf, charge de vent...) ;
   - un **bloc cassé sous ses pieds** (n'importe quelle case sous le joueur, il peut être à cheval) : celui qui l'a cassé ;
-  - un **creeper** sorti d'un œuf d'apparition : celui qui a utilisé l'œuf (les autres créatures des œufs ne sont
-    créditées à personne) ;
+  - une **créature sortie d'un œuf d'apparition** (toutes : creeper, zombie, squelette et ses flèches...) : celui qui a
+    utilisé l'œuf ;
   - un objet envoyé par un **distributeur ou un dropper** (flèche, potion jetable, boule de feu, TNT, briquet, eau ou
     lave) : celui qui a **mis l'objet dedans** (contenu comparé à l'ouverture et à la fermeture ; s'ils sont plusieurs
     pour la même sorte d'objet, le dernier ; un dropper qui remplit un distributeur transmet le joueur) ;
@@ -133,7 +145,7 @@ Potions (normales, jetables, persistantes) et flèches à effet : effet tiré au
 - Explosif, feu, lave, eau : en plus de ce qui était demandé, lits, ancres de réapparition, wagonnets de TNT et feux de
   camp sont crédités à leur poseur de la même façon ; une TNT revient à celui qui l'a posée, pas à celui qui l'a
   allumée.
-- Non crédités : créatures des œufs autres que le creeper, objets mis dans un distributeur par un entonnoir sans
+- Non crédités : objets mis dans un distributeur par un entonnoir sans
   joueur, distributeur ou dropper déjà rempli dans la map.
 
 ### Limites connues
@@ -155,23 +167,24 @@ Potions (normales, jetables, persistantes) et flèches à effet : effet tiré au
   (chute après être passé dedans), brûlure qui continue après la sortie du feu.
 - Feu : il se propage, brûle les blocs, s'éteint ; tout est remis en état. Pistons qui poussent et tirent.
 - Bloc, eau et lave contre une barrière refusés (Java et Bedrock).
-- Bloc cassé sous les pieds, creeper d'un œuf, flèche / TNT / eau d'un distributeur rempli par un joueur ; eau posée
+- Bloc cassé sous les pieds, créatures d'un œuf (creeper, squelette...), flèche / TNT / eau d'un distributeur rempli par un joueur ; eau posée
   il y a plus de 10 s (pas de crédit) ; flèche reçue dans l'eau d'un autre (crédit à l'archer).
 - Rythme des points : relever la durée réelle des parties et les éliminations créditées dans le journal des parties
-  (événements `match`) pour recaler `points-minute` et `points-kill` (voir « Calage des points »).
+  (événements `match`) pour vérifier le calage (voir « Calage des points »).
 
 ### Calage des points
 
-Demande : environ 135 points pour 30 minutes en moyenne ; le gagnant d'une partie à 4 environ 55, à 8 environ 70.
-Hypothèses (rien n'a été mesuré) : une partie dure environ 7 minutes quel que soit le nombre de joueurs, plus environ
-1 min 30 entre deux parties (3,5 parties en 30 min) ; les éliminations sont réparties dans le temps ; 70 % sont
-créditées à un joueur ; le gagnant en a environ un tiers (1 à 4 joueurs, 2 à 8 joueurs).
+Repère : environ 135 points pour 30 minutes en moyenne (`EQUILIBRAGE_POINTS.md`). Avec le rang de mort, un gagnant de
+partie à 8 a toujours un multiplicateur deux fois plus grand qu'à 4 (x12 contre x6) : viser à la fois ~55 pour le
+gagnant à 4 et ~70 pour le gagnant à 8 (première demande) n'est pas possible ; Maxster33 a choisi 7 points par
+élimination. Hypothèses (rien n'a été mesuré) : une partie dure environ 7 minutes, plus environ 1 min 30 entre deux
+parties (3,5 parties en 30 min) ; 70 % des éliminations sont créditées à un joueur ; le gagnant en fait 1 à 4 joueurs et
+2 à 8 joueurs.
 
-| Barème | Gagnant à 4 | Gagnant à 8 | Moyenne / 30 min à 4 | à 8 | Moyenne des deux |
-|---|---|---|---|---|---|
-| 1 / min, 5 / élimination (avant) | 36 | 51 | ~65 | ~110 | ~90 |
-| **2 / min, 5 / élimination (retenu)** | **57** | **72** | **~100** | **~170** | **~135** |
+| Points / élimination | Gagnant à 4 | Gagnant à 8 | Moyenne d'un joueur / 30 min |
+|---|---|---|---|
+| 5 | 51 | 162 | ~102 |
+| **7 (retenu)** | **63** | **210** | **~128** |
 
-Gagnant : (7 min x 2 + éliminations x 5) x 3, soit (14 + 5) x 3 = 57 à 4 joueurs et (14 + 10) x 3 = 72 à 8. À 8 joueurs,
-les derniers éliminés (x6, x7) gagnent souvent plus que le gagnant (x3), d'où une moyenne plus haute qu'à 4 : c'est la
-règle des multiplicateurs telle que demandée. Les deux barèmes restent réglables en jeu.
+Gagnant en 7 minutes, 7 points par élimination : à 4 joueurs (3,5 + 1 x 7) x 4 x 1,5 = 63 ; à 8 joueurs
+(3,5 + 2 x 7) x 8 x 1,5 = 210 (avec 1 seule élimination : 126). Tout reste réglable en jeu.

@@ -35,11 +35,12 @@ import java.util.UUID;
  *       tous) ; inventaire plein : l'objet tombe a ses pieds. Barre du bas : temps restant et « Joueurs en vie : a/n ».</li>
  *   <li>Elimination : chute sous la couche -64, mort, ou depart (deconnexion, /hub). L'elimine passe en mode spectateur
  *       jusqu'a la fin. Fin : un seul joueur en vie (il gagne), plus personne, ou temps ecoule (egalite des survivants).</li>
- *   <li>Points : +2 par minute complete en vie, +5 par joueur elimine par soi : tue, ou elimine dans les 10 s apres un
- *       coup, une explosion d'un explosif qu'on a pose, une brulure par un feu ou une lave qu'on a pose, ou un passage
- *       dans l'eau qu'on a posee. En fin de partie : x1 pour le premier elimine, x2 pour le deuxieme... ; gagnant
- *       seul : x3 ; survivants a egalite : x1. Pas de regle commune « moyenne des joueurs
- *       classes en dessous » (decision de Maxster33).</li>
+ *   <li>Points : (+0,25 toutes les 30 s en vie, +7 par joueur elimine par soi) x rang de mort, x1,5 en plus pour le
+ *       gagnant s'il gagne avant la fin du temps. Elimine par soi : tue, ou elimine dans les 10 s apres un coup, une
+ *       explosion d'un explosif qu'on a pose, une brulure par un feu ou une lave qu'on a pose, un passage dans l'eau
+ *       qu'on a posee, un bloc qu'on a casse sous ses pieds, une creature d'un oeuf qu'on a utilise, un objet d'un
+ *       distributeur qu'on a rempli. Rang de mort : x1 pour le premier elimine, x2 pour le deuxieme... ; les joueurs en
+ *       vie a la fin partagent le rang suivant. Pas de regle commune « moyenne des joueurs classes en dessous ».</li>
  * </ul>
  * Les blocs poses ou casses et les objets au sol sont remis en etat par le moteur de KalGames a la fin de la partie.
  */
@@ -63,7 +64,7 @@ public final class PiliersInstance extends GameInstance {
     private final List<UUID> eliminated = new ArrayList<>();
     private final Map<UUID, String> names = new HashMap<>();
     private final Map<UUID, Location> pillarOf = new HashMap<>();
-    private final Map<UUID, Integer> minutes = new HashMap<>();
+    private final Map<UUID, Integer> periods = new HashMap<>();
     private final Map<UUID, Integer> kills = new HashMap<>();
     private final Map<UUID, Hit> lastHit = new HashMap<>();
     private final Set<UUID> greeted = new java.util.HashSet<>();
@@ -165,7 +166,7 @@ public final class PiliersInstance extends GameInstance {
         eliminated.clear();
         names.clear();
         pillarOf.clear();
-        minutes.clear();
+        periods.clear();
         kills.clear();
         lastHit.clear();
         owners.clear();
@@ -207,7 +208,7 @@ public final class PiliersInstance extends GameInstance {
             alive.add(uuid);
             names.put(uuid, player.getName());
             pillarOf.put(uuid, spot);
-            minutes.put(uuid, 0);
+            periods.put(uuid, 0);
             kills.put(uuid, 0);
             // Vie, faim et saturation pleines, experience a 0, inventaire vide (resetPlayer), mode survie.
             plugin.hub().resetPlayer(player, GameMode.SURVIVAL);
@@ -263,13 +264,13 @@ public final class PiliersInstance extends GameInstance {
                     itemTimer = Math.max(1, setting("item-interval-seconds", 5));
                     giveItems();
                 }
-                if (elapsed % 60 == 0) {
+                if (elapsed % Math.max(1, setting("time-interval-seconds", 30)) == 0) {
                     for (UUID uuid : alive) {
-                        minutes.merge(uuid, 1, Integer::sum);
+                        periods.merge(uuid, 1, Integer::sum);
                     }
                 }
                 if (secondsLeft <= 0) {
-                    finish();
+                    finish(true);
                 }
             }
             case ENDING -> {
@@ -575,6 +576,11 @@ public final class PiliersInstance extends GameInstance {
     // ------------------------------------------------------------------ fin et points
 
     private void finish() {
+        finish(false);
+    }
+
+    /** @param timeUp fin par le temps ecoule (pas de bonus x1,5 pour un joueur seul encore en vie). */
+    private void finish(boolean timeUp) {
         if (!playing()) {
             return;
         }
@@ -592,29 +598,36 @@ public final class PiliersInstance extends GameInstance {
         } else {
             broadcast(t("pf.nobody", "<yellow>Plus personne en vie : pas de gagnant."));
         }
-        results(winner);
+        results(winner, timeUp);
     }
 
     /**
-     * Points de base (minutes en vie + eliminations), puis multiplicateur de fin de partie : x(rang d'elimination) pour
-     * les elimines, x3 pour le gagnant seul, x1 pour les survivants a egalite. Credites au classement du jeu.
+     * Bareme de Maxster33 (06/10/2026) : (0,25 point par tranche de 30 s en vie + 7 points par elimination) x rang de
+     * mort (survivants : rang suivant le dernier elimine), x1,5 en plus pour le gagnant s'il gagne avant la fin du temps.
+     * Credites au classement du jeu.
      */
-    private void results(UUID winner) {
-        int perMinute = setting("points-minute", 2);
-        int perKill = setting("points-kill", 5);
+    private void results(UUID winner, boolean timeUp) {
+        double perPeriod = setting("points-time-hundredths", 25) / 100.0;
+        int perKill = setting("points-kill", 7);
+        double winnerBonus = Math.max(10, setting("winner-multiplier-tenths", 15)) / 10.0;
+        // Rang de mort : x1 pour le premier elimine, x2 pour le deuxieme... ; les joueurs encore en vie a la fin
+        // partagent le rang suivant (decision de Maxster33, 06/10/2026).
         Map<UUID, Integer> multiplier = new LinkedHashMap<>();
         for (int i = 0; i < eliminated.size(); i++) {
             multiplier.put(eliminated.get(i), i + 1);
         }
+        int survivorRank = eliminated.size() + 1;
         for (UUID uuid : alive) {
-            multiplier.put(uuid, uuid.equals(winner) ? Math.max(1, setting("winner-multiplier", 3)) : 1);
+            multiplier.put(uuid, survivorRank);
         }
+        // x1,5 en plus pour le gagnant, seulement s'il gagne avant la fin du temps.
+        boolean bonus = winner != null && !timeUp;
         Map<UUID, Double> base = new HashMap<>();
         Map<UUID, Double> total = new HashMap<>();
         for (UUID uuid : multiplier.keySet()) {
-            double points = minutes.getOrDefault(uuid, 0) * perMinute + kills.getOrDefault(uuid, 0) * perKill;
+            double points = periods.getOrDefault(uuid, 0) * perPeriod + kills.getOrDefault(uuid, 0) * perKill;
             base.put(uuid, points);
-            total.put(uuid, points * multiplier.get(uuid));
+            total.put(uuid, points * multiplier.get(uuid) * (bonus && uuid.equals(winner) ? winnerBonus : 1));
         }
         List<UUID> order = new ArrayList<>(multiplier.keySet());
         // Classement : points finaux, puis le dernier elimine (ou le survivant) devant.
@@ -625,20 +638,24 @@ public final class PiliersInstance extends GameInstance {
         int rank = 1;
         for (UUID uuid : order) {
             String name = names.getOrDefault(uuid, "?");
+            String mult = "x" + multiplier.get(uuid)
+                    + (bonus && uuid.equals(winner) ? " x" + StatsService.formatPoints(winnerBonus) : "");
             broadcast(t("pf.results-line",
-                    "<gray><rank>. <white><name></white> <dark_gray>- <gold><total> pts <gray>(<base> x<mult>)",
+                    "<gray><rank>. <white><name></white> <dark_gray>- <gold><total> pts <gray>(<time> temps + <kills> élim. = <base> <mult>)",
                     "rank", rank, "name", name, "total", StatsService.formatPoints(total.get(uuid)),
-                    "base", StatsService.formatPoints(base.get(uuid)), "mult", multiplier.get(uuid)));
+                    "time", StatsService.formatPoints(periods.getOrDefault(uuid, 0) * perPeriod),
+                    "kills", kills.getOrDefault(uuid, 0), "base", StatsService.formatPoints(base.get(uuid)), "mult", mult));
             boolean counted = credit(uuid, name, total.get(uuid));
             Map<String, Object> one = new LinkedHashMap<>();
             one.put("player", uuid.toString());
             one.put("name", name);
             one.put("rank", rank);
-            one.put("minutes", minutes.getOrDefault(uuid, 0));
+            one.put("periods", periods.getOrDefault(uuid, 0));
             one.put("kills", kills.getOrDefault(uuid, 0));
             one.put("eliminated", eliminated.indexOf(uuid) + 1);
             one.put("base", base.get(uuid));
             one.put("multiplier", multiplier.get(uuid));
+            one.put("winner-bonus", bonus && uuid.equals(winner) ? winnerBonus : 1);
             one.put("credited", total.get(uuid));
             one.put("counted", counted);
             logged.add(one);

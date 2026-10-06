@@ -9,7 +9,6 @@ import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.Directional;
-import org.bukkit.entity.Creeper;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
@@ -26,12 +25,10 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
-import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -114,9 +111,10 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
                         integer("void-y", "Couche d'élimination", -64, -128, 320, "Un joueur qui tombe en dessous de cette hauteur est éliminé."),
                         integer("water-credit-seconds", "Eau créditée pendant (s)", 10, 0, 60, "L'eau posée par un joueur ne lui fait créditer une chute que pendant ce délai après la pose de la source."),
                         integer("kill-credit-seconds", "Chute créditée pendant (s)", 10, 1, 60, "Un joueur éliminé est compté au dernier joueur qui l'a frappé (ou dont l'explosif, le feu, la lave ou l'eau l'a touché) dans ce délai."),
-                        integer("points-minute", "Points par minute en vie", 2, 0, 50, "À chaque minute complète passée en vie."),
-                        integer("points-kill", "Points par joueur éliminé", 5, 0, 50, "Tué ou tombé à cause d'un autre joueur."),
-                        integer("winner-multiplier", "Multiplicateur du gagnant", 3, 1, 10, "Seul joueur en vie à la fin. Les éliminés : x1 pour le premier, x2 pour le deuxième..."),
+                        integer("time-interval-seconds", "Points de temps toutes les (s)", 30, 5, 600, "Chaque joueur en vie gagne des points de temps à cet intervalle."),
+                        integer("points-time-hundredths", "Points de temps (centièmes)", 25, 0, 1000, "Points gagnés à chaque intervalle en vie, en centièmes : 25 = 0,25 point."),
+                        integer("points-kill", "Points par joueur éliminé", 7, 0, 50, "Tué ou tombé à cause d'un autre joueur."),
+                        integer("winner-multiplier-tenths", "Bonus du gagnant (dixièmes)", 15, 10, 50, "Multiplie en plus le score du dernier joueur en vie s'il gagne avant la fin du temps : 15 = x1,5."),
                         integer("public-gather-seconds", "Attente avant lancement (s)", 20, 3, 180, "Partie publique : délai dès que le minimum de joueurs est atteint."),
                         integer("end-delay-seconds", "Délai après la fin (s)", 8, 1, 30, "Avant le retour au hub."),
                         integer("prewarm-arenas", "Arènes préchargées", 8, 0, 10, "Copies de chaque arène, collées dès le démarrage du serveur et gardées de côté : aucune arène à charger au lancement d'une partie (0 = aucune)."),
@@ -407,11 +405,14 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
         Player attacker = attackerOf(damager);
         if (attacker != null) {
             game.noteHit(victim, attacker.getUniqueId());
-        } else if (damager instanceof TNTPrimed || damager instanceof EnderCrystal || damager instanceof ExplosiveMinecart
-                || damager instanceof Creeper || damager instanceof Projectile) {
-            // Explosif pose, creeper d'un oeuf, projectile ou potion envoyes par un distributeur. Les autres creatures
-            // des oeufs ne sont creditees a personne (demande limitee au creeper).
-            game.noteHit(victim, explosiveOwner(game, damager));
+        } else {
+            // Explosif pose, creature sortie d'un oeuf (toutes, demande de Maxster33), projectile ou potion envoyes par
+            // un distributeur : le joueur a qui l'entite est rattachee.
+            UUID owner = explosiveOwner(game, damager);
+            if (owner == null && damager instanceof Projectile projectile && projectile.getShooter() instanceof Entity shooter) {
+                owner = game.entityOwner(shooter); // fleche d'un squelette sorti d'un oeuf...
+            }
+            game.noteHit(victim, owner);
         }
     }
 

@@ -37,8 +37,12 @@ d'un dropper crédité à celui qui l'a mis dedans.
 - Choix techniques signalés dans le journal : œufs du Wither et de l'Ender Dragon exclus, créatures frappables, mort et
   départ = élimination, chute créditée au dernier joueur qui a frappé dans les 10 s.
 
-- Points recalés sur des hypothèses (partie de ~7 min, 70 % d'éliminations créditées) : 2 par minute au lieu de 1,
-  5 par élimination inchangé ; calcul dans le journal du plugin, à vérifier sur les vraies parties.
+- Barème final, après plusieurs propositions de calcul : (0,25 point toutes les 30 s en vie + 7 par élimination) x rang
+  de mort (survivants : rang suivant, partagé), x1,5 pour le gagnant s'il gagne avant la fin. Estimation : gagnant ~63 à
+  4 joueurs, ~210 à 8 joueurs, ~128 / 30 min en moyenne ; à vérifier sur les vraies parties. Toutes les créatures des
+  œufs créditées à l'utilisateur de l'œuf.
+- Leçon : présenter le barème étape par étape (temps, éliminations, rang, bonus), un exemple chiffré, sans tableaux de
+  moyennes compliqués.
 
 ## Reste à faire
 - Déployer sur Kal-Games (sur demande de Maxster33), redémarrer, créer l'arène, la capturer, poser la zone d'attente et
