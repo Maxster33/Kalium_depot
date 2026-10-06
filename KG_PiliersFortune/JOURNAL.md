@@ -267,3 +267,18 @@ autres joueurs. »
 - Un joueur seul en vie au bout des 10 minutes est aussi le gagnant (le bonus « avant la fin » n'existe plus).
 
 **Déployé sur Kal-Games le 06/10/2026 à 17:44 (Maxster33 ; 0.1.0 dans `_removed-kg_piliersfortune-0.1.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+### Recalcul rétroactif des parties 0.1.0 (06/10/2026, 18:20, Maxster33)
+
+**Demande de Maxster33** : « applique les modifications du barème de points de manière rétroactive pour les parties ayant eu
+lieu lors des premiers tests ». Kal-Games arrêté par Maxster33.
+
+- 12 parties dans le journal d'octobre (`journal/2026-10/piliers-fortune.jsonl`) : les 9 de la 0.1.0 (15:45 à 17:37)
+  recalculées avec le barème 0.2.0 ; les 3 de la 0.2.0 (17:56, 18:04, 18:12) inchangées.
+- Exacts : points de temps (tranches de 30 s de chacun, avec la valeur en vigueur dans chaque partie : 0,25 jusqu'à
+  16:04, puis 1 point, réglage changé en jeu), +3 aux survivants (ordre des éliminations), moyenne du gagnant.
+- +25 % par élimination : qui a éliminé qui n'est pas dans le journal. Déduit dans 5 parties (une seule possibilité) ;
+  dans 4 parties (16:04, 16:23, 17:28, 17:37), hypothèse : chaque élimination créditée est la plus tardive possible.
+- `stats.yml` de KG_ScoreBoards (général, octobre, semaine du 03/10), écart ajouté aux totaux : Maaxster 147 → 108,06 ;
+  LeKiwi06 274,25 → 103,55 ; .TomHeroes57 231,88 → 70,31 ; .PatientLime2170 337,75 → 181,5. Original dans
+  `/plugins/_removed-kg_scoreboards-stats-2026-10-06-piliers/`. Journal des parties non modifié.

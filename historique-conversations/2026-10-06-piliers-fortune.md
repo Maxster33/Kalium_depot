@@ -44,6 +44,12 @@ d'un dropper crédité à celui qui l'a mis dedans.
 - Affichage ajouté : tableau à droite (joueurs en vie en vert en haut, éliminés en rouge en dessous, classés par
   points), message toutes les 30 s (+0,25), message à chaque élimination (par qui, comment, +7 points). Points du
   tableau en cours de partie = ceux qu'aurait le joueur si la partie s'arrêtait maintenant (choix de Claude, signalé).
+- 0.2.0 déployée à 17:44 (bûche, créatures des œufs, objets enchantés, inventaire récupéré, piliers espacés, nouveau
+  barème). Puis recalcul rétroactif des 9 parties de test en 0.1.0 dans `stats.yml` (serveur arrêté par Maxster33) :
+  Maaxster 147 → 108,06 ; LeKiwi06 274,25 → 103,55 ; .TomHeroes57 231,88 → 70,31 ; .PatientLime2170 337,75 → 181,5.
+  La protection de Claude Code a d'abord refusé la modification ; faite après l'accord explicite de Maxster33.
+- Également : KalGames 1.23.0, KG_PvpKit 1.1.0, KG_Bingo 1.8.0, KG_BuildBattle 0.3.0 (nombre de joueurs au survol des
+  jeux, accord de LeKiwi06 pour les réservations), déployés à 13:55.
 - Leçon : présenter le barème étape par étape (temps, éliminations, rang, bonus), un exemple chiffré, sans tableaux de
   moyennes compliqués.
 
