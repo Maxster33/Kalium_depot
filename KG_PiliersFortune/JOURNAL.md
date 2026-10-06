@@ -215,3 +215,48 @@ Gagnant en 7 minutes, 7 points par élimination : à 4 joueurs (3,5 + 1 x 7) x 4
   enregistrée reste en place ; le régler à 3 dans les Paramètres a le même effet tout de suite, sans redémarrage.
 
 **Statut : compilé, non déployé, non testé en jeu.**
+
+## 0.2.0 - bûche, créatures des œufs, objets enchantés, inventaire récupéré, nouveau barème (06/10/2026, Maxster33)
+
+Comprend la 0.1.1 (jamais déployée) : 3 à 8 joueurs.
+
+**Demande de Maxster33** : « premier objet reçu doit être une bûche ; il faut que les monstres que l'on fait apparaître
+n'attaquent pas le joueur qui l'a posé et que le golem de fer et le bonhomme de neige attaquent les autres joueurs
+également ; les équipements et outils doivent être enchantés (random) ; lorsqu'on tue un joueur ou le fait tomber on doit
+récupérer tout ce qu'il y a dans son inventaire. On va revoir le barème : à la place des points d'élimination on met
++25 % (réglable) au score actuel (temps) et tous les joueurs en vie gagnent 3 points (réglable) ; on enlève le
+multiplicateur de rang, et le gagnant de la partie (s'il y en a un) remporte ses points + la moyenne des points des
+autres joueurs. »
+
+### Changements
+
+- **Premier objet** : une bûche de chêne pour chaque joueur, 5 s après le départ ; ensuite les objets au hasard.
+- **Créatures des œufs** : elles ne visent jamais le joueur qui a utilisé l'œuf (elles se tournent vers le joueur en vie
+  le plus proche, à 32 blocs au plus, sinon personne) et ne lui font aucun dégât, projectiles et explosion de creeper
+  compris. **Golem de fer et golem de neige** : chaque seconde, sans cible, ils prennent le joueur en vie le plus proche
+  (autre que leur propriétaire) ; les boules de neige poussent et l'élimination qui suit est créditée au propriétaire.
+- **Objets enchantés** : tout objet enchantable reçu (armures, armes, outils, arcs, arbalètes, tridents, cannes à
+  pêche...) est enchanté comme à une table d'enchantement de niveau 5 à 30, enchantements compatibles entre eux, sans
+  enchantements « trésor ». Les livres restent des livres.
+- **Inventaire récupéré** : le joueur crédité d'une élimination (tué, tombé, parti) reçoit tout l'inventaire de
+  l'éliminé (armure et seconde main comprises) ; ce qui ne rentre pas tombe à ses pieds. Seulement s'il est lui-même
+  encore en vie et connecté (sinon l'inventaire disparaît, comme avant).
+- **Barème** :
+  1. +0,25 point toutes les 30 s en vie (inchangé) ;
+  2. élimination : le joueur crédité gagne **+25 % de son score actuel** (`kill-bonus-percent`), calculé avant le
+     point 3 ;
+  3. à chaque élimination, **tous les joueurs encore en vie gagnent +3 points** (`points-alive-on-elimination`) ;
+  4. **plus de multiplicateur de rang ni de x1,5** ;
+  5. le **gagnant** (seul joueur encore en vie, avant ou au bout des 10 minutes) gagne son score **+ la moyenne des
+     scores de tous les autres joueurs** de la partie ; égalité (plusieurs en vie) : scores inchangés.
+  Réglages retirés : `points-kill`, `winner-multiplier-tenths`.
+- Tableau de droite : score actuel pendant la partie, points définitifs à la fin. Tchat : « Autre gagne +25 % (4 → 5
+  pts) et récupère son inventaire », puis « +3 points pour chaque joueur encore en vie (n) ».
+
+### Choix techniques à signaler
+
+- La bûche est une bûche de chêne.
+- Le +25 % s'applique au score avant le +3 de survie du même moment.
+- Un joueur seul en vie au bout des 10 minutes est aussi le gagnant (le bonus « avant la fin » n'existe plus).
+
+**Statut : compilé, non déployé, non testé en jeu.**

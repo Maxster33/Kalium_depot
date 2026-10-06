@@ -5,7 +5,7 @@
 # Depend de KalGames : KalGames est compile d'abord et ses classes servent seulement a compiler (jamais embarquees).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=0.1.1
+VERSION=0.2.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then

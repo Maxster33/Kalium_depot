@@ -35,12 +35,12 @@ import java.util.UUID;
  *       tous) ; inventaire plein : l'objet tombe a ses pieds. Barre du bas : temps restant et « Joueurs en vie : a/n ».</li>
  *   <li>Elimination : chute sous la couche -64, mort, ou depart (deconnexion, /hub). L'elimine passe en mode spectateur
  *       jusqu'a la fin. Fin : un seul joueur en vie (il gagne), plus personne, ou temps ecoule (egalite des survivants).</li>
- *   <li>Points : (+0,25 toutes les 30 s en vie, +7 par joueur elimine par soi) x rang de mort, x1,5 en plus pour le
- *       gagnant s'il gagne avant la fin du temps. Elimine par soi : tue, ou elimine dans les 10 s apres un coup, une
- *       explosion d'un explosif qu'on a pose, une brulure par un feu ou une lave qu'on a pose, un passage dans l'eau
- *       qu'on a posee, un bloc qu'on a casse sous ses pieds, une creature d'un oeuf qu'on a utilise, un objet d'un
- *       distributeur qu'on a rempli. Rang de mort : x1 pour le premier elimine, x2 pour le deuxieme... ; les joueurs en
- *       vie a la fin partagent le rang suivant. Pas de regle commune « moyenne des joueurs classes en dessous ».</li>
+ *   <li>Points (0.2.0) : +0,25 toutes les 30 s en vie ; un joueur qui en elimine un autre gagne +25 % de son score
+ *       actuel et recupere tout son inventaire ; a chaque elimination, tous les joueurs encore en vie gagnent +3. Le
+ *       gagnant (seul joueur en vie) ajoute la moyenne des scores des autres joueurs. Elimine par soi : tue, ou elimine
+ *       dans les 10 s apres un coup, une explosion d'un explosif qu'on a pose, une brulure par un feu ou une lave qu'on a
+ *       pose, un passage dans l'eau qu'on a posee, un bloc qu'on a casse sous ses pieds, une creature d'un oeuf qu'on a
+ *       utilise, un objet d'un distributeur qu'on a rempli.</li>
  * </ul>
  * Les blocs poses ou casses et les objets au sol sont remis en etat par le moteur de KalGames a la fin de la partie.
  */
@@ -70,6 +70,10 @@ public final class PiliersInstance extends GameInstance {
     private final Map<UUID, Location> pillarOf = new HashMap<>();
     private final Map<UUID, Integer> periods = new HashMap<>();
     private final Map<UUID, Integer> kills = new HashMap<>();
+    /** 0.2.0 : score actuel de chaque joueur (temps, +25 % par elimination, +3 de survie), avant le bonus du gagnant. */
+    private final Map<UUID, Double> score = new HashMap<>();
+    /** Joueurs qui ont deja recu leur premier objet (une buche). */
+    private final Set<UUID> firstItem = new java.util.HashSet<>();
     private final Map<UUID, Hit> lastHit = new HashMap<>();
     private final Set<UUID> greeted = new java.util.HashSet<>();
     /** Poseur de chaque bloc pose pendant la partie (explosifs, sources de lave et d'eau, feu), et de ce qui en decoule. */
@@ -177,6 +181,8 @@ public final class PiliersInstance extends GameInstance {
         pillarOf.clear();
         periods.clear();
         kills.clear();
+        score.clear();
+        firstItem.clear();
         lastHit.clear();
         owners.clear();
         entityOwners.clear();
@@ -221,6 +227,7 @@ public final class PiliersInstance extends GameInstance {
             pillarOf.put(uuid, spot);
             periods.put(uuid, 0);
             kills.put(uuid, 0);
+            score.put(uuid, 0.0);
             // Vie, faim et saturation pleines, experience a 0, inventaire vide (resetPlayer), mode survie.
             plugin.hub().resetPlayer(player, GameMode.SURVIVAL);
             player.teleport(spot);
@@ -275,9 +282,11 @@ public final class PiliersInstance extends GameInstance {
                     itemTimer = Math.max(1, setting("item-interval-seconds", 5));
                     giveItems();
                 }
+                driveGolems();
                 if (elapsed % Math.max(1, setting("time-interval-seconds", 30)) == 0 && !alive.isEmpty()) {
                     for (UUID uuid : alive) {
                         periods.merge(uuid, 1, Integer::sum);
+                        score.merge(uuid, timePoints(1), Double::sum);
                     }
                     broadcast(t("pf.time-points", "<green>+<points> point pour chaque joueur encore en vie (<n>).",
                             "points", StatsService.formatPoints(timePoints(1)), "n", alive.size()));
@@ -307,7 +316,8 @@ public final class PiliersInstance extends GameInstance {
             if (player == null) {
                 continue;
             }
-            ItemStack item = piliers.items().random(world);
+            // 0.2.0 (demande de Maxster33) : le premier objet recu est une buche (de chene).
+            ItemStack item = firstItem.add(uuid) ? new ItemStack(org.bukkit.Material.OAK_LOG) : piliers.items().random(world);
             for (ItemStack rest : player.getInventory().addItem(item).values()) {
                 world.dropItemNaturally(player.getLocation(), rest);
             }
@@ -449,6 +459,47 @@ public final class PiliersInstance extends GameInstance {
                 && player.getLocation().distanceSquared(spawned) <= 64 ? lastEgg.owner() : null;
     }
 
+    /**
+     * 0.2.0 : joueur en vie le plus proche de la creature (32 blocs au plus), autre que celui qui l'a fait apparaitre ;
+     * null s'il n'y en a pas.
+     */
+    Player nearestFoe(Entity mob, UUID owner) {
+        Player best = null;
+        double bestDistance = 32 * 32;
+        for (Player player : alivePlayers()) {
+            if (player.getUniqueId().equals(owner) || player.getWorld() != mob.getWorld()) {
+                continue;
+            }
+            double distance = player.getLocation().distanceSquared(mob.getLocation());
+            if (distance <= bestDistance) {
+                best = player;
+                bestDistance = distance;
+            }
+        }
+        return best;
+    }
+
+    /**
+     * 0.2.0 (demande de Maxster33) : le golem de fer et le golem de neige sortis d'un oeuf attaquent les autres joueurs
+     * (sinon ils ne s'en prennent jamais aux joueurs) : chaque seconde, sans cible, ils prennent le plus proche.
+     */
+    private void driveGolems() {
+        for (Map.Entry<UUID, UUID> entry : new ArrayList<>(entityOwners.entrySet())) {
+            Entity entity = Bukkit.getEntity(entry.getKey());
+            if (!(entity instanceof org.bukkit.entity.IronGolem || entity instanceof org.bukkit.entity.Snowman)
+                    || !entity.isValid()) {
+                continue;
+            }
+            org.bukkit.entity.Mob golem = (org.bukkit.entity.Mob) entity;
+            org.bukkit.entity.LivingEntity target = golem.getTarget();
+            boolean keep = target != null && target.isValid() && !(target instanceof Player player
+                    && (player.getUniqueId().equals(entry.getValue()) || !alive.contains(player.getUniqueId())));
+            if (!keep) {
+                golem.setTarget(nearestFoe(golem, entry.getValue()));
+            }
+        }
+    }
+
     UUID entityOwner(Entity entity) {
         return entityOwners.get(entity.getUniqueId());
     }
@@ -536,19 +587,63 @@ public final class PiliersInstance extends GameInstance {
         Hit credited = creditFor(victim, killer);
         String name = names.getOrDefault(victim, "?");
         if (credited != null) {
-            kills.merge(credited.attacker(), 1, Integer::sum);
+            UUID by = credited.attacker();
+            kills.merge(by, 1, Integer::sum);
+            boolean looted = loot(victim, by);
+            // 0.2.0 : +25 % (reglable) au score actuel du joueur credite, avant le bonus de survie ci-dessous.
+            int percent = Math.max(0, setting("kill-bonus-percent", 25));
+            double before = score.getOrDefault(by, 0.0);
+            score.put(by, before * (1 + percent / 100.0));
             broadcast(t("pf.eliminated-by",
-                    "<red><victim> <mode></red> <gray>: éliminé par <white><killer></white> (<how>). <green><killer> gagne +<points> points.</green> <gray>(<n> en vie)",
-                    "victim", name, "mode", mode, "killer", names.getOrDefault(credited.attacker(), "?"),
-                    "how", credited.how(), "points", setting("points-kill", 7), "n", alive.size()));
+                    "<red><victim> <mode></red> <gray>: éliminé par <white><killer></white> (<how>). <green><killer> gagne +<percent> % (<before> → <after> pts)<loot>.</green> <gray>(<n> en vie)",
+                    "victim", name, "mode", mode, "killer", names.getOrDefault(by, "?"), "how", credited.how(),
+                    "percent", percent, "before", StatsService.formatPoints(before),
+                    "after", StatsService.formatPoints(score.get(by)),
+                    "loot", looted ? t("pf.loot", " et récupère son inventaire") : Component.empty(), "n", alive.size()));
         } else {
             broadcast(t("pf.eliminated", "<red><victim> <mode>.</red> <gray>(<n> en vie)",
                     "victim", name, "mode", mode, "n", alive.size()));
+        }
+        // 0.2.0 : chaque elimination rapporte 3 points (reglable) a tous les joueurs encore en vie.
+        int survive = Math.max(0, setting("points-alive-on-elimination", 3));
+        if (survive > 0 && !alive.isEmpty()) {
+            for (UUID uuid : alive) {
+                score.merge(uuid, (double) survive, Double::sum);
+            }
+            broadcast(t("pf.survive-points", "<green>+<points> points pour chaque joueur encore en vie (<n>).",
+                    "points", survive, "n", alive.size()));
         }
         updateBoard();
         if (alive.size() <= 1) {
             finish();
         }
+    }
+
+    /**
+     * 0.2.0 (demande de Maxster33) : le joueur credite recupere tout l'inventaire de l'elimine (armure et seconde main
+     * comprises) ; ce qui ne rentre pas tombe a ses pieds. Seulement s'il est encore en vie et connecte. Renvoie vrai si
+     * quelque chose a ete donne. L'inventaire de l'elimine est vide ensuite.
+     */
+    private boolean loot(UUID victim, UUID to) {
+        Player from = Bukkit.getPlayer(victim);
+        Player receiver = Bukkit.getPlayer(to);
+        if (from == null || receiver == null || !alive.contains(to) || receiver.getWorld() != world) {
+            return false;
+        }
+        List<ItemStack> items = new ArrayList<>();
+        for (ItemStack item : from.getInventory().getContents()) { // contenu, armure et seconde main
+            if (item != null && !item.getType().isAir()) {
+                items.add(item.clone());
+            }
+        }
+        if (items.isEmpty()) {
+            return false;
+        }
+        from.getInventory().clear();
+        for (ItemStack rest : receiver.getInventory().addItem(items.toArray(new ItemStack[0])).values()) {
+            world.dropItemNaturally(receiver.getLocation(), rest);
+        }
+        return true;
     }
 
     /** L'elimine regarde la suite en mode spectateur, au-dessus de son pilier. */
@@ -612,24 +707,10 @@ public final class PiliersInstance extends GameInstance {
         return count * setting("points-time-hundredths", 25) / 100.0;
     }
 
-    /** Points avant multiplicateur : temps + eliminations. */
-    private double basePoints(UUID uuid) {
-        return timePoints(periods.getOrDefault(uuid, 0)) + kills.getOrDefault(uuid, 0) * setting("points-kill", 7);
-    }
-
-    /** Rang de mort : place d'elimination, ou rang suivant le dernier elimine pour les joueurs en vie. */
-    private int deathRank(UUID uuid) {
-        int index = eliminated.indexOf(uuid);
-        return index >= 0 ? index + 1 : eliminated.size() + 1;
-    }
-
-    /**
-     * Points affiches : pendant la partie, ceux que le joueur aurait si elle s'arretait maintenant (base x rang de mort,
-     * sans le bonus du gagnant) ; a la fin, les points definitifs.
-     */
+    /** Points affiches : pendant la partie, le score actuel ; a la fin, les points definitifs (gagnant compris). */
     private double shownPoints(UUID uuid) {
         Double done = finalTotals.get(uuid);
-        return done != null ? done : basePoints(uuid) * deathRank(uuid);
+        return done != null ? done : score.getOrDefault(uuid, 0.0);
     }
 
     /**
@@ -717,7 +798,10 @@ public final class PiliersInstance extends GameInstance {
         finish(false);
     }
 
-    /** @param timeUp fin par le temps ecoule (pas de bonus x1,5 pour un joueur seul encore en vie). */
+    /**
+     * @param timeUp fin par le temps ecoule. 0.2.0 : un joueur seul encore en vie gagne aussi au bout du temps (le bonus
+     *               x1,5 « avant la fin » n'existe plus).
+     */
     private void finish(boolean timeUp) {
         if (!playing()) {
             return;
@@ -736,40 +820,37 @@ public final class PiliersInstance extends GameInstance {
         } else {
             broadcast(t("pf.nobody", "<yellow>Plus personne en vie : pas de gagnant."));
         }
-        results(winner, timeUp);
+        results(winner);
     }
 
     /**
-     * Bareme de Maxster33 (06/10/2026) : (0,25 point par tranche de 30 s en vie + 7 points par elimination) x rang de
-     * mort (survivants : rang suivant le dernier elimine), x1,5 en plus pour le gagnant s'il gagne avant la fin du temps.
-     * Credites au classement du jeu.
+     * Bareme 0.2.0 (Maxster33, 06/10/2026) : chacun garde son score actuel (temps, +25 % par elimination, +3 a chaque
+     * elimination tant qu'il est en vie) ; plus de multiplicateur de rang. Le gagnant (seul joueur encore en vie) y
+     * ajoute la moyenne des scores de tous les autres joueurs de la partie. Egalite : scores inchanges. Credites au
+     * classement du jeu.
      */
-    private void results(UUID winner, boolean timeUp) {
-        double perPeriod = setting("points-time-hundredths", 25) / 100.0;
-        int perKill = setting("points-kill", 7);
-        double winnerBonus = Math.max(10, setting("winner-multiplier-tenths", 15)) / 10.0;
-        // Rang de mort : x1 pour le premier elimine, x2 pour le deuxieme... ; les joueurs encore en vie a la fin
-        // partagent le rang suivant (decision de Maxster33, 06/10/2026).
-        Map<UUID, Integer> multiplier = new LinkedHashMap<>();
-        for (int i = 0; i < eliminated.size(); i++) {
-            multiplier.put(eliminated.get(i), i + 1);
-        }
-        int survivorRank = eliminated.size() + 1;
-        for (UUID uuid : alive) {
-            multiplier.put(uuid, survivorRank);
-        }
-        // x1,5 en plus pour le gagnant, seulement s'il gagne avant la fin du temps.
-        boolean bonus = winner != null && !timeUp;
-        Map<UUID, Double> base = new HashMap<>();
+    private void results(UUID winner) {
+        List<UUID> players = new ArrayList<>(eliminated);
+        players.addAll(alive);
         Map<UUID, Double> total = new HashMap<>();
-        for (UUID uuid : multiplier.keySet()) {
-            double points = periods.getOrDefault(uuid, 0) * perPeriod + kills.getOrDefault(uuid, 0) * perKill;
-            base.put(uuid, points);
-            total.put(uuid, points * multiplier.get(uuid) * (bonus && uuid.equals(winner) ? winnerBonus : 1));
+        for (UUID uuid : players) {
+            total.put(uuid, score.getOrDefault(uuid, 0.0));
+        }
+        double average = 0;
+        if (winner != null) {
+            int others = 0;
+            for (UUID uuid : players) {
+                if (!uuid.equals(winner)) {
+                    average += score.getOrDefault(uuid, 0.0);
+                    others++;
+                }
+            }
+            average = others == 0 ? 0 : average / others;
+            total.put(winner, score.getOrDefault(winner, 0.0) + average);
         }
         finalTotals.putAll(total);
         updateBoard();
-        List<UUID> order = new ArrayList<>(multiplier.keySet());
+        List<UUID> order = new ArrayList<>(players);
         // Classement : points finaux, puis le dernier elimine (ou le survivant) devant.
         Collections.reverse(order);
         order.sort((a, b) -> Double.compare(total.get(b), total.get(a)));
@@ -778,13 +859,12 @@ public final class PiliersInstance extends GameInstance {
         int rank = 1;
         for (UUID uuid : order) {
             String name = names.getOrDefault(uuid, "?");
-            String mult = "x" + multiplier.get(uuid)
-                    + (bonus && uuid.equals(winner) ? " x" + StatsService.formatPoints(winnerBonus) : "");
-            broadcast(t("pf.results-line",
-                    "<gray><rank>. <white><name></white> <dark_gray>- <gold><total> pts <gray>(<time> temps + <kills> élim. = <base> <mult>)",
-                    "rank", rank, "name", name, "total", StatsService.formatPoints(total.get(uuid)),
-                    "time", StatsService.formatPoints(periods.getOrDefault(uuid, 0) * perPeriod),
-                    "kills", kills.getOrDefault(uuid, 0), "base", StatsService.formatPoints(base.get(uuid)), "mult", mult));
+            Component detail = uuid.equals(winner)
+                    ? t("pf.results-winner", "<gray>(<own> + moyenne des autres <avg>)",
+                    "own", StatsService.formatPoints(score.getOrDefault(uuid, 0.0)), "avg", StatsService.formatPoints(average))
+                    : t("pf.results-detail", "<gray>(<kills> élim.)", "kills", kills.getOrDefault(uuid, 0));
+            broadcast(t("pf.results-line", "<gray><rank>. <white><name></white> <dark_gray>- <gold><total> pts <detail>",
+                    "rank", rank, "name", name, "total", StatsService.formatPoints(total.get(uuid)), "detail", detail));
             boolean counted = credit(uuid, name, total.get(uuid));
             Map<String, Object> one = new LinkedHashMap<>();
             one.put("player", uuid.toString());
@@ -793,9 +873,8 @@ public final class PiliersInstance extends GameInstance {
             one.put("periods", periods.getOrDefault(uuid, 0));
             one.put("kills", kills.getOrDefault(uuid, 0));
             one.put("eliminated", eliminated.indexOf(uuid) + 1);
-            one.put("base", base.get(uuid));
-            one.put("multiplier", multiplier.get(uuid));
-            one.put("winner-bonus", bonus && uuid.equals(winner) ? winnerBonus : 1);
+            one.put("score", score.getOrDefault(uuid, 0.0));
+            one.put("winner-average", uuid.equals(winner) ? average : 0.0);
             one.put("credited", total.get(uuid));
             one.put("counted", counted);
             logged.add(one);

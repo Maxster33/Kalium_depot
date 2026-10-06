@@ -80,6 +80,15 @@ final class RandomItems {
         if (item.getItemMeta() instanceof PotionMeta meta && !potions.isEmpty()) {
             meta.setBasePotionType(potions.get(random.nextInt(potions.size())));
             item.setItemMeta(meta);
+        } else if (material != Material.BOOK
+                && item.hasData(io.papermc.paper.datacomponent.DataComponentTypes.ENCHANTABLE)) {
+            // 0.2.0 (demande de Maxster33) : equipements et outils (armures, armes, outils, arcs, tridents...) enchantes
+            // au hasard, comme a une table d'enchantement de niveau 5 a 30 (enchantements compatibles entre eux).
+            try {
+                item = org.bukkit.Bukkit.getItemFactory().enchantWithLevels(item, 5 + random.nextInt(26), false, random);
+            } catch (RuntimeException e) {
+                // objet laisse sans enchantement
+            }
         }
         return item;
     }

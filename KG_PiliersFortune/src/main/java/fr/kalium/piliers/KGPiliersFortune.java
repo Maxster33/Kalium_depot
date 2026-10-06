@@ -115,8 +115,8 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
                         integer("kill-credit-seconds", "Chute créditée pendant (s)", 10, 1, 60, "Un joueur éliminé est compté au dernier joueur qui l'a frappé (ou dont l'explosif, le feu, la lave ou l'eau l'a touché) dans ce délai."),
                         integer("time-interval-seconds", "Points de temps toutes les (s)", 30, 5, 600, "Chaque joueur en vie gagne des points de temps à cet intervalle."),
                         integer("points-time-hundredths", "Points de temps (centièmes)", 25, 0, 1000, "Points gagnés à chaque intervalle en vie, en centièmes : 25 = 0,25 point."),
-                        integer("points-kill", "Points par joueur éliminé", 7, 0, 50, "Tué ou tombé à cause d'un autre joueur."),
-                        integer("winner-multiplier-tenths", "Bonus du gagnant (dixièmes)", 15, 10, 50, "Multiplie en plus le score du dernier joueur en vie s'il gagne avant la fin du temps : 15 = x1,5."),
+                        integer("kill-bonus-percent", "Bonus par élimination (%)", 25, 0, 200, "Le joueur qui en élimine un autre gagne ce pourcentage de son score actuel."),
+                        integer("points-alive-on-elimination", "Points de survie par élimination", 3, 0, 50, "À chaque élimination, tous les joueurs encore en vie gagnent ces points."),
                         integer("public-gather-seconds", "Attente avant lancement (s)", 20, 3, 180, "Partie publique : délai dès que le minimum de joueurs est atteint."),
                         integer("end-delay-seconds", "Délai après la fin (s)", 8, 1, 30, "Avant le retour au hub."),
                         integer("prewarm-arenas", "Arènes préchargées", 8, 0, 10, "Copies de chaque arène, collées dès le démarrage du serveur et gardées de côté : aucune arène à charger au lancement d'une partie (0 = aucune)."),
@@ -456,6 +456,49 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
             if (game != null) {
                 game.noteFireTick(victim);
             }
+        }
+    }
+
+    // ------------------------------------------------------------------ creatures des oeufs (0.2.0)
+
+    /** Creature (ou projectile d'une creature) d'une partie de ce jeu, et le joueur qui a utilise son oeuf. */
+    private UUID mobOwner(PiliersInstance game, Entity damager) {
+        Entity source = damager instanceof Projectile projectile && projectile.getShooter() instanceof Entity shooter
+                ? shooter : damager;
+        return source instanceof org.bukkit.entity.Mob ? game.entityOwner(source) : null;
+    }
+
+    /**
+     * Une creature sortie d'un oeuf ne vise jamais le joueur qui l'a fait apparaitre (demande de Maxster33) : elle se
+     * tourne vers le joueur en vie le plus proche, ou ne vise personne.
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onMobTarget(org.bukkit.event.entity.EntityTargetLivingEntityEvent event) {
+        if (!(event.getTarget() instanceof Player target)) {
+            return;
+        }
+        PiliersInstance game = runningAt(event.getEntity().getLocation().getBlock());
+        UUID owner = game == null ? null : game.entityOwner(event.getEntity());
+        if (owner == null || !owner.equals(target.getUniqueId())) {
+            return;
+        }
+        Player other = game.nearestFoe(event.getEntity(), owner);
+        if (other == null) {
+            event.setCancelled(true);
+        } else {
+            event.setTarget(other);
+        }
+    }
+
+    /** Aucun degat au joueur qui a fait apparaitre la creature (coup, projectile, explosion de creeper...). */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onMobHitsOwner(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player victim)) {
+            return;
+        }
+        PiliersInstance game = gameOf(victim);
+        if (game != null && victim.getUniqueId().equals(mobOwner(game, event.getDamager()))) {
+            event.setCancelled(true);
         }
     }
 
