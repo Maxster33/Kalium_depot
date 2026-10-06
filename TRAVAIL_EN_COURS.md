@@ -16,6 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KG_Pong — LeKiwi06 — depuis le 2026-10-06 09:21 — nouveau mini-jeu Pong (kal-games) : prototype, vu de dessus, raquettes en blocs, balle = Sulfur Cube
 
 
 
