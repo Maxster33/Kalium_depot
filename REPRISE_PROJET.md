@@ -92,6 +92,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KG_Pong 0.1.0** (06/10/2026, LeKiwi06) : prototype d'un nouveau mini-jeu Pong pour Kal-Games (2 joueurs, vu de dessus, raquettes en vrais blocs, balle = Sulfur Cube à bloc de glace), branché sur le moteur de parties de KalGames (aucun changement dans KalGames) ; **compilé, non déployé, non testé en jeu**, réservation gardée. Après le déploiement, un modérateur doit construire un terrain plat entouré de murs, créer l'arène et poser 5 points (voir `KG_Pong/JOURNAL.md`).
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
@@ -271,6 +272,8 @@ sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre par
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (06/10/2026, 10 h) : KG_Pong 0.1.0, prototype d'un nouveau mini-jeu Pong pour Kal-Games ; compilé, non déployé, non testé en jeu ; réservation gardée jusqu'au test.** Demande de LeKiwi06 du 06/10/2026 : Pong vu de dessus à 2 joueurs, premier à 5 points ; raquettes en vrais blocs qui butent contre les murs ; balle = Sulfur Cube qui a avalé un bloc de glace ; clic gauche pour changer le sens de la raquette, clic droit pour la déplacer (maintenu : en continu). Choix de Claude à confirmer : la trajectoire de la balle est calculée par le plugin, qui place le cube à chaque tick (le bloc de glace ne sert donc qu'à l'apparence) ; les joueurs volent, immobiles, à leur point de vue ; barème 1 point par but et +3 au vainqueur. Rien n'a pu être essayé en jeu : commandes (surtout en Bedrock), rendu de la balle et vue de dessus sont à juger sur le serveur (liste dans `KG_Pong/JOURNAL.md`).
 
 **Ajout (06/10/2026, 5 h 04) : KG_HideAndSeek 0.1.0, nouveau mini-jeu Hide and Seek, déployé sur Kal-Games (actif après redémarrage), non testé en jeu ; réservation libérée.** Demande de LeKiwi06 du 06/10/2026, réglée par questions et réponses (cahier des charges : `KG_HideAndSeek/CAHIER_DES_CHARGES.md`). Les hiders imitent un bloc du décor : en mouvement, joueur normal qui porte son bloc sur la tête (décision de LeKiwi06 pour les joueurs Bedrock, qui ne verraient pas un modèle 3D) ; immobile 3 s, vrai bloc posé dans la copie de l'arène et joueur caché. Seekers à 5 cœurs, un demi-cœur perdu par erreur, absorption en réserve ; soundboard, son automatique, évasion, retour possible après une déconnexion. Aucun changement dans KalGames. Détail, mise en place par un modérateur et liste des points à tester : `KG_HideAndSeek/JOURNAL.md`. Serveur redémarré et arène configurée par LeKiwi06 le 06/10/2026 (map construite sur Kanvas, importée par un schéma WorldEdit, voir le JOURNAL). **Reste à faire : tester avec des joueurs (Java et Bedrock).** Trois lectures de Claude à confirmer par LeKiwi06 : le dernier seeker qui se déconnecte termine la partie (il ne peut donc pas revenir) ; s'il ne reste que des hiders déconnectés, les seekers gagnent ; liste exacte des familles de blocs refusées.
 

@@ -1,0 +1,7 @@
+name: KG_Pong
+version: '${project.version}'
+main: fr.kalium.pong.KGPong
+api-version: '26.2'
+description: Pong de Kal-Games (vu de dessus, raquettes en blocs, balle = Sulfur Cube), branche sur le moteur de parties de KalGames.
+authors: [KaLium]
+depend: [KalGames, KG_ScoreBoards]
