@@ -105,7 +105,7 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
         MinigameType type = new MinigameType("PILIERS_FORTUNE", "Les piliers de la Fortune",
                 "Chacun sur son pilier, un objet au hasard toutes les 5 secondes : faites tomber les autres. Tomber, c'est être éliminé.",
                 List.of(
-                        integer("min-players", "Joueurs minimum", 4, 2, 8, "Pour lancer une partie (publique ou privée)."),
+                        integer("min-players", "Joueurs minimum", 3, 2, 8, "Pour lancer une partie (publique ou privée)."),
                         integer("max-players", "Joueurs maximum", 8, 2, 8, "Limité au nombre de piliers de l'arène."),
                         integer("duration-seconds", "Durée maximale (s)", 600, 60, 3600, "Fin de la partie si plusieurs joueurs sont encore en vie : égalité."),
                         integer("countdown-seconds", "Décompte de départ (s)", 5, 1, 30, "Les joueurs restent immobiles sur leur pilier pendant ce temps."),

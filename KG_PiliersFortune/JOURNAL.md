@@ -204,3 +204,14 @@ parties (3,5 parties en 30 min) ; 70 % des éliminations sont créditées à un 
 
 Gagnant en 7 minutes, 7 points par élimination : à 4 joueurs (3,5 + 1 x 7) x 4 x 1,5 = 63 ; à 8 joueurs
 (3,5 + 2 x 7) x 8 x 1,5 = 210 (avec 1 seule élimination : 126). Tout reste réglable en jeu.
+
+## 0.1.1 - à partir de 3 joueurs (06/10/2026, Maxster33)
+
+**Demande de Maxster33** : « pouvoir jouer à partir de 3 joueurs (3 à 8 joueurs) ».
+
+- Valeur par défaut du réglage « Joueurs minimum » (`min-players`) : **3** au lieu de 4 (publique et privée). Au survol du
+  jeu dans le menu de Kal-Games : « Joueurs : 3 à 8 ».
+- Rien d'autre ne change. Attention : si « Joueurs minimum » a déjà été modifié en jeu (Paramètres du mini-jeu), la valeur
+  enregistrée reste en place ; le régler à 3 dans les Paramètres a le même effet tout de suite, sans redémarrage.
+
+**Statut : compilé, non déployé, non testé en jeu.**

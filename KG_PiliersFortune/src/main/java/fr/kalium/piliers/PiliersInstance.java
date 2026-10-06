@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Les piliers de la Fortune (demande de Maxster33, 06/10/2026). De 4 a 8 joueurs, chacun sur un pilier en pierre.
+ * Les piliers de la Fortune (demande de Maxster33, 06/10/2026). De 3 a 8 joueurs (4 a 8 en 0.1.0), chacun sur un pilier en pierre.
  * <ul>
  *   <li>Depart : vie, faim et saturation pleines, experience a 0, inventaire vide, mode survie ; immobiles pendant un
  *       decompte de 5 s affiche au milieu de l'ecran (COUNTDOWN).</li>
@@ -137,7 +137,7 @@ public final class PiliersInstance extends GameInstance {
 
     @Override
     protected int minParticipants() {
-        return Math.max(2, Math.min(maxParticipants(), setting("min-players", 4)));
+        return Math.max(2, Math.min(maxParticipants(), setting("min-players", 3)));
     }
 
     @Override
