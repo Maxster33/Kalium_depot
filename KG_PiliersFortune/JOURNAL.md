@@ -214,7 +214,7 @@ Gagnant en 7 minutes, 7 points par élimination : à 4 joueurs (3,5 + 1 x 7) x 4
 - Rien d'autre ne change. Attention : si « Joueurs minimum » a déjà été modifié en jeu (Paramètres du mini-jeu), la valeur
   enregistrée reste en place ; le régler à 3 dans les Paramètres a le même effet tout de suite, sans redémarrage.
 
-**Statut : compilé, non déployé, non testé en jeu.**
+**Statut : jamais déployée, comprise dans la 0.2.0.**
 
 ## 0.2.0 - bûche, créatures des œufs, objets enchantés, inventaire récupéré, nouveau barème (06/10/2026, Maxster33)
 
@@ -266,4 +266,4 @@ autres joueurs. »
 - Le +25 % s'applique au score avant le +3 de survie du même moment.
 - Un joueur seul en vie au bout des 10 minutes est aussi le gagnant (le bonus « avant la fin » n'existe plus).
 
-**Statut : compilé, non déployé, non testé en jeu.**
+**Déployé sur Kal-Games le 06/10/2026 à 17:44 (Maxster33 ; 0.1.0 dans `_removed-kg_piliersfortune-0.1.0/`), actif après redémarrage. Statut : non testé en jeu.**
