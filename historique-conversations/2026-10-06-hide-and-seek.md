@@ -27,6 +27,13 @@ Précisions données pendant la seconde session :
 - Déployé sur Kal-Games à la demande de LeKiwi06 (jar envoyé par WinSCP, copie dans `jars-deployes/`) ; actif au
   prochain redémarrage du serveur. Réservation libérée.
 
+- Correction de la procédure : il n'y a plus de bouton « créer un mini-jeu » (KalGames 1.21.0) ; KalGames crée le
+  mini-jeu `hide-and-seek` au démarrage et déclare ses boutons à KG_Menu.
+- Map construite sur Kanvas : importée sur Kal-Games par un schéma WorldEdit (`hideandseek.schem`, 207 x 121 x 167,
+  environ 850 000 blocs ; une première sauvegarde ne contenait qu'une partie de la map). Fichier copié par WinSCP
+  dans `plugins/WorldEdit/schematics/` de Kal-Games ; collage, feuilles de cerisier rendues persistantes, capture,
+  points et blocs de la map faits en jeu par LeKiwi06 (« normalement tout est configuré »).
+
 ## Décisions
 
 - 3 à 16 joueurs, 1 seeker pour 5 joueurs, volontaires d'abord ; cachette 30 s, recherche 5 min.
@@ -43,9 +50,6 @@ Précisions données pendant la seconde session :
 
 ## Reste à faire
 
-- Redémarrer Kal-Games (humain).
-- En jeu : dans Informations > Paramètres > Hide and Seek (mini-jeu créé tout seul par KalGames au démarrage), créer
-  l'arène de la map déjà construite, capturer la zone, poser les 4 points, régler les blocs de la map.
 - Tester, en Java et en Bedrock (liste dans `KG_HideAndSeek/JOURNAL.md`), puis mesurer le rythme des points.
 - À confirmer par LeKiwi06 : le dernier seeker qui se déconnecte termine la partie ; s'il ne reste que des hiders
   déconnectés, les seekers gagnent ; liste exacte des familles de blocs refusées.

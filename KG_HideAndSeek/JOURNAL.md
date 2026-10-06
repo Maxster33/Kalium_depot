@@ -67,6 +67,13 @@ par questions et réponses le même jour (`CAHIER_DES_CHARGES.md`).
    « + Ajouter le bloc en main ». **Une map sans bloc n'est pas jouable** (signalé en rouge sur la page du mini-jeu).
 4. Facultatif : **Sons du soundboard** (ajouter ou retirer un son).
 
+**Map construite sur Kanvas** (cas de la première map, 06/10/2026) : la capture ne se fait que sur Kal-Games. Sur
+Kanvas : `//wea`, `//pos1`, `//pos2`, `//size` pour contrôler, `//copy`, `//schem save <nom> -f` ; copier le fichier
+de `plugins/FastAsyncWorldEdit/schematics/` (Kanvas) vers `plugins/WorldEdit/schematics/` (Kal-Games) ; sur
+Kal-Games : `//schem load <nom>`, `//paste -a -s`, puis la capture. Les feuilles posées avec WorldEdit ne sont pas
+persistantes et tombent hors de Kanvas (ticks aléatoires à 0 là-bas) : `//replace cherry_leaves
+cherry_leaves[persistent=true]` avant la capture. Dans les parties, KalGames empêche les feuilles de tomber.
+
 Blocs acceptés : tout bloc d'une seule case sur lequel on bute, plein ou non (enclume, composteur, table
 d'enchantement, pot décoratif...), qui existe en objet. Refusés : dalles, escaliers, barrières, portillons, murets,
 vitres, barreaux, portes, lits, blocs traversables (fleurs, herbes, torches).
