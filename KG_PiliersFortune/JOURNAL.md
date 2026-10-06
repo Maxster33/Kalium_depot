@@ -8,7 +8,8 @@ seuls, comme pour les autres jeux.
 
 ## 0.1.0 — première version (06/10/2026)
 
-**Statut : compilé, non déployé, non testé en jeu.** Nouveau plugin : aucun ancien jar à ranger.
+**Statut : déployé sur Kal-Games le 06/10/2026 à 13 h 12 (Maxster33), actif après redémarrage, non testé en jeu.**
+Nouveau plugin : aucun ancien jar à ranger. À déployer seul (KalGames 1.22.2, KG_ScoreBoards 1.9.0 en service).
 
 **Demande de Maxster33 (06/10/2026)** : « Les piliers de la Fortune. De 4 à 8 joueurs, parties publiques et privées. La
 map doit être pré-générée en 8 exemplaires instanciés. À la fin de chaque partie il faut remettre les blocs qui auraient

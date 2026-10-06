@@ -1,7 +1,7 @@
 # 2026-10-06 — Les piliers de la Fortune (nouveau mini-jeu)
 
 - Plugin(s) concerné(s) : KG_PiliersFortune (nouveau)
-- Versions avant / après : — → KG_PiliersFortune 0.1.0 (compilée, non déployée)
+- Versions avant / après : — → KG_PiliersFortune 0.1.0 (déployée sur Kal-Games le 06/10/2026 à 13 h 12, non testée)
 
 ## Demandé
 « Nous allons créer le jeu : Les piliers de la Fortune », de 4 à 8 joueurs, parties publiques et privées, map
@@ -48,5 +48,5 @@ d'un dropper crédité à celui qui l'a mis dedans.
   moyennes compliqués.
 
 ## Reste à faire
-- Déployer sur Kal-Games (sur demande de Maxster33), redémarrer, créer l'arène, la capturer, poser la zone d'attente et
-  les 8 piliers ; puis tester (liste dans le journal).
+- Fait : déployé sur Kal-Games (« installe », 13 h 12). Reste : redémarrage par l'humain, créer l'arène, la capturer,
+  poser la zone d'attente et les 8 piliers ; puis tester (liste dans le journal).
