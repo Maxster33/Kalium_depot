@@ -58,7 +58,10 @@ par questions et réponses le même jour (`CAHIER_DES_CHARGES.md`).
 
 ### Mise en place sur le serveur (modérateur)
 
-1. Informations > Paramètres : créer un mini-jeu de type « Hide and Seek », puis une arène ; capturer la zone de la map.
+1. Rien à créer à la main : au démarrage du serveur, KalGames crée lui-même le mini-jeu `hide-and-seek` (depuis
+   KalGames 1.21.0, un mini-jeu par type de jeu enregistré) et déclare ses boutons à KG_Menu. Informations >
+   Paramètres > **Hide and Seek** > « Arènes / maps » : créer l'arène, puis « Zone de l'arène (capture) ». Tant
+   qu'aucune arène n'est complète, le jeu n'apparaît dans la liste des jeux que pour les modérateurs.
 2. Poser les 4 points de l'arène : Tribune, Départ des hiders, Salle des seekers (pièce fermée), Départ des seekers.
 3. Page du mini-jeu > **Blocs des maps** > la map : « + Ajouter le bloc regardé » (en regardant un bloc de la map) ou
    « + Ajouter le bloc en main ». **Une map sans bloc n'est pas jouable** (signalé en rouge sur la page du mini-jeu).

@@ -44,7 +44,8 @@ Précisions données pendant la seconde session :
 ## Reste à faire
 
 - Redémarrer Kal-Games (humain).
-- En jeu : créer le mini-jeu et l'arène de la map déjà construite, poser les 4 points, régler les blocs de la map.
+- En jeu : dans Informations > Paramètres > Hide and Seek (mini-jeu créé tout seul par KalGames au démarrage), créer
+  l'arène de la map déjà construite, capturer la zone, poser les 4 points, régler les blocs de la map.
 - Tester, en Java et en Bedrock (liste dans `KG_HideAndSeek/JOURNAL.md`), puis mesurer le rythme des points.
 - À confirmer par LeKiwi06 : le dernier seeker qui se déconnecte termine la partie ; s'il ne reste que des hiders
   déconnectés, les seekers gagnent ; liste exacte des familles de blocs refusées.
