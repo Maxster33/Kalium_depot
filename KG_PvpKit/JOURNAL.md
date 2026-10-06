@@ -81,3 +81,15 @@ Minecraft) : chaque champ et bouton tient maintenant dans sa largeur normale (26
 
 **Déployé sur Kal-Games le 02/10/2026 à 17:49 (LeKiwi06 ; 1.0.0 dans `_removed-kg_pvpkit-1.0.0/`), actif après redémarrage.
 Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**
+
+## 1.1.0 - nombre de joueurs possibles au survol du jeu (06/10/2026, Maxster33)
+
+**Demande de Maxster33** : afficher le nombre de joueurs possibles au survol de chaque jeu du menu de Kal-Games (voir
+KalGames 1.23.0).
+
+- Plage déclarée à KalGames : **2** (deux équipes d'un joueur) **à nombre d'équipes de l'arène x 4** (équipes de 4 au
+  plus en partie privée ; le maximum public, équipes max x joueurs par équipe, est aussi pris en compte). Avec une
+  arène à 4 départs : « Joueurs : 2 à 16 ».
+- **Exige KalGames 1.23.0 : à déployer ensemble.**
+
+**Statut : compilé, non déployé, non testé en jeu.**

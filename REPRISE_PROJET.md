@@ -92,6 +92,11 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KalGames 1.23.0 + KG_PvpKit 1.1.0 (à déployer ensemble) + KG_Bingo 1.8.0 + KG_BuildBattle 0.3.0** (06/10/2026,
+  Maxster33, accord de LeKiwi06 pour les 4 réservations) : nombre de joueurs possibles au survol de chaque jeu du menu
+  de Kal-Games (« Joueurs : 4 à 8 »). Bingo 1 à 16, Build Battle 2 à 32, PvP Kit 2 à 16, autres jeux d'après leurs
+  réglages « Joueurs minimum / maximum » ; Pong : rien tant que KG_Pong ne déclare pas sa plage. **Compilés, non
+  déployés, non testés.** Détail dans les `JOURNAL.md`.
 - **KG_Pong 0.1.0** (06/10/2026, LeKiwi06) : prototype d'un nouveau mini-jeu Pong pour Kal-Games (2 joueurs, vu de dessus, raquettes en vrais blocs, balle = Sulfur Cube à bloc de glace), branché sur le moteur de parties de KalGames (aucun changement dans KalGames) ; **compilé, non déployé, non testé en jeu**, réservation gardée. Après le déploiement, un modérateur doit construire un terrain plat entouré de murs, créer l'arène et poser 5 points (voir `KG_Pong/JOURNAL.md`).
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.

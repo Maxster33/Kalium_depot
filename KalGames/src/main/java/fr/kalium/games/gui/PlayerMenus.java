@@ -90,6 +90,13 @@ public final class PlayerMenus {
             if (!minigame.description().isBlank()) {
                 tip.add(plugin.lang().parse("<gray>" + minigame.description()));
             }
+            // 1.23.0 (demande de Maxster33) : nombre de joueurs possibles, ex. « Joueurs : 4 à 8 ».
+            int[] range = minigame.type().playerRange(minigame, manager.usableArenas(minigame));
+            if (range != null) {
+                tip.add(range[0] == range[1]
+                        ? t("menu.player-range-one", "<gray>Joueurs : <white><n>", "n", range[0])
+                        : t("menu.player-range", "<gray>Joueurs : <white><min> à <max>", "min", range[0], "max", range[1]));
+            }
             if (usable) {
                 tip.add(t("menu.games-count", "<dark_gray>Parties en cours : <white><games></white> - Joueurs : <white><players></white>",
                         "games", manager.gamesOf(minigame.id()), "players", manager.playersIn(minigame.id())));

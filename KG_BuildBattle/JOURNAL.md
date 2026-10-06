@@ -36,3 +36,13 @@ Demande de LeKiwi06 : afficher sur chaque bouton de jeu combien de joueurs y son
   « Build Battle » affiche « | n en jeu » (KG_Menu 1.1.0). Sans nouvelle valeur depuis 30 s : rien d'affiché.
 
 **Déploiement** : avec KV_BuildBattle 0.3.6 (Kanvas), KG_Menu 1.1.0 et KLM_Menu 2.4.0. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**
+
+## 0.3.0 - nombre de joueurs possibles au survol du Build Battle (06/10/2026, Maxster33)
+
+**Demande de Maxster33** : afficher le nombre de joueurs possibles au survol de chaque jeu du menu de Kal-Games.
+
+- Ligne « Joueurs : 2 à 32 » sous le texte du bouton : 2 (deux équipes d'un joueur, minimum de KV_BuildBattle pour
+  lancer) à `equipes-max` x 4 (8 équipes de 4 par défaut). Texte : `menu.bouton-joueurs`.
+- Indépendant de KalGames 1.23.0 et de KV_BuildBattle.
+
+**Statut : compilé, non déployé, non testé en jeu.**

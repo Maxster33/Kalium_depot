@@ -76,6 +76,33 @@ public final class MinigameType {
     // KG_PvpKit depuis 1.22.0...) enregistrent leurs propres types avec register(), moteur compris.
     static {
         RUSH.engine(fr.kalium.games.game.RushInstance::new).prewarmAllowed(true);
+        // 1.23.0 : 2 joueurs au moins (deux equipes) ; au plus, la taille des equipes x le plus grand nombre de bases.
+        RUSH.playerRange((minigame, arenas) -> {
+            int teams = 2;
+            for (Arena arena : arenas) {
+                teams = Math.max(teams, RushLayout.teamCount(arena));
+            }
+            return new int[]{2, teams * Math.max(1, Math.min(4, minigame.getInt("team-size", 4)))};
+        });
+    }
+
+    /**
+     * 1.23.0 (demande de Maxster33, 06/10/2026) : nombre de joueurs possibles dans une partie de ce jeu, {minimum,
+     * maximum}, affiche au survol du jeu dans le menu de Kal-Games ; null = rien d'affiche. arenas = arenes utilisables
+     * du mini-jeu (certains jeux sont limites par leur arene).
+     */
+    @FunctionalInterface
+    public interface PlayerRange {
+        int[] of(Minigame minigame, List<Arena> arenas);
+    }
+
+    /** Par defaut : les reglages « min-players » et « max-players » du jeu, s'il les a tous les deux. */
+    private static int[] settingsRange(Minigame minigame, List<Arena> arenas) {
+        MinigameType type = minigame.type();
+        if (type.setting("min-players") == null || type.setting("max-players") == null) {
+            return null;
+        }
+        return new int[]{minigame.getInt("min-players", 1), minigame.getInt("max-players", 1)};
     }
 
     /** Liste d'objets (butin...) editee depuis l'inventaire du moderateur. */
@@ -179,6 +206,7 @@ public final class MinigameType {
     private CreateForm createForm;
     private final List<AdminAction> adminActions = new java.util.ArrayList<>();
     private java.util.function.Function<Minigame, List<net.kyori.adventure.text.Component>> adminInfo = minigame -> List.of();
+    private PlayerRange playerRange = MinigameType::settingsRange;
 
     private MinigameType(String name, String display, boolean configurable, String description, List<SettingSpec> settings,
                          List<PointSpec> points) {
@@ -238,6 +266,22 @@ public final class MinigameType {
     public MinigameType adminInfo(java.util.function.Function<Minigame, List<net.kyori.adventure.text.Component>> info) {
         this.adminInfo = info;
         return this;
+    }
+
+    /** 1.23.0 : nombre de joueurs possibles, quand les reglages min-players / max-players ne suffisent pas. */
+    public MinigameType playerRange(PlayerRange range) {
+        this.playerRange = range;
+        return this;
+    }
+
+    /** 1.23.0 : {minimum, maximum} de joueurs, ou null (rien a afficher). */
+    public int[] playerRange(Minigame minigame, List<Arena> arenas) {
+        try {
+            int[] range = playerRange == null ? null : playerRange.of(minigame, arenas);
+            return range == null || range.length < 2 || range[0] < 1 || range[1] < range[0] ? null : range;
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 
     /** Vrai si des copies d'arene peuvent etre collees a l'avance (reglage "prewarm-arenas"). */

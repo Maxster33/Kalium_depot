@@ -42,9 +42,14 @@ public final class KGBuildBattle extends JavaPlugin {
 
             @Override
             public List<Entry> games(Player joueur) {
+                // 0.3.0 (demande de Maxster33) : joueurs possibles, de 2 (deux equipes d'un joueur, minimum de
+                // KV_BuildBattle) a equipes max x 4 (equipes de 4 au plus).
+                net.kyori.adventure.text.Component info = menus.t("menu.bouton-info",
+                                "<gray>Construis sur un thème, puis vote. File publique ou partie privée.")
+                        .append(net.kyori.adventure.text.Component.newline())
+                        .append(menus.t("menu.bouton-joueurs", "<gray>Joueurs : <white>2 à <max>", "max", parties.equipesMax() * 4));
                 return List.of(new Entry("kg_buildbattle", menus.t("menu.bouton", "<gold><bold>Build Battle"),
-                        menus.t("menu.bouton-info", "<gray>Construis sur un thème, puis vote. File publique ou partie privée."),
-                        menus::ouvrir, joueurs.value()));
+                        info, menus::ouvrir, joueurs.value()));
             }
         }, this, ServicePriority.Normal);
         lang.saveIfNeeded();

@@ -874,3 +874,24 @@ Minecraft) : chaque champ et bouton tient maintenant dans sa largeur normale (26
 
 **Déployé sur Kal-Games le 02/10/2026 à 17:49 (LeKiwi06 ; 1.22.1 dans `_removed-kalgames-1.22.1/`), actif après redémarrage.
 Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**
+
+## 1.23.0 - nombre de joueurs possibles au survol des jeux (06/10/2026, Maxster33)
+
+**Demande de Maxster33** : « dans le menu Kal-Games, quand on survole un jeu avec la souris, il faut donner l'info du
+nombre de joueurs possibles, exemple 1 à 16 pour le Bingo ou 4 à 8 pour les Piliers de la Fortune ». Accord de LeKiwi06
+pour réserver KalGames, KG_PvpKit, KG_Bingo et KG_BuildBattle en même temps (au-delà de la limite de 2).
+
+- Au survol d'un jeu de KalGames dans le menu de Kal-Games : ligne « Joueurs : 4 à 8 » (« Joueurs : 2 » si le minimum et
+  le maximum sont égaux), sous la description. Textes : `menu.player-range`, `menu.player-range-one`.
+- `MinigameType.playerRange(...)` : chaque jeu peut déclarer sa plage {minimum, maximum} (avec les arènes utilisables du
+  mini-jeu). Par défaut : ses réglages « Joueurs minimum » / « Joueurs maximum » (`min-players`, `max-players`) s'il a
+  les deux : Course de bateau, Parcours, Hide and Seek, Piliers de la Fortune. Rush : 2 à taille des équipes x le plus
+  grand nombre de bases des arènes. PvP Kit : déclaré par KG_PvpKit 1.1.0. Pong (pas de réglage) : rien d'affiché tant
+  que KG_Pong ne déclare pas sa plage (`.playerRange((m, a) -> new int[]{2, 2})`).
+- Ajout seulement : les jeux compilés contre 1.22.2 continuent de fonctionner (recompilés pour vérifier : KG_BoatRace,
+  KG_Parkour, KG_HideAndSeek, KG_Pong, KG_PiliersFortune). **À déployer avec KG_PvpKit 1.1.0** (qui exige 1.23.0).
+
+Limite : pour la Course de bateau et le Parcours, le minimum affiché est le réglage « Joueurs minimum » (parties
+publiques).
+
+**Statut : compilé, non déployé, non testé en jeu.**

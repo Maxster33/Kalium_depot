@@ -101,6 +101,17 @@ public final class KGPvpKit extends JavaPlugin implements Listener {
                         single("spawn-d", "Départ équipe D", false, "Optionnel : active la 4e équipe.")))
                 .engine(PvpInstance::new)
                 .prewarmAllowed(true)
+                // 1.1.0 (demande de Maxster33) : joueurs possibles au survol du jeu : 2 (deux equipes d'un joueur) au
+                // nombre d'equipes de l'arene x 4 (equipes de 4 au plus en partie privee, publique selon les reglages).
+                .playerRange((minigame, arenas) -> {
+                    int teams = 2;
+                    for (Arena arena : arenas) {
+                        teams = Math.max(teams, PvpInstance.teamsAvailable(arena));
+                    }
+                    int publicMax = Math.min(teams, Math.min(4, minigame.getInt("public-max-teams", 4)))
+                            * Math.max(1, minigame.getInt("public-team-size", 1));
+                    return new int[]{2, Math.max(teams * 4, publicMax)};
+                })
                 .createForm(new CreateForm())
                 .adminInfo(minigame -> List.of(games.t("admin.mg-kits", "<gray>Kits proposés au vote : <white><n></white>",
                         "n", minigame.kits().size())))

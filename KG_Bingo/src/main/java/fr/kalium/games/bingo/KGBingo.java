@@ -70,9 +70,15 @@ public final class KGBingo extends JavaPlugin {
 
             @Override
             public java.util.List<Entry> games(org.bukkit.entity.Player player) {
+                // 1.8.0 (demande de Maxster33) : joueurs possibles, 1 a (equipes max x joueurs par equipe max).
+                int max = Math.max(1, getConfig().getInt("bingo.max-team-count", 4))
+                        * Math.max(1, getConfig().getInt("bingo.max-team-size", 4));
+                net.kyori.adventure.text.Component tip = menus.t("bingo.hub-entry-tip",
+                                "<gray>Mini-jeu sur serveur dédié : créez une partie ou rejoignez-en une avec un code.")
+                        .append(net.kyori.adventure.text.Component.newline())
+                        .append(menus.t("bingo.hub-entry-players", "<gray>Joueurs : <white>1 à <max>", "max", max));
                 return java.util.List.of(new Entry(ENTRY_ID, menus.t("bingo.hub-entry", "<gold><bold>Bingo"),
-                        menus.t("bingo.hub-entry-tip", "<gray>Mini-jeu sur serveur dédié : créez une partie ou rejoignez-en une avec un code."),
-                        (p, back) -> menus.openBingoMenu(p), players.value()));
+                        tip, (p, back) -> menus.openBingoMenu(p), players.value()));
             }
 
             @Override

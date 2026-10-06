@@ -169,3 +169,13 @@ envoyé pour ce mode.
 À déployer avec **KG_BingoGame 0.10.0** (Serveur Jeux).
 
 **Déployé le 05/10/2026 à 13:34 sur Kal-Games (Maxster33 ; 1.7.2 dans `_removed-kg_bingo-1.7.2/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.8.0 - nombre de joueurs possibles au survol du Bingo (06/10/2026, Maxster33)
+
+**Demande de Maxster33** : « exemple 1 à 16 pour le Bingo » au survol du jeu dans le menu de Kal-Games.
+
+- Ligne « Joueurs : 1 à 16 » sous le texte du bouton Bingo : 1 à `bingo.max-team-count` x `bingo.max-team-size` (4 x 4
+  par défaut). Texte : `bingo.hub-entry-players`.
+- Indépendant de KG_BingoGame et de KalGames 1.23.0.
+
+**Statut : compilé, non déployé, non testé en jeu.**
