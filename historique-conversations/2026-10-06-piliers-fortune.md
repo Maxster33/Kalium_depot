@@ -41,6 +41,9 @@ d'un dropper crédité à celui qui l'a mis dedans.
   de mort (survivants : rang suivant, partagé), x1,5 pour le gagnant s'il gagne avant la fin. Estimation : gagnant ~63 à
   4 joueurs, ~210 à 8 joueurs, ~128 / 30 min en moyenne ; à vérifier sur les vraies parties. Toutes les créatures des
   œufs créditées à l'utilisateur de l'œuf.
+- Affichage ajouté : tableau à droite (joueurs en vie en vert en haut, éliminés en rouge en dessous, classés par
+  points), message toutes les 30 s (+0,25), message à chaque élimination (par qui, comment, +7 points). Points du
+  tableau en cours de partie = ceux qu'aurait le joueur si la partie s'arrêtait maintenant (choix de Claude, signalé).
 - Leçon : présenter le barème étape par étape (temps, éliminations, rang, bonus), un exemple chiffré, sans tableaux de
   moyennes compliqués.
 

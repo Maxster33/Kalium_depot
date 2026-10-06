@@ -47,7 +47,11 @@ import java.util.UUID;
 public final class PiliersInstance extends GameInstance {
 
     /** Dernier coup recu d'un autre joueur. */
-    private record Hit(UUID attacker, long at, boolean water) {
+    private record Hit(UUID attacker, long at, boolean water, Component how) {
+    }
+
+    /** Poseur du feu ou de la lave qui brule le joueur, et lequel des deux. */
+    private record Burn(UUID owner, Component how) {
     }
 
     /** Poseur d'un bloc et heure de pose (l'eau ne compte que peu apres la pose de sa source). */
@@ -73,12 +77,17 @@ public final class PiliersInstance extends GameInstance {
     /** Poseur des explosifs devenus entites (TNT amorcee, cristal de l'End, wagonnet de TNT). */
     private final Map<UUID, UUID> entityOwners = new HashMap<>();
     /** Poseur du dernier feu ou de la derniere lave qui a brule le joueur. */
-    private final Map<UUID, UUID> burnBy = new HashMap<>();
+    private final Map<UUID, Burn> burnBy = new HashMap<>();
     /** Distributeurs et droppers : joueur qui y a mis chaque sorte d'objet. */
     private final Map<Long, Map<org.bukkit.Material, UUID>> loaded = new HashMap<>();
     /** Cases ou un distributeur vient d'envoyer un objet, et a qui il est. */
     private final Map<Long, Pending> pending = new HashMap<>();
     private Pending lastEgg;
+    /** Points definitifs, connus a la fin de la partie (tableau de droite). */
+    private final Map<UUID, Double> finalTotals = new HashMap<>();
+    /** Tableau a droite de l'ecran, et celui que chaque joueur avait avant. */
+    private org.bukkit.scoreboard.Scoreboard board;
+    private final Map<UUID, org.bukkit.scoreboard.Scoreboard> previousBoards = new HashMap<>();
     private int startCount;
     private int elapsed;
     private int itemTimer;
@@ -175,6 +184,8 @@ public final class PiliersInstance extends GameInstance {
         loaded.clear();
         pending.clear();
         lastEgg = null;
+        finalTotals.clear();
+        restoreAllBoards();
         startCount = 0;
         elapsed = 0;
         itemTimer = 0;
@@ -264,10 +275,12 @@ public final class PiliersInstance extends GameInstance {
                     itemTimer = Math.max(1, setting("item-interval-seconds", 5));
                     giveItems();
                 }
-                if (elapsed % Math.max(1, setting("time-interval-seconds", 30)) == 0) {
+                if (elapsed % Math.max(1, setting("time-interval-seconds", 30)) == 0 && !alive.isEmpty()) {
                     for (UUID uuid : alive) {
                         periods.merge(uuid, 1, Integer::sum);
                     }
+                    broadcast(t("pf.time-points", "<green>+<points> point pour chaque joueur encore en vie (<n>).",
+                            "points", StatsService.formatPoints(timePoints(1)), "n", alive.size()));
                 }
                 if (secondsLeft <= 0) {
                     finish(true);
@@ -281,6 +294,9 @@ public final class PiliersInstance extends GameInstance {
             }
             default -> {
             }
+        }
+        if (playing() || phase == Phase.ENDING) {
+            updateBoard();
         }
     }
 
@@ -311,7 +327,7 @@ public final class PiliersInstance extends GameInstance {
                 continue;
             }
             if (player.getLocation().getY() < voidY) {
-                eliminate(uuid, null);
+                eliminate(uuid, null, "est tombé dans le vide");
                 toSpectator(player);
             } else {
                 checkWater(player);
@@ -325,14 +341,15 @@ public final class PiliersInstance extends GameInstance {
      * Coup recu d'un autre joueur, directement ou par ce qu'il a pose (explosif, feu, lave, eau) : ecouteur de
      * KGPiliersFortune et chute dans l'eau (matchTick).
      */
-    void noteHit(Player victim, UUID attacker) {
-        noteHit(victim, attacker, false);
+    /** @param how comment, pour le message d'elimination (ex. « flèche », « TNT », « eau »). */
+    void noteHit(Player victim, UUID attacker, Component how) {
+        noteHit(victim, attacker, how, false);
     }
 
-    private void noteHit(Player victim, UUID attacker, boolean water) {
+    private void noteHit(Player victim, UUID attacker, Component how, boolean water) {
         if (attacker != null && phase == Phase.RUNNING && !victim.getUniqueId().equals(attacker)
                 && alive.contains(victim.getUniqueId()) && participants.contains(attacker)) {
-            lastHit.put(victim.getUniqueId(), new Hit(attacker, System.currentTimeMillis(), water));
+            lastHit.put(victim.getUniqueId(), new Hit(attacker, System.currentTimeMillis(), water, how));
         }
     }
 
@@ -443,17 +460,20 @@ public final class PiliersInstance extends GameInstance {
     }
 
     /** Brulure par un feu ou une lave : le poseur reste credite tant que le joueur brule (degats « en feu »). */
-    void noteBurn(Player victim, UUID owner) {
+    void noteBurn(Player victim, UUID owner, Component how) {
         if (owner == null) {
             burnBy.remove(victim.getUniqueId());
             return;
         }
-        burnBy.put(victim.getUniqueId(), owner);
-        noteHit(victim, owner);
+        burnBy.put(victim.getUniqueId(), new Burn(owner, how));
+        noteHit(victim, owner, how);
     }
 
     void noteFireTick(Player victim) {
-        noteHit(victim, burnBy.get(victim.getUniqueId()));
+        Burn burn = burnBy.get(victim.getUniqueId());
+        if (burn != null) {
+            noteHit(victim, burn.owner(), burn.how());
+        }
     }
 
     /**
@@ -483,38 +503,49 @@ public final class PiliersInstance extends GameInstance {
             if (current != null && !current.water() && now - current.at() <= hitWindow) {
                 return; // un coup plus recent que l'eau compte deja
             }
-            noteHit(player, source.owner(), true);
+            noteHit(player, source.owner(), Component.text("eau"), true);
             return;
         }
     }
 
-    /** Joueur credite de l'elimination : le tueur s'il y en a un, sinon le dernier joueur qui l'a frappe dans le delai. */
-    private UUID creditFor(UUID victim, Player killer) {
-        if (killer != null && !killer.getUniqueId().equals(victim) && participants.contains(killer.getUniqueId())) {
-            return killer.getUniqueId();
-        }
+    /**
+     * Joueur credite de l'elimination et comment : le tueur s'il y en a un, sinon le dernier joueur qui l'a touche dans le
+     * delai (null : personne).
+     */
+    private Hit creditFor(UUID victim, Player killer) {
         Hit hit = lastHit.get(victim);
         long window = Math.max(1, setting("kill-credit-seconds", 10)) * 1000L;
-        if (hit != null && System.currentTimeMillis() - hit.at() <= window) {
-            return hit.attacker();
+        boolean recent = hit != null && System.currentTimeMillis() - hit.at() <= window;
+        if (killer != null && !killer.getUniqueId().equals(victim) && participants.contains(killer.getUniqueId())) {
+            Component how = recent && hit.attacker().equals(killer.getUniqueId()) ? hit.how() : Component.text("coup");
+            return new Hit(killer.getUniqueId(), System.currentTimeMillis(), false, how);
         }
-        return null;
+        return recent ? hit : null;
     }
 
-    private void eliminate(UUID victim, Player killer) {
+    /**
+     * Elimine le joueur et l'annonce dans le tchat : par qui, comment, et les points gagnes (demande de Maxster33).
+     *
+     * @param mode ce qui est arrive : « est tombé dans le vide », « est mort », « a quitté la partie ».
+     */
+    private void eliminate(UUID victim, Player killer, String mode) {
         if (phase != Phase.RUNNING || !alive.remove(victim)) {
             return;
         }
         eliminated.add(victim);
-        UUID credited = creditFor(victim, killer);
+        Hit credited = creditFor(victim, killer);
         String name = names.getOrDefault(victim, "?");
         if (credited != null) {
-            kills.merge(credited, 1, Integer::sum);
-            broadcast(t("pf.eliminated-by", "<gray><victim> <red>a été éliminé par <white><killer></white>. <gray>(<n> en vie)",
-                    "victim", name, "killer", names.getOrDefault(credited, "?"), "n", alive.size()));
+            kills.merge(credited.attacker(), 1, Integer::sum);
+            broadcast(t("pf.eliminated-by",
+                    "<red><victim> <mode></red> <gray>: éliminé par <white><killer></white> (<how>). <green><killer> gagne +<points> points.</green> <gray>(<n> en vie)",
+                    "victim", name, "mode", mode, "killer", names.getOrDefault(credited.attacker(), "?"),
+                    "how", credited.how(), "points", setting("points-kill", 7), "n", alive.size()));
         } else {
-            broadcast(t("pf.eliminated", "<gray><victim> <red>est éliminé. <gray>(<n> en vie)", "victim", name, "n", alive.size()));
+            broadcast(t("pf.eliminated", "<red><victim> <mode>.</red> <gray>(<n> en vie)",
+                    "victim", name, "mode", mode, "n", alive.size()));
         }
+        updateBoard();
         if (alive.size() <= 1) {
             finish();
         }
@@ -529,7 +560,7 @@ public final class PiliersInstance extends GameInstance {
 
     @Override
     public void handleDeath(Player victim, Player killer) {
-        eliminate(victim.getUniqueId(), killer);
+        eliminate(victim.getUniqueId(), killer, "est mort");
     }
 
     /** Apres une mort : mode spectateur si la partie continue, sinon zone d'attente. */
@@ -559,6 +590,7 @@ public final class PiliersInstance extends GameInstance {
     @Override
     protected void onMemberLeft(UUID uuid, boolean wasParticipant, boolean disconnected) {
         greeted.remove(uuid);
+        restoreBoard(uuid);
         if (!alive.contains(uuid)) {
             return;
         }
@@ -570,7 +602,113 @@ public final class PiliersInstance extends GameInstance {
             }
             return;
         }
-        eliminate(uuid, null);
+        eliminate(uuid, null, "a quitté la partie");
+    }
+
+    // ------------------------------------------------------------------ tableau a droite de l'ecran
+
+    /** Points de temps pour ce nombre de tranches de 30 s (0,25 chacune). */
+    private double timePoints(int count) {
+        return count * setting("points-time-hundredths", 25) / 100.0;
+    }
+
+    /** Points avant multiplicateur : temps + eliminations. */
+    private double basePoints(UUID uuid) {
+        return timePoints(periods.getOrDefault(uuid, 0)) + kills.getOrDefault(uuid, 0) * setting("points-kill", 7);
+    }
+
+    /** Rang de mort : place d'elimination, ou rang suivant le dernier elimine pour les joueurs en vie. */
+    private int deathRank(UUID uuid) {
+        int index = eliminated.indexOf(uuid);
+        return index >= 0 ? index + 1 : eliminated.size() + 1;
+    }
+
+    /**
+     * Points affiches : pendant la partie, ceux que le joueur aurait si elle s'arretait maintenant (base x rang de mort,
+     * sans le bonus du gagnant) ; a la fin, les points definitifs.
+     */
+    private double shownPoints(UUID uuid) {
+        Double done = finalTotals.get(uuid);
+        return done != null ? done : basePoints(uuid) * deathRank(uuid);
+    }
+
+    /**
+     * Tableau a droite de l'ecran (demande de Maxster33, 06/10/2026) : en haut, en vert, les joueurs en vie ; en dessous,
+     * en rouge, les elimines ; chaque groupe classe par points, avec le classement de la partie. Un seul tableau pour la
+     * partie, montre a tous ses membres (spectateurs compris) ; celui qu'ils avaient avant leur est rendu a la fin.
+     */
+    private void updateBoard() {
+        if (startCount == 0) {
+            return;
+        }
+        java.util.Comparator<UUID> byPoints = (a, b) -> Double.compare(shownPoints(b), shownPoints(a));
+        List<UUID> living = new ArrayList<>(alive);
+        living.sort(byPoints);
+        List<UUID> out = new ArrayList<>(eliminated);
+        Collections.reverse(out); // a points egaux, le dernier elimine devant
+        out.sort(byPoints);
+        List<Component> lines = new ArrayList<>();
+        int rank = 1;
+        for (UUID uuid : living) {
+            lines.add(boardLine(rank++, uuid, net.kyori.adventure.text.format.NamedTextColor.GREEN));
+        }
+        if (!living.isEmpty() && !out.isEmpty()) {
+            lines.add(Component.empty());
+        }
+        for (UUID uuid : out) {
+            lines.add(boardLine(rank++, uuid, net.kyori.adventure.text.format.NamedTextColor.RED));
+        }
+        if (board == null) {
+            board = Bukkit.getScoreboardManager().getNewScoreboard();
+        }
+        org.bukkit.scoreboard.Objective old = board.getObjective("kgpiliers");
+        if (old != null) {
+            old.unregister();
+        }
+        org.bukkit.scoreboard.Objective objective = board.registerNewObjective("kgpiliers",
+                org.bukkit.scoreboard.Criteria.DUMMY, t("pf.board-title", "<gold><bold>Piliers de la Fortune"));
+        objective.setDisplaySlot(org.bukkit.scoreboard.DisplaySlot.SIDEBAR);
+        objective.numberFormat(io.papermc.paper.scoreboard.numbers.NumberFormat.blank());
+        int score = 15;
+        int index = 0;
+        for (Component line : lines) {
+            if (score <= 0) {
+                break;
+            }
+            org.bukkit.scoreboard.Score entry = objective.getScore("l" + index++);
+            entry.customName(line);
+            entry.setScore(score--);
+        }
+        for (UUID uuid : members) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null && player.getWorld() == world && player.getScoreboard() != board) {
+                previousBoards.putIfAbsent(uuid, player.getScoreboard());
+                player.setScoreboard(board);
+            }
+        }
+    }
+
+    private Component boardLine(int rank, UUID uuid, net.kyori.adventure.text.format.NamedTextColor color) {
+        return Component.text(rank + ". " + names.getOrDefault(uuid, "?"), color)
+                .append(Component.text(" " + StatsService.formatPoints(shownPoints(uuid)),
+                        net.kyori.adventure.text.format.NamedTextColor.WHITE));
+    }
+
+    /** Rend a un joueur le tableau qu'il avait avant la partie. */
+    private void restoreBoard(UUID uuid) {
+        org.bukkit.scoreboard.Scoreboard previous = previousBoards.remove(uuid);
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null && board != null && player.getScoreboard() == board) {
+            player.setScoreboard(previous != null ? previous : Bukkit.getScoreboardManager().getMainScoreboard());
+        }
+    }
+
+    private void restoreAllBoards() {
+        for (UUID uuid : new ArrayList<>(previousBoards.keySet())) {
+            restoreBoard(uuid);
+        }
+        previousBoards.clear();
+        board = null;
     }
 
     // ------------------------------------------------------------------ fin et points
@@ -629,6 +767,8 @@ public final class PiliersInstance extends GameInstance {
             base.put(uuid, points);
             total.put(uuid, points * multiplier.get(uuid) * (bonus && uuid.equals(winner) ? winnerBonus : 1));
         }
+        finalTotals.putAll(total);
+        updateBoard();
         List<UUID> order = new ArrayList<>(multiplier.keySet());
         // Classement : points finaux, puis le dernier elimine (ou le survivant) devant.
         Collections.reverse(order);

@@ -6,7 +6,9 @@ import fr.kalium.games.model.Arena;
 import fr.kalium.games.model.Minigame;
 import fr.kalium.games.model.MinigameType;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.Material;
 import org.bukkit.block.data.Directional;
 import org.bukkit.event.Event;
@@ -257,7 +259,7 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
         Block block = event.getBlock();
         for (Player player : game.alivePlayers()) {
             if (!player.equals(breaker) && standsOn(player, block)) {
-                game.noteHit(player, breaker.getUniqueId());
+                game.noteHit(player, breaker.getUniqueId(), Component.text("bloc cassé sous ses pieds"));
             }
         }
     }
@@ -404,15 +406,22 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
         Entity damager = event.getDamager();
         Player attacker = attackerOf(damager);
         if (attacker != null) {
-            game.noteHit(victim, attacker.getUniqueId());
+            // « coup » au corps a corps ; sinon le nom du projectile (« Flèche », « Boule de neige »...).
+            game.noteHit(victim, attacker.getUniqueId(), damager instanceof Player ? Component.text("coup") : damager.name());
         } else {
             // Explosif pose, creature sortie d'un oeuf (toutes, demande de Maxster33), projectile ou potion envoyes par
-            // un distributeur : le joueur a qui l'entite est rattachee.
+            // un distributeur : le joueur a qui l'entite est rattachee. Nom traduit de l'entite (« TNT », « Creeper »...).
             UUID owner = explosiveOwner(game, damager);
-            if (owner == null && damager instanceof Projectile projectile && projectile.getShooter() instanceof Entity shooter) {
-                owner = game.entityOwner(shooter); // fleche d'un squelette sorti d'un oeuf...
+            Component how = damager.name();
+            if (damager instanceof Projectile projectile) {
+                if (owner == null && projectile.getShooter() instanceof Entity shooter) {
+                    owner = game.entityOwner(shooter); // fleche d'un squelette sorti d'un oeuf...
+                    how = shooter.name().append(Component.text(" : ")).append(damager.name());
+                } else if (projectile.getShooter() instanceof BlockProjectileSource) {
+                    how = damager.name().append(Component.text(" (distributeur)"));
+                }
             }
-            game.noteHit(victim, owner);
+            game.noteHit(victim, owner, how);
         }
     }
 
@@ -431,8 +440,9 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
             block = event.getDamagerBlockState().getBlock();
         }
         switch (event.getCause()) {
-            case BLOCK_EXPLOSION -> game.noteHit(victim, game.owner(block));
-            case FIRE, LAVA, CAMPFIRE -> game.noteBurn(victim, game.owner(block));
+            case BLOCK_EXPLOSION -> game.noteHit(victim, game.owner(block), Component.text("explosion"));
+            case FIRE, CAMPFIRE -> game.noteBurn(victim, game.owner(block), Component.text("feu"));
+            case LAVA -> game.noteBurn(victim, game.owner(block), Component.text("lave"));
             default -> {
             }
         }

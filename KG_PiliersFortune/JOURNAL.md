@@ -64,6 +64,19 @@ de mort : **le rang qui suit le dernier éliminé, partagé** (choix de Maxster3
   vide, effets retirés, **mode survie**. Immobile (il peut tourner la tête) pendant le décompte de 5 s
   (`countdown-seconds`), chiffre au milieu de l'écran, puis « C'est parti ! ».
 - **Barre du bas** (chaque seconde) : « Temps restant : 9:41 | Joueurs en vie : 4/8 » (« /8 » = joueurs au départ).
+- **Tableau à droite de l'écran** (demande de Maxster33, actualisé chaque seconde et à chaque élimination) : en haut, en
+  **vert**, les joueurs en vie ; en dessous, en **rouge**, les éliminés ; chaque groupe classé par points, avec le
+  classement de la partie (« 1. Pseudo 12,5 »). Points affichés : pendant la partie, ceux que le joueur aurait si elle
+  s'arrêtait maintenant (base x rang de mort, sans le bonus du gagnant ; les joueurs en vie ont le rang qui suit le
+  dernier éliminé, leurs points montent donc à chaque élimination) ; à la fin, les points définitifs. Montré à tous les
+  membres de la partie (spectateurs compris) ; le tableau d'avant leur est rendu à la fin ou à leur départ.
+- **Tchat** : toutes les 30 s, « +0,25 point pour chaque joueur encore en vie (n) » ; à chaque élimination, qui, comment
+  et les points : « Pseudo est tombé dans le vide : éliminé par Autre (Flèche). Autre gagne +7 points. (5 en vie) ».
+  Comment : « coup », nom du projectile ou de l'entité traduit par le jeu (Flèche, TNT amorcée, Cristal de l'End,
+  Creeper, Zombie...), « Squelette : Flèche » pour une créature d'un œuf, « (distributeur) », « explosion », « feu »,
+  « lave », « eau », « bloc cassé sous ses pieds ». Ce qui est arrivé : « est tombé dans le vide », « est mort », « a
+  quitté la partie ». Sans joueur crédité : « Pseudo est tombé dans le vide. (5 en vie) ». Les +7 sont avant le
+  multiplicateur de rang.
 - **Objets** : toutes les 5 s (`item-interval-seconds`), premier objet 5 s après le départ, un objet tiré au hasard
   **pour chaque joueur** (un exemplaire) ; inventaire plein : l'objet tombe à ses pieds. Voir « Objets » plus bas.
 - **Élimination** : sous la couche -64 (`void-y`), à la mort (coups, créatures, lave...), ou au départ du joueur
@@ -167,6 +180,8 @@ Potions (normales, jetables, persistantes) et flèches à effet : effet tiré au
   (chute après être passé dedans), brûlure qui continue après la sortie du feu.
 - Feu : il se propage, brûle les blocs, s'éteint ; tout est remis en état. Pistons qui poussent et tirent.
 - Bloc, eau et lave contre une barrière refusés (Java et Bedrock).
+- Tableau de droite (couleurs, ordre, points qui montent à chaque élimination, points définitifs à la fin, tableau
+  rendu après la partie), y compris sur Bedrock ; messages du tchat (30 s, éliminations, noms traduits).
 - Bloc cassé sous les pieds, créatures d'un œuf (creeper, squelette...), flèche / TNT / eau d'un distributeur rempli par un joueur ; eau posée
   il y a plus de 10 s (pas de crédit) ; flèche reçue dans l'eau d'un autre (crédit à l'archer).
 - Rythme des points : relever la durée réelle des parties et les éliminations créditées dans le journal des parties
