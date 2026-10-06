@@ -16,7 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KG_HideAndSeek — LeKiwi06 — depuis le 2026-10-06 04:49 — nouveau mini-jeu Hide and Seek (kal-games), branché sur le moteur de parties de KalGames
 
 
 

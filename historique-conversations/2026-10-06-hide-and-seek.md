@@ -1,7 +1,7 @@
 # 2026-10-06 — Hide and Seek (nouveau mini-jeu)
 
 - Plugin(s) concerné(s) : KG_HideAndSeek (nouveau)
-- Versions avant / après : aucune / 0.1.0 (compilé, non déployé)
+- Versions avant / après : aucune / 0.1.0 (déployé sur Kal-Games le 06/10/2026 à 5 h 04, non testé)
 
 ## Demandé
 
@@ -21,10 +21,11 @@ Précisions données pendant la seconde session :
 
 ## Fait
 
-- Cahier des charges validé (gardé hors dépôt, à publier au déploiement).
+- Cahier des charges validé, publié au déploiement : `KG_HideAndSeek/CAHIER_DES_CHARGES.md`.
 - KG_HideAndSeek 0.1.0 écrit et compilé (`sh KG_HideAndSeek/build.sh`) : type `HIDE_AND_SEEK` enregistré auprès de
   KalGames, sans aucun changement dans KalGames. Détail : `KG_HideAndSeek/JOURNAL.md`.
-- Réservation de KG_HideAndSeek dans `TRAVAIL_EN_COURS.md`, gardée jusqu'au déploiement.
+- Déployé sur Kal-Games à la demande de LeKiwi06 (jar envoyé par WinSCP, copie dans `jars-deployes/`) ; actif au
+  prochain redémarrage du serveur. Réservation libérée.
 
 ## Décisions
 
@@ -42,7 +43,7 @@ Précisions données pendant la seconde session :
 
 ## Reste à faire
 
-- Déployer sur Kal-Games (jar dans `sortie/`), puis publier le cahier des charges dans le dossier du plugin.
+- Redémarrer Kal-Games (humain).
 - En jeu : créer le mini-jeu et l'arène de la map déjà construite, poser les 4 points, régler les blocs de la map.
 - Tester, en Java et en Bedrock (liste dans `KG_HideAndSeek/JOURNAL.md`), puis mesurer le rythme des points.
 - À confirmer par LeKiwi06 : le dernier seeker qui se déconnecte termine la partie ; s'il ne reste que des hiders

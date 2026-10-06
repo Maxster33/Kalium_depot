@@ -6,7 +6,8 @@ KalGames : le jeu n'utilise que les crochets existants du moteur de parties.
 
 ## 0.1.0 — première version (06/10/2026)
 
-**Statut : compilé, non déployé, non testé en jeu.**
+**Statut : déployé sur Kal-Games le 06/10/2026 à 5 h 04 (LeKiwi06), actif après redémarrage, non testé en jeu.**
+Nouveau plugin : aucun ancien jar à ranger. Cahier des charges : `CAHIER_DES_CHARGES.md`.
 
 **Demande de LeKiwi06 (06/10/2026)** : « j'aimerais créer un mini-jeu de hide and seek ; les hiders doivent se cacher,
 les seekers doivent trouver les hiders ; les hiders sont des blocs présents dans le décor de la map ; les hiders peuvent
@@ -14,7 +15,7 @@ faire du soundboard avec des sons de Minecraft ; un hider qui reste statique dev
 toutes les 30 secondes automatiquement ; un hider se fait one shot par un seeker s'il lui tape dessus ; un seeker n'a que
 5 cœurs, et perd un demi-cœur chaque fois qu'il se trompe ; quand il tue un hider, il récupère toute sa vie, il peut
 stocker jusqu'à 3 cœurs d'absorption s'il était à 3 cœurs ou plus au moment de tuer un hider ». Le reste a été réglé
-par questions et réponses le même jour (cahier des charges gardé hors dépôt, publié ici au déploiement).
+par questions et réponses le même jour (`CAHIER_DES_CHARGES.md`).
 
 ### Règles codées
 
