@@ -92,4 +92,4 @@ KalGames 1.23.0).
   arène à 4 départs : « Joueurs : 2 à 16 ».
 - **Exige KalGames 1.23.0 : à déployer ensemble.**
 
-**Statut : compilé, non déployé, non testé en jeu.**
+**Déployé sur Kal-Games le 06/10/2026 à 13:55 (Maxster33 ; 1.0.1 dans `_removed-kg_pvpkit-1.0.1/`), actif après redémarrage. Statut : non testé en jeu.**

@@ -45,4 +45,4 @@ Demande de LeKiwi06 : afficher sur chaque bouton de jeu combien de joueurs y son
   lancer) à `equipes-max` x 4 (8 équipes de 4 par défaut). Texte : `menu.bouton-joueurs`.
 - Indépendant de KalGames 1.23.0 et de KV_BuildBattle.
 
-**Statut : compilé, non déployé, non testé en jeu.**
+**Déployé sur Kal-Games le 06/10/2026 à 13:55 (Maxster33 ; 0.2.0 dans `_removed-kg_buildbattle-0.2.0/`), actif après redémarrage. Statut : non testé en jeu.**

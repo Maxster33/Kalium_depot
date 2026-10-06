@@ -178,4 +178,4 @@ envoyé pour ce mode.
   par défaut). Texte : `bingo.hub-entry-players`.
 - Indépendant de KG_BingoGame et de KalGames 1.23.0.
 
-**Statut : compilé, non déployé, non testé en jeu.**
+**Déployé sur Kal-Games le 06/10/2026 à 13:55 (Maxster33 ; 1.7.3 dans `_removed-kg_bingo-1.7.3/`), actif après redémarrage. Statut : non testé en jeu.**

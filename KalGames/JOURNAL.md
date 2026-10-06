@@ -894,4 +894,4 @@ pour réserver KalGames, KG_PvpKit, KG_Bingo et KG_BuildBattle en même temps (a
 Limite : pour la Course de bateau et le Parcours, le minimum affiché est le réglage « Joueurs minimum » (parties
 publiques).
 
-**Statut : compilé, non déployé, non testé en jeu.**
+**Déployé sur Kal-Games le 06/10/2026 à 13:55 (Maxster33 ; 1.22.2 dans `_removed-kalgames-1.22.2/`), actif après redémarrage. Statut : non testé en jeu.**
