@@ -1,0 +1,7 @@
+name: KG_PiliersFortune
+version: '${project.version}'
+main: fr.kalium.piliers.KGPiliersFortune
+api-version: '26.2'
+description: Les piliers de la Fortune de Kal-Games (objets aleatoires sur des piliers, chute = elimination), branche sur le moteur de parties de KalGames.
+authors: [KaLium]
+depend: [KalGames, KG_ScoreBoards]

@@ -92,6 +92,12 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KG_PiliersFortune 0.1.0** (06/10/2026, Maxster33) : nouveau mini-jeu « Les piliers de la Fortune » pour Kal-Games
+  (4 à 8 joueurs sur des piliers, un objet au hasard toutes les 5 s, chute sous -64 = élimination, 10 min au plus,
+  barème avec multiplicateur par rang d'élimination), branché sur le moteur de KalGames (aucun changement dans KalGames,
+  KG_Menu ni KG_ScoreBoards : bouton du menu et classements créés tout seuls) ; 8 arènes pré-générées. **Compilé, non
+  déployé, non testé en jeu**, réservation gardée. Après le déploiement, un modérateur crée l'arène sur la map déjà
+  construite sur Kal-Games, la capture et pose la zone d'attente et un point par pilier (voir `KG_PiliersFortune/JOURNAL.md`).
 - **KG_Pong 0.1.0** (06/10/2026, LeKiwi06) : prototype d'un nouveau mini-jeu Pong pour Kal-Games (2 joueurs, vu de dessus, raquettes en vrais blocs, balle = Sulfur Cube à bloc de glace), branché sur le moteur de parties de KalGames (aucun changement dans KalGames) ; **compilé, non déployé, non testé en jeu**, réservation gardée. Après le déploiement, un modérateur doit construire un terrain plat entouré de murs, créer l'arène et poser 5 points (voir `KG_Pong/JOURNAL.md`).
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
