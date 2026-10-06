@@ -15,7 +15,11 @@ scores inchangés). Plugin, intégration au menu Kal-Games et classements. Texte
 
 Ensuite (avant tout déploiement) : retirer les livres enchantés ; explosion (TNT, cristal de l'End) créditée au poseur
 de l'explosif ; mort par feu ou lave, chute à cause d'une source d'eau créditée au poseur de la source ; débloquer le
-feu et les pistons ; diviser les points par 3 ; interdire de poser un bloc contre une barrière.
+feu et les pistons ; diviser les points par 3 ; interdire de poser un bloc contre une barrière. Puis : eau créditée
+seulement 10 s après la pose de la source, et un vrai coup reçu ensuite l'emporte ; pas de division par 3 à la fin mais
+des points de base recalés (~135 / 30 min, gagnant ~55 à 4 joueurs, ~70 à 8) ; ni eau ni lave contre une barrière ;
+creeper crédité à l'utilisateur de l'œuf ; bloc cassé sous les pieds crédité au casseur ; objet d'un distributeur ou
+d'un dropper crédité à celui qui l'a mis dedans.
 
 ## Fait
 - Réservation de KG_PiliersFortune, puis plugin écrit et compilé (`KG_PiliersFortune-0.1.0.jar`).
@@ -32,6 +36,9 @@ feu et les pistons ; diviser les points par 3 ; interdire de poser un bloc contr
   des joueurs classés en dessous » ; la map existe déjà sur Kal-Games.
 - Choix techniques signalés dans le journal : œufs du Wither et de l'Ender Dragon exclus, créatures frappables, mort et
   départ = élimination, chute créditée au dernier joueur qui a frappé dans les 10 s.
+
+- Points recalés sur des hypothèses (partie de ~7 min, 70 % d'éliminations créditées) : 2 par minute au lieu de 1,
+  5 par élimination inchangé ; calcul dans le journal du plugin, à vérifier sur les vraies parties.
 
 ## Reste à faire
 - Déployer sur Kal-Games (sur demande de Maxster33), redémarrer, créer l'arène, la capturer, poser la zone d'attente et

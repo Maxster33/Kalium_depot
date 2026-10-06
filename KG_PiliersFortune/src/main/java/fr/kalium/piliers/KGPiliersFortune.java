@@ -6,7 +6,23 @@ import fr.kalium.games.model.Arena;
 import fr.kalium.games.model.Minigame;
 import fr.kalium.games.model.MinigameType;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.Directional;
+import org.bukkit.entity.Creeper;
+import org.bukkit.event.Event;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -38,6 +54,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -69,6 +86,8 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
 
     private KalGames games;
     private final RandomItems items = new RandomItems();
+    /** Contenu d'un distributeur ou d'un dropper a son ouverture, par joueur. */
+    private final Map<UUID, Map<Material, Integer>> opened = new HashMap<>();
 
     public static KGPiliersFortune get() {
         return instance;
@@ -93,11 +112,11 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
                         integer("countdown-seconds", "Décompte de départ (s)", 5, 1, 30, "Les joueurs restent immobiles sur leur pilier pendant ce temps."),
                         integer("item-interval-seconds", "Objet aléatoire toutes les (s)", 5, 1, 60, "Chaque joueur en vie reçoit un objet tiré au hasard ; inventaire plein : l'objet tombe au sol."),
                         integer("void-y", "Couche d'élimination", -64, -128, 320, "Un joueur qui tombe en dessous de cette hauteur est éliminé."),
+                        integer("water-credit-seconds", "Eau créditée pendant (s)", 10, 0, 60, "L'eau posée par un joueur ne lui fait créditer une chute que pendant ce délai après la pose de la source."),
                         integer("kill-credit-seconds", "Chute créditée pendant (s)", 10, 1, 60, "Un joueur éliminé est compté au dernier joueur qui l'a frappé (ou dont l'explosif, le feu, la lave ou l'eau l'a touché) dans ce délai."),
-                        integer("points-minute", "Points par minute en vie", 1, 0, 50, "À chaque minute complète passée en vie."),
+                        integer("points-minute", "Points par minute en vie", 2, 0, 50, "À chaque minute complète passée en vie."),
                         integer("points-kill", "Points par joueur éliminé", 5, 0, 50, "Tué ou tombé à cause d'un autre joueur."),
                         integer("winner-multiplier", "Multiplicateur du gagnant", 3, 1, 10, "Seul joueur en vie à la fin. Les éliminés : x1 pour le premier, x2 pour le deuxième..."),
-                        integer("points-divisor", "Diviseur des points", 3, 1, 10, "Le score final (après multiplicateur) est divisé par ce nombre avant d'être crédité."),
                         integer("public-gather-seconds", "Attente avant lancement (s)", 20, 3, 180, "Partie publique : délai dès que le minimum de joueurs est atteint."),
                         integer("end-delay-seconds", "Délai après la fin (s)", 8, 1, 30, "Avant le retour au hub."),
                         integer("prewarm-arenas", "Arènes préchargées", 8, 0, 10, "Copies de chaque arène, collées dès le démarrage du serveur et gardées de côté : aucune arène à charger au lancement d'une partie (0 = aucune)."),
@@ -166,6 +185,15 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
         }
     }
 
+    /** Pas de source d'eau ni de lave versee contre une barriere (demande de Maxster33, 06/10/2026). */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onBucketAgainstBarrier(PlayerBucketEmptyEvent event) {
+        if (event.getBlockClicked().getType() == Material.BARRIER && event.getBucket() != Material.POWDER_SNOW_BUCKET
+                && gameOf(event.getPlayer()) != null) {
+            event.setCancelled(true);
+        }
+    }
+
     // ------------------------------------------------------------------ poseurs
 
     /** Poseur de chaque bloc (TNT, lit, ancre de reapparition...). */
@@ -206,7 +234,7 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
     public void onFlow(BlockFromToEvent event) {
         PiliersInstance game = runningAt(event.getToBlock());
         if (game != null) {
-            game.owner(event.getToBlock(), game.owner(event.getBlock()));
+            game.copyOwner(event.getBlock(), event.getToBlock());
         }
     }
 
@@ -218,6 +246,140 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
         if (game != null && game.running()) {
             game.entityOwner(event.getEntity(), player.getUniqueId());
         }
+    }
+
+    /** Bloc casse sous les pieds d'un joueur : la chute est creditee a celui qui l'a casse (demande de Maxster33). */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBreakUnderFeet(BlockBreakEvent event) {
+        Player breaker = event.getPlayer();
+        PiliersInstance game = gameOf(breaker);
+        if (game == null || !game.running()) {
+            return;
+        }
+        Block block = event.getBlock();
+        for (Player player : game.alivePlayers()) {
+            if (!player.equals(breaker) && standsOn(player, block)) {
+                game.noteHit(player, breaker.getUniqueId());
+            }
+        }
+    }
+
+    /** Le joueur se tient sur ce bloc (n'importe quelle case sous ses pieds, il peut etre a cheval sur plusieurs). */
+    private static boolean standsOn(Player player, Block block) {
+        if (player.getWorld() != block.getWorld()) {
+            return false;
+        }
+        BoundingBox box = player.getBoundingBox();
+        return block.getY() == (int) Math.floor(box.getMinY() - 0.05)
+                && block.getX() >= (int) Math.floor(box.getMinX()) && block.getX() <= (int) Math.floor(box.getMaxX() - 1.0E-6)
+                && block.getZ() >= (int) Math.floor(box.getMinZ()) && block.getZ() <= (int) Math.floor(box.getMaxZ() - 1.0E-6);
+    }
+
+    /** Oeuf d'apparition utilise par un joueur en vie : la creature qui apparait est a lui (creeper). */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEggUse(PlayerInteractEvent event) {
+        ItemStack item = event.getItem();
+        if (item == null || !item.getType().name().endsWith("_SPAWN_EGG") || event.useItemInHand() == Event.Result.DENY) {
+            return;
+        }
+        PiliersInstance game = gameOf(event.getPlayer());
+        if (game != null && game.running() && game.isAlive(event.getPlayer())) {
+            game.noteEgg(event.getPlayer());
+        }
+    }
+
+    // Distributeurs et droppers : l'objet envoye revient a celui qui l'a mis dedans (demande de Maxster33).
+
+    private static boolean isLauncher(Inventory inventory) {
+        return inventory.getType() == InventoryType.DISPENSER || inventory.getType() == InventoryType.DROPPER;
+    }
+
+    private static Map<Material, Integer> count(Inventory inventory) {
+        Map<Material, Integer> counts = new HashMap<>();
+        for (ItemStack item : inventory.getContents()) {
+            if (item != null && !item.getType().isAir()) {
+                counts.merge(item.getType(), item.getAmount(), Integer::sum);
+            }
+        }
+        return counts;
+    }
+
+    /** Contenu du distributeur a l'ouverture, compare a la fermeture : ce que le joueur y a ajoute est a lui. */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onLauncherOpen(InventoryOpenEvent event) {
+        if (event.getPlayer() instanceof Player player && isLauncher(event.getInventory()) && gameOf(player) != null) {
+            opened.put(player.getUniqueId(), count(event.getInventory()));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onLauncherClose(InventoryCloseEvent event) {
+        if (!(event.getPlayer() instanceof Player player)) {
+            return;
+        }
+        Map<Material, Integer> before = opened.remove(player.getUniqueId());
+        Location location = event.getInventory().getLocation();
+        PiliersInstance game = gameOf(player);
+        if (before == null || location == null || game == null || !game.running() || !isLauncher(event.getInventory())) {
+            return;
+        }
+        for (Map.Entry<Material, Integer> entry : count(event.getInventory()).entrySet()) {
+            if (entry.getValue() > before.getOrDefault(entry.getKey(), 0)) {
+                game.noteLoaded(location.getBlock(), entry.getKey(), player.getUniqueId());
+            }
+        }
+    }
+
+    /** Un dropper (ou un entonnoir) qui remplit un distributeur transmet le joueur de l'objet. */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onLauncherFeed(InventoryMoveItemEvent event) {
+        Location from = event.getSource().getLocation();
+        Location to = event.getDestination().getLocation();
+        if (from == null || to == null || !isLauncher(event.getDestination())) {
+            return;
+        }
+        PiliersInstance game = runningAt(to.getBlock());
+        if (game != null) {
+            game.noteLoaded(to.getBlock(), event.getItem().getType(), game.loader(from.getBlock(), event.getItem().getType()));
+        }
+    }
+
+    /** Envoi : l'entite qui apparait devant (fleche, TNT, boule de feu...), la lave ou l'eau versee sont au joueur. */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onDispense(BlockDispenseEvent event) {
+        Block block = event.getBlock();
+        PiliersInstance game = runningAt(block);
+        if (game == null || !(block.getBlockData() instanceof Directional directional)) {
+            return;
+        }
+        UUID owner = game.loader(block, event.getItem().getType());
+        if (owner == null) {
+            return;
+        }
+        Block front = block.getRelative(directional.getFacing());
+        game.notePending(front, owner);
+        game.notePending(block, owner);
+        Material type = event.getItem().getType();
+        if (type == Material.WATER_BUCKET || type == Material.LAVA_BUCKET || type.name().endsWith("_BUCKET")
+                && type != Material.BUCKET && type != Material.MILK_BUCKET && type != Material.POWDER_SNOW_BUCKET) {
+            game.owner(front, owner);
+        }
+    }
+
+    /** Entite apparue : envoyee par un distributeur, ou creature d'un oeuf d'apparition. */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntitySpawn(EntitySpawnEvent event) {
+        Entity entity = event.getEntity();
+        PiliersInstance game = runningAt(entity.getLocation().getBlock());
+        if (game == null) {
+            return;
+        }
+        UUID owner = game.pending(entity.getLocation().getBlock());
+        if (owner == null && event instanceof CreatureSpawnEvent spawn
+                && spawn.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) {
+            owner = game.eggUser(entity.getLocation());
+        }
+        game.entityOwner(entity, owner);
     }
 
     /** Poseur d'un explosif devenu entite : TNT amorcee (poseur du bloc de TNT), cristal, wagonnet de TNT. */
@@ -245,7 +407,10 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
         Player attacker = attackerOf(damager);
         if (attacker != null) {
             game.noteHit(victim, attacker.getUniqueId());
-        } else if (damager instanceof TNTPrimed || damager instanceof EnderCrystal || damager instanceof ExplosiveMinecart) {
+        } else if (damager instanceof TNTPrimed || damager instanceof EnderCrystal || damager instanceof ExplosiveMinecart
+                || damager instanceof Creeper || damager instanceof Projectile) {
+            // Explosif pose, creeper d'un oeuf, projectile ou potion envoyes par un distributeur. Les autres creatures
+            // des oeufs ne sont creditees a personne (demande limitee au creeper).
             game.noteHit(victim, explosiveOwner(game, damager));
         }
     }
@@ -311,10 +476,16 @@ public final class KGPiliersFortune extends JavaPlugin implements Listener {
         event.setCancelled(false);
         game.track(event.getBlock());
         UUID owner = null;
+        Entity igniter = event.getIgnitingEntity();
+        Block source = event.getIgnitingBlock();
         if (event.getPlayer() != null) {
             owner = event.getPlayer().getUniqueId();
-        } else if (event.getIgnitingEntity() != null && attackerOf(event.getIgnitingEntity()) != null) {
-            owner = attackerOf(event.getIgnitingEntity()).getUniqueId();
+        } else if (igniter != null && attackerOf(igniter) != null) {
+            owner = attackerOf(igniter).getUniqueId();
+        } else if (igniter != null && game.entityOwner(igniter) != null) {
+            owner = game.entityOwner(igniter); // boule de feu envoyee par un distributeur
+        } else if (source != null && (source.getType() == Material.DISPENSER || game.pending(event.getBlock()) != null)) {
+            owner = game.pending(event.getBlock()); // briquet dans un distributeur
         } else if (event.getIgnitingBlock() != null) {
             owner = game.owner(event.getIgnitingBlock());
         }

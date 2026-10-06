@@ -35,10 +35,10 @@ import java.util.UUID;
  *       tous) ; inventaire plein : l'objet tombe a ses pieds. Barre du bas : temps restant et « Joueurs en vie : a/n ».</li>
  *   <li>Elimination : chute sous la couche -64, mort, ou depart (deconnexion, /hub). L'elimine passe en mode spectateur
  *       jusqu'a la fin. Fin : un seul joueur en vie (il gagne), plus personne, ou temps ecoule (egalite des survivants).</li>
- *   <li>Points : +1 par minute complete en vie, +5 par joueur elimine par soi : tue, ou elimine dans les 10 s apres un
+ *   <li>Points : +2 par minute complete en vie, +5 par joueur elimine par soi : tue, ou elimine dans les 10 s apres un
  *       coup, une explosion d'un explosif qu'on a pose, une brulure par un feu ou une lave qu'on a pose, ou un passage
  *       dans l'eau qu'on a posee. En fin de partie : x1 pour le premier elimine, x2 pour le deuxieme... ; gagnant
- *       seul : x3 ; survivants a egalite : x1 ; puis le tout divise par 3. Pas de regle commune « moyenne des joueurs
+ *       seul : x3 ; survivants a egalite : x1. Pas de regle commune « moyenne des joueurs
  *       classes en dessous » (decision de Maxster33).</li>
  * </ul>
  * Les blocs poses ou casses et les objets au sol sont remis en etat par le moteur de KalGames a la fin de la partie.
@@ -46,7 +46,15 @@ import java.util.UUID;
 public final class PiliersInstance extends GameInstance {
 
     /** Dernier coup recu d'un autre joueur. */
-    private record Hit(UUID attacker, long at) {
+    private record Hit(UUID attacker, long at, boolean water) {
+    }
+
+    /** Poseur d'un bloc et heure de pose (l'eau ne compte que peu apres la pose de sa source). */
+    private record Source(UUID owner, long placedAt) {
+    }
+
+    /** Envoi d'un distributeur ou oeuf d'apparition : joueur et tick du serveur. */
+    private record Pending(UUID owner, int tick) {
     }
 
     private final KGPiliersFortune piliers;
@@ -60,11 +68,16 @@ public final class PiliersInstance extends GameInstance {
     private final Map<UUID, Hit> lastHit = new HashMap<>();
     private final Set<UUID> greeted = new java.util.HashSet<>();
     /** Poseur de chaque bloc pose pendant la partie (explosifs, sources de lave et d'eau, feu), et de ce qui en decoule. */
-    private final Map<Long, UUID> owners = new HashMap<>();
+    private final Map<Long, Source> owners = new HashMap<>();
     /** Poseur des explosifs devenus entites (TNT amorcee, cristal de l'End, wagonnet de TNT). */
     private final Map<UUID, UUID> entityOwners = new HashMap<>();
     /** Poseur du dernier feu ou de la derniere lave qui a brule le joueur. */
     private final Map<UUID, UUID> burnBy = new HashMap<>();
+    /** Distributeurs et droppers : joueur qui y a mis chaque sorte d'objet. */
+    private final Map<Long, Map<org.bukkit.Material, UUID>> loaded = new HashMap<>();
+    /** Cases ou un distributeur vient d'envoyer un objet, et a qui il est. */
+    private final Map<Long, Pending> pending = new HashMap<>();
+    private Pending lastEgg;
     private int startCount;
     private int elapsed;
     private int itemTimer;
@@ -158,6 +171,9 @@ public final class PiliersInstance extends GameInstance {
         owners.clear();
         entityOwners.clear();
         burnBy.clear();
+        loaded.clear();
+        pending.clear();
+        lastEgg = null;
         startCount = 0;
         elapsed = 0;
         itemTimer = 0;
@@ -309,9 +325,13 @@ public final class PiliersInstance extends GameInstance {
      * KGPiliersFortune et chute dans l'eau (matchTick).
      */
     void noteHit(Player victim, UUID attacker) {
+        noteHit(victim, attacker, false);
+    }
+
+    private void noteHit(Player victim, UUID attacker, boolean water) {
         if (attacker != null && phase == Phase.RUNNING && !victim.getUniqueId().equals(attacker)
                 && alive.contains(victim.getUniqueId()) && participants.contains(attacker)) {
-            lastHit.put(victim.getUniqueId(), new Hit(attacker, System.currentTimeMillis()));
+            lastHit.put(victim.getUniqueId(), new Hit(attacker, System.currentTimeMillis(), water));
         }
     }
 
@@ -331,16 +351,84 @@ public final class PiliersInstance extends GameInstance {
 
     /** Joueur qui a pose le bloc (ou la source dont il provient : lave et eau qui coulent, feu qui se propage). */
     UUID owner(Block block) {
-        return block == null ? null : owners.get(key(block));
+        Source source = block == null ? null : owners.get(key(block));
+        return source == null ? null : source.owner();
     }
 
-    /** Note le poseur d'un bloc (null : bloc sans poseur connu, l'ancien est oublie). */
+    /** Note le poseur d'un bloc, pose maintenant (null : bloc sans poseur connu, l'ancien est oublie). */
     void owner(Block block, UUID uuid) {
         if (uuid == null) {
             owners.remove(key(block));
         } else if (inBounds(block.getX(), block.getY(), block.getZ())) {
-            owners.put(key(block), uuid);
+            owners.put(key(block), new Source(uuid, System.currentTimeMillis()));
         }
+    }
+
+    /** La lave et l'eau qui coulent gardent le poseur et l'heure de pose de leur source. */
+    void copyOwner(Block from, Block to) {
+        Source source = owners.get(key(from));
+        if (source == null) {
+            owners.remove(key(to));
+        } else if (inBounds(to.getX(), to.getY(), to.getZ())) {
+            owners.put(key(to), source);
+        }
+    }
+
+    /** Joueurs en vie connectes. */
+    List<Player> alivePlayers() {
+        List<Player> list = new ArrayList<>();
+        for (UUID uuid : alive) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                list.add(player);
+            }
+        }
+        return list;
+    }
+
+    boolean isAlive(Player player) {
+        return alive.contains(player.getUniqueId());
+    }
+
+    // Distributeurs et droppers : qui y a mis quel objet (demande de Maxster33, 06/10/2026).
+
+    /** Le joueur a mis cet objet dans le distributeur ou le dropper. */
+    void noteLoaded(Block container, org.bukkit.Material material, UUID uuid) {
+        if (uuid != null && inBounds(container.getX(), container.getY(), container.getZ())) {
+            loaded.computeIfAbsent(key(container), k -> new HashMap<>()).put(material, uuid);
+        }
+    }
+
+    /** Joueur qui a mis cet objet dans le distributeur ou le dropper (le dernier, s'ils sont plusieurs). */
+    UUID loader(Block container, org.bukkit.Material material) {
+        Map<org.bukkit.Material, UUID> byItem = loaded.get(key(container));
+        return byItem == null ? null : byItem.get(material);
+    }
+
+    /** Un distributeur vient d'envoyer un objet de ce joueur vers cette case : l'entite qui y apparait est a lui. */
+    void notePending(Block block, UUID uuid) {
+        pending.put(key(block), new Pending(uuid, Bukkit.getCurrentTick()));
+    }
+
+    /** Joueur d'un envoi de distributeur vers cette case, pendant le tick de l'envoi et le suivant. */
+    UUID pending(Block block) {
+        Pending entry = pending.get(key(block));
+        return entry != null && Bukkit.getCurrentTick() - entry.tick() <= 1 ? entry.owner() : null;
+    }
+
+    /** Le joueur vient d'utiliser un oeuf d'apparition. */
+    void noteEgg(Player player) {
+        lastEgg = new Pending(player.getUniqueId(), Bukkit.getCurrentTick());
+    }
+
+    /** Joueur qui vient d'utiliser un oeuf, a 8 blocs au plus de la creature apparue (ce tick ou le suivant). */
+    UUID eggUser(Location spawned) {
+        if (lastEgg == null || Bukkit.getCurrentTick() - lastEgg.tick() > 1) {
+            return null;
+        }
+        Player player = Bukkit.getPlayer(lastEgg.owner());
+        return player != null && player.getWorld() == spawned.getWorld()
+                && player.getLocation().distanceSquared(spawned) <= 64 ? lastEgg.owner() : null;
     }
 
     UUID entityOwner(Entity entity) {
@@ -367,17 +455,35 @@ public final class PiliersInstance extends GameInstance {
         noteHit(victim, burnBy.get(victim.getUniqueId()));
     }
 
-    /** Le joueur est dans de l'eau posee par un autre joueur : il est credite si la chute suit. */
+    /**
+     * Le joueur est dans de l'eau posee par un autre joueur : le poseur est credite si la chute suit (demandes de
+     * Maxster33, 06/10/2026) :
+     * <ul>
+     *   <li>seulement dans les 10 s qui suivent la pose de la source (`water-credit-seconds`) : plus tard, l'eau ne
+     *       compte plus pour personne ;</li>
+     *   <li>un vrai coup recu ensuite (fleche, explosion...) l'emporte : l'eau ne le remplace pas tant qu'il compte
+     *       (`kill-credit-seconds`).</li>
+     * </ul>
+     */
     private void checkWater(Player player) {
+        long now = System.currentTimeMillis();
+        long sourceWindow = Math.max(0, setting("water-credit-seconds", 10)) * 1000L;
         Location at = player.getLocation();
         for (Block block : new Block[]{at.getBlock(), at.clone().add(0, 1, 0).getBlock()}) {
-            if (block.getType() == org.bukkit.Material.WATER) {
-                UUID owner = owner(block);
-                if (owner != null) {
-                    noteHit(player, owner);
-                    return;
-                }
+            if (block.getType() != org.bukkit.Material.WATER) {
+                continue;
             }
+            Source source = owners.get(key(block));
+            if (source == null || now - source.placedAt() > sourceWindow) {
+                continue;
+            }
+            Hit current = lastHit.get(player.getUniqueId());
+            long hitWindow = Math.max(1, setting("kill-credit-seconds", 10)) * 1000L;
+            if (current != null && !current.water() && now - current.at() <= hitWindow) {
+                return; // un coup plus recent que l'eau compte deja
+            }
+            noteHit(player, source.owner(), true);
+            return;
         }
     }
 
@@ -494,9 +600,8 @@ public final class PiliersInstance extends GameInstance {
      * les elimines, x3 pour le gagnant seul, x1 pour les survivants a egalite. Credites au classement du jeu.
      */
     private void results(UUID winner) {
-        int perMinute = setting("points-minute", 1);
+        int perMinute = setting("points-minute", 2);
         int perKill = setting("points-kill", 5);
-        int divisor = Math.max(1, setting("points-divisor", 3));
         Map<UUID, Integer> multiplier = new LinkedHashMap<>();
         for (int i = 0; i < eliminated.size(); i++) {
             multiplier.put(eliminated.get(i), i + 1);
@@ -509,8 +614,7 @@ public final class PiliersInstance extends GameInstance {
         for (UUID uuid : multiplier.keySet()) {
             double points = minutes.getOrDefault(uuid, 0) * perMinute + kills.getOrDefault(uuid, 0) * perKill;
             base.put(uuid, points);
-            // Divise par 3 (demande de Maxster33, 06/10/2026), arrondi au centieme.
-            total.put(uuid, Math.round(points * multiplier.get(uuid) * 100.0 / divisor) / 100.0);
+            total.put(uuid, points * multiplier.get(uuid));
         }
         List<UUID> order = new ArrayList<>(multiplier.keySet());
         // Classement : points finaux, puis le dernier elimine (ou le survivant) devant.
@@ -522,9 +626,9 @@ public final class PiliersInstance extends GameInstance {
         for (UUID uuid : order) {
             String name = names.getOrDefault(uuid, "?");
             broadcast(t("pf.results-line",
-                    "<gray><rank>. <white><name></white> <dark_gray>- <gold><total> pts <gray>(<base> x<mult> / <div>)",
+                    "<gray><rank>. <white><name></white> <dark_gray>- <gold><total> pts <gray>(<base> x<mult>)",
                     "rank", rank, "name", name, "total", StatsService.formatPoints(total.get(uuid)),
-                    "base", StatsService.formatPoints(base.get(uuid)), "mult", multiplier.get(uuid), "div", divisor));
+                    "base", StatsService.formatPoints(base.get(uuid)), "mult", multiplier.get(uuid)));
             boolean counted = credit(uuid, name, total.get(uuid));
             Map<String, Object> one = new LinkedHashMap<>();
             one.put("player", uuid.toString());
@@ -535,7 +639,6 @@ public final class PiliersInstance extends GameInstance {
             one.put("eliminated", eliminated.indexOf(uuid) + 1);
             one.put("base", base.get(uuid));
             one.put("multiplier", multiplier.get(uuid));
-            one.put("divisor", divisor);
             one.put("credited", total.get(uuid));
             one.put("counted", counted);
             logged.add(one);
