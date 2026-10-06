@@ -94,7 +94,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 - **KG_PiliersFortune 0.1.0** (06/10/2026, Maxster33) : nouveau mini-jeu « Les piliers de la Fortune » pour Kal-Games
   (4 à 8 joueurs sur des piliers, un objet au hasard toutes les 5 s, chute sous -64 = élimination, 10 min au plus,
-  barème avec multiplicateur par rang d'élimination), branché sur le moteur de KalGames (aucun changement dans KalGames,
+  barème avec multiplicateur par rang d'élimination, divisé par 3 ; élimination créditée aussi au poseur d'un explosif, d'un feu, d'une lave ou d'une eau ; feu et pistons débloqués dans ses parties ; pas de bloc posé contre une barrière), branché sur le moteur de KalGames (aucun changement dans KalGames,
   KG_Menu ni KG_ScoreBoards : bouton du menu et classements créés tout seuls) ; 8 arènes pré-générées. **Compilé, non
   déployé, non testé en jeu**, réservation gardée. Après le déploiement, un modérateur crée l'arène sur la map déjà
   construite sur Kal-Games, la capture et pose la zone d'attente et un point par pilier (voir `KG_PiliersFortune/JOURNAL.md`).

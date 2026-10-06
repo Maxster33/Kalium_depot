@@ -32,6 +32,13 @@ jeu au menu Kal-Games et créer ses classements. »
 - **Pas** de règle commune « points + moyenne des joueurs classés en dessous » : le barème seul.
 - La map existe déjà **sur Kal-Games**.
 
+**Demandes complémentaires de Maxster33 (même jour, avant tout déploiement ; la version reste 0.1.0)** :
+« Enlève les livres enchantés de la liste d'objets. Si un joueur est expulsé par une explosion (TNT ou cristal de l'End
+par exemple), c'est le joueur qui a posé l'explosif qui est le tueur. Si un joueur meurt de feu, de lave, ou tombe à
+cause d'une source d'eau, c'est le joueur qui a posé la source qui est le tueur. Il faut débloquer le feu et les
+pistons. Divise par 3 les points. » Puis : « Il faut rendre impossible le fait de poser un bloc contre un bloc
+barrière. »
+
 ### Règles codées
 
 - **Partie** : 4 à 8 joueurs (`min-players`, `max-players`, limité au nombre de piliers), publique ou privée. Attente
@@ -48,11 +55,29 @@ jeu au menu Kal-Games et créer ses classements. »
 - **Fin** : plus qu'un joueur en vie (il gagne) ; plus personne (pas de gagnant) ; ou 10 min écoulées (`duration-seconds`,
   égalité des survivants). Classement aux points dans le tchat, puis retour au hub après 8 s (`end-delay-seconds`).
 - **Points** : +1 par minute complète en vie (`points-minute`, la 10e minute comprise) ; +5 par joueur éliminé
-  (`points-kill`) : le tueur, ou à défaut **le dernier joueur qui l'a frappé dans les 10 s** (`kill-credit-seconds` ;
-  coups au corps à corps et projectiles : flèches, boules de neige, œufs, charges de vent...). En fin de partie, le
-  total est multiplié : x(rang d'élimination) pour les éliminés, x3 pour le gagnant seul (`winner-multiplier`), x1 pour
-  les survivants à égalité. Crédité au classement du jeu (`piliers-fortune`) ; tous les joueurs du départ sont crédités,
-  même déconnectés.
+  (`points-kill`). En fin de partie, le total est multiplié : x(rang d'élimination) pour les éliminés, x3 pour le
+  gagnant seul (`winner-multiplier`), x1 pour les survivants à égalité ; **puis divisé par 3** (`points-divisor`,
+  arrondi au centième ; affiché « 12 pts (12 x3 / 3) »). Crédité au classement du jeu (`piliers-fortune`) ; tous les
+  joueurs du départ sont crédités, même déconnectés.
+- **Qui a éliminé qui** (+5) : le tueur direct, sinon le joueur crédité du dernier « coup » reçu dans les 10 s
+  (`kill-credit-seconds`) avant l'élimination (chute, mort ou départ). Un « coup » :
+  - un coup au corps à corps ou un projectile (flèche, boule de neige, œuf, charge de vent...) ;
+  - une **explosion** : TNT (le joueur qui a **posé le bloc de TNT**, quel que soit celui qui l'a allumée, réactions
+    en chaîne comprises), **cristal de l'End** et wagonnet de TNT (celui qui les a posés), lit et ancre de
+    réapparition qui explosent (celui qui les a posés) ;
+  - une **brûlure** par un feu (briquet, boule de feu, ou propagation d'un feu posé) ou par une **lave** posée au seau
+    (et la lave qui en coule) : le poseur de la source ; il reste crédité tant que le joueur continue de brûler ;
+  - un passage dans l'**eau** posée au seau par un autre joueur (et l'eau qui en coule) : le poseur de la source,
+    vérifié tous les 2 ticks tant que le joueur est dans l'eau ; s'il tombe dans les 10 s, l'élimination est pour lui.
+  On ne se crédite jamais soi-même (sa propre TNT, sa propre lave...).
+- **Feu et pistons débloqués** (KalGames les bloque dans tout le monde des parties) : pendant une partie de ce jeu,
+  dans son arène seulement, le feu peut être allumé (briquet, boule de feu, lave), se propage, brûle les blocs et
+  s'éteint ; les pistons poussent et tirent (refusés si une case touchée sort de l'arène). Chaque bloc touché est suivi
+  et remis en état à la fin. La règle du monde des parties `fireSpreadRadiusAroundPlayer`, mise à 0 par KalGames, est
+  remise à sa valeur normale au lancement de chaque partie (sans effet sur les autres jeux : KalGames y annule toujours
+  tout feu).
+- **Barrières** : un joueur de la partie ne peut pas poser de bloc **contre une barrière** (le clic sur une barrière
+  ne pose rien), dans toutes les phases.
 - **Remise en état** (moteur de KalGames) : blocs posés, cassés, détruits par explosion, eau et lave remis à l'identique,
   objets au sol, flèches et créatures supprimés à la fin de chaque partie. **8 copies de l'arène pré-générées** au
   démarrage du serveur (`prewarm-arenas` = 8), gardées de côté et réutilisées.
@@ -63,8 +88,8 @@ Tous les objets du jeu (dans les fonctionnalités activées du monde), chacun av
 compris**. Exclus : objets de commande, de structure, de test et de débogage, barrière, lumière, livre des connaissances,
 bedrock, cadre de portail de l'End, générateurs (spawner, générateur d'épreuve, coffre-fort), terre labourée, chemin,
 plante de chorus, frai de grenouille, dalle de chêne pétrifiée, deepslate renforcée, améthyste bourgeonnante, sable et
-gravier suspects, blocs infestés (aucun ne s'obtient en survie). Potions (normales, jetables, persistantes) et flèches à
-effet : effet tiré au hasard ; livre enchanté : enchantement et niveau tirés au hasard.
+gravier suspects, blocs infestés (aucun ne s'obtient en survie), et le **livre enchanté** (demande de Maxster33).
+Potions (normales, jetables, persistantes) et flèches à effet : effet tiré au hasard.
 
 ### Mise en place sur le serveur (modérateur)
 
@@ -83,19 +108,25 @@ effet : effet tiré au hasard ; livre enchanté : enchantement et niveau tirés 
 - **Œufs du Wither et de l'Ender Dragon exclus** (boss qui détruisent l'arène et la font durer) ; tous les autres œufs
   sont dans la liste, Warden compris.
 - Les joueurs en vie peuvent **frapper les créatures** de leur partie (KalGames l'interdit partout ailleurs).
-- Une **mort** (coups, créatures, lave, chute) élimine aussi, comme la chute sous -64 ; un départ (déconnexion, `/hub`)
-  aussi, crédité au dernier joueur qui l'a frappé dans les 10 s. Les objets d'un joueur mort ne tombent pas (règle
-  commune de KalGames).
+- Une **mort** (coups, créatures, lave, feu, chute) élimine aussi, comme la chute sous -64 ; un départ (déconnexion,
+  `/hub`) aussi, crédité comme une chute. Les objets d'un joueur mort ne tombent pas (règle commune de KalGames).
 - Pas de faim ni de dégâts pendant le décompte ; mode survie pendant la partie.
 - `min-players` réglable à 2 (pour tester à deux comptes) ; la valeur par défaut reste 4.
-- Les chutes provoquées sans coup direct (TNT, créature lâchée, bloc retiré sous les pieds) ne sont créditées à
-  personne.
+- Explosif, feu, lave, eau : en plus de ce qui était demandé, lits, ancres de réapparition, wagonnets de TNT et feux de
+  camp sont crédités à leur poseur de la même façon ; une TNT revient à celui qui l'a posée, pas à celui qui l'a
+  allumée.
+- Le diviseur des points est un réglage (`points-divisor`, 3) appliqué au score final, plutôt que de changer les
+  barèmes de base (+1 / +5 ne se divisent pas en nombres entiers).
+- Non crédités : créatures sorties d'un œuf (creeper compris), bloc retiré sous les pieds, TNT allumée par un
+  distributeur, eau ou lave versée par un distributeur.
 
-### Limites connues (moteur de KalGames, non modifié)
+### Limites connues
 
-- Feu impossible (briquet, boule de feu) : KalGames empêche tout départ de feu dans le monde des parties. Pistons
-  bloqués aussi.
-- Les explosions (TNT, creeper) cassent des blocs pendant la partie ; ils sont remis en état à la fin.
+- La propagation du feu dépend de la règle `fireSpreadRadiusAroundPlayer` du monde des parties, remise à sa valeur
+  normale par ce plugin à chaque lancement de partie ; KalGames la remet à 0 à chacun de ses démarrages.
+- Les explosions (TNT, cristal, creeper) cassent des blocs pendant la partie ; ils sont remis en état à la fin.
+- Poser un bloc contre une barrière est refusé, mais pas verser de l'eau ou de la lave contre une barrière (non
+  demandé).
 
 ### À tester en jeu (rien n'a pu l'être)
 
@@ -103,5 +134,9 @@ effet : effet tiré au hasard ; livre enchanté : enchantement et niveau tirés 
 - Élimination sous -64, mode spectateur au-dessus du pilier, fin à un joueur, fin au temps (égalité), barème affiché.
 - Remise en état entre deux parties (blocs, eau, lave, objets au sol, créatures) et 8 copies pré-générées au démarrage.
 - Œufs d'apparition (créatures qui apparaissent, coups des joueurs sur elles), joueurs Bedrock.
-- Rythme des points (repère de `EQUILIBRAGE_POINTS.md` : environ 135 pour 30 minutes ; ici un gagnant à 8 joueurs
-  peut dépasser 100 points en une partie de 10 minutes).
+- Crédits : TNT posée par A et allumée par B (crédit à A), cristal de l'End, feu au briquet, lave et eau au seau
+  (chute après être passé dedans), brûlure qui continue après la sortie du feu.
+- Feu : il se propage, brûle les blocs, s'éteint ; tout est remis en état. Pistons qui poussent et tirent.
+- Bloc posé contre une barrière refusé (Java et Bedrock).
+- Rythme des points (repère de `EQUILIBRAGE_POINTS.md` : environ 135 pour 30 minutes ; après la division par 3, un
+  gagnant à 8 joueurs avec 3 ou 4 éliminations fait environ 25 à 30 points en 10 minutes).

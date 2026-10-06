@@ -3,9 +3,7 @@ package fr.kalium.piliers;
 import org.bukkit.Material;
 import org.bukkit.Registry;
 import org.bukkit.World;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
 
@@ -20,10 +18,9 @@ import java.util.concurrent.ThreadLocalRandom;
  * d'apparition compris. Chaque objet a la meme chance de sortir ; un seul exemplaire a la fois.
  * <ul>
  *   <li>Exclus : objets de commande, de structure ou de debogage (jamais obtenus en survie), blocs qu'on ne peut pas
- *       recuperer en survie (bedrock, cadre de portail de l'End, generateurs...), et les oeufs du Wither et de l'Ender
- *       Dragon (boss qui detruisent l'arene : choix technique signale).</li>
- *   <li>Potions, potions jetables, persistantes, fleches a effet : effet tire au hasard (sinon une simple fiole d'eau).
- *       Livre enchante : un enchantement tire au hasard, a un niveau au hasard.</li>
+ *       recuperer en survie (bedrock, cadre de portail de l'End, generateurs...), les oeufs du Wither et de l'Ender
+ *       Dragon (boss qui detruisent l'arene : choix technique signale), et le livre enchante (demande de Maxster33).</li>
+ *   <li>Potions, potions jetables, persistantes, fleches a effet : effet tire au hasard (sinon une simple fiole d'eau).</li>
  * </ul>
  * La liste est calculee une fois par monde (objets actives par les options du monde seulement).
  */
@@ -37,12 +34,12 @@ final class RandomItems {
             Material.DIRT_PATH, Material.END_PORTAL_FRAME, Material.FARMLAND, Material.FROGSPAWN,
             Material.PETRIFIED_OAK_SLAB, Material.REINFORCED_DEEPSLATE, Material.SPAWNER, Material.TRIAL_SPAWNER,
             Material.VAULT, Material.SUSPICIOUS_SAND, Material.SUSPICIOUS_GRAVEL,
-            Material.WITHER_SPAWN_EGG, Material.ENDER_DRAGON_SPAWN_EGG);
+            Material.WITHER_SPAWN_EGG, Material.ENDER_DRAGON_SPAWN_EGG,
+            Material.ENCHANTED_BOOK);
 
     private World world;
     private List<Material> pool = List.of();
     private List<PotionType> potions = List.of();
-    private List<Enchantment> enchantments = List.of();
 
     @SuppressWarnings("deprecation")
     private void build(World target) {
@@ -67,14 +64,9 @@ final class RandomItems {
                 types.add(type);
             }
         }
-        List<Enchantment> enchants = new ArrayList<>();
-        for (Enchantment enchantment : Registry.ENCHANTMENT) {
-            enchants.add(enchantment);
-        }
         this.world = target;
         this.pool = materials;
         this.potions = types;
-        this.enchantments = enchants;
     }
 
     /** Un objet tire au hasard (un seul exemplaire). */
@@ -87,12 +79,6 @@ final class RandomItems {
         ItemStack item = new ItemStack(material);
         if (item.getItemMeta() instanceof PotionMeta meta && !potions.isEmpty()) {
             meta.setBasePotionType(potions.get(random.nextInt(potions.size())));
-            item.setItemMeta(meta);
-        } else if (item.getItemMeta() instanceof EnchantmentStorageMeta meta && !enchantments.isEmpty()) {
-            Enchantment enchantment = enchantments.get(random.nextInt(enchantments.size()));
-            int min = Math.max(1, enchantment.getStartLevel());
-            int max = Math.max(min, enchantment.getMaxLevel());
-            meta.addStoredEnchant(enchantment, min + random.nextInt(max - min + 1), true);
             item.setItemMeta(meta);
         }
         return item;

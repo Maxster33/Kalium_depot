@@ -35,10 +35,11 @@ import java.util.UUID;
  *       tous) ; inventaire plein : l'objet tombe a ses pieds. Barre du bas : temps restant et « Joueurs en vie : a/n ».</li>
  *   <li>Elimination : chute sous la couche -64, mort, ou depart (deconnexion, /hub). L'elimine passe en mode spectateur
  *       jusqu'a la fin. Fin : un seul joueur en vie (il gagne), plus personne, ou temps ecoule (egalite des survivants).</li>
- *   <li>Points : +1 par minute complete en vie, +5 par joueur tue ou tombe apres un coup (dernier coup recu dans les
- *       10 s). En fin de partie : x1 pour le premier elimine, x2 pour le deuxieme... ; gagnant seul : x3 ; survivants
- *       a egalite : scores inchanges. Pas de regle commune « moyenne des joueurs classes en dessous » (decision de
- *       Maxster33).</li>
+ *   <li>Points : +1 par minute complete en vie, +5 par joueur elimine par soi : tue, ou elimine dans les 10 s apres un
+ *       coup, une explosion d'un explosif qu'on a pose, une brulure par un feu ou une lave qu'on a pose, ou un passage
+ *       dans l'eau qu'on a posee. En fin de partie : x1 pour le premier elimine, x2 pour le deuxieme... ; gagnant
+ *       seul : x3 ; survivants a egalite : x1 ; puis le tout divise par 3. Pas de regle commune « moyenne des joueurs
+ *       classes en dessous » (decision de Maxster33).</li>
  * </ul>
  * Les blocs poses ou casses et les objets au sol sont remis en etat par le moteur de KalGames a la fin de la partie.
  */
@@ -58,6 +59,12 @@ public final class PiliersInstance extends GameInstance {
     private final Map<UUID, Integer> kills = new HashMap<>();
     private final Map<UUID, Hit> lastHit = new HashMap<>();
     private final Set<UUID> greeted = new java.util.HashSet<>();
+    /** Poseur de chaque bloc pose pendant la partie (explosifs, sources de lave et d'eau, feu), et de ce qui en decoule. */
+    private final Map<Long, UUID> owners = new HashMap<>();
+    /** Poseur des explosifs devenus entites (TNT amorcee, cristal de l'End, wagonnet de TNT). */
+    private final Map<UUID, UUID> entityOwners = new HashMap<>();
+    /** Poseur du dernier feu ou de la derniere lave qui a brule le joueur. */
+    private final Map<UUID, UUID> burnBy = new HashMap<>();
     private int startCount;
     private int elapsed;
     private int itemTimer;
@@ -148,6 +155,9 @@ public final class PiliersInstance extends GameInstance {
         minutes.clear();
         kills.clear();
         lastHit.clear();
+        owners.clear();
+        entityOwners.clear();
+        burnBy.clear();
         startCount = 0;
         elapsed = 0;
         itemTimer = 0;
@@ -173,6 +183,7 @@ public final class PiliersInstance extends GameInstance {
         phase = Phase.COUNTDOWN;
         secondsLeft = Math.max(1, setting("countdown-seconds", 5));
         startCount = players.size();
+        allowFireSpread();
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
             UUID uuid = player.getUniqueId();
@@ -188,6 +199,22 @@ public final class PiliersInstance extends GameInstance {
         }
         showCountdown();
         broadcast(t("pf.start", "<gold>Les piliers de la Fortune : <white><n></white> joueurs. Dernier en vie gagne !", "n", startCount));
+    }
+
+    /**
+     * KalGames regle la propagation du feu a 0 dans le monde des parties (le feu ne s'y propage jamais) : elle est remise
+     * a sa valeur normale. Sans effet sur les autres jeux : KalGames y annule tout depart et toute propagation de feu,
+     * seul ce plugin les autorise, dans ses propres parties (voir KGPiliersFortune).
+     */
+    private void allowFireSpread() {
+        try {
+            Integer normal = world.getGameRuleDefault(org.bukkit.GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER);
+            if (normal != null && !normal.equals(world.getGameRuleValue(org.bukkit.GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER))) {
+                world.setGameRule(org.bukkit.GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER, normal);
+            }
+        } catch (RuntimeException e) {
+            piliers.getLogger().warning("Propagation du feu non rétablie : " + e.getMessage());
+        }
     }
 
     /** Chiffre du decompte au milieu de l'ecran. */
@@ -263,20 +290,94 @@ public final class PiliersInstance extends GameInstance {
         int voidY = setting("void-y", -64);
         for (UUID uuid : new ArrayList<>(alive)) {
             Player player = Bukkit.getPlayer(uuid);
-            if (player != null && player.getWorld() == world && player.getLocation().getY() < voidY) {
+            if (player == null || player.getWorld() != world) {
+                continue;
+            }
+            if (player.getLocation().getY() < voidY) {
                 eliminate(uuid, null);
                 toSpectator(player);
+            } else {
+                checkWater(player);
             }
         }
     }
 
     // ------------------------------------------------------------------ eliminations
 
-    /** Coup d'un joueur sur un autre (ecouteur de KGPiliersFortune). */
-    void noteHit(Player victim, Player attacker) {
-        if (phase == Phase.RUNNING && !victim.equals(attacker) && alive.contains(victim.getUniqueId())
-                && participants.contains(attacker.getUniqueId())) {
-            lastHit.put(victim.getUniqueId(), new Hit(attacker.getUniqueId(), System.currentTimeMillis()));
+    /**
+     * Coup recu d'un autre joueur, directement ou par ce qu'il a pose (explosif, feu, lave, eau) : ecouteur de
+     * KGPiliersFortune et chute dans l'eau (matchTick).
+     */
+    void noteHit(Player victim, UUID attacker) {
+        if (attacker != null && phase == Phase.RUNNING && !victim.getUniqueId().equals(attacker)
+                && alive.contains(victim.getUniqueId()) && participants.contains(attacker)) {
+            lastHit.put(victim.getUniqueId(), new Hit(attacker, System.currentTimeMillis()));
+        }
+    }
+
+    // ------------------------------------------------------------------ poseurs (explosifs, feu, lave, eau)
+
+    boolean running() {
+        return phase == Phase.RUNNING;
+    }
+
+    private static long key(int x, int y, int z) {
+        return ((long) (x & 0x3FFFFFF) << 38) | ((long) (z & 0x3FFFFFF) << 12) | (y & 0xFFF);
+    }
+
+    private static long key(Block block) {
+        return key(block.getX(), block.getY(), block.getZ());
+    }
+
+    /** Joueur qui a pose le bloc (ou la source dont il provient : lave et eau qui coulent, feu qui se propage). */
+    UUID owner(Block block) {
+        return block == null ? null : owners.get(key(block));
+    }
+
+    /** Note le poseur d'un bloc (null : bloc sans poseur connu, l'ancien est oublie). */
+    void owner(Block block, UUID uuid) {
+        if (uuid == null) {
+            owners.remove(key(block));
+        } else if (inBounds(block.getX(), block.getY(), block.getZ())) {
+            owners.put(key(block), uuid);
+        }
+    }
+
+    UUID entityOwner(Entity entity) {
+        return entityOwners.get(entity.getUniqueId());
+    }
+
+    void entityOwner(Entity entity, UUID uuid) {
+        if (uuid != null) {
+            entityOwners.put(entity.getUniqueId(), uuid);
+        }
+    }
+
+    /** Brulure par un feu ou une lave : le poseur reste credite tant que le joueur brule (degats « en feu »). */
+    void noteBurn(Player victim, UUID owner) {
+        if (owner == null) {
+            burnBy.remove(victim.getUniqueId());
+            return;
+        }
+        burnBy.put(victim.getUniqueId(), owner);
+        noteHit(victim, owner);
+    }
+
+    void noteFireTick(Player victim) {
+        noteHit(victim, burnBy.get(victim.getUniqueId()));
+    }
+
+    /** Le joueur est dans de l'eau posee par un autre joueur : il est credite si la chute suit. */
+    private void checkWater(Player player) {
+        Location at = player.getLocation();
+        for (Block block : new Block[]{at.getBlock(), at.clone().add(0, 1, 0).getBlock()}) {
+            if (block.getType() == org.bukkit.Material.WATER) {
+                UUID owner = owner(block);
+                if (owner != null) {
+                    noteHit(player, owner);
+                    return;
+                }
+            }
         }
     }
 
@@ -395,6 +496,7 @@ public final class PiliersInstance extends GameInstance {
     private void results(UUID winner) {
         int perMinute = setting("points-minute", 1);
         int perKill = setting("points-kill", 5);
+        int divisor = Math.max(1, setting("points-divisor", 3));
         Map<UUID, Integer> multiplier = new LinkedHashMap<>();
         for (int i = 0; i < eliminated.size(); i++) {
             multiplier.put(eliminated.get(i), i + 1);
@@ -407,7 +509,8 @@ public final class PiliersInstance extends GameInstance {
         for (UUID uuid : multiplier.keySet()) {
             double points = minutes.getOrDefault(uuid, 0) * perMinute + kills.getOrDefault(uuid, 0) * perKill;
             base.put(uuid, points);
-            total.put(uuid, points * multiplier.get(uuid));
+            // Divise par 3 (demande de Maxster33, 06/10/2026), arrondi au centieme.
+            total.put(uuid, Math.round(points * multiplier.get(uuid) * 100.0 / divisor) / 100.0);
         }
         List<UUID> order = new ArrayList<>(multiplier.keySet());
         // Classement : points finaux, puis le dernier elimine (ou le survivant) devant.
@@ -419,9 +522,9 @@ public final class PiliersInstance extends GameInstance {
         for (UUID uuid : order) {
             String name = names.getOrDefault(uuid, "?");
             broadcast(t("pf.results-line",
-                    "<gray><rank>. <white><name></white> <dark_gray>- <gold><total> pts <gray>(<base> x<mult>)",
+                    "<gray><rank>. <white><name></white> <dark_gray>- <gold><total> pts <gray>(<base> x<mult> / <div>)",
                     "rank", rank, "name", name, "total", StatsService.formatPoints(total.get(uuid)),
-                    "base", StatsService.formatPoints(base.get(uuid)), "mult", multiplier.get(uuid)));
+                    "base", StatsService.formatPoints(base.get(uuid)), "mult", multiplier.get(uuid), "div", divisor));
             boolean counted = credit(uuid, name, total.get(uuid));
             Map<String, Object> one = new LinkedHashMap<>();
             one.put("player", uuid.toString());
@@ -432,6 +535,7 @@ public final class PiliersInstance extends GameInstance {
             one.put("eliminated", eliminated.indexOf(uuid) + 1);
             one.put("base", base.get(uuid));
             one.put("multiplier", multiplier.get(uuid));
+            one.put("divisor", divisor);
             one.put("credited", total.get(uuid));
             one.put("counted", counted);
             logged.add(one);

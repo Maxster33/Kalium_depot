@@ -13,8 +13,15 @@ minute en vie, +5 par joueur tué ou tombé, x1 / x2 / x3... selon le rang d'él
 scores inchangés). Plugin, intégration au menu Kal-Games et classements. Texte complet dans
 `KG_PiliersFortune/JOURNAL.md`.
 
+Ensuite (avant tout déploiement) : retirer les livres enchantés ; explosion (TNT, cristal de l'End) créditée au poseur
+de l'explosif ; mort par feu ou lave, chute à cause d'une source d'eau créditée au poseur de la source ; débloquer le
+feu et les pistons ; diviser les points par 3 ; interdire de poser un bloc contre une barrière.
+
 ## Fait
 - Réservation de KG_PiliersFortune, puis plugin écrit et compilé (`KG_PiliersFortune-0.1.0.jar`).
+- Demandes complémentaires codées dans la même version 0.1.0 (jamais déployée) : détail dans le journal du plugin.
+  Le feu et les pistons sont débloqués par KG_PiliersFortune lui-même (dans ses parties seulement), sans toucher
+  KalGames.
 - Aucun changement dans KalGames, KG_Menu ni KG_ScoreBoards : le moteur de parties fournit déjà les arènes
   pré-générées (`prewarm-arenas`), la remise en état, les files publiques / parties privées, le bouton du menu et les
   classements par jeu.
