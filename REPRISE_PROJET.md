@@ -154,6 +154,23 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
 
 ## Points ouverts / limites connues (rien de bloquant)
 
+- **Passage de Kixster en Paper 26.3 (Maxster33, 07/10/2026)** — étape 1 d'un chantier en 4 étapes (26.3, puis
+  Tectonic + quelques biomes Terralith, prégénération d'une carte de 40 000 blocs, puis plugins d'Event sur Kixster).
+  - Sauvegarde complète de Kixster en 26.2 sur le PC de Maxster33 : `Documents\Sauvegardes_KaLium\kixster-2026-10-07-paper-26.2`
+    (629 Mo, sans `libraries/`, `cache/`, `versions/`).
+  - Plugins de Kixster (serveur arrêté) : ViaVersion 5.12.1-SNAPSHOT (+1069), **ViaBackwards 5.12.1-SNAPSHOT (+634) ajouté**
+    (Geyser parle Java 26.2 : sans lui, joueurs Bedrock et clients 26.2 refusés sur un serveur 26.3), voicechat 2.6.24 ;
+    FairMinimap 1.0.0+1.21.7 gardé (déjà compatible 26.3). Retirés à la demande de Maxster33 (rangés dans
+    `plugins/_removed-<plugin>-<version>/`, avec leur dossier de données) : Skript 2.16.2, SimpleClaimSystem 1.13.1,
+    TradeShop 1.7, LegacyFreecam 2.0.0, WoodCutter 1.0.2, AnvilUnlocker 1.1.3, Geyser-Spigot 2.11.2 ; anciens ViaVersion
+    5.12.0 et voicechat 2.6.23 rangés de même. Restent : LuckPerms 5.5.71, WorldEdit 7.4.6-beta-01, RideOnHead 1.1.3,
+    KLM_Menu 2.9.0, KLM_Chat 1.0.0.
+  - Version 26.3 à choisir dans le panneau Minestrator (Paper 26.3 encore en bêta, build 159 au 06/10/2026), puis
+    redémarrage par l'humain et lecture des journaux.
+  - Proxy : Velocity 4.1.2-SNAPSHOT-27 ne gère pas la 26.3. `velocity-4.2.0-30.jar` (stable, gère aussi toutes les
+    versions plus anciennes) déposé à la racine du proxy **à côté** de l'ancien jar, sans rien remplacer : à activer
+    dans le panneau (fichier de démarrage) puis redémarrer le proxy (déconnecte tout le réseau).
+
 - **Sauvegardes des mondes : à voir plus tard (LeKiwi06, 26/09/2026)**. Aucune sauvegarde automatique connue (seulement
   des copies manuelles, ex. `Kixster SMP_bak`). Pistes : 1) vérifier dans le panneau web Minestrator si chaque serveur
   a des sauvegardes (non vérifié, Claude n'y a pas accès) ; 2) sauvegarde manuelle des mondes sur le PC par WinSCP
