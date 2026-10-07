@@ -6,7 +6,8 @@ KalGames : le jeu n'utilise que les crochets existants du moteur de parties.
 
 ## 0.2.0 — retours du premier test (07/10/2026)
 
-**Statut : compilé, non déployé, non testé en jeu.**
+**Statut : déployé sur Kal-Games le 07/10/2026 à 22 h 10 (LeKiwi06), actif après redémarrage, non testé en jeu.**
+0.1.0 rangée dans `_removed-kg_hideandseek-0.1.0/`. KalGames en service : 1.23.0.
 
 **Demande de LeKiwi06 (07/10/2026), après le premier test de la 0.1.0** : « quand les seekers attendent, ils voient la
 map, il faut leur donner darkness ; désactiver la boussole de localisation, sinon les joueurs non solides sont

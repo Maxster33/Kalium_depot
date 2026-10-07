@@ -1,7 +1,7 @@
 # 2026-10-07 — Hide and Seek : retours du premier test
 
 - Plugin(s) concerné(s) : KG_HideAndSeek
-- Versions avant / après : 0.1.0 (en service) / 0.2.0 (compilé, non déployé)
+- Versions avant / après : 0.1.0 / 0.2.0 (déployé sur Kal-Games le 07/10/2026 à 22 h 10, non testé)
 
 ## Demandé
 
@@ -16,6 +16,8 @@ très gênant ».
 
 - KG_HideAndSeek 0.2.0 : les six points (détail dans `KG_HideAndSeek/JOURNAL.md`), compilé.
 - Cahier des charges complété (partie 5 bis).
+- Déployé sur Kal-Games avec l'accord de LeKiwi06 (0.1.0 rangée dans `_removed-kg_hideandseek-0.1.0/`), actif au
+  prochain redémarrage. Réservation libérée.
 
 ## Décisions
 
@@ -27,6 +29,6 @@ très gênant ».
 
 ## Reste à faire
 
-- Déployer la 0.2.0 sur Kal-Games (accord de LeKiwi06 à demander), puis tester.
+- Redémarrer Kal-Games (humain), puis tester la 0.2.0.
 - Toujours à confirmer : dernier seeker déconnecté = fin de partie ; hiders tous déconnectés = seekers gagnants ;
   familles de blocs refusées.
