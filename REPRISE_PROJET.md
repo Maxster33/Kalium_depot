@@ -169,7 +169,14 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
     absent de l'onglet « Versions » du panneau : `paper-26.3-159.jar` déposé à la racine et choisi dans Paramètres >
     Hébergement > « Changer le paramètre de démarrage ». `spigot-26.3.jar` posé par le panneau rangé dans
     `_removed-spigot-26.3/` (jamais lancé).
-  - Proxy : Velocity 4.1.2-SNAPSHOT-27 ne gère pas la 26.3. `velocity-4.2.0-30.jar` (stable, gère aussi toutes les
+  - **Proxy redémarré en Velocity 4.2.0-30 le 07/10/2026 à 08:59** (Maxster33, fichier de démarrage choisi dans le
+    panneau) : floodgate, Geyser 2.11.3, KaliumRelay 1.4.0, velocity-command-forward OK. **LibertyBans 1.1.4 plantait**
+    (premier chargement depuis son installation du 03/10 ; incompatible avec tout Velocity 4, `NoSuchMethodError`
+    Adventure `TextComponent.ofChildren`) : remplacé par **LibertyBans 1.2.0-M1** (préversion, gère Velocity 4),
+    1.1.4 rangé dans `plugins/_removed-libertybans-1.1.4/`. **Actif au prochain redémarrage du proxy, non vérifié** ;
+    tant que ce n'est pas fait, le bouton « Bannir de KaLium » (KS_AntiCheat → KaliumRelay) ne marche pas.
+    `geyserupdater-spigot.jar` (plugin Bukkit, ignoré par Velocity) toujours en erreur au démarrage, sans effet.
+  - Proxy (avant) : Velocity 4.1.2-SNAPSHOT-27 ne gère pas la 26.3. `velocity-4.2.0-30.jar` (stable, gère aussi toutes les
     versions plus anciennes) déposé à la racine du proxy **à côté** de l'ancien jar, sans rien remplacer : à activer
     dans le panneau (fichier de démarrage) puis redémarrer le proxy (déconnecte tout le réseau).
 
