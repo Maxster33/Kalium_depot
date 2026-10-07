@@ -174,6 +174,11 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
     sans erreur. `generate-structures=true` (structures vanilla, décision de Maxster33). Ancien monde (et ancien
     `server.properties`) rangé dans `/_removed-monde-kixster-smp-2026-10-07/` ; aussi dans la sauvegarde du PC.
     Prochaine étape : prégénération d'une carte de 40 000 blocs de côté.
+  - **Étape 3 en cours (lancée le 07/10/2026 vers 09:34)** : Chunky 1.5.3 (Modrinth) ; `worldborder center 0 0` +
+    `worldborder set 40000` ; `chunky center 0 0`, `radius 20000`, `shape square` (X et Z de -20 000 à +20 000,
+    ~6,25 millions de chunks). ~32 chunks/s (Paper n'a qu'1 worker thread sur Kixster) : fin estimée vers le
+    09/10/2026 en fin d'après-midi. Config Chunky : `continue-on-restart: true`, `update-interval: 60` (original dans
+    `plugins/_removed-chunky-config-2026-10-07/`). Place disque à surveiller (estimation grossière 40 à 70 Go).
   - **Proxy redémarré en Velocity 4.2.0-30 le 07/10/2026 à 08:59** (Maxster33, fichier de démarrage choisi dans le
     panneau) : floodgate, Geyser 2.11.3, KaliumRelay 1.4.0, velocity-command-forward OK. **LibertyBans 1.1.4 plantait**
     (premier chargement depuis son installation du 03/10 ; incompatible avec tout Velocity 4, `NoSuchMethodError`
