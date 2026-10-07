@@ -12,12 +12,11 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.List;
 
 /**
- * Objets de la barre du hider : 6 sons favoris, menu des sons, changement de bloc, evasion. Chaque objet porte son role
+ * Objets de la barre du hider : soundboard, changement de bloc, evasion. Chaque objet porte son role
  * (clic droit : voir KGHideAndSeek.onInteract).
  */
 public final class HideItems {
 
-    public static final String FAVORITE = "fav:";
     public static final String SOUNDS = "sounds";
     public static final String BLOCK = "block";
     public static final String ESCAPE = "escape";
@@ -38,7 +37,7 @@ public final class HideItems {
         return item;
     }
 
-    /** Role de l'objet (FAVORITE + identifiant du son, SOUNDS, BLOCK, ESCAPE) ou null. */
+    /** Role de l'objet (SOUNDS, BLOCK, ESCAPE) ou null. */
     public String kind(ItemStack item) {
         if (item == null || item.getType().isAir() || !item.hasItemMeta()) {
             return null;
@@ -46,14 +45,9 @@ public final class HideItems {
         return item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
     }
 
-    public ItemStack favorite(SoundBoard.Entry entry) {
-        return tagged(entry.icon(), games.t("hns.item-sound", "<yellow>Son : <white><name>", "name", entry.label()),
-                List.of(games.t("hns.item-sound-lore", "<gray>Clic droit : jouer ce son.")), FAVORITE + entry.key());
-    }
-
     public ItemStack soundsMenu() {
-        return tagged(Material.NOTE_BLOCK, games.t("hns.item-sounds", "<gold><bold>Tous les sons"),
-                List.of(games.t("hns.item-sounds-lore", "<gray>Clic droit : tous les sons, et vos favoris.")), SOUNDS);
+        return tagged(Material.NOTE_BLOCK, games.t("hns.item-soundboard", "<gold><bold>Soundboard"),
+                List.of(games.t("hns.item-soundboard-lore", "<gray>Clic droit : choisir un son à jouer.")), SOUNDS);
     }
 
     public ItemStack blockChanger(Material current) {

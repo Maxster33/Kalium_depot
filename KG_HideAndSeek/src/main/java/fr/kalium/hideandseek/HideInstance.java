@@ -18,12 +18,14 @@ import org.bukkit.SoundCategory;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 
 import java.util.ArrayList;
@@ -45,7 +47,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * <ul>
  *   <li>Hider en mouvement : joueur normal, visible, qui porte son bloc sur la tete (visible aussi des joueurs
  *       Bedrock). Immobile quelques secondes : il devient un vrai bloc pose dans la copie de l'arene, et il est cache a
- *       tous les autres joueurs ; il redevient un joueur des qu'il bouge.</li>
+ *       tous les autres joueurs ; il redevient un joueur des qu'il bouge. 0.2.0 : le hider solide se tient DEBOUT SUR
+ *       son bloc (il le voit sous ses pieds et n'est plus repousse par lui), au lieu d'etre dedans.</li>
  *   <li>Seeker : 5 coeurs, main nue. Un coup sur un hider (joueur ou bloc) l'elimine ; un coup sur un bloc du decor
  *       d'un type de la liste de la map coute un demi-coeur. A 0 coeur : retour dans la salle des seekers.</li>
  *   <li>Deroulement : cachette (phase COUNTDOWN, seekers enfermes dans leur salle), recherche (RUNNING), fin (ENDING).</li>
@@ -367,7 +370,7 @@ public final class HideInstance extends GameInstance {
                 seekers.put(uuid, seeker);
                 startRoles.put(uuid, "seeker");
                 seekerNames.add(player.getName());
-                setupSeeker(player, seekerRoom());
+                setupSeeker(player, true);
                 title(Set.of(uuid), t("hns.role-seeker", "<red><bold>Seeker"),
                         t("hns.role-seeker-sub", "<gray>Les hiders se cachent : <white><s></white> s", "s", secondsLeft), 5, 60, 10);
             } else {
@@ -398,6 +401,7 @@ public final class HideInstance extends GameInstance {
         plugin.hub().resetPlayer(player, GameMode.ADVENTURE);
         hns.clearState(player);
         hns.joinTeam(player);
+        hns.hideFromLocatorBar(player);
         giveHotbar(player, hider);
         if (to != null) {
             player.teleport(to);
@@ -406,27 +410,35 @@ public final class HideInstance extends GameInstance {
         hider.stillTicks = 0;
     }
 
-    /** Barre d'objets du hider : 6 sons favoris, menu des sons, changement de bloc, evasion ; bloc sur la tete. */
+    /** Barre d'objets du hider (0.2.0 : un seul objet pour le soundboard) : sons, changement de bloc, evasion ; bloc sur la tete. */
     public void giveHotbar(Player player, Hider hider) {
         PlayerInventory inventory = player.getInventory();
-        List<SoundBoard.Entry> favorites = hns.sounds().favoritesOf(player.getUniqueId());
-        for (int slot = 0; slot < SoundBoard.FAVORITES; slot++) {
-            inventory.setItem(slot, slot < favorites.size() ? hns.items().favorite(favorites.get(slot)) : null);
-        }
-        inventory.setItem(6, hns.items().soundsMenu());
-        inventory.setItem(7, hns.items().blockChanger(hider.block));
-        inventory.setItem(8, hns.items().escape(setting("escape-points", 5), setting("escape-cooldown-seconds", 60)));
+        inventory.setItem(0, hns.items().soundsMenu());
+        inventory.setItem(1, hns.items().blockChanger(hider.block));
+        inventory.setItem(2, hns.items().escape(setting("escape-points", 5), setting("escape-cooldown-seconds", 60)));
         inventory.setHelmet(new ItemStack(hider.block));
     }
 
-    /** Etat d'un seeker : mode aventure, main nue, 5 coeurs, reserve d'absorption vide. */
-    private void setupSeeker(Player player, Location to) {
+    /**
+     * Etat d'un seeker : mode aventure, main nue, 5 coeurs, reserve d'absorption vide. waiting : il attend dans la salle
+     * des seekers (cachette, ou retour a 0 coeur), dans l'obscurite pour ne pas observer la map.
+     */
+    private void setupSeeker(Player player, boolean waiting) {
         plugin.hub().resetPlayer(player, GameMode.ADVENTURE);
         hns.clearState(player);
         hns.applySeekerHearts(player);
+        hns.hideFromLocatorBar(player);
         player.setHealth(SEEKER_HEALTH);
-        if (to != null) {
-            player.teleport(to);
+        darken(player, waiting);
+        player.teleport(waiting ? seekerRoom() : seekerSpawn());
+    }
+
+    /** Obscurite d'un seeker qui attend dans sa salle (0.2.0 : sinon il voit la map et les hiders qui se cachent). */
+    private static void darken(Player player, boolean on) {
+        if (on) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, PotionEffect.INFINITE_DURATION, 0, false, false, false));
+        } else {
+            player.removePotionEffect(PotionEffectType.DARKNESS);
         }
     }
 
@@ -437,6 +449,7 @@ public final class HideInstance extends GameInstance {
         for (Seeker seeker : seekers.values()) {
             Player player = presentPlayer(seeker.uuid);
             if (player != null) {
+                darken(player, false);
                 player.teleport(seekerSpawn());
                 player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 0.6f, 1.2f);
             }
@@ -551,6 +564,7 @@ public final class HideInstance extends GameInstance {
             seeker.jail--;
             Player player = presentPlayer(seeker.uuid);
             if (seeker.jail == 0 && player != null) {
+                darken(player, false);
                 player.teleport(seekerSpawn());
                 player.sendMessage(plugin.prefix().append(t("hns.seeker-back", "<green>Vous repartez avec 5 cœurs.")));
             }
@@ -578,13 +592,12 @@ public final class HideInstance extends GameInstance {
         }
     }
 
-    /** Chaque seconde : les hiders solides restent caches (nouveaux arrivants) et gardent de l'air dans leur case. */
+    /** Chaque seconde : les hiders solides restent caches (joueurs arrives entre-temps sur le serveur). */
     private void refreshSolid() {
         for (Hider hider : hiders.values()) {
             Player player = hider.solid() ? presentPlayer(hider.uuid) : null;
             if (player != null) {
                 hns.conceal(player);
-                sendAir(hider, player);
             }
         }
     }
@@ -607,8 +620,10 @@ public final class HideInstance extends GameInstance {
 
     /**
      * Le hider immobile devient son bloc : un vrai bloc est pose dans sa case (contenu d'origine garde, remis des qu'il
-     * bouge), il est recentre dans la case et cache a tous les autres joueurs. Son propre jeu recoit de l'air a cet
-     * endroit, sinon il serait repousse hors du bloc. Renvoie false si la case ne convient pas.
+     * bouge) et il est cache a tous les autres joueurs. 0.2.0 : le hider est place DEBOUT SUR son bloc, au centre : il
+     * le voit sous ses pieds, et son jeu ne le repousse plus hors du bloc (en 0.1.0 il restait dedans, avec de l'air
+     * envoye a son seul jeu : il etait parfois repousse et redevenait mobile). Sous un plafond bas il s'y tient couche
+     * (comportement du jeu). Renvoie false si la case ne convient pas.
      */
     private boolean solidify(Hider hider, Player player) {
         Location at = player.getLocation();
@@ -623,17 +638,40 @@ public final class HideInstance extends GameInstance {
             player.sendActionBar(t("hns.solid-refused", "<red>Impossible de devenir solide ici."));
             return false;
         }
+        if (!cell.getRelative(BlockFace.UP).isPassable()) {
+            player.sendActionBar(t("hns.solid-no-room", "<red>Pas assez de place au-dessus de vous pour devenir solide."));
+            return false;
+        }
         BlockData original = cell.getBlockData();
         trackOriginal(cell.getX(), cell.getY(), cell.getZ(), original);
         cell.setBlockData(hider.block.createBlockData(), false);
         hider.cell = cell;
         hider.cellOriginal = original;
-        hider.snap = new Location(world, cell.getX() + 0.5, at.getY(), cell.getZ() + 0.5, at.getYaw(), at.getPitch());
-        player.teleport(hider.snap);
+        standOn(hider, player);
         hns.conceal(player);
-        sendAirSoon(hider);
-        player.sendActionBar(t("hns.solid-on", "<green>Vous êtes solide. <gray>Bougez pour redevenir un joueur."));
+        player.sendActionBar(t("hns.solid-on-2", "<green>Vous êtes solide : votre bloc est sous vos pieds. <gray>Bougez pour redevenir un joueur."));
         return true;
+    }
+
+    /** Place le hider solide debout sur son bloc, au centre de la case (a la hauteur reelle du dessus du bloc). */
+    private void standOn(Hider hider, Player player) {
+        Block cell = hider.cell;
+        double top = 0;
+        for (BoundingBox box : cell.getCollisionShape().getBoundingBoxes()) {
+            top = Math.max(top, box.getMaxY());
+        }
+        if (top > 2) {
+            top -= cell.getY(); // forme donnee en coordonnees du monde
+        }
+        if (top <= 0 || top > 1.5) {
+            top = 1.0;
+        }
+        Location at = player.getLocation();
+        hider.snap = new Location(world, cell.getX() + 0.5, cell.getY() + top, cell.getZ() + 0.5, at.getYaw(), at.getPitch());
+        // Le bloc est envoye au joueur AVANT son deplacement (la pose du vrai bloc n'est diffusee qu'en fin de tick) :
+        // sinon son jeu le ferait tomber a travers un bloc qu'il ne connait pas encore.
+        player.sendBlockChange(cell.getLocation(), cell.getBlockData());
+        player.teleport(hider.snap);
     }
 
     /** Le hider redevient un joueur visible : sa case retrouve son contenu d'origine. */
@@ -653,22 +691,6 @@ public final class HideInstance extends GameInstance {
         }
     }
 
-    private void sendAir(Hider hider, Player player) {
-        if (hider.cell != null) {
-            player.sendBlockChange(hider.cell.getLocation(), Material.AIR.createBlockData());
-        }
-    }
-
-    /** Au tick suivant : la pose du vrai bloc est envoyee aux joueurs en fin de tick, l'air doit arriver apres. */
-    private void sendAirSoon(Hider hider) {
-        plugin.later(1L, () -> {
-            Player player = Bukkit.getPlayer(hider.uuid);
-            if (player != null && hiders.get(hider.uuid) == hider) {
-                sendAir(hider, player);
-            }
-        });
-    }
-
     // ------------------------------------------------------------------ actions du hider
 
     /** Clic droit sur un objet de la barre du hider. */
@@ -677,9 +699,7 @@ public final class HideInstance extends GameInstance {
         if (hider == null || !playing()) {
             return;
         }
-        if (kind.startsWith(HideItems.FAVORITE)) {
-            playBoard(player, kind.substring(HideItems.FAVORITE.length()));
-        } else if (kind.equals(HideItems.SOUNDS)) {
+        if (kind.equals(HideItems.SOUNDS)) {
             hns.menus().openSounds(player, this);
         } else if (kind.equals(HideItems.BLOCK)) {
             hns.menus().openBlocks(player, this);
@@ -716,14 +736,16 @@ public final class HideInstance extends GameInstance {
         giveHotbar(player, hider);
         if (hider.solid()) {
             hider.cell.setBlockData(material.createBlockData(), false);
-            sendAirSoon(hider);
+            standOn(hider, player); // le dessus du nouveau bloc n'est pas forcement a la meme hauteur
         }
         return null;
     }
 
     private void playAt(Hider hider, Player player, String sound) {
         Location spot = hider.solid() ? hider.cell.getLocation().add(0.5, 0.5, 0.5) : player.getEyeLocation();
-        world.playSound(spot, sound, SoundCategory.MASTER, 1f, 1f);
+        // Un son s'entend a 16 blocs par point de volume : 0.2.0, portee reglable (30 blocs par defaut).
+        float volume = Math.max(1f, setting("sound-range", 30) / 16f);
+        world.playSound(spot, sound, SoundCategory.MASTER, volume, 1f);
     }
 
     /** Soundboard : joue le son a l'endroit du hider ; rapporte des points si un seeker est assez pres. */
@@ -872,6 +894,7 @@ public final class HideInstance extends GameInstance {
                 player.setAbsorptionAmount(0);
                 player.setHealth(SEEKER_HEALTH);
                 if (seeker.jail > 0) {
+                    darken(player, true);
                     player.teleport(seekerRoom());
                     player.sendMessage(plugin.prefix().append(t("hns.seeker-out",
                             "<red>Plus de cœurs ! <gray>Vous repartez dans <white><s></white> s.", "s", seeker.jail)));
@@ -913,7 +936,7 @@ public final class HideInstance extends GameInstance {
             Seeker seeker = new Seeker(hider.uuid);
             seeker.jail = Math.max(0, setting("seeker-respawn-seconds", 15));
             seekers.put(hider.uuid, seeker);
-            setupSeeker(player, seeker.jail > 0 ? seekerRoom() : seekerSpawn());
+            setupSeeker(player, seeker.jail > 0);
             title(Set.of(hider.uuid), t("hns.found-title", "<red><bold>Trouvé !"),
                     t("hns.found-seeker-sub", "<gray>Vous devenez seeker dans <white><s></white> s", "s", seeker.jail), 5, 50, 10);
         } else {
@@ -976,6 +999,7 @@ public final class HideInstance extends GameInstance {
             Player player = presentPlayer(uuid);
             if (player != null) {
                 hns.clearState(player);
+                darken(player, false);
             }
         }
         Component headline = result == Winner.HIDERS
@@ -1127,9 +1151,11 @@ public final class HideInstance extends GameInstance {
         if (hider != null) {
             setupHider(player, hider, back.location() == null ? hiderSpawn() : back.location());
         } else if (seeker != null) {
-            Location to = phase == Phase.COUNTDOWN || seeker.jail > 0 ? seekerRoom()
-                    : back.inRoom() || back.location() == null ? seekerSpawn() : back.location();
-            setupSeeker(player, to);
+            boolean waiting = phase == Phase.COUNTDOWN || seeker.jail > 0;
+            setupSeeker(player, waiting);
+            if (!waiting && !back.inRoom() && back.location() != null) {
+                player.teleport(back.location());
+            }
             player.setHealth(Math.max(1, Math.min(SEEKER_HEALTH, back.health())));
             player.setAbsorptionAmount(Math.max(0, Math.min(SEEKER_ABSORPTION, back.absorption())));
         } else {

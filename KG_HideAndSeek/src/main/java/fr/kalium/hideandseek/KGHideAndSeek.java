@@ -42,7 +42,7 @@ import static fr.kalium.games.model.SettingSpec.text;
  * 2.2), comme KG_PvpKit, KG_BoatRace et KG_Parkour. S'appuie sur le moteur de parties de KalGames (arenes, files
  * d'attente, parties publiques et privees) : ce plugin enregistre le type « HIDE_AND_SEEK » (reglages, points d'arene,
  * moteur, formulaire de partie privee) et garde ses propres donnees : blocs de chaque map (blocks.yml), sons du
- * soundboard (sounds.yml), sons favoris des joueurs (favorites.yml). Textes : lang.yml de KalGames, cles « hns.* ».
+ * soundboard (sounds.yml). Textes : lang.yml de KalGames, cles « hns.* ».
  */
 public final class KGHideAndSeek extends JavaPlugin implements Listener {
 
@@ -58,6 +58,7 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
     private HideMenus menus;
     private NamespacedKey heartsKey;
     private NamespacedKey absorptionKey;
+    private NamespacedKey locatorKey;
 
     public static KGHideAndSeek get() {
         return instance;
@@ -69,6 +70,7 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
         games = (KalGames) getServer().getPluginManager().getPlugin("KalGames");
         heartsKey = new NamespacedKey(this, "seeker_hearts");
         absorptionKey = new NamespacedKey(this, "seeker_absorption");
+        locatorKey = new NamespacedKey(this, "no_locator_bar");
         blocks = new MapBlocks(this);
         blocks.load();
         sounds = new SoundBoard(this);
@@ -90,6 +92,7 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
                         integer("solid-seconds", "Immobile avant solide (s)", 3, 1, 30, "Un hider immobile devient son bloc ; il redevient un joueur dès qu'il bouge."),
                         integer("block-change-seconds", "Délai entre 2 blocs (s)", 30, 0, 300, "Entre deux changements de bloc d'un hider."),
                         integer("sound-cooldown-seconds", "Délai du soundboard (s)", 3, 0, 60, "Entre deux sons joués par un hider."),
+                        integer("sound-range", "Portée des sons (blocs)", 30, 16, 96, "Distance à laquelle on entend le son automatique et les sons du soundboard."),
                         integer("auto-sound-seconds", "Son automatique : intervalle (s)", 30, 0, 300, "Chaque hider sonne à cet intervalle pendant la recherche. 0 = jamais."),
                         integer("auto-sound-gap-ticks", "Son automatique : écart (ticks)", 15, 0, 100, "Entre deux hiders. 20 ticks = 1 seconde : 15 = 0,75 s."),
                         text("auto-sound", "Son automatique", "entity.villager.ambient", "Identifiant Minecraft du son (villageois par défaut)."),
@@ -222,24 +225,40 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
         setModifier(player, Attribute.MAX_ABSORPTION, absorptionKey, HideInstance.SEEKER_ABSORPTION);
     }
 
+    /**
+     * 0.2.0 : le joueur n'apparait plus dans la barre de localisation des autres (la barre du haut de l'ecran qui montre
+     * la direction des joueurs) : elle montrait les hiders en mouvement aux seekers. Portee d'emission ramenee a 0.
+     */
+    void hideFromLocatorBar(Player player) {
+        setModifier(player, Attribute.WAYPOINT_TRANSMIT_RANGE, locatorKey, -1.0, AttributeModifier.Operation.MULTIPLY_SCALAR_1);
+    }
+
     private void setModifier(Player player, Attribute attribute, NamespacedKey key, double amount) {
+        setModifier(player, attribute, key, amount, AttributeModifier.Operation.ADD_NUMBER);
+    }
+
+    private void setModifier(Player player, Attribute attribute, NamespacedKey key, double amount, AttributeModifier.Operation operation) {
         AttributeInstance value = player.getAttribute(attribute);
         if (value == null) {
             return;
         }
         value.removeModifier(key);
-        value.addModifier(new AttributeModifier(key, amount, AttributeModifier.Operation.ADD_NUMBER));
+        value.addModifier(new AttributeModifier(key, amount, operation));
     }
 
     /**
      * Retire tout ce que ce jeu a pose sur le joueur : coeurs de seeker, absorption, equipe des hiders, invisibilite pour
-     * les autres. Sans effet sur un joueur qui n'a rien de tout cela (appele aussi a chaque arrivee sur le serveur).
+     * les autres, absence de la barre de localisation. Sans effet sur un joueur qui n'a rien de tout cela (appele aussi a chaque arrivee sur le serveur).
      */
     void clearState(Player player) {
         player.setAbsorptionAmount(0);
         AttributeInstance absorption = player.getAttribute(Attribute.MAX_ABSORPTION);
         if (absorption != null) {
             absorption.removeModifier(absorptionKey);
+        }
+        AttributeInstance locator = player.getAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE);
+        if (locator != null) {
+            locator.removeModifier(locatorKey);
         }
         AttributeInstance health = player.getAttribute(Attribute.MAX_HEALTH);
         if (health != null && health.getModifier(heartsKey) != null) {

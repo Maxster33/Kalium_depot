@@ -128,6 +128,17 @@ Conséquences déduites par Claude (**À CONFIRMER**) :
 - c. **Tous les hiders présents éliminés, il ne reste que des absents** : les seekers gagnent (sinon une
   déconnexion empêcherait la victoire des seekers).
 
+## 5 bis. Modifications demandées par LeKiwi06 le 07/10/2026 (après le premier test, version 0.2.0)
+
+1. Les seekers qui attendent dans leur salle sont dans l'**obscurité** (« ils voient la map »).
+2. La **barre de localisation** est coupée pour les joueurs de la partie (« sinon les joueurs non solides sont
+   visibles »).
+3. Les sons s'entendent sur **une trentaine de blocs** (réglable).
+4. Le hider solide **voit son propre bloc** et n'est **plus repoussé** par lui : il se tient debout dessus (remplace,
+   dans la partie 6, « son propre jeu reçoit de l'air à cet endroit »).
+5. **Un seul objet** dans la barre pour le soundboard : la règle 13 (« 6 sons favoris dans la barre d'objets ») et le
+   point 9 de la partie 4 ne valent plus ; barre du hider : soundboard, changer de bloc, évasion.
+
 ## 6. Notes techniques (à confirmer au moment du code)
 
 - **Hider en mouvement** (décision de LeKiwi06, 06/10/2026, pour les joueurs Bedrock) : **joueur normal, visible,

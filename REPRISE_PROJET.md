@@ -94,6 +94,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 - **KG_Pong 0.1.0** (06/10/2026, LeKiwi06) : prototype d'un nouveau mini-jeu Pong pour Kal-Games (2 joueurs, vu de dessus, raquettes en vrais blocs, balle = Sulfur Cube à bloc de glace), branché sur le moteur de parties de KalGames (aucun changement dans KalGames) ; **compilé, non déployé, non testé en jeu**, réservation gardée. Après le déploiement, un modérateur doit construire un terrain plat entouré de murs, créer l'arène et poser 5 points (voir `KG_Pong/JOURNAL.md`).
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
+- **KG_HideAndSeek 0.2.0** (07/10/2026, LeKiwi06) : retours du premier test de la 0.1.0 (obscurité des seekers en attente, barre de localisation coupée, portée des sons à 30 blocs, hider solide debout sur son bloc, un seul objet pour le soundboard) ; **compilé, non déployé, non testé en jeu** ; 0.1.0 en service sur Kal-Games.
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.
 
 **Refonte des menus (déployée le 28/09/2026 à 3 h 40 par Claude de LeKiwi06, serveurs arrêtés, non testée en jeu)** : comparateur « Informations »
@@ -331,6 +332,8 @@ sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre par
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (07/10/2026, 22 h) : KG_HideAndSeek 0.2.0, compilé, non déployé.** Premier test de la 0.1.0 fait par LeKiwi06 avec des joueurs ; six demandes : obscurité (`darkness`) pour les seekers qui attendent dans leur salle ; joueurs de la partie retirés de la barre de localisation (les hiders en mouvement y étaient visibles) ; sons audibles à 30 blocs (réglage `sound-range`) ; hider solide placé debout sur son bloc (il le voit, et son jeu ne le repousse plus : en 0.1.0 il était dans le bloc et redevenait parfois mobile) ; barre du hider réduite à 3 objets (soundboard, changer de bloc, évasion), sons favoris retirés. Détail et limites : `KG_HideAndSeek/JOURNAL.md`.
 
 **Ajout (06/10/2026, 10 h) : KG_Pong 0.1.0, prototype d'un nouveau mini-jeu Pong pour Kal-Games ; compilé, non déployé, non testé en jeu ; réservation gardée jusqu'au test.** Demande de LeKiwi06 du 06/10/2026 : Pong vu de dessus à 2 joueurs, premier à 5 points ; raquettes en vrais blocs qui butent contre les murs ; balle = Sulfur Cube qui a avalé un bloc de glace ; clic gauche pour changer le sens de la raquette, clic droit pour la déplacer (maintenu : en continu). Choix de Claude à confirmer : la trajectoire de la balle est calculée par le plugin, qui place le cube à chaque tick (le bloc de glace ne sert donc qu'à l'apparence) ; les joueurs volent, immobiles, à leur point de vue ; barème 1 point par but et +3 au vainqueur. Rien n'a pu être essayé en jeu : commandes (surtout en Bedrock), rendu de la balle et vue de dessus sont à juger sur le serveur (liste dans `KG_Pong/JOURNAL.md`).
 

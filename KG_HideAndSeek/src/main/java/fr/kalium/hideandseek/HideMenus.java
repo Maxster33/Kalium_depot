@@ -89,57 +89,9 @@ public final class HideMenus {
         for (SoundBoard.Entry entry : hns.sounds().all()) {
             buttons.add(gui.button(Component.text(entry.label(), NamedTextColor.YELLOW), null, p -> game.playBoard(p, entry.key())));
         }
-        buttons.add(gui.button(t("hns.favorites-button", "<gold>Mes sons favoris"), null, p -> openFavorites(p, game)));
         gui.open(player, t("hns.sounds-title", "<gold><bold>Soundboard"),
                 List.of(t("hns.sounds-body", "<gray>Le son est joué là où vous êtes : tout le monde l'entend.")),
                 List.of(), buttons, gui.close(), 2);
-    }
-
-    /** Les 6 sons de la barre d'objets, gardes d'une partie a l'autre. */
-    public void openFavorites(Player player, HideInstance game) {
-        List<SoundBoard.Entry> all = hns.sounds().all();
-        if (all.isEmpty()) {
-            return;
-        }
-        List<String> ids = new ArrayList<>();
-        List<Component> labels = new ArrayList<>();
-        for (int i = 0; i < all.size(); i++) {
-            ids.add(String.valueOf(i));
-            labels.add(Component.text(all.get(i).label()));
-        }
-        List<SoundBoard.Entry> current = hns.sounds().favoritesOf(player.getUniqueId());
-        List<DialogInput> inputs = new ArrayList<>();
-        int slots = Math.min(SoundBoard.FAVORITES, all.size());
-        for (int slot = 0; slot < slots; slot++) {
-            int selected = slot < current.size() ? all.indexOf(current.get(slot)) : slot;
-            inputs.add(gui.choice("fav" + slot, t("hns.favorites-slot", "Case <n>", "n", slot + 1), ids, labels,
-                    String.valueOf(Math.max(0, selected))));
-        }
-        List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(gui.form(t("hns.save", "<green>Enregistrer"), null, (p, view) -> {
-            List<String> keys = new ArrayList<>();
-            for (int slot = 0; slot < slots; slot++) {
-                String text = view.getText("fav" + slot);
-                try {
-                    int index = Integer.parseInt(text == null ? "" : text.trim());
-                    if (index >= 0 && index < all.size() && !keys.contains(all.get(index).key())) {
-                        keys.add(all.get(index).key());
-                    }
-                } catch (NumberFormatException ignored) {
-                    // case laissee telle quelle
-                }
-            }
-            hns.sounds().setFavorites(p.getUniqueId(), keys);
-            HideInstance.Hider hider = game.hider(p.getUniqueId());
-            if (hider != null) {
-                game.giveHotbar(p, hider);
-            }
-            p.sendMessage(plugin.prefix().append(t("hns.favorites-saved", "<green>Sons favoris enregistrés.")));
-        }));
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, p -> openSounds(p, game)));
-        gui.open(player, t("hns.favorites-title", "<gold><bold>Sons favoris"),
-                List.of(t("hns.favorites-body", "<gray>Les sons de votre barre d'objets, gardés d'une partie à l'autre.")),
-                inputs, buttons, gui.close(), 1);
     }
 
     // ------------------------------------------------------------------ moderateurs

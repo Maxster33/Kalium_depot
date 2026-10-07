@@ -4,6 +4,43 @@ Hide and Seek de Kal-Games : un plugin par jeu (règle 2.2 de `REGLES.md`), comm
 Serveur : `kal-games` (machine 7001). Dépend de KalGames (1.22.2 en service) et KG_ScoreBoards. Aucun changement dans
 KalGames : le jeu n'utilise que les crochets existants du moteur de parties.
 
+## 0.2.0 — retours du premier test (07/10/2026)
+
+**Statut : compilé, non déployé, non testé en jeu.**
+
+**Demande de LeKiwi06 (07/10/2026), après le premier test de la 0.1.0** : « quand les seekers attendent, ils voient la
+map, il faut leur donner darkness ; désactiver la boussole de localisation, sinon les joueurs non solides sont
+visibles ; améliorer la portée des sons, il faut qu'on les entende sur une trentaine de blocs ; faire en sorte qu'on
+voie son propre bloc quand on est solide ; faire un seul item dans la hotbar pour le menu des soundboard ; quand on est
+solide parfois on se fait pousser par son propre bloc et on redevient en mouvement, c'est très gênant ».
+
+- **Obscurité des seekers en attente** : effet Obscurité (`darkness`) tant qu'un seeker est dans la salle des seekers
+  (cachette, et retour à 0 cœur ou hider devenu seeker), retiré au moment où il est lâché.
+- **Barre de localisation** (la barre du haut de l'écran qui montre la direction des joueurs) : les joueurs de la
+  partie, hiders et seekers, n'y apparaissent plus (attribut `waypoint_transmit_range` ramené à 0 par un modificateur
+  `kg_hideandseek:no_locator_bar`, retiré en fin de partie et à chaque arrivée sur le serveur).
+- **Portée des sons** : nouveau réglage `sound-range` (« Portée des sons (blocs) », 30 par défaut, 16 à 96), pour le son
+  automatique et le soundboard. La distance qui fait gagner des points au soundboard reste à part
+  (`sound-points-range`, 24).
+- **Hider solide : debout sur son bloc**. Cause des deux derniers points : en 0.1.0 le hider restait DANS son bloc, et
+  son propre jeu recevait de l'air à cet endroit pour ne pas être repoussé ; il ne voyait donc pas son bloc, et quand
+  l'air arrivait trop tard son jeu le repoussait hors du bloc (il redevenait mobile). En 0.2.0 le hider est placé
+  **debout sur son bloc**, au centre, à la hauteur réelle du dessus du bloc : il le voit sous ses pieds, et il n'y a
+  plus d'air envoyé ni de repoussement. Toujours caché à tous les autres joueurs. Il redevient un joueur dès qu'il
+  quitte le dessus du bloc ou saute (il retombe alors au sol, le bloc disparaît).
+  **Limites** : il faut une case libre au-dessus du bloc, sinon « Pas assez de place au-dessus de vous pour devenir
+  solide » (on ne peut plus devenir solide sous un plafond à 1 bloc et demi, par exemple sous une dalle haute) ; sous
+  un plafond à 2 blocs le hider se retrouve couché sur son bloc (comportement du jeu), sans autre effet.
+- **Barre d'objets du hider** : 3 objets au lieu de 9 (cases 1 à 3) : « Soundboard » (ouvre le menu des sons),
+  « Changer de bloc », « Évasion ». Les 6 sons favoris et le menu « Mes sons favoris » sont retirés ; le fichier
+  `favorites.yml` de la 0.1.0 n'est plus lu (laissé en place sur le serveur).
+
+Choix à signaler : l'obscurité s'applique aussi pendant les 15 s de retour à 0 cœur (la demande parlait des seekers
+« qui attendent ») ; la barre de localisation est coupée pour les seekers aussi (les hiders ne les y voient plus).
+
+À tester : obscurité suffisante dans la salle (sinon ajouter la cécité) ; hider solide sous un plafond à 2 blocs ;
+blocs plus bas qu'une case (table d'enchantement, lanterne) ; barre de localisation en Bedrock.
+
 ## 0.1.0 — première version (06/10/2026)
 
 **Statut : déployé sur Kal-Games le 06/10/2026 à 5 h 04 (LeKiwi06), actif après redémarrage, non testé en jeu.**
