@@ -1,0 +1,4 @@
+# KS_FioleExp
+# Chance (en %) que l'enclume s'abime d'un cran a chaque fiole remplie (champ du nom de l'enclume ou menu).
+# Au 3e cran, l'enclume casse. Vanilla : 12. Demande de Maxster33 (29/09/2026) : 6. 0 = aucune usure.
+usure-enclume-pourcent: 6

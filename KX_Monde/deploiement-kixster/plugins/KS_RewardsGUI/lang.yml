@@ -1,0 +1,9 @@
+bouton:
+  nom: <light_purple><bold>Récompenses
+  description: <gray>Récompenses gagnées sur les autres serveurs
+menu:
+  vide: <gray>Aucune récompense en attente. Les récompenses gagnées sur les autres
+    serveurs arrivent ici.
+  titre: <light_purple><bold>Récompenses <gray>(<nombre>)
+gui:
+  close: <red>Fermer

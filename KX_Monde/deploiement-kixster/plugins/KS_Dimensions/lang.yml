@@ -1,0 +1,18 @@
+catalog:
+  title: <light_purple>Dimensions
+  description: <gray>Activer ou désactiver les portails du Nether et de l'End.
+menu:
+  header: <gray>Un portail désactivé empêche d'aller dans sa dimension ; le retour
+    vers le monde normal reste possible.
+  'on': <green>activé
+  nether: '<gold>Portail du Nether : <state>'
+  click-off: <gray>Clique pour désactiver.
+  end: '<light_purple>Portail de l''End : <state>'
+  title: <light_purple><bold>Dimensions
+  'off': <red>désactivé
+  click-on: <gray>Clique pour activer.
+gui:
+  close: <red>Fermer
+toggled:
+  nether: '<gray>Portail du Nether : <state>'
+  end: '<gray>Portail de l''End : <state>'

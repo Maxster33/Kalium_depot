@@ -1,0 +1,50 @@
+moderation:
+  anticheat: <dark_red>Anti-triche
+  anticheat-info: <gray>Alertes, joueurs suspects, suspensions.
+  invsee: <aqua>Invsee
+  invsee-info: <gray>Inventaire d'un joueur (en ligne ou hors ligne).
+  ecsee: <dark_purple>EcSee
+  ecsee-info: <gray>Coffre de l'Ender d'un joueur (en ligne ou hors ligne).
+  minage: <gold>Minage (x-ray)
+  minage-info: <gray>Filons rares cachés trouvés par joueur (24 dernières heures).
+menu:
+  resume: '<white>Alertes des dernières 24 h : <yellow><n></yellow> ; suspendus :
+    <red><s>'
+  bouton-alertes: <yellow>Alertes récentes
+  bouton-joueurs: <white>Joueurs avec alertes
+  bouton-chercher: <white>Chercher un joueur
+  bouton-suspendus: <red>Suspendus
+  bouton-minage: <gold>Minage (x-ray)
+  bouton-morts: <white>Morts d'entités
+  bouton-consultations: <white>Journal invsee / ecsee
+  retour: <gray>Retour
+  titre: <dark_red><bold>Anti-triche
+  bouton-valider: <green>Valider
+  titre-ecsee: <dark_purple><bold>EcSee
+  champ-pseudo: Pseudo du joueur
+  titre-invsee: <aqua><bold>Invsee
+  titre-alertes: <yellow><bold>Alertes récentes
+gui:
+  close: <red>Fermer
+minage:
+  aide: <gray>Seuls comptent les diamants, émeraudes et débris antiques cachés (pas
+    à l'air libre) ; un filon compte une fois ; taux pour 1 000 blocs de roche minés.
+    Du plus suspect au moins suspect.
+  aucun: <gray>Aucun filon rare caché trouvé ces 24 dernières heures.
+  titre: <gold><bold>Minage (x-ray)
+inv:
+  aucun: <red>Aucun inventaire enregistré pour <nom> (pas encore venu depuis l'installation
+    de l'anti-triche).
+alerte:
+  legere: '<gold>[Anti-triche] <yellow><nom> : <type> <gray>- <detail>'
+joueur:
+  lever-texte: <white><nom> pourra de nouveau se connecter à Kixster.
+  suspendre-aide: <gray>Il ne pourra plus se connecter à Kixster (message : « Une erreur inhabituelle est survenue, contacte le staff. »), jusqu'à ce que le staff lève la suspension.
+  etat: <white><nom> <gray>- <etat> - <n> alerte(s)
+  bouton-invsee: <aqua>Inventaire
+  bouton-ecsee: <dark_purple>Coffre de l'Ender
+  bouton-suspendre: <red>Suspendre
+  bouton-bannir: <dark_red>Bannir de KaLium
+  titre: <dark_red><bold><nom>
+afk:
+  message: <yellow>Expulsé après <minutes> minutes d'inactivité.

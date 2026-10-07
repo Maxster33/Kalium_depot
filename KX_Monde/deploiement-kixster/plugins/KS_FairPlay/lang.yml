@@ -1,0 +1,7 @@
+connexion: '<dark_gray>Mini-cartes : vue des grottes et radar d''entités désactivés
+  (fair-play).'
+compte-2: '<yellow>Limite du jour (coffres, spawners, blocs suspects, gardiens anciens)
+  : <n> / <limite>'
+limite-2: '<red>Limite atteinte, reviens demain. <gray>(<limite> par jour : coffres
+  de structure, spawners, blocs suspects, gardiens anciens ; l''Élixir de Fortune
+  lève la limite)'

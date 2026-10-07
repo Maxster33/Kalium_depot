@@ -1,0 +1,19 @@
+anticheat:
+  anti-xray:
+    enabled: true
+    engine-mode: 1
+    hidden-blocks:
+    - ancient_debris
+    - nether_gold_ore
+    - nether_quartz_ore
+    - gilded_blackstone
+    - chest
+    - trapped_chest
+    - barrel
+    - spawner
+    lava-obscures: true
+    max-block-height: 128
+    replacement-blocks:
+    - netherrack
+    - basalt
+    - blackstone

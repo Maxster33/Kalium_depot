@@ -190,9 +190,11 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
     sans 26.3). Redémarrage de 11:25 : 44 plugins, aucune erreur. Avant cela, 43/45 OK :
     GrimAC 8eb5f28 et LegacyFreecam plantaient. Tests en jeu à faire.
     Ensuite : préparer nos plugins pour Kixster (étape 4).
-  - **Étape 4 préparée (07/10/2026), à envoyer quand la prégénération sera finie** : paquet sur le PC de Maxster33,
-    `Documents\KaLium_preparation\kixster\` (hors dépôt : contient `relay-token` et la clé Floodgate ; détail dans
-    son `LISEZMOI.md`, script WinSCP `envoyer-kixster.txt`). 27 KS_ (dont KS_Menu 1.1.0, `commande: kixster`),
+  - **Étape 4 préparée (07/10/2026), à envoyer quand la prégénération sera finie** : tout est dans
+    **`KX_Monde/deploiement-kixster/`** (mode d'emploi : son `LISEZMOI.md` ; `sh envoyer.sh <session Kixster>
+    <session Event>`, testé à blanc avec `DRY_RUN=1`). Probablement repris par LeKiwi06. Secrets jamais dans le
+    dépôt : lus sur Event par le script (jeton du relais, clé Floodgate) ; plugins externes téléchargés par
+    `telecharger-externes.sh` (empreintes vérifiées). 27 KS_ (dont KS_Menu 1.1.0, `commande: kixster`),
     externes « seulement le nécessaire » (décision de Maxster33) : SimpleClaimSystem 1.13.1, VaultUnlocked 2.20.3,
     Floodgate, GrimAC 2.3.74-abb95b6, + WorldGuard 7.0.19 (magasins KS_Economy) et JourneyMap 26.3-6.0.10 (porte le
     fair-play de LeKiwi06), ajoutés à la demande de Maxster33 ; réglages de serveur de LeKiwi06 (anti-xray, pistons,

@@ -1,0 +1,7 @@
+objet:
+  nom: <gold><bold>Kixster
+  description: '<gray>Clic droit : menu du serveur'
+menu:
+  titre: <gold><bold>Kixster
+gui:
+  close: <red>Fermer

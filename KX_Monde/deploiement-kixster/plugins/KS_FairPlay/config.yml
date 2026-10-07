@@ -1,0 +1,7 @@
+# KS_FairPlay - valeurs par defaut aussi dans le code.
+
+# Ouvertures par jour (remise a zero a minuit, heure de Paris) : contenants au butin non genere, spawners naturels
+# casses, blocs suspects brosses. L'effet Chance III ou plus (Elixir de Fortune) leve la limite et ne compte pas.
+limite-par-jour: 10
+# Envoie a la connexion le code « fair » de Xaero (vue des grottes et radar d'entites coupes).
+xaero-fair: true

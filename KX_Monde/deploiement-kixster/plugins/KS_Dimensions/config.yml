@@ -1,0 +1,16 @@
+# ============================================================
+#  KS_Dimensions - serveur Event
+#  Se regle en jeu : /dimensions (operateurs). Les valeurs ci-dessous sont ecrites par le menu.
+# ============================================================
+
+# false : on ne peut plus ALLER dans le Nether par un portail depuis le monde normal (joueurs et entites).
+# Le retour du Nether vers le monde normal reste possible.
+nether-portals-enabled: true
+
+# false : on ne peut plus ALLER dans l'End par un portail depuis le monde normal (joueurs et entites).
+# Le portail de sortie de l'End reste utilisable.
+end-portals-enabled: true
+
+# Largeur des boutons du menu (100 a 400).
+gui:
+  button-width: 240

@@ -1,0 +1,170 @@
+bouton:
+  nom: <green><bold>Économie
+  description: <gray>Solde, dépôt et retrait d'émeraudes
+tab:
+  solde: ' <green><solde>'
+menu:
+  solde: '<white>Solde : <green><bold><solde></bold>'
+  visible: <gray>Ton solde est <green>visible</green> par les autres joueurs dans
+    la liste des joueurs (Tab).
+  tout-deposer:
+    info: <gray>Émeraudes, blocs d'émeraude et blocs compressés de ton inventaire
+  deposer:
+    info: <gray>Pose dans le coffre les émeraudes à déposer
+  retirer:
+    info: <gray>Émeraudes, blocs ou blocs compressés
+  masquer:
+    info: <gray>Coûte <pourcent> % de ton solde par jour
+  titre: <green><bold>Économie
+  bouton-tout-deposer: <green>Tout déposer
+  info-tout-deposer: <gray>Émeraudes, blocs d'émeraude et blocs compressés de ton
+    inventaire
+  bouton-deposer: <green>Déposer des objets
+  info-deposer: <gray>Pose dans le coffre les émeraudes à déposer
+  bouton-retirer: <yellow>Retirer
+  info-retirer: <gray>Émeraudes, blocs ou blocs compressés
+  bouton-masquer: <red>Masquer mon solde
+  info-masquer: <gray>Coûte <pourcent> % de ton solde par jour
+  masque: '<gray>Ton solde est <red>masqué</red> dans la liste des joueurs (Tab) :
+    <pourcent> % prélevé chaque jour à minuit.'
+  bouton-reveler: <aqua>Révéler mon solde
+  info-reveler: <gray>Gratuit, immédiat
+  bouton-magasins: <gold>Magasins
+  info-magasins: <gray>Boutiques des joueurs, achat à distance, ton magasin
+gui:
+  close: <red>Fermer
+  'yes': <green>Confirmer
+  'no': <red>Annuler
+  ok: <green>OK
+  retour: <gray>Retour
+masquer:
+  titre: <red>Masquer mon solde
+  texte: <white>Ton solde ne sera plus visible dans la liste des joueurs. Chaque jour
+    à minuit (heure de Paris), <red><pourcent> %</red> de ton solde est prélevé (arrondi
+    à l'unité inférieure). Tu peux le révéler gratuitement à tout moment.
+depot:
+  titre: 'Déposer : émeraudes, blocs, blocs compressés'
+  fait-coffre: <green><points></green> <white>déposés. Les autres objets t'ont été
+    rendus.
+  fait: <green><points></green> <white>déposés (<emeraudes> émeraudes).
+  titre-coffre: Déposer des émeraudes
+retrait:
+  emeraude: Émeraude (1)
+  bloc: Bloc d'émeraude (9)
+  tier: Bloc compressé tier <tier> (<valeur>)
+  objet: Objet (valeur en émeraudes)
+  nombre: Nombre
+  valider: <yellow>Retirer
+  titre: <yellow><bold>Retirer
+  fait: <white><nombre> x <objet> retiré(s) pour <yellow><cout></yellow>.
+catalogue:
+  mon-magasin: <white>Mon magasin
+  vide: <gray>Aucun magasin pour l'instant.
+  titre: <gold><bold>Magasins
+  info: <gray>de <proprio>
+  aide: <gray>Choisis un magasin pour voir ses boutiques et acheter à distance.
+  proprio: <white>Magasin de <proprio>
+  position: '<gray>Position : x <x>, y <y>, z <z>'
+magasin:
+  titre: <gold><bold>Magasin
+  aucun: <white>Tu n'as pas encore de magasin.
+  aide-creer: '<gray>Place-toi dans un de tes claims de la zone des magasins, puis
+    « Créer mon magasin » (ou /magasin create) : <prix> ou <blocs> blocs d''émeraude
+    compressés tier 3.'
+  bouton-creer: <green>Créer mon magasin
+  pas-ton-claim: <red>Place-toi dans un de tes claims.
+  titre-creer: <gold><bold>Créer mon magasin
+  creer-texte: '<white>Le magasin est créé sur ce claim. Paiement : <gray>(solde :
+    <solde> ; blocs tier 3 : <blocs>)'
+  payer-points: <green>Payer <prix>
+  payer-blocs: <green>Payer <blocs> blocs tier 3
+  solde: '<red>Solde insuffisant : il faut <prix>.'
+  cree: <green>Magasin créé ! Pose un panneau sur un contenant de ce claim pour créer
+    ta première boutique.
+  nom: <white><nom>
+  boutiques: '<white>Boutiques : <nombre> / <max> ; claims : <claims>'
+  aide: '<gray>Pose un panneau sur un coffre, un tonneau ou une shulker dans un claim
+    du magasin pour créer une boutique. /magasin agrandir dans un autre de tes claims
+    de la zone : <prix>, +1 boutique.'
+  bouton-boutiques: <white>Mes boutiques
+  bouton-fiche: <white>Nom et description
+  bouton-position: <white>Position ici
+  bouton-agrandir: <white>Agrandir ici
+  enregistrer: <green>Enregistrer
+  titre-fiche: <gold><bold>Nom et description
+  champ-nom: Nom (32 caractères)
+  champ-description: Description (100 caractères)
+  retour: <gray>Retour
+  description: <gray><description>
+  points-attente: '<white>Points en attente : <yellow><points>'
+  bouton-stock: <white>Gérer le stock
+  bouton-supprimer: <red>Supprimer la boutique
+  titre-gerer: <gold><bold>Ma boutique
+  titre-stock: Stock de la boutique
+  bouton-boutique: <white>Boutique <n>
+  bouton-points: <green>Récupérer les points
+  position-ok: <green>Position du magasin enregistrée.
+  aucune-boutique: <gray>Aucune boutique pour l'instant.
+  titre-boutiques: <gold><bold>Mes boutiques
+  titre-supprimer: <red><bold>Supprimer la boutique
+  supprimer-texte: <white>Le panneau redevient ordinaire ; le contenu du contenant
+    et les points en attente te restent.
+  aide-2: '<gray>Pose un panneau sur un coffre (en cuivre compris), un tonneau ou
+    une shulker dans un claim du magasin pour créer une boutique. /magasin agrandir
+    dans un autre de tes claims de la zone : <prix>, +1 boutique.'
+  bouton-renommer: <white>Renommer
+  bouton-fermer: <gold>Fermer temporairement
+  fermer-info: <gray>Plus aucun achat jusqu'à la réouverture
+  places-attente: '<gold><attente> place(s) encore prise(s) par des boutiques supprimées
+    : prochaine libre dans <delai>.'
+boutique:
+  bouton-creer: <green>Créer une boutique
+  bouton-fermer: <gray>Fermer
+  titre: <gold><bold>Boutique
+  proposer: <white>Faire de ce panneau une boutique ? <gray>Le contenu du contenant
+    sera son stock ; les paiements en objets y arriveront.
+  ecrire: <white>Écrire le nom
+  inventaire: <white>Choisir dans l'inventaire
+  annuler: <red>Annuler
+  titre-vente: <gold><bold>Objet à vendre
+  choix-aide: <gray>Écris le nom français ou l'id du jeu (« diamant », « diamond »),
+    ou choisis un objet de ton inventaire (objets spéciaux compris).
+  chercher: <green>Chercher
+  titre-nom: <gold><bold>Nom de l'objet
+  champ-nom: Nom ou id
+  retour: <gray>Retour
+  introuvable: <red>Aucun objet ne correspond à « <texte> ».
+  titre-inventaire: Clique sur l'objet
+  valider: <green>Valider
+  titre-quantite: <gold><bold>Quantité
+  quantite-objet: '<white>Objet : '
+  champ-quantite: Quantité par lot
+  monnaie: <green>Monnaie (points)
+  objet: <white>Objet
+  titre-prix-choix: <gold><bold>Prix d'un lot
+  prix-aide: '<gray>Monnaie : les points payés attendent dans la boutique, tu les
+    récupères depuis ton magasin. Objet : il arrive dans le contenant.'
+  titre-points: <gold><bold>Prix en points
+  champ-points: Points par lot
+  titre-recap: <gold><bold>Nouvelle boutique
+  recap: <white>Vend <lot> contre <prix>.
+  creee: <green>Boutique créée.
+  supprimee: <yellow>Boutique supprimée<points>.
+  titre-prix: <gold><bold>Objet demandé en paiement
+  bouton-creer-nom: <green>Créer la boutique
+  champ-nom-boutique: Nom de la boutique (20 caractères)
+achat:
+  vend: '<white>Vend : '
+  contre: '<white>Contre : '
+  stock: '<white>Stock : <lots> lot(s)'
+  bouton: <green>Acheter
+  titre: <gold><bold>Boutique de <proprio>
+  champ-lots: Nombre de lots
+  fait: '<green>Acheté : <lots> lot(s).'
+  nom: <gold><bold><nom>
+etat:
+  ouverte: <green><lots> lot(s) en stock
+  rupture: <red><bold>Rupture de stock
+moderation:
+  signalements: <red>Signalements des magasins
+  signalements-info: <gray>Boutiques et magasins signalés par les joueurs.

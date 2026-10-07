@@ -1,0 +1,70 @@
+bouton:
+  nom: <aqua><bold>Claims
+  description: <gray>Tes claims, leurs membres et leurs réglages
+  nom-description: <white>Nom et description
+  membres: <white>Membres
+  bannis: <white>Bannis
+  groupe: <white>Groupe
+  reglages-membres: <white>Réglages des membres
+  reglages-visiteurs: <white>Réglages des visiteurs
+  vendre: <gold>Vendre
+  supprimer: <red>Supprimer
+  retour: <gray>Retour
+  claimer: <green>Claimer ici
+  mes-claims: <white>Mes claims (<nombre>)
+  groupes: <white>Mes groupes
+  prix: <white>Prix des claims
+  enregistrer: <green>Enregistrer
+  bannir: <red>Bannir un joueur
+  expulser: <yellow>Expulser un joueur
+  mettre-en-vente: <gold>Mettre en vente
+  creer-groupe: <green>Créer un groupe
+  creer: <green>Créer
+claimer:
+  titre: <green><bold>Claimer ce chunk
+  texte: '<white>Chunk <x>, <z> (<monde>). Prix : <yellow><prix></yellow>.'
+  fait: <green>Chunk claimé (<prix>).
+  solde: '<red>Solde insuffisant : ce claim coûte <prix>.'
+gui:
+  'yes': <green>Confirmer
+  'no': <red>Annuler
+  close: <red>Fermer
+  ok: <green>OK
+titre: <aqua><bold>Claims
+claim:
+  nom: <white><nom> <gray>- <position>
+  description: <gray><description>
+  membres: '<white>Membres : <nombre> / <max>'
+  sans-groupe: '<white>Groupe : <gray>aucun'
+  titre: <aqua><bold>Claim <nom>
+accueil:
+  nombre: '<white>Claims : <green><nombre></green> / <max>'
+  prochain: '<white>Prochain claim : <yellow><prix>'
+  aide: '<gray>1 claim = 1 chunk (16 x 16 blocs, toute la hauteur). « Claimer ici
+    » claime le chunk où tu te trouves (aussi : /ksclaim).'
+claims:
+  info: <gray><position><groupe>
+  page: <gray>Page <page> / <pages>
+  titre: <aqua><bold>Mes claims
+champ:
+  nom: Nom (16 caractères)
+  description: Description (50 caractères)
+  prix: Prix (points)
+  nom-groupe: Nom du groupe
+nom:
+  titre: <aqua><bold>Nom et description
+bannis:
+  titre: <aqua><bold>Bannis
+  aide: <gray>Un joueur banni ne peut plus entrer dans le claim ; expulser le fait
+    seulement sortir.
+vente:
+  titre: <gold><bold>Vendre ce claim
+  aide: <gray>Un joueur qui se tient dans le claim peut l'acheter avec /ksclaim. S'il
+    a déjà <gratuits> claims ou plus, le prix doit être au moins celui de son prochain
+    claim.
+groupes:
+  titre: <aqua><bold>Mes groupes
+  aide: <gray>Les membres et les réglages d'un groupe s'appliquent à tous ses claims.
+    Un claim n'est que dans un seul groupe.
+groupe:
+  creer-titre: <aqua><bold>Nouveau groupe
