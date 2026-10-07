@@ -190,6 +190,14 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
     sans 26.3). Redémarrage de 11:25 : 44 plugins, aucune erreur. Avant cela, 43/45 OK :
     GrimAC 8eb5f28 et LegacyFreecam plantaient. Tests en jeu à faire.
     Ensuite : préparer nos plugins pour Kixster (étape 4).
+  - **Étape 4 préparée (07/10/2026), à envoyer quand la prégénération sera finie** : paquet sur le PC de Maxster33,
+    `Documents\KaLium_preparation\kixster\` (hors dépôt : contient `relay-token` et la clé Floodgate ; détail dans
+    son `LISEZMOI.md`, script WinSCP `envoyer-kixster.txt`). 27 KS_ (dont KS_Menu 1.1.0, `commande: kixster`),
+    externes « seulement le nécessaire » (décision de Maxster33) : SimpleClaimSystem 1.13.1, VaultUnlocked 2.20.3,
+    Floodgate, GrimAC 2.3.74-abb95b6 ; WorldGuard 7.0.19 en option (sans lui, aucun magasin KS_Economy). Réglages
+    d'Event repris sans les données de jeu ; adaptés : textes « Kixster » (KS_Menu, KS_Tableau, KS_AntiCheat),
+    `boite: kixster` (KS_RewardsGUI ; **KG_Rewards de Kal-Games à passer en `boite: kixster` à l'ouverture**),
+    noms de mondes de SimpleClaimSystem.
   - **Proxy redémarré en Velocity 4.2.0-30 le 07/10/2026 à 08:59** (Maxster33, fichier de démarrage choisi dans le
     panneau) : floodgate, Geyser 2.11.3, KaliumRelay 1.4.0, velocity-command-forward OK. **LibertyBans 1.1.4 plantait**
     (premier chargement depuis son installation du 03/10 ; incompatible avec tout Velocity 4, `NoSuchMethodError`
