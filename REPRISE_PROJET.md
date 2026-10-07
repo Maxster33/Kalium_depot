@@ -194,7 +194,9 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
     `Documents\KaLium_preparation\kixster\` (hors dépôt : contient `relay-token` et la clé Floodgate ; détail dans
     son `LISEZMOI.md`, script WinSCP `envoyer-kixster.txt`). 27 KS_ (dont KS_Menu 1.1.0, `commande: kixster`),
     externes « seulement le nécessaire » (décision de Maxster33) : SimpleClaimSystem 1.13.1, VaultUnlocked 2.20.3,
-    Floodgate, GrimAC 2.3.74-abb95b6 ; WorldGuard 7.0.19 en option (sans lui, aucun magasin KS_Economy). Réglages
+    Floodgate, GrimAC 2.3.74-abb95b6, + WorldGuard 7.0.19 (magasins KS_Economy) et JourneyMap 26.3-6.0.10 (porte le
+    fair-play de LeKiwi06), ajoutés à la demande de Maxster33 ; réglages de serveur de LeKiwi06 (anti-xray, pistons,
+    suivi des entités, JourneyMap) appliqués aux fichiers de Kixster dans `racine/` du paquet. Réglages
     d'Event repris sans les données de jeu ; adaptés : textes « Kixster » (KS_Menu, KS_Tableau, KS_AntiCheat),
     `boite: kixster` (KS_RewardsGUI ; **KG_Rewards de Kal-Games à passer en `boite: kixster` à l'ouverture**),
     noms de mondes de SimpleClaimSystem.
