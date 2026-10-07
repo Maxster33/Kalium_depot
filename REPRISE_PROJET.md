@@ -165,8 +165,10 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
     TradeShop 1.7, LegacyFreecam 2.0.0, WoodCutter 1.0.2, AnvilUnlocker 1.1.3, Geyser-Spigot 2.11.2 ; anciens ViaVersion
     5.12.0 et voicechat 2.6.23 rangés de même. Restent : LuckPerms 5.5.71, WorldEdit 7.4.6-beta-01, RideOnHead 1.1.3,
     KLM_Menu 2.9.0, KLM_Chat 1.0.0.
-  - Version 26.3 à choisir dans le panneau Minestrator (Paper 26.3 encore en bêta, build 159 au 06/10/2026), puis
-    redémarrage par l'humain et lecture des journaux.
+  - **Kixster démarré en Paper 26.3-159 le 07/10/2026 à 08:55** : les 9 plugins chargés sans erreur. Paper 26.3
+    absent de l'onglet « Versions » du panneau : `paper-26.3-159.jar` déposé à la racine et choisi dans Paramètres >
+    Hébergement > « Changer le paramètre de démarrage ». `spigot-26.3.jar` posé par le panneau rangé dans
+    `_removed-spigot-26.3/` (jamais lancé).
   - Proxy : Velocity 4.1.2-SNAPSHOT-27 ne gère pas la 26.3. `velocity-4.2.0-30.jar` (stable, gère aussi toutes les
     versions plus anciennes) déposé à la racine du proxy **à côté** de l'ancien jar, sans rien remplacer : à activer
     dans le panneau (fichier de démarrage) puis redémarrer le proxy (déconnecte tout le réseau).
