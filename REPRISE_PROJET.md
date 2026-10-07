@@ -185,8 +185,10 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
     sur le PC de Maxster33 (`Documents\Sauvegardes_KaLium\event-2026-10-07-paper-26.2`, 2,6 Go). Nos 29 plugins
     (KS_*, KLM_Menu, KLM_Chat) recompilés ensemble contre paper-api 26.3.build.159-beta : 0 erreur (comme en 26.2),
     jars inchangés. Mis à jour (anciens dans `plugins/_removed-…`) : WorldEdit 7.4.6-beta-02, ViaVersion/ViaBackwards
-    5.12.1-SNAPSHOT, voicechat 2.6.24, JourneyMap 26.3-6.0.10, VaultUnlocked 2.20.3. Démarrage : 43/45 plugins OK ;
-    **GrimAC 2.3.74 et LegacyFreecam 2.0.0 plantent** (pas de version 26.3). Tests en jeu à faire.
+    5.12.1-SNAPSHOT, voicechat 2.6.24, JourneyMap 26.3-6.0.10, VaultUnlocked 2.20.3, **GrimAC 2.3.74-abb95b6** (alpha
+    Modrinth du 01/10, contient « support 26.3 » ; 8eb5f28 plantait) ; LegacyFreecam 2.0.0 retiré (CommandAPI 12.0.0
+    sans 26.3). Redémarrage de 11:25 : 44 plugins, aucune erreur. Avant cela, 43/45 OK :
+    GrimAC 8eb5f28 et LegacyFreecam plantaient. Tests en jeu à faire.
     Ensuite : préparer nos plugins pour Kixster (étape 4).
   - **Proxy redémarré en Velocity 4.2.0-30 le 07/10/2026 à 08:59** (Maxster33, fichier de démarrage choisi dans le
     panneau) : floodgate, Geyser 2.11.3, KaliumRelay 1.4.0, velocity-command-forward OK. **LibertyBans 1.1.4 plantait**
