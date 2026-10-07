@@ -18,6 +18,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_Pong — LeKiwi06 — depuis le 2026-10-06 09:21 — nouveau mini-jeu Pong (kal-games) : prototype, vu de dessus, raquettes en blocs, balle = Sulfur Cube
 - KG_PiliersFortune — Maxster33 — depuis le 2026-10-06 12:00 — nouveau mini-jeu « Les piliers de la Fortune » (kal-games) : 4 à 8 joueurs sur des piliers, objets aléatoires, chute = élimination
+- KS_Menu — Maxster33 — depuis le 2026-10-07 11:32 — nom de la commande du menu réglable (/event sur Event, /kixster sur Kixster), test sur Event (26.3)
 
 
 
