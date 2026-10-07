@@ -1,0 +1,363 @@
+== Entrees conservees par biome (overworld.json)
+  terralith:forested_highlands : 22
+  terralith:frozen_cliffs : 4
+  terralith:glacial_chasm : 3
+  terralith:rocky_mountains : 21
+  terralith:shield : 19
+  terralith:siberian_taiga : 65
+  terralith:volcanic_crater : 1
+  terralith:volcanic_peaks : 3
+  terralith:warm_river : 8
+  terralith:white_cliffs : 4
+  terralith:wintry_forest : 50
+== Remplacements (biome Terralith -> biome vanilla : nombre d'entrees)
+  terralith:alpha_islands -> {minecraft:mushroom_fields=1}
+  terralith:alpha_islands_winter -> {minecraft:mushroom_fields=1}
+  terralith:alpine_grove -> {minecraft:grove=33, minecraft:snowy_slopes=2}
+  terralith:alpine_highlands -> {minecraft:flower_forest=10, minecraft:forest=3, minecraft:meadow=1, minecraft:stony_shore=2, minecraft:sunflower_plains=12}
+  terralith:amethyst_canyon -> {minecraft:bamboo_jungle=2, minecraft:jungle=1}
+  terralith:amethyst_rainforest -> {minecraft:bamboo_jungle=8, minecraft:jungle=16}
+  terralith:ancient_sands -> {minecraft:desert=3}
+  terralith:arid_highlands -> {minecraft:savanna=3}
+  terralith:ashen_savanna -> {minecraft:savanna=2, minecraft:savanna_plateau=4}
+  terralith:basalt_cliffs -> {minecraft:savanna=1}
+  terralith:birch_taiga -> {minecraft:forest=7, minecraft:grove=8, minecraft:meadow=1, minecraft:old_growth_birch_forest=1, minecraft:stony_shore=1}
+  terralith:blooming_plateau -> {minecraft:windswept_hills=4}
+  terralith:blooming_valley -> {minecraft:forest=3, minecraft:plains=3}
+  terralith:brushland -> {minecraft:forest=19, minecraft:jungle=3, minecraft:plains=11, minecraft:sparse_jungle=3, minecraft:stony_shore=2}
+  terralith:bryce_canyon -> {minecraft:river=1, minecraft:wooded_badlands=14}
+  terralith:caldera -> {minecraft:meadow=2, minecraft:plains=2, minecraft:snowy_slopes=2}
+  terralith:cave/deep_caves -> {(entree retiree)=1}
+  terralith:cave/frostfire_caves -> {(entree retiree)=1}
+  terralith:cave/fungal_caves -> {(entree retiree)=1}
+  terralith:cave/infested_caves -> {(entree retiree)=1}
+  terralith:cave/mantle_caves -> {(entree retiree)=1}
+  terralith:cave/thermal_caves -> {(entree retiree)=1}
+  terralith:cave/underground_jungle -> {(entree retiree)=1}
+  terralith:cloud_forest -> {minecraft:swamp=1}
+  terralith:cold_shrubland -> {minecraft:dappled_forest=3, minecraft:frozen_river=1, minecraft:plains=3, minecraft:snowy_plains=19, minecraft:windswept_gravelly_hills=1}
+  terralith:desert_canyon -> {minecraft:desert=3}
+  terralith:desert_oasis -> {minecraft:desert=15, minecraft:mangrove_swamp=1, minecraft:river=2}
+  terralith:desert_spires -> {minecraft:desert=2}
+  terralith:emerald_peaks -> {minecraft:frozen_peaks=5}
+  terralith:fractured_savanna -> {minecraft:flower_forest=1, minecraft:mangrove_swamp=1, minecraft:plains=2, minecraft:savanna=2, minecraft:sunflower_plains=2}
+  terralith:granite_cliffs -> {minecraft:badlands=1, minecraft:desert=4, minecraft:stony_shore=3}
+  terralith:gravel_beach -> {minecraft:beach=2, minecraft:stony_shore=2}
+  terralith:gravel_desert -> {minecraft:dappled_forest=2, minecraft:ice_spikes=10, minecraft:plains=1, minecraft:windswept_gravelly_hills=1}
+  terralith:haze_mountain -> {minecraft:mangrove_swamp=1, minecraft:swamp=1}
+  terralith:highlands -> {minecraft:plains=3}
+  terralith:hot_shrubland -> {minecraft:forest=1, minecraft:savanna=23, minecraft:sparse_jungle=2, minecraft:stony_shore=2}
+  terralith:ice_marsh -> {minecraft:frozen_river=2, minecraft:snowy_plains=1, minecraft:snowy_taiga=1, minecraft:taiga=6}
+  terralith:jungle_mountains -> {minecraft:bamboo_jungle=1, minecraft:jungle=1, minecraft:mangrove_swamp=1, minecraft:swamp=1}
+  terralith:lavender_forest -> {minecraft:old_growth_pine_taiga=5}
+  terralith:lavender_valley -> {minecraft:river=1, minecraft:windswept_forest=1}
+  terralith:lush_desert -> {minecraft:desert=6}
+  terralith:lush_valley -> {minecraft:windswept_forest=3}
+  terralith:mirage_isles -> {minecraft:mushroom_fields=1}
+  terralith:moonlight_grove -> {minecraft:old_growth_pine_taiga=13, minecraft:old_growth_spruce_taiga=15, minecraft:stony_shore=2}
+  terralith:moonlight_valley -> {minecraft:plains=2, minecraft:windswept_gravelly_hills=1}
+  terralith:orchid_swamp -> {minecraft:flower_forest=1, minecraft:river=1, minecraft:sunflower_plains=1, minecraft:swamp=1}
+  terralith:painted_mountains -> {minecraft:badlands=5, minecraft:eroded_badlands=5}
+  terralith:red_oasis -> {minecraft:river=1}
+  terralith:rocky_jungle -> {minecraft:bamboo_jungle=3, minecraft:jungle=18}
+  terralith:rocky_shrubland -> {minecraft:ice_spikes=2, minecraft:snowy_plains=1}
+  terralith:sakura_grove -> {minecraft:dark_forest=22, minecraft:pale_garden=10, minecraft:stony_shore=2}
+  terralith:sakura_valley -> {minecraft:bamboo_jungle=2, minecraft:jungle=1, minecraft:river=1, minecraft:windswept_forest=1}
+  terralith:sandstone_valley -> {minecraft:mangrove_swamp=1, minecraft:river=1}
+  terralith:savanna_badlands -> {minecraft:forest=1, minecraft:mangrove_swamp=2, minecraft:savanna=15, minecraft:savanna_plateau=15, minecraft:windswept_savanna=1}
+  terralith:savanna_slopes -> {minecraft:savanna=1, minecraft:savanna_plateau=9}
+  terralith:scarlet_mountains -> {minecraft:grove=1, minecraft:jagged_peaks=4}
+  terralith:shield_clearing -> {minecraft:plains=1}
+  terralith:shrubland -> {minecraft:flower_forest=13, minecraft:jungle=1, minecraft:stony_shore=2, minecraft:sunflower_plains=19}
+  terralith:siberian_grove -> {minecraft:grove=5, minecraft:old_growth_pine_taiga=2}
+  terralith:skylands_autumn -> {minecraft:deep_ocean=1}
+  terralith:skylands_spring -> {minecraft:deep_ocean=1}
+  terralith:skylands_summer -> {minecraft:deep_lukewarm_ocean=1}
+  terralith:skylands_winter -> {minecraft:deep_cold_ocean=1}
+  terralith:snowy_badlands -> {minecraft:ice_spikes=7, minecraft:snowy_plains=8, minecraft:snowy_slopes=5, minecraft:windswept_gravelly_hills=2}
+  terralith:snowy_cherry_grove -> {minecraft:ice_spikes=3, minecraft:snowy_slopes=4}
+  terralith:snowy_maple_forest -> {minecraft:dappled_forest=2, minecraft:meadow=1, minecraft:plains=2, minecraft:snowy_slopes=4}
+  terralith:snowy_shield -> {minecraft:meadow=1, minecraft:plains=4, minecraft:snowy_slopes=4}
+  terralith:steppe -> {minecraft:flower_forest=1, minecraft:plains=1, minecraft:sunflower_plains=2}
+  terralith:stony_spires -> {minecraft:dark_forest=2, minecraft:forest=2, minecraft:stony_peaks=2}
+  terralith:temperate_highlands -> {minecraft:dappled_forest=13, minecraft:dark_forest=3, minecraft:plains=9}
+  terralith:tropical_jungle -> {minecraft:bamboo_jungle=3, minecraft:jungle=9}
+  terralith:valley_clearing -> {minecraft:forest=1, minecraft:sunflower_plains=1}
+  terralith:warped_mesa -> {minecraft:mushroom_fields=1}
+  terralith:white_mesa -> {minecraft:savanna=2, minecraft:stony_peaks=3}
+  terralith:windswept_spires -> {minecraft:dappled_forest=1, minecraft:old_growth_pine_taiga=1, minecraft:old_growth_spruce_taiga=1, minecraft:plains=1}
+  terralith:wintry_lowlands -> {minecraft:taiga=6}
+  terralith:yellowstone -> {minecraft:forest=2, minecraft:river=4}
+  terralith:yosemite_cliffs -> {minecraft:windswept_hills=2}
+  terralith:yosemite_lowlands -> {minecraft:flower_forest=1, minecraft:sunflower_plains=2}
+== Fichiers copies : 270
+  data/minecraft/worldgen/material_rule/overworld/biome_surface.json
+  data/minecraft/worldgen/material_rule/overworld/biome_surface/stony_peaks.json
+  data/minecraft/worldgen/material_rule/overworld/surface.json
+  data/minecraft/worldgen/material_rule/overworld/under_biome_surface.json
+  data/minecraft/worldgen/material_rule/overworld/underground.json
+  data/terralith/tags/block/calcite_moss.json
+  data/terralith/tags/block/cobblestone_snow.json
+  data/terralith/tags/block/grass_block.json
+  data/terralith/tags/block/soil_stone.json
+  data/terralith/tags/block/stone.json
+  data/terralith/tags/block/volcano_barrier.json
+  data/terralith/tags/block/volcano_blocks.json
+  data/terralith/tags/worldgen/biome/all_terralith_biomes.json
+  data/terralith/tags/worldgen/biome/caves.json
+  data/terralith/tags/worldgen/biome/rare_island.json
+  data/terralith/tags/worldgen/biome/reference/all_with_structures.json
+  data/terralith/tags/worldgen/biome/reference/badlands_all.json
+  data/terralith/tags/worldgen/biome/reference/badlands_with_structures.json
+  data/terralith/tags/worldgen/biome/reference/cave.json
+  data/terralith/tags/worldgen/biome/reference/desert_all.json
+  data/terralith/tags/worldgen/biome/reference/desert_with_structures.json
+  data/terralith/tags/worldgen/biome/reference/forest.json
+  data/terralith/tags/worldgen/biome/reference/jungle.json
+  data/terralith/tags/worldgen/biome/reference/mountain.json
+  data/terralith/tags/worldgen/biome/reference/mountain_peak.json
+  data/terralith/tags/worldgen/biome/reference/mountain_slope.json
+  data/terralith/tags/worldgen/biome/reference/plains.json
+  data/terralith/tags/worldgen/biome/reference/savanna.json
+  data/terralith/tags/worldgen/biome/reference/swamp.json
+  data/terralith/tags/worldgen/biome/reference/taiga.json
+  data/terralith/tags/worldgen/biome/reference/temperature/cold.json
+  data/terralith/tags/worldgen/biome/reference/temperature/frozen_all.json
+  data/terralith/tags/worldgen/biome/reference/temperature/frozen_with_structures.json
+  data/terralith/tags/worldgen/biome/reference/temperature/lukewarm.json
+  data/terralith/tags/worldgen/biome/reference/temperature/warm.json
+  data/terralith/tags/worldgen/biome/reference/windswept.json
+  data/terralith/tags/worldgen/biome/skylands.json
+  data/terralith/worldgen/biome/forested_highlands.json
+  data/terralith/worldgen/biome/frozen_cliffs.json
+  data/terralith/worldgen/biome/glacial_chasm.json
+  data/terralith/worldgen/biome/rocky_mountains.json
+  data/terralith/worldgen/biome/shield.json
+  data/terralith/worldgen/biome/siberian_taiga.json
+  data/terralith/worldgen/biome/volcanic_crater.json
+  data/terralith/worldgen/biome/volcanic_peaks.json
+  data/terralith/worldgen/biome/warm_river.json
+  data/terralith/worldgen/biome/white_cliffs.json
+  data/terralith/worldgen/biome/wintry_forest.json
+  data/terralith/worldgen/feature/canyon/cliff/column/stone.json
+  data/terralith/worldgen/feature/canyon/cliff/grass_lower.json
+  data/terralith/worldgen/feature/canyon/cliff/grass_upper.json
+  data/terralith/worldgen/feature/canyon/generic/slab_stone.json
+  data/terralith/worldgen/feature/canyon/glacial/snow.json
+  data/terralith/worldgen/feature/canyon/glacial/snow_surface.json
+  data/terralith/worldgen/feature/cliffs/frozen/blue_ice.json
+  data/terralith/worldgen/feature/cliffs/frozen/icicle.json
+  data/terralith/worldgen/feature/cliffs/frozen/puddle.json
+  data/terralith/worldgen/feature/cliffs/white/andesite_crack.json
+  data/terralith/worldgen/feature/cliffs/white/andesite_seed.json
+  data/terralith/worldgen/feature/cliffs/white/birch_alt.json
+  data/terralith/worldgen/feature/cliffs/white/calcitifier.json
+  data/terralith/worldgen/feature/cliffs/white/diorite_crack.json
+  data/terralith/worldgen/feature/cliffs/white/diorite_seed.json
+  data/terralith/worldgen/feature/cliffs/white/moss_vegetation.json
+  data/terralith/worldgen/feature/cliffs/white/patch_base.json
+  data/terralith/worldgen/feature/forest/vanilla/fallen_tree_dark_oak.json
+  data/terralith/worldgen/feature/forest/vanilla/fallen_tree_oak.json
+  data/terralith/worldgen/feature/forest/vanilla/fallen_tree_spruce.json
+  data/terralith/worldgen/feature/highlands/forest/creek.json
+  data/terralith/worldgen/feature/highlands/forest/disk_gravel.json
+  data/terralith/worldgen/feature/highlands/forest/flowers.json
+  data/terralith/worldgen/feature/highlands/forest/grass.json
+  data/terralith/worldgen/feature/highlands/forest/mid/trees_mid.json
+  data/terralith/worldgen/feature/highlands/forest/small/trees_small.json
+  data/terralith/worldgen/feature/highlands/forest/tall/trees_tall.json
+  data/terralith/worldgen/feature/highlands/forest/tall_flowers.json
+  data/terralith/worldgen/feature/highlands/forest/tiny/trees_tiny.json
+  data/terralith/worldgen/feature/highlands/forest/trees_maple.json
+  data/terralith/worldgen/feature/highlands/lichen.json
+  data/terralith/worldgen/feature/highlands/pillar.json
+  data/terralith/worldgen/feature/highlands/trees.json
+  data/terralith/worldgen/feature/highlands/vines_seed.json
+  data/terralith/worldgen/feature/highlands/vines_spread.json
+  data/terralith/worldgen/feature/mountains/rocky/deepslate.json
+  data/terralith/worldgen/feature/mountains/rocky/deepslate_extra.json
+  data/terralith/worldgen/feature/mountains/rocky/funny_snow.json
+  data/terralith/worldgen/feature/mountains/rocky/funny_snow_segwit_2x.json
+  data/terralith/worldgen/feature/mountains/rocky/snow.json
+  data/terralith/worldgen/feature/mountains/rocky/tuff.json
+  data/terralith/worldgen/feature/nothing.json
+  data/terralith/worldgen/feature/savanna/dripstone.json
+  data/terralith/worldgen/feature/savanna/terracotta.json
+  data/terralith/worldgen/feature/shield/birch.json
+  data/terralith/worldgen/feature/shield/dark_oak.json
+  data/terralith/worldgen/feature/shield/spruce_big.json
+  data/terralith/worldgen/feature/snowy/fix_grass.json
+  data/terralith/worldgen/feature/snowy/fix_snow.json
+  data/terralith/worldgen/feature/snowy/layer/first.json
+  data/terralith/worldgen/feature/snowy/layer/second.json
+  data/terralith/worldgen/feature/snowy/layer/third.json
+  data/terralith/worldgen/feature/snowy/max_spruce.json
+  data/terralith/worldgen/feature/snowy/mega_spruce.json
+  data/terralith/worldgen/feature/snowy/spruce.json
+  data/terralith/worldgen/feature/snowy/spruce_tiny.json
+  data/terralith/worldgen/feature/snowy/trees_center.json
+  data/terralith/worldgen/feature/snowy/trees_edge.json
+  data/terralith/worldgen/feature/snowy/trees_giant.json
+  data/terralith/worldgen/feature/snowy/trees_outer.json
+  data/terralith/worldgen/feature/taiga/mid/pine_mid.json
+  data/terralith/worldgen/feature/taiga/mid/spruce_mid.json
+  data/terralith/worldgen/feature/taiga/mid/spruce_mid_m.json
+  data/terralith/worldgen/feature/taiga/small/pine_small.json
+  data/terralith/worldgen/feature/taiga/small/spruce_small.json
+  data/terralith/worldgen/feature/taiga/small/spruce_small_m.json
+  data/terralith/worldgen/feature/taiga/tall/pine_tall.json
+  data/terralith/worldgen/feature/taiga/tall/spruce_tall.json
+  data/terralith/worldgen/feature/taiga/tall/spruce_tall_m.json
+  data/terralith/worldgen/feature/taiga/tiny/pine_tiny.json
+  data/terralith/worldgen/feature/taiga/tiny/spruce_tiny.json
+  data/terralith/worldgen/feature/taiga/tiny/spruce_tiny_m.json
+  data/terralith/worldgen/feature/volcano/lava_flow.json
+  data/terralith/worldgen/feature/volcano/lava_lakes.json
+  data/terralith/worldgen/feature/volcano/spring_lava.json
+  data/terralith/worldgen/feature/volcano/top_secret_do_not_touch.json
+  data/terralith/worldgen/feature/yellowstone/patch_fern.json
+  data/terralith/worldgen/material_rule/preliminary_surface.json
+  data/terralith/worldgen/material_rule/under_biome_surface/river_detail.json
+  data/terralith/worldgen/material_rule/underground/underground_jungle.json
+  data/terralith/worldgen/noise/amethyst/calcite.json
+  data/terralith/worldgen/noise/birch/taiga_podzol.json
+  data/terralith/worldgen/noise/birch/taiga_surface.json
+  data/terralith/worldgen/noise/brushland/sand.json
+  data/terralith/worldgen/noise/bryce/dirt.json
+  data/terralith/worldgen/noise/bryce/strip.json
+  data/terralith/worldgen/noise/desert/detail_grass.json
+  data/terralith/worldgen/noise/desert/grass.json
+  data/terralith/worldgen/noise/desert/gravel_surface.json
+  data/terralith/worldgen/noise/desert/mud.json
+  data/terralith/worldgen/noise/desert/mud2.json
+  data/terralith/worldgen/noise/desert/sands_line1.json
+  data/terralith/worldgen/noise/desert/sands_line2.json
+  data/terralith/worldgen/noise/desert/sands_line3.json
+  data/terralith/worldgen/noise/desert/sands_line4.json
+  data/terralith/worldgen/noise/desert/sands_line5.json
+  data/terralith/worldgen/noise/desert/sands_line6.json
+  data/terralith/worldgen/noise/desert/sands_line7.json
+  data/terralith/worldgen/noise/desert/sands_surface.json
+  data/terralith/worldgen/noise/generic/clay_thickness.json
+  data/terralith/worldgen/noise/generic/gravel.json
+  data/terralith/worldgen/noise/generic/sand.json
+  data/terralith/worldgen/noise/generic/sand_thickness.json
+  data/terralith/worldgen/noise/highlands/cracks.json
+  data/terralith/worldgen/noise/highlands/creek.json
+  data/terralith/worldgen/noise/highlands/gravel.json
+  data/terralith/worldgen/noise/highlands/gravel_large.json
+  data/terralith/worldgen/noise/highlands/red_sand.json
+  data/terralith/worldgen/noise/highlands/terracotta.json
+  data/terralith/worldgen/noise/highlands/white_terracotta.json
+  data/terralith/worldgen/noise/mushroom/surface.json
+  data/terralith/worldgen/noise/plains/is_coarse.json
+  data/terralith/worldgen/noise/plains/surface.json
+  data/terralith/worldgen/noise/plains/tiny_noise.json
+  data/terralith/worldgen/noise/savanna/dripstone.json
+  data/terralith/worldgen/noise/savanna/fracture.json
+  data/terralith/worldgen/noise/savanna/path.json
+  data/terralith/worldgen/noise/savanna/stone.json
+  data/terralith/worldgen/noise/savanna/terracotta.json
+  data/terralith/worldgen/noise/scarlet/crimson_noise.json
+  data/terralith/worldgen/noise/scarlet/mini_noise.json
+  data/terralith/worldgen/noise/scarlet/surface_pattern.json
+  data/terralith/worldgen/noise/shield/surface.json
+  data/terralith/worldgen/noise/shrubland/rocky_surface.json
+  data/terralith/worldgen/noise/shrubland/surface.json
+  data/terralith/worldgen/noise/sparse_jungle/noise.json
+  data/terralith/worldgen/noise/sparse_jungle/noise_big.json
+  data/terralith/worldgen/noise/sparse_jungle/surface.json
+  data/terralith/worldgen/noise/swamp/surface.json
+  data/terralith/worldgen/noise/taiga/cracks.json
+  data/terralith/worldgen/noise/taiga/dirt.json
+  data/terralith/worldgen/noise/taiga/lakes.json
+  data/terralith/worldgen/noise/taiga/siberian_surface.json
+  data/terralith/worldgen/noise/tropics/gravel.json
+  data/terralith/worldgen/noise/tropics/volcano_magma.json
+  data/terralith/worldgen/noise/tropics/volcano_surface.json
+  data/terralith/worldgen/noise/yellowstone/calcite_cliff.json
+  data/terralith/worldgen/noise/yellowstone/calcite_patch.json
+  data/terralith/worldgen/noise/yellowstone/dirt.json
+  data/terralith/worldgen/noise/yellowstone/gravel_1.json
+  data/terralith/worldgen/placed_feature/canyon/cliff/grass_lower.json
+  data/terralith/worldgen/placed_feature/canyon/cliff/grass_upper.json
+  data/terralith/worldgen/placed_feature/canyon/generic/slab_stone.json
+  data/terralith/worldgen/placed_feature/canyon/glacial/snow_surface.json
+  data/terralith/worldgen/placed_feature/cliffs/frozen/blue_ice.json
+  data/terralith/worldgen/placed_feature/cliffs/frozen/icicle.json
+  data/terralith/worldgen/placed_feature/cliffs/frozen/puddle.json
+  data/terralith/worldgen/placed_feature/cliffs/white/andesite_crack.json
+  data/terralith/worldgen/placed_feature/cliffs/white/andesite_seed.json
+  data/terralith/worldgen/placed_feature/cliffs/white/birch_alt.json
+  data/terralith/worldgen/placed_feature/cliffs/white/calcitifier.json
+  data/terralith/worldgen/placed_feature/cliffs/white/diorite_crack.json
+  data/terralith/worldgen/placed_feature/cliffs/white/diorite_seed.json
+  data/terralith/worldgen/placed_feature/cliffs/white/moss_patch.json
+  data/terralith/worldgen/placed_feature/cliffs/white/trees_small.json
+  data/terralith/worldgen/placed_feature/forest/vanilla/fallen_tree_dark_oak.json
+  data/terralith/worldgen/placed_feature/forest/vanilla/fallen_tree_oak.json
+  data/terralith/worldgen/placed_feature/forest/vanilla/fallen_tree_spruce.json
+  data/terralith/worldgen/placed_feature/highlands/forest/creek.json
+  data/terralith/worldgen/placed_feature/highlands/forest/disk_gravel.json
+  data/terralith/worldgen/placed_feature/highlands/forest/flowers.json
+  data/terralith/worldgen/placed_feature/highlands/forest/grass.json
+  data/terralith/worldgen/placed_feature/highlands/forest/mid/trees_mid.json
+  data/terralith/worldgen/placed_feature/highlands/forest/red_shrub.json
+  data/terralith/worldgen/placed_feature/highlands/forest/small/trees_small.json
+  data/terralith/worldgen/placed_feature/highlands/forest/tall/trees_tall.json
+  data/terralith/worldgen/placed_feature/highlands/forest/tall_flowers.json
+  data/terralith/worldgen/placed_feature/highlands/forest/tiny/trees_tiny.json
+  data/terralith/worldgen/placed_feature/highlands/forest/trees_maple.json
+  data/terralith/worldgen/placed_feature/highlands/lichen.json
+  data/terralith/worldgen/placed_feature/highlands/pillar.json
+  data/terralith/worldgen/placed_feature/highlands/trees.json
+  data/terralith/worldgen/placed_feature/highlands/vines_seed.json
+  data/terralith/worldgen/placed_feature/highlands/vines_spread.json
+  data/terralith/worldgen/placed_feature/mountains/rocky/deepslate.json
+  data/terralith/worldgen/placed_feature/mountains/rocky/deepslate_extra.json
+  data/terralith/worldgen/placed_feature/mountains/rocky/funny_snow.json
+  data/terralith/worldgen/placed_feature/mountains/rocky/funny_snow_segwit_2x.json
+  data/terralith/worldgen/placed_feature/mountains/rocky/snow.json
+  data/terralith/worldgen/placed_feature/mountains/rocky/tuff.json
+  data/terralith/worldgen/placed_feature/nothing.json
+  data/terralith/worldgen/placed_feature/savanna/dripstone.json
+  data/terralith/worldgen/placed_feature/savanna/terracotta.json
+  data/terralith/worldgen/placed_feature/shield/birch.json
+  data/terralith/worldgen/placed_feature/shield/spruce_big.json
+  data/terralith/worldgen/placed_feature/shield/trees.json
+  data/terralith/worldgen/placed_feature/shield/trees_birch.json
+  data/terralith/worldgen/placed_feature/shield/trees_lark.json
+  data/terralith/worldgen/placed_feature/snowy/fix_grass.json
+  data/terralith/worldgen/placed_feature/snowy/fix_snow.json
+  data/terralith/worldgen/placed_feature/snowy/layer/first.json
+  data/terralith/worldgen/placed_feature/snowy/layer/second.json
+  data/terralith/worldgen/placed_feature/snowy/layer/third.json
+  data/terralith/worldgen/placed_feature/snowy/max_spruce.json
+  data/terralith/worldgen/placed_feature/snowy/mega_spruce.json
+  data/terralith/worldgen/placed_feature/snowy/spruce.json
+  data/terralith/worldgen/placed_feature/snowy/spruce_tiny.json
+  data/terralith/worldgen/placed_feature/snowy/trees_center.json
+  data/terralith/worldgen/placed_feature/snowy/trees_edge.json
+  data/terralith/worldgen/placed_feature/snowy/trees_giant.json
+  data/terralith/worldgen/placed_feature/snowy/trees_outer.json
+  data/terralith/worldgen/placed_feature/taiga/mid/pine_mid.json
+  data/terralith/worldgen/placed_feature/taiga/mid/spruce_mid.json
+  data/terralith/worldgen/placed_feature/taiga/mid/spruce_mid_m.json
+  data/terralith/worldgen/placed_feature/taiga/siberian/trees_new.json
+  data/terralith/worldgen/placed_feature/taiga/siberian/trees_new_orange.json
+  data/terralith/worldgen/placed_feature/taiga/small/pine_small.json
+  data/terralith/worldgen/placed_feature/taiga/small/spruce_small.json
+  data/terralith/worldgen/placed_feature/taiga/small/spruce_small_m.json
+  data/terralith/worldgen/placed_feature/taiga/tall/pine_tall.json
+  data/terralith/worldgen/placed_feature/taiga/tall/spruce_tall.json
+  data/terralith/worldgen/placed_feature/taiga/tall/spruce_tall_m.json
+  data/terralith/worldgen/placed_feature/taiga/tiny/pine_tiny.json
+  data/terralith/worldgen/placed_feature/taiga/tiny/spruce_tiny.json
+  data/terralith/worldgen/placed_feature/taiga/tiny/spruce_tiny_m.json
+  data/terralith/worldgen/placed_feature/volcano/crater_fixer.json
+  data/terralith/worldgen/placed_feature/volcano/lava_flow.json
+  data/terralith/worldgen/placed_feature/volcano/lava_lakes.json
+  data/terralith/worldgen/placed_feature/volcano/magma_barrier.json
+  data/terralith/worldgen/placed_feature/volcano/spring_lava.json
+  data/terralith/worldgen/placed_feature/volcano/top_secret_do_not_touch.json
+  data/terralith/worldgen/placed_feature/yellowstone/patch_fern.json
