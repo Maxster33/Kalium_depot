@@ -169,6 +169,11 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
     absent de l'onglet « Versions » du panneau : `paper-26.3-159.jar` déposé à la racine et choisi dans Paramètres >
     Hébergement > « Changer le paramètre de démarrage ». `spigot-26.3.jar` posé par le panneau rangé dans
     `_removed-spigot-26.3/` (jamais lancé).
+  - **Étape 2 faite (07/10/2026, 09:25)** : nouveau monde `Kixster SMP` créé (graine aléatoire) avec Tectonic 3.0.29
+    + `kalium-terralith-1.0.0` (11 biomes Terralith, aucune structure Terralith ; voir `KX_Monde/README.md`), chargés
+    sans erreur. `generate-structures=true` (structures vanilla, décision de Maxster33). Ancien monde (et ancien
+    `server.properties`) rangé dans `/_removed-monde-kixster-smp-2026-10-07/` ; aussi dans la sauvegarde du PC.
+    Prochaine étape : prégénération d'une carte de 40 000 blocs de côté.
   - **Proxy redémarré en Velocity 4.2.0-30 le 07/10/2026 à 08:59** (Maxster33, fichier de démarrage choisi dans le
     panneau) : floodgate, Geyser 2.11.3, KaliumRelay 1.4.0, velocity-command-forward OK. **LibertyBans 1.1.4 plantait**
     (premier chargement depuis son installation du 03/10 ; incompatible avec tout Velocity 4, `NoSuchMethodError`
