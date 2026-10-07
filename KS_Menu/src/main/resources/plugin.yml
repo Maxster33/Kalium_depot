@@ -2,10 +2,6 @@ name: KS_Menu
 version: '${project.version}'
 main: fr.kalium.ksmenu.KSMenu
 api-version: '26.2'
-description: Menu du serveur Event (etoile du Nether, boutons declares par les plugins d'Event).
+description: Menu du serveur de survie (etoile du Nether, boutons declares par les plugins KS_, commande reglable).
 authors: [KaLium]
 depend: [KLM_Menu]
-commands:
-  event:
-    description: Ouvre le menu du serveur Event.
-    usage: /event

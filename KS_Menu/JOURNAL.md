@@ -3,6 +3,21 @@
 Plugin du serveur Event : son menu. Cahier des charges : catégorie 2 « Économie » de LeKiwi06 (validé le 29/09/2026 ;
 copié dans `CAHIER_DES_CHARGES.md` de KS_Economy au déploiement).
 
+## 1.1.0 - commande du menu réglable (07/10/2026)
+
+Demande de Maxster33 : préparer les plugins d'Event pour Kixster (nouveau serveur de survie en 26.3) ; sur Kixster, le
+menu s'ouvre par `/kixster` (plus `/menu`, l'étoile du Nether et `/menu on | off`, inchangés).
+
+- **Commande** : plus déclarée dans `plugin.yml` ; enregistrée au démarrage (API Paper `LifecycleEvents.COMMANDS`,
+  `BasicCommand`) avec le nom lu dans `config.yml` : `commande: event` par défaut (Event inchangé), `kixster` sur
+  Kixster. Nom invalide → `/event` et un avertissement dans la console. Redémarrage nécessaire après un changement.
+- **`config.yml`** (nouveau, créé au premier démarrage) : `commande`, `hub-item.slot` (4 par défaut, comme avant).
+- Textes « Event » (nom de l'étoile, titre du menu) : toujours dans `plugins/KS_Menu/lang.yml`, à changer par serveur.
+- Compilé contre paper-api 26.2.build.123 ; vérifié aussi contre 26.3.build.159-beta (0 erreur).
+
+**Déployé sur Event le 07/10/2026 à 11:33 (Maxster33 ; 1.0.0 dans `_removed-ks_menu-1.0.0/`), actif après
+redémarrage d'Event (Paper 26.3). Statut : non testé.**
+
 ## 1.0.0 - menu d'Event (30/09/2026)
 
 Demande de LeKiwi06 : ouvrir l'Économie par un bouton dans l'étoile du Nether (`/menu on`) ; créer KS_Menu, le menu du

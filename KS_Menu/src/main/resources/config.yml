@@ -1,0 +1,9 @@
+# KS_Menu - menu du serveur de survie
+
+# Nom de la commande qui ouvre le menu (sans le /) : event sur Event, kixster sur Kixster.
+# Lu au demarrage du serveur (un redemarrage est necessaire apres un changement).
+commande: event
+
+# Case de la barre ou se place l'etoile du Nether (0 a 8 ; 4 = case 5).
+hub-item:
+  slot: 4

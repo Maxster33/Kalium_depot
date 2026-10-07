@@ -3,13 +3,13 @@ package fr.kalium.ksmenu;
 import fr.kalium.menu.api.Gui;
 import fr.kalium.menu.api.InterfaceItem;
 import fr.kalium.menu.api.Lang;
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -44,7 +44,8 @@ import java.util.function.Consumer;
  *   de menu d'Event (items-by-default: false de KLM_Menu), elle n'est donnée qu'après « /menu on » et retirée par
  *   « /menu off » ; verrouillée (ni déplacée, ni jetée).
  * - Le menu liste les boutons que les plugins d'Event déclarent avec ajouterBouton(...) (au départ : « Économie »,
- *   KS_Economy). Aussi ouvert par /menu (KLM_Menu) et /event.
+ *   KS_Economy). Aussi ouvert par /menu (KLM_Menu) et par la commande du serveur (config.yml, commande : /event sur
+ *   Event, /kixster sur Kixster ; 1.1.0).
  */
 public final class KSMenu extends JavaPlugin implements Listener {
 
@@ -71,12 +72,13 @@ public final class KSMenu extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         lang = new Lang(this);
         gui = new Gui(this, lang);
         cle = new NamespacedKey(this, "objet_menu");
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getServicesManager().register(InterfaceItem.class, interfaceItem(), this, ServicePriority.Normal);
-        getCommand("event").setExecutor(this);
+        enregistrerCommande();
         getServer().getScheduler().runTaskTimer(this, () -> getServer().getOnlinePlayers().forEach(this::verifier),
                 40L, 40L);
         lang.saveIfNeeded();
@@ -87,14 +89,23 @@ public final class KSMenu extends JavaPlugin implements Listener {
         BOUTONS.clear();
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player joueur) {
-            ouvrir(joueur);
-        } else {
-            sender.sendMessage("Commande réservée aux joueurs.");
+    /** Commande du menu, nommée par config.yml (commande : event par défaut ; kixster sur Kixster). */
+    private void enregistrerCommande() {
+        String nom = getConfig().getString("commande", "event").trim().toLowerCase();
+        if (!nom.matches("[a-z0-9_-]+")) {
+            getLogger().warning("Nom de commande invalide dans config.yml (« " + nom + " ») : /event utilisé.");
+            nom = "event";
         }
-        return true;
+        String commande = nom;
+        BasicCommand menu = (source, args) -> {
+            if (source.getExecutor() instanceof Player joueur) {
+                ouvrir(joueur);
+            } else {
+                source.getSender().sendMessage("Commande réservée aux joueurs.");
+            }
+        };
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,
+                event -> event.registrar().register(commande, "Ouvre le menu du serveur.", menu));
     }
 
     // ------------------------------------------------------------------ menu
