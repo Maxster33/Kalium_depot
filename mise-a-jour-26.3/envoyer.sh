@@ -59,7 +59,7 @@ sauvegarder() { # copie du serveur sur le PC (synchronisation : seuls les fichie
   D="$SAUVE/$SRV-avant-26.3"; mkdir -p "$D"
   echo "Sauvegarde de $SRV dans $D (peut etre long la premiere fois)"
   { ouvrir
-    echo "synchronize local -resumesupport=off -filemask=\"|libraries/; cache/; .cache/; versions/; .ai-backups/; logs/; crash-reports/; _removed-*/; *.log.gz\" \"$(w "$D")\" /"
+    echo "synchronize local -resumesupport=off -filemask=\"|libraries/; cache/; .cache/; versions/; .ai-backups/; logs/; crash-reports/; _removed-*/; *.log.gz; bingo_reserve-*/\" \"$(w "$D")\" /"
     echo "exit"; } > "$T/sauve.txt"
   winscp "$T/sauve.txt"
   echo "Sauvegarde OK : $(du -sh "$D" | cut -f1)"

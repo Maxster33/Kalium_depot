@@ -221,6 +221,24 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
     versions plus anciennes) déposé à la racine du proxy **à côté** de l'ancien jar, sans rien remplacer : à activer
     dans le panneau (fichier de démarrage) puis redémarrer le proxy (déconnecte tout le réseau).
 
+- **Tout le réseau en 26.3 (08/10/2026, Maxster33 avec Claude)** : paquet `mise-a-jour-26.3/` (mode d'emploi :
+  son `LISEZMOI.md`). Nos 22 plugins de ces serveurs compilent contre paper-api 26.3.build.159-beta sans erreur : jars
+  inchangés. Serveurs arrêtés vers 16:15, sauvegardés sur le PC de Maxster33 (`Documents\Sauvegardes_KaLium\<serveur>-avant-26.3`,
+  sans `libraries/`, `logs/`, `_removed-*/` ; Serveur Jeux sans les mondes `bingo_reserve-*`, décision de Maxster33),
+  anciens jars dans `/plugins/_removed-avant-26.3/`, démarrage sur `paper-26.3-159.jar` choisi dans le panneau :
+  - **Proxy** (16:28) : Velocity 4.2.0, Geyser-Velocity 2.11.3-b1249 (ancien et `geyserupdater-spigot.jar` dans
+    `plugins/_removed-avant-geyser-b1249/`), **LibertyBans 1.2.0-M1 chargé sans erreur** ; aucune erreur.
+  - **Lobby** (16:29) : WorldEdit 7.4.6-beta-02, WorldGuard 7.0.19, voicechat 2.6.24, + ViaVersion / ViaBackwards
+    5.12.1-SNAPSHOT, Geyser-Spigot rangé ; 14 plugins, aucune erreur.
+  - **Kanvas** : préparé par LeKiwi06 le 08/10 vers 08:47 (FAWE 2.16.0, Via 5.12.1-SNAPSHOT, voicechat 2.6.24) ;
+    16 plugins, aucune erreur.
+  - **Serveur Jeux** (17:21) : ViaVersion 5.12.1-SNAPSHOT, WorldEdit 7.4.6-beta-02, + ViaBackwards ; rangés :
+    LegacyFreecam (plante en 26.3), Skript (aucun script), TradeShop, WoodCutter, Geyser-Spigot ; 16 plugins, aucune erreur.
+  - **Kal-Games** (17:23) : Via 5.12.1-SNAPSHOT, WorldEdit 7.4.6-beta-02, voicechat 2.6.24, GrimAC 2.3.74-abb95b6,
+    ConditionalEvents 4.80.3, PlayerKits2 1.24.1 ; 28 plugins ; seule erreur : config de ConditionalEvents (ligne 10,
+    `register_commands`), déjà là avant.
+  - **Non testé en jeu.** `paper-26.2-121.jar` reste à la racine (retour en arrière : voir le `LISEZMOI.md`).
+    ViaVersion 5.12.1 stable est sortie (signalé au démarrage) : passage possible plus tard.
 - **Sauvegardes des mondes : à voir plus tard (LeKiwi06, 26/09/2026)**. Aucune sauvegarde automatique connue (seulement
   des copies manuelles, ex. `Kixster SMP_bak`). Pistes : 1) vérifier dans le panneau web Minestrator si chaque serveur
   a des sauvegardes (non vérifié, Claude n'y a pas accès) ; 2) sauvegarde manuelle des mondes sur le PC par WinSCP
@@ -231,7 +249,7 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
 - **Serveur Event (25/09/2026)** : ConditionalEvents, PyxelRegions et WorldGuard gardent leurs réglages du hub (événements,
   régions de l'ancien monde) : à vérifier pour la survie. Floodgate installé, extension PlaceholderAPI déplacée,
   PlayerKits2 retiré (demande de Maxster33, 25/09/2026).
-- **KalGames2 et Serveur Jeux repassés en Paper 26.2-121** (24/09/2026, 13 h) : créés en Paper 26.3 alpha, ils ne
+- (Historique, dépassé depuis le passage en 26.3 du 08/10/2026) **KalGames2 et Serveur Jeux repassés en Paper 26.2-121** (24/09/2026, 13 h) : créés en Paper 26.3 alpha, ils ne
   démarraient pas (WorldEdit 7.4.5 incompatible → crash au démarrage). `server.jar` remplacé par le
   `paper-26.2-121.jar` du lobby ; jar 26.3 et monde généré en 26.3 rangés dans `_removed-paper-26.3/`. Si le panneau
   Minestrator réinstalle la 26.3 au démarrage, choisir la 26.2 dans le panneau.

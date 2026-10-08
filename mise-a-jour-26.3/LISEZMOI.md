@@ -1,6 +1,6 @@
 # Passage en 26.3 : proxy, lobby, Kanvas, Serveur Jeux, Kal-Games
 
-Préparé le 08/10/2026 par Maxster33 (avec Claude). **Rien n'est encore envoyé** : à lancer serveur par serveur, après
+Préparé le 08/10/2026 par Maxster33 (avec Claude). **Envoyé le 08/10/2026 entre 16:20 et 17:23 sur les 5 serveurs, tous démarrés en 26.3 sans erreur nouvelle** (détail : `REPRISE_PROJET.md`). Texte d origine : à lancer serveur par serveur, après
 le feu vert de Maxster33. Kixster et Event sont déjà en Paper 26.3-159 (07/10/2026) ; ce paquet reprend les mêmes
 versions.
 
