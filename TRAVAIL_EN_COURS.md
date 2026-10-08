@@ -16,7 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KaliumRelay — LeKiwi06 — depuis le 2026-10-08 20:51 — joueur Bedrock expulsé d'un serveur : déconnecté de KaLium avec le message au lieu d'être renvoyé au lobby (il revenait figé puis expulsé pour « vol »)
+
 - KS_CoffreMort — LeKiwi06 — depuis le 2026-10-08 20:13 — nouveau (catégorie 7) : coffres de mort, fiole d'XP, jeton et badge de la mort
 
 

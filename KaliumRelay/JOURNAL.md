@@ -295,4 +295,4 @@ levé la suspension il ne peut pas bouger ». Choix de LeKiwi06 parmi deux corre
 - **Limite** : un compte Bedrock lié à un compte Java (UUID Java) n'est pas reconnu comme Bedrock.
 - Empilé sur la 1.4.0 (bannissement, jamais testé) à la demande explicite de LeKiwi06.
 
-**Compilé le 08/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur le proxy le 08/10/2026 à 20:54 (LeKiwi06 ; 1.4.0 dans `_removed-kaliumrelay-1.4.0/`), actif après redémarrage du proxy. Statut : non testé en jeu.**
