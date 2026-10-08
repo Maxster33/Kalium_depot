@@ -17,6 +17,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 ## Utilisés actuellement
 
 - KG_Pong — LeKiwi06 — depuis le 2026-10-06 09:21 — nouveau mini-jeu Pong (kal-games) : prototype, vu de dessus, raquettes en blocs, balle = Sulfur Cube
+- KS_CoffreMort — LeKiwi06 — depuis le 2026-10-08 20:13 — nouveau (catégorie 7) : coffres de mort, fiole d'XP, jeton et badge de la mort
 
 
 
@@ -33,6 +34,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 ## Requis parfois
+
+- KS_RewardsGUI — LeKiwi06 — depuis le 2026-10-08 20:13 — dépôt local d'une récompense (coffres de mort envoyés dans /rewards)
 
 
 
