@@ -202,6 +202,14 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
     d'Event repris sans les données de jeu ; adaptés : textes « Kixster » (KS_Menu, KS_Tableau, KS_AntiCheat),
     `boite: kixster` (KS_RewardsGUI ; **KG_Rewards de Kal-Games à passer en `boite: kixster` à l'ouverture**),
     noms de mondes de SimpleClaimSystem.
+  - **Étape 3 terminée** : prégénération finie le 08/10/2026 vers 05:33 (`plugins/Chunky/tasks/Kixster SMP.properties` :
+    6 254 953 chunks, `cancelled=true` = tâche finie ; d'où « No tasks to continue » au démarrage).
+  - **Étape 4 envoyée le 08/10/2026 à 15:06** (Maxster33, avec Claude ; Kixster arrêté) : `sh envoyer.sh`, aucune
+    erreur ; originaux dans `/_removed-config-avant-plugins-event-20261008-1506/`. Redémarrage de 15:20 (après ajout
+    de RAM par Maxster33) : **43 plugins activés, aucune erreur** (seul avertissement : GrimAC + ViaBackwards, comme
+    sur Event). **Non testé en jeu.** Reste à faire : points 2 à 6 de « Après l'envoi » du `LISEZMOI.md` (noms des
+    mondes de SimpleClaimSystem, `boite: kixster` de KG_Rewards, permissions LuckPerms, régions WorldGuard
+    `zone_shop` et `ile_du_dragon`, `worker-threads`).
   - **Proxy redémarré en Velocity 4.2.0-30 le 07/10/2026 à 08:59** (Maxster33, fichier de démarrage choisi dans le
     panneau) : floodgate, Geyser 2.11.3, KaliumRelay 1.4.0, velocity-command-forward OK. **LibertyBans 1.1.4 plantait**
     (premier chargement depuis son installation du 03/10 ; incompatible avec tout Velocity 4, `NoSuchMethodError`
