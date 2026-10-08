@@ -157,3 +157,57 @@ Empilé sur la 1.5.0 non testée, à la demande explicite de LeKiwi06.
 
 **Déployé sur Kal-Games le 05/10/2026 à 15:21 (LeKiwi06, serveur arrêté ; 1.5.0 dans `_removed-kg_boatrace-1.5.0/`).
 Statut : non testé en jeu.**
+
+## 1.6.0 - essai : bateau calculé par le serveur pour les joueurs Bedrock (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (08/10/2026)** : « les joueurs Bedrock ont un net avantage sur le boat race comme leur bateau ne
+fonctionne pas pareil (pour avoir testé, on dirait qu'ils ne dérapent presque pas) ». Mesure faite d'abord (cahier des
+charges, « Équité Java / Bedrock »), puis choix de LeKiwi06 parmi les pistes proposées : « bateau serveur en essai »,
+empilé sur la 1.5.1 non testée avec son accord explicite.
+
+**Mesure** (journal de KG_ScoreBoards, 24/09 au 08/10/2026, arène `non_alcoholic_pigeons`, 1 781 tours, tours lancés
+de moins de 60 s) : meilleur tour 39,50 s en Java contre 32,90 s en Bedrock ; tour médian 45,0 s contre 39,8 s ; tous
+les tronçons plus rapides en Bedrock (5 à 18 %), vitesse d'entrée aux checkpoints plus haute partout (+8 à +29 km/h,
+190 contre 160 km/h en bout de ligne droite) ; 2,36 points par tour en Java contre 4,99 en Bedrock (paliers de chrono).
+Réserve : un joueur a fait 949 des 1 300 tours Bedrock ; sans lui il reste 3,2 s sur le meilleur tour et 1,5 s sur le
+médian. Détail dans le cahier des charges.
+
+**Cause** : en bateau, c'est le jeu du joueur qui calcule le mouvement ; un joueur Bedrock roule avec la physique de
+Bedrock, que Geyser transmet telle quelle.
+
+**Changements** (tout est derrière le réglage, rien ne change tant qu'il est désactivé) :
+- Réglage « Bedrock : bateau serveur (essai) » (`bedrock-server-boat`, **désactivé par défaut**). Activé : un joueur
+  Bedrock ne pilote plus un vrai bateau. Il est assis sur un porte-armure invisible (`ServerBoats`), et le serveur
+  calcule à chaque tick, à partir de ses touches (avancer, reculer, gauche, droite), le même mouvement que le jeu Java
+  (frottement du sol selon les blocs, rotation, poussée, gravité, collisions avec les blocs). Un vrai bateau vide (la
+  « coque ») suit cette position : c'est lui que l'on voit, et que regardent le hors-piste et l'anti-collision.
+  Les joueurs Java gardent leur bateau habituel.
+- Pourquoi un siège à part : un joueur passe toujours en première place d'un véhicule, donc pilote ; on ne peut pas le
+  laisser dans un vrai bateau sans que son jeu le pilote.
+- Réglage « Bedrock : hauteur du siège (cm) » (`bedrock-seat-height`, 19) : à ajuster si le joueur paraît trop haut ou
+  trop bas dans son bateau.
+- Sortie du siège interdite en course (`ServerBoatListener`), comme la sortie du bateau ; personne ne peut monter dans
+  une coque.
+- Position du bateau calculé envoyée aux joueurs à chaque tick (au lieu de tous les 3 ticks).
+- Journal de KG_ScoreBoards : la ligne `lap` gagne `serverBoat` (vrai si le tour est fait avec un bateau calculé), pour
+  mesurer l'effet.
+
+**Vérifié hors jeu** (calcul lancé sur un faux monde) : vitesse maximale 144 km/h sur glace compacte et 262 km/h sur
+glace bleue (valeurs du jeu Java), arrêt net contre un mur, glissade le long d'un mur pris en biais, chute et
+atterrissage, dérapage en virage, frottement d'un bloc ordinaire.
+
+**Limites connues** : la direction réagit avec le retard de la connexion du joueur (le jeu Java, lui, réagit tout de
+suite) ; le bateau calculé ne heurte que les blocs, jamais une entité (avec l'anti-collision désactivé, deux joueurs
+Java se heurtent encore, pas un joueur Bedrock) ; pas d'animation des rames ; eau simplifiée (flottaison seulement) ;
+sable des âmes, miel et slime sans effet.
+
+**À vérifier en jeu avec un joueur Bedrock (partie privée, réglage activé)** :
+1. les touches arrivent bien : le bateau avance, recule et tourne ;
+2. la vue du joueur tourne avec le bateau (sinon il doit tourner la caméra lui-même) ;
+3. la hauteur du joueur dans la coque (réglage ci-dessus) ;
+4. le retard de la direction est-il jouable ;
+5. le joueur ne peut pas sortir du siège ni monter dans la coque ; retour au point de contrôle ; arrivée ;
+6. hors-piste, anti-collision et classement inchangés ; un joueur Java dans la même course n'est pas touché.
+
+**Déploiement** : seul (KalGames 1.23.0 et KG_ScoreBoards 1.9.0 en place). **Statut : compilé, non déployé, non testé
+en jeu.**

@@ -78,10 +78,13 @@ final class CollisionShield {
     private final Map<UUID, Copy> copies = new HashMap<>();
     /** Bateau actuel de chaque coureur (un nouveau bateau est cree apres une chute). */
     private final Map<UUID, Entity> boats = new HashMap<>();
+    /** 1.6.0 : bateau d'un coureur (son vehicule, ou la coque de son bateau calcule par le serveur). */
+    private final java.util.function.Function<Player, Entity> boatOf;
 
-    CollisionShield(Plugin plugin, World world, String boatType) {
+    CollisionShield(Plugin plugin, World world, String boatType, java.util.function.Function<Player, Entity> boatOf) {
         this.plugin = plugin;
         this.world = world;
+        this.boatOf = boatOf;
         Material hull = Material.matchMaterial(boatType.toUpperCase(java.util.Locale.ROOT).replace("_CHEST_BOAT", "_SLAB")
                 .replace("_BOAT", "_SLAB").replace("_CHEST_RAFT", "_SLAB").replace("_RAFT", "_SLAB"));
         this.hullMaterial = hull != null && hull.isBlock() && hull.createBlockData() instanceof Slab ? hull : Material.OAK_SLAB;
@@ -226,7 +229,7 @@ final class CollisionShield {
             if (player == null) {
                 continue;
             }
-            Entity vehicle = player.getVehicle();
+            Entity vehicle = boatOf.apply(player);
             Entity known = boats.get(id);
             if (vehicle != null && vehicle != known) {
                 boats.put(id, vehicle);

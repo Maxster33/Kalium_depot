@@ -46,6 +46,9 @@ import java.util.UUID;
  *
  * 1.4.0 : anti-collision etendu aux joueurs Bedrock ; hors-piste verifie sur tout le trajet et contact lateral compte
  * seulement s'il ralentit le bateau ; record personnel du joueur dans son tableau lateral.
+ *
+ * 1.6.0 (essai, reglage « bedrock-server-boat », desactive par defaut) : bateau calcule par le serveur pour les joueurs
+ * Bedrock (ServerBoats), pour qu'ils aient la meme physique que les joueurs Java.
  */
 public final class BoatRaceInstance extends GameInstance {
 
@@ -104,6 +107,8 @@ public final class BoatRaceInstance extends GameInstance {
 
     /** 1.3.0 : anti-collision (null si desactive) et blocs de piste (hors-piste = tout autre bloc touche). */
     private CollisionShield shield;
+    /** 1.6.0 : bateaux calcules par le serveur pour les joueurs Bedrock (null si le reglage est desactive). */
+    private ServerBoats serverBoats;
     private Set<org.bukkit.Material> trackBlocks = Set.of();
     /** 1.3.0 : meilleur tour de la course en cours (tableau lateral). */
     private String bestLapName;
@@ -261,6 +266,12 @@ public final class BoatRaceInstance extends GameInstance {
             racer.lapStart = startMillis;
         }
         title(participants, t("race.go-title", "<green><bold>Partez !"), Component.empty(), 0, 20, 10);
+        // 1.6.0 : bateau calcule par le serveur pour les joueurs Bedrock (reglage, desactive par defaut).
+        if (minigame().getBool("bedrock-server-boat", false)) {
+            serverBoats = new ServerBoats(org.bukkit.plugin.java.JavaPlugin.getPlugin(KGBoatRace.class), world,
+                    minigame().getInt("bedrock-seat-height", 19) / 100.0);
+            serverBoats.start();
+        }
         for (UUID uuid : participants) {
             Player player = Bukkit.getPlayer(uuid);
             if (player == null) {
@@ -279,7 +290,7 @@ public final class BoatRaceInstance extends GameInstance {
                 }
             }
             shield = new CollisionShield(org.bukkit.plugin.java.JavaPlugin.getPlugin(KGBoatRace.class), world,
-                    minigame().getText("boat-type", "OAK_BOAT"));
+                    minigame().getText("boat-type", "OAK_BOAT"), this::raceBoat);
             shield.start(online);
         }
     }
@@ -306,7 +317,7 @@ public final class BoatRaceInstance extends GameInstance {
      * l'air (saut), rien n'est compte. Une seule fois par tour : le tour n'est plus « propre ».
      */
     private void checkOffTrack(Player player, Racer racer) {
-        if (!(player.getVehicle() instanceof org.bukkit.entity.Boat boat)) {
+        if (!(raceBoat(player) instanceof org.bukkit.entity.Boat boat)) {
             racer.instantKmh = 0;
             return;
         }
@@ -396,6 +407,10 @@ public final class BoatRaceInstance extends GameInstance {
         } catch (IllegalArgumentException e) {
             type = EntityType.OAK_BOAT;
         }
+        if (serverBoats != null && CollisionShield.bedrock(player.getUniqueId())) {
+            serverBoats.mount(player, where, type);
+            return;
+        }
         Entity boat;
         try {
             boat = world.spawnEntity(where, type);
@@ -404,6 +419,23 @@ public final class BoatRaceInstance extends GameInstance {
         }
         boat.setPersistent(false);
         boat.addPassenger(player);
+    }
+
+    /** 1.6.0 : bateau du coureur : son vrai bateau, ou la coque de son bateau calcule par le serveur. */
+    private Entity raceBoat(Player player) {
+        Entity hull = serverBoats == null ? null : serverBoats.hull(player.getUniqueId());
+        return hull != null ? hull : player.getVehicle();
+    }
+
+    private void stopBoats() {
+        if (shield != null) {
+            shield.stop();
+            shield = null;
+        }
+        if (serverBoats != null) {
+            serverBoats.stop();
+            serverBoats = null;
+        }
     }
 
     // ------------------------------------------------------------------ boucle
@@ -689,6 +721,8 @@ public final class BoatRaceInstance extends GameInstance {
         fields.put("player", player.getUniqueId().toString());
         fields.put("name", player.getName());
         fields.put("platform", platform(player.getUniqueId()));
+        // 1.6.0 : tour fait avec un bateau calcule par le serveur (mesure de l'ecart Java / Bedrock).
+        fields.put("serverBoat", serverBoats != null && CollisionShield.bedrock(player.getUniqueId()));
         fields.put("ranked", ranked(player));
         fields.put("lap", racer.lap);
         fields.put("laps", laps);
@@ -747,6 +781,9 @@ public final class BoatRaceInstance extends GameInstance {
         racer.rank = ++finishedCount;
         if (shield != null) {
             shield.release(player.getUniqueId());
+        }
+        if (serverBoats != null) {
+            serverBoats.release(player.getUniqueId());
         }
         broadcast(t("race.finished", "<aqua><name></aqua> <green>termine <white>n°<rank></white> en <white><time></white>.",
                 "name", player.getName(), "rank", racer.rank, "time", formatTime(racer.finishMillis)));
@@ -878,10 +915,7 @@ public final class BoatRaceInstance extends GameInstance {
                     return pit == null || pit.getWorld() != player.getWorld() ? distance : Math.min(distance, player.getLocation().distance(pit));
                 }));
 
-        if (shield != null) {
-            shield.stop();
-            shield = null;
-        }
+        stopBoats();
         // 1.3.0 : Grand Prix (nombre de tours du reglage « gp-laps », 40 par defaut) termine en entier : bonus sur le
         // total de la course.
         int gpLaps = minigame().getInt("gp-laps", 40);
@@ -1174,6 +1208,9 @@ public final class BoatRaceInstance extends GameInstance {
         if (shield != null) {
             shield.release(uuid);
         }
+        if (serverBoats != null) {
+            serverBoats.release(uuid);
+        }
         Racer racer = racers.remove(uuid);
         released.remove(uuid);
         finishOrder.remove(uuid);
@@ -1190,10 +1227,7 @@ public final class BoatRaceInstance extends GameInstance {
     @Override
     protected void onClose() {
         restoreAllBoards();
-        if (shield != null) {
-            shield.stop();
-            shield = null;
-        }
+        stopBoats();
     }
 
     private void abortCountdown() {
@@ -1205,10 +1239,7 @@ public final class BoatRaceInstance extends GameInstance {
     @Override
     protected void onMatchReset() {
         restoreAllBoards();
-        if (shield != null) {
-            shield.stop();
-            shield = null;
-        }
+        stopBoats();
         racers.clear();
         finishOrder.clear();
         passages.clear();

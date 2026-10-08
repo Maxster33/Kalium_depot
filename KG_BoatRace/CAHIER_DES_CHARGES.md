@@ -63,6 +63,28 @@ un tour sans hors-piste. Pas de retour au checkpoint : seulement la perte des bo
   similaire. Un plafond de vitesse ne suffit donc pas.
 - À MESURER d'abord (vitesse en km/h, temps par checkpoint et par tour, avec la plateforme du joueur : Java ou
   Bedrock via Floodgate), avant de corriger.
+- **Mesuré le 08/10/2026** (journal de KG_ScoreBoards, 24/09 au 08/10, arène `non_alcoholic_pigeons`, 1 781 tours ;
+  tours lancés de moins de 60 s) :
+
+  | | Java (6 joueurs, 303 tours) | Bedrock (6 joueurs, 1 300 tours) |
+  |---|---|---|
+  | Meilleur tour | 39,50 s | 32,90 s |
+  | Tour médian | 45,0 s | 39,8 s |
+  | Tours propres | 47 % | 74 % |
+  | Points par tour (moyenne) | 2,36 | 4,99 |
+  | Tours sous 40 s (palier x2 ou mieux) | 1 % | 54 % |
+  | Départ jusqu'au 1er checkpoint | 4,6 s | 3,9 s |
+
+  Tous les tronçons sont plus rapides en Bedrock (5 à 18 % sur le meilleur quart des tours de chaque plateforme) et la
+  vitesse d'entrée aux checkpoints est plus haute partout (+8 à +29 km/h ; 190 contre 160 km/h en bout de ligne
+  droite) : la « vitesse maximale similaire » notée plus haut est fausse. Réserve : un joueur a fait 949 des 1 300 tours
+  Bedrock ; sans lui il reste 3,2 s sur le meilleur tour et 1,5 s sur le médian. L'avantage réel est donc entre 3 et 6 s
+  par tour d'environ 40 s. À refaire à pilote égal (une dizaine de tours de LeKiwi06 en Bedrock).
+- **Cause** : en bateau, c'est le jeu du joueur qui calcule le mouvement ; un joueur Bedrock roule avec la physique de
+  Bedrock, que Geyser transmet telle quelle.
+- **Choix de LeKiwi06 (08/10/2026)** : bateau calculé par le serveur pour les joueurs Bedrock, en essai (1.6.0, réglage
+  `bedrock-server-boat` désactivé par défaut). Repli si la conduite est mauvaise : records séparés Java / Bedrock et
+  paliers de chrono décalés pour Bedrock (piste 3 ci-dessous).
 - Pistes, à tester dans cet ordre : (1) bateau posé et bloqué pendant le compte à rebours, relâché pour tous en même
   temps ; (2) limiter côté serveur, pour les joueurs Bedrock seulement, le gain de vitesse par tick (accélération)
   et la vitesse gardée en virage - risque d'effet « élastique » à évaluer en jeu ; (3) en dernier recours,

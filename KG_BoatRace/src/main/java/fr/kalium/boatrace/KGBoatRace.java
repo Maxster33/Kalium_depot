@@ -51,6 +51,11 @@ public final class KGBoatRace extends JavaPlugin {
                                 "Hors-piste = tout autre bloc touché. Noms de blocs séparés par des virgules."),
                         bool("anti-collision", "Anti-collision entre bateaux", true,
                                 "Les adversaires sont remplacés par des copies sans collision (Java : coque, tête et pseudo ; Bedrock : tête et pseudo)."),
+                        // 1.6.0 : essai d'equite Java / Bedrock (cahier des charges).
+                        bool("bedrock-server-boat", "Bedrock : bateau serveur (essai)", false,
+                                "Le bateau des joueurs Bedrock est calculé par le serveur, avec la physique de Java. La direction réagit avec le retard de leur connexion."),
+                        integer("bedrock-seat-height", "Bedrock : hauteur du siège (cm)", 19, -100, 150,
+                                "Bateau serveur seulement : hauteur du joueur dans son bateau, à ajuster s'il paraît trop haut ou trop bas."),
                         integer("record-max-lap-seconds", "Meilleurs temps : tour max (s)", 45, 0, 600,
                                 "Tours enregistrés dans les meilleurs temps jusqu'à cette durée : un tour plus long n'entre pas dans les meilleurs temps. 0 = tous les tours."),
                         integer("time-limit-seconds", "Temps limite (s)", 600, 30, 3600, "Fin de la course pour tout le monde."),
@@ -75,6 +80,8 @@ public final class KGBoatRace extends JavaPlugin {
                         "laps", BoatRaceInstance.DEFAULT_PUBLIC_LAPS))
                 .prewarmAllowed(false);
         MinigameType.register(type);
+        getServer().getPluginManager().registerEvents(new ServerBoatListener(
+                (fr.kalium.games.KalGames) getServer().getPluginManager().getPlugin("KalGames")), this);
         getLogger().info("Course de bateau enregistrée auprès de KalGames.");
     }
 
