@@ -1,8 +1,22 @@
 # KS_Jetons - valeurs par defaut aussi dans le code.
 
 # Prix d'un jeton en points du score (0 : pas en vente). A REGLER (LeKiwi06 : environ 15 minutes de farm pour une TP).
+# Seuls les jetons de teleportation et de claim s'achetent ; fly et mort : /rewards ; localisation : craft.
 prix:
   tp: 0
-  emplacement: 0
   claim: 0
-  mort: 0
+
+# Badges : valeur de chaque niveau (le nombre de valeurs est le niveau maximal).
+badges:
+  # Minutes de vol par heure.
+  fly: [1, 3, 5, 10, 15]
+  # Jours reels entre deux recuperations gratuites d'un coffre de mort.
+  mort: [7, 6, 5, 4, 3, 2, 1]
+  # Teleportations gratuites supplementaires stockees.
+  tp: [1, 2, 3, 4, 5]
+  # Emplacements de localisation. PROVISOIRE : a fixer par LeKiwi06.
+  localisation: [1, 2, 3, 4, 5]
+
+# Fusion de 2 badges du meme niveau a l'enclume : niveaux d'experience demandes pour obtenir le niveau 2, 3, 4...
+# (au-dela de la liste : + 20 par niveau).
+fusion-niveaux: [30, 50, 70, 90, 110, 130]

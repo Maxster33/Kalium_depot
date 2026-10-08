@@ -59,10 +59,7 @@ public final class KSKaliumGive extends JavaPlugin {
             OBJETS.put("elixir_" + elixir, new ObjetCustom("KS_Elixir",
                     () -> fr.kalium.elixir.KSElixir.creerElixir(elixir)));
         }
-        // 1.8.0 (catégorie 7) : jetons de KS_Jetons (pour les tables de butin des récompenses).
-        for (String jeton : List.of("tp", "emplacement", "claim", "mort")) {
-            OBJETS.put("jeton_" + jeton, new ObjetCustom("KS_Jetons", () -> fr.kalium.jetons.KSJetons.creer(jeton)));
-        }
+        // 1.8.0 (catégorie 7) : jetons de KS_Jetons ; 1.9.0 : jetons et badges ajoutés au démarrage (voir onEnable).
     }
 
     /** Fiole d'experience de KS_FioleExp, avec son nombre de niveaux (1.4.0 ; points avant) : fiole_exp(50). */
@@ -81,6 +78,9 @@ public final class KSKaliumGive extends JavaPlugin {
 
     /** 1.6.0 : têtes de KS_Decapitator (tete_<id>, ex. tete_bebe_mouton_rouge) ; liste lue dans le plugin des têtes. */
     private static final String TETE = "tete_";
+
+    /** 1.9.0 : badges de KS_Jetons (badge_<type>_<niveau>, ex. badge_fly_3) ; liste lue dans KS_Jetons. */
+    private static final String BADGE = "badge_";
 
     /**
      * 1.7.0 (catégorie 4 « Récompenses ») : un objet custom par son id_custom (comme /kaliumgive), ou null si l'id est
@@ -103,6 +103,12 @@ public final class KSKaliumGive extends JavaPlugin {
                         () -> fr.kalium.decapitator.KSDecapitator.creerTete(id)));
             }
         }
+        // 1.9.0 : jeton_fly, jeton_mort, jeton_tp, jeton_claim et badge_<type>_<niveau> (KS_Jetons 2.0.0).
+        if (getServer().getPluginManager().isPluginEnabled("KS_Jetons")) {
+            for (String id : fr.kalium.jetons.KSJetons.idsCustom()) {
+                OBJETS.put(id, new ObjetCustom("KS_Jetons", () -> fr.kalium.jetons.KSJetons.creerCustom(id)));
+            }
+        }
     }
 
     @Override
@@ -118,10 +124,10 @@ public final class KSKaliumGive extends JavaPlugin {
         ObjetCustom objet = trouver(args[1].toLowerCase());
         if (objet == null) {
             List<String> liste = new ArrayList<>(OBJETS.keySet());
-            liste.removeIf(id -> id.startsWith(TETE));
+            liste.removeIf(id -> id.startsWith(TETE) || id.startsWith(BADGE));
             sender.sendMessage(Component.text("id_custom inconnu : " + args[1] + ". Liste : "
-                    + String.join(", ", liste) + ", fiole_exp(<niveaux>), " + TETE + "<tête> (liste : /tetes ou "
-                    + "complétion)", NamedTextColor.RED));
+                    + String.join(", ", liste) + ", fiole_exp(<niveaux>), " + BADGE + "<type>_<niveau> (complétion), "
+                    + TETE + "<tête> (liste : /tetes ou complétion)", NamedTextColor.RED));
             return true;
         }
         if (!getServer().getPluginManager().isPluginEnabled(objet.plugin())) {

@@ -93,3 +93,12 @@ Catégorie 7 : id_custom `jeton_tp`, `jeton_emplacement`, `jeton_claim`, `jeton_
 `/kaliumgive` et les tables de butin des récompenses. `softdepend` KS_Jetons.
 
 **Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.8.0 ; ancienne version dans `_removed-ks_kaliumgive-1.7.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.9.0 - jetons en lingots et badges (08/10/2026, LeKiwi06)
+
+KS_Jetons 2.0.0 : id_custom lus dans KS_Jetons au démarrage (comme les têtes) : `jeton_fly`, `jeton_mort`, `jeton_tp`,
+`jeton_claim` et `badge_<type>_<niveau>` (`badge_fly_1` à `5`, `badge_mort_1` à `7`, `badge_tp_1` à `5`,
+`badge_localisation_1` à `5`). Retiré : `jeton_emplacement` (jeton supprimé). Pas de `jeton_localisation` : il ne vient
+que du craft, lié à une magnétite. Le message d'id inconnu ne liste pas chaque badge (`badge_<type>_<niveau>`).
+
+**À déployer avec KS_Jetons 2.0.0.** Compilé le 08/10/2026 ; **non déployé**.
