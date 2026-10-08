@@ -47,4 +47,4 @@ un fix pour ce problème ? », puis « oui mets à jour les scripts et envoie su
   ConditionalEvents, PlayerKits2 et PyxelRegions rangés sur Kal-Games (seul serveur où ils tournaient encore ; effectif
   au redémarrage) ; dossiers de données restants rangés sur Event, lobby, Kanvas (et Skript sur Serveur Jeux). Rien
   n'est supprimé. « etc. » : question posée à LeKiwi06, rien d'autre touché.
-- Kal-Games redémarré à 01:01 (les 3 plugins ne sont plus chargés, aucune erreur) ; dossiers de données rangés à 01:03.
+- Kal-Games redémarré à 01:01 (les 3 plugins ne sont plus chargés, aucune erreur) ; dossiers de données rangés à 01:02.
