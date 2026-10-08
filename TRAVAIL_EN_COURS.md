@@ -16,6 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_Crafts — LeKiwi06 — depuis le 2026-10-09 00:19 — livre de recettes : vrais objets affichés dans les réparations de la tête de wither squelette
+
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 
 
