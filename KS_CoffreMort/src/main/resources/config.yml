@@ -1,0 +1,10 @@
+# KS_CoffreMort - valeurs par defaut aussi dans le code.
+
+# Duree de vie d'un coffre de mort, en minutes ; ensuite il disparait avec son contenu.
+duree-minutes: 15
+
+# Coffres de mort actifs par joueur ; un de plus supprime le plus ancien.
+maximum: 3
+
+# Distance (en blocs) jusqu'ou chercher un bloc d'air ou de fluide autour de la mort (16 au plus).
+rayon-recherche: 6

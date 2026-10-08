@@ -92,6 +92,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_CoffreMort 1.0.0 + KS_RewardsGUI 1.1.0** (08/10/2026, LeKiwi06) : coffres de mort d'Event (objets et moitié de l'expérience dans un coffre réservé au mort pendant 15 minutes, 3 au plus ; envoi dans `/rewards` dans ses claims ou en zone protégée ; `/coffres` : coordonnées, temps restant, récupération par badge ou jeton de la mort). **Compilés, non déployés, non testés** ; à déployer ensemble sur Event (KS_Jetons 2.0.0 y est déjà) ; réservations gardées jusqu'au déploiement.
 - **KG_Pong 0.1.0** (06/10/2026, LeKiwi06) : prototype d'un nouveau mini-jeu Pong pour Kal-Games (2 joueurs, vu de dessus, raquettes en vrais blocs, balle = Sulfur Cube à bloc de glace), branché sur le moteur de parties de KalGames (aucun changement dans KalGames) ; **compilé, non déployé, non testé en jeu**, réservation gardée. Après le déploiement, un modérateur doit construire un terrain plat entouré de murs, créer l'arène et poser 5 points (voir `KG_Pong/JOURNAL.md`).
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).
 - **KLM_DiscordBot 0.1.0** (29/09/2026, LeKiwi06) : bot Discord Node.js, étape 1 (`/classement` en image) ; hébergement à choisir ; non testé sur Discord. Nécessite KG_ScoreBoards 1.7.0.

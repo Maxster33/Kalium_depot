@@ -1,0 +1,13 @@
+name: KS_CoffreMort
+version: '${project.version}'
+main: fr.kalium.coffremort.KSCoffreMort
+api-version: '26.2'
+description: Coffres de mort du serveur Event (objets et moitie de l'experience gardes 15 minutes), /coffres.
+authors: [KaLium]
+depend: [KLM_Menu]
+softdepend: [KS_Menu, KS_Jetons, KS_RewardsGUI, WorldGuard, SimpleClaimSystem]
+commands:
+  coffres:
+    description: Tes coffres de mort (coordonnees, temps restant, recuperation).
+    usage: /coffres
+    aliases: [coffremort]

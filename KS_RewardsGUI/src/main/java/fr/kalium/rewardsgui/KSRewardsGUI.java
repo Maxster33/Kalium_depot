@@ -47,6 +47,8 @@ import java.util.UUID;
  * - /rewards (et bouton « Récompenses » de KS_Menu) : récompenses en attente (origine, raison, contenu) ; Récupérer /
  *   Tout récupérer ; refus si l'inventaire manque de place ; pas d'expiration.
  * - Journal : plugins/KS_RewardsGUI/recuperations.log (date, joueur, origine, raison, contenu).
+ * - 1.1.0 (catégorie 7) : deposer(...) : un plugin d'Event dépose directement une récompense en objets (KS_CoffreMort :
+ *   coffre de mort envoyé dans /rewards).
  */
 public final class KSRewardsGUI extends JavaPlugin implements Listener {
 
@@ -57,6 +59,7 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
     /** Ids des messages déjà reçus (évite un doublon si la confirmation a échoué). */
     private final Set<String> recus = new LinkedHashSet<>();
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+    private static KSRewardsGUI instance;
     private File fichier;
     private Lang lang;
     private Gui gui;
@@ -64,6 +67,7 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        instance = this;
         saveDefaultConfig();
         lang = new Lang(this);
         gui = new Gui(this, lang);
@@ -203,9 +207,49 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
      */
     public synchronized Map<UUID, Long> plusAnciennesEnAttente() {
         Map<UUID, Long> r = new LinkedHashMap<>();
-        enAttente.forEach((joueur, liste) -> liste.values().forEach(rec ->
-                r.merge(joueur, rec.date, Math::min)));
+        enAttente.forEach((joueur, liste) -> liste.values().forEach(rec -> {
+            // 1.1.0 : un dépôt local (coffre de mort) qui attend n'a rien de suspect.
+            if (!rec.locale) {
+                r.merge(joueur, rec.date, Math::min);
+            }
+        }));
         return r;
+    }
+
+    /**
+     * 1.1.0 : dépose une récompense en objets pour un joueur, sans passer par le relais (fil principal). Elle apparaît
+     * dans /rewards comme les autres ; 36 piles au plus (elle doit tenir dans un inventaire vide). Faux si rien n'a été
+     * déposé (plugin désactivé, aucun objet).
+     */
+    public static boolean deposer(UUID joueur, String nom, String origine, String raison, List<org.bukkit.inventory.ItemStack> objets) {
+        if (instance == null || !instance.isEnabled() || objets.isEmpty() || objets.size() > 36) {
+            return false;
+        }
+        YamlConfiguration yaml = new YamlConfiguration();
+        yaml.set("joueur", joueur.toString());
+        yaml.set("nom", nom);
+        yaml.set("origine", origine);
+        yaml.set("raison", raison);
+        yaml.set("date", System.currentTimeMillis());
+        yaml.set("locale", true);
+        List<Map<String, Object>> contenu = new ArrayList<>();
+        for (org.bukkit.inventory.ItemStack objet : objets) {
+            Map<String, Object> element = new LinkedHashMap<>();
+            element.put("type", "objet");
+            element.put("donnees", Base64.getEncoder().encodeToString(objet.serializeAsBytes()));
+            element.put("nombre", objet.getAmount());
+            contenu.add(element);
+        }
+        yaml.set("contenu", contenu);
+        Recompense r = Recompense.lire(yaml.saveToString());
+        if (r == null) {
+            return false;
+        }
+        synchronized (instance) {
+            instance.enAttente.computeIfAbsent(joueur, u -> new LinkedHashMap<>()).put("local-" + UUID.randomUUID(), r);
+        }
+        instance.sauver();
+        return true;
     }
 
     synchronized List<Map.Entry<String, Recompense>> enAttente(UUID joueur) {

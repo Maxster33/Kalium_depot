@@ -104,9 +104,11 @@ final class Menu {
         if (argent > 0) {
             fr.kalium.economy.KSEconomy.crediter(joueur.getUniqueId(), argent);
         }
-        // 1.0.1 : signal pour l'anti-triche (revente suspecte).
-        org.bukkit.Bukkit.getPluginManager().callEvent(new fr.kalium.rewardsgui.api.RecompenseRecupereeEvent(joueur,
-                r.origine, r.raison, objets, argent, r.date));
+        // 1.0.1 : signal pour l'anti-triche (revente suspecte). 1.1.0 : pas pour un dépôt local (ses propres objets).
+        if (!r.locale) {
+            org.bukkit.Bukkit.getPluginManager().callEvent(new fr.kalium.rewardsgui.api.RecompenseRecupereeEvent(joueur,
+                    r.origine, r.raison, objets, argent, r.date));
+        }
         if (rouvrir) {
             ouvrir(joueur);
         }

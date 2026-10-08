@@ -30,6 +30,7 @@ import java.util.UUID;
  *     nombre: 2
  *   - type: argent         # points du score (KS_Economy)
  *     montant: 500
+ * locale: true                                   # 1.1.0 : déposée par un plugin d'Event (KSRewardsGUI.deposer)
  * </pre>
  */
 final class Recompense {
@@ -43,6 +44,8 @@ final class Recompense {
     String origine;
     String raison;
     long date;
+    /** 1.1.0 : déposée par un plugin de ce serveur (objets du joueur lui-même) : hors suivi de l'anti-triche. */
+    boolean locale;
     final List<Element> contenu = new ArrayList<>();
     /** Texte d'origine (enregistré tel quel). */
     String texte;
@@ -63,6 +66,7 @@ final class Recompense {
         r.origine = yaml.getString("origine", "?");
         r.raison = yaml.getString("raison", "Récompense");
         r.date = yaml.getLong("date", System.currentTimeMillis());
+        r.locale = yaml.getBoolean("locale", false);
         for (Map<?, ?> element : yaml.getMapList("contenu")) {
             String type = String.valueOf(element.get("type"));
             Object nombre = element.containsKey("nombre") ? element.get("nombre") : element.get("montant");

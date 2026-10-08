@@ -33,3 +33,14 @@ raison, objets, points, date d'envoi) quand une récompense est récupérée ; `
 plus ancienne récompense en attente de chaque joueur. Aucun autre changement.
 
 **Déployé sur Event le 03/10/2026 à 06:45 (LeKiwi06 ; 1.0.0 dans `_removed-ks_rewardsgui-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.1.0 - dépôt local d'une récompense (08/10/2026, LeKiwi06)
+
+Catégorie 7 (coffres de mort) : `KSRewardsGUI.deposer(joueur, nom, origine, raison, objets)` dépose directement une
+récompense en objets (36 piles au plus), sans passer par le relais ; elle apparaît dans `/rewards` comme les autres.
+Utilisé par KS_CoffreMort 1.0.0 (mort dans un de ses claims ou en zone protégée, récupération par badge ou jeton de la
+mort). Ces dépôts sont marqués `locale: true` : pas de signal `RecompenseRecupereeEvent` et pas de comptage dans
+`plusAnciennesEnAttente()` (ce sont les objets du joueur lui-même : rien à surveiller pour l'anti-triche). Aucun autre
+changement.
+
+**À déployer avec KS_CoffreMort 1.0.0.** Compilé le 08/10/2026 ; **non déployé**.
