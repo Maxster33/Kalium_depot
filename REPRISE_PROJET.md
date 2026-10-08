@@ -92,6 +92,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Fly 1.0.0** (08/10/2026, LeKiwi06) : vol dans ses claims (propriétaire ou membre) avec un jeton de fly (10 minutes d'affilée, fenêtre d'activation au double saut, « ne plus m'afficher ») ou un badge de fly (minutes par heure décomptées en vol), barre de boss, dégâts de chute conservés, `/fly`. **Compilé, non déployé** : LeKiwi06 veut déployer toute la catégorie 7 ensemble (KS_Fly, KS_CoffreMort 1.0.1, KS_Jetons 2.0.1, puis KS_Teleport).
 - **KS_CoffreMort 1.0.1 + KS_Jetons 2.0.1** (08/10/2026, LeKiwi06) : corrections de LeKiwi06 après le déploiement de 20:56. KS_CoffreMort : `/rewards` dans le claim **d'un autre** (et non dans les siens, où le coffre est posé). KS_Jetons : `prix.tp: 20`, `prix.claim: 0` (les 20 émeraudes concernaient le jeton de téléportation). **Compilés, non déployés** ; au déploiement, remplacer le `config.yml` de KS_Jetons sur Event.
 - **KG_Pong 0.1.0** (06/10/2026, LeKiwi06) : prototype d'un nouveau mini-jeu Pong pour Kal-Games (2 joueurs, vu de dessus, raquettes en vrais blocs, balle = Sulfur Cube à bloc de glace), branché sur le moteur de parties de KalGames (aucun changement dans KalGames) ; **compilé, non déployé, non testé en jeu**, réservation gardée. Après le déploiement, un modérateur doit construire un terrain plat entouré de murs, créer l'arène et poser 5 points (voir `KG_Pong/JOURNAL.md`).
 - **KG_ScoreBoards 1.7.0** : déployé sur Kal-Games le 29/09/2026 à 2 h 36 (voir le tableau ci-dessus).

@@ -16,7 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_CoffreMort — LeKiwi06 — depuis le 2026-10-08 21:13 — 1.0.1 : /rewards dans les claims des autres (et non dans les siens)
 - KS_Fly — LeKiwi06 — depuis le 2026-10-08 21:16 — nouveau (catégorie 7) : vol dans ses claims avec un jeton ou un badge de fly, barre de boss
 
 
@@ -38,6 +37,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 ## Requis parfois
 
 - KS_Jetons — LeKiwi06 — depuis le 2026-10-08 21:13 — 2.0.1 : prix (jeton de téléportation à 20, jeton de claim pas en vente)
+- KS_CoffreMort — LeKiwi06 — depuis le 2026-10-08 21:13 — 1.0.1 compilée, en attente du déploiement groupé de la catégorie 7
 
 
 

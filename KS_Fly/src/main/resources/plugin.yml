@@ -1,0 +1,12 @@
+name: KS_Fly
+version: '${project.version}'
+main: fr.kalium.fly.KSFly
+api-version: '26.2'
+description: Vol dans ses claims sur le serveur Event, avec un jeton ou un badge de fly (KS_Jetons), /fly.
+authors: [KaLium]
+depend: [KLM_Menu, KS_Jetons, SimpleClaimSystem]
+softdepend: [KS_Menu]
+commands:
+  fly:
+    description: Ton temps de vol (jetons, badge de fly) et le reglage de la fenetre du jeton.
+    usage: /fly

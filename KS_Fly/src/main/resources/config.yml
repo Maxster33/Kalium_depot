@@ -1,0 +1,8 @@
+# KS_Fly - valeurs par defaut aussi dans le code.
+
+# Minutes de vol d'un jeton de fly, d'affilee a partir de son activation.
+jeton-minutes: 10
+
+# Minutes apres le debut de son utilisation au bout desquelles la reserve du badge de fly se remplit d'un coup.
+# (Les minutes de vol de chaque niveau du badge sont dans le config.yml de KS_Jetons : badges.fly.)
+badge-recharge-minutes: 60
