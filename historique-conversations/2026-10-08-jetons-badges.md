@@ -1,8 +1,8 @@
 # 2026-10-08 — Jetons et badges (catégorie 7)
 
-- Plugin(s) concerné(s) : KS_Jetons, KS_KaliumGive
+- Plugin(s) concerné(s) : KS_Jetons, KS_KaliumGive, geyser-bedrock
 - Versions avant / après : KS_Jetons 1.0.0 / 2.0.0 ; KS_KaliumGive 1.8.0 / 1.9.0 (déployés sur Event le 08/10/2026 à
-  19:09, non testés)
+  19:09, non testés) ; geyser-bedrock 1.2.0 / 1.3.0 (envoyé sur le proxy le 08/10/2026 à 19:40, non testé)
 
 ## Demandé
 
@@ -20,6 +20,8 @@ seul par type, apparence du bloc du lingot, capacité non cumulable) avec leurs 
 - KS_Jetons 2.0.0 : jetons en lingots, badges à niveaux, inventaire spécial en deux contenants à l'interface
   d'entonnoir, fusion à l'enclume, reprise des données de la 1.0.0. KS_KaliumGive 1.9.0 : ids des jetons et des badges.
 - Déployés sur Event le 08/10/2026 à 19:09 (anciens jars et ancien `config.yml` dans `_removed-…`).
+- Demande suivante de LeKiwi06 : « tous les objets customs doivent figurer dans le proxy pour que les joueurs Bedrock
+  les voient » : `geyser-bedrock` 1.3.0 (5 jetons, 4 badges), envoyé sur le proxy à 19:40.
 
 ## Décisions
 
@@ -38,8 +40,8 @@ seul par type, apparence du bloc du lingot, capacité non cumulable) avec leurs 
 
 ## Reste à faire
 
-- Redémarrer Event (LeKiwi06), puis tester : `/jetons`, les deux contenants, `/kaliumgive <pseudo> badge_fly_1 2` et la
+- Redémarrer Event et le proxy (LeKiwi06), puis tester : `/jetons`, les deux contenants, `/kaliumgive <pseudo> badge_fly_1 2` et la
   fusion à l'enclume (Java et Bedrock).
 - Coder KS_CoffreMort, KS_Fly, KS_Teleport, puis les jetons de claim dans KS_Claim.
-- `zone_shop` → `zone_spawn` (WorldGuard et `magasins.region` de KS_Economy) ; `rachats.csv` ; `geyser-bedrock`.
+- `zone_shop` → `zone_spawn` (WorldGuard et `magasins.region` de KS_Economy) ; `rachats.csv`.
 - Niveau maximal du badge de localisation (5 par défaut) ; prix du jeton de téléportation.

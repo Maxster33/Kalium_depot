@@ -61,6 +61,96 @@
           "icon": "kalium.changeur_biome",
           "allow_offhand": true
         }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:iron_ingot",
+        "bedrock_identifier": "kalium:jeton_fly",
+        "display_name": "Jeton de fly",
+        "bedrock_options": {
+          "icon": "kalium.jeton_fly",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:netherite_ingot",
+        "bedrock_identifier": "kalium:jeton_mort",
+        "display_name": "Jeton de la mort",
+        "bedrock_options": {
+          "icon": "kalium.jeton_mort",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:gold_ingot",
+        "bedrock_identifier": "kalium:jeton_tp",
+        "display_name": "Jeton de téléportation",
+        "bedrock_options": {
+          "icon": "kalium.jeton_tp",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:copper_ingot",
+        "bedrock_identifier": "kalium:jeton_localisation",
+        "display_name": "Jeton de localisation",
+        "bedrock_options": {
+          "icon": "kalium.jeton_localisation",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:golden_shovel",
+        "bedrock_identifier": "kalium:jeton_claim",
+        "display_name": "Jeton de claim",
+        "bedrock_options": {
+          "icon": "kalium.jeton_claim",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:iron_block",
+        "bedrock_identifier": "kalium:badge_fly",
+        "display_name": "Badge de fly",
+        "bedrock_options": {
+          "icon": "kalium.badge_fly",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:netherite_block",
+        "bedrock_identifier": "kalium:badge_mort",
+        "display_name": "Badge de la mort",
+        "bedrock_options": {
+          "icon": "kalium.badge_mort",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:gold_block",
+        "bedrock_identifier": "kalium:badge_tp",
+        "display_name": "Badge de téléportation",
+        "bedrock_options": {
+          "icon": "kalium.badge_tp",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:copper_block",
+        "bedrock_identifier": "kalium:badge_localisation",
+        "display_name": "Badge de localisation",
+        "bedrock_options": {
+          "icon": "kalium.badge_localisation",
+          "allow_offhand": true
+        }
       }
     ]
   }

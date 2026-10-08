@@ -13,6 +13,15 @@ côté serveur (aucun effet du vrai sac ou de la vraie clé).
 | Fragment de Spawner (KS_ItemSimple) | `knowledge_book` | `minecraft:disc_fragment_5` | `kalium:fragment_spawner` | fragment de disque |
 | Cœur de Spawner (KS_ItemSimple) | `knowledge_book` | `minecraft:respawn_anchor` | `kalium:coeur_spawner` | côté de l'ancre de réapparition (image plate) |
 | Changeur de Biome (KS_BiomeChanger) | `knowledge_book` | `minecraft:end_crystal` | `kalium:changeur_biome` | cristal de l'End |
+| Jeton de fly (KS_Jetons) | `knowledge_book` | `minecraft:iron_ingot` | `kalium:jeton_fly` | lingot de fer |
+| Jeton de la mort (KS_Jetons) | `knowledge_book` | `minecraft:netherite_ingot` | `kalium:jeton_mort` | lingot de netherite |
+| Jeton de téléportation (KS_Jetons) | `knowledge_book` | `minecraft:gold_ingot` | `kalium:jeton_tp` | lingot d'or |
+| Jeton de localisation (KS_Jetons) | `knowledge_book` | `minecraft:copper_ingot` | `kalium:jeton_localisation` | lingot de cuivre |
+| Jeton de claim (KS_Jetons) | `knowledge_book` | `minecraft:golden_shovel` | `kalium:jeton_claim` | pelle en or |
+| Badge de fly (KS_Jetons) | `knowledge_book` | `minecraft:iron_block` | `kalium:badge_fly` | face du bloc de fer (image plate) |
+| Badge de la mort (KS_Jetons) | `knowledge_book` | `minecraft:netherite_block` | `kalium:badge_mort` | face du bloc de netherite (image plate) |
+| Badge de téléportation (KS_Jetons) | `knowledge_book` | `minecraft:gold_block` | `kalium:badge_tp` | face du bloc d'or (image plate) |
+| Badge de localisation (KS_Jetons) | `knowledge_book` | `minecraft:copper_block` | `kalium:badge_localisation` | face du bloc de cuivre (image plate) |
 
 Attention : **tout** livre de connaissances qui a l'un de ces `item_model` prend cette apparence ; un futur objet
 custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne ici.
@@ -47,3 +56,10 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
 - **1.2.0 (29/09/2026, Maxster33)** : Fragment de Spawner (fragment de disque), Cœur de Spawner (côté de l'ancre de
   réapparition : l'ancre est un bloc en 3D sur Java, Bedrock n'a qu'une image plate pour un objet custom) et Changeur
   de Biome (cristal de l'End). Envoyé sur le proxy le 29/09/2026 à 17:23 (1.1.0 dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.1.0/`) ; actif après redémarrage du proxy. **Non testé.**
+- **1.3.0 (08/10/2026, LeKiwi06)** : jetons (fly, mort, téléportation, localisation : lingots ; claim : pelle en or) et
+  badges (fly, mort, téléportation, localisation : face du bloc de fer, de netherite, d'or, de cuivre, en image plate)
+  de KS_Jetons 2.0.0. Demande de LeKiwi06 : « tous les objets customs doivent figurer dans le proxy pour que les joueurs
+  Bedrock les voient » ; vérifié : tous les objets faits sur un livre de connaissances (9 plugins) ont maintenant leur
+  ligne. Le niveau d'un badge est dans son nom (même image pour tous les niveaux). Envoyé sur le proxy le 08/10/2026 à
+  19:40 (1.2.0 dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.2.0/` ; supprimable par l'humain :
+  `_removed-kalium-objets-1.0.0/`) ; actif après redémarrage du proxy. **Non testé.**

@@ -64,8 +64,8 @@ jour ; cahier des charges : catégorie 7, parties 6 à 11 (en local, publié au 
 
 Limites :
 - **Aucun effet en jeu pour l'instant** : KS_Teleport, KS_CoffreMort et KS_Fly n'existent pas encore.
-- Joueurs Bedrock : jetons et badges s'affichent comme des livres tant que `geyser-bedrock` n'a pas leurs
-  correspondances (Maxster33) ; fusion à l'enclume sur Bedrock à vérifier (leur jeu calcule lui-même l'aperçu).
+- Joueurs Bedrock : apparence des jetons et des badges dans `geyser-bedrock` 1.3.0 (proxy, 08/10/2026, actif après
+  redémarrage du proxy) ; fusion à l'enclume sur Bedrock à vérifier (leur jeu calcule lui-même l'aperçu).
 - `rachats.csv` de KS_Economy : `jeton_emplacement` n'existe plus ; nouveaux jetons et badges absents (valeurs à fixer
   avec LeKiwi06).
 

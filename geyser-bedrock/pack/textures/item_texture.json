@@ -19,6 +19,33 @@
     },
     "kalium.changeur_biome": {
       "textures": ["textures/items/kalium_changeur_biome"]
+    },
+    "kalium.jeton_fly": {
+      "textures": ["textures/items/kalium_jeton_fly"]
+    },
+    "kalium.jeton_mort": {
+      "textures": ["textures/items/kalium_jeton_mort"]
+    },
+    "kalium.jeton_tp": {
+      "textures": ["textures/items/kalium_jeton_tp"]
+    },
+    "kalium.jeton_localisation": {
+      "textures": ["textures/items/kalium_jeton_localisation"]
+    },
+    "kalium.jeton_claim": {
+      "textures": ["textures/items/kalium_jeton_claim"]
+    },
+    "kalium.badge_fly": {
+      "textures": ["textures/items/kalium_badge_fly"]
+    },
+    "kalium.badge_mort": {
+      "textures": ["textures/items/kalium_badge_mort"]
+    },
+    "kalium.badge_tp": {
+      "textures": ["textures/items/kalium_badge_tp"]
+    },
+    "kalium.badge_localisation": {
+      "textures": ["textures/items/kalium_badge_localisation"]
     }
   }
 }
