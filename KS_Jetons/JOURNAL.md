@@ -28,7 +28,8 @@ jour ; cahier des charges : catégorie 7, parties 6 à 11 (en local, publié au 
   supprimé** (remplacé par le badge de localisation) : ceux de la 1.0.0 deviennent des livres sans effet.
 - **Badges** (nouveau) : fly (bloc de fer ; 1, 3, 5, 10, 15 minutes de vol par heure), mort (bloc de netherite ; une
   récupération gratuite tous les 7, 6, 5, 4, 3, 2, 1 jours), téléportation (bloc d'or ; 1 à 5 téléportations gratuites
-  de plus en réserve), localisation (bloc de cuivre ; emplacements de localisation : **1 à 5, provisoire**, à fixer).
+  de plus en réserve), localisation (bloc de cuivre ; 1 à 5 emplacements de localisation en plus de `/home bed` et
+  `/spawn` : niveau 1 = 1, niveau 2 = 2, etc. ; niveau maximal 5 comme les autres, non précisé par LeKiwi06).
   Livres de connaissances (on ne peut pas les poser), non empilables, niveau dans le nom. Valeurs réglables
   (`badges.<type>` du `config.yml` ; le nombre de valeurs est le niveau maximal).
 - **Fusion** : 2 badges du même type et du même niveau dans une enclume donnent le niveau suivant. Coût en niveaux
@@ -47,7 +48,8 @@ jour ; cahier des charges : catégorie 7, parties 6 à 11 (en local, publié au 
   - Les objets refusés ne peuvent pas y être posés (clic, Maj + clic, touches, glisser) ; à la fermeture, tout intrus
     est rendu. Enregistré à chaque changement (`jetons.yml`, objets entiers : un jeton de localisation garde sa
     magnétite).
-  - Achat avec le score : seulement téléportation et claim (`prix.tp`, `prix.claim` ; **0 = pas en vente**). Jeton de
+  - Achat avec le score : seulement téléportation et claim (`prix.tp` : **0 = pas en vente**, à fixer ;
+    `prix.claim` : **20** émeraudes, LeKiwi06, 08/10/2026). Jeton de
     fly et de la mort : /rewards seulement ; localisation : craft (KS_Teleport, à venir).
   - Contenant plein : les jetons achetés ou reçus attendent (ils comptent déjà) et y descendent dès qu'une place se
     libère.
@@ -67,4 +69,6 @@ Limites :
 - `rachats.csv` de KS_Economy : `jeton_emplacement` n'existe plus ; nouveaux jetons et badges absents (valeurs à fixer
   avec LeKiwi06).
 
-**À déployer avec KS_KaliumGive 1.9.0.** Compilé le 08/10/2026 ; **non déployé**.
+**Déployé sur Event le 08/10/2026 à 19:09 (LeKiwi06, avec KS_KaliumGive 1.9.0 ; 1.0.0 et son `config.yml` dans
+`_removed-ks_jetons-1.0.0/`), actif après redémarrage d'Event. `config.yml` du serveur remplacé par celui de la 2.0.0
+(`prix.claim: 20`) ; `jetons.yml` du serveur était vide (rien à reprendre). Statut : non testé en jeu.**

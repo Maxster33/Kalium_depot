@@ -116,7 +116,7 @@ public final class KSJetons extends JavaPlugin implements Listener {
         MORT("mort", "Badge de la mort", "netherite_block", 7, 6, 5, 4, 3, 2, 1),
         /** Téléportations gratuites supplémentaires stockées. */
         TP("tp", "Badge de téléportation", "gold_block", 1, 2, 3, 4, 5),
-        /** Emplacements de localisation. PROVISOIRE : valeurs à fixer par LeKiwi06. */
+        /** Emplacements de localisation, en plus de /home bed et /spawn (niveau 1 : 1, niveau 2 : 2, etc.). */
         LOCALISATION("localisation", "Badge de localisation", "copper_block", 1, 2, 3, 4, 5);
 
         final String id;
@@ -154,7 +154,7 @@ public final class KSJetons extends JavaPlugin implements Listener {
                 case FLY -> v + (v > 1 ? " minutes" : " minute") + " de vol par heure dans tes claims";
                 case MORT -> "Un coffre de mort récupéré gratuitement " + (v > 1 ? "tous les " + v + " jours" : "chaque jour");
                 case TP -> v + (v > 1 ? " téléportations gratuites" : " téléportation gratuite") + " de plus en réserve";
-                case LOCALISATION -> v + (v > 1 ? " emplacements" : " emplacement") + " de localisation";
+                case LOCALISATION -> v + (v > 1 ? " emplacements" : " emplacement") + " de localisation en plus";
             };
         }
     }

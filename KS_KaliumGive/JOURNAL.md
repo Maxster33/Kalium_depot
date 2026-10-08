@@ -101,4 +101,6 @@ KS_Jetons 2.0.0 : id_custom lus dans KS_Jetons au démarrage (comme les têtes) 
 `badge_localisation_1` à `5`). Retiré : `jeton_emplacement` (jeton supprimé). Pas de `jeton_localisation` : il ne vient
 que du craft, lié à une magnétite. Le message d'id inconnu ne liste pas chaque badge (`badge_<type>_<niveau>`).
 
-**À déployer avec KS_Jetons 2.0.0.** Compilé le 08/10/2026 ; **non déployé**.
+**Déployé sur Event le 08/10/2026 à 19:09 (LeKiwi06, avec KS_Jetons 2.0.0 ; 1.8.0 dans `_removed-ks_kaliumgive-1.8.0/` ;
+supprimables par l'humain : `_removed-ks_kaliumgive-1.0.0/` à `1.6.0/`), actif après redémarrage d'Event. Statut : non
+testé en jeu.**
