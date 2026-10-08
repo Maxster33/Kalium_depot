@@ -225,4 +225,4 @@ de recettes n'affiche que ce que la recette déclare.
 Limite : le résultat affiché reste le crâne de wither squelette, même pour une tête qui garde d'autres défauts (le vrai
 résultat apparaît en posant les objets). Affichage chez les joueurs Bedrock : non vérifié.
 
-**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster et Event le 09/10/2026 à 00:39 (LeKiwi06 ; 1.10.0 dans `_removed-ks_crafts-1.10.0/`), actif après redémarrage. Statut : non testé en jeu.**

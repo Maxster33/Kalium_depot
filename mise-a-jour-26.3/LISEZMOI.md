@@ -89,7 +89,9 @@ SANS_SAUVEGARDE=1 sh envoyer.sh <serveur>     # jars seulement, serveur allumé 
 ```
 
 Sur un autre PC que celui de Maxster33 : `WINSCP=<chemin de WinSCP.com>` et `SESSION_WINSCP="<nom de la session>"`.
-État : Kixster envoyé le 08/10/2026 à 23:42 (actif au prochain redémarrage) ; les autres restent à faire.
+État : Kixster envoyé le 08/10/2026 à 23:42, actif depuis son redémarrage du 09/10 à 00:12, craft Bedrock confirmé par
+LeKiwi06 ; Event, lobby, Kanvas, Serveur Jeux et Kal-Games envoyés le 09/10/2026 vers 00:40 (actifs au prochain
+redémarrage de chacun).
 
 ## Après la mise à jour
 

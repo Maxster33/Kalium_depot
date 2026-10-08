@@ -34,4 +34,10 @@ un fix pour ce problème ? », puis « oui mets à jour les scripts et envoie su
 - « Le cadre a une membrane de phantom ? » : c'est la recette du cadre invisible de KS_Crafts.
 - Demande : réparations de la tête de wither squelette mal indiquées dans l'interface de craft → **KS_Crafts 1.11.0**
   (vrais objets affichés ; voir `KS_Crafts/JOURNAL.md`), compilé, non déployé, non testé ; KS_Crafts réservé.
-- Reste à faire : accord de LeKiwi06 pour déployer KS_Crafts 1.11.0 (Event, Kixster), puis test en jeu.
+- « oui déploie sur kixster et event » : KS_Crafts 1.11.0 envoyé sur Kixster et Event à 00:39 (1.10.0 dans
+  `_removed-ks_crafts-1.10.0/`), actif après redémarrage ; réservation libérée.
+- Kixster redémarré à 00:12 avec Via 5.12.1 ; LeKiwi06 : « les crafts ont l'air bon pour les joueurs bedrock du coup, il
+  faut aussi effectuer la réparation sur tous les serveurs » : Via 5.12.1 envoyé sur Event, lobby, Kanvas, Serveur Jeux
+  et Kal-Games entre 00:40 et 00:41 (serveurs allumés), actif au prochain redémarrage de chacun.
+- Reste à faire : redémarrer Kixster et Event (KS_Crafts), les 5 serveurs (Via) ; tester les recettes de réparation de
+  la tête de wither squelette en Java et en Bedrock.
