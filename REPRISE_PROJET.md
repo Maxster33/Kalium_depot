@@ -264,6 +264,18 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
   squelette (bloc d'émeraude compressé tier 2, fiole de 15 niveaux, bloc de charbon de bois, tête marquée du défaut,
   autres états en alternance) ; ingrédients acceptés inchangés. Supprimables par l'humain sur Event :
   `_removed-ks_crafts-1.0.0/` à `1.8.0/` (9 dossiers).
+- **Plugins externes qui ne servent plus, rangés le 09/10/2026 à 00:58** (demande de LeKiwi06 : « on peut enlever
+  pyxelregion, conditional event, playerkits, skript, etc. de tous les serveurs, normalement on ne s'en sert plus » ;
+  rien n'est supprimé) :
+  - **Kal-Games** : seuls jars encore en service, rangés dans `/plugins/_removed-conditionalevents-4.80.3/`,
+    `_removed-playerkits2-1.24.1/` et `_removed-pyxelregions-1.3.0/` (kits déjà convertis dans `KG_PvpKit/kits.yml`).
+    **Effectif au prochain redémarrage de Kal-Games** ; leurs 3 dossiers de données restent dans `/plugins/` jusque-là
+    (plugins encore chargés), à ranger ensuite dans les mêmes `_removed-…`.
+  - **Event, lobby, Kanvas** : les jars étaient déjà rangés ; dossiers de données `ConditionalEvents`, `PyxelRegions`
+    (et `PlayerKits2` sur Kanvas) déplacés dans les `_removed-<plugin>-<version>/` déjà présents.
+  - **Serveur Jeux** : dossier `Skript` (aucun script) déplacé dans `/plugins/_removed-skript-2.16.2/` ; le jar est dans
+    `_removed-avant-26.3/`. Kixster : rien à faire.
+  - « etc. » : rien d'autre n'a été touché ; liste des autres restes proposée à LeKiwi06, en attente de sa réponse.
 - **Sauvegardes des mondes : à voir plus tard (LeKiwi06, 26/09/2026)**. Aucune sauvegarde automatique connue (seulement
   des copies manuelles, ex. `Kixster SMP_bak`). Pistes : 1) vérifier dans le panneau web Minestrator si chaque serveur
   a des sauvegardes (non vérifié, Claude n'y a pas accès) ; 2) sauvegarde manuelle des mondes sur le PC par WinSCP

@@ -43,3 +43,7 @@ un fix pour ce problème ? », puis « oui mets à jour les scripts et envoie su
   la tête de wither squelette en Java et en Bedrock.
 - Serveurs redémarrés par LeKiwi06 vers 00:46 ; journaux lus : les 6 serveurs Paper en ViaVersion / ViaBackwards 5.12.1,
   Kixster et Event en KS_Crafts 1.11.0 (44 crafts), aucune erreur nouvelle. Reste le test en jeu des recettes.
+- « on peut enlever pyxelregion, conditional event, playerkits, skript, etc. de tous les serveurs » : à 00:58, jars de
+  ConditionalEvents, PlayerKits2 et PyxelRegions rangés sur Kal-Games (seul serveur où ils tournaient encore ; effectif
+  au redémarrage) ; dossiers de données restants rangés sur Event, lobby, Kanvas (et Skript sur Serveur Jeux). Rien
+  n'est supprimé. « etc. » : question posée à LeKiwi06, rien d'autre touché.
