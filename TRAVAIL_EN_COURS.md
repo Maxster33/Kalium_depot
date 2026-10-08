@@ -17,6 +17,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 ## Utilisés actuellement
 
 - KG_Pong — LeKiwi06 — depuis le 2026-10-06 09:21 — nouveau mini-jeu Pong (kal-games) : prototype, vu de dessus, raquettes en blocs, balle = Sulfur Cube
+- geyser-bedrock — LeKiwi06 — depuis le 2026-10-08 19:39 — 1.3.0 : apparence Bedrock des jetons et des badges de KS_Jetons 2.0.0 (proxy)
 
 
 
