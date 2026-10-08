@@ -269,8 +269,9 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
   rien n'est supprimé) :
   - **Kal-Games** : seuls jars encore en service, rangés dans `/plugins/_removed-conditionalevents-4.80.3/`,
     `_removed-playerkits2-1.24.1/` et `_removed-pyxelregions-1.3.0/` (kits déjà convertis dans `KG_PvpKit/kits.yml`).
-    **Effectif au prochain redémarrage de Kal-Games** ; leurs 3 dossiers de données restent dans `/plugins/` jusque-là
-    (plugins encore chargés), à ranger ensuite dans les mêmes `_removed-…`.
+    **Effectif depuis le redémarrage de Kal-Games du 09/10/2026 à 01:01** (journal : 3 plugins absents, aucune erreur,
+    l'erreur de config de ConditionalEvents a disparu, PvP Kit : 7 kits) ; leurs 3 dossiers de données rangés à 01:03
+    dans les mêmes `_removed-…`.
   - **Event, lobby, Kanvas** : les jars étaient déjà rangés ; dossiers de données `ConditionalEvents`, `PyxelRegions`
     (et `PlayerKits2` sur Kanvas) déplacés dans les `_removed-<plugin>-<version>/` déjà présents.
   - **Serveur Jeux** : dossier `Skript` (aucun script) déplacé dans `/plugins/_removed-skript-2.16.2/` ; le jar est dans
