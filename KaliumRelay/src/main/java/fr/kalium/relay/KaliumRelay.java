@@ -1,6 +1,7 @@
 package fr.kalium.relay;
 
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.player.KickedFromServerEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -29,7 +30,7 @@ import java.util.Optional;
  * plugins de Velocity repose entierement sur Guice : son propre Injector garantit que
  * com.google.inject.Inject est toujours present et correctement resolu, donc plus sur.
  */
-@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.4.0",
+@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.5.0",
         description = "Relais HTTP entre KalGames et KalBingo, independant de la presence d'un joueur.",
         authors = {"KaLium"})
 public final class KaliumRelay {
@@ -101,6 +102,35 @@ public final class KaliumRelay {
         if (!isAdmin(event.getPlayer())) {
             event.getRootNode().getChildren().removeIf(node -> node.getName().equals("server") || node.getName().equals("velocity:server"));
         }
+    }
+
+    /**
+     * 1.5.0 - joueur Bedrock expulse d'un serveur (demande de LeKiwi06, 08/10/2026) : deconnecte de KaLium avec le
+     * message de l'expulsion, au lieu d'etre renvoye au lobby. Constat (journaux du 02/10 et du 08/10/2026) : un joueur
+     * Bedrock renvoye au lobby apres une expulsion (suspension de KS_AntiCheat, redemarrage d'un serveur, « vol »)
+     * garde sa session Geyser dereglee : a son retour il est fige en l'air, puis expulse pour « vol », en boucle ;
+     * une reconnexion complete a KaLium le debloque. Ne concerne que le renvoi vers un autre serveur decide par
+     * Velocity : une connexion refusee (liste blanche, suspension) laisse toujours le joueur ou il est. Joueurs Java
+     * inchanges.
+     */
+    @Subscribe
+    public void onKickedFromServer(KickedFromServerEvent event) {
+        if (!isBedrock(event.getPlayer())
+                || !(event.getResult() instanceof KickedFromServerEvent.RedirectPlayer redirect)) {
+            return;
+        }
+        String from = event.getServer().getServerInfo().getName();
+        event.setResult(KickedFromServerEvent.DisconnectPlayer.create(event.getServerKickReason().orElseGet(
+                () -> net.kyori.adventure.text.Component.text("Tu as été déconnecté de " + from + ". Reconnecte-toi.",
+                        net.kyori.adventure.text.format.NamedTextColor.RED))));
+        logger.info("[KaliumRelay] " + event.getPlayer().getUsername() + " (Bedrock) expulse de '" + from
+                + "' : deconnecte de KaLium au lieu du renvoi vers '" + redirect.getServer().getServerInfo().getName()
+                + "'.");
+    }
+
+    /** Joueur Bedrock (Floodgate) : son UUID commence par 00000000-0000-0000. */
+    private static boolean isBedrock(com.velocitypowered.api.proxy.Player player) {
+        return player.getUniqueId().getMostSignificantBits() == 0L;
     }
 
     @Subscribe

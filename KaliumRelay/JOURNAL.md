@@ -271,3 +271,28 @@ chemin ; pseudo vérifié (lettres, chiffres, _ ; 16 au plus), raison nettoyée 
 LibertyBans absent, 400 : pseudo invalide, 401 : jeton. Utilisé par le bouton « Bannir de KaLium » de KS_AntiCheat.
 
 **Déployé sur le proxy le 03/10/2026 à 06:45 (LeKiwi06 ; 1.3.0 dans `_removed-kaliumrelay-1.3.0/`) avec LibertyBans 1.1.4 (nouveau), actif après redémarrage du proxy. Statut : non testé.**
+
+## 1.5.0 - joueur Bedrock expulsé d'un serveur : déconnecté de KaLium (08/10/2026, LeKiwi06)
+
+Signalé par LeKiwi06 (test de la suspension de KS_AntiCheat sur Kixster avec Maxster33 en Bedrock) : « après avoir
+levé la suspension il ne peut pas bouger ». Choix de LeKiwi06 parmi deux corrections proposées : celle du proxy.
+- **Constat (journaux de Kixster, du lobby et du proxy)** : la suspension et la levée ont fonctionné. Expulsé de
+  Kixster à 20:31:32, le joueur Bedrock a été renvoyé au lobby par Velocity, sur la même session Geyser ; à chaque
+  retour sur Kixster il était figé en l'air, puis expulsé pour « vol » (20:32:47, 20:36:38, 20:40:55), chaque
+  expulsion le renvoyant de nouveau au lobby. Sa sauvegarde joueur était saine. Une reconnexion complète à KaLium l'a
+  débloqué (confirmé par LeKiwi06). Même enchaînement le 02/10/2026 sans KS_AntiCheat (`.MRMister7866`, serveur-jeux
+  redémarré, puis 3 expulsions pour « vol »). Mécanisme exact côté Geyser non trouvé.
+- **Changement** (`KickedFromServerEvent`) : quand Velocity s'apprête à renvoyer vers un autre serveur un joueur
+  **Bedrock** (UUID Floodgate, qui commence par `00000000-0000-0000`) expulsé de son serveur, il est déconnecté de
+  KaLium avec le message de l'expulsion (sans message : « Tu as été déconnecté de <serveur>. Reconnecte-toi. »).
+  Une ligne dans la console du proxy à chaque fois.
+- **Inchangé** : joueurs Java ; connexion refusée à un serveur (liste blanche, suspension en cours) : le joueur reste
+  où il est.
+- **Conséquences à connaître** : un joueur Bedrock est déconnecté de KaLium (au lieu d'arriver au lobby) à chaque
+  redémarrage du serveur où il se trouve, à l'expulsion pour inactivité de KS_AntiCheat (60 min) et à celle du Bingo
+  (5 min ; il revient directement dans sa partie en se reconnectant, routage de la 1.1.0), et à une expulsion pour
+  « vol ».
+- **Limite** : un compte Bedrock lié à un compte Java (UUID Java) n'est pas reconnu comme Bedrock.
+- Empilé sur la 1.4.0 (bannissement, jamais testé) à la demande explicite de LeKiwi06.
+
+**Compilé le 08/10/2026, non déployé. Statut : non testé en jeu.**
