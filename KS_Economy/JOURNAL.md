@@ -265,3 +265,14 @@ Demande de LeKiwi06 : « enregistrer cette base de données dans le plugin d'éc
   têtes demandent des têtes identiques ; l'œuf de dragon peut sortir (une seule vente possible, environ 150 000).
 
 **Déployé sur Event le 04/10/2026 à 22:01 (LeKiwi06 ; 1.2.0 dans `_removed-ks_economy-1.2.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.3.1 - région du spawn : `zone_spawn` (08/10/2026, LeKiwi06)
+
+Décision de LeKiwi06 (08/10/2026) : « la région zone_shop est maintenant zone_spawn, qui permet de créer maisons et
+magasins ». Valeur par défaut de `magasins.region` : `zone_spawn` (code et `config.yml` du jar). Aucun autre changement.
+- **Au déploiement** : la région WorldGuard doit s'appeler `zone_spawn` (à renommer ou recréer par l'humain, avec
+  `build allow` et `scs-claim allow`) ; si le `config.yml` du serveur contient `magasins.region: zone_shop`, le changer.
+  Tant que la région et le réglage ne portent pas le même nom, aucun magasin ne peut être créé ni agrandi.
+- Non changé : `rachats.csv` (`jeton_emplacement` à retirer, valeurs des nouveaux jetons et des badges à fixer).
+
+**À déployer avec KS_Teleport 1.0.0.** Compilé le 08/10/2026 ; **non déployé**.

@@ -94,7 +94,8 @@ final class Magasins {
     // ------------------------------------------------------------------ réglages
 
     String region() {
-        return plugin.getConfig().getString("magasins.region", "zone_shop");
+        // 1.3.1 (LeKiwi06, 08/10/2026) : « la région zone_shop est maintenant zone_spawn » (maisons et magasins).
+        return plugin.getConfig().getString("magasins.region", "zone_spawn");
     }
 
     long prixCreation() {

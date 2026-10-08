@@ -12,8 +12,8 @@ masquage:
 
 # 1.1.0 - magasins (a ajouter a la main dans le config.yml du serveur pour les modifier).
 magasins:
-  # Region WorldGuard de la zone des magasins (drapeaux build allow et scs-claim allow).
-  region: zone_shop
+  # Region WorldGuard du spawn : magasins (et maisons de KS_Teleport) ; drapeaux build allow et scs-claim allow.
+  region: zone_spawn
   prix-creation: 45000
   blocs-tier3-creation: 5
   prix-agrandissement: 10000

@@ -26,6 +26,6 @@ final class ProtectionClaims {
     /** Vrai si le bloc est dans le claim d'un autre joueur (1.0.1 : même s'il en est membre). */
     static boolean dUnAutre(Block bloc, Player joueur) {
         Claim claim = claim(bloc);
-        return claim != null && !joueur.getName().equalsIgnoreCase(claim.getOwner());
+        return claim != null && !joueur.getUniqueId().equals(claim.getUUID());
     }
 }

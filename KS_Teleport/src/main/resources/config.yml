@@ -1,0 +1,16 @@
+# KS_Teleport - valeurs par defaut aussi dans le code.
+
+# Minutes entre deux teleportations gratuites (chaque teleportation stockee par le badge a ce meme delai).
+delai-minutes: 60
+
+# Secondes a rester sans bouger avant de partir (un degat annule) ; 0 : depart immediat.
+attente-secondes: 5
+
+# Minutes pendant lesquelles un emplacement libere ne peut pas resservir.
+emplacement-libere-minutes: 15
+
+# Maison du spawn (/maison create) : prix en points, region WorldGuard ou elle doit se trouver.
+# (Prix du jeton de teleportation : config.yml de KS_Jetons, prix.tp.)
+maison:
+  prix: 500
+  region: zone_spawn
