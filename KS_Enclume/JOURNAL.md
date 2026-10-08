@@ -140,4 +140,5 @@ Limites :
 - Une ligne de plus rend l'objet différent pour les plugins qui comparent les objets exactement (ex. boutiques de
   KS_Economy : un équipement mis en vente doit être choisi dans l'inventaire, comme avant).
 
-**Statut : compilé, non déployé, non testé en jeu.**
+**Déployé sur Event et Kixster le 08/10/2026 à 21:12 (Maxster33 ; 1.2.0 dans `_removed-ks_enclume-1.2.0/`), actif après
+redémarrage. Statut : non testé en jeu.**

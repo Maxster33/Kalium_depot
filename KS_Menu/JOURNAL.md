@@ -12,7 +12,8 @@ qu'elle tombe au sol ».
 - À la mort, l'étoile est retirée des objets lâchés (priorité LOW : avant KS_CoffreMort, qui range les objets dans
   le coffre de mort en HIGHEST) ; elle est rendue à sa case à la réapparition, comme avant.
 
-**Statut : compilé, non déployé, non testé en jeu.**
+**Déployé sur Event et Kixster le 08/10/2026 à 21:12 (Maxster33 ; 1.1.0 dans `_removed-ks_menu-1.1.0/`), actif après
+redémarrage. Statut : non testé en jeu.**
 
 ## 1.1.0 - commande du menu réglable (07/10/2026)
 
