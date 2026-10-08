@@ -27,12 +27,14 @@ prendre paper-26.3-159.jar \
   sha256 2224a0b2b6b096ff4c429ad926e97977213e4f633e90cb3a49b5eeb82f94bab0
 
 # Plugins Paper (Modrinth)
-prendre ViaVersion-5.12.1-SNAPSHOT.jar \
-  https://cdn.modrinth.com/data/P1OZGk5p/versions/TEgYlalY/ViaVersion-5.12.1-SNAPSHOT.jar \
-  sha512 9f23879f392a53098e1cc1a70a942bd8558ae39ab725185cf79a5dda396e748af0896416ea0357473e9c8e6b8efb330a8f4afd7ca6bd3f80861419cd67ed69e1
-prendre ViaBackwards-5.12.1-SNAPSHOT.jar \
-  https://cdn.modrinth.com/data/NpvuJQoq/versions/w6P38zDf/ViaBackwards-5.12.1-SNAPSHOT.jar \
-  sha512 5062a409e20d267047a8d8820d28e0b341b7a827f6aff94af365175f1e84506a501f28f013bed89a51b3a2f5dc5afb177207d2ac26105e9afaf228de31def685
+# ViaVersion / ViaBackwards 5.12.1 stables (08/10/2026) : ViaBackwards 5.12.1-SNAPSHOT+634 (22/09) traduisait mal le
+# livre de recettes 26.3 -> 26.2 (interface de craft fausse pour les joueurs Bedrock, que Geyser fait entrer en 26.2)
+prendre ViaVersion-5.12.1.jar \
+  https://cdn.modrinth.com/data/P1OZGk5p/versions/5WgnasGG/ViaVersion-5.12.1.jar \
+  sha512 b2e5c03689e2265410613a928640076cfcd576e7a3dc7ca1276a76dbe624f2f5467348c3b3eaf8b5987ed7662afb93cc5cb9373035f4c5512884116e4bb6add9
+prendre ViaBackwards-5.12.1.jar \
+  https://cdn.modrinth.com/data/NpvuJQoq/versions/dWw67APC/ViaBackwards-5.12.1.jar \
+  sha512 65752dd113bf1266ef2c3b25a748e79e9808bb67682a3f5fbcf3e2b097d76182786d0871562175af8d491bde7ec6addfeaf97fdb23987cb11b829b0c22f6e5ff
 prendre worldedit-bukkit-7.4.6-beta-02.jar \
   https://cdn.modrinth.com/data/1u6JkXh5/versions/J1eeOh6C/worldedit-bukkit-7.4.6-beta-02.jar \
   sha512 138ea8f412bf4a17104d2e090a9171e1b263c6b28a060dacda5bc78c4629e9bac1c3834cccaaa50ac87bf148a269cf9dfd46967dddedd64dc512fdf7a5db17f9

@@ -6,8 +6,16 @@
 #   sh envoyer.sh <serveur>              -> SERVEUR ARRETE : sauvegarde a jour, puis envoi
 #   OPTIONS=1 sh envoyer.sh <serveur>    -> idem + changements facultatifs (voir LISEZMOI.md, a valider avant)
 #
-# <serveur> : proxy | lobby | kanvas | serveurjeux | kalgames
-# Rien n'est supprime : les anciens jars vont dans /plugins/_removed-avant-26.3/ (proxy : _removed-avant-geyser-b1249/).
+# <serveur> : proxy | lobby | kanvas | serveurjeux | kalgames | kixster | event
+# Rien n'est supprime : les anciens jars vont dans /plugins/_removed-avant-26.3/ (proxy : _removed-avant-geyser-b1249/,
+# Kixster et Event : _removed-via-5.12.1-snapshot/).
+#
+# Depuis le 08/10/2026 (les 5 premiers serveurs sont deja en 26.3) : ViaVersion / ViaBackwards 5.12.1-SNAPSHOT ->
+# 5.12.1 stables sur tous les serveurs Paper (livre de recettes des joueurs Bedrock). Kixster et Event, passes en
+# 26.3 avant ce paquet, ne recoivent que ces deux jars, sans sauvegarde (mondes trop gros, rien d'autre ne change).
+#   SESSION_WINSCP="<nom>"  -> autre nom de session WinSCP (ceux d'ici sont ceux du PC de Maxster33)
+#   SANS_SAUVEGARDE=1       -> envoi sans la copie du serveur sur le PC (jars seulement, serveur allume possible :
+#                              les nouveaux jars sont pris au prochain demarrage)
 set -e
 SRV="$1"; MODE="$2"
 WINSCP="${WINSCP:-/c/Program Files (x86)/WinSCP/WinSCP.com}"
@@ -18,29 +26,37 @@ export MSYS_NO_PATHCONV=1
 
 # Par serveur : session WinSCP, PAPER (1 = poser paper-26.3-159.jar a la racine),
 # MAJ (ancien>nouveau), AJOUT (nouveaux), RETRAIT (a ranger), OPT (facultatifs : ancien>nouveau ou ancien seul).
-PAPER=1; MAJ=""; AJOUT=""; RETRAIT=""; OPT=""; RANGE="/plugins/_removed-avant-26.3"
+PAPER=1; MAJ=""; AJOUT=""; RETRAIT=""; OPT=""; RANGE="/plugins/_removed-avant-26.3"; COPIE=1
+VIA="ViaVersion-5.12.1-SNAPSHOT.jar>ViaVersion-5.12.1.jar ViaBackwards-5.12.1-SNAPSHOT.jar>ViaBackwards-5.12.1.jar"
 case "$SRV" in
   proxy)
     SESSION="ProxyVelocity@7018.mystrator.com"; PAPER=0; RANGE="/plugins/_removed-avant-geyser-b1249"
     OPT="Geyser-Velocity.jar>Geyser-Velocity-2.11.3-b1249.jar geyserupdater-spigot.jar" ;;
   lobby)
     SESSION="lobby@7002.mystrator.com"
-    MAJ="worldedit-bukkit-7.4.5.jar>worldedit-bukkit-7.4.6-beta-02.jar worldguard-bukkit-7.0.18.jar>worldguard-bukkit-7.0.19.jar voicechat-bukkit-2.6.23.jar>voicechat-bukkit-2.6.24.jar"
-    AJOUT="ViaVersion-5.12.1-SNAPSHOT.jar ViaBackwards-5.12.1-SNAPSHOT.jar"
+    MAJ="$VIA worldedit-bukkit-7.4.5.jar>worldedit-bukkit-7.4.6-beta-02.jar worldguard-bukkit-7.0.18.jar>worldguard-bukkit-7.0.19.jar voicechat-bukkit-2.6.23.jar>voicechat-bukkit-2.6.24.jar"
     OPT="Geyser-Spigot.jar" ;;
   kanvas)
-    SESSION="Kanvas@5038.mystrator.com" ;;   # deja prepare le 08/10/2026 vers 08:47 : seul le jar de demarrage change
+    SESSION="Kanvas@5038.mystrator.com"   # prepare le 08/10/2026 vers 08:47 par LeKiwi06
+    MAJ="$VIA" ;;
   serveurjeux)
     SESSION="serveurjeux@7015.mystrator.com"
-    MAJ="ViaVersion-5.12.0-SNAPSHOT.jar>ViaVersion-5.12.1-SNAPSHOT.jar worldedit-bukkit-7.4.6-beta-01.jar>worldedit-bukkit-7.4.6-beta-02.jar"
-    AJOUT="ViaBackwards-5.12.1-SNAPSHOT.jar"
+    MAJ="$VIA worldedit-bukkit-7.4.6-beta-01.jar>worldedit-bukkit-7.4.6-beta-02.jar"
     RETRAIT="legacyfreecam-paper-2.0.0.jar"
     OPT="Skript-2.16.2.jar TradeShop-1.7.jar woodcutter-paper-1.0.2.jar Geyser-Spigot.jar" ;;
   kalgames)
     SESSION="KalGames@7001.mystrator.com"
-    MAJ="ViaVersion-5.12.0.jar>ViaVersion-5.12.1-SNAPSHOT.jar ViaBackwards-5.12.0.jar>ViaBackwards-5.12.1-SNAPSHOT.jar worldedit-bukkit-7.4.5.jar>worldedit-bukkit-7.4.6-beta-02.jar voicechat-bukkit-2.6.23.jar>voicechat-bukkit-2.6.24.jar grimac-bukkit-2.3.74-8eb5f28.jar>grimac-bukkit-2.3.74-abb95b6.jar ConditionalEvents-4.79.2.jar>ConditionalEvents-4.80.3.jar PlayerKits2-1.23.3.jar>PlayerKits2-1.24.1.jar" ;;
-  *) echo "Serveur inconnu : '$SRV' (proxy | lobby | kanvas | serveurjeux | kalgames)" >&2; exit 1 ;;
+    MAJ="$VIA worldedit-bukkit-7.4.5.jar>worldedit-bukkit-7.4.6-beta-02.jar voicechat-bukkit-2.6.23.jar>voicechat-bukkit-2.6.24.jar grimac-bukkit-2.3.74-8eb5f28.jar>grimac-bukkit-2.3.74-abb95b6.jar ConditionalEvents-4.79.2.jar>ConditionalEvents-4.80.3.jar PlayerKits2-1.23.3.jar>PlayerKits2-1.24.1.jar" ;;
+  kixster)
+    SESSION="kixster@7003.mystrator.com"; PAPER=0; COPIE=0; RANGE="/plugins/_removed-via-5.12.1-snapshot"
+    MAJ="$VIA" ;;
+  event)
+    SESSION="Event@7021.mystrator.com"; PAPER=0; COPIE=0; RANGE="/plugins/_removed-via-5.12.1-snapshot"
+    MAJ="$VIA" ;;
+  *) echo "Serveur inconnu : '$SRV' (proxy | lobby | kanvas | serveurjeux | kalgames | kixster | event)" >&2; exit 1 ;;
 esac
+SESSION="${SESSION_WINSCP:-$SESSION}"
+[ "${SANS_SAUVEGARDE:-0}" = 1 ] && COPIE=0
 [ "${OPTIONS:-0}" = 1 ] && MAJ="$MAJ $(for o in $OPT; do case "$o" in *">"*) echo "$o";; esac; done)" \
   && RETRAIT="$RETRAIT $(for o in $OPT; do case "$o" in *">"*) ;; *) echo "$o";; esac; done)"
 
@@ -101,7 +117,7 @@ fi
 if [ "${DRY_RUN:-0}" = 1 ]; then echo "DRY_RUN : rien n'est envoye."; rm -rf "$T"; exit 0; fi
 
 # 3. Sauvegarde a jour (le serveur doit etre ARRETE : mondes coherents)
-sauvegarder
+if [ "$COPIE" = 1 ]; then sauvegarder; else echo "  pas de sauvegarde sur le PC (jars seulement, anciens jars gardes dans $RANGE/)"; fi
 
 # 4. Envoi : nouveaux jars d'abord, puis anciens ranges (jamais de serveur sans le plugin)
 { ouvrir

@@ -238,7 +238,18 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
     ConditionalEvents 4.80.3, PlayerKits2 1.24.1 ; 28 plugins ; seule erreur : config de ConditionalEvents (ligne 10,
     `register_commands`), déjà là avant.
   - **Non testé en jeu.** `paper-26.2-121.jar` reste à la racine (retour en arrière : voir le `LISEZMOI.md`).
-    ViaVersion 5.12.1 stable est sortie (signalé au démarrage) : passage possible plus tard.
+  - **Interface de craft fausse pour les joueurs Bedrock (signalé par LeKiwi06, 08/10/2026)** : cause probable =
+    ViaBackwards 5.12.1-SNAPSHOT+634 (22/09), qui traduit mal le livre de recettes 26.3 → 26.2 (Geyser fait entrer
+    les joueurs Bedrock en 26.2 ; corrigé dans ViaBackwards le 29/09, ViaVersion/ViaVersion#5072). Correctif :
+    **ViaVersion + ViaBackwards 5.12.1 stables** (Modrinth, 08/10/2026). `mise-a-jour-26.3/telecharger.sh` et
+    `envoyer.sh` les prennent maintenant pour tous les serveurs Paper (`kixster` et `event` ajoutés : ces deux jars
+    seulement, sans sauvegarde ; `SESSION_WINSCP=` pour un autre nom de session).
+    - **Kixster : envoyé le 08/10/2026 à 23:42** (LeKiwi06, avec Claude ; serveur allumé), anciens jars dans
+      `/plugins/_removed-via-5.12.1-snapshot/`. **Actif au prochain redémarrage de Kixster ; non testé en jeu.**
+    - **Restent en 5.12.1-SNAPSHOT** : Event, lobby, Kanvas, Serveur Jeux, Kal-Games (`sh envoyer.sh <serveur>`,
+      à faire après le test sur Kixster).
+    - Si le craft reste lent ou faux après cela : GeyserMC/Geyser#6744 (ouvert) ; le support de la 26.3 par Geyser
+      est en cours (GeyserMC/Geyser#6712, sans date).
 - **Sauvegardes des mondes : à voir plus tard (LeKiwi06, 26/09/2026)**. Aucune sauvegarde automatique connue (seulement
   des copies manuelles, ex. `Kixster SMP_bak`). Pistes : 1) vérifier dans le panneau web Minestrator si chaque serveur
   a des sauvegardes (non vérifié, Claude n'y a pas accès) ; 2) sauvegarde manuelle des mondes sur le PC par WinSCP

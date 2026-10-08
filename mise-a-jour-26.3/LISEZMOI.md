@@ -75,6 +75,22 @@ Un monde ouvert en 26.3 **ne peut plus être ouvert en 26.2**. Si un serveur ne 
 3. remettre les mondes depuis la sauvegarde du PC ; 4. choisir `paper-26.2-121.jar` (encore à la racine) dans le
 panneau. Claude peut le faire par WinSCP.
 
+## Correctif du 08/10/2026 : ViaVersion / ViaBackwards 5.12.1 stables
+
+Les joueurs Bedrock (que Geyser fait entrer en 26.2) voyaient une interface de craft fausse : ViaBackwards
+5.12.1-SNAPSHOT+634 traduit mal le livre de recettes 26.3 → 26.2 (corrigé dans la 5.12.1 stable du 08/10/2026).
+`envoyer.sh` remplace maintenant les deux jars SNAPSHOT par les 5.12.1 stables sur chaque serveur Paper, Kixster et
+Event compris (`sh envoyer.sh kixster`, `sh envoyer.sh event` : ces deux jars seulement, sans sauvegarde). Les
+autres lignes du tableau ci-dessus sont déjà faites : le script les annonce « deja fait ».
+
+```sh
+DRY_RUN=1 sh envoyer.sh <serveur>             # à blanc
+SANS_SAUVEGARDE=1 sh envoyer.sh <serveur>     # jars seulement, serveur allumé possible ; actif au redémarrage
+```
+
+Sur un autre PC que celui de Maxster33 : `WINSCP=<chemin de WinSCP.com>` et `SESSION_WINSCP="<nom de la session>"`.
+État : Kixster envoyé le 08/10/2026 à 23:42 (actif au prochain redémarrage) ; les autres restent à faire.
+
 ## Après la mise à jour
 
 - Mettre à jour le tableau « Versions en service » de `REPRISE_PROJET.md` (Paper 26.3-159 partout).
