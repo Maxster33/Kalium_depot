@@ -109,3 +109,35 @@ partie au-dessus de 50 compte pour moitié (arrondi à l'unité inférieure) : 5
   vérification à la prise : inchangés, ils utilisent le coût réduit (toujours supérieur à 39).
 
 **Déployé sur Event le 01/10/2026 à 19:50 (Maxster33 ; 1.1.4 dans `_removed-ks_enclume-1.1.4/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.3.0 - coût de réparation dans la description des équipements (08/10/2026)
+
+Demande de Maxster33 (après les tests de Kixster) : « ajouter le coût en niveaux nécessaire pour la réparation
+directement dans les descriptions des équipements ». Choix de Maxster33 : coût d'une **réparation complète avec le
+matériau** de l'objet, sur **tout objet réparable**.
+
+- Dernière ligne (grise) de la description de chaque objet réparable de l'inventaire du joueur (barre, armure,
+  seconde main) : « Réparation : 10 niveaux ».
+- Calcul (règles vanilla de l'enclume) : pénalité de l'objet (0, 1, 3, 7, 15... selon les passages à l'enclume)
+  + 1 niveau par unité de matériau, chaque unité réparant un quart de la solidité maximale, jusqu'à la réparation
+  complète ; puis la réduction de la 1.2.0 au-delà de 50 niveaux. Exemple : épée en diamant (1 561 de solidité,
+  1 diamant répare 390), pénalité 7, abîmée de 800 : 3 diamants (800 → 410 → 20 → 0), 7 + 3 = **10 niveaux**.
+- Objet sans matériau de réparation (arc, trident, canne à pêche, briquet, cisailles...) : « Réparation : au moins
+  7 niveaux (par fusion) » (seule la fusion le répare ; la pénalité est le minimum, le reste dépend des enchantements
+  de l'autre objet). Objet intact : « Réparation : objet intact ». Objet incassable : pas de ligne.
+- Mise à jour chaque seconde (l'objet n'est réécrit que si le texte change), à la connexion et à la fermeture d'un
+  inventaire. Rien n'est changé tant qu'un autre inventaire est ouvert (enclume, coffre...), pour ne pas gêner les
+  clics ni la ligne « Coût réel » des joueurs Bedrock. La ligne est retrouvée par son texte, gardé dans le marqueur
+  `ks_enclume:ligne_reparation` : les autres lignes de la description ne sont jamais touchées.
+
+Choix signalé : l'objet intact affiche « objet intact » (l'enclume refuse de réparer un objet intact) plutôt que sa
+pénalité.
+
+Limites :
+- Seul l'inventaire des joueurs est mis à jour : un objet rangé dans un coffre garde la ligne de sa dernière mise à
+  jour jusqu'à ce qu'un joueur le reprenne.
+- Le coût suppose assez de matériau en 2e case (un seul passage à l'enclume) ; renommer en même temps ajoute 1 niveau.
+- Une ligne de plus rend l'objet différent pour les plugins qui comparent les objets exactement (ex. boutiques de
+  KS_Economy : un équipement mis en vente doit être choisi dans l'inventaire, comme avant).
+
+**Statut : compilé, non déployé, non testé en jeu.**

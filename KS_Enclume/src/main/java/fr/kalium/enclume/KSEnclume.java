@@ -59,6 +59,10 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 1.2.0 (Maxster33, 01/10/2026) : « l'augmentation du prix en expérience pour la réparation et l'amélioration d'objet
  * [...] réduite de moitié à partir du niveau 50 » ; choix : coût vanilla jusqu'à 50, partie au-dessus comptée pour
  * moitié (70 -> 60, 100 -> 75). Les fioles de KS_FioleExp gardent leur propre coût.
+ *
+ * 1.3.0 (Maxster33, 08/10/2026) : « ajouter le coût en niveaux nécessaire pour la réparation directement dans les
+ * descriptions des équipements » ; choix : réparation complète avec le matériau de l'objet, sur tout objet réparable.
+ * Dernière ligne de la description des objets de l'inventaire (voir Reparation).
  */
 public final class KSEnclume extends JavaPlugin implements Listener {
 
@@ -83,6 +87,14 @@ public final class KSEnclume extends JavaPlugin implements Listener {
     public void onEnable() {
         marque = new NamespacedKey(this, "ligne_cout");
         getServer().getPluginManager().registerEvents(this, this);
+        Reparation reparation = new Reparation(this);
+        getServer().getPluginManager().registerEvents(reparation, this);
+        getServer().getScheduler().runTaskTimer(this, reparation::toutMettreAJour, 20L, 20L);
+    }
+
+    /** 1.2.0 : coût réduit au-delà de 50 niveaux (partie au-dessus comptée pour moitié) ; aussi pour 1.3.0. */
+    static int reduire(int cout) {
+        return cout > SEUIL_REDUCTION ? SEUIL_REDUCTION + (cout - SEUIL_REDUCTION) / 2 : cout;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -110,7 +122,7 @@ public final class KSEnclume extends JavaPlugin implements Listener {
         AnvilView view = event.getView();
         int cout = view.getRepairCost();
         if (cout > SEUIL_REDUCTION) {
-            view.setRepairCost(SEUIL_REDUCTION + (cout - SEUIL_REDUCTION) / 2);
+            view.setRepairCost(reduire(cout));
         }
     }
 

@@ -3,6 +3,17 @@
 Plugin du serveur Event : son menu. Cahier des charges : catégorie 2 « Économie » de LeKiwi06 (validé le 29/09/2026 ;
 copié dans `CAHIER_DES_CHARGES.md` de KS_Economy au déploiement).
 
+## 1.2.0 - étoile gardée à la mort (08/10/2026)
+
+Signalé par Maxster33 (tests de Kixster) : « la nether star du /menu on tombe au sol quand on meurt. il ne faut pas
+qu'elle tombe au sol ».
+- Cause : KS_Menu verrouillait l'étoile (ni jetée, ni déplacée) mais ne la retirait pas des objets lâchés à la mort
+  (KLM_Menu ne le fait que pour sa boussole et son comparateur).
+- À la mort, l'étoile est retirée des objets lâchés (priorité LOW : avant KS_CoffreMort, qui range les objets dans
+  le coffre de mort en HIGHEST) ; elle est rendue à sa case à la réapparition, comme avant.
+
+**Statut : compilé, non déployé, non testé en jeu.**
+
 ## 1.1.0 - commande du menu réglable (07/10/2026)
 
 Demande de Maxster33 : préparer les plugins d'Event pour Kixster (nouveau serveur de survie en 26.3) ; sur Kixster, le

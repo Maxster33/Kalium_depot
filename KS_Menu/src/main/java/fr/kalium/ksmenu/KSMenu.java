@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -247,6 +248,15 @@ public final class KSMenu extends JavaPlugin implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onRespawn(PlayerRespawnEvent event) {
         verifierPlusTard(event.getPlayer());
+    }
+
+    /**
+     * 1.2.0 : l'étoile ne tombe pas au sol à la mort (rendue à la réapparition par onRespawn). Priorité LOW : retirée
+     * avant que KS_CoffreMort (HIGHEST) ne range les objets dans le coffre de mort.
+     */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onDeath(PlayerDeathEvent event) {
+        event.getDrops().removeIf(this::estObjet);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
