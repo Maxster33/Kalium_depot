@@ -40,4 +40,5 @@ Limites, à vérifier en jeu :
   mais ne peut plus être ouvert : seule la récupération par badge ou jeton reste possible.
 - Un opérateur ne peut ni ouvrir ni casser le coffre d'un autre.
 
-**À déployer avec KS_RewardsGUI 1.1.0 (et KS_Jetons 2.0.0, déjà sur Event).** Compilé le 08/10/2026 ; **non déployé**.
+**Déployé sur Event le 08/10/2026 à 20:56 (LeKiwi06, avec KS_RewardsGUI 1.1.0 ; nouveau), actif après redémarrage
+d'Event. Statut : non testé en jeu.**

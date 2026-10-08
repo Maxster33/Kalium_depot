@@ -1,6 +1,6 @@
-# 2026-10-08 — Jetons et badges (catégorie 7)
+# 2026-10-08 — Jetons, badges et coffres de mort (catégorie 7)
 
-- Plugin(s) concerné(s) : KS_Jetons, KS_KaliumGive, geyser-bedrock
+- Plugin(s) concerné(s) : KS_Jetons, KS_KaliumGive, geyser-bedrock, KS_CoffreMort, KS_RewardsGUI
 - Versions avant / après : KS_Jetons 1.0.0 / 2.0.0 ; KS_KaliumGive 1.8.0 / 1.9.0 (déployés sur Event le 08/10/2026 à
   19:09, non testés) ; geyser-bedrock 1.2.0 / 1.3.0 (envoyé sur le proxy le 08/10/2026 à 19:40, non testé)
 
@@ -23,6 +23,9 @@ seul par type, apparence du bloc du lingot, capacité non cumulable) avec leurs 
 - Demande suivante de LeKiwi06 : « tous les objets customs doivent figurer dans le proxy pour que les joueurs Bedrock
   les voient » : `geyser-bedrock` 1.3.0 (5 jetons, 4 badges), envoyé sur le proxy à 19:40.
 
+- Demande suivante : « commence KS_CoffreMort sans attendre le test », puis « oui déploie les deux sur Event » :
+  KS_CoffreMort 1.0.0 (nouveau) et KS_RewardsGUI 1.0.1 / 1.1.0, déployés sur Event à 20:56, non testés.
+
 ## Décisions
 
 - Badge porté = rangé dans l'inventaire spécial ; délais attachés au joueur.
@@ -36,12 +39,17 @@ seul par type, apparence du bloc du lingot, capacité non cumulable) avec leurs 
 - `/spawn` : vers sa maison, après `/maison create` (500 émeraudes) dans un claim de la région `zone_spawn` (ex
   `zone_shop`) ; téléportation entre dimensions permise si la dimension est ouverte.
 - Code et tests sur Event d'abord, puis Kixster.
+- KS_CoffreMort (choix de Claude, signalés à LeKiwi06) : contenu gardé par le plugin (bloc vide, 54 cases) ; lots de
+  27 piles dans /rewards ; 15 minutes en heure réelle ; fiole d'expérience propre au plugin ; objets d'un coffre de mort
+  non suivis par l'anti-triche.
 - Signalé par Claude, gardé tel que demandé : à 20 émeraudes, le jeton de claim coûte moins qu'un 11e claim (237).
 
 ## Reste à faire
 
 - Redémarrer Event et le proxy (LeKiwi06), puis tester : `/jetons`, les deux contenants, `/kaliumgive <pseudo> badge_fly_1 2` et la
   fusion à l'enclume (Java et Bedrock).
-- Coder KS_CoffreMort, KS_Fly, KS_Teleport, puis les jetons de claim dans KS_Claim.
+- Tester KS_CoffreMort : mourir (coffre, coordonnées, fiole), dans un de ses claims (/rewards), `/coffres`,
+  récupération avec `jeton_mort` et `badge_mort_1`, claim d'un autre (membre, visiteur).
+- Coder KS_Fly, KS_Teleport, puis les jetons de claim dans KS_Claim.
 - `zone_shop` → `zone_spawn` (WorldGuard et `magasins.region` de KS_Economy) ; `rachats.csv`.
 - Niveau maximal du badge de localisation (5 par défaut) ; prix du jeton de téléportation.

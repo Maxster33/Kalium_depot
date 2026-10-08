@@ -43,4 +43,6 @@ mort). Ces dépôts sont marqués `locale: true` : pas de signal `RecompenseRecu
 `plusAnciennesEnAttente()` (ce sont les objets du joueur lui-même : rien à surveiller pour l'anti-triche). Aucun autre
 changement.
 
-**À déployer avec KS_CoffreMort 1.0.0.** Compilé le 08/10/2026 ; **non déployé**.
+**Déployé sur Event le 08/10/2026 à 20:56 (LeKiwi06, avec KS_CoffreMort 1.0.0 ; 1.0.1 dans
+`_removed-ks_rewardsgui-1.0.1/`), actif après redémarrage d'Event. `config.yml` du serveur non touché. Statut : non
+testé en jeu.**

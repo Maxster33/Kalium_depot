@@ -17,7 +17,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 ## Utilisés actuellement
 
 
-- KS_CoffreMort — LeKiwi06 — depuis le 2026-10-08 20:13 — nouveau (catégorie 7) : coffres de mort, fiole d'XP, jeton et badge de la mort
 
 
 
@@ -34,8 +33,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 ## Requis parfois
-
-- KS_RewardsGUI — LeKiwi06 — depuis le 2026-10-08 20:13 — dépôt local d'une récompense (coffres de mort envoyés dans /rewards)
 
 
 
