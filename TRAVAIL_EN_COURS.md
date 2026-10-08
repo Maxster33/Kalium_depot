@@ -17,6 +17,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 ## Utilisés actuellement
 
 
+- KS_Menu — Maxster33 — depuis le 2026-10-08 20:56 — l'étoile du Nether ne tombe plus au sol à la mort
+- KS_Enclume — Maxster33 — depuis le 2026-10-08 20:56 — coût de réparation en niveaux dans la description des équipements
 
 
 
