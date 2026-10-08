@@ -41,3 +41,5 @@ un fix pour ce problème ? », puis « oui mets à jour les scripts et envoie su
   et Kal-Games entre 00:40 et 00:41 (serveurs allumés), actif au prochain redémarrage de chacun.
 - Reste à faire : redémarrer Kixster et Event (KS_Crafts), les 5 serveurs (Via) ; tester les recettes de réparation de
   la tête de wither squelette en Java et en Bedrock.
+- Serveurs redémarrés par LeKiwi06 vers 00:46 ; journaux lus : les 6 serveurs Paper en ViaVersion / ViaBackwards 5.12.1,
+  Kixster et Event en KS_Crafts 1.11.0 (44 crafts), aucune erreur nouvelle. Reste le test en jeu des recettes.
