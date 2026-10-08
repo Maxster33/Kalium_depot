@@ -56,4 +56,5 @@ c'est dans les claims des autres ». La 1.0.0 suivait le texte du 03/10 (« ou d
   mort par KS_Menu 1.2.0 (Maxster33, 08/10/2026, priorité LOW, avant KS_CoffreMort) ; rien à changer ici. Une vraie
   étoile du Nether (butin du Wither) va toujours dans le coffre.
 
-**Compilé le 08/10/2026 ; non déployé.**
+**Déployé sur Event le 08/10/2026 à 23:38 (LeKiwi06, déploiement groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.3.1, KS_Claim 1.2.0 ; 1.0.0 dans
+`_removed-ks_coffremort-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**

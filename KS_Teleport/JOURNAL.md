@@ -48,5 +48,6 @@ rendu quand on libère l'emplacement ; la maison est l'endroit exact où l'on se
 Limites, à vérifier en jeu : la recette avec une boussole liée (Java et Bedrock) ; `/home bed` avec une ancre de
 réapparition ; commandes `/home` et `/spawn` d'un autre plugin éventuel.
 
-**À déployer avec KS_Jetons 2.0.1 et KS_Economy 1.3.1 ; région WorldGuard `zone_spawn` à créer ou renommer par
-l'humain.** Compilé le 08/10/2026 ; **non déployé** (déploiement groupé demandé par LeKiwi06).
+**Déployé sur Event le 08/10/2026 à 23:38 (LeKiwi06, déploiement groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.3.1, KS_Claim 1.2.0 ; nouveau), actif après redémarrage d'Event.
+**Région WorldGuard `zone_spawn` à créer ou renommer par l'humain** (sans elle : ni `/maison create` ni `/spawn`).
+Statut : non testé en jeu.**

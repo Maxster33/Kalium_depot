@@ -80,4 +80,6 @@ Correction de LeKiwi06 (08/10/2026) : « ce n'est pas le jeton de claim qui coû
 `prix.claim: 0` (pas en vente, prix non fixé). Aucun changement de code ; le `config.yml` du serveur est à remplacer au
 déploiement (la clé y existe déjà).
 
-**Compilé le 08/10/2026 ; non déployé.**
+**Déployé sur Event le 08/10/2026 à 23:38 (LeKiwi06, déploiement groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.3.1, KS_Claim 1.2.0 ; 2.0.0 et son `config.yml` dans
+`_removed-ks_jetons-2.0.0/`), actif après redémarrage d'Event. `config.yml` du serveur remplacé (`prix.tp: 20`,
+`prix.claim: 0`). Statut : non testé en jeu.**

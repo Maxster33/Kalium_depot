@@ -1,6 +1,7 @@
 # 2026-10-08 — Jetons, badges et coffres de mort (catégorie 7)
 
-- Plugin(s) concerné(s) : KS_Jetons, KS_KaliumGive, geyser-bedrock, KS_CoffreMort, KS_RewardsGUI
+- Plugin(s) concerné(s) : KS_Jetons, KS_KaliumGive, geyser-bedrock, KS_CoffreMort, KS_RewardsGUI, KS_Fly, KS_Teleport,
+  KS_Economy, KS_Claim
 - Versions avant / après : KS_Jetons 1.0.0 / 2.0.0 ; KS_KaliumGive 1.8.0 / 1.9.0 (déployés sur Event le 08/10/2026 à
   19:09, non testés) ; geyser-bedrock 1.2.0 / 1.3.0 (envoyé sur le proxy le 08/10/2026 à 19:40, non testé)
 
@@ -53,9 +54,12 @@ seul par type, apparence du bloc du lingot, capacité non cumulable) avec leurs 
 
 ## Reste à faire
 
-- **Déploiement groupé sur Event** (accord de LeKiwi06 à demander) : KS_Jetons 2.0.1 (+ `config.yml` du serveur),
-  KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.3.1, KS_Claim 1.2.0 ; région WorldGuard `zone_spawn`
-  à créer ou renommer par l'humain ; réservations à libérer ensuite.
+- **Déploiement groupé fait sur Event le 08/10/2026 à 23:38** (« oui déploie tout sur Event ») : KS_Jetons 2.0.1
+  (+ `config.yml` du serveur), KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.3.1, KS_Claim 1.2.0 ;
+  non testés ; réservations libérées. **Région WorldGuard `zone_spawn` à créer ou renommer par l'humain.**
+- Tester aussi : fly (double saut dans un claim, fenêtre du jeton, barre de boss), téléportations (`/home bed`,
+  `/maison create`, `/spawn`, jeton de localisation, magnétite), jetons de claim.
+- Ensuite : envoi sur Kixster.
 
 - Redémarrer Event et le proxy (LeKiwi06), puis tester : `/jetons`, les deux contenants, `/kaliumgive <pseudo> badge_fly_1 2` et la
   fusion à l'enclume (Java et Bedrock).

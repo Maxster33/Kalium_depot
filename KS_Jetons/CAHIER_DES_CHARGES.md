@@ -1,12 +1,11 @@
 # Cahier des charges - Catégorie 7 : Déplacements, jetons, coffres de mort - LeKiwi06
 
-Publié au déploiement de KS_Jetons (03/10/2026 ; mis à jour le 08/10/2026 : KS_Jetons 2.0.0 et 2.0.1, KS_CoffreMort) ;
-restent à coder : KS_Fly, KS_Teleport, jetons de claim.
+Publié au déploiement de KS_Jetons (03/10/2026 ; mis à jour le 08/10/2026 : toute la catégorie est déployée sur Event).
 
 Serveur : **Event** (bêta ; destination future : Kixster SMP). Né de la revue des plugins du 03/10/2026 (proposition
 « Claims : se téléporter à mon claim »). État : **en cours de rédaction** (réponses de LeKiwi06 du 03/10/2026 ;
 ajouts « jetons et badges » du 08/10/2026 en parties 6 à 11 ; toutes les réponses reçues le 08/10/2026 ;
-KS_Jetons 2.0.0 déployé sur Event le 08/10/2026 à 19:09, non testé).
+catégorie entièrement codée et déployée sur Event le 08/10/2026 à 23:38, non testée).
 
 # 1. Demande d'origine (03/10/2026, fait foi)
 
@@ -214,13 +213,17 @@ Reste ouvert : niveau maximal du badge de localisation (le cahier du 03/10 parla
 | Jeton de claim | Prix non fixé (pas en vente) : les « 20 émeraudes » ne le concernaient pas |
 | Coffre de mort et claims | Dans **ses** claims : coffre posé. Dans le **claim d'un autre** : contenu dans /rewards (corrige « ou dans un de ses claims » des parties 1, 3 et 9) |
 
-# 11. Plugins (ordre de code)
+# 11. Plugins (état au 08/10/2026, 23:38)
 
-1. **KS_Jetons 2.0.0** (jetons en lingots, badges, inventaire spécial en entonnoirs, fusion) + KS_KaliumGive 1.9.0 (ids) :
-   **déployés sur Event le 08/10/2026 à 19:09, non testés**.
-2. **KS_CoffreMort** 1.0.0 (nouveau) + KS_RewardsGUI 1.1.0 (dépôt local d'une récompense) : **déployés sur Event le
-   08/10/2026 à 20:56, non testés**.
-3. **KS_Fly** (nouveau : vol dans ses claims, barre de boss).
-4. **KS_Teleport** (nouveau : /home, /spawn et /maison, jetons de localisation, magnétites).
-5. KS_Claim (jetons de claim), KS_Economy (`rachats.csv` : `jeton_emplacement` à retirer, valeurs des nouveaux objets
-   à fixer avec LeKiwi06).
+Tous déployés sur Event, non testés en jeu ; à envoyer sur Kixster après les tests.
+
+1. **KS_Jetons 2.0.1** (jetons en lingots, badges, inventaire spécial en entonnoirs, fusion) + KS_KaliumGive 1.9.0 (ids)
+   + `geyser-bedrock` 1.3.0 sur le proxy (apparence Bedrock).
+2. **KS_CoffreMort 1.0.1** + KS_RewardsGUI 1.1.0 (dépôt local d'une récompense).
+3. **KS_Fly 1.0.0** (vol dans ses claims, barre de boss).
+4. **KS_Teleport 1.0.0** (/home, /spawn et /maison, jetons de localisation, magnétites) + KS_Economy 1.3.1 (région
+   `zone_spawn`).
+5. **KS_Claim 1.2.0** (jetons de claim).
+
+Restent ouverts : `rachats.csv` de KS_Economy (`jeton_emplacement` à retirer, valeurs des nouveaux objets), niveau
+maximal du badge de localisation (5), prix du jeton de claim, région WorldGuard `zone_spawn` (par l'humain).

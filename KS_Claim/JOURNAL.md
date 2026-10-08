@@ -89,4 +89,6 @@ gagnables qui offrent une utilisation de claim gratuite (ça ne fait pas monter 
 - Achat d'un claim à un joueur : le prix minimum est le prochain prix de l'acheteur, jetons compris.
 - Données : `jetons-de-claim` de chaque joueur dans `donnees.yml`. `softdepend` KS_Jetons (sans lui : aucun bouton).
 
-**À déployer avec KS_Jetons 2.0.1.** Compilé le 08/10/2026 ; **non déployé** (déploiement groupé demandé par LeKiwi06).
+**Déployé sur Event le 08/10/2026 à 23:38 (LeKiwi06, déploiement groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.3.1, KS_Claim 1.2.0 ; 1.1.2 dans
+`_removed-ks_claim-1.1.2/` ; supprimables par l'humain : `_removed-ks_claim-1.0.0/`, `1.1.0/`), actif après redémarrage
+d'Event. Statut : non testé en jeu.**

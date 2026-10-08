@@ -275,4 +275,7 @@ magasins ». Valeur par défaut de `magasins.region` : `zone_spawn` (code et `co
   Tant que la région et le réglage ne portent pas le même nom, aucun magasin ne peut être créé ni agrandi.
 - Non changé : `rachats.csv` (`jeton_emplacement` à retirer, valeurs des nouveaux jetons et des badges à fixer).
 
-**À déployer avec KS_Teleport 1.0.0.** Compilé le 08/10/2026 ; **non déployé**.
+**Déployé sur Event le 08/10/2026 à 23:38 (LeKiwi06, déploiement groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.3.1, KS_Claim 1.2.0 ; 1.3.0 dans
+`_removed-ks_economy-1.3.0/` ; supprimables par l'humain : `_removed-ks_economy-1.0.0/` à `1.1.5/`, 10 dossiers), actif
+après redémarrage d'Event. Le `config.yml` du serveur n'a pas de section `magasins` : la région lue est donc
+`zone_spawn` (valeur du code) ; **région WorldGuard à renommer ou recréer par l'humain**. Statut : non testé en jeu.**
