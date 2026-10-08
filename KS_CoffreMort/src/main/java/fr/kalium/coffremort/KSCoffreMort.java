@@ -71,8 +71,8 @@ import java.util.UUID;
  * - Le coffre n'est ouvrable et cassable que par le mort, pendant 15 minutes ; ensuite il disparaît avec son contenu.
  *   3 coffres actifs au plus par joueur : le 4e supprime le plus ancien. Le contenu est gardé par le plugin (le bloc
  *   n'est qu'un repère) : ni entonnoir ni explosion ne peut le vider.
- * - Mort dans un de ses claims, ou dans une zone protégée où il ne peut ni casser ni poser : le contenu va dans
- *   /rewards (KS_RewardsGUI), avec un message.
+ * - Mort dans le claim d'un autre joueur (1.0.1 : et non dans un des siens, correction de LeKiwi06), ou dans une zone
+ *   protégée où il ne peut ni casser ni poser : le contenu va dans /rewards (KS_RewardsGUI), avec un message.
  * - /coffres (et bouton du menu) : coordonnées et temps restant de ses coffres (visibles sans jeton), contenu, et
  *   récupération certaine : le contenu part dans /rewards et le coffre disparaît, avec le badge de la mort (gratuit,
  *   une fois tous les N jours réels selon son niveau, délai tenu par joueur) sinon avec un jeton de la mort (KS_Jetons).
@@ -198,7 +198,7 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
         Block bloc = emplacement(joueur.getLocation());
         Component raison = bloc == null
                 ? t("mort.aucune-place", "<gold>Aucune place pour ton coffre de mort ici")
-                : dansSonClaim(bloc, joueur) ? t("mort.claim", "<gold>Tu es mort dans un de tes claims")
+                : claimDunAutre(bloc, joueur) ? t("mort.claim-autre", "<gold>Tu es mort dans le claim d'un autre joueur")
                 : protege(bloc, joueur) ? t("mort.protege", "<gold>Tu es mort dans une zone protégée") : null;
         boolean range;
         if (raison != null && versRewards(joueur, objets, "Mort du " + LocalDateTime.now(ZoneId.of("Europe/Paris"))
@@ -258,15 +258,15 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
         return meilleur;
     }
 
-    private boolean dansSonClaim(Block bloc, Player joueur) {
-        return getServer().getPluginManager().isPluginEnabled("SimpleClaimSystem") && ProtectionClaims.sien(bloc, joueur);
+    /** 1.0.1 : les claims des autres restent sans coffre de mort (dans les siens, le coffre est posé). */
+    private boolean claimDunAutre(Block bloc, Player joueur) {
+        return getServer().getPluginManager().isPluginEnabled("SimpleClaimSystem")
+                && ProtectionClaims.dUnAutre(bloc, joueur);
     }
 
-    /** Zone où le joueur ne peut ni casser ni poser : région WorldGuard ou claim d'un autre. */
+    /** Zone où le joueur ne peut ni casser ni poser (région WorldGuard). */
     private boolean protege(Block bloc, Player joueur) {
-        return (getServer().getPluginManager().isPluginEnabled("WorldGuard") && ProtectionWorldGuard.protege(bloc, joueur))
-                || (getServer().getPluginManager().isPluginEnabled("SimpleClaimSystem")
-                && ProtectionClaims.protege(bloc, joueur));
+        return getServer().getPluginManager().isPluginEnabled("WorldGuard") && ProtectionWorldGuard.protege(bloc, joueur);
     }
 
     /** Dépose les objets dans /rewards, par lots qui tiennent dans un inventaire. Faux si KS_RewardsGUI est absent. */

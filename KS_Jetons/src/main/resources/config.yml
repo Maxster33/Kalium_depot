@@ -3,10 +3,10 @@
 # Prix d'un jeton en points du score, 1 point = 1 emeraude (0 : pas en vente).
 # Seuls les jetons de teleportation et de claim s'achetent ; fly et mort : /rewards ; localisation : craft.
 prix:
-  # A REGLER (LeKiwi06 : environ 15 minutes de farm pour une TP).
-  tp: 0
   # LeKiwi06, 08/10/2026 : 20 emeraudes.
-  claim: 20
+  tp: 20
+  # Pas en vente (prix non fixe).
+  claim: 0
 
 # Badges : valeur de chaque niveau (le nombre de valeurs est le niveau maximal).
 badges:

@@ -1,7 +1,7 @@
 # Cahier des charges - Catégorie 7 : Déplacements, jetons, coffres de mort - LeKiwi06
 
-Publié au déploiement de KS_Jetons (03/10/2026 ; mis à jour le 08/10/2026 au déploiement de la 2.0.0) ; les autres
-plugins de la catégorie (KS_CoffreMort, KS_Fly, KS_Teleport) restent à coder.
+Publié au déploiement de KS_Jetons (03/10/2026 ; mis à jour le 08/10/2026 : KS_Jetons 2.0.0 et 2.0.1, KS_CoffreMort) ;
+restent à coder : KS_Fly, KS_Teleport, jetons de claim.
 
 Serveur : **Event** (bêta ; destination future : Kixster SMP). Né de la revue des plugins du 03/10/2026 (proposition
 « Claims : se téléporter à mon claim »). État : **en cours de rédaction** (réponses de LeKiwi06 du 03/10/2026 ;
@@ -203,11 +203,23 @@ niveau : 70, 90, 110, 130) ; 4 jeton de claim toujours achetable ; 5 déploiemen
 
 Reste ouvert : niveau maximal du badge de localisation (le cahier du 03/10 parlait de 20 emplacements au plus).
 
+# 10 bis. Corrections de LeKiwi06 (08/10/2026, 21 h ; font foi sur tout ce qui précède)
+
+> la nether star ne doit pas etre dans un coffre de mort  , ce n'est pas le jeton de claim qui coute 20 mais le jeton de téléportation  .  et ce n'est pas quand un meurt dans notre claim que le coffre arrive dans reward , c'est dans les claims des autres
+
+| Sujet | Décision |
+|---|---|
+| Étoile du menu | Jamais dans un coffre de mort (KS_Menu 1.2.0 de Maxster33 la retire des objets de la mort) |
+| Jeton de téléportation | **20 émeraudes** |
+| Jeton de claim | Prix non fixé (pas en vente) : les « 20 émeraudes » ne le concernaient pas |
+| Coffre de mort et claims | Dans **ses** claims : coffre posé. Dans le **claim d'un autre** : contenu dans /rewards (corrige « ou dans un de ses claims » des parties 1, 3 et 9) |
+
 # 11. Plugins (ordre de code)
 
 1. **KS_Jetons 2.0.0** (jetons en lingots, badges, inventaire spécial en entonnoirs, fusion) + KS_KaliumGive 1.9.0 (ids) :
    **déployés sur Event le 08/10/2026 à 19:09, non testés**.
-2. **KS_CoffreMort** (nouveau) + KS_RewardsGUI (dépôt local d'une récompense).
+2. **KS_CoffreMort** 1.0.0 (nouveau) + KS_RewardsGUI 1.1.0 (dépôt local d'une récompense) : **déployés sur Event le
+   08/10/2026 à 20:56, non testés**.
 3. **KS_Fly** (nouveau : vol dans ses claims, barre de boss).
 4. **KS_Teleport** (nouveau : /home, /spawn et /maison, jetons de localisation, magnétites).
 5. KS_Claim (jetons de claim), KS_Economy (`rachats.csv` : `jeton_emplacement` à retirer, valeurs des nouveaux objets

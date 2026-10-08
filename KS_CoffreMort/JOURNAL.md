@@ -42,3 +42,18 @@ Limites, à vérifier en jeu :
 
 **Déployé sur Event le 08/10/2026 à 20:56 (LeKiwi06, avec KS_RewardsGUI 1.1.0 ; nouveau), actif après redémarrage
 d'Event. Statut : non testé en jeu.**
+
+## 1.0.1 - /rewards dans les claims des autres, pas dans les siens (08/10/2026, LeKiwi06)
+
+Correction de LeKiwi06 (08/10/2026) : « ce n'est pas quand on meurt dans notre claim que le coffre arrive dans reward,
+c'est dans les claims des autres ». La 1.0.0 suivait le texte du 03/10 (« ou dans un de ses claims »).
+- Mort **dans un de ses claims** : coffre de mort posé, comme ailleurs.
+- Mort **dans le claim d'un autre joueur** (même si l'on en est membre) : contenu envoyé dans `/rewards`, message « Tu
+  es mort dans le claim d'un autre joueur : tes objets t'attendent dans /rewards. » (nouvelle clé `mort.claim-autre`).
+  Les permissions du claim ne sont plus lues (plus de point à vérifier pour membre et visiteur).
+- Inchangé : zone protégée par WorldGuard où il ne peut ni casser ni poser, et aucun bloc libre : `/rewards`.
+- « La nether star ne doit pas être dans un coffre de mort » : c'est l'étoile du menu, déjà retirée des objets de la
+  mort par KS_Menu 1.2.0 (Maxster33, 08/10/2026, priorité LOW, avant KS_CoffreMort) ; rien à changer ici. Une vraie
+  étoile du Nether (butin du Wither) va toujours dans le coffre.
+
+**Compilé le 08/10/2026 ; non déployé.**

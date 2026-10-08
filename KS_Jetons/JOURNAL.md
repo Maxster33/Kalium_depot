@@ -72,3 +72,12 @@ Limites :
 **Déployé sur Event le 08/10/2026 à 19:09 (LeKiwi06, avec KS_KaliumGive 1.9.0 ; 1.0.0 et son `config.yml` dans
 `_removed-ks_jetons-1.0.0/`), actif après redémarrage d'Event. `config.yml` du serveur remplacé par celui de la 2.0.0
 (`prix.claim: 20`) ; `jetons.yml` du serveur était vide (rien à reprendre). Statut : non testé en jeu.**
+
+## 2.0.1 - prix : jeton de téléportation à 20, jeton de claim pas en vente (08/10/2026, LeKiwi06)
+
+Correction de LeKiwi06 (08/10/2026) : « ce n'est pas le jeton de claim qui coûte 20 mais le jeton de téléportation »
+(sa réponse « met 20 émeraudes » avait été rangée sous le jeton de claim). `config.yml` : `prix.tp: 20`,
+`prix.claim: 0` (pas en vente, prix non fixé). Aucun changement de code ; le `config.yml` du serveur est à remplacer au
+déploiement (la clé y existe déjà).
+
+**Compilé le 08/10/2026 ; non déployé.**

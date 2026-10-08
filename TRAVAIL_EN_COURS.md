@@ -16,6 +16,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
+- KS_CoffreMort — LeKiwi06 — depuis le 2026-10-08 21:13 — 1.0.1 : /rewards dans les claims des autres (et non dans les siens)
+
 
 
 
@@ -33,6 +35,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 ## Requis parfois
+
+- KS_Jetons — LeKiwi06 — depuis le 2026-10-08 21:13 — 2.0.1 : prix (jeton de téléportation à 20, jeton de claim pas en vente)
 
 
 
