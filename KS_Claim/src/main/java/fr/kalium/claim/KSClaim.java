@@ -49,6 +49,8 @@ public final class KSClaim extends JavaPlugin {
     /** Données d'un joueur. */
     static final class Joueur {
         final List<Long> prixPayes = new ArrayList<>();
+        /** 1.2.0 : jetons de claim utilisés : autant de claims gratuits en plus, sans faire monter les prix. */
+        int jetons;
         final Map<String, Groupe> groupes = new LinkedHashMap<>();
     }
 
@@ -204,9 +206,23 @@ public final class KSClaim extends JavaPlugin {
         return (long) Math.ceil(16.0 * n + n * (double) n / 2);
     }
 
-    /** Prix du prochain claim du joueur. */
+    /** 1.2.0 : jetons de claim utilisés par le joueur. */
+    synchronized int jetons(UUID joueur) {
+        return joueur(joueur).jetons;
+    }
+
+    synchronized void changerJetons(UUID joueur, int difference) {
+        Joueur j = joueur(joueur);
+        j.jetons = Math.max(0, j.jetons + difference);
+        sauver();
+    }
+
+    /**
+     * Prix du prochain claim du joueur. 1.2.0 : chaque jeton de claim utilisé donne un claim gratuit de plus et ne
+     * fait pas monter les prix : le claim compte comme le (n - jetons)-ième.
+     */
     long prochainPrix(UUID joueur) {
-        return prix(nombreDeClaims(joueur) + 1);
+        return prix(nombreDeClaims(joueur) + 1 - jetons(joueur));
     }
 
     synchronized void noterPrixPaye(UUID joueur, long prix) {
@@ -317,6 +333,7 @@ public final class KSClaim extends JavaPlugin {
                 continue;
             }
             Joueur j = joueur(uuid);
+            j.jetons = Math.max(0, section.getInt(cle + ".jetons-de-claim", 0));
             for (Object prix : section.getList(cle + ".prix-payes", List.of())) {
                 if (prix instanceof Number nombre) {
                     j.prixPayes.add(nombre.longValue());
@@ -339,6 +356,9 @@ public final class KSClaim extends JavaPlugin {
         joueurs.forEach((uuid, j) -> {
             String cle = "joueurs." + uuid;
             yaml.set(cle + ".prix-payes", new ArrayList<>(j.prixPayes));
+            if (j.jetons > 0) {
+                yaml.set(cle + ".jetons-de-claim", j.jetons);
+            }
             j.groupes.forEach((id, g) -> {
                 yaml.set(cle + ".groupes." + id + ".nom", g.nom);
                 yaml.set(cle + ".groupes." + id + ".claims", new ArrayList<>(g.claims));

@@ -72,3 +72,21 @@ Demande de LeKiwi06 : « supprime l'option de bannissement du claim ».
   le nombre est noté dans la console. Les commandes de SimpleClaimSystem restent interdites aux joueurs (LuckPerms).
 
 **Déployé sur Event le 03/10/2026 à 02:35 (LeKiwi06 ; ancienne version dans `_removed-ks_claim-1.1.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.2.0 - jetons de claim (08/10/2026, LeKiwi06)
+
+Catégorie 7 (demande du 03/10/2026, « fait comme expliqué la dernière fois » le 08/10/2026) : « des jetons de claim
+gagnables qui offrent une utilisation de claim gratuite (ça ne fait pas monter le prix des claims [...] ça stocke
+"utilisations gratuites" dans l'interface pour claim) ».
+- **Utiliser un jeton de claim** (bouton de l'accueil des claims, s'il y en a dans l'inventaire spécial de KS_Jetons) :
+  **+1 claim gratuit**, tant que le jeton n'est pas retiré. Les prix ne montent pas : avec j jetons utilisés, le n-ième
+  claim coûte le prix du (n − j)-ième (10 claims + 1 jeton : le 11e est gratuit, le 12e coûte 237 comme un 11e).
+- **Accueil** : « Claims gratuits : 11 (dont 1 par jetons de claim) ; encore libres : 2 ». « Prix des claims » tient
+  compte des jetons.
+- **Retirer un jeton de claim** (pour le donner ou le revendre) : gratuit s'il reste un claim gratuit libre ; sinon il
+  faut **payer le prix du prochain claim** (ce qu'un de ses claims aurait coûté sans ce jeton ; ce prix rejoint la
+  liste des prix payés, remboursable à la suppression d'un claim). Le jeton revient dans l'inventaire spécial.
+- Achat d'un claim à un joueur : le prix minimum est le prochain prix de l'acheteur, jetons compris.
+- Données : `jetons-de-claim` de chaque joueur dans `donnees.yml`. `softdepend` KS_Jetons (sans lui : aucun bouton).
+
+**À déployer avec KS_Jetons 2.0.1.** Compilé le 08/10/2026 ; **non déployé** (déploiement groupé demandé par LeKiwi06).

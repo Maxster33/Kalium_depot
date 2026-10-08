@@ -110,13 +110,28 @@ final class Menus {
     void ouvrir(Player joueur) {
         UUID uuid = joueur.getUniqueId();
         int nombre = KSClaim.nombreDeClaims(uuid);
+        // 1.2.0 : claims gratuits (de base + jetons de claim utilisés) et ceux qui restent libres.
+        int jetons = plugin.jetons(uuid);
+        int gratuits = plugin.claimsGratuits() + jetons;
         List<Component> corps = List.of(
                 t("accueil.nombre", "<white>Claims : <green><nombre></green> / <max>", "nombre", nombre, "max",
                         plugin.claimsMax()),
+                t("accueil.gratuits", "<white>Claims gratuits : <green><gratuits></green> <gray>(dont <jetons> par jetons "
+                        + "de claim) ; encore libres : <white><libres>", "gratuits", gratuits, "jetons", jetons, "libres",
+                        Math.max(0, gratuits - nombre)),
                 t("accueil.prochain", "<white>Prochain claim : <yellow><prix>", "prix", pts(plugin.prochainPrix(uuid))),
                 t("accueil.aide", "<gray>1 claim = 1 chunk (16 x 16 blocs, toute la hauteur). « Claimer ici » "
                         + "claime le chunk où tu te trouves (aussi : /ksclaim)."));
         List<ActionButton> boutons = new ArrayList<>();
+        if (jetonsEnStock(uuid) > 0) {
+            boutons.add(gui.button(t("bouton.jeton-utiliser", "<aqua>Utiliser un jeton de claim"),
+                    t("bouton.jeton-utiliser-info", "<gray>+1 claim gratuit, sans faire monter les prix"),
+                    this::utiliserJeton));
+        }
+        if (jetons > 0 && jetonsActifs()) {
+            boutons.add(gui.button(t("bouton.jeton-retirer", "<white>Retirer un jeton de claim"),
+                    t("bouton.jeton-retirer-info", "<gray>Le jeton revient dans tes jetons"), this::retirerJeton));
+        }
         boutons.add(gui.button(t("bouton.claimer", "<green>Claimer ici"), null, this::claimerIci));
         boutons.add(gui.button(t("bouton.mes-claims", "<white>Mes claims (<nombre>)", "nombre", nombre), null,
                 p -> listeClaims(p, 0)));
@@ -128,15 +143,84 @@ final class Menus {
 
     private void prixSuivants(Player joueur) {
         int n = KSClaim.nombreDeClaims(joueur.getUniqueId()) + 1;
+        int jetons = plugin.jetons(joueur.getUniqueId());
         List<Component> corps = new ArrayList<>();
         corps.add(t("prix.regle", "<gray>Les <gratuits> premiers claims sont gratuits, puis le n-ième coûte 16n + n²/2 "
                 + "points (arrondi au-dessus) ; <max> claims au plus. Supprimer un claim rembourse le dernier prix payé.",
                 "gratuits", plugin.claimsGratuits(), "max", plugin.claimsMax()));
         for (int i = n; i < n + 5 && i <= plugin.claimsMax(); i++) {
-            corps.add(t("prix.ligne", "<white><n>e claim : <yellow><prix>", "n", i, "prix", pts(plugin.prix(i))));
+            corps.add(t("prix.ligne", "<white><n>e claim : <yellow><prix>", "n", i, "prix",
+                    pts(plugin.prix(i - jetons))));
+        }
+        if (jetons > 0) {
+            corps.add(t("prix.jetons", "<gray>Tes <jetons> jeton(s) de claim utilisé(s) donnent autant de claims "
+                    + "gratuits en plus, sans faire monter les prix.", "jetons", jetons));
         }
         gui.open(joueur, t("prix.titre", "<aqua><bold>Prix des claims"), corps, List.of(), List.of(retour(this::ouvrir)),
                 null, 1);
+        lang.saveIfNeeded();
+    }
+
+    // ------------------------------------------------------------------ jetons de claim (1.2.0)
+
+    private static boolean jetonsActifs() {
+        return org.bukkit.Bukkit.getPluginManager().isPluginEnabled("KS_Jetons");
+    }
+
+    /** Jetons de claim dans l'inventaire spécial du joueur (KS_Jetons). */
+    private static long jetonsEnStock(UUID joueur) {
+        return jetonsActifs() ? fr.kalium.jetons.KSJetons.nombre(joueur, fr.kalium.jetons.KSJetons.Type.CLAIM) : 0;
+    }
+
+    /** Utiliser un jeton de claim : +1 claim gratuit, tant que le jeton n'est pas retiré. */
+    private void utiliserJeton(Player joueur) {
+        UUID uuid = joueur.getUniqueId();
+        if (!jetonsActifs() || !fr.kalium.jetons.KSJetons.consommer(uuid, fr.kalium.jetons.KSJetons.Type.CLAIM, 1)) {
+            ouvrir(joueur);
+            return;
+        }
+        plugin.changerJetons(uuid, 1);
+        plugin.getLogger().info(joueur.getName() + " utilise un jeton de claim (" + plugin.jetons(uuid) + ").");
+        message(joueur, t("jeton.utilise", "<green>Jeton de claim utilisé : tu as un claim gratuit de plus."), this::ouvrir);
+    }
+
+    /**
+     * Retirer un jeton de claim utilisé (pour le donner ou le revendre) : gratuit s'il reste un claim gratuit libre ;
+     * sinon il faut payer le prix du prochain claim (celui qu'un de ses claims aurait coûté sans ce jeton).
+     */
+    private void retirerJeton(Player joueur) {
+        UUID uuid = joueur.getUniqueId();
+        int jetons = plugin.jetons(uuid);
+        if (jetons < 1 || !jetonsActifs()) {
+            ouvrir(joueur);
+            return;
+        }
+        boolean libre = plugin.claimsGratuits() + jetons > KSClaim.nombreDeClaims(uuid);
+        long prix = libre ? 0 : plugin.prochainPrix(uuid);
+        gui.confirm(joueur, t("titre", "<aqua><bold>Claims"), libre
+                ? t("jeton.retirer-libre", "<white>Retirer un jeton de claim ? Tu perds un claim gratuit encore libre ; "
+                + "le jeton revient dans tes jetons.")
+                : t("jeton.retirer-payer", "<white>Retirer un jeton de claim ? Tous tes claims gratuits sont pris : il "
+                + "faut payer <yellow><prix></yellow>, le prix qu'un de tes claims aurait coûté sans ce jeton. Le jeton "
+                + "revient dans tes jetons.", "prix", pts(prix)), p -> {
+            UUID id = p.getUniqueId();
+            int actuels = plugin.jetons(id);
+            if (actuels < 1) {
+                ouvrir(p);
+                return;
+            }
+            boolean encoreLibre = plugin.claimsGratuits() + actuels > KSClaim.nombreDeClaims(id);
+            long aPayer = encoreLibre ? 0 : plugin.prochainPrix(id);
+            if (aPayer > 0 && !KSEconomy.debiter(id, aPayer)) {
+                message(p, t("jeton.solde", "<red>Il te faut <prix>.", "prix", pts(aPayer)), this::ouvrir);
+                return;
+            }
+            plugin.noterPrixPaye(id, aPayer);
+            plugin.changerJetons(id, -1);
+            fr.kalium.jetons.KSJetons.ajouter(id, fr.kalium.jetons.KSJetons.Type.CLAIM, 1);
+            plugin.getLogger().info(p.getName() + " retire un jeton de claim (" + aPayer + " points).");
+            message(p, t("jeton.retire", "<green>Jeton de claim retiré : il est dans tes jetons (/jetons)."), this::ouvrir);
+        }, this::ouvrir);
         lang.saveIfNeeded();
     }
 
@@ -771,7 +855,8 @@ final class Menus {
                     this::ouvrir);
             return;
         }
-        long minimum = possedes >= plugin.claimsGratuits() ? plugin.prix(possedes + 1) : 0;
+        // 1.2.0 : prix du prochain claim de l'acheteur, jetons de claim compris (0 tant qu'il a un claim gratuit).
+        long minimum = plugin.prochainPrix(uuid);
         if (prix < minimum) {
             message(joueur, t("achat.minimum", "<red>Achat impossible : ce claim est vendu <prix>, moins que ton "
                     + "prochain claim (<minimum>).", "prix", pts(prix), "minimum", pts(minimum)), this::ouvrir);

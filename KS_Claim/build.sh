@@ -4,7 +4,7 @@
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.1.2
+VERSION=1.2.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -17,7 +17,7 @@ case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) SEP=';'; win() { cygpath -w "$1"; } ;;
   *) SEP=':'; win() { printf '%s' "$1"; } ;;
 esac
-CP="$(win "$TOOLS/classes/KLM_Menu")$SEP$(win "$TOOLS/classes/KS_Menu")$SEP$(win "$TOOLS/classes/KS_Economy")$SEP"
+CP="$(win "$TOOLS/classes/KLM_Menu")$SEP$(win "$TOOLS/classes/KS_Menu")$SEP$(win "$TOOLS/classes/KS_Economy")$SEP$(win "$TOOLS/classes/KS_Jetons")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
 OUT="$TOOLS/classes/KS_Claim"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"

@@ -26,6 +26,13 @@ seul par type, apparence du bloc du lingot, capacité non cumulable) avec leurs 
 - Demande suivante : « commence KS_CoffreMort sans attendre le test », puis « oui déploie les deux sur Event » :
   KS_CoffreMort 1.0.0 (nouveau) et KS_RewardsGUI 1.0.1 / 1.1.0, déployés sur Event à 20:56, non testés.
 
+- Corrections de LeKiwi06 (21 h) : l'étoile du menu jamais dans un coffre de mort (déjà fait par KS_Menu 1.2.0 de
+  Maxster33) ; 20 émeraudes = jeton de téléportation (pas le jeton de claim) ; /rewards dans le claim d'un autre (pas
+  dans les siens) : KS_CoffreMort 1.0.1, KS_Jetons 2.0.1.
+- « ne déploie pas encore, on va s'occuper des autres plugins et tout déployer ensemble » : codés et compilés, **non
+  déployés** : KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.3.1 (région `zone_spawn`), KS_Claim 1.2.0 (jetons de
+  claim), avec KS_CoffreMort 1.0.1 et KS_Jetons 2.0.1.
+
 ## Décisions
 
 - Badge porté = rangé dans l'inventaire spécial ; délais attachés au joueur.
@@ -45,6 +52,10 @@ seul par type, apparence du bloc du lingot, capacité non cumulable) avec leurs 
 - Signalé par Claude, gardé tel que demandé : à 20 émeraudes, le jeton de claim coûte moins qu'un 11e claim (237).
 
 ## Reste à faire
+
+- **Déploiement groupé sur Event** (accord de LeKiwi06 à demander) : KS_Jetons 2.0.1 (+ `config.yml` du serveur),
+  KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.3.1, KS_Claim 1.2.0 ; région WorldGuard `zone_spawn`
+  à créer ou renommer par l'humain ; réservations à libérer ensuite.
 
 - Redémarrer Event et le proxy (LeKiwi06), puis tester : `/jetons`, les deux contenants, `/kaliumgive <pseudo> badge_fly_1 2` et la
   fusion à l'enclume (Java et Bedrock).

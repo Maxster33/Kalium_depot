@@ -16,7 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_Teleport — LeKiwi06 — depuis le 2026-10-08 21:20 — nouveau (catégorie 7) : /home, /spawn et /maison, téléportations gratuites et jetons, jetons de localisation, magnétites
+- KS_Claim — LeKiwi06 — depuis le 2026-10-08 21:24 — 1.2.0 : jetons de claim (claims gratuits en plus, utiliser, retirer)
 
 
 
@@ -39,6 +39,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_Jetons — LeKiwi06 — depuis le 2026-10-08 21:13 — 2.0.1 : prix (jeton de téléportation à 20, jeton de claim pas en vente)
 - KS_CoffreMort — LeKiwi06 — depuis le 2026-10-08 21:13 — 1.0.1 compilée, en attente du déploiement groupé de la catégorie 7
 - KS_Fly — LeKiwi06 — depuis le 2026-10-08 21:16 — 1.0.0 compilée, en attente du déploiement groupé de la catégorie 7
+- KS_Teleport — LeKiwi06 — depuis le 2026-10-08 21:20 — 1.0.0 compilée, en attente du déploiement groupé de la catégorie 7
 - KS_Economy — LeKiwi06 — depuis le 2026-10-08 21:20 — région des magasins : zone_shop devient zone_spawn (maisons et magasins)
 
 
