@@ -5,6 +5,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -20,7 +21,9 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -38,6 +41,10 @@ import java.util.function.Predicate;
  *
  * Les recettes sont des formes (affichées dans le livre de recettes) ; les ingrédients exacts et le résultat sont
  * vérifiés à chaque craft.
+ *
+ * 1.11.0 (LeKiwi06, 09/10/2026) : le livre de recettes montre les vrais objets (bloc d'émeraude compressé tier 2, fiole
+ * de 15 niveaux, bloc de charbon de bois, tête marquée du défaut à réparer) au lieu des objets vanilla de même
+ * apparence. Au centre : la tête qui n'a plus que ce défaut, puis en alternance celles qui en ont d'autres.
  */
 final class TeteWither implements Listener {
 
@@ -90,33 +97,76 @@ final class TeteWither implements Listener {
                 && !(i.getItemMeta() instanceof Damageable dm && dm.hasDamage() && dm.getDamage() > 0);
         Predicate<ItemStack> netherite = i -> i != null && i.getType() == Material.NETHERITE_INGOT && !i.hasItemMeta();
         Predicate<ItemStack> charbon = this::estBlocCharbonDeBois;
-        reparation("tete_wither_nettoyer", "sale", Material.BRUSH, Material.BRUSH, pinceau, pinceau);
-        reparation("tete_wither_reparer_a", "endommagee", Material.NETHERITE_INGOT, Material.COAL_BLOCK, netherite, charbon);
-        reparation("tete_wither_reparer_b", "endommagee", Material.COAL_BLOCK, Material.NETHERITE_INGOT, charbon, netherite);
+        RecipeChoice pinceaux = new RecipeChoice.MaterialChoice(Material.BRUSH);
+        RecipeChoice lingots = new RecipeChoice.MaterialChoice(Material.NETHERITE_INGOT);
+        // 1.11.0 : objet montré par le livre de recettes + même vérification qu'au craft.
+        RecipeChoice blocsCharbon = RecipeChoice.predicateChoice(charbon, creerBlocCharbonDeBois());
+        reparation("tete_wither_nettoyer", "sale", pinceaux, pinceaux, pinceau, pinceau);
+        reparation("tete_wither_reparer_a", "endommagee", lingots, blocsCharbon, netherite, charbon);
+        reparation("tete_wither_reparer_b", "endommagee", blocsCharbon, lingots, charbon, netherite);
         if (plugin.actif("KS_Economy") && plugin.actif("KS_FioleExp")) {
             ItemStack fiole15 = fr.kalium.fioleexp.KSFioleExp.creerFioleNiveaux(15);
             Predicate<ItemStack> blocTier2 = i -> fr.kalium.economy.KSEconomy.tierBloc(i) == 2;
             Predicate<ItemStack> fiole = i -> i != null && i.isSimilar(fiole15);
-            reparation("tete_wither_reactiver_a", "desactivee", Material.EMERALD_BLOCK, Material.EXPERIENCE_BOTTLE,
-                    blocTier2, fiole);
-            reparation("tete_wither_reactiver_b", "desactivee", Material.EXPERIENCE_BOTTLE, Material.EMERALD_BLOCK,
-                    fiole, blocTier2);
+            RecipeChoice blocs = RecipeChoice.predicateChoice(blocTier2, fr.kalium.economy.KSEconomy.creerBloc(2));
+            RecipeChoice fioles = RecipeChoice.predicateChoice(fiole, fiole15);
+            reparation("tete_wither_reactiver_a", "desactivee", blocs, fioles, blocTier2, fiole);
+            reparation("tete_wither_reactiver_b", "desactivee", fioles, blocs, fiole, blocTier2);
         } else {
             plugin.getLogger().warning("KS_Economy ou KS_FioleExp absent : craft « réactiver » de la tête de wither "
                     + "squelette ignoré.");
         }
     }
 
+    /**
+     * 1.11.0 : les têtes de wither squelette qui ont ce défaut, pour le centre de la recette : d'abord celle qui n'a
+     * plus que lui (le résultat affiché est alors le bon), puis celles qui ont aussi un autre défaut, puis les trois.
+     * Null si KS_Decapitator n'a pas cette tête.
+     */
+    private RecipeChoice tetes(String defaut) {
+        ItemStack complete = null;
+        for (ItemStack t : fr.kalium.decapitator.KSDecapitator.tetesDe(EntityType.WITHER_SKELETON)) {
+            if (fr.kalium.decapitator.KSDecapitator.defautsTete(t).contains(defaut)) {
+                complete = t;
+                break;
+            }
+        }
+        if (complete == null) {
+            return null;
+        }
+        List<String> autres = new ArrayList<>(fr.kalium.decapitator.KSDecapitator.defautsTete(complete));
+        autres.remove(defaut);
+        List<ItemStack> choix = new ArrayList<>();
+        ItemStack seule = complete;
+        for (String autre : autres) {
+            seule = fr.kalium.decapitator.KSDecapitator.reparer(seule, autre);
+        }
+        choix.add(seule);
+        if (autres.size() == 2) {
+            choix.add(fr.kalium.decapitator.KSDecapitator.reparer(complete, autres.get(1)));
+            choix.add(fr.kalium.decapitator.KSDecapitator.reparer(complete, autres.get(0)));
+        }
+        if (!autres.isEmpty()) {
+            choix.add(complete);
+        }
+        return new RecipeChoice.ExactChoice(choix);
+    }
+
     /** Forme : la tête au centre, coins et côtés ; résultat réel calculé au moment du craft. */
     @SuppressWarnings("unchecked")
-    private void reparation(String id, String defaut, Material coins, Material cotes, Predicate<ItemStack> okCoins,
+    private void reparation(String id, String defaut, RecipeChoice coins, RecipeChoice cotes, Predicate<ItemStack> okCoins,
                             Predicate<ItemStack> okCotes) {
+        RecipeChoice tetes = tetes(defaut);
+        if (tetes == null) {
+            plugin.getLogger().warning("Tête de wither squelette absente de KS_Decapitator : craft « " + id + " » ignoré.");
+            return;
+        }
         NamespacedKey cle = plugin.key(id);
         ShapedRecipe r = new ShapedRecipe(cle, new ItemStack(Material.WITHER_SKELETON_SKULL));
         r.shape("ABA", "BTB", "ABA");
         r.setIngredient('A', coins);
         r.setIngredient('B', cotes);
-        r.setIngredient('T', Material.PLAYER_HEAD);
+        r.setIngredient('T', tetes);
         plugin.add(r);
         reparations.put(cle, defaut);
         verifs.put(cle, new Predicate[]{okCoins, okCotes});

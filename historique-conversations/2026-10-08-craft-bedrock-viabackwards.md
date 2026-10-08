@@ -26,3 +26,12 @@ un fix pour ce problème ? », puis « oui mets à jour les scripts et envoie su
 - Redémarrer Kixster (l'humain), puis tester le craft avec un joueur Bedrock.
 - Si c'est bon : Event, lobby, Kanvas, Serveur Jeux, Kal-Games (`sh envoyer.sh <serveur>`).
 - Lenteur éventuelle du craft : voir GeyserMC/Geyser#6744 (ouvert).
+
+## Suite (09/10/2026)
+- Test de LeKiwi06 à 00:09 (« je vois des planches de bois dans les crafts des outils ») : Kixster n'avait pas été
+  redémarré depuis l'envoi (dernier démarrage 08/10 à 21:05, Via 5.12.1-SNAPSHOT dans le journal). À refaire après
+  redémarrage.
+- « Le cadre a une membrane de phantom ? » : c'est la recette du cadre invisible de KS_Crafts.
+- Demande : réparations de la tête de wither squelette mal indiquées dans l'interface de craft → **KS_Crafts 1.11.0**
+  (vrais objets affichés ; voir `KS_Crafts/JOURNAL.md`), compilé, non déployé, non testé ; KS_Crafts réservé.
+- Reste à faire : accord de LeKiwi06 pour déployer KS_Crafts 1.11.0 (Event, Kixster), puis test en jeu.

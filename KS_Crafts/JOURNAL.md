@@ -198,3 +198,31 @@ casser la chaîne de production automatique des shulker ».
 Limite : une verrue déjà posée dans un alambic avant cette version y reste, sans effet (brassage annulé).
 
 **Déployé sur Event le 04/10/2026 à 06:52 (LeKiwi06 ; 1.9.0 dans `_removed-ks_crafts-1.9.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.11.0 - vrais objets dans les recettes de réparation de la tête de wither squelette (09/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (vu dans l'interface de craft) : « le processus de réparation des têtes de wither était plutôt mal
+indiqué : les items demandés ne sont pas les bons (on ne voit pas le tier du bloc compressé, on ne voit pas une tête de
+wither marquée comme "désactivé" (avec alternative contenant les autres états selon l'ordre dans lequel on souhaite le
+faire) et on ne voit pas le niveau de la fiole d'xp ».
+
+Cause : les 5 recettes étaient déclarées avec les objets vanilla de même apparence (bloc d'émeraude, fiole
+d'expérience, bloc de charbon, tête de joueur) ; les vrais objets n'étaient vérifiés qu'au moment du craft, et le livre
+de recettes n'affiche que ce que la recette déclare.
+
+- **Autour** : le livre montre le **bloc d'émeraude compressé tier 2**, la **fiole de 15 niveaux** et le **bloc de
+  charbon de bois** (`RecipeChoice.predicateChoice` de Paper : objet d'exemple affiché, même vérification qu'avant).
+  Pinceau et lingot de netherite : inchangés (objets vanilla).
+- **Au centre** : la tête de wither squelette marquée du défaut à réparer (`ExactChoice`) ; d'abord celle qui n'a plus
+  que ce défaut (le crâne de wither squelette affiché en résultat est alors le bon), puis, en alternance, celles qui
+  ont aussi un autre défaut, puis celle qui a les trois.
+- Aucun changement des ingrédients acceptés ni du résultat (toujours vérifiés à chaque craft).
+- **Conséquence** : ces recettes se débloquent dans le livre en obtenant un **vrai** ingrédient (tête à réparer, bloc
+  tier 2, fiole de 15 niveaux, bloc de charbon de bois, pinceau, lingot de netherite), plus avec n'importe quelle tête de
+  joueur, bloc d'émeraude, fiole d'expérience ou bloc de charbon. Une recette déjà débloquée le reste.
+- Sans la tête de wither squelette dans KS_Decapitator : crafts de réparation ignorés (avertissement).
+
+Limite : le résultat affiché reste le crâne de wither squelette, même pour une tête qui garde d'autres défauts (le vrai
+résultat apparaît en posant les objets). Affichage chez les joueurs Bedrock : non vérifié.
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

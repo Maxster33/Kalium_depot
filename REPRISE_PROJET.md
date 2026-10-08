@@ -254,6 +254,10 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
       à faire après le test sur Kixster).
     - Si le craft reste lent ou faux après cela : GeyserMC/Geyser#6744 (ouvert) ; le support de la 26.3 par Geyser
       est en cours (GeyserMC/Geyser#6712, sans date).
+- **KS_Crafts 1.11.0 (LeKiwi06, 09/10/2026) : compilé, non déployé, non testé.** Le livre de recettes montre les vrais
+  objets des réparations de la tête de wither squelette (bloc d'émeraude compressé tier 2, fiole de 15 niveaux, bloc de
+  charbon de bois, tête marquée du défaut, autres états en alternance) ; ingrédients acceptés inchangés. Event et
+  Kixster sont en 1.10.0 ; KS_Crafts reste réservé par LeKiwi06 jusqu'au déploiement.
 - **Sauvegardes des mondes : à voir plus tard (LeKiwi06, 26/09/2026)**. Aucune sauvegarde automatique connue (seulement
   des copies manuelles, ex. `Kixster SMP_bak`). Pistes : 1) vérifier dans le panneau web Minestrator si chaque serveur
   a des sauvegardes (non vérifié, Claude n'y a pas accès) ; 2) sauvegarde manuelle des mondes sur le PC par WinSCP
