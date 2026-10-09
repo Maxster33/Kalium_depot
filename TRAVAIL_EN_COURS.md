@@ -19,8 +19,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 - KS_Economy — LeKiwi06 — depuis le 2026-10-09 20:12 — rachats de la semaine : les objets custom s'affichent en étoile du Nether
-- KS_CoffreMort — LeKiwi06 — depuis le 2026-10-09 23:25 — coffre de mort gardé 1 heure au lieu de 15 minutes
-- KG_Rewards — LeKiwi06 — depuis le 2026-10-09 23:25 — nouveau coffre de rattrapage pour Maaxster seul (fichier `rattrapage.yml`, aucun changement de code)
 
 
 ## Requis parfois
