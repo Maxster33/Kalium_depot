@@ -45,11 +45,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 1.3.0 (LeKiwi06, 04/10/2026) : barème des prix d'Event (rachats.csv, dans le jar) et « Rachats de la semaine » : le
- * serveur rachète aux joueurs 10 objets tirés chaque semaine (lundi, heure de Paris), 2 par gamme de prix.
+ * serveur rachète aux joueurs 10 objets tirés chaque semaine (lundi, heure de Paris).
  *
- * - Tirage : dans chaque gamme (moins de 0,1 ; 0,1 à 1 ; 1 à 10 ; 10 à 100 ; 100 et plus), 2 familles au hasard, puis
- *   un objet de la famille dans cette gamme (les variantes d'un objet comptent pour un seul : têtes, cuivre, sapin...).
- *   Jamais d'objet issu d'une dimension dont KS_Dimensions ferme les portails (Nether, End).
+ * - Tirage (1.4.0, LeKiwi06, 09/10/2026 : plus de quota par gamme de prix) : 10 familles au hasard, puis un objet de
+ *   chaque famille (les variantes d'un objet comptent pour un seul : têtes, cuivre, sapin...).
+ *   Jamais d'objet issu d'une dimension dont KS_Dimensions ferme les portails (Nether, End) : ceux d'une dimension
+ *   fermée après le tirage sont remplacés.
  * - Prix de la semaine : prix du barème à plus ou moins 25 %, arrondi à l'unité dès 1 émeraude.
  * - Lot : la quantité (arrondie à l'unité inférieure) qui approche 1 / 10 / 64 / 320 émeraudes selon la gamme du prix
  *   de la semaine, payée au nombre entier le plus proche ; à l'unité à partir de 100 et pour un objet non empilable.
@@ -268,6 +269,9 @@ final class Rachats implements CommandExecutor {
             tirer();
             change = true;
         }
+        if (remplacerFermes()) {
+            change = true;
+        }
         if (change) {
             sauver();
         }
@@ -279,40 +283,71 @@ final class Rachats implements CommandExecutor {
         return dimensions == null || !dimensions.isEnabled() || dimensions.getConfig().getBoolean(cle, true);
     }
 
-    private void tirer() {
-        offres.clear();
-        // Aucun objet issu d'une dimension fermée (KS_Dimensions) : il serait impossible à obtenir.
-        boolean nether = ouverte("nether-portals-enabled");
-        boolean end = ouverte("end-portals-enabled");
+    /** Faux pour un objet issu d'une dimension fermée (KS_Dimensions) : il serait impossible à obtenir. */
+    private static boolean permis(Entree e, boolean nether, boolean end) {
+        return (nether || !e.dimensions().contains("nether")) && (end || !e.dimensions().contains("end"));
+    }
+
+    /**
+     * 1.4.0 : complète les offres jusqu'au nombre voulu (10), sans gamme de prix : une famille au hasard, puis un de
+     * ses objets. Une famille déjà présente ne revient que s'il n'en reste pas d'autre.
+     */
+    private void completer(boolean nether, boolean end) {
         ThreadLocalRandom hasard = ThreadLocalRandom.current();
-        int parGamme = Math.max(1, plugin.getConfig().getInt("rachats.objets-par-gamme", 2));
+        int nombre = Math.max(1, plugin.getConfig().getInt("rachats.objets", 10));
         Set<String> prises = new HashSet<>();
-        for (int g = 0; g <= BORNES.length; g++) {
-            Map<String, List<Entree>> familles = new HashMap<>();
-            for (Entree e : base.values()) {
-                if (tirable(e) && gamme(e.prix()) == g && (nether || !e.dimensions().contains("nether"))
-                        && (end || !e.dimensions().contains("end"))) {
-                    familles.computeIfAbsent(e.famille(), f -> new ArrayList<>()).add(e);
-                }
-            }
-            List<String> noms = new ArrayList<>(familles.keySet());
-            Collections.sort(noms);
-            Collections.shuffle(noms, hasard);
-            // une famille déjà tirée dans une autre gamme passe après les autres
-            noms.sort((a, b) -> Boolean.compare(prises.contains(a), prises.contains(b)));
-            for (int k = 0; k < parGamme && k < noms.size(); k++) {
-                List<Entree> choix = familles.get(noms.get(k));
-                offres.add(offre(choix.get(hasard.nextInt(choix.size())), hasard));
-                prises.add(noms.get(k));
+        Set<String> offerts = new HashSet<>();
+        for (Offre o : offres) {
+            prises.add(o.entree().famille());
+            offerts.add(o.entree().id());
+        }
+        Map<String, List<Entree>> familles = new HashMap<>();
+        for (Entree e : base.values()) {
+            if (tirable(e) && permis(e, nether, end) && !offerts.contains(e.id())) {
+                familles.computeIfAbsent(e.famille(), f -> new ArrayList<>()).add(e);
             }
         }
-        StringBuilder journal = new StringBuilder("Rachats de la semaine " + semaine
-                + (nether ? "" : " (Nether fermé)") + (end ? "" : " (End fermé)") + " :");
+        List<String> noms = new ArrayList<>(familles.keySet());
+        Collections.sort(noms);
+        Collections.shuffle(noms, hasard);
+        noms.sort((a, b) -> Boolean.compare(prises.contains(a), prises.contains(b)));
+        for (int k = 0; offres.size() < nombre && k < noms.size(); k++) {
+            List<Entree> choix = familles.get(noms.get(k));
+            offres.add(offre(choix.get(hasard.nextInt(choix.size())), hasard));
+        }
+    }
+
+    private void journal(String debut, boolean nether, boolean end) {
+        StringBuilder journal = new StringBuilder(debut + (nether ? "" : " (Nether fermé)")
+                + (end ? "" : " (End fermé)") + " :");
         for (Offre o : offres) {
             journal.append(' ').append(o.quantite()).append(" x ").append(o.entree().id()).append(" = ")
                     .append(o.points()).append(" ;");
         }
         plugin.getLogger().info(journal.toString());
+    }
+
+    private void tirer() {
+        offres.clear();
+        boolean nether = ouverte("nether-portals-enabled");
+        boolean end = ouverte("end-portals-enabled");
+        completer(nether, end);
+        journal("Rachats de la semaine " + semaine, nether, end);
+    }
+
+    /**
+     * 1.4.0 : une dimension fermée après le tirage (ou un tirage fait quand KS_Dimensions n'était pas lisible) : ses
+     * objets sont remplacés, pour qu'aucun objet d'une dimension fermée ne reste proposé. Vrai si une offre a changé.
+     */
+    private boolean remplacerFermes() {
+        boolean nether = ouverte("nether-portals-enabled");
+        boolean end = ouverte("end-portals-enabled");
+        if (!offres.removeIf(o -> !permis(o.entree(), nether, end))) {
+            return false;
+        }
+        completer(nether, end);
+        journal("Rachats de la semaine " + semaine + " : objets d'une dimension fermée remplacés", nether, end);
+        return true;
     }
 
     /** Prix de la semaine (barème à plus ou moins 25 %) puis lot de la gamme de ce prix. */

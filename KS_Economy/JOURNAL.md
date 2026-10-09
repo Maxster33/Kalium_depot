@@ -279,3 +279,32 @@ magasins ». Valeur par défaut de `magasins.region` : `zone_spawn` (code et `co
 `_removed-ks_economy-1.3.0/` ; supprimables par l'humain : `_removed-ks_economy-1.0.0/` à `1.1.5/`, 10 dossiers), actif
 après redémarrage d'Event. Le `config.yml` du serveur n'a pas de section `magasins` : la région lue est donc
 `zone_spawn` (valeur du code) ; **région WorldGuard à renommer ou recréer par l'humain**. Statut : non testé en jeu.**
+
+## 1.4.0 - rachats : 10 objets au hasard par familles, plus de gamme de prix (09/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « modifier le tirage des items pour les rachats de la semaine, il faudrait tirer 10 items
+aléatoires en gardant le système de "famille" mais sans restriction de 2 par ordre de prix », et « des items issus du
+Nether ont été tirés alors qu'il est fermé, ce n'est pas normal ».
+
+- **Tirage** : 10 familles au hasard parmi toutes (174 ; 155 Nether fermé), puis un objet au hasard dans chaque
+  famille, quel que soit son prix. Une famille ne sort deux fois que s'il n'en reste pas d'autre. Le réglage
+  `rachats.objets-par-gamme` n'est plus lu ; nouveau réglage `rachats.objets` (10 par défaut dans le code, à ajouter à
+  la main dans le `config.yml` du serveur pour le changer).
+- Conséquence, mesurée sur 20 000 tirages simulés avec le barème actuel : en moyenne par semaine 4,7 objets à moins
+  de 0,1 émeraude, 3 entre 0,1 et 1, 1 entre 1 et 10, 0,6 entre 10 et 100, 0,7 à 100 et plus (avant : 2 de chaque).
+- Inchangés : prix de la semaine (barème à plus ou moins 25 %), taille des lots (1 / 10 / 64 / 320 émeraudes selon le
+  prix de la semaine), quota, objets jamais tirés.
+- **Dimension fermée** : cause non établie (les fichiers d'Event n'ont pas pu être lus pendant la session). Relu :
+  le filtre du tirage et la colonne « dimension » de `rachats.csv` (208 objets marqués Nether, matières premières
+  vérifiées une à une) ; aucune erreur trouvée. Seul cas trouvé dans le code : le tirage ne regardait KS_Dimensions
+  qu'au moment du tirage (lundi, ou premier démarrage), donc un Nether fermé ensuite laissait ses objets proposés
+  jusqu'au dimanche. Corrigé (choix de Claude, signalé) : à chaque vérification (toutes les minutes, au démarrage et à
+  l'ouverture du menu), une offre dont la dimension est fermée est retirée et remplacée par un nouveau tirage (ligne
+  « objets d'une dimension fermée remplacés » dans la console). Rouvrir la dimension ne fait pas revenir l'offre.
+- Le tirage en cours (semaine 41) n'est pas refait par la mise à jour : seuls les objets d'une dimension fermée sont
+  remplacés. Le nouveau tirage s'applique lundi 12/10, ou en supprimant `rachats.yml` serveur éteint (l'humain).
+- Limite connue : si les objets vus par LeKiwi06 ne sont pas marqués « nether » dans `rachats.csv`, ou si KS_Dimensions
+  n'est pas le plugin qui ferme le Nether sur ce serveur, cette version ne corrige pas le problème : relever les objets
+  concernés et la ligne « Rachats de la semaine ... » de la console.
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

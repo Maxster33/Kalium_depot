@@ -24,8 +24,8 @@ magasins:
 
 # 1.3.0 - rachats de la semaine (a ajouter a la main dans le config.yml du serveur pour les modifier).
 rachats:
-  # Objets tires dans chacune des 5 gammes de prix (2 : 10 objets par semaine).
-  objets-par-gamme: 2
+  # 1.4.0 : objets tires chaque semaine (une famille au hasard, puis un de ses objets ; plus de gamme de prix).
+  objets: 10
   # Ecart maximal du prix de la semaine autour du prix du bareme, en %.
   variation-pourcent: 25
   quota:

@@ -201,7 +201,7 @@ Choix d'interprétation (Claude, à valider aux tests) :
 | Point | Règle |
 |---|---|
 | Base | Le barème des prix (émeraudes à l'unité) est dans KS_Economy |
-| Tirage | 10 objets par semaine : 2 par gamme de prix ; on tire une famille puis un objet de la famille dans la gamme (les variantes d'un objet comptent pour un seul) |
+| Tirage | 10 objets par semaine : on tire 10 familles au hasard, puis un objet dans chaque famille (les variantes d'un objet comptent pour un seul). Modifié le 09/10/2026 : avant, 2 objets par gamme de prix |
 | Prix de rachat | Au hasard à plus ou moins 25 % du prix du barème, arrondi à l'unité |
 | Lot (objet empilable) | Moins de 0,1 : 1 émeraude ; 0,1 à 1 : 10 ; 1 à 10 : 64 ; 10 à 100 : 320 ; plus de 100 : à l'unité. Quantité arrondie à l'unité inférieure, payée à l'entier le plus proche |
 | Quota | Par objet, par joueur et par jour : aucun sous 25 000 de cagnotte ; au-dessus, 5 % de la cagnotte (7,5 % si elle est masquée) ; la vente qui fait dépasser passe, on bloque ensuite |
@@ -210,6 +210,15 @@ Précisions de LeKiwi06 (réponses du 04/10/2026) : gamme 1 à 10 = 64 émeraude
 diamant) ; « chaque famille d'item a son sous-tirage comme les têtes, il tire dans les items de sa famille qui
 correspondent à la gamme de prix qu'on lui demande » (familles : diorite, cuivre, fleur, terres, spruce, potion,
 améthyste, boue, terres cuites) ; ne pas compter les variantes non obtenables en survie dans l'inventaire.
+
+Modification de LeKiwi06 (09/10/2026) :
+
+> j'aimerai modifier le tirage des items pour les rachats de la semaine , il faudrait tirer 10 items aléatoire  en gardant le systeme de " famille " mais sans restriction de 2 par ordre de prix
+>
+> aussi tout a l'heure , des items issues du nether ont été tirés alors qu'il est fermé , ce n'est pas normal
+
+Les gammes de prix ne servent plus qu'à la taille des lots. Un objet issu d'une dimension fermée dans KS_Dimensions
+n'est jamais proposé, même si la dimension est fermée après le tirage (il est alors remplacé).
 
 ## Magasins (version du 29/09/2026, remplacée)
 
