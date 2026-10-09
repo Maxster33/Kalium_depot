@@ -122,3 +122,15 @@ Proposé, sans réponse : garantir la moitié de chaque récompense en récompen
 - Reste à trancher par LeKiwi06 : admins et comptes de test dans le rattrapage ; tops de la semaine des semaines
   reconstruites ; donner les coffres un par un ou les regrouper ; déduire ce qui a déjà été donné depuis le 09/10 à 07:12.
 - Reste à faire : déployer les 1.3.0 sur son accord ; coder le rattrapage une fois ses réponses reçues.
+
+## Suite (17 h 30) : un gros coffre de rattrapage par joueur
+
+- LeKiwi06 : « fais un gros coffre pour rattraper tous les petits ».
+- Fait (KG_Rewards 1.3.0, toujours non déployé) : `/kgrewards rattrapage <boîte> [confirmer]`, un seul coffre par joueur,
+  envoi unique ; `rattrapage.yml` calculé hors dépôt (10 joueurs, 1 042 coffres remplacés, 6 274 émeraudes de valeur
+  moyenne, tops de Kanvas compris).
+- Choix de Claude signalés : un seul coffre pour tout le rattrapage (pas seulement les minimales) ; contenu tiré dans
+  les pools comme un coffre normal de cette valeur (donc avec de la chance : pour 1 973 de moyenne, 1 coffre sur 10 vaut
+  moins de 800) ; part du Légendaire lissée entre deux réglages de niveaux.
+- Reste à trancher : admins et comptes de test ; tops des semaines reconstruites ; garantir ou non une partie du coffre.
+- Reste à faire : déployer sur accord ; lancer le rattrapage à l'ouverture, sur sa commande.

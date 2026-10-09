@@ -126,4 +126,22 @@ et les top 100, 50, 25, et 10 ».
 Effet sur les gains (simulation des paliers, hors tops) : un joueur régulier passe d'environ 30 à 22 émeraudes par heure
 de mini-jeu, un occasionnel de 16 à 14, un acharné de 41 à 32.
 
+**Rattrapage à l'ouverture** (LeKiwi06 : « à l'ouverture chaque joueur gagne d'un coup tous les coffres qu'il aurait dû gagner
+depuis le début des scores », puis « fais un gros coffre pour rattraper tous les petits ») : `/kgrewards rattrapage <boîte>`
+(admins et console) lit `plugins/KG_Rewards/rattrapage.yml` et affiche, joueur par joueur, le coffre prévu ;
+`/kgrewards rattrapage <boîte> confirmer` tire et envoie **un seul gros coffre par joueur** (raison « Rattrapage : n
+récompenses gagnées depuis le début des scores », valeur moyenne affichée sur le coffre), puis renomme le fichier en
+`rattrapage-envoye.yml` : le rattrapage ne part qu'une fois. Aucun palier ni top n'est modifié.
+
+- Le fichier est calculé hors du serveur (`sortie/rewards/retro.py`, hors dépôt) : pour chaque joueur, la valeur
+  moyenne de tous les coffres qu'il aurait eus avec les règles de la 1.3.0, un nombre de piles (2 à 27) et les
+  fréquences des pools qui donnent cette valeur. Les tops de Kanvas (notes reçues) y sont ajoutés : un seul coffre
+  par joueur pour tout.
+- Calculé sur les scores du 09/10/2026 (dernier point marqué à 03:51, avant que les tables de butin existent) :
+  aucun coffre réel n'avait encore été donné, rien n'est donc compté deux fois ; les paliers franchis ensuite sont
+  récompensés normalement.
+- Hypothèses de Claude, non tranchées par LeKiwi06 : tops de la semaine des semaines du 19 et du 26 septembre
+  reconstruits depuis le journal des parties ; tops permanents comptés une fois, au rang actuel ; admins et comptes
+  de test inclus.
+
 **Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

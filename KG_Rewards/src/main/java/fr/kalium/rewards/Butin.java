@@ -112,7 +112,19 @@ final class Butin {
      * quantités multipliées (prestige : objets arrondis au hasard, argent à l'unité inférieure).
      */
     List<Map<String, Object>> tirer(String periode, String niveau, double multiplicateur) {
-        Niveau n = niveau(periode, niveau);
+        return tirer(niveau(periode, niveau), multiplicateur);
+    }
+
+    /** 1.3.0 : même tirage avec un réglage libre (tirages, fréquences, valeur), pour le coffre de rattrapage. */
+    List<Map<String, Object>> tirer(int tirages, Map<String, Integer> frequences, double valeur) {
+        Niveau n = new Niveau();
+        n.tirages = tirages;
+        n.frequences.putAll(frequences);
+        n.valeur = valeur;
+        return tirer(n, 1);
+    }
+
+    private List<Map<String, Object>> tirer(Niveau n, double multiplicateur) {
         Contenu contenu = new Contenu();
         contenu.valeur = n.valeur * multiplicateur;
         ThreadLocalRandom hasard = ThreadLocalRandom.current();

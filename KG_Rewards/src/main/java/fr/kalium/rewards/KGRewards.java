@@ -113,6 +113,10 @@ public final class KGRewards extends JavaPlugin implements Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length > 0 && args[0].equalsIgnoreCase("rattrapage") && sender.hasPermission("kgrewards.admin")) {
+            rattraper(sender, args);
+            return true;
+        }
         if (args.length > 0 && args[0].equalsIgnoreCase("test") && sender.hasPermission("kgrewards.admin")) {
             tester(sender, args);
             return true;
@@ -135,6 +139,80 @@ public final class KGRewards extends JavaPlugin implements Listener {
      * tables de butin et les envoie comme de vraies récompenses, dans la boîte de config.yml ou dans celle indiquée
      * (ex. kixster). Aucun palier ni top n'est marqué comme atteint.
      */
+    /**
+     * 1.3.0 (LeKiwi06, 09/10/2026 : « à l'ouverture chaque joueur gagne d'un coup tous les coffres qu'il aurait dû gagner
+     * depuis le début des scores », puis « fais un gros coffre pour rattraper tous les petits ») :
+     * /kgrewards rattrapage <boîte> affiche ce que contient plugins/KG_Rewards/rattrapage.yml (un gros coffre par joueur :
+     * valeur moyenne, tirages, fréquences des pools ; fichier calculé hors du serveur à partir des scores) ;
+     * /kgrewards rattrapage <boîte> confirmer tire et envoie un coffre par joueur, puis range le fichier sous le nom
+     * rattrapage-envoye.yml : le rattrapage ne peut donc partir qu'une fois. Aucun palier ni top n'est modifié.
+     */
+    private void rattraper(CommandSender sender, String[] args) {
+        if (args.length < 2 || !args[1].toLowerCase().matches("[a-z0-9_-]{1,32}")) {
+            sender.sendMessage("Usage : /kgrewards rattrapage <boîte> [confirmer]");
+            return;
+        }
+        String boite = args[1].toLowerCase();
+        java.io.File fichier = new java.io.File(getDataFolder(), "rattrapage.yml");
+        if (!fichier.isFile()) {
+            sender.sendMessage("Aucun rattrapage à envoyer (pas de rattrapage.yml, ou déjà envoyé).");
+            return;
+        }
+        org.bukkit.configuration.ConfigurationSection joueurs = org.bukkit.configuration.file.YamlConfiguration
+                .loadConfiguration(fichier).getConfigurationSection("joueurs");
+        if (joueurs == null || joueurs.getKeys(false).isEmpty()) {
+            sender.sendMessage("rattrapage.yml ne contient aucun joueur.");
+            return;
+        }
+        boolean envoyer = args.length > 2 && args[2].equalsIgnoreCase("confirmer");
+        int envoyes = 0;
+        double total = 0;
+        for (String cle : joueurs.getKeys(false)) {
+            org.bukkit.configuration.ConfigurationSection j = joueurs.getConfigurationSection(cle);
+            java.util.UUID uuid;
+            try {
+                uuid = java.util.UUID.fromString(cle);
+            } catch (IllegalArgumentException e) {
+                sender.sendMessage("Joueur illisible ignoré : " + cle);
+                continue;
+            }
+            String nom = j.getString("nom", "?");
+            double valeur = j.getDouble("valeur");
+            int tirages = j.getInt("tirages");
+            int coffres = j.getInt("coffres");
+            Map<String, Integer> frequences = new java.util.LinkedHashMap<>();
+            org.bukkit.configuration.ConfigurationSection f = j.getConfigurationSection("frequences");
+            if (f != null) {
+                f.getKeys(false).forEach(pool -> frequences.put(pool, f.getInt(pool)));
+            }
+            total += valeur;
+            if (!envoyer) {
+                sender.sendMessage(nom + " : 1 gros coffre, valeur moyenne " + Math.round(valeur) + " émeraudes, " + tirages
+                        + " piles (remplace " + coffres + " coffres)");
+                continue;
+            }
+            List<Map<String, Object>> contenu = butin.tirer(tirages, frequences, valeur);
+            if (contenu.isEmpty()) {
+                sender.sendMessage(nom + " : coffre vide (pools introuvables), rien envoyé.");
+                continue;
+            }
+            envois.envoyer(uuid, nom, "Rattrapage : " + coffres + " récompenses gagnées depuis le début des scores",
+                    contenu, boite);
+            envoyes++;
+        }
+        if (!envoyer) {
+            sender.sendMessage(joueurs.getKeys(false).size() + " joueur(s), " + Math.round(total) + " émeraudes de valeur "
+                    + "moyenne au total. Pour envoyer : /kgrewards rattrapage " + boite + " confirmer");
+            return;
+        }
+        java.io.File fait = new java.io.File(getDataFolder(), "rattrapage-envoye.yml");
+        if (!fichier.renameTo(fait)) {
+            getLogger().severe("Rattrapage envoyé, mais rattrapage.yml n'a pas pu être renommé : le retirer à la main.");
+        }
+        sender.sendMessage(envoyes + " gros coffre(s) de rattrapage envoyé(s) vers la boîte « " + boite + " ».");
+        getLogger().info("Rattrapage envoyé par " + sender.getName() + " : " + envoyes + " coffre(s), boîte " + boite + ".");
+    }
+
     private void tester(CommandSender sender, String[] args) {
         if (args.length < 4) {
             sender.sendMessage("Usage : /kgrewards test <joueur> <semaine | mois | permanent> <niveau | tout> [nombre] [boîte]");
