@@ -45,8 +45,12 @@ pour KalGames2, Serveur Jeux et Kal-Test-Dev), une modification du fichier seul 
 (symptôme en jeu : « Votre serveur n'a pas envoyé de requête de transfert vers le proxy »). Raccordement
 confirmé par Maxster33 le 24/09/2026.
 
-**Ports voicechat** (UDP, attribués par Minestrator) : proxy 44301, lobby 43841, Kixster 40046, kal-games 40002,
-Kal-Test-Dev 45595, Serveur Jeux 43131, KalGames2 43374.
+**Ports voicechat** (UDP, attribués par Minestrator) : proxy 44301 (inutilisé), lobby 43841, Kixster 40046,
+Event 40002 (ex kal-games), Kanvas 45595 (ex Kal-Test-Dev), Serveur Jeux 43131, Kal-Games 43374 (ex KalGames2).
+**Chat vocal derrière le proxy** (décision de LeKiwi06, 09/10/2026) : pas de plugin voicechat sur le proxy ; dans
+`plugins/voicechat/voicechat-server.properties` de chaque serveur Paper, `voice_host=<IP de jeu du serveur>:<son port
+voicechat>` (sans lui, le client vise l'IP du proxy avec le port du serveur et ne se connecte à rien). Si l'IP d'un
+serveur change, son `voice_host` est à changer aussi.
 
 - **KLM_Menu** (tous les serveurs Paper, anciennement KaliumMenu) : couche profonde des interfaces - navigation
   entre serveurs et boussole, boîte à outils des menus (`fr.kalium.menu.api`), catalogue « Interfaces » où les
@@ -301,10 +305,16 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
 - **Raccordement du 24/09/2026 (Maxster33)** : actif seulement après redémarrage de KalGames2, Serveur Jeux,
   Kal-Test-Dev, du lobby (voicechat, destinations KLM_Menu) puis du proxy. À vérifier dans les journaux : Floodgate
   sans erreur de clé, KLM_Menu chargé, connexion par le proxy (`/server kalgames2`...).
-- voicechat : ports réglés sur lobby, KalGames2, Serveur Jeux et Kal-Test-Dev ; **pas encore** sur Kixster (40046)
-  ni kal-games (40002) ; rien sur le proxy (44301 : aucun plugin voicechat sur Velocity pour l'instant). `voice_host`
-  laissé vide partout : derrière le proxy, les clients risquent de viser l'IP du proxy → à décider (voice_host
-  `<ip>:<port>` par serveur, ou voicechat sur le proxy).
+- **voicechat réglé sur les 6 serveurs Paper le 09/10/2026 à 18:32 (LeKiwi06, avec Claude ; serveurs allumés) :
+  actif après redémarrage de chaque serveur, non testé en jeu.** `voice_host` posé partout (lobby
+  `91.197.6.152:43841`, Kal-Games `91.197.6.24:43374`, Kanvas `91.197.6.215:45595`, Kixster `91.197.6.212:40046`,
+  Event `51.254.174.133:40002`, Serveur Jeux `91.197.6.65:43131`) ; `port` corrigé sur Kixster et Event (ils étaient
+  restés à 24454, port par défaut jamais attribué). Rien d'autre ne change (voicechat 2.6.24, distance 48 blocs,
+  groupes activés). Anciens fichiers dans `/plugins/_removed-voicechat-config-2026-10-09/` de chaque serveur. Rien
+  sur le proxy. À vérifier après redémarrage : journal (`Voice chat server started at port …`), fichier non réécrit,
+  puis en jeu avec le mod (icône du micro sans prise barrée). Si la voix ne se connecte pas sur un serveur : port
+  UDP à contrôler dans le panneau Minestrator (40002 d'Event : attribué le 24/09 quand ce serveur s'appelait
+  kal-games, supposé toujours valable). Les joueurs Bedrock n'ont pas le chat vocal (pas de mod).
 - Kal-Test-Dev garde son propre Geyser-Spigot (crossplay direct) : devenu inutile derrière le proxy (Geyser tourne
   sur le proxy) ; non retiré (pas demandé). Le lobby a aussi un `Geyser-Spigot.jar` qui ne se charge pas (aucun dossier).
 - Lobby : la destination KLM_Menu `Kixster` (désactivée) vise un nom qui n'existe plus dans Velocity depuis le
@@ -402,6 +412,8 @@ sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre par
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (09/10/2026, 18:32) : Simple Voice Chat réglé sur les 6 serveurs Paper ; actif après redémarrage, non testé.** Demande de LeKiwi06 : « il faudrait configurer simple voice chat dans tout les serveurs ». Constaté en lecture seule : voicechat 2.6.24 présent sur les 6 serveurs Paper, absent du proxy ; `voice_host` vide partout alors que chaque serveur a sa propre IP (le client visait donc le proxy) ; Kixster et Event encore sur le port par défaut 24454. Ses choix : « voice_host par serveur » (plutôt que voicechat-velocity sur le proxy, dont la seule version est une alpha du 28/05) et « Oui, Kanvas aussi ». Envoyé à 18:32 : `voicechat-server.properties` de chaque serveur, deux lignes au plus (`voice_host`, et `port` sur Kixster 40046 et Event 40002) ; anciens fichiers dans `/plugins/_removed-voicechat-config-2026-10-09/`. Détail et suite : « Points ouverts ». Même session : règle 4.6 de `REGLES.md` (« Ne pas toucher au serveur Kal-Test-Dev sauf demande explicite ») supprimée à sa demande (« la règle pour kal-test-dev est obsolète, il n'est plus un serveur de testes depuis longtemps »).
 
 **Ajout (09/10/2026, 18:31) : fiche d'un joueur complétée, cinq plugins envoyés ensemble sur Kixster (accord de LeKiwi06 : « Oui, sur Kixster ») ; non testés, actifs après redémarrage ; réservations libérées.** Après « vas-y pour la suite » (LeKiwi06), le « etc. » de la demande : KS_AntiCheat 1.3.0 ajoute à la fiche d'un joueur « Économie » (solde, magasin, ventes de ses boutiques, derniers achats, derniers `/echange`), « Maisons » (lit, maison du spawn, emplacements, avec téléportation), « Jetons et récompenses » (jetons, badges, récompenses en attente, coffres de mort avec téléportation) et la téléportation à un claim. KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2 et KS_RewardsGUI 1.4.1 ne gagnent qu'une lecture publique (rien ne change pour les joueurs). Nouveau fichier `plugins/KS_AntiCheat/echanges.log` : les `/echange` sont notés à partir de cette version (KS_Economy n'en gardait aucune trace). Avant l'envoi : les cinq jars en place identiques à `jars-deployes/`. Event n'est pas touché. Empilé sur des versions non testées, à la demande de LeKiwi06. À vérifier en jeu : têtes des joueurs hors ligne, point d'arrivée d'un claim, arrivée sur un lit ou un coffre de mort. Détail : `KS_AntiCheat/JOURNAL.md`.
 

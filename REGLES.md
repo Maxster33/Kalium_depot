@@ -132,8 +132,7 @@ mot de passe : sessions enregistrées, ou mot de passe tapé par l'humain.
 4. Ne jamais taper d'accents dans l'éditeur intégré de WinSCP (texte corrompu) : un texte accentué se change
    dans le code source, puis on recompile.
 5. Claude ne redémarre jamais un serveur : c'est l'humain qui le fait.
-6. Ne pas toucher au serveur Kal-Test-Dev sauf demande explicite.
-7. Dans le même push, juste après le déploiement : copie du nouveau jar dans `jars-deployes/` (ancien jar
+6. Dans le même push, juste après le déploiement : copie du nouveau jar dans `jars-deployes/` (ancien jar
    retiré de ce dossier) et mise à jour du tableau des versions de `REPRISE_PROJET.md`.
 
    Pourquoi : `jars-deployes/` et `REPRISE_PROJET.md` sont la seule façon pour l'autre équipe de savoir ce qui
