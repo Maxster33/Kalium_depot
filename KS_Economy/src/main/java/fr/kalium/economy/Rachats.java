@@ -416,8 +416,42 @@ final class Rachats implements CommandExecutor {
                 + "cagnotte).", "quota", KSEconomy.points(quota), "pourcent", pourcent(joueur.getUniqueId()));
     }
 
-    /** 1.5.0 : l'objet d'un rachat dans le menu (l'objet du jeu, la potion, ou une étoile pour un objet spécial). */
-    private static ItemStack icone(Offre o) {
+    /**
+     * 1.5.1 : l'apparence d'un objet custom du barème, créé par KS_KaliumGive (mêmes id_custom que /kaliumgive), sans
+     * la marque de son plugin : l'objet du menu n'est qu'une image. Une étoile si l'objet ne peut pas être créé
+     * (KS_KaliumGive ou le plugin de l'objet absent). Appel par réflexion : KS_KaliumGive dépend de plugins qui
+     * dépendent de KS_Economy (KS_Jetons, KS_Elixir), une dépendance dans l'autre sens ferait une boucle.
+     */
+    private ItemStack custom(Entree e) {
+        ItemStack objet = null;
+        Plugin give = plugin.getServer().getPluginManager().getPlugin("KS_KaliumGive");
+        if (give != null && give.isEnabled()) {
+            try {
+                objet = (ItemStack) give.getClass().getMethod("creer", String.class).invoke(null, e.id());
+            } catch (ReflectiveOperationException | RuntimeException erreur) {
+                plugin.getLogger().warning("Rachats : objet custom " + e.id() + " non créé : " + erreur);
+            }
+        }
+        if (objet == null) {
+            // Le bloc de charbon de bois (KS_Crafts, inconnu de KS_KaliumGive) est un bloc de charbon marqué.
+            return new ItemStack(e.id().equals("bloc_charbon_de_bois") ? Material.COAL_BLOCK : Material.NETHER_STAR);
+        }
+        ItemMeta meta = objet.getItemMeta();
+        if (meta != null) {
+            PersistentDataContainer marques = meta.getPersistentDataContainer();
+            for (NamespacedKey cle : new ArrayList<>(marques.getKeys())) {
+                marques.remove(cle);
+            }
+            objet.setItemMeta(meta);
+        }
+        return objet;
+    }
+
+    /**
+     * 1.5.0 : l'objet d'un rachat dans le menu (l'objet du jeu, la potion ; 1.5.1 : l'objet custom lui-même, avant
+     * une étoile du Nether pour tous).
+     */
+    private ItemStack icone(Offre o) {
         Entree e = o.entree();
         ItemStack objet;
         if (e.materiel() != null) {
@@ -434,7 +468,7 @@ final class Rachats implements CommandExecutor {
                 }
             }
         } else {
-            objet = new ItemStack(Material.NETHER_STAR);
+            objet = custom(e);
         }
         objet.setAmount(Math.max(1, Math.min(o.quantite(), objet.getMaxStackSize())));
         return objet;

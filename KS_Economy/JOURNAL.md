@@ -392,3 +392,28 @@ stock d'une boutique restent de vrais coffres.
 **Déployé le 09/10/2026 à 19:09 sur Event (à la place de la 1.4.0) et Kixster (à la place de la 1.4.1), avec KLM_Menu 2.11.0 (accord de LeKiwi06 : « oui déploie » ; jars en place vérifiés identiques à `jars-deployes/` ; anciens jars dans `_removed-ks_economy-1.4.0/` et `_removed-ks_economy-1.4.1/`). Actif après redémarrage. Statut : non testé en jeu
 (aucun des 28 écrans n'a été ouvert ; seule la coupe des descriptions a été essayée hors serveur).** La 1.5.0 part de
 la 1.4.1 (Kixster, non testée) : elle garde `KSEconomy.resume` pour KS_AntiCheat 1.3.0. Event est en 1.4.0.
+
+## 1.5.1 - rachats : les objets custom montrent leur vrai objet (09/10/2026, LeKiwi06)
+
+Signalement de LeKiwi06 : « les items dans le rachat de la semaine sont buggué quand c'est des items custom on voit
+une nether star ».
+
+- **Cause** : depuis la 1.5.0 (menus en coffres), l'objet d'un rachat était l'objet du jeu pour un objet vanilla, la
+  potion pour une potion, et une étoile du Nether pour **tout** objet custom du barème (361 lignes : 330 têtes,
+  11 élixirs, 8 spawners, 5 fioles d'expérience, Estomac du gardien, Clé de l'End, Bedrock Breaker, Changeur de
+  Biome, Fragment et Cœur de Spawner, bloc de charbon de bois). Écrit ainsi en 1.5.0, pas une panne.
+- **Correction** : l'objet custom est créé par KS_KaliumGive (`KSKaliumGive.creer(id)`, les id du barème sont ceux de
+  `/kaliumgive` : relu ligne par ligne contre la liste de KS_KaliumGive), puis habillé comme les autres (nom
+  « N x objet », prix, « Tu en as »).
+  Liste des rachats et écran « Vendre au serveur ».
+- Le bloc de charbon de bois (KS_Crafts) n'est pas dans KS_KaliumGive : il est montré par un bloc de charbon (c'est
+  son apparence en jeu).
+- Choix de Claude, signalés :
+  - l'objet du menu ne porte **pas** la marque de son plugin (retirée) : c'est une image, pas un vrai objet custom ;
+  - appel par réflexion, sans `softdepend` : KS_KaliumGive dépend de KS_Jetons et KS_Elixir, qui dépendent de
+    KS_Economy ; une dépendance dans l'autre sens ferait une boucle au chargement des plugins.
+- Limite : sans KS_KaliumGive (ou si le plugin de l'objet est désactivé), l'étoile du Nether reste. KS_KaliumGive est
+  sur Event et Kixster (1.9.0).
+- Aucun autre changement : reconnaissance des objets à la vente, prix, tirage, quota inchangés. Pas de nouveau texte.
+
+**Compilé le 09/10/2026 (`sortie/KS_Economy-1.5.1.jar`). Non déployé. Statut : non testé en jeu.**
