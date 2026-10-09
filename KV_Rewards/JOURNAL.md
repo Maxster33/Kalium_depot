@@ -48,4 +48,4 @@ Tire des récompenses dans les tables de butin et les envoie comme de vraies ré
 comme atteint. Pour cela, un message en attente peut porter sa propre boîte (première ligne `#boite:<nom>` dans
 `envois.yml`, retirée à l’envoi). Les vraies récompenses partent toujours vers la boîte de `config.yml`.
 
-**Déployé sur Kanvas le 09/10/2026 à 07:05 (LeKiwi06 ; 1.0.0 dans `_removed-kv_rewards-1.0.0/`) avec `plugins/KV_Rewards/butin.yml` (aucun n'existait avant), actif après redémarrage. `config.yml` du serveur non touché. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 09/10/2026 à 07:05 (LeKiwi06 ; 1.0.0 dans `_removed-kv_rewards-1.0.0/`) avec `plugins/KV_Rewards/butin.yml` (aucun n'existait avant), actif depuis le redémarrage de 07:12 (journal lu : 1.1.0 activée, aucune erreur, aucun objet du `butin.yml` refusé). `config.yml` du serveur non touché. Statut : non testé en jeu.**
