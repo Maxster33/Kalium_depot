@@ -192,3 +192,5 @@ Limites :
 - Les claims dont le joueur est seulement membre ne sont pas listés ; pas de téléportation vers un claim.
 
 **Déployé sur Kixster le 09/10/2026 à 18:11 (LeKiwi06 : « Kixster seulement » ; 1.1.1 dans `_removed-ks_anticheat-1.1.1/` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage de Kixster. Event reste en 1.1.1. Statut : non testé en jeu.**
+
+**Journal de Kixster lu après le redémarrage de 18:15 (09/10/2026) : 1.2.0 chargée et activée sans erreur, après SimpleClaimSystem ; KLM_Menu trouve les interfaces de KS_AntiCheat. Personne n'avait encore ouvert le menu : la liste en têtes et les claims restent à tester en jeu.**

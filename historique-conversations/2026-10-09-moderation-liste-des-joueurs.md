@@ -32,5 +32,5 @@ pour voir leur inventaire, ender chest, leurs liste de claim, etc »
 
 ## Reste à faire
 
-- Redémarrage de Kixster par LeKiwi06, puis test en jeu de la 1.2.0.
+- Test en jeu de la 1.2.0 (Kixster redémarré par LeKiwi06 à 18:15 ; journal lu : activée sans erreur, menu pas encore ouvert). À regarder : les têtes des joueurs hors ligne (comportement vérifié dans Paper 26.2 seulement, Kixster est en 26.3).
 - Version suivante : le « etc. » (voir « Décisions »).
