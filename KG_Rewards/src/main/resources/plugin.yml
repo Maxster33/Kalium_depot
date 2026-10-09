@@ -8,7 +8,7 @@ depend: [KG_ScoreBoards, KLM_Menu]
 commands:
   kgrewards:
     description: Progression des recompenses (et tables de butin pour les admins).
-    usage: /kgrewards [admin]
+    usage: "/kgrewards [admin] ; /kgrewards test <joueur> <periode> <niveau | tout> [nombre] [boite]"
 permissions:
   kgrewards.admin:
     description: Modifier les tables de butin.

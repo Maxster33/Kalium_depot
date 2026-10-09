@@ -41,4 +41,11 @@ Limites : comme KG_Rewards 1.1.0 (écrit sans serveur de test ; empilé sur la 1
 LeKiwi06). Le `butin.yml` généré pour Kanvas (mois, permanent, concours) est dans `sortie/rewards/butin/` (hors
 dépôt) ; ses paliers reposent sur une hypothèse de 20 notes reçues par heure de build, jamais mesurée.
 
+**Commande d’essai** (demande de LeKiwi06 : « donne moi 10 récompenses de chaque dans mon reward sur kixster pour tester ») :
+`/kvrewards test <joueur> <mois | permanent | concours> <niveau | tout> [nombre] [boîte]` (admins `kvrewards.admin` et console ; nombre de 1 à 100).
+Tire des récompenses dans les tables de butin et les envoie comme de vraies récompenses (raison « Essai n - <niveau>
+(<période>) »), dans la boîte de `config.yml` ou dans celle indiquée (ex. `kixster`) ; aucun palier ni top n’est marqué
+comme atteint. Pour cela, un message en attente peut porter sa propre boîte (première ligne `#boite:<nom>` dans
+`envois.yml`, retirée à l’envoi). Les vraies récompenses partent toujours vers la boîte de `config.yml`.
+
 **Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

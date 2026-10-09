@@ -8,7 +8,7 @@ depend: [KV_Plots, KLM_Menu]
 commands:
   kvrewards:
     description: Progression des recompenses (et tables de butin pour les admins).
-    usage: /kvrewards [admin]
+    usage: "/kvrewards [admin] ; /kvrewards test <joueur> <periode> <niveau | tout> [nombre] [boite]"
 permissions:
   kvrewards.admin:
     description: Modifier les tables de butin.

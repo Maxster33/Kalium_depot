@@ -64,4 +64,11 @@ format des fichiers générés ont été vérifiés hors serveur (lecteur YAML d
 Les `butin.yml` générés (Kal-Games et Kanvas) sont dans `sortie/rewards/butin/` (hors dépôt) ; valeurs validées par
 LeKiwi06 le 09/10/2026.
 
+**Commande d’essai** (demande de LeKiwi06 : « donne moi 10 récompenses de chaque dans mon reward sur kixster pour tester ») :
+`/kgrewards test <joueur> <semaine | mois | permanent> <niveau | tout> [nombre] [boîte]` (admins `kgrewards.admin` et console ; nombre de 1 à 100).
+Tire des récompenses dans les tables de butin et les envoie comme de vraies récompenses (raison « Essai n - <niveau>
+(<période>) »), dans la boîte de `config.yml` ou dans celle indiquée (ex. `kixster`) ; aucun palier ni top n’est marqué
+comme atteint. Pour cela, un message en attente peut porter sa propre boîte (première ligne `#boite:<nom>` dans
+`envois.yml`, retirée à l’envoi). Les vraies récompenses partent toujours vers la boîte de `config.yml`.
+
 **Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

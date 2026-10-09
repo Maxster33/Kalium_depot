@@ -24,6 +24,8 @@ final class Envois {
     private final KVRewards plugin;
     private final File fichier;
     private final List<String> enAttente = new ArrayList<>();
+    /** 1.1.0 : première ligne d'un message en attente destiné à une autre boîte que celle de config.yml. */
+    private static final String MARQUE_BOITE = "#boite:";
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
 
     Envois(KVRewards plugin) {
@@ -34,6 +36,11 @@ final class Envois {
 
     /** Prépare et met en file une récompense (rien si le contenu est vide). */
     void envoyer(UUID joueur, String nom, String raison, List<Map<String, Object>> contenu) {
+        envoyer(joueur, nom, raison, contenu, null);
+    }
+
+    /** 1.1.0 : boite non nulle = boîte aux lettres de ce message (essais vers un autre serveur), sinon celle de config.yml. */
+    void envoyer(UUID joueur, String nom, String raison, List<Map<String, Object>> contenu, String boite) {
         if (contenu.isEmpty()) {
             plugin.getLogger().info("Récompense vide (niveau non configuré) : " + nom + " - " + raison);
             return;
@@ -46,7 +53,7 @@ final class Envois {
         yaml.set("date", System.currentTimeMillis());
         yaml.set("contenu", contenu);
         synchronized (this) {
-            enAttente.add(yaml.saveToString());
+            enAttente.add((boite == null ? "" : MARQUE_BOITE + boite + "\n") + yaml.saveToString());
             sauver();
         }
         plugin.getLogger().info("Récompense pour " + nom + " : " + raison);
@@ -63,8 +70,8 @@ final class Envois {
         if (url.isBlank() || jeton.isBlank()) {
             return;
         }
-        String base = (url.endsWith("/") ? url.substring(0, url.length() - 1) : url) + "/mail/"
-                + plugin.getConfig().getString("boite", "event");
+        String base = (url.endsWith("/") ? url.substring(0, url.length() - 1) : url) + "/mail/";
+        String boiteParDefaut = plugin.getConfig().getString("boite", "event");
         while (true) {
             String message;
             synchronized (this) {
@@ -73,10 +80,16 @@ final class Envois {
                 }
                 message = enAttente.get(0);
             }
+            String boite = boiteParDefaut;
+            String corps = message;
+            if (message.startsWith(MARQUE_BOITE) && message.indexOf('\n') > 0) {
+                boite = message.substring(MARQUE_BOITE.length(), message.indexOf('\n')).trim();
+                corps = message.substring(message.indexOf('\n') + 1);
+            }
             try {
-                HttpResponse<String> reponse = http.send(HttpRequest.newBuilder(URI.create(base))
+                HttpResponse<String> reponse = http.send(HttpRequest.newBuilder(URI.create(base + boite))
                         .timeout(Duration.ofSeconds(10)).header("X-Kalium-Relay-Token", jeton)
-                        .POST(HttpRequest.BodyPublishers.ofString(message)).build(), HttpResponse.BodyHandlers.ofString());
+                        .POST(HttpRequest.BodyPublishers.ofString(corps)).build(), HttpResponse.BodyHandlers.ofString());
                 if (reponse.statusCode() != 200) {
                     plugin.getLogger().warning("Relais : réponse " + reponse.statusCode() + " à l'envoi d'une récompense.");
                     return;
