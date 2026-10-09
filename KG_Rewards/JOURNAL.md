@@ -38,3 +38,30 @@ Plugin de kal-games : récompenses des mini-jeux. Cahier des charges : catégori
 - **Bouton « Récompenses »** de KLM_Menu 2.6.0 : déclaré (`Recompenses`) ; ouvre la progression (bouton « Tables de butin » pour les admins). **KLM_Menu 2.6.0 obligatoire sur kal-games.**
 
 **Déployé sur Kal-Games le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (nouveau), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.1.0 - objets vanilla par leur id dans butin.yml (09/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « ajoute la lecture par id et génère les butin.yml ». Les tables de butin (5 pools, 96 entrées,
+54 niveaux) sont préparées dans un tableau ; les saisir dans l'interface admin demandait de déposer chaque objet
+vanilla dans un coffre, un par un.
+
+Cause : un objet vanilla n'était enregistré que sous la forme `donnees` (l'objet sérialisé par le serveur, en base64),
+qu'on ne peut pas écrire hors du serveur.
+
+- **`butin.yml`** : un objet vanilla peut aussi être écrit par son id, `{type: objet, id: diamond, nombre: 2}`, avec au
+  besoin `enchantements: {mending: 1}` (livre enchanté : enchantement stocké ; autre objet : enchantement posé). Au
+  chargement, il est remplacé par l'objet créé par le serveur (`donnees`), exactement comme s'il avait été déposé dans
+  l'interface admin : rien ne change pour le tirage, l'envoi ni KS_RewardsGUI.
+- Id ou enchantement inconnu : l'élément est ignoré et signalé dans la console (`butin.yml : objet inconnu « ... »`).
+- Le fichier garde les ids tant que personne ne modifie une table dans l'interface admin ; à la première modification,
+  le plugin réécrit tout le fichier avec les `donnees` (comportement inchangé), commentaires compris.
+- Aucun autre changement (interface admin, paliers, tops, envois).
+
+Limites : écrit sans serveur de test ; la création des objets par id n'a été vérifiée qu'à la compilation. Les ids et le
+format des fichiers générés ont été vérifiés hors serveur (lecteur YAML du plugin, liste des objets de l'API Paper
+26.2). Empilé sur la 1.0.0 jamais testée en jeu (demande explicite de LeKiwi06).
+
+Les `butin.yml` générés (Kal-Games et Kanvas) sont dans `sortie/rewards/butin/` (hors dépôt) ; valeurs validées par
+LeKiwi06 le 09/10/2026.
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

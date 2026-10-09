@@ -1,11 +1,21 @@
 package fr.kalium.kvrewards;
 
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +30,10 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * Un élément de contenu suit le format de KS_RewardsGUI : {type: objet, donnees: base64, nombre: n},
  * {type: custom, id: id_custom, nombre: n}, {type: argent, montant: n}.
+ *
+ * 1.1.0 (LeKiwi06, 09/10/2026 : « ajoute la lecture par id ») : dans butin.yml, un objet vanilla peut aussi être écrit
+ * par son id, {type: objet, id: diamond, nombre: 2}, avec au besoin enchantements: {mending: 1} ; il est transformé au
+ * chargement en « donnees » (l'objet créé par le serveur, comme s'il avait été déposé dans l'interface admin).
  */
 final class Butin {
 
@@ -161,9 +175,53 @@ final class Butin {
         for (Map<?, ?> m : brut) {
             Map<String, Object> el = new LinkedHashMap<>();
             m.forEach((k, v) -> el.put(String.valueOf(k), v));
-            liste.add(el);
+            if (objetParId(el)) {
+                liste.add(el);
+            }
         }
         return liste;
+    }
+
+    /**
+     * 1.1.0 : objet vanilla écrit par son id ({type: objet, id: ..., nombre: n} sans « donnees ») : remplacé par l'objet
+     * sérialisé. Renvoie false si l'id n'est pas un objet du jeu : l'élément est alors ignoré (signalé dans la console).
+     */
+    private static boolean objetParId(Map<String, Object> el) {
+        if (!"objet".equals(el.get("type")) || el.containsKey("donnees")) {
+            return true;
+        }
+        String id = String.valueOf(el.get("id"));
+        Material materiau = el.get("id") == null ? null : Material.matchMaterial(id);
+        if (materiau == null || !materiau.isItem() || materiau.isAir()) {
+            Bukkit.getLogger().severe("[KV_Rewards] butin.yml : objet inconnu « " + id + " », élément ignoré.");
+            return false;
+        }
+        ItemStack objet = new ItemStack(materiau);
+        if (el.get("enchantements") instanceof Map<?, ?> enchantements) {
+            ItemMeta meta = objet.getItemMeta();
+            for (Map.Entry<?, ?> e : enchantements.entrySet()) {
+                String cle = String.valueOf(e.getKey()).toLowerCase();
+                Enchantment enchantement = NamespacedKey.fromString(cle) == null ? null : RegistryAccess.registryAccess()
+                        .getRegistry(RegistryKey.ENCHANTMENT).get(NamespacedKey.fromString(cle));
+                if (enchantement == null) {
+                    Bukkit.getLogger().severe("[KV_Rewards] butin.yml : enchantement inconnu « " + cle + " » sur " + id
+                            + ", élément ignoré.");
+                    return false;
+                }
+                int niveau = (int) Math.max(1, nombre(e.getValue()));
+                if (meta instanceof EnchantmentStorageMeta livre) {
+                    livre.addStoredEnchant(enchantement, niveau, true);
+                } else {
+                    meta.addEnchant(enchantement, niveau, true);
+                }
+            }
+            objet.setItemMeta(meta);
+        }
+        el.remove("id");
+        el.remove("enchantements");
+        el.put("donnees", Base64.getEncoder().encodeToString(objet.serializeAsBytes()));
+        el.put("nombre", Math.max(1, nombre(el.get("nombre"))));
+        return true;
     }
 
     private void charger() {

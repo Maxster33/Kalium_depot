@@ -28,3 +28,17 @@ au total des notes avec 3 places ; copié dans `CAHIER_DES_CHARGES.md` au déplo
   `boite`, `origine` (Kanvas). `depend` KV_Plots (1.5.0), KLM_Menu.
 
 **Déployé sur Kanvas le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (nouveau), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.1.0 - objets vanilla par leur id dans butin.yml (09/10/2026, LeKiwi06)
+
+Même changement que KG_Rewards 1.1.0 (demande de LeKiwi06 : « ajoute la lecture par id et génère les butin.yml ») :
+dans `butin.yml`, un objet vanilla peut être écrit par son id, `{type: objet, id: diamond, nombre: 2}`, avec au besoin
+`enchantements: {mending: 1}` ; il est remplacé au chargement par l'objet créé par le serveur (`donnees`), comme s'il
+avait été déposé dans l'interface admin. Id ou enchantement inconnu : élément ignoré, signalé dans la console. Le
+fichier garde les ids jusqu'à la première modification dans l'interface admin. Aucun autre changement.
+
+Limites : comme KG_Rewards 1.1.0 (écrit sans serveur de test ; empilé sur la 1.0.0 jamais testée, demande explicite de
+LeKiwi06). Le `butin.yml` généré pour Kanvas (mois, permanent, concours) est dans `sortie/rewards/butin/` (hors
+dépôt) ; ses paliers reposent sur une hypothèse de 20 notes reçues par heure de build, jamais mesurée.
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**
