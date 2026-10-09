@@ -66,4 +66,4 @@ paliers de la semaine) : tops classiques 5, 3, 2 et 1 seulement (`Moteur.TOPS`) 
 `top-100`, `top-50`, `top-25` et `top-10` disparaissent de l'interface admin, de la commande d'essai et du `butin.yml`
 régénéré. Même changement que KG_Rewards 1.3.0.
 
-**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 09/10/2026 à 17:16 (LeKiwi06 ; 1.2.0 et l'ancien `butin.yml` dans `_removed-kv_rewards-1.2.0/`) avec le nouveau `butin.yml`, actif après redémarrage. `config.yml` du serveur non touché. Statut : non testé en jeu.**

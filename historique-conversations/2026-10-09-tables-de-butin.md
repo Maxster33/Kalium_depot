@@ -132,5 +132,9 @@ Proposé, sans réponse : garantir la moitié de chaque récompense en récompen
 - Choix de Claude signalés : un seul coffre pour tout le rattrapage (pas seulement les minimales) ; contenu tiré dans
   les pools comme un coffre normal de cette valeur (donc avec de la chance : pour 1 973 de moyenne, 1 coffre sur 10 vaut
   moins de 800) ; part du Légendaire lissée entre deux réglages de niveaux.
-- Reste à trancher : admins et comptes de test ; tops des semaines reconstruites ; garantir ou non une partie du coffre.
-- Reste à faire : déployer sur accord ; lancer le rattrapage à l'ouverture, sur sa commande.
+- Réponses de LeKiwi06 : « 1 : d'accord » (déploiement) ; « 2 : oui on garde » (admins et comptes de test) ; « 3 : oui mais on en
+  fait un gros coffre en accumulant la valeur de tous les petits coffres » ; « 4 : on laisse tel quel ».
+- Déployé le 09/10/2026 à 17:16 : KG_Rewards 1.3.0 + `butin.yml` + `rattrapage.yml` (Kal-Games), KV_Rewards 1.3.0 + `butin.yml`
+  (Kanvas) ; non testés ; réservations libérées.
+- Reste à faire : redémarrer Kal-Games et Kanvas (l'humain), lire les consoles ; à l'ouverture, lancer
+  `/kgrewards rattrapage <boîte>` puis `confirmer` (LeKiwi06).
