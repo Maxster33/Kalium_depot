@@ -2,6 +2,7 @@ package fr.kalium.economy;
 
 import fr.kalium.economy.Magasins.Boutique;
 import fr.kalium.economy.Magasins.Magasin;
+import fr.kalium.menu.api.Contenant;
 import fr.kalium.menu.api.Gui;
 import fr.kalium.menu.api.Lang;
 import fr.kalium.menu.api.Lisible;
@@ -55,6 +56,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * 1.1.0 - boutiques (cahier des charges, catégorie 2, « Magasins » révisés le 02/10/2026) : création en posant un
@@ -71,6 +73,10 @@ import java.util.UUID;
  * 1.2.0 (LeKiwi06, 03/10/2026) : une boutique (son contenant) n'est utilisée que par un acheteur à la fois (menu
  * d'achat, « Voir l'objet », achat ; libérée après l'achat, à la déconnexion ou après 30 s sans action) ; chaque vente
  * est enregistrée (statistiques, notification au propriétaire) ; bouton favori.
+ *
+ * 1.5.0 (LeKiwi06, 09/10/2026) : menus en coffres (voir Menus) : création (choix de l'objet dans son inventaire,
+ * quantité, prix, récapitulatif), menu d'achat (l'objet exact, l'offre, le paiement, 1 / 5 / 10 lots). Restent en
+ * fenêtre de Gui les saisies : nom d'un objet, quantité ou nombre de lots libre, prix en points, nom de la boutique.
  */
 final class Boutiques implements Listener {
 
@@ -85,6 +91,8 @@ final class Boutiques implements Listener {
         int quantite;
         ItemStack prixObjet;
         int prixQuantite;
+        /** 1.5.0 : nom choisi au récapitulatif (null : nom de l'objet vendu). */
+        String nom;
         long prixPoints;
         boolean prixEnPoints;
     }
@@ -128,26 +136,11 @@ final class Boutiques implements Listener {
         liberer(event.getPlayer().getUniqueId());
     }
 
-    /** 1.1.3 : coffre « Voir l'objet » (lecture seule) d'une boutique. */
-    private record Vue(UUID joueur, String boutique) implements InventoryHolder {
-        @Override
-        public Inventory getInventory() {
-            return null;
-        }
-    }
-
-    /** Coffre de choix d'un objet dans l'inventaire. */
-    private record Selection(UUID joueur, Etape etape) implements InventoryHolder {
-        @Override
-        public Inventory getInventory() {
-            return null;
-        }
-    }
-
     private final KSEconomy plugin;
     private final Magasins magasins;
     private final Lang lang;
     private final Gui gui;
+    private final Menus menus;
     private final Map<UUID, Creation> creations = new HashMap<>();
     /** Id du jeu -> nom français (noms_objets.txt, dans le jar depuis 1.1.2). */
     private static final Map<String, String> NOMS = new LinkedHashMap<>();
@@ -162,6 +155,7 @@ final class Boutiques implements Listener {
         this.magasins = magasins;
         this.lang = plugin.lang();
         this.gui = plugin.gui();
+        this.menus = plugin.menus();
         chargerNoms();
         // Panneaux des chunks déjà chargés : nouvelle présentation (1.1.2) et état à jour.
         Bukkit.getScheduler().runTask(plugin, () -> {
@@ -178,9 +172,9 @@ final class Boutiques implements Listener {
         return lang.c(cle, defaut, paires);
     }
 
+    /** Refus ou information : message court (1.5.0 : au-dessus de la barre d'objets, plus de fenêtre). */
     private void message(Player joueur, Component texte) {
-        gui.notice(joueur, t("boutique.titre", "<gold><bold>Boutique"), texte, null);
-        lang.saveIfNeeded();
+        menus.message(joueur, texte, true);
     }
 
     // ------------------------------------------------------------------ noms des objets
@@ -307,6 +301,18 @@ final class Boutiques implements Listener {
         Bukkit.getScheduler().runTask(plugin, () -> proposer(joueur, panneau));
     }
 
+    /** Abandon de la création : rien n'est gardé, le coffre se referme. */
+    private void annuler(Player joueur) {
+        creations.remove(joueur.getUniqueId());
+        Contenant.fermer(joueur);
+    }
+
+    private void boutonAnnuler(Contenant c) {
+        c.poser(c.bas(5), Contenant.objet(Material.BARRIER, t("boutique.annuler", "<red>Annuler"), List.of()),
+                this::annuler);
+    }
+
+    /** 1.5.0 : coffre « Faire de ce panneau une boutique ? ». */
     private void proposer(Player joueur, Block panneau) {
         Magasin magasin = magasins.magasinDuChunk(panneau.getChunk());
         Component refus = magasin == null ? null : refusComplet(joueur, magasin);
@@ -317,13 +323,15 @@ final class Boutiques implements Listener {
         Creation c = new Creation();
         c.panneau = panneau;
         creations.put(joueur.getUniqueId(), c);
-        List<ActionButton> boutons = List.of(
-                gui.button(t("boutique.bouton-creer", "<green>Créer une boutique"), null, p -> choisirObjet(p, Etape.VENTE)),
-                gui.button(t("boutique.bouton-fermer", "<gray>Fermer"), null, p -> creations.remove(p.getUniqueId())));
-        gui.open(joueur, t("boutique.titre", "<gold><bold>Boutique"),
-                List.of(t("boutique.proposer", "<white>Faire de ce panneau une boutique ? <gray>Le contenu du contenant "
-                        + "sera son stock ; les paiements en objets y arriveront.")),
-                List.of(), boutons, gui.close(), 1);
+        Contenant menu = menus.menu(joueur, 4, t("boutique.titre-coffre", "<dark_gray>Nouvelle boutique ?"),
+                "boutique-proposer");
+        menu.poser(11, Menus.objet(Material.EMERALD, t("boutique.bouton-creer", "<green>Créer une boutique"),
+                t("boutique.proposer-info", "<gray>Le contenu du contenant sera son stock ; les paiements en objets y "
+                        + "arriveront.")), p -> choisirObjet(p, Etape.VENTE));
+        menu.poser(15, Menus.objet(Material.OAK_SIGN, t("boutique.bouton-panneau", "<white>Non, un panneau ordinaire"),
+                t("boutique.panneau-info", "<gray>Le panneau reste un simple panneau")), this::annuler);
+        boutonAnnuler(menu);
+        menu.ouvrir(joueur);
         lang.saveIfNeeded();
     }
 
@@ -331,23 +339,49 @@ final class Boutiques implements Listener {
         return creations.get(joueur.getUniqueId());
     }
 
+    /**
+     * 1.5.0 : choix de l'objet (vendu, ou demandé en paiement) : le coffre montre l'inventaire du joueur, un clic
+     * choisit l'objet tel quel (objets spéciaux compris) ; « Écrire le nom » pour un objet qu'on n'a pas sur soi.
+     */
     private void choisirObjet(Player joueur, Etape etape) {
         if (creation(joueur) == null) {
             return;
         }
-        List<ActionButton> boutons = List.of(
-                gui.button(t("boutique.ecrire", "<white>Écrire le nom"), null, p -> ecrireNom(p, etape)),
-                gui.button(t("boutique.inventaire", "<white>Choisir dans l'inventaire"), null,
-                        p -> choisirDansInventaire(p, etape)),
-                gui.button(t("boutique.annuler", "<red>Annuler"), null, p -> creations.remove(p.getUniqueId())));
-        gui.open(joueur, etape == Etape.VENTE ? t("boutique.titre-vente", "<gold><bold>Objet à vendre")
-                        : t("boutique.titre-prix", "<gold><bold>Objet demandé en paiement"),
-                List.of(t("boutique.choix-aide", "<gray>Écris le nom français ou l'id du jeu (« diamant », « diamond »), "
-                        + "ou choisis un objet de ton inventaire (objets spéciaux compris).")),
-                List.of(), boutons, gui.close(), 1);
+        Contenant c = menus.menu(joueur, 6, etape == Etape.VENTE
+                ? t("boutique.titre-vente-coffre", "<dark_gray>Clique sur l'objet à vendre")
+                : t("boutique.titre-prix-coffre", "<dark_gray>Clique sur l'objet demandé"), "boutique-objet-" + etape);
+        ItemStack[] contenu = joueur.getInventory().getStorageContents();
+        boolean vide = true;
+        for (int i = 0; i < contenu.length && i < 36; i++) {
+            if (contenu[i] == null || contenu[i].getType().isAir()) {
+                continue;
+            }
+            vide = false;
+            ItemStack objet = contenu[i].clone();
+            ItemStack choix = objet.clone();
+            choix.setAmount(1);
+            // Même disposition que l'inventaire : ses 3 rangées, puis la barre d'objets.
+            c.poser(i < 9 ? 27 + i : i - 9, objet, p -> choisi(p, etape, choix));
+        }
+        if (vide) {
+            c.poser(13, Menus.objet(Material.PAPER, t("boutique.inventaire-vide", "<gray>Ton inventaire est vide"),
+                    t("boutique.inventaire-vide-info", "<dark_gray>Utilise « Écrire le nom » en bas.")), null);
+        }
+        menus.aide(c, t("boutique.choix-titre", "<aqua>Choisir l'objet"),
+                t("boutique.choix-aide-coffre", "<gray>Clique sur un objet de ton inventaire (objets spéciaux "
+                        + "compris), ou écris son nom français ou son id (« diamant », « diamond »)."));
+        c.poser(c.bas(4), Menus.objet(Material.NAME_TAG, t("boutique.ecrire", "<white>Écrire le nom"),
+                t("boutique.ecrire-info", "<gray>Pour un objet que tu n'as pas sur toi")), p -> ecrireNom(p, etape));
+        if (etape == Etape.VENTE) {
+            boutonAnnuler(c);
+        } else {
+            menus.sortie(c, this::choisirPrix);
+        }
+        c.ouvrir(joueur);
         lang.saveIfNeeded();
     }
 
+    /** Nom de l'objet : saisie de texte (fenêtre de Gui) ; plusieurs objets trouvés : un coffre pour choisir. */
     private void ecrireNom(Player joueur, Etape etape) {
         ActionButton chercher = gui.form(t("boutique.chercher", "<green>Chercher"), null, (p, vue) -> {
             String texte = vue.getText("nom") == null ? "" : vue.getText("nom");
@@ -359,59 +393,27 @@ final class Boutiques implements Listener {
             } else if (trouves.size() == 1) {
                 choisi(p, etape, new ItemStack(trouves.get(0)));
             } else {
-                List<ActionButton> boutons = new ArrayList<>();
-                for (Material m : trouves) {
-                    boutons.add(gui.button(nomObjet(new ItemStack(m)), null,
-                            q -> choisi(q, etape, new ItemStack(m))));
+                Contenant c = menus.menu(p, 4, t("boutique.resultats-coffre", "<dark_gray>Quel objet ?"),
+                        "boutique-resultats");
+                for (int i = 0; i < trouves.size() && i < 27; i++) {
+                    Material m = trouves.get(i);
+                    c.poser(i, Contenant.objet(m, nomObjet(new ItemStack(m)), List.of()),
+                            q -> choisi(q, etape, new ItemStack(m)));
                 }
-                boutons.add(gui.button(t("boutique.autre-nom", "<gray>Autre nom"), null, q -> ecrireNom(q, etape)));
-                gui.open(p, t("boutique.resultats", "<gold><bold>Quel objet ?"), List.of(), List.of(), boutons,
-                        gui.close(), 2);
+                c.poser(c.bas(4), Contenant.objet(Material.NAME_TAG, t("boutique.autre-nom-coffre", "<white>Autre nom"),
+                        List.of()), q -> ecrireNom(q, etape));
+                menus.sortie(c, q -> choisirObjet(q, etape));
+                c.ouvrir(p);
             }
             lang.saveIfNeeded();
         });
-        gui.open(joueur, t("boutique.titre-nom", "<gold><bold>Nom de l'objet"), List.of(),
-                List.of(gui.text("nom", t("boutique.champ-nom", "Nom ou id"), "", 64)),
-                List.of(chercher, gui.button(t("boutique.retour", "<gray>Retour"), null, p -> choisirObjet(p, etape))),
-                gui.close(), 1);
-        lang.saveIfNeeded();
-    }
-
-    private void choisirDansInventaire(Player joueur, Etape etape) {
-        Inventory choix = Bukkit.createInventory(new Selection(joueur.getUniqueId(), etape), 36,
-                t("boutique.titre-inventaire", "Clique sur l'objet"));
-        ItemStack[] contenu = joueur.getInventory().getStorageContents();
-        for (int i = 0; i < contenu.length && i < 36; i++) {
-            if (contenu[i] != null && !contenu[i].getType().isAir()) {
-                choix.setItem(i, contenu[i].clone());
-            }
-        }
-        joueur.openInventory(choix);
-    }
-
-    @EventHandler
-    public void onClickSelection(InventoryClickEvent event) {
-        if (!(event.getView().getTopInventory().getHolder() instanceof Selection selection)) {
-            return;
-        }
-        event.setCancelled(true);
-        if (event.getClickedInventory() != event.getView().getTopInventory() || event.getCurrentItem() == null
-                || event.getCurrentItem().getType().isAir() || !(event.getWhoClicked() instanceof Player joueur)) {
-            return;
-        }
-        ItemStack objet = event.getCurrentItem().clone();
-        objet.setAmount(1);
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            joueur.closeInventory();
-            choisi(joueur, selection.etape(), objet);
+        Contenant.saisie(joueur, () -> {
+            gui.open(joueur, t("boutique.titre-nom", "<gold><bold>Nom de l'objet"), List.of(),
+                    List.of(gui.text("nom", t("boutique.champ-nom", "Nom ou id"), "", 64)),
+                    List.of(chercher, gui.button(t("boutique.retour", "<gray>Retour"), null,
+                            p -> choisirObjet(p, etape))), gui.close(), 1);
+            lang.saveIfNeeded();
         });
-    }
-
-    @EventHandler
-    public void onDragSelection(InventoryDragEvent event) {
-        if (event.getView().getTopInventory().getHolder() instanceof Selection) {
-            event.setCancelled(true);
-        }
     }
 
     private void choisi(Player joueur, Etape etape, ItemStack objet) {
@@ -427,49 +429,94 @@ final class Boutiques implements Listener {
         quantite(joueur, etape);
     }
 
+    /** Quantités proposées d'un clic ; les autres se saisissent. */
+    private static final int[] QUANTITES = {1, 2, 4, 8, 16, 32, 64};
+
+    /** 1.5.0 : quantité par lot : 1 à 64 d'un clic, ou « Autre quantité » (saisie, jusqu'à 2 304). */
     private void quantite(Player joueur, Etape etape) {
         Creation c = creation(joueur);
         if (c == null) {
             return;
         }
         ItemStack objet = etape == Etape.VENTE ? c.objet : c.prixObjet;
+        Contenant menu = menus.menu(joueur, 4, etape == Etape.VENTE
+                ? t("boutique.titre-quantite-vente", "<dark_gray>Quantité vendue par lot")
+                : t("boutique.titre-quantite-prix", "<dark_gray>Quantité demandée par lot"), "boutique-quantite-" + etape);
+        menu.poser(4, Menus.telQuel(objet, 1), null);
+        for (int i = 0; i < QUANTITES.length; i++) {
+            int n = QUANTITES[i];
+            menu.poser(10 + i, Contenant.objet(Menus.telQuel(objet, n),
+                    t("boutique.quantite-bouton", "<yellow><quantite> par lot", "quantite", n), List.of()),
+                    p -> quantiteChoisie(p, etape, n));
+        }
+        menu.poser(menu.bas(4), Menus.objet(Material.OAK_SIGN, t("boutique.autre-quantite", "<aqua>Autre quantité"),
+                t("boutique.autre-quantite-info", "<gray>Écrire la quantité (1 à <max>)", "max", QUANTITE_MAX)),
+                p -> saisirQuantite(p, etape));
+        menus.sortie(menu, p -> choisirObjet(p, etape));
+        menu.ouvrir(joueur);
+        lang.saveIfNeeded();
+    }
+
+    private void quantiteChoisie(Player joueur, Etape etape, int n) {
+        Creation c = creation(joueur);
+        if (c == null) {
+            return;
+        }
+        if (etape == Etape.VENTE) {
+            c.quantite = n;
+            choisirPrix(joueur);
+        } else {
+            c.prixQuantite = n;
+            c.prixEnPoints = false;
+            recapitulatif(joueur);
+        }
+    }
+
+    private void saisirQuantite(Player joueur, Etape etape) {
         ActionButton valider = gui.form(t("boutique.valider", "<green>Valider"), null, (p, vue) -> {
             int n = entier(vue.getText("quantite"));
             if (n < 1 || n > QUANTITE_MAX) {
                 gui.notice(p, t("boutique.titre", "<gold><bold>Boutique"),
                         t("boutique.quantite-invalide", "<red>Quantité invalide (1 à <max>).", "max", QUANTITE_MAX),
-                        q -> quantite(q, etape));
+                        q -> saisirQuantite(q, etape));
+                lang.saveIfNeeded();
                 return;
             }
-            Creation cc = creation(p);
-            if (cc == null) {
-                return;
-            }
-            if (etape == Etape.VENTE) {
-                cc.quantite = n;
-                choisirPrix(p);
-            } else {
-                cc.prixQuantite = n;
-                cc.prixEnPoints = false;
-                recapitulatif(p);
-            }
+            quantiteChoisie(p, etape, n);
         });
-        gui.open(joueur, t("boutique.titre-quantite", "<gold><bold>Quantité"),
-                List.of(t("boutique.quantite-objet", "<white>Objet : ").append(nomObjet(objet))),
-                List.of(gui.text("quantite", t("boutique.champ-quantite", "Quantité par lot"), "1", 5)),
-                List.of(valider), gui.close(), 1);
-        lang.saveIfNeeded();
+        Contenant.saisie(joueur, () -> {
+            Creation c = creation(joueur);
+            if (c == null) {
+                return;
+            }
+            gui.open(joueur, t("boutique.titre-quantite", "<gold><bold>Quantité"),
+                    List.of(t("boutique.quantite-objet", "<white>Objet : ")
+                            .append(nomObjet(etape == Etape.VENTE ? c.objet : c.prixObjet))),
+                    List.of(gui.text("quantite", t("boutique.champ-quantite", "Quantité par lot"), "1", 5)),
+                    List.of(valider, gui.button(t("boutique.retour", "<gray>Retour"), null, p -> quantite(p, etape))),
+                    gui.close(), 1);
+            lang.saveIfNeeded();
+        });
     }
 
+    /** 1.5.0 : prix d'un lot : en points (saisie) ou en objet (choix dans l'inventaire). */
     private void choisirPrix(Player joueur) {
-        List<ActionButton> boutons = List.of(
-                gui.button(t("boutique.monnaie", "<green>Monnaie (points)"), null, this::prixEnPoints),
-                gui.button(t("boutique.objet", "<white>Objet"), null, p -> choisirObjet(p, Etape.PRIX)),
-                gui.button(t("boutique.annuler", "<red>Annuler"), null, p -> creations.remove(p.getUniqueId())));
-        gui.open(joueur, t("boutique.titre-prix-choix", "<gold><bold>Prix d'un lot"),
-                List.of(t("boutique.prix-aide", "<gray>Monnaie : les points payés attendent dans la boutique, tu les "
-                        + "récupères depuis ton magasin. Objet : il arrive dans le contenant.")),
-                List.of(), boutons, gui.close(), 1);
+        Creation c = creation(joueur);
+        if (c == null) {
+            return;
+        }
+        Contenant menu = menus.menu(joueur, 4, t("boutique.titre-prix-choix-coffre", "<dark_gray>Prix d'un lot"),
+                "boutique-prix");
+        menu.poser(4, Contenant.objet(Menus.telQuel(c.objet, c.quantite),
+                t("boutique.lot-vendu", "<yellow>Lot vendu : <lot>", "lot", lot(c.quantite, c.objet)), List.of()), null);
+        menu.poser(11, Menus.objet(Material.EMERALD, t("boutique.monnaie", "<green>Monnaie (points)"),
+                t("boutique.monnaie-info", "<gray>Les points payés attendent dans la boutique : tu les récupères "
+                        + "depuis ton magasin.")), this::prixEnPoints);
+        menu.poser(15, Menus.objet(Material.CHEST, t("boutique.objet", "<white>Objet"),
+                t("boutique.objet-info", "<gray>L'objet payé arrive dans le contenant de la boutique.")),
+                p -> choisirObjet(p, Etape.PRIX));
+        menus.sortie(menu, p -> quantite(p, Etape.VENTE));
+        menu.ouvrir(joueur);
         lang.saveIfNeeded();
     }
 
@@ -490,28 +537,75 @@ final class Boutiques implements Listener {
             c.prixObjet = null;
             recapitulatif(p);
         });
-        gui.open(joueur, t("boutique.titre-points", "<gold><bold>Prix en points"), List.of(),
-                List.of(gui.text("points", t("boutique.champ-points", "Points par lot"), "", 12)),
-                List.of(valider), gui.close(), 1);
-        lang.saveIfNeeded();
+        Contenant.saisie(joueur, () -> {
+            gui.open(joueur, t("boutique.titre-points", "<gold><bold>Prix en points"), List.of(),
+                    List.of(gui.text("points", t("boutique.champ-points", "Points par lot"), "", 12)),
+                    List.of(valider, gui.button(t("boutique.retour", "<gray>Retour"), null, this::choisirPrix)),
+                    gui.close(), 1);
+            lang.saveIfNeeded();
+        });
     }
 
-    /** Récapitulatif et nom de la boutique (1.1.2 : nom choisi ici, l'objet vendu par défaut). */
+    /** Nom que portera la boutique : celui choisi, sinon l'objet vendu. */
+    private static String nomPrevu(Creation c) {
+        return c.nom != null ? c.nom : couper(texteObjet(c.objet), Magasins.NOM_MAX);
+    }
+
+    /**
+     * Récapitulatif (1.5.0 : coffre) : l'objet vendu à gauche, le prix à droite ; en bas, le nom de la boutique (1.1.2 :
+     * choisi ici, l'objet vendu par défaut) et « Créer la boutique ».
+     */
     private void recapitulatif(Player joueur) {
         Creation c = creation(joueur);
         if (c == null) {
             return;
         }
         Component prix = c.prixEnPoints ? Component.text(KSEconomy.points(c.prixPoints)) : lot(c.prixQuantite, c.prixObjet);
-        ActionButton creer = gui.form(t("boutique.bouton-creer-nom", "<green>Créer la boutique"), null,
-                (p, vue) -> creer(p, vue.getText("nom")));
-        gui.open(joueur, t("boutique.titre-recap", "<gold><bold>Nouvelle boutique"),
-                List.of(t("boutique.recap", "<white>Vend <lot> contre <prix>.", "lot", lot(c.quantite, c.objet), "prix", prix)),
-                List.of(gui.text("nom", t("boutique.champ-nom-boutique", "Nom de la boutique (20 caractères)"),
-                        couper(texteObjet(c.objet), Magasins.NOM_MAX), Magasins.NOM_MAX)),
-                List.of(creer, gui.button(t("boutique.annuler", "<red>Annuler"), null, p -> creations.remove(p.getUniqueId()))),
-                gui.close(), 1);
+        Contenant menu = menus.menu(joueur, 4, t("boutique.titre-recap-coffre", "<dark_gray>Nouvelle boutique"),
+                "boutique-recap");
+        menu.poser(11, Menus.telQuel(c.objet, c.quantite), null);
+        menu.poser(13, Menus.objet(Material.PAPER, t("boutique.recap-nom", "<gold><nom>", "nom", nomPrevu(c)),
+                t("boutique.recap-vend", "<white>Vend <lot>", "lot", lot(c.quantite, c.objet)),
+                t("boutique.recap-contre", "<white>contre <prix>", "prix", prix)), null);
+        menu.poser(15, c.prixEnPoints
+                ? Contenant.objet(Material.EMERALD, t("voir.points", "<!italic><green><points>", "points",
+                        KSEconomy.points(c.prixPoints)), List.of())
+                : Menus.telQuel(c.prixObjet, c.prixQuantite), null);
+        menu.poser(menu.bas(3), Menus.objet(Material.NAME_TAG, t("boutique.recap-renommer", "<white>Nom : <nom>", "nom",
+                        nomPrevu(c)), t("boutique.recap-renommer-info", "<gray>Clic : choisir un autre nom")),
+                this::nommer);
+        menu.poser(menu.bas(4), Contenant.objet(Material.EMERALD_BLOCK,
+                t("boutique.bouton-creer-nom", "<green>Créer la boutique"), List.of()), p -> {
+            Creation cc = creation(p);
+            creer(p, cc == null ? null : cc.nom);
+        });
+        boutonAnnuler(menu);
+        menu.ouvrir(joueur);
         lang.saveIfNeeded();
+    }
+
+    /** Nom de la boutique : saisie de texte (fenêtre de Gui), puis retour au récapitulatif. */
+    private void nommer(Player joueur) {
+        ActionButton valider = gui.form(t("boutique.valider", "<green>Valider"), null, (p, vue) -> {
+            Creation c = creation(p);
+            if (c != null) {
+                c.nom = nettoyerNom(vue.getText("nom"));
+                recapitulatif(p);
+            }
+        });
+        Contenant.saisie(joueur, () -> {
+            Creation c = creation(joueur);
+            if (c == null) {
+                return;
+            }
+            gui.open(joueur, t("magasin.titre-renommer", "<gold><bold>Nom de la boutique"),
+                    List.of(t("magasin.renommer-aide", "<gray>Vide : le nom de l'objet vendu.")),
+                    List.of(gui.text("nom", t("boutique.champ-nom-boutique", "Nom de la boutique (20 caractères)"),
+                            nomPrevu(c), Magasins.NOM_MAX)),
+                    List.of(valider, gui.button(t("boutique.retour", "<gray>Retour"), null, this::recapitulatif)),
+                    gui.close(), 1);
+            lang.saveIfNeeded();
+        });
     }
 
     /** Magasin complet (boutiques + places encore prises par des boutiques supprimées) : le refus, sinon null. */
@@ -548,11 +642,13 @@ final class Boutiques implements Listener {
         Magasin magasin = magasins.magasinDuChunk(panneau.getChunk());
         if (!(panneau.getState() instanceof Sign) || Magasins.contenantDu(panneau) == null || magasin == null
                 || !magasin.proprio.equals(joueur.getUniqueId()) || magasins.boutiqueDuPanneau(panneau) != null) {
+            Contenant.fermer(joueur);
             message(joueur, t("boutique.plus-possible", "<red>Ce panneau ne peut plus devenir une boutique."));
             return;
         }
         Component refus = refusComplet(joueur, magasin);
         if (refus != null) {
+            Contenant.fermer(joueur);
             message(joueur, refus);
             return;
         }
@@ -575,7 +671,8 @@ final class Boutiques implements Listener {
         magasins.boutiques.put(b.id, b);
         magasins.sauver();
         ecrirePanneau(b);
-        message(joueur, t("boutique.creee", "<green>Boutique créée."));
+        Contenant.fermer(joueur);
+        menus.message(joueur, t("boutique.creee", "<green>Boutique créée."), false);
     }
 
     /**
@@ -740,8 +837,35 @@ final class Boutiques implements Listener {
         return n;
     }
 
-    /** Menu d'achat (sur place ou depuis le catalogue). */
+    /**
+     * 1.5.0 : l'objet d'une boutique dans une liste : l'objet vendu (pile du lot), nom de la boutique coloré selon son
+     * état, puis l'offre, l'état et les lignes en plus.
+     */
+    ItemStack icone(Boutique b, Component... plus) {
+        List<Component> lignes = new ArrayList<>(Menus.lignes(
+                t("boutique.ligne-vend", "<gray>Vend <white><lot>", "lot", lot(b.quantite, b.objet)),
+                t("boutique.ligne-contre", "<gray>contre <white><prix>", "prix", prix(b)),
+                etatTexte(b)));
+        lignes.addAll(Menus.lignes(plus));
+        return Contenant.objet(Menus.telQuel(b.objet, b.quantite), boutonBoutique(b), lignes);
+    }
+
+    /** Menu d'achat ouvert en cliquant sur le panneau : pas d'écran précédent. */
     void ouvrirAchat(Player joueur, Boutique b) {
+        ouvrirAchat(joueur, b, null);
+    }
+
+    /** Nombres de lots achetés d'un clic ; les autres se saisissent. */
+    private static final int[] LOTS = {1, 5, 10};
+
+    /**
+     * Menu d'achat (sur place ou depuis le catalogue). 1.5.0 : coffre. À gauche l'objet exact vendu (nom,
+     * enchantements, description : l'achat donne des objets identiques ; remplace « Voir l'objet » de 1.1.3), au
+     * centre l'offre, à droite ce qu'on paie ; dessous, acheter 1, 5 ou 10 lots, ou un autre nombre (saisie).
+     *
+     * @param retour écran précédent (« Retour »), ou null (« Fermer »)
+     */
+    void ouvrirAchat(Player joueur, Boutique b, Consumer<Player> retour) {
         // 1.1.3 : pas d'achat dans sa propre boutique ; le propriétaire arrive sur sa gestion.
         if (b.proprio.equals(joueur.getUniqueId())) {
             plugin.menuMagasin().gererBoutique(joueur, b);
@@ -754,98 +878,64 @@ final class Boutiques implements Listener {
         if (!utiliser(joueur, b)) {
             return;
         }
-        List<Component> corps = new ArrayList<>();
-        corps.add(t("achat.nom", "<gold><bold><nom>", "nom", nomBoutique(b)));
-        corps.add(t("achat.vend", "<white>Vend : ").append(lot(b.quantite, b.objet)));
-        corps.add(t("achat.contre", "<white>Contre : ").append(prix(b)));
-        corps.add(t("achat.etat", "<white>État : <etat>", "etat", etatTexte(b)));
-        ActionButton acheter = gui.form(t("achat.bouton", "<green>Acheter"), null,
-                (p, vue) -> acheter(p, b, entier(vue.getText("lots"))));
-        ActionButton voir = gui.button(t("achat.bouton-voir", "<aqua>Voir l'objet"),
-                t("achat.voir-info", "<gray>L'objet exact que tu vas recevoir"), p -> voirObjet(p, b));
-        ActionButton signaler = gui.button(t("achat.bouton-signaler", "<red>Signaler la boutique"),
-                t("achat.signaler-info", "<gray>Arnaque, contenu inapproprié..."),
-                p -> plugin.signalements().signalerBoutique(p, b, q -> ouvrirAchat(q, b)));
-        // 1.2.0 : favori.
-        boolean favori = plugin.favoris().contient(joueur.getUniqueId(), Favoris.boutique(b.id));
-        ActionButton etoile = gui.button(favori ? t("favoris.retirer", "<yellow>Retirer des favoris")
-                : t("favoris.ajouter", "<yellow>Ajouter aux favoris"), null, p -> {
-            plugin.favoris().basculer(p.getUniqueId(), Favoris.boutique(b.id));
-            ouvrirAchat(p, b);
-        });
-        gui.open(joueur, t("achat.titre", "<gold><bold>Boutique de <proprio>", "proprio", nomJoueur(b.proprio)), corps,
-                List.of(gui.text("lots", t("achat.champ-lots", "Nombre de lots"), "1", 4)),
-                List.of(acheter, voir, etoile, signaler), gui.close(), 1);
-        lang.saveIfNeeded();
-    }
-
-    /**
-     * 1.1.3 : « Voir l'objet » : coffre en lecture seule avec l'objet vendu tel quel (nom, enchantements, description :
-     * l'achat donne exactement des objets identiques), le résumé de l'offre et l'objet demandé (ou les points).
-     * Refermé : retour au menu d'achat.
-     */
-    void voirObjet(Player joueur, Boutique b) {
-        if (!utiliser(joueur, b)) {
-            return;
-        }
-        Inventory vue = Bukkit.createInventory(new Vue(joueur.getUniqueId(), b.id), 27,
-                t("voir.titre", "Ce que tu achètes"));
-        ItemStack vendu = b.objet.clone();
-        vendu.setAmount(Math.max(1, Math.min(b.quantite, vendu.getMaxStackSize())));
-        vue.setItem(11, vendu);
-        ItemStack resume = new ItemStack(Material.PAPER);
-        ItemMeta meta = resume.getItemMeta();
-        meta.displayName(t("voir.resume", "<!italic><gold>Vend <lot>", "lot", lot(b.quantite, b.objet)));
-        meta.lore(List.of(t("voir.contre", "<!italic><white>contre <prix>", "prix", prix(b)),
+        Contenant c = menus.menu(joueur, 5, t("achat.titre-coffre", "<dark_gray>Boutique de <proprio>", "proprio",
+                nomJoueur(b.proprio)), "achat:" + b.id);
+        c.poser(11, Menus.telQuel(b.objet, b.quantite), null);
+        c.poser(13, Menus.objet(Material.PAPER, t("achat.nom", "<gold><bold><nom>", "nom", nomBoutique(b)),
+                t("achat.vend", "<white>Vend : ").append(lot(b.quantite, b.objet)),
+                t("achat.contre", "<white>Contre : ").append(prix(b)),
+                etatTexte(b),
                 t("voir.exact", "<!italic><gray>Tu reçois exactement l'objet de gauche"),
                 t("voir.exact-2", "<!italic><gray>(nom, enchantements, description)."),
-                t("voir.paiement", "<!italic><gray>À droite : ce que tu paies.")));
-        resume.setItemMeta(meta);
-        vue.setItem(13, resume);
-        ItemStack paye;
-        if (b.enPoints()) {
-            paye = new ItemStack(Material.EMERALD);
-            ItemMeta m = paye.getItemMeta();
-            m.displayName(t("voir.points", "<!italic><green><points>", "points", KSEconomy.points(b.prixPoints)));
-            paye.setItemMeta(m);
-        } else {
-            paye = b.prixObjet.clone();
-            paye.setAmount(Math.max(1, Math.min(b.prixQuantite, paye.getMaxStackSize())));
+                t("voir.paiement", "<!italic><gray>À droite : ce que tu paies.")), null);
+        c.poser(15, b.enPoints()
+                ? Contenant.objet(Material.EMERALD, t("voir.points", "<!italic><green><points>", "points",
+                        KSEconomy.points(b.prixPoints)), List.of())
+                : Menus.telQuel(b.prixObjet, b.prixQuantite), null);
+        for (int i = 0; i < LOTS.length; i++) {
+            int lots = LOTS[i];
+            c.poser(29 + i, Contenant.objet(Menus.telQuel(new ItemStack(Material.EMERALD), lots),
+                    t("achat.bouton-lots", "<green>Acheter <lots> lot(s)", "lots", lots),
+                    List.of(t("achat.recoit", "<gray>Tu reçois <white><lot>", "lot", lot(b.quantite * lots, b.objet)),
+                            t("achat.paie", "<gray>Tu paies <white><prix>", "prix", b.enPoints()
+                                    ? Component.text(KSEconomy.points(b.prixPoints * lots))
+                                    : lot(b.prixQuantite * lots, b.prixObjet)))),
+                    p -> acheter(p, b, lots, retour));
         }
-        vue.setItem(15, paye);
-        joueur.openInventory(vue);
+        c.poser(33, Menus.objet(Material.OAK_SIGN, t("achat.bouton-autre", "<aqua>Autre nombre de lots"),
+                t("achat.autre-info", "<gray>Écrire le nombre de lots à acheter")), p -> saisirLots(p, b, retour));
+        // 1.2.0 : favori.
+        boolean favori = plugin.favoris().contient(joueur.getUniqueId(), Favoris.boutique(b.id));
+        c.poser(c.bas(3), Contenant.objet(favori ? Material.NETHER_STAR : Material.FIREWORK_STAR,
+                favori ? t("favoris.retirer", "<yellow>Retirer des favoris")
+                        : t("favoris.ajouter", "<yellow>Ajouter aux favoris"), List.of()), p -> {
+            plugin.favoris().basculer(p.getUniqueId(), Favoris.boutique(b.id));
+            ouvrirAchat(p, b, retour);
+        });
+        menus.sortie(c, retour);
+        c.poser(c.bas(6), Menus.objet(Material.REDSTONE_TORCH, t("achat.bouton-signaler", "<red>Signaler la boutique"),
+                t("achat.signaler-info", "<gray>Arnaque, contenu inapproprié...")),
+                p -> plugin.signalements().signalerBoutique(p, b, q -> ouvrirAchat(q, b, retour)));
+        c.ouvrir(joueur);
         lang.saveIfNeeded();
     }
 
-    @EventHandler
-    public void onClickVue(InventoryClickEvent event) {
-        if (event.getView().getTopInventory().getHolder() instanceof Vue) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onDragVue(InventoryDragEvent event) {
-        if (event.getView().getTopInventory().getHolder() instanceof Vue) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onCloseVue(InventoryCloseEvent event) {
-        if (!(event.getInventory().getHolder() instanceof Vue vue)
-                || event.getReason() != InventoryCloseEvent.Reason.PLAYER
-                || !(event.getPlayer() instanceof Player joueur)) {
-            return;
-        }
-        Boutique b = magasins.boutiques.get(vue.boutique());
-        if (b != null) {
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                if (joueur.isOnline()) {
-                    ouvrirAchat(joueur, b);
-                }
-            });
-        }
+    /** Nombre de lots : saisie (fenêtre de Gui), puis retour au menu d'achat. */
+    private void saisirLots(Player joueur, Boutique b, Consumer<Player> retour) {
+        ActionButton acheter = gui.form(t("achat.bouton", "<green>Acheter"), null, (p, vue) -> {
+            int lots = entier(vue.getText("lots"));
+            ouvrirAchat(p, b, retour);
+            acheter(p, b, lots, retour);
+        });
+        Contenant.saisie(joueur, () -> {
+            gui.open(joueur, t("achat.titre", "<gold><bold>Boutique de <proprio>", "proprio", nomJoueur(b.proprio)),
+                    List.of(t("achat.vend", "<white>Vend : ").append(lot(b.quantite, b.objet)),
+                            t("achat.contre", "<white>Contre : ").append(prix(b))),
+                    List.of(gui.text("lots", t("achat.champ-lots", "Nombre de lots"), "1", 4)),
+                    List.of(acheter, gui.button(t("boutique.retour", "<gray>Retour"), null,
+                            p -> ouvrirAchat(p, b, retour))), gui.close(), 1);
+            lang.saveIfNeeded();
+        });
     }
 
     static String nomJoueur(UUID joueur) {
@@ -853,12 +943,17 @@ final class Boutiques implements Listener {
         return nom == null ? "?" : nom;
     }
 
-    private void acheter(Player joueur, Boutique b, int lots) {
+    private void acheter(Player joueur, Boutique b, int lots, Consumer<Player> retour) {
         if (b.proprio.equals(joueur.getUniqueId())) {
             message(joueur, t("achat.soi-meme", "<red>Tu ne peux pas acheter dans ta propre boutique."));
             return;
         }
         if (!magasins.boutiques.containsKey(b.id)) {
+            if (retour != null) {
+                retour.accept(joueur);
+            } else {
+                Contenant.fermer(joueur);
+            }
             message(joueur, t("achat.disparue", "<red>Cette boutique n'existe plus."));
             return;
         }
@@ -929,7 +1024,8 @@ final class Boutiques implements Listener {
         plugin.ventes().enregistrer(b, joueur, lots, b.enPoints() ? Component.text(KSEconomy.points(points))
                 : lot(b.prixQuantite * lots, b.prixObjet));
         liberer(joueur.getUniqueId());
-        message(joueur, t("achat.fait", "<green>Acheté : <lots> lot(s).", "lots", lots));
+        ouvrirAchat(joueur, b, retour);
+        menus.message(joueur, t("achat.fait", "<green>Acheté : <lots> lot(s).", "lots", lots), false);
     }
 
     /** Piles d'un modèle pour une quantité totale. */

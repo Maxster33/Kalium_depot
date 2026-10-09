@@ -71,6 +71,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
 
     private Lang lang;
     private Gui gui;
+    private Menus menus;
     private MenuEconomie menu;
     private Echanges echanges;
     private Magasins magasins;
@@ -91,6 +92,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         saveDefaultConfig();
         lang = new Lang(this);
         gui = new Gui(this, lang);
+        menus = new Menus(lang);
         fichier = new File(getDataFolder(), "comptes.yml");
         charger();
 
@@ -179,6 +181,11 @@ public final class KSEconomy extends JavaPlugin implements Listener {
 
     Gui gui() {
         return gui;
+    }
+
+    /** 1.5.0 : pièces communes des menus en coffres. */
+    Menus menus() {
+        return menus;
     }
 
     Ventes ventes() {

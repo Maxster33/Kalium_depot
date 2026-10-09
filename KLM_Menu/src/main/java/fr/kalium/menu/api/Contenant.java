@@ -1,7 +1,9 @@
 package fr.kalium.menu.api;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -15,6 +17,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +41,10 @@ import java.util.function.Consumer;
  * le tchat. Une saisie (texte, nombre) reste une fenêtre de Gui, ouverte depuis une case.
  *
  * Une ligne de description ne passe pas à la ligne toute seule : la couper à environ 35 caractères ({@link #lignes}).
+ *
+ * Pendant un clic, le jeu interdit d'ouvrir ou de fermer une fenêtre : {@link #ouvrir}, {@link #fermer} et
+ * {@link #saisie} attendent d'eux-mêmes la fin du clic ; pour toute autre fenêtre (un vrai coffre, par exemple),
+ * passer par {@link #apres}.
  */
 public final class Contenant implements InventoryHolder {
 
@@ -47,6 +54,8 @@ public final class Contenant implements InventoryHolder {
     private final Inventory inventaire;
     private final Map<Integer, Consumer<Player>> actions = new HashMap<>();
     private final Object marque;
+    /** Vrai pendant l'action d'un clic (voir {@link #apres}). */
+    private static boolean enClic;
 
     /**
      * @param rangees 1 à 6
@@ -70,9 +79,14 @@ public final class Contenant implements InventoryHolder {
 
     /** Le menu de cette marque déjà ouvert par le joueur, vidé ; sinon un nouveau menu de 6 rangées. */
     public static Contenant pour(Player joueur, Component titre, Object marque) {
+        return pour(joueur, 6, titre, marque);
+    }
+
+    /** Comme {@link #pour(Player, Component, Object)}, pour un menu de 1 à 6 rangées (petit menu, confirmation). */
+    public static Contenant pour(Player joueur, int rangees, Component titre, Object marque) {
         Contenant ouvert = ouvert(joueur, marque);
-        if (ouvert == null) {
-            return new Contenant(6, titre, marque);
+        if (ouvert == null || ouvert.taille() != Math.max(1, Math.min(6, rangees)) * 9) {
+            return new Contenant(rangees, titre, marque);
         }
         ouvert.vider();
         return ouvert;
@@ -104,10 +118,56 @@ public final class Contenant implements InventoryHolder {
         return inventaire.getSize();
     }
 
+    /** Case de la barre d'actions (dernière rangée) : colonne 0 à 8. Modèle : 0 et 8 pages, 3 aide, 4 action, 5 sortie. */
+    public int bas(int colonne) {
+        return inventaire.getSize() - 9 + colonne;
+    }
+
     public void ouvrir(Player joueur) {
         if (joueur.getOpenInventory().getTopInventory() != inventaire) {
-            joueur.openInventory(inventaire);
+            apres(() -> {
+                if (joueur.isOnline()) {
+                    joueur.openInventory(inventaire);
+                }
+            });
         }
+    }
+
+    /** Ferme la fenêtre du joueur (après le clic en cours). */
+    public static void fermer(Player joueur) {
+        apres(joueur::closeInventory);
+    }
+
+    /** Exécute tout de suite, ou juste après le clic en cours (ouvrir ou fermer une fenêtre pendant un clic est interdit). */
+    public static void apres(Runnable suite) {
+        if (enClic) {
+            Bukkit.getScheduler().runTask(JavaPlugin.getProvidingPlugin(Contenant.class), suite);
+        } else {
+            suite.run();
+        }
+    }
+
+    /**
+     * Ouvre une fenêtre de saisie (Gui : texte, nombre, long texte) depuis un menu : le menu est refermé d'abord, et un
+     * joueur Bedrock attend un quart de seconde (son jeu n'affiche pas un formulaire pendant qu'un coffre se referme).
+     */
+    public static void saisie(Player joueur, Runnable fenetre) {
+        if (!(joueur.getOpenInventory().getTopInventory().getHolder() instanceof Contenant)) {
+            apres(fenetre);
+            return;
+        }
+        apres(() -> {
+            joueur.closeInventory();
+            if (BedrockColors.isBedrock(joueur)) {
+                Bukkit.getScheduler().runTaskLater(JavaPlugin.getProvidingPlugin(Contenant.class), () -> {
+                    if (joueur.isOnline()) {
+                        fenetre.run();
+                    }
+                }, 5L);
+            } else {
+                fenetre.run();
+            }
+        });
     }
 
     /** Un objet de menu : nom et lignes sans italique, sans les attributs du jeu (dégâts, etc.). */
@@ -161,6 +221,25 @@ public final class Contenant implements InventoryHolder {
         return lignes;
     }
 
+    /**
+     * Coupe un texte déjà mis en forme (lang.yml) en lignes d'environ 35 caractères : sa première couleur est gardée
+     * pour toutes les lignes (gris s'il n'en a pas), les autres mises en forme sont perdues. Un texte qui tient sur
+     * une ligne est gardé tel quel.
+     */
+    public static List<Component> lignes(Component texte) {
+        if (PlainTextComponentSerializer.plainText().serialize(texte).length() <= 35) {
+            return List.of(texte);
+        }
+        net.kyori.adventure.text.format.TextColor couleur = null;
+        Component c = texte;
+        while (couleur == null && c != null) {
+            couleur = c.color();
+            c = c.children().isEmpty() ? null : c.children().get(0);
+        }
+        return lignes(PlainTextComponentSerializer.plainText().serialize(texte),
+                couleur == null ? NamedTextColor.GRAY : couleur);
+    }
+
     /** Message court au-dessus de la barre d'objets du joueur ; refus = son grave, sinon son de ramassage. */
     public static void message(Player joueur, Component texte, boolean refus) {
         joueur.sendActionBar(texte);
@@ -183,7 +262,12 @@ public final class Contenant implements InventoryHolder {
             Consumer<Player> action = menu.actions.get(event.getSlot());
             if (action != null) {
                 joueur.playSound(joueur.getLocation(), Sound.UI_BUTTON_CLICK, 0.5f, 1f);
-                action.accept(joueur);
+                enClic = true;
+                try {
+                    action.accept(joueur);
+                } finally {
+                    enClic = false;
+                }
             }
         }
 

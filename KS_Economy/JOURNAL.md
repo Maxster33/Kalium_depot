@@ -333,3 +333,62 @@ de modération). Aucun changement pour les joueurs.
 **Déployé sur Kixster le 09/10/2026 à 18:31 (LeKiwi06, envoi groupé : KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2, KS_RewardsGUI 1.4.1 ; accord de LeKiwi06 : « Oui, sur Kixster » ; 1.4.0 dans `_removed-ks_economy-1.4.0/` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (KS_Economy 1.4.0). Statut : non testé en jeu.**
 
 **Journal de Kixster lu après le redémarrage de 18:36 (09/10/2026) : activé sans erreur, avec KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2 et KS_RewardsGUI 1.4.1 ; KS_AntiCheat démarre après eux. Personne n'avait encore ouvert la fiche d'un joueur : reste à tester en jeu.**
+
+## 1.5.0 - menus en coffres (09/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « j'aimerais rendre les interfaces plus jolies, et selon moi ça passe par davantage d'interfaces
+de type contenant quand c'est possible au lieu des boutons », puis, après son test de `/rewards` : « ça marche, passe
+aux écrans de l'économie ». Les 28 écrans du plugin étaient des fenêtres de dialogue ; ils deviennent des coffres
+(classe `Contenant` de **KLM_Menu 2.11.0, à déployer avec**). Aucune règle du jeu ne change : mêmes prix, mêmes
+contrôles, mêmes fichiers.
+
+Modèle commun (nouvelle classe `Menus`) : objets cliquables en haut, barre d'actions en bas sur vitres grises (flèches
+de page aux deux bouts, livre d'aide, action principale au centre, porte « Retour » ou barrière « Fermer » à sa
+droite). Les messages courts (« Solde insuffisant », « Acheté : 2 lots »...) s'affichent au-dessus de la barre d'objets
+du joueur, avec un son, et l'écran reste ouvert ; sans menu ouvert (commande tapée, clic sur un panneau) ils sont aussi
+écrits dans le tchat. Les confirmations sont un petit coffre : béton vert « Confirmer », béton rouge « Annuler ».
+
+- **Économie** (`/economie`) : solde sur un bloc d'émeraude ; tout déposer, déposer des objets, retirer, magasins,
+  rachats, masquer / révéler.
+- **Retirer** : les 8 objets (émeraude, bloc, compressés tier 1 à 6) avec leur coût, puis le nombre d'un clic : 1, 8,
+  64, « le maximum » (selon le solde et la place), ou « Autre nombre » (saisie).
+- **Rachats de la semaine** : un objet par rachat (la pile montre le lot), avec le prix et ce qu'on possède ; un clic
+  ouvre la vente : « Vendre 1 lot », « Tout vendre ».
+- **Mon magasin** (`/magasin`) : fiche sur la tête du joueur, mes boutiques, nom et description, position, agrandir ;
+  bouton « Magasins » vers le catalogue. Création : payer en points ou en blocs tier 3, d'un clic.
+- **Mes boutiques** : une boutique par case (l'objet vendu, nom coloré selon l'état, offre, état, points à récupérer),
+  45 par page. **Ma boutique** : stock, renommer, fermer / rouvrir, récupérer les points, supprimer.
+- **Catalogue** : un magasin par case (tête du propriétaire, rang, ventes de la semaine, description), 45 par page ;
+  dans la barre : rechercher, favoris, mon magasin. **Magasin d'un joueur** : ses boutiques ; dans la barre : sa fiche,
+  favori (étoile), signaler. **Favoris** : magasins et boutiques dans le même coffre.
+- **Créer une boutique** (panneau posé sur un contenant) : « Créer une boutique » ou « Non, un panneau ordinaire » ;
+  l'objet se choisit en cliquant dans une copie de son inventaire (ou « Écrire le nom » ; plusieurs objets trouvés :
+  un coffre pour choisir) ; quantité par lot : 1 à 64 d'un clic ou « Autre quantité » ; prix : monnaie ou objet ;
+  récapitulatif avec l'objet vendu, le prix, le nom de la boutique (modifiable) et « Créer la boutique ».
+- **Acheter dans une boutique** : à gauche l'objet exact vendu (nom, enchantements, description), au centre l'offre et
+  l'état, à droite ce qu'on paie ; « Acheter 1 / 5 / 10 lots » d'un clic, ou « Autre nombre de lots » ; favori et
+  signalement dans la barre. Le coffre « Voir l'objet » de la 1.1.3 disparaît : l'écran d'achat le remplace. Ouvert
+  depuis une liste, « Retour » y ramène ; ouvert depuis le panneau, « Fermer ».
+- **Rechercher un objet** : un seul coffre, résultats en haut (36 par page), filtres dessous : nom de l'objet (saisie),
+  catégorie (un coffre de 10 objets), prix, en stock seulement, tri ; un clic change le filtre et la liste suit.
+- **Signaler** : une teinture par raison (verte : cochée), « Autre » (saisie), « Envoyer ». **Signalements du staff** :
+  un signalement par case, fiche avec la boutique signalée, se téléporter, supprimer la boutique, classer (d'un clic,
+  ou avec une note saisie).
+
+Restent des fenêtres de dialogue, ouvertes depuis une case (un coffre ne sait pas faire de saisie) : nombre à retirer,
+nom et description du magasin, nom d'une boutique, nom d'un objet, quantité ou nombre de lots libre, prix en points,
+texte « Autre » d'un signalement, note de classement, et leurs messages d'erreur de saisie. Le coffre de dépôt et le
+stock d'une boutique restent de vrais coffres.
+
+À savoir :
+- Les textes déjà dans `lang.yml` sont repris tels quels ; les nouveaux ont de nouvelles clés (`eco.*`, `contenant.*`,
+  `*-coffre`, `*-info`...). Les anciennes clés des fenêtres supprimées restent dans `lang.yml`, sans effet.
+- Une description longue est coupée en lignes d'environ 35 caractères : seule sa première couleur est gardée.
+- Tête d'un magasin : celle du propriétaire ; un joueur Bedrock ou jamais vu par le serveur a une tête ordinaire.
+- Catalogue, mes boutiques et signalements passent de 10 à 45 par page ; la recherche de 10 à 36.
+- Bedrock : entre un coffre et une fenêtre de saisie, le coffre est refermé et la fenêtre s'ouvre un quart de seconde
+  plus tard (délai choisi par Claude, à vérifier en jeu).
+
+**Compilé le 09/10/2026 (`sortie/KS_Economy-1.5.0.jar`, contre KLM_Menu 2.11.0), non déployé. Statut : non testé en jeu
+(aucun des 28 écrans n'a été ouvert ; seule la coupe des descriptions a été essayée hors serveur).** La 1.5.0 part de
+la 1.4.1 (Kixster, non testée) : elle garde `KSEconomy.resume` pour KS_AntiCheat 1.3.0. Event est en 1.4.0.

@@ -2,13 +2,16 @@ package fr.kalium.economy;
 
 import fr.kalium.economy.Magasins.Boutique;
 import fr.kalium.economy.Magasins.Magasin;
+import fr.kalium.menu.api.Contenant;
 import fr.kalium.menu.api.Gui;
 import fr.kalium.menu.api.Lang;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -30,11 +33,13 @@ import java.util.function.Consumer;
  * complet, pour arnaque, contenu inapproprié, etc ») : raisons à cocher + « Autre » ; message au staff connecté
  * (kseconomy.staff) et dans la console ; enregistrés dans plugins/KS_Economy/signalements.yml ; /magasin signalements
  * (staff) : voir, se téléporter, supprimer la boutique signalée, classer.
+ *
+ * 1.5.0 (LeKiwi06, 09/10/2026) : menus en coffres (voir Menus) : raisons à cocher (teintures), liste et fiche des
+ * signalements du staff. Restent en fenêtre de Gui les saisies de texte : « Autre », note de classement.
  */
 final class Signalements {
 
     static final String PERMISSION_STAFF = "kseconomy.staff";
-    private static final int PAR_PAGE = 10;
     private static final int AUTRE_MAX = 200;
     private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
             .withZone(ZoneId.of("Europe/Paris"));
@@ -61,6 +66,7 @@ final class Signalements {
     private final Magasins magasins;
     private final Lang lang;
     private final Gui gui;
+    private final Menus menus;
     private final File fichier;
     private final Map<Integer, Signalement> liste = new LinkedHashMap<>();
     private int prochainId = 1;
@@ -70,6 +76,7 @@ final class Signalements {
         this.magasins = magasins;
         this.lang = plugin.lang();
         this.gui = plugin.gui();
+        this.menus = plugin.menus();
         this.fichier = new File(plugin.getDataFolder(), "signalements.yml");
         charger();
     }
@@ -111,60 +118,92 @@ final class Signalements {
             return;
         }
         if (dejaSignale(joueur.getUniqueId(), type, cible)) {
-            gui.notice(joueur, t("signalement.titre", "<red><bold>Signaler"),
-                    t("signalement.deja", "<yellow>Tu as déjà signalé ceci ; le staff ne l'a pas encore traité."),
-                    retour::accept);
-            lang.saveIfNeeded();
+            menus.message(joueur, t("signalement.deja", "<yellow>Tu as déjà signalé ceci ; le staff ne l'a pas encore "
+                    + "traité."), true);
             return;
         }
+        Signalement s = new Signalement();
+        s.type = type;
+        s.cible = cible;
+        s.proprio = proprio;
+        s.nomCible = nom;
+        s.lieu = lieu;
+        s.auteur = joueur.getUniqueId();
+        cocher(joueur, s, retour);
+    }
+
+    /**
+     * 1.5.0 : coffre du signalement : une teinture par raison (verte : cochée), un livre pour « Autre » (saisie de
+     * texte, fenêtre de Gui), « Envoyer » dans la barre d'actions. Le signalement en préparation garde les choix.
+     */
+    private void cocher(Player joueur, Signalement s, Consumer<Player> retour) {
         List<Component> raisons = raisons();
-        List<DialogInput> champs = new ArrayList<>();
-        for (int i = 0; i < raisons.size(); i++) {
-            champs.add(gui.toggle("r" + i, raisons.get(i), false));
-        }
-        champs.add(gui.text("autre", t("signalement.champ-autre", "Autre (précise)"), "", AUTRE_MAX));
-        ActionButton envoyer = gui.form(t("signalement.envoyer", "<red><bold>Envoyer le signalement"), null, (p, vue) -> {
-            Signalement s = new Signalement();
-            for (int i = 0; i < raisons.size(); i++) {
-                if (Boolean.TRUE.equals(vue.getBoolean("r" + i))) {
-                    s.raisons.add(texte(raisons.get(i)));
+        Contenant c = menus.menu(joueur, 4, "boutique".equals(s.type)
+                ? t("signalement.titre-boutique-coffre", "<dark_gray>Signaler la boutique")
+                : t("signalement.titre-magasin-coffre", "<dark_gray>Signaler le magasin"), "signalement-" + s.type);
+        c.poser(4, Menus.objet(Material.PAPER, t("signalement.cible", "<white><nom>", "nom", s.nomCible),
+                t("catalogue.info", "<gray>de <proprio>", "proprio", Boutiques.nomJoueur(s.proprio)),
+                t("signalement.aide-coffre", "<gray>Coche les raisons, ou précise dans « Autre », puis « Envoyer ».")),
+                null);
+        int[] places = {10, 12, 14};
+        for (int i = 0; i < raisons.size() && i < places.length; i++) {
+            String raison = texte(raisons.get(i));
+            boolean cochee = s.raisons.contains(raison);
+            c.poser(places[i], Contenant.objet(cochee ? Material.LIME_DYE : Material.GRAY_DYE,
+                    Component.text(raison, cochee ? NamedTextColor.GREEN : NamedTextColor.WHITE),
+                    List.of(cochee ? t("signalement.cochee", "<green>Cochée <dark_gray>(clic : décocher)")
+                            : t("signalement.a-cocher", "<dark_gray>Clic : cocher"))), p -> {
+                if (!s.raisons.remove(raison)) {
+                    s.raisons.add(raison);
                 }
-            }
+                cocher(p, s, retour);
+            });
+        }
+        c.poser(16, Menus.objet(Material.WRITABLE_BOOK, t("signalement.autre", "<white>Autre (précise)"),
+                s.autre.isEmpty() ? null : Component.text("« " + s.autre + " »", NamedTextColor.YELLOW),
+                t("recherche.clic-ecrire", "<dark_gray>Clic : écrire")), p -> preciser(p, s, retour));
+        c.poser(c.bas(4), Contenant.objet(Material.BELL, t("signalement.envoyer", "<red><bold>Envoyer le signalement"),
+                List.of()), p -> envoyer(p, s, retour));
+        menus.sortie(c, retour);
+        c.ouvrir(joueur);
+        lang.saveIfNeeded();
+    }
+
+    private void preciser(Player joueur, Signalement s, Consumer<Player> retour) {
+        ActionButton valider = gui.form(t("boutique.valider", "<green>Valider"), null, (p, vue) -> {
             String autre = vue.getText("autre") == null ? "" : vue.getText("autre").trim();
             s.autre = autre.length() > AUTRE_MAX ? autre.substring(0, AUTRE_MAX) : autre;
-            if (s.raisons.isEmpty() && s.autre.isEmpty()) {
-                gui.notice(p, t("signalement.titre", "<red><bold>Signaler"),
-                        t("signalement.vide", "<red>Coche au moins une raison, ou précise dans « Autre »."),
-                        q -> formulaire(q, type, cible, proprio, nom, lieu, retour));
-                lang.saveIfNeeded();
-                return;
-            }
-            if (dejaSignale(p.getUniqueId(), type, cible)) {
-                retour.accept(p);
-                return;
-            }
-            s.id = prochainId++;
-            s.type = type;
-            s.cible = cible;
-            s.proprio = proprio;
-            s.nomCible = nom;
-            s.lieu = lieu;
-            s.auteur = p.getUniqueId();
-            s.date = System.currentTimeMillis();
-            liste.put(s.id, s);
-            sauver();
-            prevenirStaff(s);
-            gui.notice(p, t("signalement.merci-titre", "<green><bold>Merci !"),
-                    t("signalement.merci", "<gray>Ton signalement a été envoyé au staff."), retour::accept);
+            cocher(p, s, retour);
+        });
+        Contenant.saisie(joueur, () -> {
+            gui.open(joueur, "boutique".equals(s.type) ? t("signalement.titre-boutique", "<red><bold>Signaler la boutique")
+                            : t("signalement.titre-magasin", "<red><bold>Signaler le magasin"), List.of(),
+                    List.of(gui.text("autre", t("signalement.champ-autre", "Autre (précise)"), s.autre, AUTRE_MAX)),
+                    List.of(valider, gui.button(t("signalement.retour", "<gray>Retour"), null,
+                            p -> cocher(p, s, retour))), null, 1);
             lang.saveIfNeeded();
         });
-        gui.open(joueur, "boutique".equals(type) ? t("signalement.titre-boutique", "<red><bold>Signaler la boutique")
-                        : t("signalement.titre-magasin", "<red><bold>Signaler le magasin"),
-                List.of(t("signalement.aide", "<white><nom> <gray>de <proprio>. Coche les raisons, ou précise dans "
-                        + "« Autre ».", "nom", nom, "proprio", Boutiques.nomJoueur(proprio))),
-                champs, List.of(envoyer, gui.button(t("signalement.retour", "<gray>Retour"), null, retour::accept)),
-                null, 1);
-        lang.saveIfNeeded();
+    }
+
+    private void envoyer(Player joueur, Signalement s, Consumer<Player> retour) {
+        if (s.raisons.isEmpty() && s.autre.isEmpty()) {
+            menus.message(joueur, t("signalement.vide", "<red>Coche au moins une raison, ou précise dans « Autre »."),
+                    true);
+            return;
+        }
+        if (dejaSignale(joueur.getUniqueId(), s.type, s.cible)) {
+            retour.accept(joueur);
+            return;
+        }
+        List<String> ordre = raisons().stream().map(Signalements::texte).toList();
+        s.raisons.sort(java.util.Comparator.comparingInt(ordre::indexOf));
+        s.id = prochainId++;
+        s.date = System.currentTimeMillis();
+        liste.put(s.id, s);
+        sauver();
+        prevenirStaff(s);
+        retour.accept(joueur);
+        menus.message(joueur, t("signalement.merci", "<gray>Ton signalement a été envoyé au staff."), false);
     }
 
     private boolean dejaSignale(UUID auteur, String type, String cible) {
@@ -206,7 +245,22 @@ final class Signalements {
 
     // ------------------------------------------------------------------ staff
 
-    /** /magasin signalements (ou rubrique « Modération » de /menu) : non traités (ou classés), par pages. */
+    /** Lignes communes d'un signalement : sa cible, son auteur et sa date, ses raisons. */
+    private List<Component> fiche(Signalement s) {
+        return Menus.lignes(
+                t("staff.cible", "<white><type> « <nom> » de <proprio>", "type", typeAffiche(s), "nom", s.nomCible,
+                        "proprio", Boutiques.nomJoueur(s.proprio)),
+                t("staff.auteur", "<gray>Par <white><auteur></white>, le <date>", "auteur",
+                        Boutiques.nomJoueur(s.auteur), "date", DATE.format(Instant.ofEpochMilli(s.date))),
+                t("staff.raisons", "<gray>Raisons : <white><raisons>", "raisons", resume(s)));
+    }
+
+    /**
+     * /magasin signalements (ou rubrique « Modération » de /menu) : non traités (ou classés), par pages. 1.5.0 : coffre,
+     * un signalement par case (coffre : boutique ; pancarte : magasin).
+     *
+     * @param retour écran précédent (fenêtre de /menu), ou null
+     */
     void ouvrirStaff(Player joueur, boolean classes, int page, Consumer<Player> retour) {
         if (!staff(joueur)) {
             return;
@@ -218,64 +272,66 @@ final class Signalements {
             }
         }
         java.util.Collections.reverse(choisis);
-        int pages = Math.max(1, (choisis.size() + PAR_PAGE - 1) / PAR_PAGE);
+        int pages = Math.max(1, (choisis.size() + Contenant.PAR_PAGE - 1) / Contenant.PAR_PAGE);
         int p = Math.max(0, Math.min(page, pages - 1));
-        List<ActionButton> boutons = new ArrayList<>();
-        for (int i = p * PAR_PAGE; i < Math.min(choisis.size(), (p + 1) * PAR_PAGE); i++) {
+        Contenant c = menus.menu(joueur, 6, classes ? t("staff.titre-classes-coffre", "<dark_gray>Signalements classés")
+                : t("staff.titre-coffre", "<dark_gray>Signalements"), "signalements-" + classes);
+        for (int i = p * Contenant.PAR_PAGE; i < Math.min(choisis.size(), (p + 1) * Contenant.PAR_PAGE); i++) {
             Signalement s = choisis.get(i);
-            boutons.add(gui.button(t("staff.bouton-signalement", "<white>n°<id> : <nom>", "id", s.id,
-                            "nom", Boutiques.couper(s.nomCible, 24)),
-                    t("staff.info-signalement", "<gray><type> de <proprio>", "type", typeAffiche(s),
-                            "proprio", Boutiques.nomJoueur(s.proprio)), j -> detail(j, s, classes, retour)));
+            List<Component> lignes = new ArrayList<>(fiche(s));
+            lignes.add(t("staff.clic", "<dark_gray>Clic : ouvrir"));
+            c.poser(i - p * Contenant.PAR_PAGE, Contenant.objet(
+                    "boutique".equals(s.type) ? Material.CHEST : Material.OAK_HANGING_SIGN,
+                    t("staff.bouton-signalement", "<white>n°<id> : <nom>", "id", s.id, "nom",
+                            Boutiques.couper(s.nomCible, 24)), lignes), j -> detail(j, s, classes, retour));
         }
-        if (p > 0) {
-            boutons.add(gui.button(t("magasin.precedent", "<yellow>Page précédente"), null, j -> ouvrirStaff(j, classes, p - 1, retour)));
+        if (choisis.isEmpty()) {
+            c.poser(22, Contenant.objet(Material.PAPER, t("staff.aucun", "<gray>Aucun signalement."), List.of()), null);
         }
-        if (p < pages - 1) {
-            boutons.add(gui.button(t("magasin.suivant", "<yellow>Page suivante"), null, j -> ouvrirStaff(j, classes, p + 1, retour)));
-        }
-        boutons.add(classes
-                ? gui.button(t("staff.bouton-non-traites", "<yellow>Non traités"), null, j -> ouvrirStaff(j, false, 0, retour))
-                : gui.button(t("staff.bouton-classes", "<gray>Classés"), null, j -> ouvrirStaff(j, true, 0, retour)));
-        if (retour != null) {
-            boutons.add(gui.button(t("signalement.retour", "<gray>Retour"), null, retour::accept));
-        }
-        List<Component> corps = List.of(choisis.isEmpty() ? t("staff.aucun", "<gray>Aucun signalement.")
-                : t("staff.nombre", "<white><nombre> signalement(s).", "nombre", choisis.size()));
-        gui.open(joueur, classes ? t("staff.titre-classes", "<red><bold>Signalements classés")
-                : t("staff.titre", "<red><bold>Signalements"), corps, List.of(), boutons, gui.close(), 2);
+        menus.pages(c, p, pages, (j, n) -> ouvrirStaff(j, classes, n, retour));
+        c.poser(c.bas(4), classes
+                ? Contenant.objet(Material.BELL, t("staff.bouton-non-traites", "<yellow>Non traités"), List.of())
+                : Contenant.objet(Material.BOOKSHELF, t("staff.bouton-classes", "<gray>Classés"), List.of()),
+                j -> ouvrirStaff(j, !classes, 0, retour));
+        // L'écran précédent est une fenêtre de /menu : le coffre est refermé avant de l'ouvrir.
+        menus.sortie(c, retour == null ? null : j -> Contenant.saisie(j, () -> retour.accept(j)));
+        c.ouvrir(joueur);
         lang.saveIfNeeded();
     }
 
+    /** 1.5.0 : coffre d'un signalement : sa fiche, la boutique signalée, et les actions du staff. */
     private void detail(Player joueur, Signalement s, boolean classes, Consumer<Player> retour) {
         if (!staff(joueur)) {
             return;
         }
-        List<Component> corps = new ArrayList<>();
-        corps.add(t("staff.cible", "<white><type> « <nom> » de <proprio>", "type", typeAffiche(s), "nom", s.nomCible,
-                "proprio", Boutiques.nomJoueur(s.proprio)));
-        corps.add(t("staff.auteur", "<gray>Par <white><auteur></white>, le <date>", "auteur", Boutiques.nomJoueur(s.auteur),
-                "date", DATE.format(Instant.ofEpochMilli(s.date))));
-        corps.add(t("staff.raisons", "<gray>Raisons : <white><raisons>", "raisons", resume(s)));
+        Contenant c = menus.menu(joueur, 5, t("staff.titre-detail-coffre", "<dark_gray>Signalement n°<id>", "id", s.id),
+                "signalement-staff");
+        List<Component> lignes = new ArrayList<>(fiche(s));
         Boutique b = "boutique".equals(s.type) ? magasins.boutiques.get(s.cible) : null;
-        if (b != null) {
-            corps.add(t("staff.offre", "<gray>Offre : ").append(Boutiques.lot(b.quantite, b.objet))
-                    .append(Component.text(" contre ")).append(plugin.boutiques().prix(b)));
-        } else if ("boutique".equals(s.type)) {
-            corps.add(t("staff.disparue", "<gray>Cette boutique n'existe plus."));
+        if (b == null && "boutique".equals(s.type)) {
+            lignes.add(t("staff.disparue", "<gray>Cette boutique n'existe plus."));
         }
         if (s.classe) {
-            corps.add(t("staff.classe", "<green>Classé par <qui> : <action>", "qui", s.traitePar, "action", s.action));
+            lignes.addAll(Menus.lignes(t("staff.classe", "<green>Classé par <qui> : <action>", "qui", s.traitePar,
+                    "action", s.action)));
         }
-        List<ActionButton> boutons = new ArrayList<>();
+        c.poser(b == null ? 4 : 3, Contenant.objet(Material.PAPER, t("staff.detail-nom", "<gold>Signalement n°<id>", "id",
+                s.id), lignes), null);
+        if (b != null) {
+            c.poser(5, plugin.boutiques().icone(b), null);
+        }
         Location lieu = b != null ? b.panneau : s.lieu;
         if (lieu != null && lieu.getWorld() != null) {
-            boutons.add(gui.button(t("staff.bouton-tp", "<white>Se téléporter"), null,
-                    p -> p.teleport(lieu.clone().add(0.5, 0, 0.5))));
+            c.poser(19, Contenant.objet(Material.ENDER_PEARL, t("staff.bouton-tp", "<white>Se téléporter"), List.of()),
+                    p -> Contenant.apres(() -> {
+                        p.closeInventory();
+                        p.teleport(lieu.clone().add(0.5, 0, 0.5));
+                    }));
         }
         if (b != null && !s.classe) {
-            boutons.add(gui.button(t("staff.bouton-supprimer", "<red>Supprimer la boutique"), null,
-                    p -> gui.confirm(p, t("staff.titre-supprimer", "<red><bold>Supprimer la boutique"),
+            c.poser(21, Menus.objet(Material.LAVA_BUCKET, t("staff.bouton-supprimer", "<red>Supprimer la boutique"),
+                    t("staff.supprimer-info", "<gray>Une confirmation est demandée ; le signalement sera classé")),
+                    p -> menus.confirmer(p, t("staff.titre-supprimer-coffre", "<dark_gray>Supprimer la boutique"),
                             t("staff.supprimer-texte", "<white>La boutique est supprimée (panneau ordinaire, contenu du "
                                     + "contenant et points en attente laissés au propriétaire) ; le signalement est "
                                     + "classé."),
@@ -285,21 +341,38 @@ final class Signalements {
                                 }
                                 classer(q, s, "boutique supprimée");
                                 ouvrirStaff(q, false, 0, retour);
-                            }, q -> detail(q, s, classes, retour))));
+                            }, q -> detail(q, s, classes, retour)));
         }
         if (!s.classe) {
-            boutons.add(gui.form(t("staff.bouton-classer", "<green>Classer"), null, (p, vue) -> {
-                String action = vue.getText("action") == null ? "" : vue.getText("action").trim();
-                classer(p, s, action.isEmpty() ? "rien à faire" : action);
+            c.poser(23, Menus.objet(Material.LIME_DYE, t("staff.bouton-classer", "<green>Classer"),
+                    t("staff.classer-info", "<gray>Sans note : « rien à faire »")), p -> {
+                classer(p, s, "rien à faire");
                 ouvrirStaff(p, false, 0, retour);
-            }));
+            });
+            c.poser(25, Menus.objet(Material.WRITABLE_BOOK, t("staff.bouton-classer-note", "<green>Classer avec une note"),
+                    t("staff.classer-note-info", "<gray>Écrire l'action faite")), p -> noter(p, s, classes, retour));
         }
-        boutons.add(gui.button(t("signalement.retour", "<gray>Retour"), null, p -> ouvrirStaff(p, classes, 0, retour)));
-        List<DialogInput> champs = s.classe ? List.of()
-                : List.of(gui.text("action", t("staff.champ-action", "Action faite (pour classer)"), "", 100));
-        gui.open(joueur, t("staff.titre-detail", "<red><bold>Signalement n°<id>", "id", s.id), corps, champs, boutons,
-                gui.close(), 1);
+        menus.sortie(c, p -> ouvrirStaff(p, classes, 0, retour));
+        c.ouvrir(joueur);
         lang.saveIfNeeded();
+    }
+
+    /** Classer avec une note : saisie de texte (fenêtre de Gui). */
+    private void noter(Player joueur, Signalement s, boolean classes, Consumer<Player> retour) {
+        ActionButton classer = gui.form(t("staff.bouton-classer", "<green>Classer"), null, (p, vue) -> {
+            String action = vue.getText("action") == null ? "" : vue.getText("action").trim();
+            if (!s.classe) {
+                classer(p, s, action.isEmpty() ? "rien à faire" : action);
+            }
+            ouvrirStaff(p, false, 0, retour);
+        });
+        Contenant.saisie(joueur, () -> {
+            gui.open(joueur, t("staff.titre-detail", "<red><bold>Signalement n°<id>", "id", s.id), List.of(),
+                    List.of(gui.text("action", t("staff.champ-action", "Action faite (pour classer)"), "", 100)),
+                    List.of(classer, gui.button(t("signalement.retour", "<gray>Retour"), null,
+                            p -> detail(p, s, classes, retour))), gui.close(), 1);
+            lang.saveIfNeeded();
+        });
     }
 
     private void classer(Player staff, Signalement s, String action) {

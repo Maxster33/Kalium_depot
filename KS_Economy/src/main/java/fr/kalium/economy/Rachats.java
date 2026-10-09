@@ -1,8 +1,7 @@
 package fr.kalium.economy;
 
-import fr.kalium.menu.api.Gui;
+import fr.kalium.menu.api.Contenant;
 import fr.kalium.menu.api.Lang;
-import io.papermc.paper.registry.data.dialog.ActionButton;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -74,7 +73,7 @@ final class Rachats implements CommandExecutor {
 
     private final KSEconomy plugin;
     private final Lang lang;
-    private final Gui gui;
+    private final Menus menus;
     private final File fichier;
     private final Map<String, Entree> base = new LinkedHashMap<>();
     private final List<Offre> offres = new ArrayList<>();
@@ -86,7 +85,7 @@ final class Rachats implements CommandExecutor {
     Rachats(KSEconomy plugin) {
         this.plugin = plugin;
         this.lang = plugin.lang();
-        this.gui = plugin.gui();
+        this.menus = plugin.menus();
         this.fichier = new File(plugin.getDataFolder(), "rachats.yml");
         chargerBase();
         charger();
@@ -398,7 +397,7 @@ final class Rachats implements CommandExecutor {
     }
 
     private Component titre() {
-        return t("rachats.titre", "<gold><bold>Rachats de la semaine");
+        return t("rachats.titre-coffre", "<dark_gray>Rachats de la semaine");
     }
 
     private String pourcent(UUID joueur) {
@@ -417,32 +416,66 @@ final class Rachats implements CommandExecutor {
                 + "cagnotte).", "quota", KSEconomy.points(quota), "pourcent", pourcent(joueur.getUniqueId()));
     }
 
+    /** 1.5.0 : l'objet d'un rachat dans le menu (l'objet du jeu, la potion, ou une étoile pour un objet spécial). */
+    private static ItemStack icone(Offre o) {
+        Entree e = o.entree();
+        ItemStack objet;
+        if (e.materiel() != null) {
+            objet = new ItemStack(e.materiel());
+        } else if (e.cible().startsWith("potion:")) {
+            objet = new ItemStack(Material.POTION);
+            if (objet.getItemMeta() instanceof PotionMeta potion) {
+                try {
+                    potion.setBasePotionType(org.bukkit.potion.PotionType.valueOf(
+                            e.cible().substring(7).toUpperCase(Locale.ROOT)));
+                    objet.setItemMeta(potion);
+                } catch (IllegalArgumentException inconnue) {
+                    // potion inconnue de cette version : une fiole sans effet
+                }
+            }
+        } else {
+            objet = new ItemStack(Material.NETHER_STAR);
+        }
+        objet.setAmount(Math.max(1, Math.min(o.quantite(), objet.getMaxStackSize())));
+        return objet;
+    }
+
+    /** Cases des 10 rachats : deux rangées de 5, centrées. */
+    private static final int[] PLACES = {20, 21, 22, 23, 24, 29, 30, 31, 32, 33};
+
+    /** 1.5.0 : coffre ; un objet par rachat (la pile montre le lot), un clic ouvre la vente. */
     void ouvrir(Player joueur) {
         verifier();
-        List<Component> corps = new ArrayList<>();
-        corps.add(t("rachats.intro", "<white>Le serveur rachète ces objets jusqu'à dimanche soir (minuit, heure de "
-                + "Paris). Nouveau tirage chaque lundi."));
-        corps.add(t("menu.solde", "<white>Solde : <green><bold><solde></bold>", "solde",
-                KSEconomy.points(KSEconomy.solde(joueur.getUniqueId()))));
-        corps.add(ligneQuota(joueur));
-        List<ActionButton> boutons = new ArrayList<>();
-        for (Offre o : offres) {
+        Contenant c = menus.menu(joueur, 6, titre(), "rachats");
+        c.poser(4, Menus.objet(Material.CLOCK, t("rachats.info", "<gold>Rachats de la semaine"),
+                t("rachats.intro", "<white>Le serveur rachète ces objets jusqu'à dimanche soir (minuit, heure de "
+                        + "Paris). Nouveau tirage chaque lundi."),
+                t("eco.solde", "<white>Solde : <green><solde>", "solde",
+                        KSEconomy.points(KSEconomy.solde(joueur.getUniqueId()))),
+                ligneQuota(joueur)), null);
+        for (int i = 0; i < offres.size() && i < 36; i++) {
+            Offre o = offres.get(i);
             int possede = compter(joueur, o.entree());
-            boutons.add(gui.button(
-                    t("rachats.bouton", "<quantite> x <objet> : <green><points>", "quantite", o.quantite(), "objet",
-                            nom(o.entree()), "points", KSEconomy.nombre(o.points())),
-                    t("rachats.bouton-info", "<gray>Tu en as <white><n></white> (<lots> lot(s))", "n", possede, "lots",
-                            possede / o.quantite()),
-                    p -> detail(p, o)));
+            int place = offres.size() <= PLACES.length ? PLACES[i] : 9 + i;
+            c.poser(place, Contenant.objet(icone(o),
+                    t("rachats.objet", "<yellow><quantite> x <objet>", "quantite", o.quantite(), "objet",
+                            nom(o.entree())),
+                    List.of(t("rachats.objet-prix", "<gray>Racheté <green><points></green> le lot", "points",
+                                    KSEconomy.points(o.points())),
+                            t("rachats.bouton-info", "<gray>Tu en as <white><n></white> (<lots> lot(s))", "n", possede,
+                                    "lots", possede / o.quantite()),
+                            t("rachats.objet-clic", "<dark_gray>Clic : vendre"))), p -> detail(p, o));
         }
         if (offres.isEmpty()) {
-            corps.add(t("rachats.vide", "<red>Aucun rachat cette semaine."));
+            c.poser(22, Contenant.objet(Material.BARRIER, t("rachats.vide", "<red>Aucun rachat cette semaine."),
+                    List.of()), null);
         }
-        gui.open(joueur, titre(), corps, List.of(), boutons,
-                gui.button(t("gui.retour", "<gray>Retour"), null, plugin.menuEconomie()::ouvrir), 2);
+        menus.sortie(c, plugin.menuEconomie()::ouvrir);
+        c.ouvrir(joueur);
         lang.saveIfNeeded();
     }
 
+    /** 1.5.0 : vente d'un objet : un lot, ou tout ce que l'inventaire et le quota permettent. */
     private void detail(Player joueur, Offre o) {
         if (!offres.contains(o)) {
             ouvrir(joueur);
@@ -451,48 +484,43 @@ final class Rachats implements CommandExecutor {
         UUID id = joueur.getUniqueId();
         int possede = compter(joueur, o.entree());
         int lots = possede / o.quantite();
-        List<Component> corps = new ArrayList<>();
-        corps.add(t("rachats.detail-lot", "<white>Le serveur achète <yellow><quantite> x <objet></yellow> pour "
-                + "<green><points></green>.", "quantite", o.quantite(), "objet", nom(o.entree()), "points",
-                KSEconomy.points(o.points())));
-        corps.add(t("rachats.detail-inventaire", "<gray>Dans ton inventaire : <white><n></white>, soit <white><lots>"
-                + "</white> lot(s).", "n", possede, "lots", lots));
         long quota = quota(id);
-        if (quota >= 0) {
-            corps.add(t("rachats.detail-quota", "<gray>Gagné aujourd'hui avec cet objet : <white><gagne></white> sur "
-                    + "<white><quota></white>.", "gagne", KSEconomy.nombre(gagne(id, o.entree().id())), "quota",
-                    KSEconomy.points(quota)));
-        } else {
-            corps.add(ligneQuota(joueur));
-        }
-        List<ActionButton> boutons = new ArrayList<>();
-        boutons.add(gui.button(t("rachats.vendre-un", "<green>Vendre 1 lot"),
-                t("rachats.vendre-un-info", "<gray>+ <points>", "points", KSEconomy.points(o.points())),
-                p -> vendre(p, o, false)));
+        Contenant c = menus.menu(joueur, 4, t("rachats.titre-vente", "<dark_gray>Vendre au serveur"), "rachat");
+        c.poser(4, Menus.objet(icone(o),
+                t("rachats.objet", "<yellow><quantite> x <objet>", "quantite", o.quantite(), "objet", nom(o.entree())),
+                t("rachats.objet-prix", "<gray>Racheté <green><points></green> le lot", "points",
+                        KSEconomy.points(o.points())),
+                t("rachats.detail-inventaire", "<gray>Dans ton inventaire : <white><n></white>, soit <white><lots>"
+                        + "</white> lot(s).", "n", possede, "lots", lots),
+                quota >= 0 ? t("rachats.detail-quota", "<gray>Gagné aujourd'hui avec cet objet : <white><gagne></white> "
+                        + "sur <white><quota></white>.", "gagne", KSEconomy.nombre(gagne(id, o.entree().id())), "quota",
+                        KSEconomy.points(quota)) : ligneQuota(joueur)), null);
+        c.poser(lots > 1 ? 11 : 13, Contenant.objet(Material.EMERALD, t("rachats.vendre-un", "<green>Vendre 1 lot"),
+                List.of(t("rachats.vendre-un-info", "<gray>+ <points>", "points", KSEconomy.points(o.points())))),
+                p -> vendre(p, o, false));
         if (lots > 1) {
-            boutons.add(gui.button(t("rachats.vendre-tout", "<green>Tout vendre"),
-                    t("rachats.vendre-tout-info", "<gray><lots> lots, dans la limite du quota", "lots", lots),
-                    p -> vendre(p, o, true)));
+            c.poser(15, Menus.objet(Material.EMERALD_BLOCK, t("rachats.vendre-tout", "<green>Tout vendre"),
+                    t("rachats.vendre-tout-info", "<gray><lots> lots, dans la limite du quota", "lots", lots)),
+                    p -> vendre(p, o, true));
         }
-        gui.open(joueur, titre(), corps, List.of(), boutons,
-                gui.button(t("gui.retour", "<gray>Retour"), null, this::ouvrir), 1);
+        menus.sortie(c, this::ouvrir);
+        c.ouvrir(joueur);
         lang.saveIfNeeded();
     }
 
     private void vendre(Player joueur, Offre o, boolean tout) {
         verifier();
         if (!offres.contains(o)) {
-            gui.notice(joueur, titre(), t("rachats.termine", "<red>Ce rachat est terminé : nouveau tirage."),
-                    this::ouvrir);
+            ouvrir(joueur);
+            menus.message(joueur, t("rachats.termine", "<red>Ce rachat est terminé : nouveau tirage."), true);
             return;
         }
         UUID id = joueur.getUniqueId();
         String objet = o.entree().id();
         int lots = compter(joueur, o.entree()) / o.quantite();
         if (lots < 1) {
-            gui.notice(joueur, titre(), t("rachats.manque", "<red>Il te faut <quantite> x <objet> dans ton inventaire.",
-                    "quantite", o.quantite(), "objet", nom(o.entree())), p -> detail(p, o));
-            lang.saveIfNeeded();
+            menus.message(joueur, t("rachats.manque", "<red>Il te faut <quantite> x <objet> dans ton inventaire.",
+                    "quantite", o.quantite(), "objet", nom(o.entree())), true);
             return;
         }
         // Lots vendus : la vente qui fait dépasser le quota passe, on ne bloque qu'ensuite. Le quota suit la
@@ -518,18 +546,17 @@ final class Rachats implements CommandExecutor {
             gains.computeIfAbsent(id, u -> new HashMap<>()).merge(objet, total, Long::sum);
         }
         if (vendus == 0) {
-            gui.notice(joueur, titre(), t("rachats.quota-atteint", "<red>Quota du jour atteint pour cet objet "
-                    + "(<quota>). Reviens demain.", "quota", KSEconomy.points(quota(id))), p -> detail(p, o));
-            lang.saveIfNeeded();
+            menus.message(joueur, t("rachats.quota-atteint", "<red>Quota du jour atteint pour cet objet "
+                    + "(<quota>). Reviens demain.", "quota", KSEconomy.points(quota(id))), true);
             return;
         }
         sauver();
         plugin.getLogger().info(joueur.getName() + " vend " + (vendus * o.quantite()) + " x " + objet + " pour "
                 + total + " points (rachats de la semaine).");
-        gui.notice(joueur, titre(), t("rachats.vendu", "<white>Vendu : <yellow><nombre> x <objet></yellow> pour "
+        detail(joueur, o);
+        menus.message(joueur, t("rachats.vendu", "<white>Vendu : <yellow><nombre> x <objet></yellow> pour "
                 + "<green><points></green>.", "nombre", vendus * o.quantite(), "objet", nom(o.entree()), "points",
-                KSEconomy.points(total)), p -> detail(p, o));
-        lang.saveIfNeeded();
+                KSEconomy.points(total)), false);
     }
 
     // ------------------------------------------------------------------ sauvegarde

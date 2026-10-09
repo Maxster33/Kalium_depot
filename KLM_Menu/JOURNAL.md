@@ -301,6 +301,13 @@ boîte à outils pour servir à tous les plugins.
   d'actions en bas ; une saisie de texte ou de nombre reste une fenêtre de `Gui`, ouverte depuis une case.
 - Ajout seulement : `Gui` et les plugins compilés contre la 2.10.0 fonctionnent sans changement. KS_RewardsGUI 1.4.0
   garde pour l'instant sa propre copie de la classe.
+- **Complété le même jour pour KS_Economy 1.5.0** (premier plugin à s'en servir, 28 écrans) :
+  `pour(joueur, rangées, titre, marque)` (petit menu, confirmation) et `bas(colonne)` (case de la barre d'actions) ;
+  `lignes(texte mis en forme)` (coupe un texte de `lang.yml` ; un texte court est gardé tel quel) ;
+  `saisie(joueur, fenêtre)` : ouvre une fenêtre de `Gui` depuis un menu (le coffre est refermé d'abord ; un joueur
+  Bedrock attend 5 ticks, délai choisi par Claude, à vérifier en jeu) ; `fermer(joueur)` et `apres(suite)` : pendant
+  un clic, le jeu interdit d'ouvrir ou de fermer une fenêtre, donc `ouvrir`, `fermer` et `saisie` attendent la fin du
+  clic (un tick) quand ils sont appelés depuis l'action d'une case.
 
 **Compilé le 09/10/2026, non déployé (à envoyer sur les serveurs avec le premier plugin qui s'en sert). Statut : non testé en jeu.**
 
