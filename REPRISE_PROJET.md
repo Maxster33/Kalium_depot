@@ -92,6 +92,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KLM_Menu 2.11.0** (09/10/2026, LeKiwi06) : classe `Contenant` (menus de type contenant) dans la boîte à outils, avec son écoute commune ; ajout seulement ; **compilé, non déployé, non testé en jeu**, réservation gardée. À envoyer avec le premier plugin qui s'en sert (KS_Economy, dont les écrans seront convertis dès que la réservation de l'autre session de LeKiwi06 sur ce plugin sera levée).
+
 
 
 

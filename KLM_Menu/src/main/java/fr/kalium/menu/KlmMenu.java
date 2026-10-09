@@ -141,6 +141,8 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         getServer().getMessenger().registerOutgoingPluginChannel(this, CHANNEL);
         getServer().getMessenger().registerIncomingPluginChannel(this, CHANNEL, this);
         getServer().getPluginManager().registerEvents(this, this);
+        // 2.11.0 : menus de type contenant de tous les plugins (clics annules, action de la case cliquee).
+        getServer().getPluginManager().registerEvents(new fr.kalium.menu.api.Contenant.Ecoute(), this);
 
         for (String name : List.of("servers", "lobby", "kaliummenu", "informations", "menu")) {
             PluginCommand command = getCommand(name);

@@ -281,3 +281,26 @@ affichée. Empilé sur la 2.9.0, non testée en jeu : nécessaire pour la demand
 - Ajout seulement : les plugins compilés contre la 2.9.0 fonctionnent sans changement.
 
 **Déployé sur les 6 serveurs Paper le 09/10/2026 à 06:06 (LeKiwi06 ; 2.9.0 dans `_removed-klm_menu-2.9.0/`), actif après redémarrage de chaque serveur. Statut : non testé en jeu.**
+
+## 2.11.0 - menus de type contenant dans la boîte à outils (09/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « j'aimerais rendre les interfaces plus jolies, et selon moi ça passe par davantage d'interfaces
+de type contenant quand c'est possible au lieu des boutons ». Le premier menu converti (`/rewards`, KS_RewardsGUI 1.4.0)
+a été validé en jeu par lui le 09/10/2026 (« ça marche, passe aux écrans de l'économie ») : sa brique passe dans la
+boîte à outils pour servir à tous les plugins.
+
+- **`fr.kalium.menu.api.Contenant`** : un coffre de 1 à 6 rangées dont chaque case porte un objet et, au besoin, une
+  action. `poser(case, objet, action)`, `barre()` (dernière rangée en vitres grises), `objet(...)` (objet de menu :
+  nom et lignes sans italique, attributs masqués ; à partir d'un matériau ou d'un objet existant), `decor()`,
+  `lignes(texte, couleur)` (coupe une description à 35 caractères), `message(joueur, texte, refus)` (message au-dessus
+  de la barre d'objets, avec un son), `pour(joueur, titre, marque)` (reprend le menu déjà ouvert de la même marque et le
+  vide, pour le remplir à nouveau sans le refermer).
+- **KLM_Menu enregistre l'écoute commune** (`Contenant.Ecoute`) : tout clic et tout glisser dans un tel menu est annulé
+  (rien ne se prend ni ne se dépose), le clic sur une case à action la déclenche avec un son de bouton.
+- Modèle à suivre (dans le commentaire de la classe) : 6 rangées, objets cliquables en haut (45 par page), barre
+  d'actions en bas ; une saisie de texte ou de nombre reste une fenêtre de `Gui`, ouverte depuis une case.
+- Ajout seulement : `Gui` et les plugins compilés contre la 2.10.0 fonctionnent sans changement. KS_RewardsGUI 1.4.0
+  garde pour l'instant sa propre copie de la classe.
+
+**Compilé le 09/10/2026, non déployé (à envoyer sur les serveurs avec le premier plugin qui s'en sert). Statut : non testé en jeu.**
+
