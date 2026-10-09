@@ -23,6 +23,7 @@ star ».
 
 ## Reste à faire
 
-- Accord de LeKiwi06 pour déployer la 1.5.1 sur Event et Kixster (KS_Economy reste réservé en attendant).
+- Déploiement de la 1.5.1 sur Event et Kixster : pas maintenant. LeKiwi06 (20:30) : « pas encore, il y a des joueurs
+  on fera ça après le stream de ce soir ». À faire quand il le redemande ; KS_Economy reste réservé jusque-là.
 - À tester en jeu : `/rachat` une semaine où un objet custom est tiré (tête, élixir, spawner, fiole), en Java et en
   Bedrock ; l'écran « Vendre au serveur » ; la vente d'un vrai objet custom.
