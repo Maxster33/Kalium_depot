@@ -133,3 +133,14 @@ Limites : écrit sans serveur de test. À vérifier en jeu, surtout sur Bedrock 
 clic sur les cases).
 
 **Déployé sur Kixster et sur Event le 09/10/2026 à 18:20 (LeKiwi06 ; 1.3.0 dans `_removed-ks_rewardsgui-1.3.0/`), actif depuis les redémarrages de 18:23 (journaux lus : 1.4.0 activée sur les deux serveurs, aucune erreur). `config.yml` des serveurs non touchés. Statut : non testé en jeu.**
+
+## 1.4.1 - lecture publique pour la modération (09/10/2026, LeKiwi06)
+
+Pour la fiche d'un joueur de KS_AntiCheat 1.3.0 (demande de LeKiwi06 : récompenses en attente dans la fiche de
+modération). Aucun changement pour les joueurs ; empilé sur la 1.4.0 non testée (« vas-y pour la suite »).
+- `recompensesEnAttente(joueur)` : récompenses en attente d'un joueur (date d'envoi, origine, raison, nombre d'éléments,
+  dépôt local ou non), en ligne ou hors ligne. Lecture seule : le contenu n'est ni montré ni touché.
+
+À déployer ensemble : KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2, KS_RewardsGUI 1.4.1 (sans les quatre derniers, la fiche de KS_AntiCheat 1.3.0 s'ouvre mais en montre moins).
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

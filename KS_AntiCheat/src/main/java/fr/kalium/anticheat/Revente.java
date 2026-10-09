@@ -313,6 +313,8 @@ final class Revente implements Listener {
         @EventHandler(priority = EventPriority.MONITOR)
         public void onEchange(fr.kalium.economy.api.EchangeTermineEvent e) {
             revente.echange(e.a(), e.b(), e.objetsA(), e.objetsB(), e.pointsA(), e.pointsB());
+            // 1.3.0 : journal des échanges (fiche d'un joueur, « Économie »).
+            revente.plugin.echanges().noter(e.a(), e.b(), e.objetsA(), e.objetsB(), e.pointsA(), e.pointsB());
         }
     }
 

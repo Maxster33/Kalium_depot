@@ -102,6 +102,8 @@ public final class KSTeleport extends JavaPlugin implements Listener {
     private static final List<Material> CUIVRES = List.of(Material.WAXED_COPPER_BLOCK, Material.WAXED_EXPOSED_COPPER,
             Material.WAXED_WEATHERED_COPPER, Material.WAXED_OXIDIZED_COPPER);
 
+    private static KSTeleport instance;
+
     private Lang lang;
     private Gui gui;
     private File fichier;
@@ -117,6 +119,7 @@ public final class KSTeleport extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        instance = this;
         saveDefaultConfig();
         cleRecette = new NamespacedKey(this, "jeton_localisation");
         cleMonde = new NamespacedKey(this, "monde");
@@ -155,6 +158,29 @@ public final class KSTeleport extends JavaPlugin implements Listener {
 
     private Fiche fiche(UUID joueur) {
         return fiches.computeIfAbsent(joueur, u -> new Fiche());
+    }
+
+    /**
+     * 1.0.1 (modération : fiche d'un joueur de KS_AntiCheat 1.3.0) : destinations enregistrées de ce joueur, en ligne ou
+     * hors ligne, dans l'ordre : « Maison du spawn », puis « Emplacement N » (dessus de la magnétite). Lecture seule ;
+     * une destination dont le monde n'est pas chargé est ignorée. Le lit n'est pas ici (il se lit dans Paper).
+     */
+    public static Map<String, Location> destinations(UUID joueur) {
+        Map<String, Location> r = new java.util.LinkedHashMap<>();
+        Fiche fiche = instance.fiches.get(joueur);
+        if (fiche == null) {
+            return r;
+        }
+        if (fiche.maison != null && fiche.maison.isWorldLoaded()) {
+            r.put("Maison du spawn", fiche.maison.clone());
+        }
+        fiche.emplacements.forEach((numero, pos) -> {
+            World monde = Bukkit.getWorld(pos.monde());
+            if (monde != null) {
+                r.put("Emplacement " + (numero + 1), new Location(monde, pos.x() + 0.5, pos.y() + 1, pos.z() + 0.5));
+            }
+        });
+        return r;
     }
 
     private long delai() {

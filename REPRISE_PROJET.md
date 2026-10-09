@@ -97,6 +97,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 
 
+- **KS_AntiCheat 1.3.0 + KS_Economy 1.4.1 + KS_Teleport 1.0.1 + KS_CoffreMort 1.0.2 + KS_RewardsGUI 1.4.1** (09/10/2026, LeKiwi06, à déployer ensemble) : fiche d'un joueur de la modération : « Économie » (solde, magasin, ventes, achats, `/echange` notés à partir de cette version), « Maisons » (lit, maison du spawn, emplacements), « Jetons et récompenses » (jetons, badges, récompenses en attente, coffres de mort), téléportation du staff à un claim, une maison ou un coffre de mort ; les quatre autres plugins ne gagnent qu'une lecture publique ; **compilés, non déployés, non testés en jeu**, réservations gardées jusqu'au déploiement (accord de LeKiwi06 attendu). Empilé sur KS_AntiCheat 1.2.0 et sur la catégorie 7 non testées, à la demande de LeKiwi06 (« vas-y pour la suite »).
+
 - **KG_BoatRace 1.6.0** (09/10/2026, LeKiwi06) : essai d'équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock, derrière le réglage « Bedrock : bateau serveur (essai) » désactivé par défaut ; **compilé, non déployé, non testé en jeu**, réservation gardée jusqu'au test. Empilé sur la 1.5.1 non testée (accord explicite de LeKiwi06).
 
 - **KG_Pong 0.1.0** (06/10/2026, LeKiwi06) : prototype d'un nouveau mini-jeu Pong pour Kal-Games (2 joueurs, vu de dessus, raquettes en vrais blocs, balle = Sulfur Cube à bloc de glace), branché sur le moteur de parties de KalGames (aucun changement dans KalGames) ; **compilé, non déployé, non testé en jeu**, réservation gardée. Après le déploiement, un modérateur doit construire un terrain plat entouré de murs, créer l'arène et poser 5 points (voir `KG_Pong/JOURNAL.md`).

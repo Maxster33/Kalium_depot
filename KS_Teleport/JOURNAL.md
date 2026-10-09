@@ -53,3 +53,14 @@ réapparition ; commandes `/home` et `/spawn` d'un autre plugin éventuel.
 Statut : non testé en jeu.**
 
 **Envoyé sur Kixster le 09/10/2026 à 17:31 (LeKiwi06, envoi groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_KaliumGive 1.9.0, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.4.0, KS_Claim 1.2.0 ; demande de LeKiwi06 : « envoie la catégorie 7 sur kixster » ; 1.0.0 ; nouveau sur Kixster ; **région WorldGuard `zone_spawn` à créer par l'humain** (sans elle : ni `/maison create` ni `/spawn`)), actif après redémarrage de Kixster. Jars en place vérifiés identiques aux références avant l'envoi. Statut : non testé en jeu.**
+
+## 1.0.1 - lecture publique pour la modération (09/10/2026, LeKiwi06)
+
+Pour la fiche d'un joueur de KS_AntiCheat 1.3.0 (demande de LeKiwi06 : ses /home, s'y téléporter). Aucun changement
+pour les joueurs.
+- `KSTeleport.destinations(joueur)` : maison du spawn et emplacements de localisation d'un joueur (libellé et position
+  d'arrivée), en ligne ou hors ligne. Lecture seule ; le lit n'y est pas (il se lit dans Paper).
+
+À déployer ensemble : KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2, KS_RewardsGUI 1.4.1 (sans les quatre derniers, la fiche de KS_AntiCheat 1.3.0 s'ouvre mais en montre moins).
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

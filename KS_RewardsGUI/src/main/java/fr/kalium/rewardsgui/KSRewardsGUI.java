@@ -231,6 +231,25 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
     }
 
     /**
+     * 1.4.1 (modération) : une récompense en attente : date d'envoi, origine, raison, nombre d'éléments de son contenu,
+     * et si c'est un dépôt local (objets du joueur lui-même, ex. coffre de mort).
+     */
+    public record EnAttente(long date, String origine, String raison, int elements, boolean locale) {
+    }
+
+    /**
+     * 1.4.1 (modération : fiche d'un joueur de KS_AntiCheat 1.3.0) : récompenses en attente de ce joueur, en ligne ou
+     * hors ligne, de la plus ancienne à la plus récente. Lecture seule : le contenu n'est ni montré ni touché.
+     */
+    public synchronized List<EnAttente> recompensesEnAttente(UUID joueur) {
+        List<EnAttente> r = new ArrayList<>();
+        for (Recompense rec : enAttente.getOrDefault(joueur, new LinkedHashMap<>()).values()) {
+            r.add(new EnAttente(rec.date, rec.origine, rec.raison, rec.contenu.size(), rec.locale));
+        }
+        return r;
+    }
+
+    /**
      * 1.1.0 : dépose une récompense en objets pour un joueur, sans passer par le relais (fil principal). Elle apparaît
      * dans /rewards comme les autres ; 36 piles au plus (elle doit tenir dans un inventaire vide). Faux si rien n'a été
      * déposé (plugin désactivé, aucun objet).

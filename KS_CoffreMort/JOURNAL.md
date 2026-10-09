@@ -60,3 +60,14 @@ c'est dans les claims des autres ». La 1.0.0 suivait le texte du 03/10 (« ou d
 `_removed-ks_coffremort-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
 
 **Envoyé sur Kixster le 09/10/2026 à 17:31 (LeKiwi06, envoi groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_KaliumGive 1.9.0, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.4.0, KS_Claim 1.2.0 ; demande de LeKiwi06 : « envoie la catégorie 7 sur kixster » ; 1.0.1 ; nouveau sur Kixster), actif après redémarrage de Kixster. Jars en place vérifiés identiques aux références avant l'envoi. Statut : non testé en jeu.**
+
+## 1.0.2 - lecture publique pour la modération (09/10/2026, LeKiwi06)
+
+Pour la fiche d'un joueur de KS_AntiCheat 1.3.0 (demande de LeKiwi06 : coffres de mort dans la fiche de modération).
+Aucun changement pour les joueurs.
+- `KSCoffreMort.coffresActifs(joueur)` : coffres de mort actifs d'un joueur (position, heure de disparition, nombre de
+  piles d'objets), en ligne ou hors ligne. Lecture seule : le contenu n'est ni montré ni touché.
+
+À déployer ensemble : KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2, KS_RewardsGUI 1.4.1 (sans les quatre derniers, la fiche de KS_AntiCheat 1.3.0 s'ouvre mais en montre moins).
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

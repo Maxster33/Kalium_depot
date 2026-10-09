@@ -273,6 +273,54 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         }
     }
 
+    /**
+     * 1.4.1 (modération : fiche d'un joueur de KS_AntiCheat 1.3.0) : résumé en lecture seule de ce joueur, en ligne ou
+     * hors ligne ; lignes : nombre de ventes et d'achats récents à renvoyer.
+     */
+    public static fr.kalium.economy.api.ResumeJoueur resume(UUID joueur, int lignes) {
+        KSEconomy p = instance;
+        long solde;
+        boolean masque;
+        synchronized (p.comptes) {
+            Compte compte = p.comptes.get(joueur);
+            solde = compte == null ? 0 : compte.solde;
+            masque = compte != null && compte.masque;
+        }
+        Magasins.Magasin magasin = p.magasins.magasins.get(joueur);
+        int boutiques = 0;
+        long enAttente = 0;
+        for (Magasins.Boutique b : p.magasins.boutiques.values()) {
+            if (joueur.equals(b.proprio)) {
+                boutiques++;
+                enAttente += b.pointsEnAttente;
+            }
+        }
+        Ventes.Stats stats = p.ventes.magasin(joueur);
+        return new fr.kalium.economy.api.ResumeJoueur(solde, masque, magasin == null ? null : magasin.nom,
+                magasin == null || magasin.position == null ? null : magasin.position.clone(), boutiques, enAttente,
+                stats.ventes(), stats.lots7j(), stats.points(),
+                p.pourLecture(p.ventes.dernieres(v -> joueur.equals(v.proprio()), lignes)),
+                p.pourLecture(p.ventes.dernieres(v -> joueur.equals(v.acheteur()), lignes)));
+    }
+
+    private java.util.List<fr.kalium.economy.api.ResumeJoueur.Vente> pourLecture(java.util.List<Ventes.Vente> ventes) {
+        java.util.List<fr.kalium.economy.api.ResumeJoueur.Vente> r = new java.util.ArrayList<>();
+        for (Ventes.Vente v : ventes) {
+            Magasins.Boutique b = magasins.boutiques.get(v.boutique());
+            String vendeur;
+            synchronized (comptes) {
+                Compte compte = comptes.get(v.proprio());
+                vendeur = compte == null ? null : compte.nom;
+            }
+            if (vendeur == null) {
+                vendeur = Bukkit.getOfflinePlayer(v.proprio()).getName();
+            }
+            r.add(new fr.kalium.economy.api.ResumeJoueur.Vente(v.date(), b == null ? null : Boutiques.nomBoutique(b),
+                    vendeur == null ? "?" : vendeur, v.nomAcheteur(), v.lots(), v.points(), v.objets()));
+        }
+        return r;
+    }
+
     /** Ajoute des points (points &gt; 0). */
     public static void crediter(UUID joueur, long points) {
         if (points <= 0) {

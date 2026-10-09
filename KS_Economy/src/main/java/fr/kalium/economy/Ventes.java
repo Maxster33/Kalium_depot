@@ -141,6 +141,17 @@ final class Ventes implements Listener {
         return new Stats(ventes, lots, lots7j, points, objets);
     }
 
+    /** 1.4.1 : les dernières ventes qui passent ce filtre, la plus récente d'abord. */
+    List<Vente> dernieres(java.util.function.Predicate<Vente> filtre, int nombre) {
+        List<Vente> r = new ArrayList<>();
+        for (int i = liste.size() - 1; i >= 0 && r.size() < nombre; i--) {
+            if (filtre.test(liste.get(i))) {
+                r.add(liste.get(i));
+            }
+        }
+        return r;
+    }
+
     /** Lots vendus ces 7 derniers jours, par propriétaire (classement des magasins). */
     Map<UUID, Integer> lotsDeLaSemaine() {
         long semaine = System.currentTimeMillis() - SEPT_JOURS;

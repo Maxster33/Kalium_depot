@@ -194,3 +194,39 @@ Limites :
 **Déployé sur Kixster le 09/10/2026 à 18:11 (LeKiwi06 : « Kixster seulement » ; 1.1.1 dans `_removed-ks_anticheat-1.1.1/` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage de Kixster. Event reste en 1.1.1. Statut : non testé en jeu.**
 
 **Journal de Kixster lu après le redémarrage de 18:15 (09/10/2026) : 1.2.0 chargée et activée sans erreur, après SimpleClaimSystem ; KLM_Menu trouve les interfaces de KS_AntiCheat. Personne n'avait encore ouvert le menu : la liste en têtes et les claims restent à tester en jeu.**
+
+## 1.3.0 - fiche d'un joueur : économie, maisons, jetons et récompenses, téléportation (09/10/2026, LeKiwi06)
+
+Suite de la 1.2.0 : le « etc. » de la demande, précisé par LeKiwi06 (choix dans une liste, puis « vas-y pour la
+suite ») : économie (solde, magasin, dernières ventes et échanges), maisons et téléportation (ses /home, se téléporter à
+un de ses claims ou à une maison), jetons et récompenses (inventaire spécial, récompenses en attente, coffres de mort).
+Empilé sur la 1.2.0 non testée, à sa demande.
+
+Nouveaux boutons de la fiche d'un joueur (en ligne ou hors ligne), tous en lecture seule :
+- **« Économie »** : solde (et s'il est masqué), magasin (nom, position, nombre de boutiques, points en attente dans
+  les boutiques), ventes de ses boutiques (nombre, lots des 7 derniers jours, points gagnés), ses 5 dernières ventes,
+  ses 5 derniers achats en boutique, ses 5 derniers `/echange`.
+- **« Maisons »** : lit (point de réapparition enregistré), maison du spawn, emplacements de localisation : position
+  de chacun, et un bouton par destination pour s'y téléporter.
+- **« Jetons et récompenses »** : jetons de l'inventaire spécial (un nombre par type), badges portés (niveau),
+  récompenses en attente dans `/rewards` (nombre ; pour les 10 plus récentes : date, origine, raison, nombre
+  d'éléments), coffres de mort actifs (position, piles d'objets, minutes restantes) avec un bouton par coffre pour s'y
+  téléporter.
+- **« Claims »** : un bouton par claim pour s'y téléporter (au point enregistré par SimpleClaimSystem pour ce claim).
+- **Téléportation du staff** : immédiate, sans jeton ni délai ; chaque téléportation est notée dans la console (qui, où).
+- **Journal des échanges** (nécessaire, non demandé tel quel) : KS_Economy ne garde aucune trace des `/echange` ;
+  KS_AntiCheat les note maintenant dans `plugins/KS_AntiCheat/echanges.log` (date, les deux joueurs, ce que chacun a
+  donné). Les échanges d'avant cette version ne sont donc pas affichés.
+- Lecture des autres plugins : `Infos` ; `softdepend` KS_Teleport, KS_CoffreMort, KS_Jetons en plus. Un plugin absent :
+  pas de bouton ou pas de ligne ; trop ancien : un message le dit.
+
+À déployer ensemble : KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2, KS_RewardsGUI 1.4.1 (sans les quatre derniers, la fiche de KS_AntiCheat 1.3.0 s'ouvre mais en montre moins).
+
+Limites :
+- Récompenses en attente : leur contenu (les objets) n'est pas montré.
+- Inventaire spécial : des nombres et des niveaux, pas la vue du contenant.
+- Arrivée d'une téléportation non vérifiée (le staff peut arriver dans un bloc ou dans le vide si le lieu a changé) ;
+  lit : position enregistrée, même si le lit a été cassé.
+- À vérifier en jeu : le point d'arrivée d'un claim (celui que SimpleClaimSystem enregistre à sa création).
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

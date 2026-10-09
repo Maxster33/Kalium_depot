@@ -319,3 +319,15 @@ Tant que le Nether n'est pas fermé dans `/dimensions`, ses objets peuvent sorti
 ces offres dans la minute. À préciser par LeKiwi06 : par quel moyen le Nether est fermé sur Event.
 
 **Envoyé sur Kixster le 09/10/2026 à 17:31 (LeKiwi06, envoi groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_KaliumGive 1.9.0, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.4.0, KS_Claim 1.2.0 ; demande de LeKiwi06 : « envoie la catégorie 7 sur kixster » ; 1.4.0, la version d'Event (1.3.1 pour la région `zone_spawn` + 1.4.0 pour les rachats par familles) ; 1.3.0 dans `_removed-ks_economy-1.3.0/` ; le `config.yml` du serveur n'a pas de section `magasins` : la région lue devient `zone_spawn` (à créer par l'humain)), actif après redémarrage de Kixster. Jars en place vérifiés identiques aux références avant l'envoi. Statut : non testé en jeu.**
+
+## 1.4.1 - lecture publique pour la modération (09/10/2026, LeKiwi06)
+
+Pour la fiche d'un joueur de KS_AntiCheat 1.3.0 (demande de LeKiwi06 : solde, magasin, dernières ventes dans la fiche
+de modération). Aucun changement pour les joueurs.
+- `KSEconomy.resume(joueur, lignes)` renvoie un `fr.kalium.economy.api.ResumeJoueur` : solde, solde masqué ou non,
+  magasin (nom, position), nombre de boutiques, points en attente dans les boutiques, ventes de ses boutiques (nombre,
+  lots des 7 derniers jours, points gagnés), dernières ventes et derniers achats. Lecture seule, en ligne ou hors ligne.
+
+À déployer ensemble : KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2, KS_RewardsGUI 1.4.1 (sans les quatre derniers, la fiche de KS_AntiCheat 1.3.0 s'ouvre mais en montre moins).
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

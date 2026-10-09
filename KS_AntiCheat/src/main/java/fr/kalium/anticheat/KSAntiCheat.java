@@ -25,6 +25,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  * activée dans les mondes d'Event (fermes à TNT moins efficaces, choix de LeKiwi06).
  * 1.2.0 (LeKiwi06, 09/10/2026) : « Joueurs » dans la rubrique Modération : tous les joueurs, même hors ligne, en têtes
  * dans un coffre (Joueurs) ; la fiche d'un joueur liste aussi ses claims (Claims, SimpleClaimSystem).
+ * 1.3.0 (LeKiwi06, 09/10/2026) : fiche d'un joueur : économie (KS_Economy 1.4.1, journal des /echange : Echanges),
+ * maisons (lit, KS_Teleport 1.0.1), jetons et badges (KS_Jetons), récompenses en attente (KS_RewardsGUI 1.4.1), coffres de mort
+ * (KS_CoffreMort 1.0.2) ; téléportation du staff à un claim, une maison ou un coffre de mort.
  *
  * Permission : ksanticheat.staff (opérateurs par défaut).
  */
@@ -40,6 +43,7 @@ public final class KSAntiCheat extends JavaPlugin {
     private Morts morts;
     private Menus menus;
     private Joueurs joueurs;
+    private Echanges echanges;
     private Detections detections;
     private Minage minage;
     private Revente revente;
@@ -59,6 +63,7 @@ public final class KSAntiCheat extends JavaPlugin {
         minage = new Minage(this);
         getServer().getPluginManager().registerEvents(detections, this);
         getServer().getPluginManager().registerEvents(minage, this);
+        echanges = new Echanges(this);
         // Étape 4 : revente suspecte (signaux de KS_Economy 1.1.5 et KS_RewardsGUI 1.0.1 s'ils sont là).
         revente = new Revente(this);
         getServer().getPluginManager().registerEvents(revente, this);
@@ -168,6 +173,10 @@ public final class KSAntiCheat extends JavaPlugin {
 
     Joueurs joueurs() {
         return joueurs;
+    }
+
+    Echanges echanges() {
+        return echanges;
     }
 
     Morts morts() {

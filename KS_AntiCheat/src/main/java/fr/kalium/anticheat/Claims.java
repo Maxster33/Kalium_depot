@@ -5,6 +5,7 @@ import fr.xyness.SCS.SimpleClaimSystem;
 import fr.xyness.SCS.Types.Claim;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,8 +18,11 @@ import java.util.UUID;
  */
 final class Claims {
 
-    /** Un claim : nom et position (« Overworld, x 120 z -40 », centre du chunk, comme dans KS_Claim). */
-    record Ligne(String nom, String position) {
+    /**
+     * Un claim : nom et position (« Overworld, x 120 z -40 », centre du chunk, comme dans KS_Claim). 1.3.0 : arrivee, le
+     * point du claim enregistré par SimpleClaimSystem (là où il a été créé), pour s'y téléporter ; null s'il manque.
+     */
+    record Ligne(String nom, String position, Location arrivee) {
     }
 
     private Claims() {
@@ -45,7 +49,9 @@ final class Claims {
             claims.sort(Comparator.comparingInt(Claim::getId));
             List<Ligne> lignes = new ArrayList<>();
             for (Claim claim : claims) {
-                lignes.add(new Ligne(claim.getName(), position(claim)));
+                Location arrivee = claim.getLocation();
+                lignes.add(new Ligne(claim.getName(), position(claim),
+                        arrivee == null || !arrivee.isWorldLoaded() ? null : arrivee.clone()));
             }
             return lignes;
         } catch (LinkageError | RuntimeException e) {

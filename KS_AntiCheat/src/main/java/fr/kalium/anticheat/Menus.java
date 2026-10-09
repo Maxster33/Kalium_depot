@@ -6,6 +6,7 @@ import fr.kalium.menu.api.Gui;
 import fr.kalium.menu.api.Lang;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -21,10 +22,14 @@ import java.util.function.Consumer;
  * Interface staff (cahier, catégorie 6 ; rubrique « Modération » de /menu et /anticheat) : alertes récentes, joueurs
  * avec alertes, recherche d'un joueur (alertes, invsee, ecsee, suspendre / lever), suspendus, morts d'entités
  * importantes, journal des consultations. 1.2.0 : « Tous les joueurs » (liste en têtes, Joueurs) et claims d'un joueur.
+ * 1.3.0 : fiche d'un joueur : économie, maisons, jetons et récompenses (Infos), téléportation du staff à un claim, une
+ * maison ou un coffre de mort.
  */
 final class Menus {
 
     private static final int PAR_PAGE = 10;
+    /** 1.3.0 : ventes, achats et échanges récents montrés dans « Économie ». */
+    private static final int RECENTS = 5;
 
     private final KSAntiCheat plugin;
     private final Lang lang;
@@ -207,6 +212,14 @@ final class Menus {
             boutons.add(gui.button(t("joueur.bouton-claims", "<green>Claims (<n>)", "n", claims == null ? "?" : claims.size()),
                     null, p -> claims(p, cible, 0)));
         }
+        // 1.3.0 (LeKiwi06) : économie, maisons, jetons et récompenses.
+        if (Infos.economieDisponible()) {
+            boutons.add(gui.button(t("joueur.bouton-economie", "<gold>Économie"), null, p -> economie(p, cible)));
+        }
+        boutons.add(gui.button(t("joueur.bouton-maisons", "<green>Maisons"), null, p -> maisons(p, cible)));
+        if (Infos.jetonsDisponibles()) {
+            boutons.add(gui.button(t("joueur.bouton-jetons", "<yellow>Jetons et récompenses"), null, p -> jetons(p, cible)));
+        }
         if (s == null) {
             boutons.add(gui.button(t("joueur.bouton-suspendre", "<red>Suspendre"), null, p -> suspendre(p, cible)));
         } else {
@@ -256,7 +269,7 @@ final class Menus {
         lang.saveIfNeeded();
     }
 
-    /** 1.2.0 : claims possédés par le joueur (SimpleClaimSystem), 10 par page : nom et position. */
+    /** 1.2.0 : claims possédés par le joueur (SimpleClaimSystem), 10 par page : nom et position. 1.3.0 : s'y téléporter. */
     private void claims(Player staff, OfflinePlayer cible, int page) {
         String nom = cible.getName() == null ? "?" : cible.getName();
         List<Claims.Ligne> liste = Claims.de(cible.getUniqueId());
@@ -269,11 +282,16 @@ final class Menus {
         } else {
             int pages = Math.max(1, (liste.size() + PAR_PAGE - 1) / PAR_PAGE);
             int p = Math.max(0, Math.min(page, pages - 1));
-            corps.add(t("claims.entete", "<gray>Page <page> / <pages> - <n> claim(s) : nom, puis position (centre du chunk).",
-                    "page", p + 1, "pages", pages, "n", liste.size()));
+            corps.add(t("claims.entete-2", "<gray>Page <page> / <pages> - <n> claim(s) : nom, puis position (centre du "
+                    + "chunk). Clique sur un claim pour t'y téléporter.", "page", p + 1, "pages", pages, "n", liste.size()));
             for (int i = p * PAR_PAGE; i < Math.min(liste.size(), (p + 1) * PAR_PAGE); i++) {
-                corps.add(t("claims.ligne", "<white><nom> <gray>- <position>", "nom", liste.get(i).nom(),
-                        "position", liste.get(i).position()));
+                Claims.Ligne claim = liste.get(i);
+                corps.add(t("claims.ligne", "<white><nom> <gray>- <position>", "nom", claim.nom(),
+                        "position", claim.position()));
+                if (claim.arrivee() != null) {
+                    boutons.add(gui.button(Component.text(claim.nom()), Component.text(claim.position()),
+                            j -> teleporter(j, claim.arrivee(), "claim « " + claim.nom() + " » de " + nom)));
+                }
             }
             if (p > 0) {
                 boutons.add(gui.button(t("menu.precedent", "<yellow>Page précédente"), null, j -> claims(j, cible, p - 1)));
@@ -284,7 +302,125 @@ final class Menus {
         }
         boutons.add(retour(j -> fiche(j, cible)));
         gui.open(staff, t("claims.titre", "<green><bold>Claims de <nom>", "nom", nom), corps, List.of(), boutons,
-                gui.close(), 1);
+                gui.close(), 2);
+        lang.saveIfNeeded();
+    }
+
+    // ------------------------------------------------------------------ 1.3.0 : économie, maisons, jetons et récompenses
+
+    /** Téléporte le staff (regard gardé) ; chaque téléportation est notée dans la console. */
+    private void teleporter(Player staff, Location lieu, String quoi) {
+        if (!KSAntiCheat.staff(staff)) {
+            return;
+        }
+        if (lieu == null || !lieu.isWorldLoaded()) {
+            staff.sendMessage(t("tp.echec", "<red>Téléportation impossible (monde non chargé)."));
+            lang.saveIfNeeded();
+            return;
+        }
+        Location arrivee = lieu.clone();
+        arrivee.setYaw(staff.getLocation().getYaw());
+        arrivee.setPitch(staff.getLocation().getPitch());
+        plugin.getLogger().info(staff.getName() + " se téléporte : " + quoi + " (" + Infos.position(lieu) + ").");
+        staff.teleportAsync(arrivee).thenAccept(reussi -> {
+            staff.sendMessage(reussi ? t("tp.fait", "<green>Téléporté : <quoi>.", "quoi", quoi)
+                    : t("tp.refus", "<red>Téléportation refusée."));
+            lang.saveIfNeeded();
+        });
+    }
+
+    /** Un titre, puis ses lignes (ou « Rien. »). */
+    private void section(List<Component> corps, Component titre, List<String> lignes) {
+        corps.add(titre);
+        if (lignes.isEmpty()) {
+            corps.add(t("fiche.rien", "<gray>Rien."));
+        }
+        for (String ligne : lignes) {
+            corps.add(Component.text(ligne));
+        }
+    }
+
+    /** Solde, magasin, ventes de ses boutiques, derniers achats (KS_Economy 1.4.1) et derniers /echange (Echanges). */
+    private void economie(Player staff, OfflinePlayer cible) {
+        String nom = cible.getName() == null ? "?" : cible.getName();
+        List<Component> corps = new ArrayList<>();
+        Infos.Economie eco = Infos.economie(cible.getUniqueId(), RECENTS);
+        if (eco == null) {
+            corps.add(t("eco.illisible", "<red>KS_Economy est trop ancien (1.4.1 nécessaire) : solde et ventes illisibles."));
+        } else {
+            for (String ligne : eco.resume()) {
+                corps.add(Component.text(ligne));
+            }
+            section(corps, t("eco.ventes", "<yellow>Dernières ventes de ses boutiques"), eco.ventes());
+            section(corps, t("eco.achats", "<yellow>Derniers achats en boutique"), eco.achats());
+        }
+        section(corps, t("eco.echanges", "<yellow>Derniers /echange <gray>(suivis depuis KS_AntiCheat 1.3.0)"),
+                plugin.echanges().derniers(cible.getUniqueId(), RECENTS));
+        gui.open(staff, t("eco.titre", "<gold><bold>Économie de <nom>", "nom", nom), corps, List.of(),
+                List.of(retour(j -> fiche(j, cible))), gui.close(), 1);
+        lang.saveIfNeeded();
+    }
+
+    /** Lit, maison du spawn et emplacements (KS_Teleport 1.0.1) : position de chacun, et s'y téléporter. */
+    private void maisons(Player staff, OfflinePlayer cible) {
+        String nom = cible.getName() == null ? "?" : cible.getName();
+        List<Component> corps = new ArrayList<>();
+        List<ActionButton> boutons = new ArrayList<>();
+        Map<String, Location> lieux = Infos.maisons(cible);
+        if (lieux.isEmpty()) {
+            corps.add(t("maisons.aucune", "<gray>Aucune destination enregistrée (ni lit, ni maison du spawn, ni emplacement)."));
+        } else {
+            corps.add(t("maisons.aide", "<gray>Clique sur une destination pour t'y téléporter. Le lit est son point de "
+                    + "réapparition enregistré."));
+        }
+        lieux.forEach((quoi, lieu) -> {
+            corps.add(Component.text(quoi + " : " + Infos.position(lieu)));
+            boutons.add(gui.button(Component.text(quoi), Component.text(Infos.position(lieu)),
+                    j -> teleporter(j, lieu, quoi.toLowerCase(java.util.Locale.ROOT) + " de " + nom)));
+        });
+        boutons.add(retour(j -> fiche(j, cible)));
+        gui.open(staff, t("maisons.titre", "<green><bold>Maisons de <nom>", "nom", nom), corps, List.of(), boutons,
+                gui.close(), 2);
+        lang.saveIfNeeded();
+    }
+
+    /**
+     * Jetons et badges (KS_Jetons), récompenses en attente (KS_RewardsGUI 1.4.1 ; les 10 plus récentes), coffres de mort
+     * (KS_CoffreMort 1.0.2).
+     */
+    private void jetons(Player staff, OfflinePlayer cible) {
+        String nom = cible.getName() == null ? "?" : cible.getName();
+        UUID uuid = cible.getUniqueId();
+        List<Component> corps = new ArrayList<>();
+        List<ActionButton> boutons = new ArrayList<>();
+        List<String> jetons = Infos.jetons(uuid);
+        if (jetons != null) {
+            section(corps, t("jetons.special", "<yellow>Inventaire spécial : jetons, puis badges portés"), jetons);
+        }
+        List<String> recompenses = Infos.recompenses(uuid);
+        if (recompenses != null) {
+            int n = recompenses.size();
+            section(corps, t("jetons.recompenses", "<yellow>Récompenses en attente dans /rewards : <n>", "n", n),
+                    n > PAR_PAGE ? recompenses.subList(n - PAR_PAGE, n) : recompenses);
+        }
+        List<Infos.CoffreMort> coffres = Infos.coffresDeMort(uuid);
+        if (coffres != null) {
+            List<String> lignes = new ArrayList<>();
+            for (int i = 0; i < coffres.size(); i++) {
+                Infos.CoffreMort coffre = coffres.get(i);
+                String quoi = "Coffre de mort " + (i + 1);
+                lignes.add(quoi + " : " + coffre.texte());
+                boutons.add(gui.button(Component.text(quoi), Component.text(coffre.texte()),
+                        j -> teleporter(j, coffre.position().clone().add(0, 1, 0), "coffre de mort de " + nom)));
+            }
+            section(corps, t("jetons.coffres", "<yellow>Coffres de mort actifs <gray>(clique pour t'y téléporter)"), lignes);
+        } else if (org.bukkit.Bukkit.getPluginManager().isPluginEnabled("KS_CoffreMort")) {
+            corps.add(t("jetons.coffres-illisibles", "<red>KS_CoffreMort est trop ancien (1.0.2 nécessaire) : coffres de mort "
+                    + "illisibles."));
+        }
+        boutons.add(retour(j -> fiche(j, cible)));
+        gui.open(staff, t("jetons.titre", "<yellow><bold>Jetons de <nom>", "nom", nom), corps, List.of(), boutons,
+                gui.close(), 2);
         lang.saveIfNeeded();
     }
 

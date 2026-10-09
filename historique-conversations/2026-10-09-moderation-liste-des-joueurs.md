@@ -1,6 +1,6 @@
 # 2026-10-09 — Modération : liste de tous les joueurs en têtes, claims d'un joueur
 
-- Plugin(s) concerné(s) : KS_AntiCheat
+- Plugin(s) concerné(s) : KS_AntiCheat ; lecture publique ajoutée à KS_Economy, KS_Teleport, KS_CoffreMort, KS_RewardsGUI
 - Versions avant / après : KS_AntiCheat 1.1.1 / 1.2.0 (déployé sur Kixster le 09/10/2026 à 18:11, non testé ; Event reste en 1.1.1)
 
 ## Demandé
@@ -30,7 +30,19 @@ pour voir leur inventaire, ender chest, leurs liste de claim, etc »
   récompenses en attente, coffres de mort).
 - Déploiement : « Kixster seulement » (LeKiwi06) ; envoyé à 18:11, 1.1.1 rangée dans `_removed-ks_anticheat-1.1.1/`.
 
+## Suite : le « etc. » (KS_AntiCheat 1.3.0)
+
+- « j'ai redémarré kixster, tu peux lire le journal » (LeKiwi06) : 1.2.0 active sans erreur (redémarrage de 18:15).
+- « vas-y pour la suite » (LeKiwi06) : KS_AntiCheat 1.3.0 (écrans « Économie », « Maisons », « Jetons et
+  récompenses », téléportation du staff, journal des `/echange`) avec une lecture publique ajoutée à KS_Economy 1.4.1,
+  KS_Teleport 1.0.1, KS_CoffreMort 1.0.2 et KS_RewardsGUI 1.4.1 (réservés en « Requis parfois »). Compilés, non
+  déployés.
+- KS_RewardsGUI était réservé par une autre session de LeKiwi06 de 18:17 à 18:23 (1.4.0 déployée) ; une fois libéré,
+  lecture publique ajoutée aussi (1.4.1 : liste des récompenses en attente).
+- KS_Jetons : non modifié, il exposait déjà les nombres de jetons et les niveaux de badges.
+
 ## Reste à faire
 
 - Test en jeu de la 1.2.0 (Kixster redémarré par LeKiwi06 à 18:15 ; journal lu : activée sans erreur, menu pas encore ouvert). À regarder : les têtes des joueurs hors ligne (comportement vérifié dans Paper 26.2 seulement, Kixster est en 26.3).
-- Version suivante : le « etc. » (voir « Décisions »).
+- Accord de LeKiwi06 pour déployer ensemble sur Kixster KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1,
+  KS_CoffreMort 1.0.2 et KS_RewardsGUI 1.4.1, puis test en jeu.

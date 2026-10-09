@@ -121,6 +121,12 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
     private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd/MM HH:mm");
     private static final BlockFace[] COTES = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
 
+    /** 1.0.2 (modération) : un coffre de mort actif : position, heure de sa disparition, piles d'objets qu'il contient. */
+    public record CoffreActif(Location position, long expiration, int piles) {
+    }
+
+    private static KSCoffreMort instance;
+
     private Lang lang;
     private Gui gui;
     private File fichier;
@@ -134,6 +140,7 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        instance = this;
         saveDefaultConfig();
         clePoints = new NamespacedKey(this, "points");
         lang = new Lang(this);
@@ -339,6 +346,22 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
         for (Coffre coffre : coffres.values()) {
             if (coffre.joueur.equals(joueur)) {
                 liste.add(coffre);
+            }
+        }
+        return liste;
+    }
+
+    /**
+     * 1.0.2 (modération : fiche d'un joueur de KS_AntiCheat 1.3.0) : coffres de mort actifs de ce joueur, en ligne ou
+     * hors ligne, du plus ancien au plus récent. Lecture seule ; un coffre dont le monde n'est pas chargé est ignoré.
+     */
+    public static List<CoffreActif> coffresActifs(UUID joueur) {
+        List<CoffreActif> liste = new ArrayList<>();
+        for (Coffre coffre : instance.coffresDe(joueur)) {
+            org.bukkit.World monde = Bukkit.getWorld(coffre.pos.monde());
+            if (monde != null) {
+                liste.add(new CoffreActif(new Location(monde, coffre.pos.x() + 0.5, coffre.pos.y(), coffre.pos.z() + 0.5),
+                        coffre.expiration, contenu(coffre).size()));
             }
         }
         return liste;
