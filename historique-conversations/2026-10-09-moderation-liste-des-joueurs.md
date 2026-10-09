@@ -45,6 +45,6 @@ pour voir leur inventaire, ender chest, leurs liste de claim, etc »
 ## Reste à faire
 
 - Test en jeu de la 1.2.0 (Kixster redémarré par LeKiwi06 à 18:15 ; journal lu : activée sans erreur, menu pas encore ouvert). À regarder : les têtes des joueurs hors ligne (comportement vérifié dans Paper 26.2 seulement, Kixster est en 26.3).
-- Redémarrage de Kixster par LeKiwi06, puis test en jeu des cinq plugins envoyés à 18:31 (accord : « Oui, sur
-  Kixster »). À regarder : point d'arrivée d'un claim, arrivée sur un lit ou un coffre de mort.
+- Test en jeu des cinq plugins envoyés à 18:31 (accord : « Oui, sur Kixster » ; Kixster redémarré par LeKiwi06 à
+  18:36, journal lu : les cinq activés sans erreur, fiche pas encore ouverte). À regarder : point d'arrivée d'un claim, arrivée sur un lit ou un coffre de mort.
 - Contenu (objets) des récompenses en attente et vue de l'inventaire spécial : non montrés, à demander si utile.
