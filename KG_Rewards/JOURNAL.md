@@ -144,4 +144,4 @@ récompenses gagnées depuis le début des scores », valeur moyenne affichée s
   reconstruits depuis le journal des parties ; tops permanents comptés une fois, au rang actuel ; admins et comptes
   de test inclus. Validées par LeKiwi06 le 09/10/2026 (« oui on garde », « on laisse tel quel »).
 
-**Déployé sur Kal-Games le 09/10/2026 à 17:16 (LeKiwi06 ; 1.2.0 et l'ancien `butin.yml` dans `_removed-kg_rewards-1.2.0/`) avec le nouveau `butin.yml` et `rattrapage.yml`, actif après redémarrage. `config.yml` du serveur non touché. Le rattrapage n'est pas envoyé : il part sur la commande de LeKiwi06. Statut : non testé en jeu.**
+**Déployé sur Kal-Games le 09/10/2026 à 17:16 (LeKiwi06 ; 1.2.0 et l'ancien `butin.yml` dans `_removed-kg_rewards-1.2.0/`) avec le nouveau `butin.yml` et `rattrapage.yml`, actif depuis le redémarrage de 17:17 (journal lu : 1.3.0 activée, aucune erreur, aucune entrée refusée ; `rattrapage.yml` toujours en place, donc non envoyé). `config.yml` du serveur non touché. Le rattrapage n'est pas envoyé : il part sur la commande de LeKiwi06. Statut : non testé en jeu.**
