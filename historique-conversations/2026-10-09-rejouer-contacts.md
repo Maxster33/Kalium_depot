@@ -46,8 +46,7 @@ quels serveurs de KaLium ils sont, etc. »
 - **KLM_Contacts, étape 3 « parties »** (« code l'étape 3 sans attendre le test ») : KaliumRelay 1.8.0 (parties proposées,
   `/partie accepter | refuser`), KLM_Contacts 1.2.0 (API `JeuDeGroupe`, « Inviter dans ma partie »), KalGames 1.25.0,
   KG_Bingo 1.10.0 et KG_BuildBattle 0.5.0 (chaque entrée en partie est annoncée ; le groupe du chef le suit, « Rejouer »
-  compris). Logique du proxy essayée hors jeu (48 cas), tout passe. Compilés et poussés, **non déployés** ;
-  réservations gardées.
+  compris). Logique du proxy essayée hors jeu (48 cas), tout passe. **Déployés le 09/10/2026 à 6 h 50** (« oui déploie ») ; réservations libérées.
 
 ## Décisions
 
@@ -69,7 +68,7 @@ quels serveurs de KaLium ils sont, etc. »
 
 ## Reste à faire
 
-- **Étape 3 de KLM_Contacts à déployer** (accord de LeKiwi06 à donner) : KaliumRelay 1.8.0 sur le proxy, KLM_Contacts 1.2.0
+- **Étape 3 de KLM_Contacts déployée** (reste : redémarrages par l'humain, puis tests) : KaliumRelay 1.8.0 sur le proxy, KLM_Contacts 1.2.0
   sur les 6 serveurs Paper, KalGames 1.25.0, KG_Bingo 1.10.0 et KG_BuildBattle 0.5.0 sur Kal-Games. Choix faits au code :
   `KLM_Contacts/CAHIER_DES_CHARGES.md`, partie 8.
 

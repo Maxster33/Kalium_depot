@@ -217,5 +217,4 @@ Empilé sur la 1.9.0 non testée : accord explicite.
   proposition `/partie accepter` (il a aussi l'objet « Rejoindre la partie de X »).
 - Partie pleine ou fermée : « Code invalide, partie pleine ou introuvable ».
 
-**À déployer après KLM_Contacts 1.2.0 et KaliumRelay 1.8.0.** **Compilé le 09/10/2026, non déployé. Statut : non testé
-en jeu.**
+**À déployer après KLM_Contacts 1.2.0 et KaliumRelay 1.8.0.** **Déployé sur Kal-Games le 09/10/2026 à 06:50 (LeKiwi06 ; 1.9.0 dans `_removed-kg_bingo-1.9.0/`), actif après redémarrage. Statut : non testé en jeu.**

@@ -397,5 +397,5 @@ Empilé sur la 1.7.0 non testée : accord explicite de LeKiwi06.
   par chaque serveur). La réponse de `group` contient la partie proposée (ligne « O »).
 
 **À déployer avec KLM_Contacts 1.2.0** (puis KalGames 1.25.0, KG_Bingo 1.10.0, KG_BuildBattle 0.5.0 sur kal-games).
-**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu** (logique essayée hors jeu avec un faux proxy : 48 cas
+**Déployé sur le proxy le 09/10/2026 à 06:50 (LeKiwi06 ; 1.7.0 dans `_removed-kaliumrelay-1.7.0/`), actif après redémarrage du proxy. Statut : non testé en jeu** (logique essayée hors jeu avec un faux proxy : 48 cas
 pour les parties, 64 pour les groupes, 32 pour les amis, tout passe).

@@ -88,5 +88,4 @@ Empilé sur la 1.1.0 non testée : accord explicite.
   « Refuser la partie ».
 - Le plugin demande une fois au proxy le nom Velocity de son serveur (au premier joueur connecté).
 
-**À déployer avec KaliumRelay 1.8.0** ; les jeux suivent avec KalGames 1.25.0, KG_Bingo 1.10.0 et KG_BuildBattle 0.5.0.
-**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**
+**À déployer avec KaliumRelay 1.8.0** ; les jeux suivent avec KalGames 1.25.0, KG_Bingo 1.10.0 et KG_BuildBattle 0.5.0. **Déployé sur les 6 serveurs Paper le 09/10/2026 à 06:50 (LeKiwi06 ; 1.1.0 dans `_removed-klm_contacts-1.1.0/`), actif après redémarrage. Statut : non testé en jeu.**

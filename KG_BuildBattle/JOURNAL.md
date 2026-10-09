@@ -84,5 +84,4 @@ Empilé sur la 0.4.0 non testée : accord explicite.
 Limite : en file publique, les membres rejoignent la file de la même taille d'équipes ; rien ne garantit qu'ils soient
 dans la même équipe que leur chef (les équipes se forment sur Kanvas).
 
-**À déployer après KLM_Contacts 1.2.0 et KaliumRelay 1.8.0.** **Compilé le 09/10/2026, non déployé. Statut : non testé
-en jeu.**
+**À déployer après KLM_Contacts 1.2.0 et KaliumRelay 1.8.0.** **Déployé sur Kal-Games le 09/10/2026 à 06:50 (LeKiwi06 ; 0.4.0 dans `_removed-kg_buildbattle-0.4.0/`), actif après redémarrage. Statut : non testé en jeu.**

@@ -946,5 +946,4 @@ Empilé sur la 1.24.0 non testée : accord explicite.
   habituel lui est affiché.
 - Avec un KLM_Contacts sans cette fonction (avant la 1.2.0) : un avertissement au démarrage, rien d'autre ne change.
 
-**À déployer après KLM_Contacts 1.2.0 et KaliumRelay 1.8.0.** **Compilé le 09/10/2026, non déployé. Statut : non testé
-en jeu.**
+**À déployer après KLM_Contacts 1.2.0 et KaliumRelay 1.8.0.** **Déployé sur Kal-Games le 09/10/2026 à 06:50 (LeKiwi06 ; 1.24.0 dans `_removed-kalgames-1.24.0/`), actif après redémarrage. Statut : non testé en jeu.**
