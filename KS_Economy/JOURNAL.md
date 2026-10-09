@@ -307,4 +307,4 @@ Nether ont été tirés alors qu'il est fermé, ce n'est pas normal ».
   n'est pas le plugin qui ferme le Nether sur ce serveur, cette version ne corrige pas le problème : relever les objets
   concernés et la ligne « Rachats de la semaine ... » de la console.
 
-**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Event le 09/10/2026 à 05:52 (LeKiwi06 ; 1.3.1 dans `_removed-ks_economy-1.3.1/`, jar en place vérifié identique à `jars-deployes/` avant l'envoi ; `config.yml` du serveur non modifié ; supprimables par l'humain : `_removed-ks_economy-1.0.0/` à `1.2.0/`, 11 dossiers), actif après redémarrage d'Event. Statut : non testé en jeu.**

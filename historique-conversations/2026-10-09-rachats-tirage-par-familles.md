@@ -1,7 +1,7 @@
 # 2026-10-09 — Rachats de la semaine : tirage par familles, dimension fermée
 
 - Plugin(s) concerné(s) : KS_Economy
-- Versions avant / après : KS_Economy 1.3.1 / 1.4.0 (compilé, non déployé)
+- Versions avant / après : KS_Economy 1.3.1 / 1.4.0 (déployé sur Event le 09/10/2026 à 05:52, non testé)
 
 ## Demandé
 
@@ -20,6 +20,9 @@ LeKiwi06 :
 - KS_Economy 1.4.0 : tirage de 10 familles au hasard puis un objet par famille, sans gamme de prix ; une offre issue
   d'une dimension fermée dans KS_Dimensions est remplacée à chaque vérification. Détail : `KS_Economy/JOURNAL.md`.
 
+- « oui déploie sur event » (LeKiwi06) : KS_Economy 1.4.0 envoyé sur Event à 05:52, 1.3.1 rangé dans
+  `_removed-ks_economy-1.3.1/` ; actif après redémarrage.
+
 ## Décisions
 
 - Les gammes de prix ne servent plus qu'à la taille des lots (inchangée, non demandée).
@@ -31,7 +34,7 @@ LeKiwi06 :
 
 - LeKiwi06 : dire quels objets ont été vus (et quand), ou autoriser la lecture du journal d'Event, pour confirmer la
   cause ; si ces objets ne sont pas marqués « nether » dans `rachats.csv`, la 1.4.0 ne suffit pas.
-- Déployer KS_Economy 1.4.0 sur Event (accord de LeKiwi06 à donner), puis tester en jeu : `/rachat`, fermer le Nether
+- Redémarrer Event (l'humain), puis tester en jeu : `/rachat`, fermer le Nether
   dans `/dimensions` et vérifier que les objets du Nether sont remplacés dans la minute.
 - Le tirage de la semaine 41 n'est pas refait par la mise à jour : nouveau tirage lundi 12/10, ou `rachats.yml`
   supprimé serveur éteint par l'humain.
