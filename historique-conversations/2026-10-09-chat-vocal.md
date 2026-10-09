@@ -26,8 +26,15 @@ LeKiwi06 : « il faudrait configurer simple voice chat dans tout les serveurs »
   testes depuis longtemps, tu peux donc supprimer la règle ».
 - Choix de Claude signalé : IP de jeu de chaque serveur (celle de `velocity.toml`) plutôt qu'un nom d'hôte.
 
+## Suite : journaux après redémarrage
+
+- « j'ai redémarré les serveurs, tu peux lire les journaux » (LeKiwi06) : redémarrages de 18:36 - 18:37. Sur les 6
+  serveurs, voicechat démarre sur le bon port avec le bon `voice_host`, aucune erreur, réglages non réécrits.
+- Lobby : LeKiwi06 et Maaxster connectés au chat vocal à 18:37. Les 5 autres : personne n'était encore entré.
+
 ## Reste à faire
 
-- Redémarrage des 6 serveurs par l'humain, puis test en jeu avec le mod (deux joueurs sur le même serveur).
+- Entrer avec le mod sur Kal-Games, Kanvas, Kixster, Event et Serveur Jeux (liaison vérifiée sur le lobby seulement),
+  et s'entendre à deux.
 - Port 40002 d'Event : attribué le 24/09 au serveur qui s'appelait alors kal-games ; à contrôler dans le panneau
   Minestrator si la voix ne se connecte pas sur Event.

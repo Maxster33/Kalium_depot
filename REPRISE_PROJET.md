@@ -311,8 +311,13 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
   Event `51.254.174.133:40002`, Serveur Jeux `91.197.6.65:43131`) ; `port` corrigé sur Kixster et Event (ils étaient
   restés à 24454, port par défaut jamais attribué). Rien d'autre ne change (voicechat 2.6.24, distance 48 blocs,
   groupes activés). Anciens fichiers dans `/plugins/_removed-voicechat-config-2026-10-09/` de chaque serveur. Rien
-  sur le proxy. À vérifier après redémarrage : journal (`Voice chat server started at port …`), fichier non réécrit,
-  puis en jeu avec le mod (icône du micro sans prise barrée). Si la voix ne se connecte pas sur un serveur : port
+  sur le proxy. **Journaux lus après les redémarrages de 18:36 - 18:37 (lecture seule, copies hors dépôt)** : sur
+  les 6 serveurs, `Voice host is '<IP>:<port>'` et `Voice chat server started at 0.0.0.0:<port>` avec les valeurs
+  envoyées, aucune erreur, fichiers de réglage non réécrits. **Lobby : LeKiwi06 et Maaxster « successfully
+  connected to voice chat » à 18:37** (la liaison par le proxy marche) ; sur les 5 autres, aucun joueur n'était
+  encore entré au moment de la lecture, liaison non vérifiée. Avertissement attendu partout : « Running in offline
+  mode - Voice chat encryption is not secure » (`online-mode=false` derrière Velocity). Reste à vérifier : entrer
+  sur chacun des 5 autres avec le mod, et s'entendre à deux. Si la voix ne se connecte pas sur un serveur : port
   UDP à contrôler dans le panneau Minestrator (40002 d'Event : attribué le 24/09 quand ce serveur s'appelait
   kal-games, supposé toujours valable). Les joueurs Bedrock n'ont pas le chat vocal (pas de mod).
 - Kal-Test-Dev garde son propre Geyser-Spigot (crossplay direct) : devenu inutile derrière le proxy (Geyser tourne
