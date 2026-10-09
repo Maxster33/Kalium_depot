@@ -24,6 +24,10 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
+- KS_Economy — LeKiwi06 — depuis le 2026-10-09 18:20 — lecture publique pour la fiche de modération de KS_AntiCheat 1.3.0 (petite retouche, déploiement groupé sur Kixster)
+- KS_Teleport — LeKiwi06 — depuis le 2026-10-09 18:20 — lecture publique pour la fiche de modération de KS_AntiCheat 1.3.0 (petite retouche, déploiement groupé sur Kixster)
+- KS_CoffreMort — LeKiwi06 — depuis le 2026-10-09 18:20 — lecture publique pour la fiche de modération de KS_AntiCheat 1.3.0 (petite retouche, déploiement groupé sur Kixster)
+
 
 
 
