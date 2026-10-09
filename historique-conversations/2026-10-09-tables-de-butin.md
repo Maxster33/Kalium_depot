@@ -138,3 +138,14 @@ Proposé, sans réponse : garantir la moitié de chaque récompense en récompen
   (Kanvas) ; non testés ; réservations libérées.
 - Reste à faire : redémarrer Kal-Games et Kanvas (l'humain), lire les consoles ; à l'ouverture, lancer
   `/kgrewards rattrapage <boîte>` puis `confirmer` (LeKiwi06).
+
+## Suite (17 h 30) : catégorie 7 envoyée sur Kixster
+
+- LeKiwi06 : « envoie la catégorie 7 sur kixster » (pour que les coffres qui contiennent un jeton de fly ou un badge
+  s'ouvrent sur Kixster avant le rattrapage de l'ouverture).
+- Fait à 17:31 : KS_Jetons 2.0.1 (+ `config.yml`), KS_KaliumGive 1.9.0, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport
+  1.0.0, KS_Economy 1.4.0, KS_Claim 1.2.0, aux versions d'Event ; anciens jars dans les `_removed-…` ; jars remplacés
+  vérifiés identiques aux références ; réservations libérées. Non testés ; actifs après redémarrage.
+- Signalé : KS_Economy 1.4.0 apporte aussi les rachats par familles ; rien de tout cela n'a été testé en jeu sur Event ;
+  région WorldGuard `zone_spawn` à créer sur Kixster par l'humain.
+- Reste à faire : redémarrer Kixster (l'humain), lire la console, rouvrir les coffres bloqués.

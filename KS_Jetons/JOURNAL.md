@@ -83,3 +83,5 @@ déploiement (la clé y existe déjà).
 **Déployé sur Event le 08/10/2026 à 23:38 (LeKiwi06, déploiement groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.3.1, KS_Claim 1.2.0 ; 2.0.0 et son `config.yml` dans
 `_removed-ks_jetons-2.0.0/`), actif après redémarrage d'Event. `config.yml` du serveur remplacé (`prix.tp: 20`,
 `prix.claim: 0`). Statut : non testé en jeu.**
+
+**Envoyé sur Kixster le 09/10/2026 à 17:31 (LeKiwi06, envoi groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_KaliumGive 1.9.0, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.4.0, KS_Claim 1.2.0 ; demande de LeKiwi06 : « envoie la catégorie 7 sur kixster » ; 2.0.1 ; 1.0.0 et son `config.yml` dans `_removed-ks_jetons-1.0.0/` ; `config.yml` du serveur remplacé par celui de la 2.0.1 (`prix.tp: 20`, `prix.claim: 0` ; l'ancien avait tous les prix à 0) ; `jetons.yml` contenait 2 jetons de téléportation de LeKiwi06, repris par la 2.0 au démarrage), actif après redémarrage de Kixster. Jars en place vérifiés identiques aux références avant l'envoi. Statut : non testé en jeu.**

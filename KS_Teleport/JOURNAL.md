@@ -51,3 +51,5 @@ réapparition ; commandes `/home` et `/spawn` d'un autre plugin éventuel.
 **Déployé sur Event le 08/10/2026 à 23:38 (LeKiwi06, déploiement groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.3.1, KS_Claim 1.2.0 ; nouveau), actif après redémarrage d'Event.
 **Région WorldGuard `zone_spawn` à créer ou renommer par l'humain** (sans elle : ni `/maison create` ni `/spawn`).
 Statut : non testé en jeu.**
+
+**Envoyé sur Kixster le 09/10/2026 à 17:31 (LeKiwi06, envoi groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_KaliumGive 1.9.0, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.4.0, KS_Claim 1.2.0 ; demande de LeKiwi06 : « envoie la catégorie 7 sur kixster » ; 1.0.0 ; nouveau sur Kixster ; **région WorldGuard `zone_spawn` à créer par l'humain** (sans elle : ni `/maison create` ni `/spawn`)), actif après redémarrage de Kixster. Jars en place vérifiés identiques aux références avant l'envoi. Statut : non testé en jeu.**

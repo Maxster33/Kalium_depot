@@ -317,3 +317,5 @@ KS_Dimensions inchangé depuis le 30/09). Pour le plugin, aucune dimension n'est
 (05/10 à 12:38) contient donc `dragon_breath` (End) et `red_shulker_box` (End + Nether). Le filtre n'est pas en cause.
 Tant que le Nether n'est pas fermé dans `/dimensions`, ses objets peuvent sortir ; dès qu'il l'est, la 1.4.0 remplace
 ces offres dans la minute. À préciser par LeKiwi06 : par quel moyen le Nether est fermé sur Event.
+
+**Envoyé sur Kixster le 09/10/2026 à 17:31 (LeKiwi06, envoi groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_KaliumGive 1.9.0, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.4.0, KS_Claim 1.2.0 ; demande de LeKiwi06 : « envoie la catégorie 7 sur kixster » ; 1.4.0, la version d'Event (1.3.1 pour la région `zone_spawn` + 1.4.0 pour les rachats par familles) ; 1.3.0 dans `_removed-ks_economy-1.3.0/` ; le `config.yml` du serveur n'a pas de section `magasins` : la région lue devient `zone_spawn` (à créer par l'humain)), actif après redémarrage de Kixster. Jars en place vérifiés identiques aux références avant l'envoi. Statut : non testé en jeu.**
