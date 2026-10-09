@@ -56,14 +56,12 @@ final class MenuJoueur {
         for (String grille : grilles(uuid)) {
             int prestige = moteur.prestige(grille, uuid);
             double perm = moteur.compteur("permanent", grille, uuid);
-            double semaine = moteur.compteur("semaine", grille, uuid);
             double mois = moteur.compteur("mois", grille, uuid);
-            corps.add(lang.c("joueur.grille", "<gold><jeu><prestige></gold> <gray>- permanent <white><perm></white> "
-                    + "(prochain palier <white><prochain-perm></white>), semaine <white><semaine></white> (<prochain-semaine>), "
-                    + "mois <white><mois></white> (<prochain-mois>)",
+            // 1.3.0 : plus de paliers de la semaine (nouvelle clé : le texte déjà enregistré dans lang.yml en parlait).
+            corps.add(lang.c("joueur.grille-mois", "<gold><jeu><prestige></gold> <gray>- permanent <white><perm></white> "
+                    + "(prochain palier <white><prochain-perm></white>), mois <white><mois></white> (<prochain-mois>)",
                     "jeu", Moteur.nomGrille(grille), "prestige", prestige > 0 ? " (prestige " + prestige + ")" : "",
                     "perm", pts(perm), "prochain-perm", Moteur.prochainSeuil(perm),
-                    "semaine", pts(semaine), "prochain-semaine", Moteur.prochainSeuil(semaine),
                     "mois", pts(mois), "prochain-mois", Moteur.prochainSeuil(mois)));
             if (moteur.prestigePossible(uuid, grille)) {
                 boutons.add(gui.button(lang.c("joueur.bouton-prestige", "<light_purple>Prestige : <jeu>", "jeu",

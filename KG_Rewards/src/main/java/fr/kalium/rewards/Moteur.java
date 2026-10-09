@@ -36,10 +36,15 @@ import java.util.UUID;
  *   <= x % des joueurs qui ont au moins 1 point, arrondi au-dessus). Semaine et mois : classement final à la clôture de
  *   KG_ScoreBoards. Permanent : à l'arrivée (une fois par top) puis chaque semaine passée dans le top depuis l'arrivée
  *   (le moins bon top occupé pendant la semaine compte ; le compte repart à zéro en sortant des tops).
+ * - 1.3.0 (LeKiwi06, 09/10/2026) : plus de paliers de la semaine (il reste ceux du mois et les permanents ; les tops
+ *   de la semaine restent) ; plus de tops 100, 50, 25 et 10 (il reste 5, 3, 2, 1 et les tops en %).
  */
 final class Moteur {
 
-    static final int[] TOPS = {100, 50, 25, 10, 5, 3, 2, 1};
+    /** 1.3.0 (LeKiwi06, 09/10/2026 : « on supprime [...] les top 100, 50, 25, et 10 ») : il reste 5, 3, 2 et 1. */
+    static final int[] TOPS = {5, 3, 2, 1};
+    /** 1.3.0 (LeKiwi06, 09/10/2026 : « on supprime les paliers de semaines ») : paliers du mois et permanents. */
+    static final List<String> PERIODES_PALIERS = List.of("mois", "permanent");
     static final int[] TOPS_POURCENT = {50, 25, 10, 5, 1};
     static final String GENERAL = "general";
     private static final long SEMAINE_MS = 7L * 24 * 60 * 60 * 1000;
@@ -195,11 +200,11 @@ final class Moteur {
         return t;
     }
 
-    /** Points ajoutés (KG_ScoreBoards) : paliers de la grille du jeu et de la grille générale, pour les 3 périodes. */
+    /** Points ajoutés (KG_ScoreBoards) : paliers de la grille du jeu et de la grille générale (mois et permanent). */
     void pointsAjoutes(String jeu, UUID uuid, String nom) {
         joueur(uuid).nom = nom;
         for (String grille : List.of(jeu, GENERAL)) {
-            for (String type : Butin.PERIODES) {
+            for (String type : PERIODES_PALIERS) {
                 Grille g = grille(uuid, grille);
                 String cle = clePeriode(type, g);
                 double compteur = compteur(type, grille, uuid);

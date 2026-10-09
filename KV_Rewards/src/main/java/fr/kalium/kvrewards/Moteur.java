@@ -33,7 +33,8 @@ import java.util.UUID;
  */
 final class Moteur {
 
-    static final int[] TOPS = {100, 50, 25, 10, 5, 3, 2, 1};
+    /** 1.3.0 (LeKiwi06, 09/10/2026 : « on supprime [...] les top 100, 50, 25, et 10 ») : il reste 5, 3, 2 et 1. */
+    static final int[] TOPS = {5, 3, 2, 1};
     static final int[] TOPS_POURCENT = {50, 25, 10, 5, 1};
     static final int PLACES_CONCOURS = 3;
     static final double SEUIL_PRESTIGE = 100_000;

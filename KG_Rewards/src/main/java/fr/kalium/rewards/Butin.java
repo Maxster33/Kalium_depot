@@ -63,6 +63,20 @@ final class Butin {
         }
     }
 
+    /** 1.3.0 : niveaux d'une période ; la semaine n'a plus de paliers, seulement des tops. */
+    static Map<String, String> niveauxDe(String periode) {
+        if (!"semaine".equals(periode)) {
+            return NIVEAUX;
+        }
+        Map<String, String> tops = new LinkedHashMap<>();
+        NIVEAUX.forEach((id, nom) -> {
+            if (id.startsWith("top-")) {
+                tops.put(id, nom);
+            }
+        });
+        return tops;
+    }
+
     static final class Entree {
         final List<Map<String, Object>> contenu = new ArrayList<>();
         int poids = 1;

@@ -189,7 +189,8 @@ final class MenuAdmin implements Listener {
 
     private void niveaux(Player joueur, String periode) {
         List<ActionButton> boutons = new ArrayList<>();
-        Butin.NIVEAUX.forEach((id, nom) -> boutons.add(gui.button(Component.text(nom), null, p -> niveau(p, periode, id))));
+        Butin.niveauxDe(periode).forEach((id, nom) -> boutons.add(gui.button(Component.text(nom), null,
+                p -> niveau(p, periode, id))));
         boutons.add(retour(this::ouvrir));
         gui.open(joueur, t("admin.titre-niveaux", "<red><bold>Niveaux : <periode>", "periode", Moteur.nomPeriode(periode)),
                 List.of(), List.of(), boutons, gui.close(), 2);

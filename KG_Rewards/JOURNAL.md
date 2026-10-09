@@ -104,3 +104,26 @@ Limites : écrit sans serveur de test ; le tirage des enchantements n'a été v�
 **À déployer avec KS_RewardsGUI 1.3.0** (sans elle, la valeur n'est pas affichée ; rien d'autre ne casse).
 
 **Déployé sur Kal-Games le 09/10/2026 à 15:12 (LeKiwi06, feu vert après présentation ; 1.1.0 dans `_removed-kg_rewards-1.1.0/`, avec l'ancien `butin.yml`) avec le nouveau `butin.yml`, actif depuis le redémarrage de 16:03 (journal lu : 1.2.0 activée, aucune erreur, aucune des 512 entrées refusée). `config.yml` du serveur non touché. Statut : non testé en jeu.**
+
+## 1.3.0 - plus de paliers de la semaine ni de tops 100, 50, 25 et 10 (09/10/2026, LeKiwi06)
+
+Décision de LeKiwi06, après le calcul de ce que chaque joueur aurait gagné depuis le début des scores (1 536 coffres
+pour 15 joueurs, dont 282 paliers de la semaine estimés et 108 tops 100 à 10) : « on supprime les paliers de semaines
+et les top 100, 50, 25, et 10 ».
+
+- **Paliers** : seulement sur le mois et le permanent (`Moteur.PERIODES_PALIERS`). Les points de la semaine ne donnent
+  plus de palier.
+- **Tops classiques** : 5, 3, 2 et 1 seulement (`Moteur.TOPS`). Un joueur classé au-delà du rang 5 ne reçoit plus de top
+  classique ; les tops en % (50, 25, 10, 5, 1 %) sont inchangés, pour la semaine, le mois et le permanent.
+- **Tops de la semaine** : gardés (classement final du samedi 15 h).
+- Interface admin et commande d'essai : la semaine ne propose plus que ses tops ; les niveaux `top-100`, `top-50`,
+  `top-25` et `top-10` disparaissent partout. Menu du joueur : la ligne d'une grille ne parle plus de la semaine
+  (nouvelle clé `joueur.grille-mois` de `lang.yml`).
+- `butin.yml` régénéré sans ces niveaux (les anciens, s'ils restent dans un fichier, sont ignorés).
+- Un joueur qui était suivi dans un top permanent 10 à 100 n'y est plus : son compte de semaines s'arrête sans
+  récompense.
+
+Effet sur les gains (simulation des paliers, hors tops) : un joueur régulier passe d'environ 30 à 22 émeraudes par heure
+de mini-jeu, un occasionnel de 16 à 14, un acharné de 41 à 32.
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

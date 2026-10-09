@@ -58,3 +58,12 @@ Même changement que KG_Rewards 1.2.0 (voir son `JOURNAL.md` pour la demande de 
 Kal-Games ; niveaux du mois, du permanent et des concours.
 
 **Déployé sur Kanvas le 09/10/2026 à 15:12 (LeKiwi06, feu vert après présentation ; 1.1.0 dans `_removed-kv_rewards-1.1.0/`, avec l'ancien `butin.yml`) avec le nouveau `butin.yml`, actif depuis le redémarrage de 16:03 (journal lu : 1.2.0 activée, aucune erreur, aucune des 512 entrées refusée). `config.yml` du serveur non touché. Statut : non testé en jeu.**
+
+## 1.3.0 - plus de tops 100, 50, 25 et 10 (09/10/2026, LeKiwi06)
+
+Décision de LeKiwi06 (« on supprime les paliers de semaines et les top 100, 50, 25, et 10 » ; Kanvas n'a jamais eu de
+paliers de la semaine) : tops classiques 5, 3, 2 et 1 seulement (`Moteur.TOPS`) ; tops en % inchangés. Les niveaux
+`top-100`, `top-50`, `top-25` et `top-10` disparaissent de l'interface admin, de la commande d'essai et du `butin.yml`
+régénéré. Même changement que KG_Rewards 1.3.0.
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

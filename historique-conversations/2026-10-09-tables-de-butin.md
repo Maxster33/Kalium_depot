@@ -105,3 +105,20 @@ Proposé, sans réponse : garantir la moitié de chaque récompense en récompen
   fer et en or, dans le pool Légendaire, pour garder sa valeur de 1 500) ; valeur affichée = moyenne du niveau (pas
   celle du coffre) ; un seul objet inhabituel par pile ; valeurs moyennes des niveaux inchangées.
 - Reste à faire : redémarrer les quatre serveurs (l'humain), lire les consoles, tester en jeu (équipement et livres enchantés, potions, valeur sur le coffre, émeraudes dans le coffre) ; charger le schéma sur Kixster.
+
+## Suite (16 h 30) : rattrapage à l'ouverture et nouvelle règle (KG_Rewards 1.3.0, KV_Rewards 1.3.0)
+
+- Compilés, non déployés, non testés ; rien n'a été donné aux joueurs.
+- LeKiwi06 : « fais-moi un récap de la fréquence des récompenses avant toute chose, on va faire en sorte qu'à
+  l'ouverture chaque joueur gagne d'un coup tous les coffres qu'il aurait dû gagner depuis le début des scores, et je
+  veux savoir qui aura quoi et en quelle quantité avant ».
+- Fait : scores de Kal-Games et notes de Kanvas lus (copies hors dépôt), calcul par `sortie/rewards/retro.py` : 1 536
+  coffres pour 15 joueurs (629 minimales, 187 petites, 141 moyennes, 1 grosse, 578 tops), environ 7 700 émeraudes.
+- Sa décision : « on supprime les paliers de semaines et les top 100, 50, 25, et 10 ». Codé : paliers sur le mois et le
+  permanent seulement ; tops classiques 5, 3, 2, 1 ; tops en % et tops de la semaine gardés (interprétation de Claude :
+  « paliers de semaines » ne vise pas les tops de la semaine). Nouveau total : 1 022 coffres pour 10 joueurs, environ
+  6 000 émeraudes.
+- Signalé : un joueur régulier passe d'environ 30 à 22 émeraudes par heure de mini-jeu (paliers, hors tops).
+- Reste à trancher par LeKiwi06 : admins et comptes de test dans le rattrapage ; tops de la semaine des semaines
+  reconstruites ; donner les coffres un par un ou les regrouper ; déduire ce qui a déjà été donné depuis le 09/10 à 07:12.
+- Reste à faire : déployer les 1.3.0 sur son accord ; coder le rattrapage une fois ses réponses reçues.

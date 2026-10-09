@@ -150,7 +150,7 @@ public final class KGRewards extends JavaPlugin implements Listener {
             sender.sendMessage("Période inconnue : " + args[2] + " (semaine | mois | permanent)");
             return;
         }
-        Map<String, String> noms = Butin.NIVEAUX;
+        Map<String, String> noms = Butin.niveauxDe(periode);
         List<String> niveaux = args[3].equalsIgnoreCase("tout") ? new ArrayList<>(noms.keySet())
                 : List.of(args[3].toLowerCase());
         if (!noms.keySet().containsAll(niveaux)) {
