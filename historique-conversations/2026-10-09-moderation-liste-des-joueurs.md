@@ -1,7 +1,7 @@
 # 2026-10-09 — Modération : liste de tous les joueurs en têtes, claims d'un joueur
 
 - Plugin(s) concerné(s) : KS_AntiCheat
-- Versions avant / après : KS_AntiCheat 1.1.1 / 1.2.0 (compilé, non déployé, non testé)
+- Versions avant / après : KS_AntiCheat 1.1.1 / 1.2.0 (déployé sur Kixster le 09/10/2026 à 18:11, non testé ; Event reste en 1.1.1)
 
 ## Demandé
 
@@ -24,10 +24,13 @@ pour voir leur inventaire, ender chest, leurs liste de claim, etc »
   plugin : c'est le même rôle (outils du staff).
 - La fiche reste un menu (Dialog) ; seule la liste des joueurs est un coffre, comme demandé.
 - Claims lus directement dans SimpleClaimSystem : KS_Claim n'est pas modifié.
-- « etc. » non interprété (règle : ne rien construire qui n'a pas été demandé) : question posée à LeKiwi06.
+- « etc. » non interprété dans la 1.2.0 (règle : ne rien construire qui n'a pas été demandé) : question posée à
+  LeKiwi06, qui a choisi pour la version suivante : économie (solde, magasin, ventes et échanges), maisons et
+  téléportation (ses /home, se téléporter à un claim ou à une maison), jetons et récompenses (inventaire spécial,
+  récompenses en attente, coffres de mort).
+- Déploiement : « Kixster seulement » (LeKiwi06) ; envoyé à 18:11, 1.1.1 rangée dans `_removed-ks_anticheat-1.1.1/`.
 
 ## Reste à faire
 
-- Accord de LeKiwi06 pour déployer sur Kixster (et sur Event ?), puis test en jeu.
-- Réponse de LeKiwi06 sur ce que le « etc. » doit couvrir (propositions : solde et magasin, maisons, jetons et badges,
-  récompenses en attente, téléportation vers un claim, têtes aussi pour les outils « Invsee » et « EcSee »).
+- Redémarrage de Kixster par LeKiwi06, puis test en jeu de la 1.2.0.
+- Version suivante : le « etc. » (voir « Décisions »).

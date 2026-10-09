@@ -191,4 +191,4 @@ Limites :
 - Un joueur jamais venu sur ce serveur (ou pas revenu depuis le changement de monde) n'est pas dans la liste.
 - Les claims dont le joueur est seulement membre ne sont pas listés ; pas de téléportation vers un claim.
 
-**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster le 09/10/2026 à 18:11 (LeKiwi06 : « Kixster seulement » ; 1.1.1 dans `_removed-ks_anticheat-1.1.1/` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage de Kixster. Event reste en 1.1.1. Statut : non testé en jeu.**
