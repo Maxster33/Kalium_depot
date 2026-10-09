@@ -317,7 +317,14 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
   connected to voice chat » à 18:37** (la liaison par le proxy marche) ; sur les 5 autres, aucun joueur n'était
   encore entré au moment de la lecture, liaison non vérifiée. Avertissement attendu partout : « Running in offline
   mode - Voice chat encryption is not secure » (`online-mode=false` derrière Velocity). Reste à vérifier : entrer
-  sur chacun des 5 autres avec le mod, et s'entendre à deux. Si la voix ne se connecte pas sur un serveur : port
+  sur chacun des 5 autres avec le mod, et s'entendre à deux (Kixster : LeKiwi06 connecté au chat vocal à 18:40, le
+  port 40046 marche). **« on n'a pas la permission de parler » (LeKiwi06, 18:45)** : le `plugin.yml` de voicechat
+  2.6.24 déclare `voicechat.speak`, `voicechat.listen` et `voicechat.groups` sans valeur par défaut (donc
+  « opérateurs seulement » pour Bukkit), et LuckPerms suit cette déclaration : refusé à tout joueur non opérateur
+  (lobby : seul Maaxster est opérateur). Correction, **pas encore faite** (LuckPerms est en H2, une base par
+  serveur, Claude n'a pas de console) : sur chacun des 6 serveurs, `lp group default permission set
+  voicechat.speak true`, puis `voicechat.listen` et `voicechat.groups` ; effet immédiat, sans redémarrage. Non
+  vérifié : sur quel serveur et pour qui le refus est apparu. Si la voix ne se connecte pas sur un serveur : port
   UDP à contrôler dans le panneau Minestrator (40002 d'Event : attribué le 24/09 quand ce serveur s'appelait
   kal-games, supposé toujours valable). Les joueurs Bedrock n'ont pas le chat vocal (pas de mod).
 - Kal-Test-Dev garde son propre Geyser-Spigot (crossplay direct) : devenu inutile derrière le proxy (Geyser tourne
