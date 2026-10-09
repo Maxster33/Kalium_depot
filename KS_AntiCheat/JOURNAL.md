@@ -229,4 +229,4 @@ Limites :
   lit : position enregistrée, même si le lit a été cassé.
 - À vérifier en jeu : le point d'arrivée d'un claim (celui que SimpleClaimSystem enregistre à sa création).
 
-**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster le 09/10/2026 à 18:31 (LeKiwi06, envoi groupé : KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2, KS_RewardsGUI 1.4.1 ; accord de LeKiwi06 : « Oui, sur Kixster » ; 1.2.0 dans `_removed-ks_anticheat-1.2.0/` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (KS_AntiCheat 1.1.1). Statut : non testé en jeu.**

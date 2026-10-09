@@ -1,7 +1,8 @@
 # 2026-10-09 — Modération : liste de tous les joueurs en têtes, claims d'un joueur
 
 - Plugin(s) concerné(s) : KS_AntiCheat ; lecture publique ajoutée à KS_Economy, KS_Teleport, KS_CoffreMort, KS_RewardsGUI
-- Versions avant / après : KS_AntiCheat 1.1.1 / 1.2.0 (déployé sur Kixster le 09/10/2026 à 18:11, non testé ; Event reste en 1.1.1)
+- Versions avant / après : KS_AntiCheat 1.1.1 / 1.2.0 (Kixster, 18:11) puis 1.3.0 (Kixster, 18:31, avec KS_Economy
+  1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2, KS_RewardsGUI 1.4.1) ; non testés ; Event n'est pas touché
 
 ## Demandé
 
@@ -44,5 +45,6 @@ pour voir leur inventaire, ender chest, leurs liste de claim, etc »
 ## Reste à faire
 
 - Test en jeu de la 1.2.0 (Kixster redémarré par LeKiwi06 à 18:15 ; journal lu : activée sans erreur, menu pas encore ouvert). À regarder : les têtes des joueurs hors ligne (comportement vérifié dans Paper 26.2 seulement, Kixster est en 26.3).
-- Accord de LeKiwi06 pour déployer ensemble sur Kixster KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1,
-  KS_CoffreMort 1.0.2 et KS_RewardsGUI 1.4.1, puis test en jeu.
+- Redémarrage de Kixster par LeKiwi06, puis test en jeu des cinq plugins envoyés à 18:31 (accord : « Oui, sur
+  Kixster »). À regarder : point d'arrivée d'un claim, arrivée sur un lit ou un coffre de mort.
+- Contenu (objets) des récompenses en attente et vue de l'inventaire spécial : non montrés, à demander si utile.
