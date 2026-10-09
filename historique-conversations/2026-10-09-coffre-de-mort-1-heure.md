@@ -56,3 +56,16 @@ redonner un coffre de récompense comme celui de tout à l'heure du même montan
 - Reste à faire par LeKiwi06 : redémarrer Kal-Games et Kanvas (le réglage n'est lu qu'au démarrage) ; lancer la
   commande du coffre de Maaxster (pas encore lancée à 23:32) ; dire s'il veut redonner sur Kixster les quatre
   récompenses parties vers Event.
+
+## Suite (10/10, 00 h 15) : redémarrages et récompenses du soir
+
+- LeKiwi06 : « donne les récompenses de ce soir sur kixster », puis « j'ai restart les serveur normalement là c'est
+  bon ? ».
+- Redémarrages lus : Kixster 23:53 (KS_CoffreMort 1.0.3 activée, `duree-minutes: 60`), Kanvas 23:53, Kal-Games 00:19 ;
+  aucune erreur. `boite: kixster` est donc actif sur Kal-Games depuis 00:19 seulement.
+- 16 récompenses automatiques parties vers la boîte d'Event entre 19:42 et 00:14 (4 joueurs, 77,5 émeraudes de
+  valeur moyenne ; liste dans `KG_Rewards/JOURNAL.md`). Aucune sur Kanvas.
+- Fait : `rattrapage.yml` posé sur Kal-Games à 00:23, un coffre par joueur plus celui de Maaxster (pas encore lancé).
+- Choix de Claude signalés : un coffre par joueur plutôt qu'un par récompense ; contenu tiré à nouveau ; les 16
+  récompenses restent aussi dans la boîte d'Event.
+- Reste à faire par LeKiwi06 : `/kgrewards rattrapage kixster` puis `/kgrewards rattrapage kixster confirmer`.

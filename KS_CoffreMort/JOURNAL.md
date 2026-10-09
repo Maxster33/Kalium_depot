@@ -86,3 +86,5 @@ coffre a disparu à 21:52 avec tout son contenu.
   le redémarrage durent 1 heure.
 
 **Déployé sur Kixster le 09/10/2026 à 23:25 (LeKiwi06 ; accord : « Oui, les deux » ; 1.0.2 et l'ancien `config.yml` dans `_removed-ks_coffremort-1.0.2/` ; `config.yml` du serveur passé à `duree-minutes: 60` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (1.0.1, 15 minutes ; décision de LeKiwi06 : « Non, Kixster seulement »). Statut : non testé en jeu.**
+
+**Journal de Kixster lu après le redémarrage du 09/10/2026 à 23:53 : 1.0.3 activée sans erreur ; `duree-minutes: 60` relu dans le `config.yml` du serveur. Reste à tester en jeu.**

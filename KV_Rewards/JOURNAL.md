@@ -69,3 +69,5 @@ régénéré. Même changement que KG_Rewards 1.3.0.
 **Déployé sur Kanvas le 09/10/2026 à 17:16 (LeKiwi06 ; 1.2.0 et l'ancien `butin.yml` dans `_removed-kv_rewards-1.2.0/`) avec le nouveau `butin.yml`, actif depuis le redémarrage de 17:17 (journal lu : 1.3.0 activée, aucune erreur, aucune entrée refusée). `config.yml` du serveur non touché. Statut : non testé en jeu.**
 
 **`boite: kixster` sur Kanvas le 09/10/2026 à 23:32 (LeKiwi06 : « oui passe les deux en boite kixster »)** : le `config.yml` du serveur contenait encore `boite: event`, les récompenses automatiques partaient donc vers la boîte d'Event alors que le `/rewards` de Kixster lit la boîte `kixster`. Seule cette ligne est changée ; ancien fichier dans `_removed-kv_rewards-config-2026-10-09/` ; aucun changement de code, jar inchangé (le `config.yml` fourni avec le plugin garde `boite: event`). Actif après redémarrage de Kanvas. Statut : non testé en jeu.
+
+**Journal de Kanvas lu après le redémarrage du 09/10/2026 à 23:53 : 1.3.0 activée sans erreur ; `boite: kixster` actif depuis.**
