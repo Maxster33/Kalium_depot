@@ -160,3 +160,20 @@ Proposé, sans réponse : garantir la moitié de chaque récompense en récompen
 - Fait : KS_RewardsGUI 1.4.0, `/rewards` en coffre de 6 rangées ; déployé sur Kixster et Event le 09/10/2026 à 18:20
   (« oui déploie »), non testé ; réservation libérée.
 - Reste à faire : redémarrer Kixster et Event (l'humain), tester (Java et Bedrock) ; puis KS_Economy.
+
+## Suite (18 h 30) : les écrans de l'économie en coffres (KS_Economy 1.4.1 → 1.5.0, KLM_Menu 2.11.0)
+
+- LeKiwi06, après son test de `/rewards` : « ça marche, passe aux écrans de l'économie ».
+- KS_Economy était réservé par une autre session de LeKiwi06 (fiche de modération, 1.4.1) : attendu sa libération ;
+  entre-temps, classe `Contenant` passée dans la boîte à outils (KLM_Menu 2.11.0).
+- Fait : KS_Economy 1.5.0, les 28 écrans en coffres (économie, retrait, rachats, mon magasin, mes boutiques,
+  catalogue, favoris, création d'une boutique, achat, recherche, signalements) ; restent en fenêtre les saisies de
+  texte ou de nombre. KLM_Menu 2.11.0 complété (petits menus, saisie depuis un menu, ouverture après le clic).
+- Compilés, poussés, **non déployés, non testés en jeu**. Réservations gardées (KS_Economy utilisé, KLM_Menu requis
+  parfois).
+- Question de LeKiwi06 en cours de route : « je n'ai eu aucun mending ni aucun badges, est-ce normal ? ». Réponse :
+  oui ; ils ne sortent que du pool Légendaire, donc des coffres exceptionnels (et à peine des gros) ; en jeu normal,
+  personne n'en aurait eu depuis le 24/09 (1 022 coffres, un seul gros, aucun exceptionnel). Deux leviers proposés
+  (baisser leurs prix, ou un « jackpot » rare dans les coffres moyens et gros), sans réponse : rien de changé.
+- Reste à faire : accord de LeKiwi06 pour déployer KLM_Menu 2.11.0 (6 serveurs Paper) et KS_Economy 1.5.0 (Event,
+  Kixster) ; test en jeu (Java et Bedrock) ; sa décision sur la rareté des badges et du Raccommodage.
