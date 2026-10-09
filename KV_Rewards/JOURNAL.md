@@ -57,4 +57,4 @@ Même changement que KG_Rewards 1.2.0 (voir son `JOURNAL.md` pour la demande de 
 `valeur` d'un niveau envoyée avec la récompense et affichée sur le coffre par KS_RewardsGUI 1.3.0. Mêmes pools que
 Kal-Games ; niveaux du mois, du permanent et des concours.
 
-**Compilé le 09/10/2026, non déployé (déploiement sur le feu vert de LeKiwi06). Statut : non testé en jeu.**
+**Déployé sur Kanvas le 09/10/2026 à 15:12 (LeKiwi06, feu vert après présentation ; 1.1.0 dans `_removed-kv_rewards-1.1.0/`, avec l'ancien `butin.yml`) avec le nouveau `butin.yml`, actif après redémarrage. `config.yml` du serveur non touché. Statut : non testé en jeu.**

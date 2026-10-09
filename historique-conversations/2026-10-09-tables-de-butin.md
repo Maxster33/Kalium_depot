@@ -88,7 +88,7 @@ Proposé, sans réponse : garantir la moitié de chaque récompense en récompen
 
 ## Suite (15 h) : rework des récompenses (KG_Rewards 1.2.0, KV_Rewards 1.2.0, KS_RewardsGUI 1.3.0)
 
-- Compilés, non déployés, non testés ; déploiement sur le feu vert de LeKiwi06.
+- Présentation faite, feu vert de LeKiwi06 (« oui déploie, et transfère aussi le schem save "kixsspawn" vers kixster depuis kanvas ») : déployés le 09/10/2026 à 15:12 sur Kal-Games, Kanvas, Event et Kixster ; non testés ; réservations libérées. Schéma `kixsspawn.schem` copié de Kanvas vers `plugins/WorldEdit/schematics/` de Kixster.
 - LeKiwi06 : « ça marche sur Event, mais je n'aime pas les récompenses » ; valeur moyenne affichée sur le coffre ;
   émeraudes « données dans le coffre, pas via un message dans le tchat » ; « il faut diversifier les récompenses : je
   n'ai eu que 3 blocs différents », « beaucoup de flèches mais aucune chair putréfiée, pas d'œil d'araignée »,
@@ -104,4 +104,4 @@ Proposé, sans réponse : garantir la moitié de chaque récompense en récompen
 - Choix de Claude signalés : enchantements au hasard sans trésor (Raccommodage seulement par des entrées dédiées, en
   fer et en or, dans le pool Légendaire, pour garder sa valeur de 1 500) ; valeur affichée = moyenne du niveau (pas
   celle du coffre) ; un seul objet inhabituel par pile ; valeurs moyennes des niveaux inchangées.
-- Reste à faire : feu vert, déploiement (Kal-Games, Kanvas, Event, Kixster), test en jeu.
+- Reste à faire : redémarrer les quatre serveurs (l'humain), lire les consoles, tester en jeu (équipement et livres enchantés, potions, valeur sur le coffre, émeraudes dans le coffre) ; charger le schéma sur Kixster.

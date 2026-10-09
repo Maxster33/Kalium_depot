@@ -103,4 +103,4 @@ Limites : écrit sans serveur de test ; le tirage des enchantements n'a été v�
 
 **À déployer avec KS_RewardsGUI 1.3.0** (sans elle, la valeur n'est pas affichée ; rien d'autre ne casse).
 
-**Compilé le 09/10/2026, non déployé (présentation à LeKiwi06, déploiement sur son feu vert). Statut : non testé en jeu.**
+**Déployé sur Kal-Games le 09/10/2026 à 15:12 (LeKiwi06, feu vert après présentation ; 1.1.0 dans `_removed-kg_rewards-1.1.0/`, avec l'ancien `butin.yml`) avec le nouveau `butin.yml`, actif après redémarrage. `config.yml` du serveur non touché. Statut : non testé en jeu.**

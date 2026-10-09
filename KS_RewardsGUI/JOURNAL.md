@@ -87,7 +87,7 @@ Limites : écrit sans serveur de test. Le clic droit dans le vide avec un bloc e
 dans `coffres.yml` (rien ne le nettoie). Les coffres ne s'empilent pas et ne se vendent pas en boutique (objets tous
 différents).
 
-**Déployé sur Kixster (1.0.1 dans `_removed-ks_rewardsgui-1.0.1/`) et sur Event (1.1.0 dans `_removed-ks_rewardsgui-1.1.0/`) le 09/10/2026 à 13:30 (LeKiwi06), actif depuis les redémarrages de 13:35 (journaux lus : 1.2.0 activée sur les deux serveurs, aucune erreur). `config.yml` des serveurs non touchés. Statut : non testé en jeu (premier essai de LeKiwi06 sur Kixster à 13:36 : 13 coffres récupérés, 2 ouverts ; 10 des 11 restés fermés contiennent un jeton de fly ou un badge, absents de Kixster ; pas encore confirmé par lui).**
+**Déployé sur Kixster (1.0.1 dans `_removed-ks_rewardsgui-1.0.1/`) et sur Event (1.1.0 dans `_removed-ks_rewardsgui-1.1.0/`) le 09/10/2026 à 13:30 (LeKiwi06), actif depuis les redémarrages de 13:35 (journaux lus : 1.2.0 activée sur les deux serveurs, aucune erreur). `config.yml` des serveurs non touchés. Statut : testé et confirmé par LeKiwi06 le 09/10/2026 sur Event (« ça marche sur Event ») ; sur Kixster, les coffres qui contiennent un jeton de fly ou un badge restent fermés tant que ces objets n'y existent pas.**
 
 ## 1.3.0 - valeur moyenne sur le coffre, émeraudes dans le coffre (09/10/2026, LeKiwi06)
 
@@ -103,4 +103,4 @@ tchat ».
   joueur les dépose lui-même sur son score (KS_Economy). Le coffre n'a donc plus besoin de KS_Economy pour s'ouvrir.
 - Aucun autre changement (coffres existants compris : ils s'ouvrent comme avant, leurs points arrivent en émeraudes).
 
-**Compilé le 09/10/2026, non déployé (déploiement sur le feu vert de LeKiwi06). Statut : non testé en jeu.**
+**Déployé sur Event et sur Kixster le 09/10/2026 à 15:12 (LeKiwi06 ; 1.2.0 dans `_removed-ks_rewardsgui-1.2.0/`), actif après redémarrage. `config.yml` des serveurs non touchés. Statut : non testé en jeu.**
