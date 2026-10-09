@@ -18,6 +18,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
+- KLM_Menu — LeKiwi06 — depuis le 2026-10-09 18:40 — menus de type contenant dans la boîte à outils (classe Contenant, ajout seulement) — 3e plugin : accord de Maxster33 (dit par LeKiwi06)
 
 
 ## Requis parfois
