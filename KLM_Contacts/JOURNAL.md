@@ -42,6 +42,6 @@ Limites connues :
   défaut). Un ami en Build Battle sur Kanvas est joignable : on arrive sur les plots, pas dans sa partie.
 - L'autocomplétion des pseudos ne propose que les joueurs du même serveur.
 
-**À déployer avec KaliumRelay 1.6.0** (proxy) ; KLM_Menu 2.10.0 pour le bouton. **Compilé le 09/10/2026, non déployé.
+**À déployer avec KaliumRelay 1.6.0** (proxy) ; KLM_Menu 2.10.0 pour le bouton. **Déployé sur les 6 serveurs Paper le 09/10/2026 à 06:06 (LeKiwi06), actif après redémarrage ; `relay-token` à remplir sur chaque serveur.
 Statut : non testé en jeu** (logique du proxy essayée hors jeu : demandes, blocage, réglages, relecture après
 redémarrage).

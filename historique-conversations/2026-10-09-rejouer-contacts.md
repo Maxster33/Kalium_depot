@@ -4,8 +4,8 @@
   KaliumRelay, KLM_Menu
 - Versions avant / après : KalGames 1.23.0 / 1.24.0 ; KG_Bingo 1.8.0 / 1.9.0 ; KG_BingoGame 0.10.0 / 0.11.0 ;
   KG_BuildBattle 0.3.0 / 0.4.0 ; KV_BuildBattle 0.3.6 / 0.4.0 (déployées le 09/10/2026 à 5 h 46, non testées) ;
-  KLM_Contacts 1.0.0 (nouveau), KaliumRelay 1.5.0 / 1.6.0, KLM_Menu 2.9.0 / 2.10.0 (compilées, non déployées, non
-  testées)
+  KLM_Contacts 1.0.0 (nouveau), KaliumRelay 1.5.0 / 1.6.0, KLM_Menu 2.9.0 / 2.10.0 (déployées le 09/10/2026 à
+  6 h 06, non testées)
 
 ## Demandé
 
@@ -32,7 +32,10 @@ quels serveurs de KaLium ils sont, etc. »
     privés `/mp` et `/r` écrits dans le journal du proxy ;
   - KLM_Menu 2.10.0 : bouton « Contacts » dans « Informations » (interfaces de joueur déclarées par les plugins).
   - Logique du proxy essayée hors jeu avec un faux proxy (32 cas : demandes, demandes croisées, blocage, réglages,
-    relecture après redémarrage, changement de pseudo), tout passe. Compilés et poussés, **non déployés**.
+    relecture après redémarrage, changement de pseudo), tout passe.
+  - Déployés le 09/10/2026 à 6 h 06 (« oui déploie ») : KaliumRelay sur le proxy, KLM_Contacts et KLM_Menu sur les 6
+    serveurs Paper ; jars vérifiés avant (nom et taille identiques à `jars-deployes/`) ; cahier publié dans
+    `KLM_Contacts/CAHIER_DES_CHARGES.md` ; réservations libérées.
 
 ## Décisions
 
@@ -59,8 +62,8 @@ quels serveurs de KaLium ils sont, etc. »
   Battle privé relancé.
 - Observateurs du Bingo (KG_BingoObservateur) : leur proposer aussi l'objet ? (question ouverte du cahier)
 - KLM_Contacts (validé le 09/10/2026 : modération par le journal du proxy et LibertyBans, le groupe suit son chef
-  quand il clique sur « Rejouer ») : **déployer l'étape 1** avec l'accord de LeKiwi06 : KaliumRelay 1.6.0 sur le proxy
-  (redémarrage du proxy), KLM_Contacts 1.0.0 et KLM_Menu 2.10.0 sur les 6 serveurs Paper, `relay-token` à recopier à
+  quand il clique sur « Rejouer ») : étape 1 déployée ; **reste à faire par l'humain** : redémarrer le proxy et les 6
+  serveurs Paper, `relay-token` à recopier à
   la main dans `plugins/KLM_Contacts/config.yml` de chaque serveur, `mp` et `r` à ajouter aux commandes bloquées de
   LibertyBans. Puis tester (deux comptes, dont un Bedrock, sur deux serveurs différents), puis étapes 2 (groupe de
   jeu) et 3 (parties).

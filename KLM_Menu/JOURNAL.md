@@ -280,4 +280,4 @@ affichée. Empilé sur la 2.9.0, non testée en jeu : nécessaire pour la demand
   menu sont masqués par défaut, Kixster et Event : `/menu on`, ou `/menu`).
 - Ajout seulement : les plugins compilés contre la 2.9.0 fonctionnent sans changement.
 
-**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur les 6 serveurs Paper le 09/10/2026 à 06:06 (LeKiwi06 ; 2.9.0 dans `_removed-klm_menu-2.9.0/`), actif après redémarrage de chaque serveur. Statut : non testé en jeu.**

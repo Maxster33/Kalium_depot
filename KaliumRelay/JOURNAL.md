@@ -329,6 +329,6 @@ Empilé sur la 1.5.0, non testée en jeu : nécessaire pour la demande, signalé
 
 Limite : les données sont en clair sur le proxy (pseudos, listes d'amis), comme le reste du dossier du relais.
 
-**À déployer avec KLM_Contacts 1.0.0** (sans lui : seules `/mp` et `/r` existent, entre joueurs en ligne). **Compilé le
-09/10/2026, non déployé. Statut : non testé en jeu** (logique des demandes, du blocage, des réglages et de la relecture
+**À déployer avec KLM_Contacts 1.0.0** (sans lui : seules `/mp` et `/r` existent, entre joueurs en ligne). **Déployé sur le proxy le
+09/10/2026 à 06:06 (LeKiwi06 ; 1.5.0 dans `_removed-kaliumrelay-1.5.0/`), actif après redémarrage du proxy. Statut : non testé en jeu** (logique des demandes, du blocage, des réglages et de la relecture
 après redémarrage essayée hors jeu avec un faux proxy).
