@@ -51,7 +51,11 @@ final class Envois {
         yaml.set("origine", plugin.getConfig().getString("origine", "Kal-Games"));
         yaml.set("raison", raison);
         yaml.set("date", System.currentTimeMillis());
-        yaml.set("contenu", contenu);
+        yaml.set("contenu", new ArrayList<>(contenu));
+        // 1.2.0 : valeur moyenne du niveau, affichée sur le coffre par KS_RewardsGUI 1.3.0.
+        if (contenu instanceof Butin.Contenu tire && tire.valeur > 0) {
+            yaml.set("valeur", tire.valeur);
+        }
         synchronized (this) {
             enAttente.add((boite == null ? "" : MARQUE_BOITE + boite + "\n") + yaml.saveToString());
             sauver();

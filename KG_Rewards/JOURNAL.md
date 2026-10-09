@@ -72,3 +72,35 @@ comme atteint. Pour cela, un message en attente peut porter sa propre boîte (pr
 `envois.yml`, retirée à l’envoi). Les vraies récompenses partent toujours vers la boîte de `config.yml`.
 
 **Déployé sur Kal-Games le 09/10/2026 à 07:05 (LeKiwi06 ; 1.0.0 dans `_removed-kg_rewards-1.0.0/`) avec `plugins/KG_Rewards/butin.yml` (aucun n'existait avant), actif depuis le redémarrage de 07:12 (journal lu : 1.1.0 activée, aucune erreur, aucun objet du `butin.yml` refusé). `config.yml` du serveur non touché. Statut : non testé en jeu.**
+
+## 1.2.0 - objets enchantés au tirage, potions, valeur moyenne du niveau (09/10/2026, LeKiwi06)
+
+Demandes de LeKiwi06 après son test sur Event (« ça marche sur Event, mais je n'aime pas les récompenses ») : « il faut afficher sur le coffre de loot sa valeur moyenne » ; « il faut que les émeraudes soient données dans le coffre, pas via un message dans le tchat » ; « il faut diversifier les récompenses » (blocs, butin de monstres, nourriture, minerais en version brute et en minerai, cuivre, améthyste, débris antiques) ; équipement en fer, or et diamant « enchanté parfois (rendre possible d'avoir du mending sur le fer et l'or, mais pas sur le diamant) » ; « des livres enchantés random parfois » et « des livres plus rares dans les meilleures récompenses (frost walker, mending, swift sneak, wind burst, etc.) » ; « des potions classiques » ; blocs de construction « par stacks entiers pour les blocs non précieux » ; « des disques, des éclats de poterie, des décorations d'armures » ; « fais-moi une présentation du rework avant de le déployer sur mon feu vert ».
+
+Ce qui manquait au plugin pour ces tables : un objet de `butin.yml` était figé au chargement (toujours le même), il
+n'y avait ni potion par son type, ni valeur de niveau à transmettre.
+
+- **`enchanter: [min, max]`** sur un objet de `butin.yml` : l'objet n'est plus figé au chargement, il est **créé à
+  chaque tirage**, enchanté comme à une table d'enchantement d'un niveau tiré entre min et max (enchantements
+  « dans la table » seulement : **jamais de trésor**, donc jamais Raccommodage au hasard). Un `book` devient un livre
+  enchanté. `enchantements: {clé: niveau}` s'ajoute ensuite : c'est ainsi qu'un objet en fer ou en or peut porter
+  Raccommodage (entrées prévues pour cela), et jamais un objet en diamant (aucune entrée). Une entrée de plusieurs
+  unités crée autant d'objets, chacun avec son tirage.
+- **`potion: <type>`** (ex. `SWIFTNESS`) sur `potion`, `splash_potion`, `lingering_potion` : potion classique.
+- **`valeur`** d'un niveau (`niveaux.<période>.<niveau>.valeur`, en émeraudes) : envoyée avec la récompense (champ
+  `valeur` du message, multipliée par le bonus de prestige) ; KS_RewardsGUI 1.3.0 l'affiche sur le coffre. Gardée
+  quand l'interface admin réécrit le fichier.
+- Interface admin : un objet créé au tirage s'affiche « n x <id> (enchanté au tirage) ».
+- Id, type de potion ou enchantement inconnu : élément ignoré, signalé dans la console (comme en 1.1.0).
+
+Tables de butin refaites (hors dépôt, `sortie/rewards/butin/`) : 5 pools, 512 entrées fabriquées par famille d'objets
+(blocs, butin de monstres, nourriture, minerais et matières, divers, émeraudes, potions, livres, équipement enchanté,
+objets de nos plugins, objets inhabituels, objets rares, badges) ; les émeraudes y sont de vrais objets. Valeurs
+moyennes des niveaux inchangées (validées le 09/10/2026).
+
+Limites : écrit sans serveur de test ; le tirage des enchantements n'a été vérifié qu'à la compilation. Empilé sur la
+1.1.0 (dont le tirage, la commande d'essai et les objets par id ont été essayés par LeKiwi06 le 09/10/2026).
+
+**À déployer avec KS_RewardsGUI 1.3.0** (sans elle, la valeur n'est pas affichée ; rien d'autre ne casse).
+
+**Compilé le 09/10/2026, non déployé (présentation à LeKiwi06, déploiement sur son feu vert). Statut : non testé en jeu.**

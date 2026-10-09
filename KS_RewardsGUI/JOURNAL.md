@@ -88,3 +88,19 @@ dans `coffres.yml` (rien ne le nettoie). Les coffres ne s'empilent pas et ne se 
 différents).
 
 **Déployé sur Kixster (1.0.1 dans `_removed-ks_rewardsgui-1.0.1/`) et sur Event (1.1.0 dans `_removed-ks_rewardsgui-1.1.0/`) le 09/10/2026 à 13:30 (LeKiwi06), actif depuis les redémarrages de 13:35 (journaux lus : 1.2.0 activée sur les deux serveurs, aucune erreur). `config.yml` des serveurs non touchés. Statut : non testé en jeu (premier essai de LeKiwi06 sur Kixster à 13:36 : 13 coffres récupérés, 2 ouverts ; 10 des 11 restés fermés contiennent un jeton de fly ou un badge, absents de Kixster ; pas encore confirmé par lui).**
+
+## 1.3.0 - valeur moyenne sur le coffre, émeraudes dans le coffre (09/10/2026, LeKiwi06)
+
+Demandes de LeKiwi06 après son test des coffres sur Event (« ça marche sur Event ») : « il faut afficher sur le coffre
+de loot sa valeur moyenne » ; « il faut que les émeraudes soient données dans le coffre, pas via un message dans le
+tchat ».
+
+- **Valeur moyenne** : le message d'une récompense peut porter `valeur` (KG_Rewards et KV_Rewards 1.2.0 : la valeur
+  moyenne de son niveau, pas celle de ce coffre-là, qui trahirait son contenu). Le coffre affiche alors « Valeur
+  moyenne : n émeraude(s) » sous l'origine. Sans ce champ, la ligne n'apparaît pas.
+- **Émeraudes dans le coffre** : les points d'une récompense (`type: argent`) ne sont plus versés sur le score avec un
+  message ; ils sont mis dans le coffre en émeraudes (jusqu'à 64), ou en blocs d'émeraude et émeraudes au-delà. Le
+  joueur les dépose lui-même sur son score (KS_Economy). Le coffre n'a donc plus besoin de KS_Economy pour s'ouvrir.
+- Aucun autre changement (coffres existants compris : ils s'ouvrent comme avant, leurs points arrivent en émeraudes).
+
+**Compilé le 09/10/2026, non déployé (déploiement sur le feu vert de LeKiwi06). Statut : non testé en jeu.**

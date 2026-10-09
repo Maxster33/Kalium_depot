@@ -49,8 +49,8 @@ import java.util.UUID;
  * - Une récompense récupérée dans /rewards donne UN objet : un coffre au nom de la récompense, marqué « Non ouvert ».
  * - Le contenu n'est pas dans l'objet : il est gardé ici (plugins/KS_RewardsGUI/coffres.yml), retrouvé par l'identifiant
  *   du coffre. Personne ne peut donc le lire avant l'ouverture, et un coffre copié ne s'ouvre qu'une fois.
- * - Clic droit, coffre en main : à la première ouverture, le coffre devient « Ouvert », les points du score qu'il contient
- *   sont versés à celui qui l'ouvre, et une fenêtre montre les objets. Un clic sur un objet le prend ; on ne peut rien y
+ * - Clic droit, coffre en main : à la première ouverture, le coffre devient « Ouvert » et une fenêtre montre les objets
+ *   (1.3.0 : les points du score d'une récompense y sont mis en émeraudes). Un clic sur un objet le prend ; on ne peut rien y
  *   déposer. Un coffre vidé disparaît ; sinon il garde ce qui reste et se rouvre.
  * - Le coffre ne se pose pas, ne se renomme pas à l'enclume, ne sert ni d'ingrédient ni de combustible.
  */
@@ -113,6 +113,14 @@ final class Coffres implements Listener {
         meta.displayName(sansItalique(lang.c("coffre.nom", "<gold>Coffre : <white><raison>", "raison", c.recompense.raison)));
         List<Component> lore = new ArrayList<>();
         lore.add(sansItalique(lang.c("coffre.origine", "<gray>Origine : <origine>", "origine", c.recompense.origine)));
+        // 1.3.0 (LeKiwi06 : « il faut afficher sur le coffre de loot sa valeur moyenne ») : celle de son niveau.
+        if (c.recompense.valeur > 0) {
+            double v = c.recompense.valeur;
+            String texte = v >= 10 || v == Math.rint(v) ? String.valueOf(Math.round(v))
+                    : String.valueOf(Math.round(v * 10) / 10.0).replace('.', ',');
+            lore.add(sansItalique(lang.c("coffre.valeur", "<gray>Valeur moyenne : <yellow><valeur></yellow> émeraude(s)",
+                    "valeur", texte)));
+        }
         lore.add(sansItalique(c.ouvert
                 ? lang.c("coffre.ouvert", "<red>Ouvert <gray>(reste <nombre> pile(s))", "nombre", c.reste.size())
                 : lang.c("coffre.non-ouvert", "<green>Non ouvert")));
@@ -182,20 +190,11 @@ final class Coffres implements Listener {
                 lang.saveIfNeeded();
                 return;
             }
-            long argent = c.recompense.argent();
-            if (argent > 0 && !Bukkit.getPluginManager().isPluginEnabled("KS_Economy")) {
-                joueur.sendMessage(lang.c("coffre.sans-economie", "<red>L'économie est indisponible : le coffre reste "
-                        + "fermé."));
-                lang.saveIfNeeded();
-                return;
-            }
             c.ouvert = true;
             c.reste.addAll(objets);
-            if (argent > 0) {
-                fr.kalium.economy.KSEconomy.crediter(joueur.getUniqueId(), argent);
-                joueur.sendMessage(lang.c("coffre.argent", "<green>Le coffre contenait <yellow><points></yellow> "
-                        + "émeraude(s) : ajoutées à ton score.", "points", argent));
-            }
+            // 1.3.0 (LeKiwi06 : « il faut que les émeraudes soient données dans le coffre, pas via un message dans le
+            // tchat ») : les points d'une récompense deviennent des émeraudes dans le coffre (blocs au-delà d'une pile).
+            c.reste.addAll(emeraudes(c.recompense.argent()));
             plugin.journal("OUVERTURE | " + joueur.getName() + " (" + joueur.getUniqueId() + ") | coffre " + id + " | "
                     + c.recompense.origine + " | " + c.recompense.raison + " | gagné par " + c.recompense.nom + " | "
                     + c.recompense.resume());
@@ -219,6 +218,20 @@ final class Coffres implements Listener {
         ouverts.add(id);
         joueur.openInventory(fenetre.inventaire);
         lang.saveIfNeeded();
+    }
+
+    /** Des points en émeraudes : jusqu'à 64, des émeraudes ; au-delà, des blocs d'émeraude (9) et le reste en émeraudes. */
+    private static List<ItemStack> emeraudes(long points) {
+        List<ItemStack> piles = new ArrayList<>();
+        long blocs = points > 64 ? points / 9 : 0;
+        long unites = points > 64 ? points % 9 : Math.max(0, points);
+        for (; blocs > 0; blocs -= 64) {
+            piles.add(new ItemStack(Material.EMERALD_BLOCK, (int) Math.min(64, blocs)));
+        }
+        if (unites > 0) {
+            piles.add(new ItemStack(Material.EMERALD, (int) unites));
+        }
+        return piles;
     }
 
     /** Un clic sur un objet du coffre le prend ; tout le reste est refusé (rien ne se dépose dans un coffre). */

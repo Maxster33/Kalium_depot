@@ -49,3 +49,12 @@ comme atteint. Pour cela, un message en attente peut porter sa propre boîte (pr
 `envois.yml`, retirée à l’envoi). Les vraies récompenses partent toujours vers la boîte de `config.yml`.
 
 **Déployé sur Kanvas le 09/10/2026 à 07:05 (LeKiwi06 ; 1.0.0 dans `_removed-kv_rewards-1.0.0/`) avec `plugins/KV_Rewards/butin.yml` (aucun n'existait avant), actif depuis le redémarrage de 07:12 (journal lu : 1.1.0 activée, aucune erreur, aucun objet du `butin.yml` refusé). `config.yml` du serveur non touché. Statut : non testé en jeu.**
+
+## 1.2.0 - objets enchantés au tirage, potions, valeur moyenne du niveau (09/10/2026, LeKiwi06)
+
+Même changement que KG_Rewards 1.2.0 (voir son `JOURNAL.md` pour la demande de LeKiwi06 et le détail) : `enchanter:
+[min, max]` (objet créé et enchanté à chaque tirage, sans trésor), `enchantements` ajoutés ensuite, `potion: <type>`,
+`valeur` d'un niveau envoyée avec la récompense et affichée sur le coffre par KS_RewardsGUI 1.3.0. Mêmes pools que
+Kal-Games ; niveaux du mois, du permanent et des concours.
+
+**Compilé le 09/10/2026, non déployé (déploiement sur le feu vert de LeKiwi06). Statut : non testé en jeu.**

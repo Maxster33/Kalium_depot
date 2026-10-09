@@ -2,6 +2,7 @@ package fr.kalium.kvrewards;
 
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
+import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -11,6 +12,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionType;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +37,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * 1.1.0 (LeKiwi06, 09/10/2026 : « ajoute la lecture par id ») : dans butin.yml, un objet vanilla peut aussi être écrit
  * par son id, {type: objet, id: diamond, nombre: 2}, avec au besoin enchantements: {mending: 1} ; il est transformé au
  * chargement en « donnees » (l'objet créé par le serveur, comme s'il avait été déposé dans l'interface admin).
+ *
+ * 1.2.0 (LeKiwi06, 09/10/2026 : « il faut diversifier les récompenses », équipement « enchanté parfois », « livres
+ * enchantés random », « potions classiques », « afficher sur le coffre de loot sa valeur moyenne ») : « potion: <type> » ;
+ * « enchanter: [min, max] » (objet enchanté à chaque tirage, sans trésor) ; « valeur » d'un niveau (sa valeur moyenne,
+ * envoyée avec la récompense et affichée sur le coffre par KS_RewardsGUI).
  */
 final class Butin {
 
@@ -75,6 +83,8 @@ final class Butin {
 
     static final class Niveau {
         int tirages;
+        /** 1.2.0 : valeur moyenne annoncée du niveau, en émeraudes (0 : non renseignée). */
+        double valeur;
         final Map<String, Integer> frequences = new LinkedHashMap<>();
         final List<Map<String, Object>> fixes = new ArrayList<>();
     }
@@ -102,7 +112,8 @@ final class Butin {
      */
     List<Map<String, Object>> tirer(String periode, String niveau, double multiplicateur) {
         Niveau n = niveau(periode, niveau);
-        List<Map<String, Object>> contenu = new ArrayList<>();
+        Contenu contenu = new Contenu();
+        contenu.valeur = n.valeur * multiplicateur;
         ThreadLocalRandom hasard = ThreadLocalRandom.current();
         int totalFrequences = 0;
         for (Map.Entry<String, Integer> f : n.frequences.entrySet()) {
@@ -142,6 +153,7 @@ final class Butin {
                 }
             }
         }
+        creerAuTirage(contenu);
         return contenu;
     }
 
@@ -183,20 +195,77 @@ final class Butin {
     }
 
     /**
-     * 1.1.0 : objet vanilla écrit par son id ({type: objet, id: ..., nombre: n} sans « donnees ») : remplacé par l'objet
-     * sérialisé. Renvoie false si l'id n'est pas un objet du jeu : l'élément est alors ignoré (signalé dans la console).
+     * 1.1.0 : objet vanilla écrit par son id ({type: objet, id: ..., nombre: n} sans « donnees ») : remplacé au chargement
+     * par l'objet sérialisé. 1.2.0 : « potion: <type> » (potion de base), et « enchanter: [min, max] » : l'objet est alors
+     * gardé tel quel et créé à chaque tirage (creerAuTirage), pour que ses enchantements changent d'un tirage à l'autre.
+     * Renvoie false si l'élément ne peut pas être créé : il est alors ignoré (signalé dans la console).
      */
     private static boolean objetParId(Map<String, Object> el) {
         if (!"objet".equals(el.get("type")) || el.containsKey("donnees")) {
             return true;
         }
+        ItemStack objet = creer(el);
+        if (objet == null) {
+            return false;
+        }
+        el.put("nombre", Math.max(1, nombre(el.get("nombre"))));
+        if (el.containsKey("enchanter")) {
+            return true; // créé à chaque tirage
+        }
+        figer(el, objet);
+        return true;
+    }
+
+    /** Remplace la description d'un objet (id, potion, enchantements...) par l'objet sérialisé. */
+    private static void figer(Map<String, Object> el, ItemStack objet) {
+        el.remove("id");
+        el.remove("potion");
+        el.remove("enchanter");
+        el.remove("enchantements");
+        el.put("donnees", Base64.getEncoder().encodeToString(objet.serializeAsBytes()));
+    }
+
+    /**
+     * L'objet décrit par un élément : id, « potion: <type> », « enchanter: [min, max] » (enchanté comme à une table
+     * d'enchantement d'un niveau tiré entre min et max : jamais d'enchantement de trésor ; un livre devient un livre
+     * enchanté), puis « enchantements: {clé: niveau} » posés en plus. Null (et une ligne dans la console) si l'id, le
+     * type de potion ou un enchantement est inconnu.
+     */
+    private static ItemStack creer(Map<String, Object> el) {
         String id = String.valueOf(el.get("id"));
         Material materiau = el.get("id") == null ? null : Material.matchMaterial(id);
         if (materiau == null || !materiau.isItem() || materiau.isAir()) {
             Bukkit.getLogger().severe("[KV_Rewards] butin.yml : objet inconnu « " + id + " », élément ignoré.");
-            return false;
+            return null;
         }
         ItemStack objet = new ItemStack(materiau);
+        if (el.get("potion") != null) {
+            PotionType type;
+            try {
+                type = PotionType.valueOf(String.valueOf(el.get("potion")).toUpperCase());
+            } catch (IllegalArgumentException e) {
+                type = null;
+            }
+            if (type == null || !(objet.getItemMeta() instanceof PotionMeta potion)) {
+                Bukkit.getLogger().severe("[KV_Rewards] butin.yml : potion inconnue « " + el.get("potion") + " » sur " + id
+                        + ", élément ignoré.");
+                return null;
+            }
+            potion.setBasePotionType(type);
+            objet.setItemMeta(potion);
+        }
+        if (el.get("enchanter") instanceof List<?> niveaux && niveaux.size() == 2) {
+            int min = (int) Math.max(1, nombre(niveaux.get(0)));
+            int max = (int) Math.max(min, nombre(niveaux.get(1)));
+            ThreadLocalRandom hasard = ThreadLocalRandom.current();
+            objet = Bukkit.getItemFactory().enchantWithLevels(objet, hasard.nextInt(min, max + 1),
+                    RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT)
+                            .getTag(EnchantmentTagKeys.IN_ENCHANTING_TABLE), hasard);
+        } else if (el.containsKey("enchanter")) {
+            Bukkit.getLogger().severe("[KV_Rewards] butin.yml : « enchanter » doit être [min, max] sur " + id
+                    + ", élément ignoré.");
+            return null;
+        }
         if (el.get("enchantements") instanceof Map<?, ?> enchantements) {
             ItemMeta meta = objet.getItemMeta();
             for (Map.Entry<?, ?> e : enchantements.entrySet()) {
@@ -206,7 +275,7 @@ final class Butin {
                 if (enchantement == null) {
                     Bukkit.getLogger().severe("[KV_Rewards] butin.yml : enchantement inconnu « " + cle + " » sur " + id
                             + ", élément ignoré.");
-                    return false;
+                    return null;
                 }
                 int niveau = (int) Math.max(1, nombre(e.getValue()));
                 if (meta instanceof EnchantmentStorageMeta livre) {
@@ -217,11 +286,35 @@ final class Butin {
             }
             objet.setItemMeta(meta);
         }
-        el.remove("id");
-        el.remove("enchantements");
-        el.put("donnees", Base64.getEncoder().encodeToString(objet.serializeAsBytes()));
-        el.put("nombre", Math.max(1, nombre(el.get("nombre"))));
-        return true;
+        return objet;
+    }
+
+    /** 1.2.0 : crée les objets « enchanter » d'un contenu tiré (un objet par unité demandée : chacun son tirage). */
+    private static void creerAuTirage(List<Map<String, Object>> contenu) {
+        List<Map<String, Object>> sortie = new ArrayList<>();
+        for (Map<String, Object> el : contenu) {
+            if (!"objet".equals(el.get("type")) || el.containsKey("donnees")) {
+                sortie.add(el);
+                continue;
+            }
+            long unites = Math.max(1, nombre(el.get("nombre")));
+            for (long i = 0; i < unites; i++) {
+                Map<String, Object> un = new LinkedHashMap<>(el);
+                ItemStack objet = creer(un);
+                if (objet != null) {
+                    figer(un, objet);
+                    un.put("nombre", 1);
+                    sortie.add(un);
+                }
+            }
+        }
+        contenu.clear();
+        contenu.addAll(sortie);
+    }
+
+    /** 1.2.0 : contenu tiré, avec la valeur moyenne annoncée de son niveau (écrite dans le message par Envois). */
+    static final class Contenu extends ArrayList<Map<String, Object>> {
+        double valeur;
     }
 
     private void charger() {
@@ -261,6 +354,7 @@ final class Butin {
                     continue;
                 }
                 n.tirages = s.getInt("tirages");
+                n.valeur = s.getDouble("valeur");
                 ConfigurationSection f = s.getConfigurationSection("frequences");
                 if (f != null) {
                     f.getKeys(false).forEach(pool -> n.frequences.put(pool, f.getInt(pool)));
@@ -285,6 +379,9 @@ final class Butin {
         niveaux.forEach((periode, parNiveau) -> parNiveau.forEach((id, n) -> {
             String cle = "niveaux." + periode + "." + id;
             yaml.set(cle + ".tirages", n.tirages);
+            if (n.valeur > 0) {
+                yaml.set(cle + ".valeur", n.valeur);
+            }
             n.frequences.forEach((pool, f) -> yaml.set(cle + ".frequences." + pool, f));
             yaml.set(cle + ".fixes", n.fixes);
         }));

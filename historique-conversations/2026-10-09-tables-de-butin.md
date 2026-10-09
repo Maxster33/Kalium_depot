@@ -85,3 +85,23 @@ Proposé, sans réponse : garantir la moitié de chaque récompense en récompen
   fichiers dans `_removed-kg_rewards-butin-2026-10-09/` et `_removed-kv_rewards-butin-2026-10-09/`) ; réservation libérée.
 - Reste à faire : redémarrer les quatre serveurs (l'humain), tester (récupérer un
   coffre, l'ouvrir en Java et en Bedrock, prendre une partie, le rouvrir, l'échanger) ; envoyer la catégorie 7 sur Kixster.
+
+## Suite (15 h) : rework des récompenses (KG_Rewards 1.2.0, KV_Rewards 1.2.0, KS_RewardsGUI 1.3.0)
+
+- Compilés, non déployés, non testés ; déploiement sur le feu vert de LeKiwi06.
+- LeKiwi06 : « ça marche sur Event, mais je n'aime pas les récompenses » ; valeur moyenne affichée sur le coffre ;
+  émeraudes « données dans le coffre, pas via un message dans le tchat » ; « il faut diversifier les récompenses : je
+  n'ai eu que 3 blocs différents », « beaucoup de flèches mais aucune chair putréfiée, pas d'œil d'araignée »,
+  nourriture pas assez variée, « des lingots de netherite mais pas de débris antiques », « les versions lingots mais pas
+  les versions ore », « pas eu de cuivre ni d'améthyste » ; équipement en fer, or et diamant enchanté parfois (« mending
+  sur le fer et l'or, mais pas sur le diamant ») ; livres enchantés au hasard et livres plus rares dans les meilleures
+  récompenses ; potions classiques ; blocs de construction par stacks entiers pour les blocs non précieux ; disques,
+  éclats de poterie, décorations d'armures ; « fais-moi une présentation du rework avant de le déployer sur mon feu
+  vert ».
+- Fait : pools refaits par familles d'objets (512 entrées au lieu de 96), émeraudes en vrais objets ; plugins : objets
+  enchantés à chaque tirage, potions par type, valeur du niveau transmise et affichée sur le coffre, points mis en
+  émeraudes dans le coffre.
+- Choix de Claude signalés : enchantements au hasard sans trésor (Raccommodage seulement par des entrées dédiées, en
+  fer et en or, dans le pool Légendaire, pour garder sa valeur de 1 500) ; valeur affichée = moyenne du niveau (pas
+  celle du coffre) ; un seul objet inhabituel par pile ; valeurs moyennes des niveaux inchangées.
+- Reste à faire : feu vert, déploiement (Kal-Games, Kanvas, Event, Kixster), test en jeu.

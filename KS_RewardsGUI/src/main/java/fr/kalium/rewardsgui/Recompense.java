@@ -31,6 +31,7 @@ import java.util.UUID;
  *   - type: argent         # points du score (KS_Economy)
  *     montant: 500
  * locale: true                                   # 1.1.0 : déposée par un plugin d'Event (KSRewardsGUI.deposer)
+ * valeur: 100.0                                  # 1.3.0 : valeur moyenne du niveau, affichée sur le coffre (facultatif)
  * </pre>
  */
 final class Recompense {
@@ -46,6 +47,8 @@ final class Recompense {
     long date;
     /** 1.1.0 : déposée par un plugin de ce serveur (objets du joueur lui-même) : hors suivi de l'anti-triche. */
     boolean locale;
+    /** 1.3.0 : valeur moyenne du niveau de la récompense, en émeraudes (« valeur » du message ; 0 : inconnue). */
+    double valeur;
     final List<Element> contenu = new ArrayList<>();
     /** Texte d'origine (enregistré tel quel). */
     String texte;
@@ -67,6 +70,7 @@ final class Recompense {
         r.raison = yaml.getString("raison", "Récompense");
         r.date = yaml.getLong("date", System.currentTimeMillis());
         r.locale = yaml.getBoolean("locale", false);
+        r.valeur = yaml.getDouble("valeur", 0);
         for (Map<?, ?> element : yaml.getMapList("contenu")) {
             String type = String.valueOf(element.get("type"));
             Object nombre = element.containsKey("nombre") ? element.get("nombre") : element.get("montant");

@@ -352,6 +352,12 @@ final class MenuAdmin implements Listener {
             switch (String.valueOf(el.get("type"))) {
                 case "objet" -> {
                     Component nom;
+                    if (!el.containsKey("donnees")) {
+                        // 1.2.0 : objet créé à chaque tirage (butin.yml : « enchanter »)
+                        partie = Component.text(Butin.nombre(el.get("nombre")) + " x " + el.get("id")
+                                + " (enchanté au tirage)");
+                        break;
+                    }
                     try {
                         ItemStack objet = ItemStack.deserializeBytes(Base64.getDecoder().decode(String.valueOf(el.get("donnees"))));
                         nom = objet.hasItemMeta() && objet.getItemMeta().hasDisplayName() ? objet.getItemMeta().displayName()
