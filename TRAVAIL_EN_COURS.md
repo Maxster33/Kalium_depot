@@ -18,6 +18,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
+- KG_Rewards — LeKiwi06 — depuis le 2026-10-09 15:00 — rework des récompenses : objets variés, équipement et livres enchantés au tirage, valeur moyenne sur le coffre
 
 
 
@@ -37,6 +38,9 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 ## Requis parfois
+
+- KV_Rewards — LeKiwi06 — depuis le 2026-10-09 15:00 — même retouche que KG_Rewards (copie du code), déploiement groupé
+- KS_RewardsGUI — LeKiwi06 — depuis le 2026-10-09 15:00 — retouche : valeur moyenne affichée sur le coffre, émeraudes dans le coffre ; déploiement groupé
 
 
 
