@@ -20,6 +20,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 - KLM_Contacts — LeKiwi06 — depuis le 2026-10-09 05:52 — KLM_Contacts étape 1 : amis, serveur de chaque ami, messages privés, notifications, invisible, blocage (données sur le proxy)
 - KaliumRelay — LeKiwi06 — depuis le 2026-10-09 05:52 — KLM_Contacts étape 1 : amis, serveur de chaque ami, messages privés, notifications, invisible, blocage (données sur le proxy)
+- KLM_Menu — LeKiwi06 — depuis le 2026-10-09 05:58 — bouton « Contacts » dans « Informations » (interface de joueur déclarée par KLM_Contacts)
 
 
 
