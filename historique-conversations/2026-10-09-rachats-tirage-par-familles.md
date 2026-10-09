@@ -23,6 +23,11 @@ LeKiwi06 :
 - « oui déploie sur event » (LeKiwi06) : KS_Economy 1.4.0 envoyé sur Event à 05:52, 1.3.1 rangé dans
   `_removed-ks_economy-1.3.1/` ; actif après redémarrage.
 
+- « j'ai redémarré event, tu peux lire le journal » (LeKiwi06) : 1.4.0 active sans erreur (redémarrage de 06:01).
+  Cause des objets du Nether trouvée : sur Event, KS_Dimensions indique les portails du Nether et de l'End « activés »
+  à chaque démarrage depuis le 01/10, jamais fermés dans `/dimensions` ; le plugin ne filtre donc rien. Tirage de la
+  semaine 41 : `dragon_breath` (End) et `red_shulker_box` (End + Nether), aucun autre objet du Nether ou de l'End.
+
 ## Décisions
 
 - Les gammes de prix ne servent plus qu'à la taille des lots (inchangée, non demandée).
@@ -32,9 +37,8 @@ LeKiwi06 :
 
 ## Reste à faire
 
-- LeKiwi06 : dire quels objets ont été vus (et quand), ou autoriser la lecture du journal d'Event, pour confirmer la
-  cause ; si ces objets ne sont pas marqués « nether » dans `rachats.csv`, la 1.4.0 ne suffit pas.
-- Redémarrer Event (l'humain), puis tester en jeu : `/rachat`, fermer le Nether
+- LeKiwi06 : préciser par quel moyen le Nether est fermé sur Event ; les rachats ne connaissent que `/dimensions`.
+- Tester en jeu : `/rachat`, fermer le Nether
   dans `/dimensions` et vérifier que les objets du Nether sont remplacés dans la minute.
 - Le tirage de la semaine 41 n'est pas refait par la mise à jour : nouveau tirage lundi 12/10, ou `rachats.yml`
   supprimé serveur éteint par l'humain.

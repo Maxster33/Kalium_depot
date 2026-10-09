@@ -308,3 +308,12 @@ Nether ont été tirés alors qu'il est fermé, ce n'est pas normal ».
   concernés et la ligne « Rachats de la semaine ... » de la console.
 
 **Déployé sur Event le 09/10/2026 à 05:52 (LeKiwi06 ; 1.3.1 dans `_removed-ks_economy-1.3.1/`, jar en place vérifié identique à `jars-deployes/` avant l'envoi ; `config.yml` du serveur non modifié ; supprimables par l'humain : `_removed-ks_economy-1.0.0/` à `1.2.0/`, 11 dossiers), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+**Journal d'Event lu le 09/10/2026 après le redémarrage de 06:01 (accord de LeKiwi06)** : KS_Economy 1.4.0 actif,
+« Barème : 1929 objets (0 inconnus de cette version) » (les objets de la 26.3 sont reconnus), aucune erreur.
+**Cause des objets du Nether** : sur Event, KS_Dimensions indique « Portails du Nether : activés ; portails de l'End :
+activés » à chaque démarrage depuis le 01/10 (43 journaux, aucune ligne « désactivés par ... », `config.yml` de
+KS_Dimensions inchangé depuis le 30/09). Pour le plugin, aucune dimension n'est fermée : le tirage de la semaine 41
+(05/10 à 12:38) contient donc `dragon_breath` (End) et `red_shulker_box` (End + Nether). Le filtre n'est pas en cause.
+Tant que le Nether n'est pas fermé dans `/dimensions`, ses objets peuvent sortir ; dès qu'il l'est, la 1.4.0 remplace
+ces offres dans la minute. À préciser par LeKiwi06 : par quel moyen le Nether est fermé sur Event.
