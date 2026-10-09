@@ -132,4 +132,4 @@ l'économie) ; un écran qui demande de taper un texte ou un nombre garde une pe
 Limites : écrit sans serveur de test. À vérifier en jeu, surtout sur Bedrock (affichage des lignes de description,
 clic sur les cases).
 
-**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster et sur Event le 09/10/2026 à 18:20 (LeKiwi06 ; 1.3.0 dans `_removed-ks_rewardsgui-1.3.0/`), actif après redémarrage. `config.yml` des serveurs non touchés. Statut : non testé en jeu.**
