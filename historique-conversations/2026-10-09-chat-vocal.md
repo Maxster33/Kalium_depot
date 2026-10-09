@@ -32,9 +32,16 @@ LeKiwi06 : « il faudrait configurer simple voice chat dans tout les serveurs »
   serveurs, voicechat démarre sur le bon port avec le bon `voice_host`, aucune erreur, réglages non réécrits.
 - Lobby : LeKiwi06 et Maaxster connectés au chat vocal à 18:37. Les 5 autres : personne n'était encore entré.
 
+## Suite : « on n'a pas la permission de parler »
+
+- Cause : le `plugin.yml` de voicechat déclare `voicechat.speak`, `voicechat.listen` et `voicechat.groups` sans
+  valeur par défaut (« opérateurs seulement » pour Bukkit) ; LuckPerms les refuse donc aux non-opérateurs.
+- Correction faite par LeKiwi06 en jeu, sur les 6 serveurs (18:55 à 19:02) : `/lp group default permission set
+  voicechat.speak true`, puis `voicechat.listen` et `voicechat.groups`. Proposition non retenue : un `permissions.yml`
+  à la racine de chaque serveur (redémarrage nécessaire, jamais essayé avec LuckPerms).
+- LeKiwi06 : « c'est bon ». Journaux relus à 19:08 : permissions enregistrées et au moins une connexion vocale
+  réussie sur chacun des 6 serveurs, aucune erreur.
+
 ## Reste à faire
 
-- Entrer avec le mod sur Kal-Games, Kanvas, Kixster, Event et Serveur Jeux (liaison vérifiée sur le lobby seulement),
-  et s'entendre à deux.
-- Port 40002 d'Event : attribué le 24/09 au serveur qui s'appelait alors kal-games ; à contrôler dans le panneau
-  Minestrator si la voix ne se connecte pas sur Event.
+- Rien. À savoir : les trois permissions sont à redonner sur tout nouveau serveur (une base LuckPerms par serveur).

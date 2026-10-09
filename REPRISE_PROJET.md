@@ -307,7 +307,8 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
   Kal-Test-Dev, du lobby (voicechat, destinations KLM_Menu) puis du proxy. À vérifier dans les journaux : Floodgate
   sans erreur de clé, KLM_Menu chargé, connexion par le proxy (`/server kalgames2`...).
 - **voicechat réglé sur les 6 serveurs Paper le 09/10/2026 à 18:32 (LeKiwi06, avec Claude ; serveurs allumés) :
-  actif après redémarrage de chaque serveur, non testé en jeu.** `voice_host` posé partout (lobby
+  actif depuis les redémarrages de 18:36, testé et confirmé par LeKiwi06 le 09/10/2026 (« c'est bon », après les
+  permissions LuckPerms ci-dessous).** `voice_host` posé partout (lobby
   `91.197.6.152:43841`, Kal-Games `91.197.6.24:43374`, Kanvas `91.197.6.215:45595`, Kixster `91.197.6.212:40046`,
   Event `51.254.174.133:40002`, Serveur Jeux `91.197.6.65:43131`) ; `port` corrigé sur Kixster et Event (ils étaient
   restés à 24454, port par défaut jamais attribué). Rien d'autre ne change (voicechat 2.6.24, distance 48 blocs,
@@ -322,12 +323,13 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
   port 40046 marche). **« on n'a pas la permission de parler » (LeKiwi06, 18:45)** : le `plugin.yml` de voicechat
   2.6.24 déclare `voicechat.speak`, `voicechat.listen` et `voicechat.groups` sans valeur par défaut (donc
   « opérateurs seulement » pour Bukkit), et LuckPerms suit cette déclaration : refusé à tout joueur non opérateur
-  (lobby : seul Maaxster est opérateur). Correction, **pas encore faite** (LuckPerms est en H2, une base par
-  serveur, Claude n'a pas de console) : sur chacun des 6 serveurs, `lp group default permission set
-  voicechat.speak true`, puis `voicechat.listen` et `voicechat.groups` ; effet immédiat, sans redémarrage. Non
-  vérifié : sur quel serveur et pour qui le refus est apparu. Si la voix ne se connecte pas sur un serveur : port
-  UDP à contrôler dans le panneau Minestrator (40002 d'Event : attribué le 24/09 quand ce serveur s'appelait
-  kal-games, supposé toujours valable). Les joueurs Bedrock n'ont pas le chat vocal (pas de mod).
+  (lobby : seul Maaxster est opérateur). Correction **faite par LeKiwi06 en jeu le 09/10/2026 entre 18:55 et
+  19:02** (LuckPerms est en H2, une base par serveur) : sur chacun des 6 serveurs, `/lp group default permission
+  set voicechat.speak true`, puis `voicechat.listen` et `voicechat.groups` ; effet immédiat, sans redémarrage.
+  **Confirmé par LeKiwi06 le 09/10/2026 (« c'est bon »).** Journaux relus à 19:08 : les trois permissions
+  enregistrées par LuckPerms sur les 6 serveurs, au moins une connexion vocale réussie sur chacun (donc les 6 ports
+  UDP marchent, 40002 d'Event compris), aucune erreur. **À refaire sur tout nouveau serveur, ou si une base
+  LuckPerms est remplacée.** Les joueurs Bedrock n'ont pas le chat vocal (pas de mod).
 - Kal-Test-Dev garde son propre Geyser-Spigot (crossplay direct) : devenu inutile derrière le proxy (Geyser tourne
   sur le proxy) ; non retiré (pas demandé). Le lobby a aussi un `Geyser-Spigot.jar` qui ne se charge pas (aucun dossier).
 - Lobby : la destination KLM_Menu `Kixster` (désactivée) vise un nom qui n'existe plus dans Velocity depuis le
