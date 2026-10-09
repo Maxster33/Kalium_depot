@@ -23,6 +23,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Étape 4 : revente suspecte (Revente).
  * Étape 5 : « Bannir de KaLium » (LibertyBans sur le proxy, par KaliumRelay 1.4.0) ; règle tntExplosionDropDecay
  * activée dans les mondes d'Event (fermes à TNT moins efficaces, choix de LeKiwi06).
+ * 1.2.0 (LeKiwi06, 09/10/2026) : « Joueurs » dans la rubrique Modération : tous les joueurs, même hors ligne, en têtes
+ * dans un coffre (Joueurs) ; la fiche d'un joueur liste aussi ses claims (Claims, SimpleClaimSystem).
  *
  * Permission : ksanticheat.staff (opérateurs par défaut).
  */
@@ -37,6 +39,7 @@ public final class KSAntiCheat extends JavaPlugin {
     private Inventaires inventaires;
     private Morts morts;
     private Menus menus;
+    private Joueurs joueurs;
     private Detections detections;
     private Minage minage;
     private Revente revente;
@@ -51,6 +54,7 @@ public final class KSAntiCheat extends JavaPlugin {
         inventaires = new Inventaires(this);
         morts = new Morts(this);
         menus = new Menus(this);
+        joueurs = new Joueurs(this);
         detections = new Detections(this);
         minage = new Minage(this);
         getServer().getPluginManager().registerEvents(detections, this);
@@ -86,11 +90,16 @@ public final class KSAntiCheat extends JavaPlugin {
         getServer().getPluginManager().registerEvents(suspensions, this);
         getServer().getPluginManager().registerEvents(inventaires, this);
         getServer().getPluginManager().registerEvents(morts, this);
+        getServer().getPluginManager().registerEvents(joueurs, this);
         for (String commande : new String[]{"anticheat", "invsee", "ecsee"}) {
             getCommand(commande).setExecutor(this);
         }
         // Rubrique « Modération » de /menu (KLM_Menu 2.7.0).
         var services = getServer().getServicesManager();
+        services.register(MenuSection.class, MenuSection.moderation(this, "joueurs", PERMISSION_STAFF, 5,
+                lang.c("moderation.joueurs", "<green>Joueurs"),
+                lang.c("moderation.joueurs-info", "<gray>Tous les joueurs, même hors ligne : inventaire, coffre de l'Ender, "
+                        + "claims, alertes."), (p, retour) -> joueurs.ouvrir(p, retour)), this, ServicePriority.Normal);
         services.register(MenuSection.class, MenuSection.moderation(this, "anticheat", PERMISSION_STAFF, 10,
                 lang.c("moderation.anticheat", "<dark_red>Anti-triche"),
                 lang.c("moderation.anticheat-info", "<gray>Alertes, joueurs suspects, suspensions."), menus::accueil),
@@ -151,6 +160,14 @@ public final class KSAntiCheat extends JavaPlugin {
 
     Inventaires inventaires() {
         return inventaires;
+    }
+
+    Menus menus() {
+        return menus;
+    }
+
+    Joueurs joueurs() {
+        return joueurs;
     }
 
     Morts morts() {

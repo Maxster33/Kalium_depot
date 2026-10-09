@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 /**
  * Interface staff (cahier, catégorie 6 ; rubrique « Modération » de /menu et /anticheat) : alertes récentes, joueurs
  * avec alertes, recherche d'un joueur (alertes, invsee, ecsee, suspendre / lever), suspendus, morts d'entités
- * importantes, journal des consultations.
+ * importantes, journal des consultations. 1.2.0 : « Tous les joueurs » (liste en têtes, Joueurs) et claims d'un joueur.
  */
 final class Menus {
 
@@ -31,6 +31,8 @@ final class Menus {
     private final Gui gui;
     /** Retour vers la rubrique « Modération » de KLM_Menu (si le menu a été ouvert de là). */
     private final Map<UUID, Consumer<Player>> retours = new HashMap<>();
+    /** 1.2.0 : retour de la fiche d'un joueur vers la liste en têtes (si la fiche a été ouverte de là). */
+    private final Map<UUID, Consumer<Player>> retoursFiche = new HashMap<>();
 
     Menus(KSAntiCheat plugin) {
         this.plugin = plugin;
@@ -68,6 +70,8 @@ final class Menus {
                 + "suspendus : <red><s>", "n", recentes, "s", plugin.suspensions().toutes().size()));
         List<ActionButton> boutons = new ArrayList<>();
         boutons.add(gui.button(t("menu.bouton-alertes", "<yellow>Alertes récentes"), null, p -> alertesRecentes(p)));
+        boutons.add(gui.button(t("menu.bouton-tous", "<green>Tous les joueurs"), null,
+                p -> plugin.joueurs().ouvrir(p, this::accueil)));
         boutons.add(gui.button(t("menu.bouton-joueurs", "<white>Joueurs avec alertes"), null, p -> joueurs(p, 0)));
         boutons.add(gui.button(t("menu.bouton-chercher", "<white>Chercher un joueur"), null, p -> chercher(p, false, false)));
         boutons.add(gui.button(t("menu.bouton-suspendus", "<red>Suspendus"), null, this::suspendus));
@@ -160,7 +164,22 @@ final class Menus {
 
     // ------------------------------------------------------------------ joueur
 
+    /** Fiche d'un joueur ; « Retour » ramène à l'accueil. */
     void joueur(Player staff, OfflinePlayer cible) {
+        joueur(staff, cible, null);
+    }
+
+    /** 1.2.0 : fiche d'un joueur ouverte depuis la liste en têtes : « Retour » y ramène (retour null : accueil). */
+    void joueur(Player staff, OfflinePlayer cible, Consumer<Player> retour) {
+        if (retour == null) {
+            retoursFiche.remove(staff.getUniqueId());
+        } else {
+            retoursFiche.put(staff.getUniqueId(), retour);
+        }
+        fiche(staff, cible);
+    }
+
+    private void fiche(Player staff, OfflinePlayer cible) {
         if (!KSAntiCheat.staff(staff)) {
             return;
         }
@@ -183,6 +202,11 @@ final class Menus {
         boutons.add(gui.button(t("joueur.bouton-invsee", "<aqua>Inventaire"), null, p -> plugin.inventaires().ouvrir(p, cible, false)));
         boutons.add(gui.button(t("joueur.bouton-ecsee", "<dark_purple>Coffre de l'Ender"), null,
                 p -> plugin.inventaires().ouvrir(p, cible, true)));
+        if (Claims.disponible()) {
+            List<Claims.Ligne> claims = Claims.de(uuid);
+            boutons.add(gui.button(t("joueur.bouton-claims", "<green>Claims (<n>)", "n", claims == null ? "?" : claims.size()),
+                    null, p -> claims(p, cible, 0)));
+        }
         if (s == null) {
             boutons.add(gui.button(t("joueur.bouton-suspendre", "<red>Suspendre"), null, p -> suspendre(p, cible)));
         } else {
@@ -191,8 +215,8 @@ final class Menus {
                     t("joueur.lever-texte", "<white><nom> pourra de nouveau se connecter à Event.", "nom", nom),
                     q -> {
                         plugin.suspensions().lever(uuid, q.getName());
-                        joueur(q, cible);
-                    }, q -> joueur(q, cible))));
+                        fiche(q, cible);
+                    }, q -> fiche(q, cible))));
         }
         boutons.add(gui.button(t("joueur.bouton-bannir", "<dark_red>Bannir de KaLium"), null, p -> bannir(p, cible)));
         // 1.0.2 (LeKiwi06) : historique complet (alertes et actions du staff), dès la première entrée.
@@ -200,7 +224,7 @@ final class Menus {
             boutons.add(gui.button(t("joueur.bouton-historique", "<yellow>Historique des alertes"), null,
                     p -> toutes(p, cible, 0)));
         }
-        boutons.add(retour(this::accueil));
+        boutons.add(retour(retoursFiche.getOrDefault(staff.getUniqueId(), this::accueil)));
         gui.open(staff, t("joueur.titre", "<dark_red><bold><nom>", "nom", nom), corps, List.of(), boutons, gui.close(), 2);
         lang.saveIfNeeded();
     }
@@ -226,9 +250,41 @@ final class Menus {
         if (p < pages - 1) {
             boutons.add(gui.button(t("menu.suivant", "<yellow>Page suivante"), null, j -> toutes(j, cible, p + 1)));
         }
-        boutons.add(retour(j -> joueur(j, cible)));
+        boutons.add(retour(j -> fiche(j, cible)));
         gui.open(staff, t("joueur.titre-historique", "<yellow><bold>Historique de <nom>", "nom",
                 cible.getName() == null ? "?" : cible.getName()), corps, List.of(), boutons, gui.close(), 1);
+        lang.saveIfNeeded();
+    }
+
+    /** 1.2.0 : claims possédés par le joueur (SimpleClaimSystem), 10 par page : nom et position. */
+    private void claims(Player staff, OfflinePlayer cible, int page) {
+        String nom = cible.getName() == null ? "?" : cible.getName();
+        List<Claims.Ligne> liste = Claims.de(cible.getUniqueId());
+        List<Component> corps = new ArrayList<>();
+        List<ActionButton> boutons = new ArrayList<>();
+        if (liste == null) {
+            corps.add(t("claims.illisibles", "<red>Claims illisibles (SimpleClaimSystem ne répond pas)."));
+        } else if (liste.isEmpty()) {
+            corps.add(t("claims.aucun", "<gray>Aucun claim."));
+        } else {
+            int pages = Math.max(1, (liste.size() + PAR_PAGE - 1) / PAR_PAGE);
+            int p = Math.max(0, Math.min(page, pages - 1));
+            corps.add(t("claims.entete", "<gray>Page <page> / <pages> - <n> claim(s) : nom, puis position (centre du chunk).",
+                    "page", p + 1, "pages", pages, "n", liste.size()));
+            for (int i = p * PAR_PAGE; i < Math.min(liste.size(), (p + 1) * PAR_PAGE); i++) {
+                corps.add(t("claims.ligne", "<white><nom> <gray>- <position>", "nom", liste.get(i).nom(),
+                        "position", liste.get(i).position()));
+            }
+            if (p > 0) {
+                boutons.add(gui.button(t("menu.precedent", "<yellow>Page précédente"), null, j -> claims(j, cible, p - 1)));
+            }
+            if (p < pages - 1) {
+                boutons.add(gui.button(t("menu.suivant", "<yellow>Page suivante"), null, j -> claims(j, cible, p + 1)));
+            }
+        }
+        boutons.add(retour(j -> fiche(j, cible)));
+        gui.open(staff, t("claims.titre", "<green><bold>Claims de <nom>", "nom", nom), corps, List.of(), boutons,
+                gui.close(), 1);
         lang.saveIfNeeded();
     }
 
@@ -238,13 +294,13 @@ final class Menus {
             String raison = vue.getText("raison") == null ? "" : vue.getText("raison").trim();
             plugin.suspensions().suspendre(cible.getUniqueId(), nom, raison.isEmpty() ? "sans raison précisée" : raison,
                     p.getName());
-            joueur(p, cible);
+            fiche(p, cible);
         });
         gui.open(staff, t("joueur.titre-suspendre", "<red><bold>Suspendre <nom>", "nom", nom),
                 List.of(t("joueur.suspendre-aide", "<gray>Il ne pourra plus se connecter à Event (message : « Une erreur "
                         + "inhabituelle est survenue, contacte le staff. »), jusqu'à ce que le staff lève la suspension.")),
                 List.of(gui.text("raison", t("joueur.champ-raison", "Raison (pour le staff)"), "", 100)),
-                List.of(valider, retour(p -> joueur(p, cible))), gui.close(), 1);
+                List.of(valider, retour(p -> fiche(p, cible))), gui.close(), 1);
         lang.saveIfNeeded();
     }
 
@@ -266,16 +322,16 @@ final class Menus {
                                         ? t("joueur.banni", "<green><nom> est banni de KaLium.", "nom", nom)
                                         : t("joueur.ban-echec", "<red>Échec : relais injoignable, relay-token vide ou "
                                         + "LibertyBans absent du proxy."),
-                                r -> joueur(r, cible));
+                                r -> fiche(r, cible));
                         lang.saveIfNeeded();
-                    }), q -> joueur(q, cible));
+                    }), q -> fiche(q, cible));
             lang.saveIfNeeded();
         });
         gui.open(staff, t("joueur.titre-bannir", "<dark_red><bold>Bannir de KaLium"),
                 List.of(t("joueur.bannir-aide", "<gray>Bannissement de tous les serveurs de KaLium (LibertyBans, sur le "
                         + "proxy), sans durée. À utiliser quand le joueur n'est pas clean ; sinon : lever la suspension.")),
                 List.of(gui.text("raison", t("joueur.champ-raison-ban", "Raison du bannissement"), "", 150)),
-                List.of(valider, retour(p -> joueur(p, cible))), gui.close(), 1);
+                List.of(valider, retour(p -> fiche(p, cible))), gui.close(), 1);
         lang.saveIfNeeded();
     }
 

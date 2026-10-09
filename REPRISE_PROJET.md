@@ -96,6 +96,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 
 
+- **KS_AntiCheat 1.2.0** (09/10/2026, LeKiwi06) : outil « Joueurs » de la rubrique Modération : tous les joueurs, même hors ligne, en têtes dans un coffre (45 par page) ; clic sur une tête = fiche du joueur (inventaire, coffre de l'Ender, suspension, alertes) avec un nouveau bouton « Claims » (nom et position de ses claims, lus dans SimpleClaimSystem) ; demandé pour Kixster ; **compilé, non déployé, non testé en jeu**, réservation gardée jusqu'au déploiement (accord de LeKiwi06 attendu). Kixster et Event sont en 1.1.1.
+
 - **KG_BoatRace 1.6.0** (09/10/2026, LeKiwi06) : essai d'équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock, derrière le réglage « Bedrock : bateau serveur (essai) » désactivé par défaut ; **compilé, non déployé, non testé en jeu**, réservation gardée jusqu'au test. Empilé sur la 1.5.1 non testée (accord explicite de LeKiwi06).
 
 - **KG_Pong 0.1.0** (06/10/2026, LeKiwi06) : prototype d'un nouveau mini-jeu Pong pour Kal-Games (2 joueurs, vu de dessus, raquettes en vrais blocs, balle = Sulfur Cube à bloc de glace), branché sur le moteur de parties de KalGames (aucun changement dans KalGames) ; **compilé, non déployé, non testé en jeu**, réservation gardée. Après le déploiement, un modérateur doit construire un terrain plat entouré de murs, créer l'arène et poser 5 points (voir `KG_Pong/JOURNAL.md`).

@@ -162,3 +162,33 @@ joueur dans son ec, donc on peut dupliquer des items si je le prends puis qu'il 
 - Double-clic (ramasser tout) désactivé dans les vues. `softdepend` KS_EC_Extension.
 
 **Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.1.1 ; ancienne version dans `_removed-ks_anticheat-1.0.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.2.0 - tous les joueurs en têtes, claims d'un joueur (09/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « il faudrait compléter la modération sur kixster, j'aimerai une interface de coffre avec les
+têtes de tout les joueurs meme hors ligne, pour ne pas avoir a taper leurs pseudo, j'aimerai que cette option m'ouvre
+une interface pour voir leur inventaire, ender chest, leurs liste de claim, etc ».
+- **« Joueurs »** : nouvel outil de la rubrique « Modération » de `/menu` (en premier), et bouton « Tous les joueurs »
+  de l'accueil de l'anti-triche (`/anticheat`). Coffre de 6 lignes : une tête par joueur connu du serveur (connecté,
+  ou qui y a une sauvegarde), 45 par page, les connectés d'abord puis par ordre alphabétique ; flèches de page, porte
+  « Retour ». Sous le pseudo (vert : en ligne, blanc : hors ligne, rouge : suspendu) : « En ligne » ou « Hors ligne,
+  vu le <date> », nombre d'alertes, « Suspendu ». Rien ne peut être pris ni déposé.
+- **Clic sur une tête** : la fiche du joueur (celle de « Chercher un joueur » : inventaire, coffre de l'Ender,
+  suspendre / lever, bannir de KaLium, historique des alertes) ; son « Retour » ramène à la même page de la liste.
+- **« Claims (n) »**, nouveau bouton de la fiche : claims possédés par le joueur, en ligne ou hors ligne, lus dans
+  SimpleClaimSystem : nom et position (« Overworld, x 120 z -40 », centre du chunk), 10 par page. Lecture seule. Sans
+  SimpleClaimSystem : pas de bouton. `softdepend` SimpleClaimSystem.
+- Pseudo et dernière connexion d'un joueur hors ligne : lus une fois dans sa sauvegarde, puis gardés en mémoire
+  jusqu'au redémarrage (mis à jour à chaque déconnexion).
+
+Choix de Claude (à confirmer) : le « etc. » de la demande n'est pas interprété : la fiche garde ce qu'elle proposait
+déjà, plus les claims. Les outils « Invsee » et « EcSee » de la rubrique demandent toujours un pseudo.
+
+Limites :
+- Tête d'un joueur hors ligne : l'objet ne porte que son identifiant, c'est le jeu du staff qui va chercher
+  l'apparence ; un joueur Bedrock garde la tête par défaut, et un membre du staff en Bedrock voit des têtes par défaut
+  (le pseudo reste affiché).
+- Un joueur jamais venu sur ce serveur (ou pas revenu depuis le changement de monde) n'est pas dans la liste.
+- Les claims dont le joueur est seulement membre ne sont pas listés ; pas de téléportation vers un claim.
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**
