@@ -29,6 +29,7 @@ et génère les butin.yml » ; « oui déploie, et donne moi 10 récompenses de 
 - Déployé le 09/10/2026 à 07:05 : jars en place identiques à `jars-deployes/`, aucun `butin.yml` existant ; anciens jars
   dans `_removed-kg_rewards-1.0.0/` et `_removed-kv_rewards-1.0.0/` ; réservations libérées.
 - Constaté sur Kixster : KS_RewardsGUI 1.0.1, KS_Jetons 1.0.0, KS_KaliumGive 1.8.0 (pas de jeton de fly ni de badges).
+
 ## Décisions
 
 Validé par LeKiwi06 :
