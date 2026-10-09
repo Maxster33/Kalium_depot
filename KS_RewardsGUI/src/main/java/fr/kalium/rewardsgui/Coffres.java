@@ -115,11 +115,8 @@ final class Coffres implements Listener {
         lore.add(sansItalique(lang.c("coffre.origine", "<gray>Origine : <origine>", "origine", c.recompense.origine)));
         // 1.3.0 (LeKiwi06 : « il faut afficher sur le coffre de loot sa valeur moyenne ») : celle de son niveau.
         if (c.recompense.valeur > 0) {
-            double v = c.recompense.valeur;
-            String texte = v >= 10 || v == Math.rint(v) ? String.valueOf(Math.round(v))
-                    : String.valueOf(Math.round(v * 10) / 10.0).replace('.', ',');
             lore.add(sansItalique(lang.c("coffre.valeur", "<gray>Valeur moyenne : <yellow><valeur></yellow> émeraude(s)",
-                    "valeur", texte)));
+                    "valeur", nombre(c.recompense.valeur))));
         }
         lore.add(sansItalique(c.ouvert
                 ? lang.c("coffre.ouvert", "<red>Ouvert <gray>(reste <nombre> pile(s))", "nombre", c.reste.size())
@@ -128,6 +125,12 @@ final class Coffres implements Listener {
         meta.getPersistentDataContainer().set(cle, PersistentDataType.STRING, id);
         objet.setItemMeta(meta);
         return objet;
+    }
+
+    /** Une valeur en émeraudes : entière à partir de 10, sinon une décimale au plus (virgule). */
+    static String nombre(double v) {
+        return v >= 10 || v == Math.rint(v) ? String.valueOf(Math.round(v))
+                : String.valueOf(Math.round(v * 10) / 10.0).replace('.', ',');
     }
 
     private static Component sansItalique(Component texte) {

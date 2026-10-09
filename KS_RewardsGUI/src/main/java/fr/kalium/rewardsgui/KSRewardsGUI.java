@@ -80,6 +80,7 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
         menu = new Menu(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(coffres, this);
+        getServer().getPluginManager().registerEvents(new Contenant.Ecoute(), this);
         getCommand("rewards").setExecutor(this);
         // Bouton « Récompenses » du comparateur « Informations » de KLM_Menu 2.6.0 (s'il est présent).
         if (getServer().getPluginManager().getPlugin("KLM_Menu") != null) {

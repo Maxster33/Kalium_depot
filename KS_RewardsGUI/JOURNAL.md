@@ -104,3 +104,32 @@ tchat ».
 - Aucun autre changement (coffres existants compris : ils s'ouvrent comme avant, leurs points arrivent en émeraudes).
 
 **Déployé sur Event et sur Kixster le 09/10/2026 à 15:12 (LeKiwi06 ; 1.2.0 dans `_removed-ks_rewardsgui-1.2.0/`), actif depuis les redémarrages de 16:03 (journaux lus : 1.3.0 activée sur les deux serveurs, aucune erreur). `config.yml` des serveurs non touchés. Statut : non testé en jeu.**
+
+## 1.4.0 - /rewards en interface de type contenant (09/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « j'aimerais rendre les interfaces plus jolies, et selon moi ça passe par davantage d'interfaces
+de type contenant quand c'est possible au lieu des boutons ». Ses choix : commencer par la survie (`/rewards`, puis
+l'économie) ; un écran qui demande de taper un texte ou un nombre garde une petite fenêtre de saisie ; maquette de
+`/rewards` validée comme modèle (« oui, pars là-dessus »).
+
+- **`/rewards`** n'est plus une fenêtre à boutons mais un **coffre de 6 rangées** : en haut, un objet par récompense
+  en attente (45 par page) ; en bas, une barre d'actions sur fond de vitres grises.
+  - Récompense d'un autre serveur : un **coffre** nommé par sa raison, avec « Origine », « Valeur moyenne » (si elle est
+    connue) et « Clic : récupérer ce coffre ». Coffre de mort (dépôt local) : un **coffre de l'Ender**, avec le nombre
+    de piles et « Clic : récupérer tes objets ».
+  - Barre du bas : flèches « Page précédente » / « Page suivante » (seulement s'il y a une page), livre « Comment ça
+    marche », entonnoir « Tout récupérer » (dès 2 récompenses), barrière « Fermer ».
+  - Aucune récompense : un papier « Aucune récompense en attente » au milieu.
+- Un clic récupère la récompense et **le menu se remplit à nouveau sans se refermer** (le curseur ne bouge pas).
+- **Messages** (inventaire plein, tout récupéré...) : au-dessus de la barre d'objets du joueur, avec un son ; plus de
+  fenêtre à fermer ni de message dans le tchat.
+- Nouvelle classe `Contenant` (menu de type contenant : cases, actions, décor, écoute commune), écrite pour être
+  reprise par les autres menus ; à déplacer dans la boîte à outils de KLM_Menu quand un deuxième plugin s'en servira.
+- Textes sous de nouvelles clés `liste.*` de `lang.yml` (les anciennes clés `menu.*` ne servent plus).
+- Inchangé : ce que fait une récupération (coffre « Non ouvert », coffre de mort rendu en objets), le journal, le
+  signal pour l'anti-triche, la commande `/rewards` et les boutons qui l'ouvrent.
+
+Limites : écrit sans serveur de test. À vérifier en jeu, surtout sur Bedrock (affichage des lignes de description,
+clic sur les cases).
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

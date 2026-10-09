@@ -149,3 +149,13 @@ Proposé, sans réponse : garantir la moitié de chaque récompense en récompen
 - Signalé : KS_Economy 1.4.0 apporte aussi les rachats par familles ; rien de tout cela n'a été testé en jeu sur Event ;
   région WorldGuard `zone_spawn` à créer sur Kixster par l'humain.
 - Reste à faire : redémarrer Kixster (l'humain), lire la console, rouvrir les coffres bloqués.
+
+## Suite (18 h) : interfaces de type contenant (KS_RewardsGUI 1.3.0 → 1.4.0)
+
+- LeKiwi06 : « j'aimerais rendre les interfaces plus jolies, et selon moi ça passe par davantage d'interfaces de type
+  contenant quand c'est possible au lieu des boutons ».
+- État des lieux : environ 200 écrans à boutons dans 27 plugins. Ses choix : commencer par la survie (`/rewards` et
+  l'économie) ; saisie de texte ou de nombre dans une petite fenêtre ouverte depuis le contenant ; maquette de
+  `/rewards` validée comme modèle. Réservation d'un 3e plugin avant 23 h : « j'ai l'accord de Maxster33 ».
+- Fait : KS_RewardsGUI 1.4.0, `/rewards` en coffre de 6 rangées ; compilé, non déployé, non testé.
+- Reste à faire : déployer sur Event et Kixster sur son accord, tester (Java et Bedrock) ; puis KS_Economy.
