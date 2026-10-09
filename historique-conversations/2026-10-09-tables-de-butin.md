@@ -67,7 +67,7 @@ Proposé, sans réponse : garantir la moitié de chaque récompense en récompen
 
 ## Suite (13 h) : premier test et coffres « Non ouvert » (KS_RewardsGUI 1.1.0 → 1.2.0)
 
-- Plugin concerné : KS_RewardsGUI (Event, Kixster) ; compilé, non déployé, non testé.
+- Plugin concerné : KS_RewardsGUI (Event, Kixster) ; déployé le 09/10/2026 à 13:30 (« oui déploie »), non testé.
 - Test de LeKiwi06 à 07:18 : 180 récompenses d'essai envoyées sur Kixster, 174 récupérées. « il y a même 6 récompenses
   que je ne peux pas claim, même avec les 36 slots de libre » : lues sur Kixster, elles contiennent toutes un jeton de
   fly ou un badge, qui n'y existent pas encore (KS_Jetons 1.0.0).
@@ -81,5 +81,7 @@ Proposé, sans réponse : garantir la moitié de chaque récompense en récompen
 - Choix de Claude signalés : vrai coffre vanilla renommé (visible tel quel sur Bedrock, rien à ajouter sur le proxy) ;
   contenu gardé par le plugin et non dans l'objet ; coffres de mort inchangés ; pas de renommage à l'enclume ; points
   versés à celui qui ouvre.
-- Reste à faire : déployer KS_RewardsGUI 1.2.0 sur Event et Kixster, renvoyer les deux `butin.yml`, tester (récupérer un
+- Déployé à 13:30 : KS_RewardsGUI 1.2.0 sur Kixster et Event ; `butin.yml` corrigés sur Kal-Games et Kanvas (anciens
+  fichiers dans `_removed-kg_rewards-butin-2026-10-09/` et `_removed-kv_rewards-butin-2026-10-09/`) ; réservation libérée.
+- Reste à faire : redémarrer les quatre serveurs (l'humain), tester (récupérer un
   coffre, l'ouvrir en Java et en Bedrock, prendre une partie, le rouvrir, l'échanger) ; envoyer la catégorie 7 sur Kixster.
