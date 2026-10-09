@@ -40,3 +40,12 @@ playersleepingpercentage a 25 % etc ».
 - Non touchés car hors de Kixster : boîte `kixster` du relais (récompenses pas encore livrées), points et
   classements de Kal-Games.
 - Suppression définitive du dossier `_removed-donnees-joueurs-2026-10-09` : par l'humain, quand il le voudra.
+
+## Suite : journal après redémarrage
+
+- « j'ai redémarré kixster, tu peux lire le journal » (LeKiwi06) : redémarrage de 19:52, journal lu à 19:59. Aucune
+  erreur ; nos plugins démarrent sans leurs fichiers de données et les recréent à l'usage.
+- Fait par LeKiwi06 : `players_sleeping_percentage` à 25 (19:54), trois joueurs ajoutés à la whitelist. Pas de
+  `/time set 0` dans le journal à 19:59.
+- Signalé, cause non cherchée : compte neuf apparu en Y 121 près du spawn (point d'apparition du monde en Y 73),
+  mort de chute 12 s après la connexion.
