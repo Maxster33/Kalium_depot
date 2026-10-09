@@ -103,4 +103,4 @@ tchat ».
   joueur les dépose lui-même sur son score (KS_Economy). Le coffre n'a donc plus besoin de KS_Economy pour s'ouvrir.
 - Aucun autre changement (coffres existants compris : ils s'ouvrent comme avant, leurs points arrivent en émeraudes).
 
-**Déployé sur Event et sur Kixster le 09/10/2026 à 15:12 (LeKiwi06 ; 1.2.0 dans `_removed-ks_rewardsgui-1.2.0/`), actif après redémarrage. `config.yml` des serveurs non touchés. Statut : non testé en jeu.**
+**Déployé sur Event et sur Kixster le 09/10/2026 à 15:12 (LeKiwi06 ; 1.2.0 dans `_removed-ks_rewardsgui-1.2.0/`), actif depuis les redémarrages de 16:03 (journaux lus : 1.3.0 activée sur les deux serveurs, aucune erreur). `config.yml` des serveurs non touchés. Statut : non testé en jeu.**
