@@ -81,6 +81,15 @@ public interface MenuSection {
         return false;
     }
 
+    /**
+     * 2.10.0 - interface de joueur affichee directement dans le comparateur « Informations », sur ce serveur (demande de
+     * LeKiwi06, 09/10/2026 : bouton « Contacts » de KLM_Contacts sur tous les serveurs). Un joueur qui en voit une
+     * recoit le comparateur, meme sans classement sur ce serveur.
+     */
+    default boolean informations() {
+        return false;
+    }
+
     /** 2.7.0 - raccourci pour un outil de moderation, visible avec cette permission (et pour les operateurs). */
     static MenuSection moderation(Plugin owner, String id, String permission, int order, Component title,
                                   Component description, java.util.function.BiConsumer<Player, Consumer<Player>> opener) {

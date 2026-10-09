@@ -267,3 +267,17 @@ sur Kixster et Event, après `/menu on`). À déployer avec KLM_Hub 1.0.0 sur le
 
 **Déployé sur les 6 serveurs Paper le 03/10/2026 à 22:47 (LeKiwi06 ; anciennes versions dans `_removed-klm_menu-2.5.0/` (lobby, Kixster, Serveur Jeux), `2.6.0/` (Kal-Games, Kanvas), `2.8.0/` (Event)), actif après redémarrage. Statut : non testé en jeu.** Les versions 2.6.0 à 2.8.0 n'ont pas encore été
 testées en jeu (signalé à LeKiwi06).
+
+## 2.10.0 - interfaces de joueur dans « Informations » (bouton « Contacts ») (09/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (KLM_Contacts, cahier validé le 09/10/2026) : un bouton « Contacts » dans le comparateur
+« Informations », sur tous les serveurs. Jusqu'ici une interface de joueur qui n'était pas un classement n'y était pas
+affichée. Empilé sur la 2.9.0, non testée en jeu : nécessaire pour la demande, signalé à LeKiwi06.
+- `MenuSection.informations()` (faux par défaut) : une interface qui répond vrai a son bouton directement dans
+  « Informations », après « Classements » et « Récompenses », avant « Paramètres ».
+- Un joueur qui voit une telle interface reçoit le comparateur, même sans classement sur ce serveur. **Conséquence :
+  avec KLM_Contacts installé, tous les joueurs ont le comparateur sur tous les serveurs** (sauf là où les objets de
+  menu sont masqués par défaut, Kixster et Event : `/menu on`, ou `/menu`).
+- Ajout seulement : les plugins compilés contre la 2.9.0 fonctionnent sans changement.
+
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

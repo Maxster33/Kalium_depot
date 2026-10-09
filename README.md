@@ -19,6 +19,7 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 | `KLM_Menu/` | Interface globale : navigation entre serveurs, catalogue des interfaces des plugins, boîte à outils des menus (anciennement KaliumMenu) | chaque serveur Paper |
 | `KLM_Portal/` | Portails : une région WorldGuard reliée à une destination de KLM_Menu (désactivée avec son bouton) | chaque serveur Paper (lobby d'abord) |
 | `KLM_Chat/` | Tchat inter-serveur : `/global send <message>`, `/global true` / `false`, préfixe coloré par serveur, séparations avec le tchat du serveur | chaque serveur Paper |
+| `KLM_Contacts/` | Contacts : amis, serveur où se trouve chaque ami, demandes, blocage, messages privés `/mp` et `/r` (données sur le proxy, dans KaliumRelay) ; groupes de jeu à venir | chaque serveur Paper |
 | `KLM_Hub/` | Lobby : barre de boss (texte défilant Discord / Twitch), QR codes en main secondaire pour « Recherche de joueurs » (dépend de KLM_Menu) | lobby |
 | `KaliumRelay/` | Relais HTTP entre serveurs | proxy Velocity |
 | `KLM_DiscordBot/` | Bot Discord (Node.js, hors Minecraft) : classements, stats et graphiques tirés de l'API de KG_ScoreBoards (cahier des charges dans le dossier) | hébergement à choisir |

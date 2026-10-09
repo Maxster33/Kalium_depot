@@ -313,7 +313,20 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
 
     /** Le joueur a-t-il quelque chose a voir dans « Informations » ? (sinon, pas de comparateur) */
     private boolean hasInformations(Player player) {
-        return isAdmin(player) || !rankingSections(player).isEmpty() || recompenses() != null;
+        return isAdmin(player) || !rankingSections(player).isEmpty() || recompenses() != null
+                || !informationsSections(player).isEmpty();
+    }
+
+    /** 2.10.0 - interfaces de joueur affichees directement dans « Informations » (ex. « Contacts » de KLM_Contacts). */
+    private List<fr.kalium.menu.api.MenuSection> informationsSections(Player player) {
+        List<fr.kalium.menu.api.MenuSection> list = new ArrayList<>();
+        for (var section : visibleSections(player)) {
+            if (section.informations()) {
+                list.add(section);
+            }
+        }
+        list.sort(SECTION_ORDER);
+        return list;
     }
 
     /** 2.6.0 : interface Récompenses de ce serveur (KG_Rewards, KS_RewardsGUI, KV_Rewards...), ou null. */
@@ -350,6 +363,10 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
                             r.ouvrir(p);
                         }
                     }));
+        }
+        // 2.10.0 : interfaces de joueur declarees par les plugins (ex. « Contacts »).
+        for (var section : informationsSections(player)) {
+            buttons.add(gui.button(section.title(), section.description(), p -> openSection(p, section, this::openInformations)));
         }
         if (isAdmin(player)) {
             buttons.add(gui.button(lang.c("info.settings", "<red><bold>Paramètres"),

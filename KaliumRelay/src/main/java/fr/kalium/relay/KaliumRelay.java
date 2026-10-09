@@ -30,7 +30,7 @@ import java.util.Optional;
  * plugins de Velocity repose entierement sur Guice : son propre Injector garantit que
  * com.google.inject.Inject est toujours present et correctement resolu, donc plus sur.
  */
-@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.5.0",
+@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.6.0",
         description = "Relais HTTP entre KalGames et KalBingo, independant de la presence d'un joueur.",
         authors = {"KaLium"})
 public final class KaliumRelay {
@@ -63,6 +63,10 @@ public final class KaliumRelay {
                             "libertybans ban " + pseudo + " " + raison);
                     return true;
                 });
+        // 1.6.0 : KLM_Contacts (amis, presence, messages prives /mp et /r) - donnees dans plugins/kaliumrelay/contacts/.
+        Contacts contacts = new Contacts(this, server, logger, config, dataDirectory);
+        contacts.register();
+        http.contacts(contacts::handle);
         try {
             http.start();
             logger.info("[KaliumRelay] Serveur HTTP relais demarre sur le port " + config.port() + ".");

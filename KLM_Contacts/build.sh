@@ -1,10 +1,10 @@
 #!/bin/sh
-# Compile KLM_Menu (anciennement KaliumMenu) (ECJ, cible Java 21) et assemble le .jar
+# Compile KLM_Contacts (contacts du reseau : amis, serveur de chaque ami) (ECJ, cible Java 21 : tourne sur Java 21+ / 25) et assemble le .jar
 # Outils : <racine du depot>/outils-build si present (PC local, ignore par git), sinon /tmp/claude-0 (espace cloud).
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=2.10.0
+VERSION=1.0.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -17,13 +17,15 @@ case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) SEP=';'; win() { cygpath -w "$1"; } ;;
   *) SEP=':'; win() { printf '%s' "$1"; } ;;
 esac
-CP=""
+# Depend de KLM_Menu (boite a outils des menus, bouton « Contacts » de « Informations ») : compile d'abord, jamais embarque.
+sh "$DIR/../KLM_Menu/build.sh" > /dev/null
+CP="$(win "$TOOLS/classes/KLM_Menu")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
-OUT="$TOOLS/classes/KLM_Menu"
+OUT="$TOOLS/classes/KLM_Contacts"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"
 java -jar "$(win "$TOOLS/ecj.jar")" -21 -proc:none -nowarn -encoding UTF-8 \
   -cp "$CP" -d "$(win "$OUT")" src/main/java
-cp src/main/resources/config.yml "$OUT/"
+cp src/main/resources/config.yml "$OUT/config.yml"
 sed "s/\${project.version}/$VERSION/" src/main/resources/plugin.yml > "$OUT/plugin.yml"
-jar cf "$DEST/KLM_Menu-$VERSION.jar" -C "$OUT" .
-echo "OK -> $DEST/KLM_Menu-$VERSION.jar"
+jar cf "$DEST/KLM_Contacts-$VERSION.jar" -C "$OUT" .
+echo "OK -> $DEST/KLM_Contacts-$VERSION.jar"

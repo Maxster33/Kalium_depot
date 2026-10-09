@@ -1,9 +1,11 @@
 # 2026-10-09 — Bouton « Rejouer » en fin de partie ; cahier de KLM_Contacts
 
-- Plugin(s) concerné(s) : KalGames, KG_Bingo, KG_BingoGame, KG_BuildBattle, KV_BuildBattle ; KLM_Contacts (cahier
-  seulement, aucun code)
+- Plugin(s) concerné(s) : KalGames, KG_Bingo, KG_BingoGame, KG_BuildBattle, KV_BuildBattle ; KLM_Contacts (nouveau),
+  KaliumRelay, KLM_Menu
 - Versions avant / après : KalGames 1.23.0 / 1.24.0 ; KG_Bingo 1.8.0 / 1.9.0 ; KG_BingoGame 0.10.0 / 0.11.0 ;
-  KG_BuildBattle 0.3.0 / 0.4.0 ; KV_BuildBattle 0.3.6 / 0.4.0 (déployées le 09/10/2026 à 5 h 46, non testées)
+  KG_BuildBattle 0.3.0 / 0.4.0 ; KV_BuildBattle 0.3.6 / 0.4.0 (déployées le 09/10/2026 à 5 h 46, non testées) ;
+  KLM_Contacts 1.0.0 (nouveau), KaliumRelay 1.5.0 / 1.6.0, KLM_Menu 2.9.0 / 2.10.0 (compilées, non déployées, non
+  testées)
 
 ## Demandé
 
@@ -22,6 +24,15 @@ quels serveurs de KaLium ils sont, etc. »
 - Cahier des charges publié : `KalGames/CAHIER_DES_CHARGES.md`. Détail technique : `JOURNAL.md` de chaque plugin.
 - Déploiement par WinSCP (nouveaux jars envoyés, anciens déplacés dans `_removed-…`), jars vérifiés avant (nom et
   taille identiques à `jars-deployes/`). Aucun `config.yml` de serveur modifié. Serveurs non redémarrés.
+
+- **KLM_Contacts, étape 1 « amis »** (après le « oui pour les deux, tu peux coder KLM_Contacts » de LeKiwi06) :
+  - KLM_Contacts 1.0.0 (nouveau, serveurs Paper) : `/amis` et son menu (amis avec leur serveur, fiche d'un ami, ajout,
+    demandes, bloqués, réglages), `/bloquer`, `/debloquer` ;
+  - KaliumRelay 1.6.0 (proxy) : données des contacts, présence, « Rejoindre son serveur », notifications, messages
+    privés `/mp` et `/r` écrits dans le journal du proxy ;
+  - KLM_Menu 2.10.0 : bouton « Contacts » dans « Informations » (interfaces de joueur déclarées par les plugins).
+  - Logique du proxy essayée hors jeu avec un faux proxy (32 cas : demandes, demandes croisées, blocage, réglages,
+    relecture après redémarrage, changement de pseudo), tout passe. Compilés et poussés, **non déployés**.
 
 ## Décisions
 
@@ -47,7 +58,14 @@ quels serveurs de KaLium ils sont, etc. »
   partie publique d'un jeu du moteur (objet, recréation, « Rejoindre », spectateur), Bingo relancé à 2 joueurs, Build
   Battle privé relancé.
 - Observateurs du Bingo (KG_BingoObservateur) : leur proposer aussi l'objet ? (question ouverte du cahier)
-- KLM_Contacts : valider les choix d'interprétation du cahier local et les deux questions restantes (modération des
-  messages privés, lien entre le groupe et « Rejouer »), puis coder par étapes (amis, groupe, parties). Il touchera
-  KaliumRelay (données sur le proxy), partagé avec Maxster33.
+- KLM_Contacts (validé le 09/10/2026 : modération par le journal du proxy et LibertyBans, le groupe suit son chef
+  quand il clique sur « Rejouer ») : **déployer l'étape 1** avec l'accord de LeKiwi06 : KaliumRelay 1.6.0 sur le proxy
+  (redémarrage du proxy), KLM_Contacts 1.0.0 et KLM_Menu 2.10.0 sur les 6 serveurs Paper, `relay-token` à recopier à
+  la main dans `plugins/KLM_Contacts/config.yml` de chaque serveur, `mp` et `r` à ajouter aux commandes bloquées de
+  LibertyBans. Puis tester (deux comptes, dont un Bedrock, sur deux serveurs différents), puis étapes 2 (groupe de
+  jeu) et 3 (parties).
+- Décisions prises au code pour KLM_Contacts : `/mp` et `/r` sont des commandes du proxy (pour que LibertyBans puisse
+  les bloquer) ; le bouton « Contacts » a demandé une petite modification de KLM_Menu (le cahier disait « sans le
+  modifier ») et donne le comparateur à tous les joueurs ; « Rejoindre son serveur » est refusé pour Serveur Jeux
+  seulement (réglable sur le proxy).
 - Dossiers `_removed-…` supprimables par l'humain : liste dans `REPRISE_PROJET.md` (tableau des versions).

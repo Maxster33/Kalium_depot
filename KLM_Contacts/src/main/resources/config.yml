@@ -1,0 +1,15 @@
+# ============================================================
+#  KLM_Contacts - configuration
+#  Le meme fichier .jar est installe sur tous les serveurs Paper.
+#  Les textes se modifient dans lang.yml (format MiniMessage).
+# ============================================================
+
+# Relais HTTP du proxy (KaliumRelay 1.6.0 ou plus) : c'est lui qui garde les amis, les demandes et les blocages.
+relay-url: "http://7018.mystrator.com:46199"
+# Jeton du relais : a recopier a la main sur chaque serveur (meme valeur que les autres plugins relies au relais).
+# Jamais dans le depot git. Vide = contacts indisponibles.
+relay-token: ""
+
+gui:
+  # Largeur des boutons des menus.
+  button-width: 240

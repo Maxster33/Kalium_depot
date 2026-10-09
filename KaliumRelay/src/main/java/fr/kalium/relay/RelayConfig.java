@@ -33,10 +33,27 @@ final class RelayConfig {
     private final String token;
     private final java.util.Set<String> admins;
 
+    /** 1.6.0 (KLM_Contacts) : nombre maximal d'amis par joueur. */
+    private static final int DEFAULT_MAX_FRIENDS = 100;
+    /** 1.6.0 (KLM_Contacts) : serveurs qu'on ne rejoint pas par « Rejoindre son serveur » (on n'y entre que par une partie). */
+    private static final String DEFAULT_NO_JOIN = "serveur-jeux";
+
+    private int maxFriends = DEFAULT_MAX_FRIENDS;
+    private java.util.Set<String> noJoin = parseAdmins(DEFAULT_NO_JOIN);
+
     private RelayConfig(int port, String token, java.util.Set<String> admins) {
         this.port = port;
         this.token = token;
         this.admins = admins;
+    }
+
+    int maxFriends() {
+        return maxFriends;
+    }
+
+    /** Ce serveur est-il ferme a « Rejoindre son serveur » (nom Velocity, majuscules ignorees) ? */
+    boolean noJoin(String serverName) {
+        return noJoin.contains(serverName.toLowerCase(java.util.Locale.ROOT));
     }
 
     /** Le joueur (pseudo ou UUID) est-il admin (autorise a utiliser /server) ? */
@@ -81,6 +98,15 @@ final class RelayConfig {
                 props.setProperty("admins", DEFAULT_ADMINS); // 1.2.0 : seuls eux peuvent utiliser /server
                 changed = true;
             }
+            // 1.6.0 (KLM_Contacts) : plafond d'amis et serveurs fermes a « Rejoindre son serveur ».
+            if (!props.containsKey("contacts-max-friends")) {
+                props.setProperty("contacts-max-friends", String.valueOf(DEFAULT_MAX_FRIENDS));
+                changed = true;
+            }
+            if (!props.containsKey("contacts-no-join")) {
+                props.setProperty("contacts-no-join", DEFAULT_NO_JOIN);
+                changed = true;
+            }
             boolean generated = false;
             if (props.getProperty("token", "").isBlank()) {
                 props.setProperty("token", UUID.randomUUID().toString());
@@ -100,7 +126,14 @@ final class RelayConfig {
             }
             int port = Integer.parseInt(props.getProperty("port").trim());
             String token = props.getProperty("token").trim();
-            return new RelayConfig(port, token, parseAdmins(props.getProperty("admins", DEFAULT_ADMINS)));
+            RelayConfig config = new RelayConfig(port, token, parseAdmins(props.getProperty("admins", DEFAULT_ADMINS)));
+            try {
+                config.maxFriends = Math.max(1, Integer.parseInt(props.getProperty("contacts-max-friends").trim()));
+            } catch (NumberFormatException e) {
+                config.maxFriends = DEFAULT_MAX_FRIENDS;
+            }
+            config.noJoin = parseAdmins(props.getProperty("contacts-no-join", DEFAULT_NO_JOIN));
+            return config;
         } catch (IOException e) {
             logger.error("[KaliumRelay] Impossible de charger/creer relay.properties, valeurs par defaut utilisees.", e);
             return new RelayConfig(DEFAULT_PORT, UUID.randomUUID().toString(), parseAdmins(DEFAULT_ADMINS));

@@ -50,6 +50,13 @@ final class RelayHttpServer {
     /** 1.4.0 : bannissement de tout KaLium (LibertyBans) : pseudo, raison -> vrai si la commande est lancee. */
     private final java.util.function.BiPredicate<String, String> bannir;
 
+    /** 1.6.0 : requetes de KLM_Contacts (action, parametres -> reponse), voir Contacts.handle. */
+    private java.util.function.BiFunction<String, Map<String, String>, String> contacts;
+
+    void contacts(java.util.function.BiFunction<String, Map<String, String>, String> contacts) {
+        this.contacts = contacts;
+    }
+
     RelayHttpServer(RelayConfig config, Logger logger, ActiveGameRegistry activeGameRegistry, MailStore mail,
                     java.util.function.BiPredicate<String, String> bannir) {
         this.config = config;
@@ -65,6 +72,7 @@ final class RelayHttpServer {
         server.createContext("/active-game/", this::handleActiveGame);
         server.createContext("/mail/", this::handleMail);
         server.createContext("/ban", this::handleBan);
+        server.createContext("/contacts/", this::handleContacts);
         server.setExecutor(Executors.newCachedThreadPool());
         server.start();
         cleaner = Executors.newSingleThreadScheduledExecutor();
@@ -235,6 +243,40 @@ final class RelayHttpServer {
             respond(exchange, lance ? 200 : 503, "");
         } catch (Exception e) {
             logger.warn("[KaliumRelay] Erreur sur une requete relais (ban) : " + e.getMessage());
+            respond(exchange, 500, "");
+        }
+    }
+
+    /**
+     * 1.6.0 - POST /contacts/&lt;action&gt; (KLM_Contacts) : corps = lignes « cle=valeur » (UTF-8, 4 Ko au plus), reponse
+     * en texte (« ok », « ok:... » ou « err:... », puis les donnees pour « list »). Voir Contacts.handle.
+     */
+    private void handleContacts(HttpExchange exchange) {
+        try {
+            String token = exchange.getRequestHeaders().getFirst("X-Kalium-Relay-Token");
+            if (token == null || config.token().isBlank() || !token.equals(config.token())) {
+                respond(exchange, 401, "");
+                return;
+            }
+            if (!"POST".equals(exchange.getRequestMethod())) {
+                respond(exchange, 405, "");
+                return;
+            }
+            String action = exchange.getRequestURI().getPath().substring("/contacts/".length());
+            if (contacts == null || !action.matches("[a-z]{1,16}")) {
+                respond(exchange, 400, "");
+                return;
+            }
+            Map<String, String> params = new java.util.HashMap<>();
+            for (String ligne : new String(exchange.getRequestBody().readNBytes(4096), StandardCharsets.UTF_8).split("\n")) {
+                int egal = ligne.indexOf('=');
+                if (egal > 0) {
+                    params.put(ligne.substring(0, egal).trim(), ligne.substring(egal + 1).trim());
+                }
+            }
+            respond(exchange, 200, contacts.apply(action, params));
+        } catch (Exception e) {
+            logger.warn("[KaliumRelay] Erreur sur une requete relais (contacts) : " + e.getMessage());
             respond(exchange, 500, "");
         }
     }

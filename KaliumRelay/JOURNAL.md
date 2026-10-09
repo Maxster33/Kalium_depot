@@ -296,3 +296,39 @@ levé la suspension il ne peut pas bouger ». Choix de LeKiwi06 parmi deux corre
 - Empilé sur la 1.4.0 (bannissement, jamais testé) à la demande explicite de LeKiwi06.
 
 **Déployé sur le proxy le 08/10/2026 à 20:54 (LeKiwi06 ; 1.4.0 dans `_removed-kaliumrelay-1.4.0/`), actif après redémarrage du proxy. Statut : non testé en jeu.**
+
+## 1.6.0 - contacts : amis, présence, messages privés (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « un KLM_Contacts pour ajouter nos amis, créer des groupes avec eux, voir dans quels serveurs
+de KaLium ils sont, etc. » (étape 1 du cahier : amis). Les données sont gardées ici parce que le proxy est le seul
+endroit qui voit tous les joueurs et tous les serveurs ; le plugin KLM_Contacts (serveurs Paper) fournit les menus.
+Empilé sur la 1.5.0, non testée en jeu : nécessaire pour la demande, signalé à LeKiwi06.
+
+- **Données** (`ContactsStore`) : `plugins/kaliumrelay/contacts/<uuid>.txt` (amis, demandes reçues et envoyées,
+  bloqués, réglages) et `contacts/noms.txt` (pseudo -> UUID, mis à jour à chaque connexion ; un changement de pseudo
+  libère l'ancien). Rien n'expire. Seuls les joueurs venus depuis cette version sont connus.
+- **`POST /contacts/<action>`** (jeton du relais ; corps : lignes `cle=valeur` ; réponse `ok`, `ok:<détail>` ou
+  `err:<code>`) : `list` (amis avec leur serveur, demandes, bloqués, réglages), `add`, `accept`, `deny`, `cancel`,
+  `remove`, `block`, `unblock`, `set` (invisible, notify, mp), `join` (le proxy déplace le joueur vers le serveur de
+  son ami), `msg` (champ « Envoyer un message » du menu).
+- **Commandes du proxy `/mp <pseudo> <message>` et `/r <message>`** : message privé d'un serveur à l'autre. Refus :
+  destinataire hors ligne ou invisible (sauf pour répondre à quelqu'un qui vient d'écrire), messages privés coupés ou
+  réservés aux amis, joueur que l'on a bloqué. Un joueur bloqué par le destinataire voit son message partir mais rien
+  n'est livré (il n'est pas prévenu). 256 caractères au plus, texte brut. Le champ du menu rejoue `/mp` au nom du
+  joueur : mêmes règles.
+- **Modération** (accord de LeKiwi06 du 09/10/2026) : chaque message privé est écrit dans le journal du proxy
+  (`[Contacts] MP A -> B : texte`). Pour qu'un joueur rendu muet par LibertyBans ne puisse pas en envoyer, **ajouter
+  `mp` (et `r` s'il n'y est pas) aux commandes bloquées de LibertyBans** sur le proxy (réglage à faire par l'humain,
+  comme pour `/global` de KLM_Chat).
+- **Notifications** envoyées par le proxy : « X s'est connecté / déconnecté » aux amis (sauf mode invisible, sauf amis
+  qui les ont coupées), demande d'ami reçue (avec `/amis accepter X` cliquable), demande acceptée, rappel des demandes
+  en attente à la connexion.
+- **Demandes** : 30 en attente au plus par joueur ; bloqué par le destinataire : la demande n'arrive pas, sans le dire.
+- **Nouvelles clés de `relay.properties`** (ajoutées au démarrage avec leur valeur par défaut) : `contacts-max-friends`
+  (100), `contacts-no-join` (`serveur-jeux` : serveurs qu'on ne rejoint pas par « Rejoindre son serveur »).
+
+Limite : les données sont en clair sur le proxy (pseudos, listes d'amis), comme le reste du dossier du relais.
+
+**À déployer avec KLM_Contacts 1.0.0** (sans lui : seules `/mp` et `/r` existent, entre joueurs en ligne). **Compilé le
+09/10/2026, non déployé. Statut : non testé en jeu** (logique des demandes, du blocage, des réglages et de la relecture
+après redémarrage essayée hors jeu avec un faux proxy).

@@ -1,0 +1,27 @@
+name: KLM_Contacts
+version: '${project.version}'
+main: fr.kalium.contacts.KlmContacts
+api-version: '26.2'
+description: Contacts du reseau KaLium - amis, serveur de chaque ami, demandes, blocage (donnees sur le proxy, KaliumRelay). Present sur tous les serveurs Paper.
+authors: [KaLium]
+depend: [KLM_Menu]
+
+commands:
+  amis:
+    description: Ouvre le menu des contacts, ou agit sur un ami.
+    usage: /<command> [ajouter|accepter|refuser|retirer|rejoindre <pseudo>]
+    aliases: [ami, contacts]
+    permission: klmcontacts.use
+  bloquer:
+    description: Bloque un joueur (plus de demande d'ami ni de message prive de sa part).
+    usage: /<command> <pseudo>
+    permission: klmcontacts.use
+  debloquer:
+    description: Debloque un joueur.
+    usage: /<command> <pseudo>
+    permission: klmcontacts.use
+
+permissions:
+  klmcontacts.use:
+    description: Utiliser les contacts (/amis, /bloquer, /debloquer).
+    default: true
