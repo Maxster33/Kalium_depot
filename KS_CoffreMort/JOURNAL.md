@@ -73,3 +73,16 @@ Aucun changement pour les joueurs.
 **Déployé sur Kixster le 09/10/2026 à 18:31 (LeKiwi06, envoi groupé : KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2, KS_RewardsGUI 1.4.1 ; accord de LeKiwi06 : « Oui, sur Kixster » ; 1.0.1 dans `_removed-ks_coffremort-1.0.1/` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (KS_CoffreMort 1.0.1). Statut : non testé en jeu.**
 
 **Journal de Kixster lu après le redémarrage de 18:36 (09/10/2026) : activé sans erreur, avec KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2 et KS_RewardsGUI 1.4.1 ; KS_AntiCheat démarre après eux. Personne n'avait encore ouvert la fiche d'un joueur : reste à tester en jeu.**
+
+## 1.0.3 - coffre de mort gardé 1 heure (09/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (09/10/2026, 23 h 15) : « on va aussi étendre la longueur des coffres de morts à 1h au lieu de 15
+minutes ». Cause : sur Kixster, Maaxster est mort à 21:37 loin du spawn (36 piles), s'est déconnecté à 21:38, et son
+coffre a disparu à 21:52 avec tout son contenu.
+- `duree-minutes` vaut **60** par défaut (code et `config.yml` fourni) au lieu de 15. Aucun autre changement ; les
+  messages affichent la durée lue dans le réglage (« il disparaît dans 60 minutes »).
+- Le `config.yml` déjà présent sur un serveur garde sa valeur : il faut y mettre `duree-minutes: 60` à la main.
+- Un coffre déjà posé garde l'heure de disparition calculée à la mort (15 minutes) ; seuls les coffres posés après
+  le redémarrage durent 1 heure.
+
+**Compilé, NON déployé (en attente de l'accord de LeKiwi06). Statut : non testé en jeu.**

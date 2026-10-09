@@ -68,7 +68,8 @@ import java.util.UUID;
  * - À la mort, les objets du joueur et la moitié de son expérience (« une bouteille d'xp custom ») vont dans un coffre
  *   posé sur le bloc d'air ou de fluide le plus proche (dans la lave : à la place du bloc de lave ; dans le vide : sur
  *   la couche constructible la plus basse, aux coordonnées de la mort). L'autre moitié de l'expérience est perdue.
- * - Le coffre n'est ouvrable et cassable que par le mort, pendant 15 minutes ; ensuite il disparaît avec son contenu.
+ * - Le coffre n'est ouvrable et cassable que par le mort, pendant 1 heure (1.0.3 ; 15 minutes avant) ; ensuite il
+ *   disparaît avec son contenu.
  *   3 coffres actifs au plus par joueur : le 4e supprime le plus ancien. Le contenu est gardé par le plugin (le bloc
  *   n'est qu'un repère) : ni entonnoir ni explosion ne peut le vider.
  * - Mort dans le claim d'un autre joueur (1.0.1 : et non dans un des siens, correction de LeKiwi06), ou dans une zone
@@ -173,7 +174,7 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
     }
 
     private long duree() {
-        return Math.max(1, getConfig().getLong("duree-minutes", 15)) * 60_000L;
+        return Math.max(1, getConfig().getLong("duree-minutes", 60)) * 60_000L;
     }
 
     private int maximum() {
