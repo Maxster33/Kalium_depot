@@ -369,5 +369,5 @@ non testée : accord explicite de LeKiwi06.
 Pas dans cette version (étape 3 du cahier) : le groupe entre ensemble dans une partie ou une file, « Inviter dans ma
 partie », lien avec « Rejouer ».
 
-**À déployer avec KLM_Contacts 1.1.0.** **Compilé le 09/10/2026, non déployé. Statut : non testé en jeu** (logique
+**À déployer avec KLM_Contacts 1.1.0.** **Déployé sur le proxy le 09/10/2026 à 06:29 (LeKiwi06 ; 1.6.0 dans `_removed-kaliumrelay-1.6.0/`), actif après redémarrage du proxy. Statut : non testé en jeu** (logique
 essayée hors jeu avec un faux proxy et de faux joueurs : 64 cas pour les groupes, 32 pour les amis, tout passe).

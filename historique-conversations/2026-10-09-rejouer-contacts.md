@@ -4,8 +4,8 @@
   KaliumRelay, KLM_Menu
 - Versions avant / après : KalGames 1.23.0 / 1.24.0 ; KG_Bingo 1.8.0 / 1.9.0 ; KG_BingoGame 0.10.0 / 0.11.0 ;
   KG_BuildBattle 0.3.0 / 0.4.0 ; KV_BuildBattle 0.3.6 / 0.4.0 (déployées le 09/10/2026 à 5 h 46, non testées) ;
-  KLM_Contacts 1.0.0 (nouveau), KaliumRelay 1.5.0 / 1.6.0, KLM_Menu 2.9.0 / 2.10.0 (déployées le 09/10/2026 à
-  6 h 06, non testées)
+  KLM_Contacts 1.1.0 (nouveau ; 1.0.0 à 6 h 06, 1.1.0 à 6 h 29), KaliumRelay 1.5.0 / 1.7.0, KLM_Menu 2.9.0 / 2.10.0
+  (déployées le 09/10/2026, non testées)
 
 ## Demandé
 
@@ -40,8 +40,8 @@ quels serveurs de KaLium ils sont, etc. »
 - **KLM_Contacts, étape 2 « groupe de jeu »** (« code l'étape 2 sans attendre le test ») : KaliumRelay 1.7.0
   (groupes en mémoire sur le proxy, commandes `/groupe` et `/gc`, suivre le chef) et KLM_Contacts 1.1.0 (menu
   « Groupe de jeu », réglages « Suivre le chef » et « Invitations de groupe », réponse « en partie ? » au proxy).
-  Logique essayée hors jeu avec un faux proxy et de faux joueurs (64 cas), tout passe. Compilés et poussés, **non
-  déployés** ; réservations gardées.
+  Logique essayée hors jeu avec un faux proxy et de faux joueurs (64 cas), tout passe. **Déployés le 09/10/2026 à
+  6 h 29** (« oui déploie ») : KaliumRelay sur le proxy, KLM_Contacts sur les 6 serveurs Paper ; réservations libérées.
 
 ## Décisions
 
@@ -63,8 +63,8 @@ quels serveurs de KaLium ils sont, etc. »
 
 ## Reste à faire
 
-- **Étape 2 de KLM_Contacts à déployer** (accord de LeKiwi06 à donner) : KaliumRelay 1.7.0 sur le proxy, KLM_Contacts
-  1.1.0 sur les 6 serveurs Paper ; `gc` à ajouter aux commandes bloquées de LibertyBans. Puis étape 3 (le groupe entre
+- **Étape 2 de KLM_Contacts déployée** ; reste à faire par l'humain : redémarrer le proxy et les 6 serveurs Paper,
+  `gc` à ajouter aux commandes bloquées de LibertyBans (avec `mp` et `r`). Puis tests, puis étape 3 (le groupe entre
   ensemble en partie, « Inviter dans ma partie », lien avec « Rejouer »).
 - Choix faits au code de l'étape 2 : voir `KLM_Contacts/CAHIER_DES_CHARGES.md`, partie 7 (chef déconnecté remplacé tout
   de suite, jamais de déplacement d'office depuis ou vers Serveur Jeux, groupes effacés au redémarrage du proxy).

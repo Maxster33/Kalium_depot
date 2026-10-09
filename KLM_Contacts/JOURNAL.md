@@ -66,4 +66,4 @@ redémarrage).
 Pas dans cette version (étape 3 du cahier) : « Inviter dans ma partie », entrée du groupe en partie, lien avec
 « Rejouer ».
 
-**À déployer avec KaliumRelay 1.7.0.** **Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**
+**À déployer avec KaliumRelay 1.7.0.** **Déployé sur les 6 serveurs Paper le 09/10/2026 à 06:29 (LeKiwi06 ; 1.0.0 dans `_removed-klm_contacts-1.0.0/`), actif après redémarrage de chaque serveur. Statut : non testé en jeu.**
