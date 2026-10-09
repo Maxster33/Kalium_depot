@@ -64,3 +64,22 @@ Proposé, sans réponse : garantir la moitié de chaque récompense en récompen
   que de tirages).
 - Reporter les nouveaux prix dans le barème (`sortie/bareme`, puis `rachats.csv` de KS_Economy).
 - Mesurer le rythme réel des notes sur Kanvas et recaler ses paliers.
+
+## Suite (13 h) : premier test et coffres « Non ouvert » (KS_RewardsGUI 1.1.0 → 1.2.0)
+
+- Plugin concerné : KS_RewardsGUI (Event, Kixster) ; compilé, non déployé, non testé.
+- Test de LeKiwi06 à 07:18 : 180 récompenses d'essai envoyées sur Kixster, 174 récupérées. « il y a même 6 récompenses
+  que je ne peux pas claim, même avec les 36 slots de libre » : lues sur Kixster, elles contiennent toutes un jeton de
+  fly ou un badge, qui n'y existent pas encore (KS_Jetons 1.0.0).
+- « il y a trop d'ender pearl dans les loot box que j'ai ouvert » : son journal de récupération le confirme (6 grosses
+  sur 8, 5 exceptionnelles sur 6). Pools corrigés (2 perles : poids 10 → 4 ; 16 perles : 8 perles, poids 10 → 3) ; une
+  grosse en contient maintenant 14 % du temps au lieu de 36 %. Fichiers régénérés, pas encore renvoyés.
+- « il faut qu'on récupère les récompenses dans des coffres renommés, avec un tag "non ouvert" pour s'assurer qu'ils
+  n'ont pas été lootés (on pourra vendre nos loot box comme ça) ». Réponses aux questions de Claude : « 1 : option 1 »
+  (clic droit, coffre en main), « 2 : contenu caché », « 3 : uniquement en vente directe pour le moment ».
+- Fait : KS_RewardsGUI 1.2.0 (détail dans son `JOURNAL.md`).
+- Choix de Claude signalés : vrai coffre vanilla renommé (visible tel quel sur Bedrock, rien à ajouter sur le proxy) ;
+  contenu gardé par le plugin et non dans l'objet ; coffres de mort inchangés ; pas de renommage à l'enclume ; points
+  versés à celui qui ouvre.
+- Reste à faire : déployer KS_RewardsGUI 1.2.0 sur Event et Kixster, renvoyer les deux `butin.yml`, tester (récupérer un
+  coffre, l'ouvrir en Java et en Bedrock, prendre une partie, le rouvrir, l'échanger) ; envoyer la catégorie 7 sur Kixster.

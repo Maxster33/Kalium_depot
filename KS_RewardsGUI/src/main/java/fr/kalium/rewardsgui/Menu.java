@@ -16,6 +16,8 @@ import java.util.Map;
 /**
  * /rewards : récompenses en attente, 8 par page ; « Récupérer » (une) ou « Tout récupérer » (dans l'ordre d'arrivée,
  * tant que l'inventaire a de la place). Textes de boutons courts (jamais de défilement), détail en texte au-dessus.
+ * 1.2.0 : une récompense arrive dans un coffre fermé (une case d'inventaire, contenu caché jusqu'à l'ouverture) ; un
+ * dépôt local (coffre de mort) est rendu en objets et son contenu reste affiché.
  */
 final class Menu {
 
@@ -45,12 +47,20 @@ final class Menu {
             corps.add(lang.c("menu.vide", "<gray>Aucune récompense en attente. Les récompenses gagnées sur les autres "
                     + "serveurs arrivent ici."));
         }
+        if (liste.stream().anyMatch(e -> !e.getValue().locale)) {
+            corps.add(lang.c("menu.aide-coffre", "<gray>Chaque récompense arrive dans un coffre fermé : clic droit, "
+                    + "coffre en main, pour l'ouvrir."));
+        }
         for (int i = p * PAR_PAGE; i < Math.min(liste.size(), (p + 1) * PAR_PAGE); i++) {
             Recompense r = liste.get(i).getValue();
             String id = liste.get(i).getKey();
             int numero = i + 1;
-            corps.add(lang.c("menu.ligne", "<white><n>. <gold><origine></gold> - <raison> : ", "n", numero, "origine",
-                    r.origine, "raison", r.raison).append(r.description()));
+            // 1.2.0 : contenu caché (il est dans le coffre) ; un dépôt local montre toujours ses objets.
+            corps.add(r.locale
+                    ? lang.c("menu.ligne", "<white><n>. <gold><origine></gold> - <raison> : ", "n", numero, "origine",
+                            r.origine, "raison", r.raison).append(r.description())
+                    : lang.c("menu.ligne-coffre", "<white><n>. <gold><origine></gold> - <raison>", "n", numero,
+                            "origine", r.origine, "raison", r.raison));
             boutons.add(gui.button(lang.c("menu.recuperer", "<green>Récupérer <n>", "n", numero), null,
                     j -> recuperer(j, id, true)));
         }
@@ -82,6 +92,9 @@ final class Menu {
             }
             return false;
         }
+        if (!r.locale) {
+            return recupererCoffre(joueur, id, r, rouvrir);
+        }
         List<ItemStack> objets = r.objets();
         if (objets == null) {
             notice(joueur, lang.c("menu.inconnu", "<red>Un objet de cette récompense n'existe pas (encore) sur ce "
@@ -109,6 +122,29 @@ final class Menu {
             org.bukkit.Bukkit.getPluginManager().callEvent(new fr.kalium.rewardsgui.api.RecompenseRecupereeEvent(joueur,
                     r.origine, r.raison, objets, argent, r.date));
         }
+        if (rouvrir) {
+            ouvrir(joueur);
+        }
+        return true;
+    }
+
+    /**
+     * 1.2.0 : la récompense est remise dans un coffre fermé (une case libre suffit). Les objets et les points ne sont
+     * créés qu'à l'ouverture du coffre : rien n'est vérifié ici.
+     */
+    private boolean recupererCoffre(Player joueur, String id, Recompense r, boolean rouvrir) {
+        if (joueur.getInventory().firstEmpty() < 0) {
+            if (rouvrir) {
+                notice(joueur, lang.c("menu.plein", "<red>Pas assez de place dans ton inventaire."));
+            }
+            return false;
+        }
+        ItemStack coffre = plugin.coffres().creer(r);
+        plugin.recuperee(joueur, id, r);
+        joueur.getInventory().addItem(coffre);
+        // Signal pour l'anti-triche (revente suspecte) : l'objet reçu est le coffre.
+        org.bukkit.Bukkit.getPluginManager().callEvent(new fr.kalium.rewardsgui.api.RecompenseRecupereeEvent(joueur,
+                r.origine, r.raison, List.of(coffre), 0, r.date));
         if (rouvrir) {
             ouvrir(joueur);
         }

@@ -49,6 +49,8 @@ import java.util.UUID;
  * - Journal : plugins/KS_RewardsGUI/recuperations.log (date, joueur, origine, raison, contenu).
  * - 1.1.0 (catégorie 7) : deposer(...) : un plugin d'Event dépose directement une récompense en objets (KS_CoffreMort :
  *   coffre de mort envoyé dans /rewards).
+ * - 1.2.0 : une récompense venue d'un autre serveur est remise dans un coffre « Non ouvert » au contenu caché (Coffres) ;
+ *   un dépôt local (coffre de mort) est toujours rendu en objets, comme avant.
  */
 public final class KSRewardsGUI extends JavaPlugin implements Listener {
 
@@ -64,6 +66,7 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
     private Lang lang;
     private Gui gui;
     private Menu menu;
+    private Coffres coffres;
 
     @Override
     public void onEnable() {
@@ -73,8 +76,10 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
         gui = new Gui(this, lang);
         fichier = new File(getDataFolder(), "recompenses.yml");
         charger();
+        coffres = new Coffres(this);
         menu = new Menu(this);
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(coffres, this);
         getCommand("rewards").setExecutor(this);
         // Bouton « Récompenses » du comparateur « Informations » de KLM_Menu 2.6.0 (s'il est présent).
         if (getServer().getPluginManager().getPlugin("KLM_Menu") != null) {
@@ -102,6 +107,10 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        if (coffres != null) {
+            coffres.fermerTout();
+            coffres.sauver();
+        }
         sauver();
     }
 
@@ -111,6 +120,10 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
 
     Gui gui() {
         return gui;
+    }
+
+    Coffres coffres() {
+        return coffres;
     }
 
     @Override
@@ -266,10 +279,15 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
             enAttente.remove(joueur.getUniqueId());
         }
         sauver();
+        journal(joueur.getName() + " (" + joueur.getUniqueId() + ") | " + r.origine + " | " + r.raison + " | "
+                + r.resume());
+    }
+
+    /** Une ligne datée dans recuperations.log (récupérations, et ouvertures de coffres depuis la 1.2.0). */
+    void journal(String ligne) {
         try (PrintWriter journal = new PrintWriter(new FileWriter(new File(getDataFolder(), "recuperations.log"),
                 StandardCharsets.UTF_8, true))) {
-            journal.println(LocalDateTime.now(ZoneId.of("Europe/Paris")).format(DATE) + " | " + joueur.getName() + " ("
-                    + joueur.getUniqueId() + ") | " + r.origine + " | " + r.raison + " | " + r.resume());
+            journal.println(LocalDateTime.now(ZoneId.of("Europe/Paris")).format(DATE) + " | " + ligne);
         } catch (IOException e) {
             getLogger().warning("Journal des récupérations : " + e.getMessage());
         }
