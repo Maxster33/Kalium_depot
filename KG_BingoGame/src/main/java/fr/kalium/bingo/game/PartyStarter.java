@@ -136,6 +136,8 @@ public final class PartyStarter {
         }
         try {
             game.setSettings(settings); // 0.3.0 - avant assignGrid (composition de la grille)
+            // 0.11.0 : reglages de l'hote gardes pour le bouton « Rejouer » de fin de partie.
+            game.setPartySettings(party.getTeamCount(), party.getTeamSize(), party.getDuration().getSeconds());
             // 0.8.5 : grille tiree AVANT de reclamer les mondes : si elle est impossible, rien n'est consomme et la
             // partie peut etre relancee.
             gameManager.assignGrid(game);

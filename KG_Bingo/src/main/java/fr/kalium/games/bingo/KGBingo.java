@@ -53,6 +53,8 @@ public final class KGBingo extends JavaPlugin {
 
         players = new RelayCounter(this, "compteur-bingo");
         BingoMenus menus = new BingoMenus(this, kg);
+        // 1.9.0 : « Rejouer » - le joueur revenu du serveur Bingo par l'objet « Rejouer » recree ou rejoint la partie.
+        getServer().getPluginManager().registerEvents(new BingoReplay(this, kg, menus), this);
         // Bingo : serveur dedie separe, pas un Minigame/Arena classique de KalGames - bouton visible de tous
         // (comme /bingo create et /bingo join).
         // 1.3.0 : boutons fournis a KG_Menu (menu du serveur kal-games), decouverts au demarrage - remplace les prises

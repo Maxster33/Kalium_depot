@@ -4,4 +4,4 @@ main: fr.kalium.kgbuildbattle.KGBuildBattle
 api-version: '26.2'
 description: Build Battle du hub kal-games (file publique, parties privees, envoi vers Kanvas ou se joue la partie).
 authors: [KaLium]
-depend: [KLM_Menu, KG_Menu]
+depend: [KLM_Menu, KG_Menu, KalGames]

@@ -1868,3 +1868,28 @@ au démarrage (6 lots) ; une partie seule sur le serveur (pas de lot pris, monde
 autre (« lot de réserve ... attribué », seed différente, pas de gel) ; fin de partie puis « son lot de réserve sera
 remplacé » et nouveau lot. Contre la montre à 3 bingos : victoire au 3e bingo avec le bonus de temps ; défaite au
 chrono ; menu de création limité à 10 bingos à 1 équipe.
+
+## 0.11.0 - objet « Rejouer » dans la salle d'attente d'après-partie (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « pour tous les mini-jeux : faire un bouton à la fin de la partie pour relancer une partie
+avec les mêmes paramètres » ; « il faut proposer ça aux joueurs pendant 30 secondes à la fin d'une partie ». Réponses du
+09/10/2026 : objet dans la barre ; le premier qui clique recrée la partie et en devient l'hôte ; nouvelle seed.
+
+- À la fin d'une partie (victoire ou temps écoulé), chaque joueur placé dans la salle d'attente d'après-partie reçoit
+  l'objet **« Rejouer »** (totem, case 7) pendant **30 s**, en plus de l'étoile « Partie terminée ».
+- Clic : les réglages de la partie terminée (équipes, joueurs par équipe, durée, mode, bingos, composition de la
+  grille) sont déposés sur le relais (clé `bingo-rejouer-<uuid>`, gardée 2 min), puis le joueur est renvoyé sur
+  kal-games, où **KG_Bingo 1.9.0** recrée la partie (nouvelle seed) et le renvoie ici, dans la nouvelle salle
+  d'attente. Les parties ne se créent que sur kal-games (limites, liste, codes) : d'où cet aller-retour (deux écrans
+  de chargement).
+- Le premier qui clique devient l'hôte ; l'objet des autres devient **« Rejoindre la partie de X »** (message dans le
+  tchat) : clic = même aller-retour, puis entrée dans la partie relancée.
+- Si le relais ne répond pas, le joueur n'est pas renvoyé (message) et garde l'objet.
+- L'objet est verrouillé comme l'étoile (ni déplacé, ni lâché) et retiré quand le joueur quitte la salle.
+- Les réglages de l'hôte (équipes, taille, durée) sont gardés dans la partie (`BingoGame.setPartySettings`) ; pour une
+  partie restaurée après un redémarrage, on prend les équipes jouées, la plus grande équipe et la durée actuelle.
+- **Nouvelle clé de `config.yml`** (valeur par défaut dans le code) : `game.replay-seconds` (30).
+
+Non fait : les **observateurs** (KG_BingoObservateur) ne reçoivent pas l'objet (question ouverte du cahier des charges).
+
+**À déployer avec KG_Bingo 1.9.0.** **Compilé le 09/10/2026. Statut : non testé en jeu.**

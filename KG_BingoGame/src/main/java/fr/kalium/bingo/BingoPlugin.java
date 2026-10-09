@@ -366,8 +366,12 @@ public class BingoPlugin extends JavaPlugin {
         fr.kalium.bingo.gui.SummaryMenu summaryMenu = new fr.kalium.bingo.gui.SummaryMenu();
         getServer().getPluginManager().registerEvents(summaryMenu, this);
         PostGameMenu postGameMenu = new PostGameMenu(this, gameEndService, summaryMenu);
+        // 0.11.0 : objet « Rejouer » (30 s) dans la salle d'attente d'apres-partie.
+        fr.kalium.bingo.game.ReplayService replayService = new fr.kalium.bingo.game.ReplayService(this, lobbyItems, relayClient);
+        replayService.setGameEndService(gameEndService);
+        gameEndService.setReplayService(replayService);
         getServer().getPluginManager().registerEvents(
-                new LobbyProtectionListener(lobbySlots, lobbyItems, partyMenu, gameEndService, postGameMenu), this);
+                new LobbyProtectionListener(lobbySlots, lobbyItems, partyMenu, gameEndService, postGameMenu, replayService), this);
 
         getLogger().info("[KG_BingoGame] Plugin active (architecture parties/instances par equipe, mondes a seed partagee, "
                 + "salle d'attente + choix d'equipe, reception d'affectation depuis kal-games).");

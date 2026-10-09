@@ -56,6 +56,40 @@ public class BingoGame {
         this.settings = settings == null ? BingoSettings.defaults() : settings;
     }
 
+    /**
+     * 0.11.0 : reglages choisis par l'hote a la creation (equipes, joueurs par equipe, duree), pour le bouton
+     * « Rejouer » (voir ReplayService). 0 = inconnus (partie restauree apres un redemarrage) : on prend alors ce que la
+     * partie montre (equipes jouees, plus grande equipe, duree actuelle).
+     */
+    private int partyTeamCount;
+    private int partyTeamSize;
+    private long partyDurationSeconds;
+
+    public void setPartySettings(int teamCount, int teamSize, long durationSeconds) {
+        this.partyTeamCount = teamCount;
+        this.partyTeamSize = teamSize;
+        this.partyDurationSeconds = durationSeconds;
+    }
+
+    public int replayTeamCount() {
+        return partyTeamCount > 0 ? partyTeamCount : Math.max(1, instances.size());
+    }
+
+    public int replayTeamSize() {
+        if (partyTeamSize > 0) {
+            return partyTeamSize;
+        }
+        int largest = 1;
+        for (BingoInstance instance : instances) {
+            largest = Math.max(largest, instance.getTeam().getPlayers().size());
+        }
+        return largest;
+    }
+
+    public long replayDurationSeconds() {
+        return partyDurationSeconds > 0 ? partyDurationSeconds : duration.getSeconds();
+    }
+
     /** Points de la partie (0.3.0, voir ScoreEngine) - recree avec la grille. */
     private ScoreEngine scoreEngine;
 

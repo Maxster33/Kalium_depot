@@ -26,6 +26,8 @@ public final class KGBuildBattle extends JavaPlugin {
         Lang lang = new Lang(this);
         Menus menus = new Menus(parties, lang, new Gui(this, lang));
         getServer().getScheduler().runTaskTimer(this, parties::verifierFermees, 100L, 100L);
+        // 0.4.0 : objet « Rejouer » au retour de Kanvas (objet et délai gérés par KalGames).
+        getServer().getPluginManager().registerEvents(new Rejouer(this, parties, menus), this);
         // 0.2.0 : nombre de joueurs en Build Battle (publie par KV_BuildBattle), affiche sur le bouton par KG_Menu.
         RelayCounter joueurs = new RelayCounter(this, "compteur-buildbattle");
 

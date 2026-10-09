@@ -179,3 +179,25 @@ envoyé pour ce mode.
 - Indépendant de KG_BingoGame et de KalGames 1.23.0.
 
 **Déployé sur Kal-Games le 06/10/2026 à 13:55 (Maxster33 ; 1.7.3 dans `_removed-kg_bingo-1.7.3/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.9.0 - « Rejouer » : la partie relancée depuis le serveur Bingo (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « pour tous les mini-jeux : faire un bouton à la fin de la partie pour relancer une partie
+avec les mêmes paramètres » (objet proposé 30 s ; le premier qui clique recrée la partie et en devient l'hôte).
+
+- Nouveau `BingoReplay` : à l'arrivée d'un joueur sur kal-games, la clé `bingo-rejouer-<uuid>` est lue sur le relais
+  (1 s après l'arrivée). Elle n'existe que si le joueur vient de cliquer sur l'objet « Rejouer » de la salle d'attente
+  d'après-partie (KG_BingoGame 0.11.0), et contient les réglages de la partie terminée.
+- Personne n'a encore relancé cette partie : une **nouvelle partie** est créée avec les mêmes réglages (nombre
+  d'équipes, joueurs par équipe, durée, mode, nombre de bingos, composition de la grille ; **nouvelle seed**), le joueur
+  en est l'hôte et repart aussitôt sur le serveur Bingo. Elle apparaît dans la liste des parties comme les autres.
+- Quelqu'un l'a déjà relancée et elle est encore en salle d'attente : le joueur la **rejoint** (refus si elle est
+  pleine).
+- Les limites habituelles s'appliquent : **2 parties créées par heure et par joueur** (1.7.0, opérateurs exclus),
+  plafonds d'équipes et de durée. En cas de refus, le joueur reste au hub de kal-games avec le motif.
+- Textes : `bingo.replay-created`, `bingo.replay-full`.
+
+Limite : si deux joueurs cliquent dans la même seconde, chacun peut créer sa partie.
+
+**À déployer avec KG_BingoGame 0.11.0** (sans lui, rien ne change : la clé n'est jamais déposée). **Compilé le
+09/10/2026. Statut : non testé en jeu.**

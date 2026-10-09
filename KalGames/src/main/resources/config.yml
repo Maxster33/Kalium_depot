@@ -38,6 +38,16 @@ items:
     slot: 0
     material: LIME_DYE
 
+# 1.24.0 : objet "Rejouer" donne au hub a la fin d'un match (joueurs et spectateurs) : relance une partie avec les
+# memes reglages (partie privee : le premier qui clique la recree) ou remet dans la file (partie publique).
+replay:
+  enabled: true
+  # Duree pendant laquelle l'objet reste dans la barre (secondes).
+  seconds: 30
+  # Case de la barre (0-8) et matiere de l'objet.
+  slot: 6
+  material: TOTEM_OF_UNDYING
+
 # Monde des instances : toutes les parties y sont collees a des emplacements distincts.
 instances:
   # Taille d'un emplacement (blocs). Elle est automatiquement portee a arenas.max-size + min-distance si besoin.

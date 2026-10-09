@@ -19,6 +19,8 @@ public final class ItemService {
     public static final String GAMES = "games";
     public static final String GAME = "game";
     public static final String CHECKPOINT = "checkpoint";
+    /** 1.24.0 : objet « Rejouer » donne quelques secondes au hub apres un match (voir ReplayService). */
+    public static final String REPLAY = "replay";
 
     private final KalGames plugin;
     private final NamespacedKey key;
@@ -51,7 +53,30 @@ public final class ItemService {
                 "<green><bold>Dernier point de contrôle", new String[]{"<gray>Clic droit pour y retourner."});
     }
 
-    /** Type d'objet du plugin (GAMES, GAME, CHECKPOINT) ou null. */
+    /**
+     * 1.24.0 : objet « Rejouer ». hostName = pseudo de celui qui a deja relance la partie privee (l'objet devient
+     * « Rejoindre la partie de X »), ou null.
+     */
+    public ItemStack replayItem(String hostName) {
+        Material material = Items.material(plugin.getConfig().getString("replay.material"), Material.TOTEM_OF_UNDYING);
+        Component name = hostName == null
+                ? plugin.t("item.replay.name", "<green><bold>Rejouer")
+                : plugin.t("item.replay.join-name", "<green><bold>Rejoindre la partie de <player>", "player", hostName);
+        List<Component> lore = new ArrayList<>();
+        lore.add(hostName == null
+                ? plugin.t("item.replay.lore0", "<gray>Clic droit : relancer une partie")
+                : plugin.t("item.replay.join-lore0", "<gray>Clic droit : entrer dans la partie"));
+        lore.add(hostName == null
+                ? plugin.t("item.replay.lore1", "<gray>avec les mêmes réglages.")
+                : plugin.t("item.replay.join-lore1", "<gray>qui vient d'être relancée."));
+        ItemStack item = Items.named(material, name, lore);
+        ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, REPLAY);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    /** Type d'objet du plugin (GAMES, GAME, CHECKPOINT, REPLAY) ou null. */
     public String kind(ItemStack item) {
         if (item == null || item.getType().isAir() || !item.hasItemMeta()) {
             return null;

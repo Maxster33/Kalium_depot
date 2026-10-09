@@ -622,6 +622,7 @@ public final class GameEndService {
      */
     private void finishAndSendToLobby(BingoGame game, IntFunction<Component> messageForTeam, List<Component> summary) {
         game.setState(GameState.FINISHED);
+        List<Player> placed = new java.util.ArrayList<>(); // 0.11.0 : joueurs places en salle d'attente (« Rejouer »)
         Location spawn = lobbySlots.reserve(game.getGameId());
         Instant deadline = Instant.now().plus(postGameLobbyTimeout);
         boolean anyoneLingering = false;
@@ -653,6 +654,7 @@ public final class GameEndService {
                         player.teleport(spawn);
                         player.setGameMode(org.bukkit.GameMode.ADVENTURE); // 0.3.1 : salle d'attente en aventure
                         lobbyItems.givePostGame(player);
+                        placed.add(player);
                     } else {
                         // Aucune salle d'attente disponible (toutes occupees / pas de modele capture) :
                         // repli sur kal-games plutot que de laisser le joueur bloque sans nether star.
@@ -673,7 +675,17 @@ public final class GameEndService {
             // ci-dessus ne serait sinon jamais libere (voir releaseSlotIfEmpty).
             lobbySlots.release(game.getGameId());
         }
+        if (replayService != null) {
+            replayService.offer(game, placed); // 0.11.0 : objet « Rejouer » pendant 30 s
+        }
         scheduleCleanup(game.getGameId());
+    }
+
+    /** 0.11.0 : objet « Rejouer » de fin de partie (voir ReplayService), branche apres la construction. */
+    private ReplayService replayService;
+
+    public void setReplayService(ReplayService replayService) {
+        this.replayService = replayService;
     }
 
     /** Retire tout ce qui pourrait encore tuer le joueur apres la teleportation (feu, chute en cours,

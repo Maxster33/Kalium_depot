@@ -219,6 +219,41 @@ final class Jeu implements Listener {
         });
     }
 
+    /**
+     * 0.4.0 - bouton « Rejouer » (LeKiwi06, 09/10/2026) : à l'annonce des résultats, les réglages de la partie sont
+     * déposés sur le relais pour chaque joueur présent (clé « buildbattle-rejouer-<uuid> », gardée 2 minutes par le
+     * relais). KG_BuildBattle la lit au retour du joueur sur kal-games et lui donne l'objet « Rejouer » (30 s).
+     */
+    void publierRejouer(Partie p) {
+        String url = url();
+        if (url == null || url.isBlank()) return;
+        String tempo = switch (p.minutes) {
+            case 3 -> "FAST";
+            case 10 -> "LONGUE";
+            case 30 -> "EXTRA";
+            default -> "NORMAL";
+        };
+        // Identifiant commun aux joueurs de cette partie (partie privée : le premier qui clique la recrée pour tous).
+        String partie = p.id != null ? p.id : "public-" + p.colonne + "-" + System.currentTimeMillis();
+        String reglages = "partie=" + partie + "\n"
+                + "type=" + (p.type == Partie.Type.PRIVE ? "prive" : "public") + "\n"
+                + "tailleEquipes=" + p.tailleEquipes + "\n"
+                + "equipesMax=" + p.equipesMax + "\n"
+                + "tempo=" + tempo + "\n"
+                + "themesEcrits=" + p.themesEcrits + "\n";
+        for (UUID joueur : p.joueurs) {
+            if (Bukkit.getPlayer(joueur) == null) continue;
+            HttpRequest requete = HttpRequest.newBuilder()
+                    .uri(URI.create(url + "/assignment/buildbattle-rejouer-" + joueur))
+                    .header("X-Kalium-Relay-Token", plugin.getConfig().getString("relay-token", ""))
+                    .timeout(Duration.ofSeconds(5))
+                    .POST(HttpRequest.BodyPublishers.ofString(reglages, StandardCharsets.UTF_8))
+                    .build();
+            // Relais injoignable : pas d'objet « Rejouer » pour ce joueur, rien d'autre n'est gêné.
+            http.sendAsync(requete, HttpResponse.BodyHandlers.discarding()).exceptionally(e -> null);
+        }
+    }
+
     private static Map<String, String> lireCles(String texte) {
         Map<String, String> m = new HashMap<>();
         for (String ligne : texte.split("\n")) {

@@ -104,6 +104,7 @@ public final class HubListener implements Listener {
                         game.useCheckpointItem(player); // 1.17.0 : crochet generique (KG_BoatRace...)
                     }
                 }
+                case ItemService.REPLAY -> plugin.replay().use(player); // 1.24.0
                 default -> {
                 }
             }

@@ -38,6 +38,8 @@ public final class KalGames extends JavaPlugin {
     private HubService hub;
     private ItemService items;
     private ScoreBridge scores;
+    /** 1.24.0 : objet « Rejouer » de fin de partie. */
+    private fr.kalium.games.game.ReplayService replay;
     private Gui gui;
     private PlayerMenus menus;
     private AdminMenus admin;
@@ -76,6 +78,7 @@ public final class KalGames extends JavaPlugin {
         menus = new PlayerMenus(this, gui);
         admin = new AdminMenus(this, gui);
         instances = new InstanceManager(this);
+        replay = new fr.kalium.games.game.ReplayService(this);
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getPluginManager().registerEvents(new ConnectionListener(this), this);
@@ -230,6 +233,11 @@ public final class KalGames extends JavaPlugin {
 
     public ScoreBridge scores() {
         return scores;
+    }
+
+    /** 1.24.0 : objet « Rejouer » de fin de partie (aussi utilise par KG_BuildBattle). */
+    public fr.kalium.games.game.ReplayService replay() {
+        return replay;
     }
 
     /** Donnees des classements (KG_ScoreBoards). */

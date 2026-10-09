@@ -765,8 +765,12 @@ public abstract class GameInstance {
             // partie suivante (pas de rechargement, donc pas de lag).
             plugin.later(1L, () -> {
                 if (!closing) {
+                    // 1.24.0 : joueurs et spectateurs presents a la fin du match, pour l'objet « Rejouer ».
+                    List<Player> players = onlineMembers();
+                    List<Player> watchers = onlineSpectators();
                     plugin.instances().close(this, plugin.t("game.finished-hub",
                             "<gray>Partie terminée. Vous êtes renvoyé au hub."));
+                    plugin.replay().offerAfterMatch(this, players, watchers);
                 }
             });
         }

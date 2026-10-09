@@ -53,8 +53,13 @@ public final class LobbyProtectionListener implements Listener {
     private final GameEndService gameEndService;
     private final PostGameMenu postGameMenu;
 
+    /** 0.11.0 : objet « Rejouer » de la salle d'attente d'apres-partie. */
+    private final fr.kalium.bingo.game.ReplayService replayService;
+
     public LobbyProtectionListener(LobbySlots lobbySlots, LobbyItems lobbyItems, PartyMenu partyMenu,
-                                    GameEndService gameEndService, PostGameMenu postGameMenu) {
+                                    GameEndService gameEndService, PostGameMenu postGameMenu,
+                                    fr.kalium.bingo.game.ReplayService replayService) {
+        this.replayService = replayService;
         this.lobbySlots = lobbySlots;
         this.lobbyItems = lobbyItems;
         this.partyMenu = partyMenu;
@@ -69,6 +74,14 @@ public final class LobbyProtectionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+        if (event.getHand() == EquipmentSlot.HAND && lobbyItems.isReplay(event.getItem())) {
+            // 0.11.0 : objet « Rejouer » (clic droit : relancer ou rejoindre ; aucune autre manipulation).
+            event.setCancelled(true);
+            if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                replayService.use(player);
+            }
+            return;
+        }
         if (event.getHand() == EquipmentSlot.HAND && lobbyItems.isOurs(event.getItem())
                 && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
             event.setCancelled(true);
@@ -177,21 +190,21 @@ public final class LobbyProtectionListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onDrop(org.bukkit.event.player.PlayerDropItemEvent event) {
-        if (lobbyItems.isOurs(event.getItemDrop().getItemStack())) {
+        if (lobbyItems.isLocked(event.getItemDrop().getItemStack())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent event) {
-        boolean ours = lobbyItems.isOurs(event.getCurrentItem()) || lobbyItems.isOurs(event.getCursor());
+        boolean ours = lobbyItems.isLocked(event.getCurrentItem()) || lobbyItems.isLocked(event.getCursor());
         if (!ours && event.getClick() == org.bukkit.event.inventory.ClickType.NUMBER_KEY
                 && event.getWhoClicked() instanceof Player player) {
-            ours = lobbyItems.isOurs(player.getInventory().getItem(event.getHotbarButton()));
+            ours = lobbyItems.isLocked(player.getInventory().getItem(event.getHotbarButton()));
         }
         if (!ours && event.getClick() == org.bukkit.event.inventory.ClickType.SWAP_OFFHAND
                 && event.getWhoClicked() instanceof Player player) {
-            ours = lobbyItems.isOurs(player.getInventory().getItemInOffHand());
+            ours = lobbyItems.isLocked(player.getInventory().getItemInOffHand());
         }
         if (ours) {
             event.setCancelled(true);
@@ -200,16 +213,22 @@ public final class LobbyProtectionListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryDrag(org.bukkit.event.inventory.InventoryDragEvent event) {
-        if (lobbyItems.isOurs(event.getOldCursor())) {
+        if (lobbyItems.isLocked(event.getOldCursor())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onSwapHands(org.bukkit.event.player.PlayerSwapHandItemsEvent event) {
-        if (lobbyItems.isOurs(event.getMainHandItem()) || lobbyItems.isOurs(event.getOffHandItem())) {
+        if (lobbyItems.isLocked(event.getMainHandItem()) || lobbyItems.isLocked(event.getOffHandItem())) {
             event.setCancelled(true);
         }
+    }
+
+    /** 0.11.0 : la proposition « Rejouer » ne survit pas a une deconnexion. */
+    @EventHandler
+    public void onQuit(org.bukkit.event.player.PlayerQuitEvent event) {
+        replayService.forget(event.getPlayer().getUniqueId());
     }
 
     /** Desactive le PvP dans la salle d'attente (independant d'un eventuel reglage PvP en partie, section 10). */

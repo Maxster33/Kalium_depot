@@ -63,6 +63,11 @@ final class Parties {
         return code == null ? null : parCode.get(code.trim().toUpperCase());
     }
 
+    /** 0.4.0 : la partie est-elle encore listée (salle d'attente, pas encore lancée sur Kanvas) ? */
+    boolean existe(String id) {
+        return parId.containsKey(id);
+    }
+
     /** Parties privées encore listées, les plus récentes d'abord. */
     List<Partie> listees(int limite) {
         return parId.values().stream().sorted(Comparator.comparing((Partie p) -> p.creee).reversed())

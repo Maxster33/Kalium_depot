@@ -518,6 +518,8 @@ final class Partie {
                     + String.format(Locale.ROOT, "%.1f", s.moyenne()) + "/5, " + s.votes() + " vote" + (s.votes() > 1 ? "s" : "") + ")");
         }
         titre("Victoire : " + noms(equipes.get(terrain)), scores.get(0).points() + " points");
+        // 0.4.0 : objet « Rejouer » au retour sur kal-games (réglages déposés maintenant, avant le renvoi).
+        jeu.publierRejouer(this);
         Location l = plugin.arene().apparitionBoite(colonne, terrain);
         for (Player p : enLigne()) {
             p.getInventory().clear();

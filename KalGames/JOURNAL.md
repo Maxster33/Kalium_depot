@@ -895,3 +895,36 @@ Limite : pour la Course de bateau et le Parcours, le minimum affiché est le ré
 publiques).
 
 **Déployé sur Kal-Games le 06/10/2026 à 13:55 (Maxster33 ; 1.22.2 dans `_removed-kalgames-1.22.2/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.24.0 - objet « Rejouer » à la fin d'une partie (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « pour tous les mini-jeux : faire un bouton à la fin de la partie pour relancer une partie
+avec les mêmes paramètres » ; « il faut proposer ça aux joueurs pendant 30 secondes à la fin d'une partie, il faut aussi
+le proposer aux joueurs qui étaient en train de regarder la partie en spectateur ». Réponses du 09/10/2026 : objet dans
+la barre ; partie privée : le premier qui clique la recrée ; un spectateur choisit entre jouer et regarder. Accord
+explicite de LeKiwi06 pour empiler sur la 1.23.0 (non testée en jeu).
+
+- À la fin d'un match (`GameInstance.endMatch`, donc les 7 jeux du moteur : PvP Kit, Parcours, Course de bateau, Hide
+  and Seek, Piliers de la Fortune, Pong, Rush, sans rien changer dans leurs plugins), les joueurs et les spectateurs
+  renvoyés au hub reçoivent l'objet **« Rejouer »** (totem, case 7 de la barre) pendant **30 s**.
+- **Partie publique** : clic = retour dans la file publique du même jeu (Rush : même arène si elle existe encore).
+- **Partie privée** : le premier qui clique recrée la partie (même mini-jeu, même arène, mêmes réglages, même choix
+  « listée ») et en devient l'hôte ; l'objet des autres devient **« Rejoindre la partie de X »** (message dans le
+  tchat) ; clic = entrée dans cette partie. L'hôte la lance comme d'habitude depuis le menu de la partie.
+- **Spectateur** de la partie précédente : clic = menu « Jouer » / « Regarder » (« Regarder » grisé tant qu'il n'y a
+  rien à regarder).
+- Pas d'objet si la partie est fermée autrement que par une fin de match (modérateur, salle vide, rechargement), ni
+  pour un joueur parti avant la fin. Les refus habituels s'appliquent au clic (parties privées au maximum, partie
+  pleine, mini-jeu désactivé) : le motif est affiché et l'objet reste.
+- L'objet est verrouillé comme les autres objets du hub ; il disparaît après usage, à l'entrée dans une partie, à la
+  déconnexion ou au bout du délai. Il est donné même avec `/menu off`.
+- Nouveau : `ReplayService` (`KalGames.replay()`), avec l'interface publique `ReplayService.Replay` et `give(...)` pour
+  les jeux qui se terminent sur un autre serveur (**KG_BuildBattle 0.4.0**).
+- **Nouvelles clés de `config.yml`** (valeurs par défaut dans le code ; à ajouter à la main sur le serveur pour les
+  changer) : `replay.enabled` (true), `replay.seconds` (30), `replay.slot` (6), `replay.material`
+  (TOTEM_OF_UNDYING). Textes : `replay.*`, `item.replay.*`.
+
+Limites : si l'arène d'origine n'est plus utilisable, une autre est tirée au hasard ; les 30 s ne sont pas prolongées
+quand quelqu'un a relancé la partie (ensuite : liste des parties ou code).
+
+**À déployer avec KG_BuildBattle 0.4.0** (qui exige 1.24.0). **Compilé le 09/10/2026. Statut : non testé en jeu.**

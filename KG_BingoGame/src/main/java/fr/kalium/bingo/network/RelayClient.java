@@ -179,6 +179,36 @@ public final class RelayClient {
         }
     }
 
+    /**
+     * 0.11.0 : bouton « Rejouer » - depose les reglages de la partie terminee pour ce joueur (cle
+     * « bingo-rejouer-&lt;uuid&gt; », gardee 2 minutes par le relais), lus par KG_Bingo a son arrivee sur kal-games (voir
+     * fr.kalium.bingo.game.ReplayService). Renvoie false si le depot a echoue (le joueur n'est alors pas renvoye).
+     * Bloquant - thread asynchrone uniquement.
+     */
+    public boolean postReplay(UUID playerId, String body) {
+        String url = plugin.getConfig().getString("network.relay-url", "");
+        if (url == null || url.isBlank()) {
+            return false;
+        }
+        String token = plugin.getConfig().getString("network.relay-token", "");
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url + "/assignment/bingo-rejouer-" + playerId))
+                    .header("X-Kalium-Relay-Token", token)
+                    .timeout(Duration.ofSeconds(5))
+                    .POST(HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8))
+                    .build();
+            return http.send(request, HttpResponse.BodyHandlers.discarding()).statusCode() / 100 == 2;
+        } catch (IOException | InterruptedException e) {
+            if (Thread.currentThread().isInterrupted()) {
+                Thread.currentThread().interrupt();
+            }
+            plugin.getLogger().warning("[KG_BingoGame] Impossible de deposer la demande « Rejouer » sur le relais : "
+                    + e.getMessage());
+            return false;
+        }
+    }
+
     public void postPartyClosed(String gameId) {
         String url = plugin.getConfig().getString("network.relay-url", "");
         if (url == null || url.isBlank()) {

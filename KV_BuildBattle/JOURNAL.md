@@ -4,6 +4,20 @@ Serveur Kanvas. Cahier des charges (commun avec KG_BuildBattle) : `KV_BuildBattl
 KLM_Menu (menus, catalogue « Interfaces » ; API inchangée depuis 2.0.0, la version en place sur Kanvas) et de
 WorldGuard (FAWE fournit l'API WorldEdit).
 
+## 0.4.0 - réglages de la partie publiés pour l'objet « Rejouer » (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « pour tous les mini-jeux : faire un bouton à la fin de la partie pour relancer une partie
+avec les mêmes paramètres ».
+
+- À l'annonce des résultats, les réglages de la partie (file publique ou partie privée, taille des équipes, nombre
+  d'équipes, tempo, thèmes écrits) sont déposés sur le relais pour chaque joueur présent (clé
+  `buildbattle-rejouer-<uuid>`, gardée 2 minutes). **KG_BuildBattle 0.4.0** les lit au retour du joueur sur kal-games
+  et lui donne l'objet « Rejouer » (30 s).
+- Rien d'autre ne change sur Kanvas. Si le relais ne répond pas : pas d'objet « Rejouer », la partie se termine
+  normalement.
+
+**À déployer avec KG_BuildBattle 0.4.0 et KalGames 1.24.0.** **Compilé le 09/10/2026. Statut : non testé en jeu.**
+
 ## 0.3.6 - nombre de joueurs publié pour kal-games (28/09/2026)
 
 Demande de LeKiwi06 (28/09/2026) : afficher sur chaque bouton de jeu de kal-games combien de joueurs y sont (le vrai

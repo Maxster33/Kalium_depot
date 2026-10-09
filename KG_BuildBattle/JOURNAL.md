@@ -1,7 +1,7 @@
 # KG_BuildBattle - journal
 
 Serveur kal-games. Cahier des charges (commun avec KV_BuildBattle) : `KV_BuildBattle/CAHIER_DES_CHARGES.md`. Dépend de
-KLM_Menu (menus) et de KG_Menu (bouton dans le menu du serveur). Ne dépend pas de KalGames.
+KLM_Menu (menus) et de KG_Menu (bouton dans le menu du serveur). Dépend de KalGames depuis la 0.4.0 (objet « Rejouer »).
 
 ## 0.1.0 - bouton du menu, file publique, parties privées, envoi vers Kanvas (27/09/2026)
 
@@ -46,3 +46,24 @@ Demande de LeKiwi06 : afficher sur chaque bouton de jeu combien de joueurs y son
 - Indépendant de KalGames 1.23.0 et de KV_BuildBattle.
 
 **Déployé sur Kal-Games le 06/10/2026 à 13:55 (Maxster33 ; 0.2.0 dans `_removed-kg_buildbattle-0.2.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 0.4.0 - objet « Rejouer » au retour de Kanvas (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « pour tous les mini-jeux : faire un bouton à la fin de la partie pour relancer une partie
+avec les mêmes paramètres » (objet proposé 30 s ; partie privée : le premier qui clique la recrée et en devient l'hôte).
+
+- Nouveau `Rejouer` : à l'arrivée d'un joueur sur kal-games, la clé `buildbattle-rejouer-<uuid>` est lue sur le relais
+  (1 s après l'arrivée). Elle est déposée par **KV_BuildBattle 0.4.0** à l'annonce des résultats, avec les réglages de
+  la partie. Le joueur reçoit alors l'objet **« Rejouer »** de KalGames (30 s, case 7 de la barre du hub).
+- **File publique** : clic = retour dans la file publique de la même taille d'équipes.
+- **Partie privée** : le premier qui clique recrée la partie (même tempo, même taille d'équipes, même mode « thèmes
+  écrits ») et part sur Kanvas ; l'objet des autres devient **« Rejoindre la partie de X »** tant que la partie est en
+  salle d'attente.
+- **Dépend désormais de KalGames** (`depend` de `plugin.yml`, `build.sh`) : l'objet, son délai et son verrouillage sont
+  ceux de `KalGames.replay()` (1.24.0).
+- Textes : `rejouer.creee`, `rejouer.complete`, `rejouer.pas-de-spectateur`.
+
+Limite : un joueur qui quitte Kanvas pendant l'annonce des résultats et revient sur kal-games dans les 2 minutes reçoit
+aussi l'objet.
+
+**À déployer avec KalGames 1.24.0 et KV_BuildBattle 0.4.0.** **Compilé le 09/10/2026. Statut : non testé en jeu.**

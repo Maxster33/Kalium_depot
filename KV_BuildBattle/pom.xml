@@ -6,7 +6,7 @@
 
     <groupId>fr.kalium</groupId>
     <artifactId>KV_BuildBattle</artifactId>
-    <version>0.3.6</version>
+    <version>0.4.0</version>
     <packaging>jar</packaging>
     <name>KV_BuildBattle</name>
 

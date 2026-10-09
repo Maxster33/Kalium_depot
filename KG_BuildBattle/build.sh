@@ -4,7 +4,7 @@
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=0.3.0
+VERSION=0.4.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -18,8 +18,9 @@ case "$(uname -s)" in
   *) SEP=':'; win() { printf '%s' "$1"; } ;;
 esac
 # Depend de KLM_Menu (boite a outils des menus) et de KG_Menu (menu du serveur) : compiles d abord, jamais embarques.
-sh "$DIR/../KG_Menu/build.sh" > /dev/null
-CP="$(win "$TOOLS/classes/KLM_Menu")$SEP$(win "$TOOLS/classes/KG_Menu")$SEP"
+# 0.4.0 : depend de KalGames (objet « Rejouer »), qui compile aussi KG_Menu et KG_ScoreBoards.
+sh "$DIR/../KalGames/build.sh" > /dev/null
+CP="$(win "$TOOLS/classes/KLM_Menu")$SEP$(win "$TOOLS/classes/KG_Menu")$SEP$(win "$TOOLS/classes/KalGames")$SEP$(win "$TOOLS/classes/KG_ScoreBoards")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
 OUT="$TOOLS/classes/KG_BuildBattle"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"

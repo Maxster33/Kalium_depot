@@ -74,10 +74,80 @@ public final class LobbyItems {
     public void remove(Player player) {
         var inventory = player.getInventory();
         for (int slot = 0; slot < inventory.getSize(); slot++) {
-            if (isOurs(inventory.getItem(slot))) {
+            if (isLocked(inventory.getItem(slot))) {
                 inventory.setItem(slot, null);
             }
         }
+    }
+
+    // ------------------------------------------------------------------ 0.11.0 : objet « Rejouer »
+
+    private static final int REPLAY_SLOT = 6;
+
+    /**
+     * 0.11.0 : objet « Rejouer » de la salle d'attente d'apres-partie (voir fr.kalium.bingo.game.ReplayService).
+     * hostName = pseudo de celui qui a deja relance la partie (l'objet devient « Rejoindre la partie de X »), ou null.
+     * Remplace l'objet « Rejouer » deja present ; sinon pose en case 6, ou dans la premiere case libre de la barre.
+     */
+    public void giveReplay(Player player, String hostName) {
+        ItemStack item = new ItemStack(Material.TOTEM_OF_UNDYING);
+        ItemMeta meta = item.getItemMeta();
+        if (hostName == null) {
+            meta.setDisplayName("§a§lRejouer");
+            meta.setLore(java.util.List.of("§7Clic droit : relancer une partie", "§7avec les mêmes réglages."));
+        } else {
+            meta.setDisplayName("§a§lRejoindre la partie de " + hostName);
+            meta.setLore(java.util.List.of("§7Clic droit : entrer dans la partie", "§7qui vient d'être relancée."));
+        }
+        meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "replay");
+        item.setItemMeta(meta);
+        var inventory = player.getInventory();
+        for (int slot = 0; slot < 9; slot++) {
+            if (isReplay(inventory.getItem(slot))) {
+                inventory.setItem(slot, item);
+                return;
+            }
+        }
+        int target = -1;
+        for (int slot = REPLAY_SLOT; slot < REPLAY_SLOT + 9 && target < 0; slot++) {
+            ItemStack current = inventory.getItem(slot % 9);
+            if (current == null || current.getType().isAir()) {
+                target = slot % 9;
+            }
+        }
+        if (target >= 0) {
+            inventory.setItem(target, item);
+        }
+    }
+
+    public boolean hasReplay(Player player) {
+        for (int slot = 0; slot < 9; slot++) {
+            if (isReplay(player.getInventory().getItem(slot))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeReplay(Player player) {
+        var inventory = player.getInventory();
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
+            if (isReplay(inventory.getItem(slot))) {
+                inventory.setItem(slot, null);
+            }
+        }
+    }
+
+    public boolean isReplay(ItemStack item) {
+        if (item == null || item.getType().isAir() || !item.hasItemMeta()) {
+            return false;
+        }
+        return "replay".equals(item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING));
+    }
+
+    /** Objet verrouille de la salle d'attente (menu de la partie ou « Rejouer ») : ni deplace, ni lache. */
+    public boolean isLocked(ItemStack item) {
+        return isOurs(item) || isReplay(item);
     }
 
     public boolean isOurs(ItemStack item) {
