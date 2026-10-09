@@ -44,3 +44,15 @@ redonner un coffre de récompense comme celui de tout à l'heure du même montan
 - À tester en jeu : message de mort (« il disparaît dans 60 minutes »), temps restant dans `/coffres`.
 - Signalé, non traité : 23 erreurs WorldGuard 7.0.19 dans le journal de Kixster depuis 20:09 (`SpawnEntityEvent`,
   NullPointerException) quand un joueur pose un bateau.
+
+## Suite (23 h 30) : récompenses automatiques vers Kixster
+
+- Question de LeKiwi06 : « les futures récompenses de palier etc seront données automatiquement maintenant ? ».
+  Réponse : oui, mais `boite: event` était resté dans le `config.yml` de KG_Rewards (Kal-Games) et de KV_Rewards
+  (Kanvas) ; quatre récompenses automatiques du 09/10 sont parties vers la boîte d'Event.
+- LeKiwi06 : « oui passe les deux en boite kixster ». Fait à 23:32 sur les deux serveurs (fichiers relus à
+  l'identique, anciens fichiers dans `_removed-kg_rewards-config-2026-10-09/` et
+  `_removed-kv_rewards-config-2026-10-09/`), aucun code modifié.
+- Reste à faire par LeKiwi06 : redémarrer Kal-Games et Kanvas (le réglage n'est lu qu'au démarrage) ; lancer la
+  commande du coffre de Maaxster (pas encore lancée à 23:32) ; dire s'il veut redonner sur Kixster les quatre
+  récompenses parties vers Event.

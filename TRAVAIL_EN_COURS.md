@@ -19,8 +19,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 - KS_Economy — LeKiwi06 — depuis le 2026-10-09 20:12 — rachats de la semaine : les objets custom s'affichent en étoile du Nether
-- KG_Rewards — LeKiwi06 — depuis le 2026-10-09 23:50 — `boite: kixster` dans le `config.yml` de Kal-Games (aucun changement de code)
-- KV_Rewards — LeKiwi06 — depuis le 2026-10-09 23:50 — `boite: kixster` dans le `config.yml` de Kanvas (aucun changement de code)
 
 
 ## Requis parfois
