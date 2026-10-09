@@ -1,7 +1,7 @@
 # KLM_Contacts — cahier des charges (demande de LeKiwi06, 09/10/2026)
 
 **Validé par LeKiwi06 le 09/10/2026** (« oui pour les deux, tu peux coder KLM_Contacts ») : partie 4 validée, questions 5.3 et 5.4 tranchées (oui aux deux).
-**Code : étape 1 « amis » - KLM_Contacts 1.0.0 et KLM_Menu 2.10.0 déployés sur les 6 serveurs Paper, KaliumRelay 1.6.0 sur le proxy, le 09/10/2026 à 6 h 06 ; non testés** (détail dans les `JOURNAL.md`). Étapes 2 (groupe) et 3 (parties) : à coder après le test de l'étape 1.
+**Code : étape 1 « amis » - KLM_Contacts 1.0.0 et KLM_Menu 2.10.0 déployés sur les 6 serveurs Paper, KaliumRelay 1.6.0 sur le proxy, le 09/10/2026 à 6 h 06 ; non testés** (détail dans les `JOURNAL.md`). **Étape 2 « groupe de jeu » codée le 09/10/2026 sans attendre le test de l'étape 1 (demande de LeKiwi06) : KLM_Contacts 1.1.0 et KaliumRelay 1.7.0, compilés, non déployés, non testés.** Étape 3 (parties) : à coder ensuite.
 
 Nouveau plugin `KLM_Contacts` (préfixe `KLM_` : réseau entier), présent sur **chaque serveur Paper** (lobby,
 kal-games, Serveur Jeux, Kixster, Event, Kanvas), comme KLM_Menu et KLM_Chat.
@@ -121,3 +121,20 @@ kal-games, Serveur Jeux, Kixster, Event, Kanvas), comme KLM_Menu et KLM_Chat.
    en Build Battle sur Kanvas est joignable (on arrive sur les plots). Les destinations désactivées dans la boussole du
    lobby ne sont pas prises en compte.
 3. Règle 15 : `/mp` et `/r` sont des commandes du proxy ; `/gc` viendra avec l'étape 2.
+
+## 7. Choix faits au code de l'étape 2 (09/10/2026)
+
+1. Règle 15 : `/groupe` et `/gc` sont des commandes du proxy (comme `/mp` et `/r`) ; `/groupe` seul ouvre le menu
+   « Groupe de jeu ». Sous-commandes ajoutées : `refuser`, `suivre`, `info`.
+2. Règle 10 : le chef change de serveur, les membres le suivent : fait. « Le chef crée ou rejoint une partie privée » et
+   « le chef entre dans une file publique » : étape 3.
+3. Règle 10, « sauf ceux qui sont en pleine partie » : le proxy demande au serveur du membre s'il est en partie ; un
+   membre qui se trouve sur Serveur Jeux n'est jamais déplacé d'office (proposition), et personne n'est déplacé vers
+   Serveur Jeux (on n'y entre que par une partie de Bingo).
+4. Un membre qui accepte une invitation, ou qui se reconnecte, rejoint le chef selon la même règle (d'office ou sur
+   proposition).
+5. Règle 8 : quand le chef se déconnecte, le plus ancien membre connecté devient chef tout de suite (sans attendre les
+   5 minutes de la règle 11) ; à son retour, l'ancien chef est un membre comme les autres.
+6. Les groupes sont en mémoire sur le proxy : un redémarrage du proxy les efface.
+7. Modération : le tchat de groupe est écrit dans le journal du proxy ; `gc` est à ajouter aux commandes bloquées de
+   LibertyBans, avec `mp` et `r`.

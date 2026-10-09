@@ -48,6 +48,10 @@ final class Relais {
         boolean invisible;
         boolean notifications = true;
         String mp = "all";
+        /** 1.1.0 (groupe de jeu) : suivre le chef d'office (auto) ou sur proposition (ask). */
+        String suivre = "auto";
+        /** 1.1.0 (groupe de jeu) : invitations de tout le monde (all) ou des amis seulement (friends). */
+        String invitations = "all";
         final List<Ami> amis = new ArrayList<>();
         final List<Personne> recues = new ArrayList<>();
         final List<Personne> envoyees = new ArrayList<>();
@@ -75,11 +79,23 @@ final class Relais {
      * relais est injoignable ou n'est pas configuré (le joueur est alors déjà prévenu).
      */
     void appeler(Player joueur, String action, Map<String, String> parametres, Consumer<Reponse> suite) {
+        appeler(joueur, action, parametres, suite, false);
+    }
+
+    /** Comme {@link #appeler}, sans rien dire au joueur si le relais est indisponible (demande faite en arrière-plan). */
+    void appelerEnSilence(Player joueur, String action, Map<String, String> parametres) {
+        appeler(joueur, action, parametres, reponse -> { }, true);
+    }
+
+    private void appeler(Player joueur, String action, Map<String, String> parametres, Consumer<Reponse> suite,
+                         boolean silence) {
         String url = plugin.getConfig().getString("relay-url", "");
         String jeton = plugin.getConfig().getString("relay-token", "");
         UUID id = joueur.getUniqueId();
         if (url == null || url.isBlank() || jeton == null || jeton.isBlank()) {
-            plugin.dire(joueur, "indisponible", "<red>Contacts indisponibles pour le moment.");
+            if (!silence) {
+                plugin.dire(joueur, "indisponible", "<red>Contacts indisponibles pour le moment.");
+            }
             suite.accept(null);
             return;
         }
@@ -101,7 +117,9 @@ final class Relais {
                     if (erreur != null || reponse.statusCode() != 200) {
                         plugin.getLogger().warning("Relais : demande « " + action + " » refusée ou injoignable ("
                                 + (erreur != null ? erreur.getMessage() : "code " + reponse.statusCode()) + ").");
-                        plugin.dire(present, "indisponible", "<red>Contacts indisponibles pour le moment.");
+                        if (!silence) {
+                            plugin.dire(present, "indisponible", "<red>Contacts indisponibles pour le moment.");
+                        }
                         suite.accept(null);
                         return;
                     }
@@ -119,6 +137,61 @@ final class Relais {
             suite.add(lignes[i]);
         }
         return new Reponse(ok, deuxPoints < 0 ? "" : premiere.substring(deuxPoints + 1), suite);
+    }
+
+    /** 1.1.0 - membre d'un groupe de jeu : serveur vide = hors ligne. */
+    record Membre(UUID id, String nom, String serveur, boolean chef) {
+    }
+
+    /** 1.1.0 - groupe de jeu du joueur (aucun membre = pas de groupe) et invitation en attente. */
+    static final class Groupe {
+        final List<Membre> membres = new ArrayList<>();
+        boolean jeSuisChef;
+        int maximum = 8;
+        /** Pseudo de celui qui m'invite dans son groupe, ou null. */
+        String invitePar;
+
+        boolean existe() {
+            return !membres.isEmpty();
+        }
+
+        Membre chef() {
+            for (Membre membre : membres) {
+                if (membre.chef()) {
+                    return membre;
+                }
+            }
+            return null;
+        }
+    }
+
+    /** 1.1.0 - état du groupe de jeu du joueur, ou null si indisponible. */
+    void groupe(Player joueur, Consumer<Groupe> suite) {
+        appeler(joueur, "group", Map.of(), reponse -> {
+            if (reponse == null || !reponse.ok()) {
+                suite.accept(null);
+                return;
+            }
+            Groupe groupe = new Groupe();
+            for (String ligne : reponse.lignes()) {
+                String[] c = ligne.split("\t", -1);
+                try {
+                    switch (c[0]) {
+                        case "G" -> {
+                            groupe.jeSuisChef = Boolean.parseBoolean(c[2]);
+                            groupe.maximum = Integer.parseInt(c[3].trim());
+                        }
+                        case "P" -> groupe.membres.add(new Membre(UUID.fromString(c[1]), c[2], c[3], Boolean.parseBoolean(c[4].trim())));
+                        case "I" -> groupe.invitePar = c[2].trim();
+                        default -> {
+                        }
+                    }
+                } catch (RuntimeException e) {
+                    // ligne incomplète : ignorée
+                }
+            }
+            suite.accept(groupe);
+        });
     }
 
     /** Liste complète du joueur (amis et leur serveur, demandes, bloqués, réglages), ou null si indisponible. */
@@ -142,6 +215,8 @@ final class Relais {
                                 case "invisible" -> liste.invisible = Boolean.parseBoolean(c[2]);
                                 case "notify" -> liste.notifications = Boolean.parseBoolean(c[2]);
                                 case "mp" -> liste.mp = c[2];
+                                case "follow" -> liste.suivre = c[2];
+                                case "invites" -> liste.invitations = c[2];
                                 default -> {
                                 }
                             }

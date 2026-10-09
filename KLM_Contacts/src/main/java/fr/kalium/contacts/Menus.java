@@ -92,6 +92,9 @@ final class Menus {
                     t("liste.ajouter-info", "<gray>Envoie une demande d'ami à un joueur, par son pseudo."), j -> ajouter(j, retour)));
             boutons.add(gui.button(t("liste.demandes", "<yellow>Demandes (<n>)", "n", liste.recues.size()),
                     t("liste.demandes-info", "<gray>Demandes d'ami reçues et envoyées."), j -> demandes(j, retour)));
+            boutons.add(gui.button(t("liste.groupe", "<aqua>Groupe de jeu"),
+                    t("liste.groupe-info", "<gray>Inviter des joueurs, se déplacer ensemble, tchat de groupe."),
+                    j -> groupe(j, k -> ouvrir(k, retour, 0))));
             boutons.add(gui.button(t("liste.bloques", "<red>Joueurs bloqués"),
                     t("liste.bloques-info", "<gray>Un joueur bloqué ne peut plus t'envoyer de demande ni de message."),
                     j -> bloques(j, retour)));
@@ -141,6 +144,11 @@ final class Menus {
             }
             boutons.add(gui.button(t("fiche.message", "<aqua>Envoyer un message"),
                     t("fiche.message-info", "<gray>Message privé, d'un serveur à l'autre."), j -> message(j, ami, retour, page)));
+            if (ami.enLigne()) {
+                boutons.add(gui.button(t("fiche.inviter", "<aqua>Inviter dans mon groupe"),
+                        t("fiche.inviter-info", "<gray>S'il accepte, vous jouez en groupe (tu es le chef si tu n'as pas encore de groupe)."),
+                        j -> relais.appeler(j, "ginvite", Map.of("target", ami.nom()), r -> { })));
+            }
             boutons.add(gui.button(t("fiche.retirer", "<yellow>Retirer des amis"), null,
                     j -> gui.confirm(j, t("fiche.retirer-titre", "<yellow>Retirer des amis"),
                             t("fiche.retirer-corps", "<gray>Retirer <white><nom></white> de tes amis ?", "nom", ami.nom()),
@@ -301,35 +309,160 @@ final class Menus {
                     gui.toggle("notifications", t("reglages.notifications", "Connexions de mes amis"), liste.notifications),
                     gui.choice("mp", t("reglages.mp", "Messages privés"), List.of("all", "friends", "none"),
                             List.of(t("reglages.mp-tous", "Tout le monde"), t("reglages.mp-amis", "Amis seulement"),
-                                    t("reglages.mp-personne", "Personne")), liste.mp));
+                                    t("reglages.mp-personne", "Personne")), liste.mp),
+                    gui.choice("suivre", t("reglages.suivre", "Suivre le chef"), List.of("auto", "ask"),
+                            List.of(t("reglages.suivre-auto", "D'office"), t("reglages.suivre-demander", "Me demander avant")),
+                            liste.suivre),
+                    gui.choice("invitations", t("reglages.invitations", "Invitations de groupe"), List.of("all", "friends"),
+                            List.of(t("reglages.invitations-tous", "Tout le monde"), t("reglages.invitations-amis", "Amis seulement")),
+                            liste.invitations));
             List<ActionButton> boutons = List.of(gui.form(t("reglages.enregistrer", "<green>Enregistrer"), null, (j, vue) -> {
                 boolean invisible = Boolean.TRUE.equals(vue.getBoolean("invisible"));
                 boolean notifications = !Boolean.FALSE.equals(vue.getBoolean("notifications"));
                 String mp = vue.getText("mp") == null ? liste.mp : vue.getText("mp");
-                // Trois réglages enregistrés l'un après l'autre, puis retour à la liste.
-                relais.appeler(j, "set", Map.of("key", "invisible", "value", String.valueOf(invisible)), r1 -> {
-                    if (r1 == null) {
-                        return;
-                    }
-                    relais.appeler(j, "set", Map.of("key", "notify", "value", String.valueOf(notifications)), r2 -> {
-                        if (r2 == null) {
-                            return;
-                        }
-                        relais.appeler(j, "set", Map.of("key", "mp", "value", mp), r3 -> {
-                            if (r3 == null) {
-                                return;
-                            }
-                            plugin.dire(j, "reglages.fait", "<green>Réglages enregistrés.");
-                            ouvrir(j, retour, 0);
-                        });
-                    });
+                String suivre = vue.getText("suivre") == null ? liste.suivre : vue.getText("suivre");
+                String invitations = vue.getText("invitations") == null ? liste.invitations : vue.getText("invitations");
+                // Réglages enregistrés l'un après l'autre, puis retour à la liste.
+                enregistrer(j, List.of(new String[]{"invisible", String.valueOf(invisible)},
+                        new String[]{"notify", String.valueOf(notifications)}, new String[]{"mp", mp},
+                        new String[]{"follow", suivre}, new String[]{"invites", invitations}), 0, k -> {
+                    plugin.dire(k, "reglages.fait", "<green>Réglages enregistrés.");
+                    ouvrir(k, retour, 0);
                 });
             }));
             gui.open(joueur, t("reglages.titre", "<aqua><bold>Réglages"),
                     List.of(t("reglages.corps-invisible", "<gray>Mode invisible : tes amis te voient hors ligne et ne savent pas sur "
                                     + "quel serveur tu es. Tu vois toujours les tiens."),
                             t("reglages.corps-notifications", "<gray>Connexions de mes amis : un message quand un ami se connecte "
-                                    + "ou se déconnecte.")), champs, boutons, retour(j -> ouvrir(j, retour, 0)), 1);
+                                    + "ou se déconnecte."),
+                            t("reglages.corps-suivre", "<gray>Suivre le chef : quand le chef de ton groupe change de serveur, tu es "
+                                    + "déplacé d'office (sauf en pleine partie), ou seulement si tu l'acceptes.")),
+                    champs, boutons, retour(j -> ouvrir(j, retour, 0)), 1);
+            lang.saveIfNeeded();
+        });
+    }
+
+    /** Enregistre les réglages (clé, valeur) un par un ; s'arrête si le relais ne répond plus. */
+    private void enregistrer(Player joueur, List<String[]> reglages, int index, Consumer<Player> fin) {
+        if (index >= reglages.size()) {
+            fin.accept(joueur);
+            return;
+        }
+        relais.appeler(joueur, "set", Map.of("key", reglages.get(index)[0], "value", reglages.get(index)[1]), reponse -> {
+            if (reponse != null) {
+                enregistrer(joueur, reglages, index + 1, fin);
+            }
+        });
+    }
+
+    // ------------------------------------------------------------------ groupe de jeu (1.1.0)
+
+    /** Action de groupe : le proxy dit lui-même le résultat dans le tchat ; le menu est rouvert ensuite. */
+    private void agirGroupe(Player joueur, String action, String cible, Consumer<Player> ensuite) {
+        relais.appeler(joueur, action, cible == null ? Map.of() : Map.of("target", cible), reponse -> {
+            if (reponse != null && ensuite != null) {
+                ensuite.accept(joueur);
+            }
+        });
+    }
+
+    void groupe(Player joueur, Consumer<Player> retour) {
+        relais.groupe(joueur, groupe -> {
+            if (groupe == null) {
+                return;
+            }
+            Consumer<Player> ici = j -> groupe(j, retour);
+            List<ActionButton> boutons = new ArrayList<>();
+            List<Component> corps = new ArrayList<>();
+            if (!groupe.existe()) {
+                corps.add(t("groupe.aucun", "<gray>Tu n'es dans aucun groupe. Invite un joueur : dès qu'il accepte, le groupe "
+                        + "est créé et tu en es le chef."));
+                if (groupe.invitePar != null) {
+                    corps.add(t("groupe.invite", "<white><nom></white> <gray>t'invite dans son groupe.", "nom", groupe.invitePar));
+                    boutons.add(gui.button(t("groupe.accepter", "<green>Rejoindre le groupe"), null, j -> agirGroupe(j, "gaccept", null, ici)));
+                    boutons.add(gui.button(t("groupe.refuser", "<red>Refuser"), null, j -> agirGroupe(j, "gdeny", null, ici)));
+                }
+                boutons.add(gui.button(t("groupe.inviter", "<aqua>Inviter un joueur"), null, j -> inviterGroupe(j, retour)));
+            } else {
+                Relais.Membre chef = groupe.chef();
+                corps.add(t("groupe.corps", "<gray>Groupe de <white><chef></white> : <n> sur <max> joueurs.",
+                        "chef", chef == null ? "?" : chef.nom(), "n", groupe.membres.size(), "max", groupe.maximum));
+                for (Relais.Membre membre : groupe.membres) {
+                    corps.add(membre.serveur().isEmpty()
+                            ? t("groupe.membre-hors-ligne", "<gray>- <nom> · hors ligne", "nom", membre.nom())
+                            : t("groupe.membre", "<gray>- <white><nom></white> · <serveur>", "nom", membre.nom(),
+                            "serveur", serveur(membre.serveur())));
+                }
+                corps.add(t("groupe.aide", "<dark_gray>Tchat de groupe : /gc message."));
+                if (groupe.jeSuisChef) {
+                    if (groupe.membres.size() < groupe.maximum) {
+                        boutons.add(gui.button(t("groupe.inviter", "<aqua>Inviter un joueur"), null, j -> inviterGroupe(j, retour)));
+                    }
+                    boutons.add(gui.button(t("groupe.gerer", "<yellow>Gérer les membres"),
+                            t("groupe.gerer-info", "<gray>Exclure un membre, ou nommer un autre chef."), j -> membres(j, retour)));
+                } else {
+                    boutons.add(gui.button(t("groupe.suivre", "<green>Rejoindre le chef"),
+                            t("groupe.suivre-info", "<gray>Tu es envoyé sur le serveur du chef du groupe."),
+                            j -> agirGroupe(j, "ggo", null, null)));
+                }
+                boutons.add(gui.button(t("groupe.quitter", "<red>Quitter le groupe"), null,
+                        j -> gui.confirm(j, t("groupe.quitter-titre", "<red>Quitter le groupe"),
+                                t("groupe.quitter-corps", "<gray>Quitter le groupe ?"),
+                                k -> agirGroupe(k, "gleave", null, ici), ici::accept)));
+                if (groupe.jeSuisChef) {
+                    boutons.add(gui.button(t("groupe.dissoudre", "<red>Dissoudre le groupe"), null,
+                            j -> gui.confirm(j, t("groupe.dissoudre-titre", "<red>Dissoudre le groupe"),
+                                    t("groupe.dissoudre-corps", "<gray>Dissoudre le groupe ? Tous les membres en sortent."),
+                                    k -> agirGroupe(k, "gdisband", null, ici), ici::accept)));
+                }
+            }
+            gui.open(joueur, t("groupe.titre", "<aqua><bold>Groupe de jeu"), corps, List.of(), boutons,
+                    retour == null ? null : retour(retour), 1);
+            lang.saveIfNeeded();
+        });
+    }
+
+    private void inviterGroupe(Player joueur, Consumer<Player> retour) {
+        List<DialogInput> champs = List.of(gui.text("pseudo", t("inviter.champ", "Pseudo du joueur"), "", 32));
+        List<ActionButton> boutons = List.of(gui.form(t("inviter.valider", "<green>Inviter"), null, (j, vue) -> {
+            String pseudo = vue.getText("pseudo");
+            if (pseudo == null || pseudo.isBlank()) {
+                groupe(j, retour);
+                return;
+            }
+            agirGroupe(j, "ginvite", pseudo.trim(), k -> groupe(k, retour));
+        }));
+        gui.open(joueur, t("inviter.titre", "<aqua>Inviter dans le groupe"),
+                List.of(t("inviter.corps", "<gray>Le joueur doit être en ligne sur KaLium. Il a 60 secondes pour accepter.")),
+                champs, boutons, retour(j -> groupe(j, retour)), 1);
+        lang.saveIfNeeded();
+    }
+
+    /** Chef du groupe : exclure un membre ou lui passer le rôle de chef. */
+    private void membres(Player joueur, Consumer<Player> retour) {
+        relais.groupe(joueur, groupe -> {
+            if (groupe == null) {
+                return;
+            }
+            if (!groupe.existe() || !groupe.jeSuisChef) {
+                groupe(joueur, retour);
+                return;
+            }
+            Consumer<Player> ici = j -> membres(j, retour);
+            List<ActionButton> boutons = new ArrayList<>();
+            for (Relais.Membre membre : groupe.membres) {
+                if (membre.chef()) {
+                    continue;
+                }
+                boutons.add(gui.button(t("membres.exclure", "<red>Exclure <nom>", "nom", membre.nom()), null,
+                        j -> agirGroupe(j, "gkick", membre.nom(), ici)));
+                boutons.add(gui.button(t("membres.chef", "<yellow>Chef : <nom>", "nom", membre.nom()),
+                        t("membres.chef-info", "<gray>Il devient le chef du groupe à ta place."),
+                        j -> agirGroupe(j, "gleader", membre.nom(), k -> groupe(k, retour))));
+            }
+            gui.open(joueur, t("membres.titre", "<yellow><bold>Membres du groupe"),
+                    List.of(t("membres.corps", "<gray>Exclure un membre, ou nommer un autre chef.")), List.of(), boutons,
+                    retour(j -> groupe(j, retour)), 2);
             lang.saveIfNeeded();
         });
     }

@@ -28,6 +28,8 @@ final class ContactsStore {
     static final String MP_ALL = "all";
     static final String MP_FRIENDS = "friends";
     static final String MP_NONE = "none";
+    static final String FOLLOW_AUTO = "auto";
+    static final String FOLLOW_ASK = "ask";
 
     static final class Profile {
         final UUID id;
@@ -43,6 +45,10 @@ final class ContactsStore {
         /** Recevoir « X s'est connecte / deconnecte ». */
         boolean notify = true;
         String mp = MP_ALL;
+        /** 1.7.0 (groupe de jeu) : suivre le chef d'office (auto) ou sur proposition (ask). */
+        String follow = FOLLOW_AUTO;
+        /** 1.7.0 (groupe de jeu) : invitations de groupe de tout le monde (all) ou des amis seulement (friends). */
+        String invites = MP_ALL;
 
         Profile(UUID id) {
             this.id = id;
@@ -112,6 +118,8 @@ final class ContactsStore {
                     case "invisible" -> profil.invisible = Boolean.parseBoolean(valeur);
                     case "notify" -> profil.notify = Boolean.parseBoolean(valeur);
                     case "mp" -> profil.mp = MP_FRIENDS.equals(valeur) || MP_NONE.equals(valeur) ? valeur : MP_ALL;
+                    case "follow" -> profil.follow = FOLLOW_ASK.equals(valeur) ? FOLLOW_ASK : FOLLOW_AUTO;
+                    case "invites" -> profil.invites = MP_FRIENDS.equals(valeur) ? MP_FRIENDS : MP_ALL;
                     default -> {
                     }
                 }
@@ -156,6 +164,8 @@ final class ContactsStore {
         lignes.add("invisible=" + profil.invisible);
         lignes.add("notify=" + profil.notify);
         lignes.add("mp=" + profil.mp);
+        lignes.add("follow=" + profil.follow);
+        lignes.add("invites=" + profil.invites);
         remplacer(fichier(profil.id), lignes);
     }
 

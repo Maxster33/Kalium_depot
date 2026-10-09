@@ -37,6 +37,12 @@ quels serveurs de KaLium ils sont, etc. »
     serveurs Paper ; jars vérifiés avant (nom et taille identiques à `jars-deployes/`) ; cahier publié dans
     `KLM_Contacts/CAHIER_DES_CHARGES.md` ; réservations libérées.
 
+- **KLM_Contacts, étape 2 « groupe de jeu »** (« code l'étape 2 sans attendre le test ») : KaliumRelay 1.7.0
+  (groupes en mémoire sur le proxy, commandes `/groupe` et `/gc`, suivre le chef) et KLM_Contacts 1.1.0 (menu
+  « Groupe de jeu », réglages « Suivre le chef » et « Invitations de groupe », réponse « en partie ? » au proxy).
+  Logique essayée hors jeu avec un faux proxy et de faux joueurs (64 cas), tout passe. Compilés et poussés, **non
+  déployés** ; réservations gardées.
+
 ## Décisions
 
 - Forme : objet dans la barre pendant 30 s (plutôt qu'un menu qui s'ouvre seul ou une commande) ; proposé aussi aux
@@ -56,6 +62,12 @@ quels serveurs de KaLium ils sont, etc. »
   rejoindre / inviter, messages privés, notifications, mode invisible et blocage.
 
 ## Reste à faire
+
+- **Étape 2 de KLM_Contacts à déployer** (accord de LeKiwi06 à donner) : KaliumRelay 1.7.0 sur le proxy, KLM_Contacts
+  1.1.0 sur les 6 serveurs Paper ; `gc` à ajouter aux commandes bloquées de LibertyBans. Puis étape 3 (le groupe entre
+  ensemble en partie, « Inviter dans ma partie », lien avec « Rejouer »).
+- Choix faits au code de l'étape 2 : voir `KLM_Contacts/CAHIER_DES_CHARGES.md`, partie 7 (chef déconnecté remplacé tout
+  de suite, jamais de déplacement d'office depuis ou vers Serveur Jeux, groupes effacés au redémarrage du proxy).
 
 - Redémarrer Kal-Games, Serveur Jeux et Kanvas (par l'humain), puis tester sur Java et sur Bedrock : partie privée et
   partie publique d'un jeu du moteur (objet, recréation, « Rejoindre », spectateur), Bingo relancé à 2 joueurs, Build

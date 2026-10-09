@@ -47,6 +47,13 @@ final class RelayConfig {
         this.admins = admins;
     }
 
+    /** 1.7.0 (KLM_Contacts) : nombre maximal de joueurs dans un groupe de jeu. */
+    private int maxGroup = 8;
+
+    int maxGroup() {
+        return maxGroup;
+    }
+
     int maxFriends() {
         return maxFriends;
     }
@@ -103,6 +110,10 @@ final class RelayConfig {
                 props.setProperty("contacts-max-friends", String.valueOf(DEFAULT_MAX_FRIENDS));
                 changed = true;
             }
+            if (!props.containsKey("contacts-max-group")) {
+                props.setProperty("contacts-max-group", "8");
+                changed = true;
+            }
             if (!props.containsKey("contacts-no-join")) {
                 props.setProperty("contacts-no-join", DEFAULT_NO_JOIN);
                 changed = true;
@@ -133,6 +144,11 @@ final class RelayConfig {
                 config.maxFriends = DEFAULT_MAX_FRIENDS;
             }
             config.noJoin = parseAdmins(props.getProperty("contacts-no-join", DEFAULT_NO_JOIN));
+            try {
+                config.maxGroup = Math.max(2, Integer.parseInt(props.getProperty("contacts-max-group").trim()));
+            } catch (NumberFormatException e) {
+                config.maxGroup = 8;
+            }
             return config;
         } catch (IOException e) {
             logger.error("[KaliumRelay] Impossible de charger/creer relay.properties, valeurs par defaut utilisees.", e);

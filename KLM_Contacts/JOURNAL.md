@@ -45,3 +45,25 @@ Limites connues :
 **À déployer avec KaliumRelay 1.6.0** (proxy) ; KLM_Menu 2.10.0 pour le bouton. **Déployé sur les 6 serveurs Paper le 09/10/2026 à 06:06 (LeKiwi06), actif après redémarrage ; `relay-token` à remplir sur chaque serveur.
 Statut : non testé en jeu** (logique du proxy essayée hors jeu : demandes, blocage, réglages, relecture après
 redémarrage).
+
+## 1.1.0 - étape 2 : groupe de jeu (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « code l'étape 2 sans attendre le test ». Empilé sur la 1.0.0 non testée : accord explicite.
+
+- Les groupes et les commandes **`/groupe`** et **`/gc`** sont sur le proxy (KaliumRelay 1.7.0, voir son journal).
+- **Menu « Groupe de jeu »** (bouton du menu « Contacts », ou `/groupe` seul) : membres avec leur serveur et le chef ;
+  « Inviter un joueur » (pseudo, 60 s pour accepter) ; invitation reçue : « Rejoindre le groupe » / « Refuser » ;
+  « Rejoindre le chef » ; « Quitter le groupe » ; pour le chef : « Gérer les membres » (exclure, nommer chef) et
+  « Dissoudre le groupe ».
+- **Fiche d'un ami** : « Inviter dans mon groupe » (s'il est en ligne).
+- **Réglages** : « Suivre le chef » (d'office / me demander avant) et « Invitations de groupe » (tout le monde / amis
+  seulement).
+- **Suivre le chef** : quand le proxy demande si un joueur est en partie (message de plugin `kalium:contacts`,
+  « follow »), le plugin interroge les jeux de ce serveur (`PlayerActivity` de KLM_Menu : KalGames, KG_BingoGame,
+  KV_BuildBattle) et répond au relais ; en partie, le joueur n'est pas déplacé, il reçoit une proposition.
+- Les résultats des actions de groupe sont dits dans le tchat par le proxy (pas de texte dans `lang.yml` pour eux).
+
+Pas dans cette version (étape 3 du cahier) : « Inviter dans ma partie », entrée du groupe en partie, lien avec
+« Rejouer ».
+
+**À déployer avec KaliumRelay 1.7.0.** **Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

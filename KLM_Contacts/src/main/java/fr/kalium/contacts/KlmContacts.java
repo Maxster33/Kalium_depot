@@ -28,9 +28,15 @@ import net.kyori.adventure.text.Component;
  * - /bloquer &lt;pseudo&gt;, /debloquer &lt;pseudo&gt;.
  * - Bouton « Contacts » du comparateur « Informations » (KLM_Menu 2.10.0 ; avec une version plus ancienne, le plugin
  *   fonctionne par ses commandes, sans le bouton).
- * Groupes de jeu et invitations en partie : étapes 2 et 3 du cahier des charges, pas dans cette version.
+ * 1.1.0 - étape 2 « groupe de jeu » : les groupes vivent sur le proxy (KaliumRelay 1.7.0), qui fournit aussi les commandes
+ * /groupe et /gc ; ici : le menu « Groupe de jeu », le réglage « Suivre le chef » et la réponse au proxy quand il demande
+ * si un joueur est en partie avant de le déplacer avec son chef.
+ * Invitations en partie et entrée du groupe en partie : étape 3 du cahier des charges, pas dans cette version.
  */
 public final class KlmContacts extends JavaPlugin {
+
+    /** 1.1.0 : canal des messages du proxy (KaliumRelay) vers ce plugin. */
+    private static final String CANAL = "kalium:contacts";
 
     private static final List<String> SOUS_COMMANDES = List.of("ajouter", "accepter", "refuser", "retirer", "rejoindre");
 
@@ -82,6 +88,17 @@ public final class KlmContacts extends JavaPlugin {
                 menus.ouvrir(joueur, retour);
             }
         }, this, ServicePriority.Normal);
+        // 1.1.0 (groupe de jeu) : messages du proxy (KaliumRelay 1.7.0) sur le canal kalium:contacts.
+        // « follow » : le chef du groupe a changé de serveur ; on répond si le joueur est en partie (il n'est alors pas
+        // déplacé d'office). « groupe » : commande /groupe sans rien, ouvrir le menu du groupe.
+        getServer().getMessenger().registerIncomingPluginChannel(this, CANAL, (canal, joueur, message) -> {
+            String texte = new String(message, java.nio.charset.StandardCharsets.UTF_8);
+            if (texte.equals("follow")) {
+                relais.appelerEnSilence(joueur, "gfollow", Map.of("busy", String.valueOf(enPartie(joueur))));
+            } else if (texte.equals("groupe")) {
+                menus.groupe(joueur, null);
+            }
+        });
         lang.saveIfNeeded();
         if (getConfig().getString("relay-token", "").isBlank()) {
             getLogger().warning("relay-token est vide dans config.yml : les contacts sont indisponibles tant qu'il n'est pas "
@@ -89,8 +106,23 @@ public final class KlmContacts extends JavaPlugin {
         }
     }
 
+    /** Le joueur est-il dans une partie (salle d'attente, jeu, spectateur) d'un plugin de ce serveur ? */
+    private boolean enPartie(Player joueur) {
+        for (var service : getServer().getServicesManager().getRegistrations(fr.kalium.menu.api.PlayerActivity.class)) {
+            try {
+                if (service.getPlugin().isEnabled() && service.getProvider().inGame(joueur)) {
+                    return true;
+                }
+            } catch (RuntimeException e) {
+                getLogger().warning("Activité de " + service.getPlugin().getName() + " illisible : " + e);
+            }
+        }
+        return false;
+    }
+
     @Override
     public void onDisable() {
+        getServer().getMessenger().unregisterIncomingPluginChannel(this);
         if (lang != null) {
             lang.saveIfNeeded();
         }

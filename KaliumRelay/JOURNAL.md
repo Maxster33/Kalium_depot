@@ -332,3 +332,42 @@ Limite : les données sont en clair sur le proxy (pseudos, listes d'amis), comme
 **À déployer avec KLM_Contacts 1.0.0** (sans lui : seules `/mp` et `/r` existent, entre joueurs en ligne). **Déployé sur le proxy le
 09/10/2026 à 06:06 (LeKiwi06 ; 1.5.0 dans `_removed-kaliumrelay-1.5.0/`), actif après redémarrage du proxy. Statut : non testé en jeu** (logique des demandes, du blocage, des réglages et de la relecture
 après redémarrage essayée hors jeu avec un faux proxy).
+
+## 1.7.0 - contacts : groupes de jeu (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « code l'étape 2 sans attendre le test » (étape 2 du cahier de KLM_Contacts : groupe de jeu).
+Réponses du 09/10/2026 : groupe temporaire avec un chef, tchat de groupe, les membres suivent le chef d'office, réglable
+par membre ; invitations ouvertes à tous, réglables en « amis seulement » ; plafond de 8 joueurs. Empilé sur la 1.6.0
+non testée : accord explicite de LeKiwi06.
+
+- Nouveau `ContactsGroups`. Les groupes vivent **en mémoire** sur le proxy : ils disparaissent quand il ne reste qu'une
+  personne, et au redémarrage du proxy.
+- **Créer un groupe = inviter quelqu'un** : à l'acceptation (60 s), celui qui a invité devient le chef. Le chef invite,
+  exclut, nomme un autre chef, dissout ; chacun peut quitter.
+- **Commandes du proxy** : `/groupe` (alias `/group`) `inviter | exclure | chef <pseudo>`, `accepter | refuser |
+  quitter | dissoudre | suivre | info` ; `/groupe` seul demande au serveur du joueur d'ouvrir le menu « Groupe de
+  jeu » (KLM_Contacts 1.1.0). **`/gc <message>`** : tchat de groupe, d'un serveur à l'autre, écrit dans le journal du
+  proxy (`[Contacts] GC (groupe de X) Y : texte`). **Ajouter `gc` aux commandes bloquées de LibertyBans** (comme `mp`
+  et `r`).
+- **Suivre le chef** : quand le chef arrive sur un serveur, chaque membre connecté ailleurs est déplacé d'office, ou
+  reçoit une proposition (`/groupe suivre`, cliquable) s'il a choisi « me demander avant », s'il a une partie de Bingo
+  en cours, s'il est sur un serveur de `contacts-no-join` (Serveur Jeux : salle d'attente, partie, salle
+  d'après-partie) ou si son serveur répond qu'il est en partie. Le proxy pose la question au serveur du membre par un
+  message de plugin (canal `kalium:contacts`, « follow ») ; KLM_Contacts répond par `POST /contacts/gfollow`
+  (`busy=true|false`) ; sans réponse sous 3 s : proposition. Jamais de déplacement vers un serveur de
+  `contacts-no-join`. Un membre qui accepte une invitation ou qui se reconnecte rejoint le chef selon la même règle.
+- **Déconnexions** : la place d'un membre déconnecté est gardée 5 minutes, puis il sort du groupe ; si c'est le chef, le
+  plus ancien membre connecté devient chef tout de suite.
+- **Invitations** : refusées si le joueur est hors ligne ou invisible, déjà dans un groupe, s'il n'accepte que celles
+  de ses amis, si le groupe est complet ; invité qui a bloqué l'inviteur : rien n'arrive, sans le dire.
+- `POST /contacts/` : nouvelles actions `group` (état du groupe et invitation en attente), `ginvite`, `gaccept`,
+  `gdeny`, `gleave`, `gkick`, `gleader`, `gdisband`, `ggo`, `gfollow` ; `set` accepte `follow` (auto, ask) et `invites`
+  (all, friends), ajoutés à la réponse de `list`. Le résultat d'une action de groupe est dit au joueur par le proxy.
+- Les messages du canal `kalium:contacts` venant d'un joueur ou d'un serveur ne sont jamais relayés.
+- **Nouvelle clé de `relay.properties`** : `contacts-max-group` (8).
+
+Pas dans cette version (étape 3 du cahier) : le groupe entre ensemble dans une partie ou une file, « Inviter dans ma
+partie », lien avec « Rejouer ».
+
+**À déployer avec KLM_Contacts 1.1.0.** **Compilé le 09/10/2026, non déployé. Statut : non testé en jeu** (logique
+essayée hors jeu avec un faux proxy et de faux joueurs : 64 cas pour les groupes, 32 pour les amis, tout passe).

@@ -46,22 +46,31 @@ final class Contacts {
     private final ProxyServer server;
     private final Logger logger;
     private final RelayConfig config;
-    private final ContactsStore store;
+    final ContactsStore store;
+    /** 1.7.0 : groupes de jeu (etape 2 de KLM_Contacts). */
+    private final ContactsGroups groups;
     /** Dernier correspondant de chaque joueur (/r), en memoire. */
     private final Map<UUID, UUID> lastPartner = new HashMap<>();
     /** Joueurs dont la connexion a ete annoncee a leurs amis (pour n'annoncer que leur deconnexion a eux). */
     private final Set<UUID> announced = new HashSet<>();
 
-    Contacts(Object plugin, ProxyServer server, Logger logger, RelayConfig config, Path dataDirectory) {
+    Contacts(Object plugin, ProxyServer server, Logger logger, RelayConfig config, Path dataDirectory,
+             ActiveGameRegistry activeGames) {
         this.plugin = plugin;
         this.server = server;
         this.logger = logger;
         this.config = config;
         this.store = new ContactsStore(dataDirectory, logger);
+        this.groups = new ContactsGroups(this, plugin, server, logger, config, activeGames);
+    }
+
+    ContactsGroups groups() {
+        return groups;
     }
 
     void register() {
         server.getEventManager().register(plugin, this);
+        groups.register();
         server.getCommandManager().register(server.getCommandManager().metaBuilder("mp").plugin(plugin).build(),
                 new SimpleCommand() {
                     @Override
@@ -110,26 +119,26 @@ final class Contacts {
 
     // ------------------------------------------------------------------ textes
 
-    private static Component prefix() {
+    static Component prefix() {
         return Component.text("Contacts » ", NamedTextColor.LIGHT_PURPLE);
     }
 
-    private static Component info(String text) {
+    static Component info(String text) {
         return prefix().append(Component.text(text, NamedTextColor.GRAY));
     }
 
-    private static Component error(String text) {
+    static Component error(String text) {
         return prefix().append(Component.text(text, NamedTextColor.RED));
     }
 
-    private void tell(UUID id, Component message) {
+    void tell(UUID id, Component message) {
         server.getPlayer(id).ifPresent(player -> player.sendMessage(message));
     }
 
     // ------------------------------------------------------------------ presence
 
     /** Serveur ou se trouve le joueur, ou null s'il est hors ligne. */
-    private String serverOf(UUID id) {
+    String serverOf(UUID id) {
         return server.getPlayer(id).flatMap(Player::getCurrentServer)
                 .map(connection -> connection.getServerInfo().getName()).orElse(null);
     }
@@ -171,6 +180,7 @@ final class Contacts {
         UUID id = player.getUniqueId();
         synchronized (this) {
             lastPartner.remove(id);
+            groups.disconnected(id, player.getUsername());
             if (announced.remove(id)) {
                 announce(store.get(id), Component.text("- ", NamedTextColor.RED)
                         .append(Component.text(player.getUsername(), NamedTextColor.WHITE))
@@ -207,7 +217,8 @@ final class Contacts {
     /**
      * Traite une requete POST /contacts/&lt;action&gt; (parametres : lignes « cle=valeur » du corps). Reponse : « ok » ou
      * « ok:&lt;detail&gt; », sinon « err:&lt;code&gt; » ; pour « list », les lignes de donnees suivent.
-     * Actions : list, add, accept, deny, cancel, remove, block, unblock, set, join, msg.
+     * Actions : list, add, accept, deny, cancel, remove, block, unblock, set, join, msg ; groupes de jeu (1.7.0) : voir
+     * ContactsGroups.handle.
      */
     synchronized String handle(String action, Map<String, String> params) {
         UUID id;
@@ -225,6 +236,9 @@ final class Contacts {
         }
         if ("msg".equals(action)) {
             return menuMessage(id, params.getOrDefault("target", ""), params.getOrDefault("text", ""));
+        }
+        if (groups.handles(action)) {
+            return groups.handle(action, id, params);
         }
         UUID targetId = resolve(params.get("target"));
         if (targetId == null) {
@@ -296,6 +310,8 @@ final class Contacts {
         out.append("S\tinvisible\t").append(me.invisible).append('\n');
         out.append("S\tnotify\t").append(me.notify).append('\n');
         out.append("S\tmp\t").append(me.mp).append('\n');
+        out.append("S\tfollow\t").append(me.follow).append('\n');
+        out.append("S\tinvites\t").append(me.invites).append('\n');
         for (UUID friend : me.friends) {
             ContactsStore.Profile profile = store.get(friend);
             // Ami invisible : affiche hors ligne.
@@ -325,6 +341,18 @@ final class Contacts {
                     return "err:bad";
                 }
                 me.mp = value;
+            }
+            case "follow" -> {
+                if (!ContactsStore.FOLLOW_AUTO.equals(value) && !ContactsStore.FOLLOW_ASK.equals(value)) {
+                    return "err:bad";
+                }
+                me.follow = value;
+            }
+            case "invites" -> {
+                if (!ContactsStore.MP_ALL.equals(value) && !ContactsStore.MP_FRIENDS.equals(value)) {
+                    return "err:bad";
+                }
+                me.invites = value;
             }
             default -> {
                 return "err:bad";
@@ -427,7 +455,7 @@ final class Contacts {
 
     // ------------------------------------------------------------------ messages prives
 
-    private static String clean(String text) {
+    static String clean(String text) {
         String clean = text == null ? "" : text.replaceAll("\\p{Cntrl}", " ").trim();
         return clean.length() > MAX_MESSAGE ? clean.substring(0, MAX_MESSAGE) : clean;
     }
