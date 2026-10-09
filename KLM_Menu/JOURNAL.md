@@ -309,5 +309,5 @@ boîte à outils pour servir à tous les plugins.
   un clic, le jeu interdit d'ouvrir ou de fermer une fenêtre, donc `ouvrir`, `fermer` et `saisie` attendent la fin du
   clic (un tick) quand ils sont appelés depuis l'action d'une case.
 
-**Compilé le 09/10/2026, non déployé (à envoyer sur les serveurs avec le premier plugin qui s'en sert). Statut : non testé en jeu.**
+**Déployé le 09/10/2026 à 19:09 sur les 6 serveurs Paper (lobby, Kal-Games, Kanvas, Serveur Jeux, Event, Kixster ; accord de LeKiwi06 : « oui déploie » ; jars en place vérifiés identiques à `jars-deployes/` ; 2.10.0 dans `_removed-klm_menu-2.10.0/`). Actif après redémarrage. Statut : non testé en jeu.**
 

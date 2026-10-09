@@ -389,6 +389,6 @@ stock d'une boutique restent de vrais coffres.
 - Bedrock : entre un coffre et une fenêtre de saisie, le coffre est refermé et la fenêtre s'ouvre un quart de seconde
   plus tard (délai choisi par Claude, à vérifier en jeu).
 
-**Compilé le 09/10/2026 (`sortie/KS_Economy-1.5.0.jar`, contre KLM_Menu 2.11.0), non déployé. Statut : non testé en jeu
+**Déployé le 09/10/2026 à 19:09 sur Event (à la place de la 1.4.0) et Kixster (à la place de la 1.4.1), avec KLM_Menu 2.11.0 (accord de LeKiwi06 : « oui déploie » ; jars en place vérifiés identiques à `jars-deployes/` ; anciens jars dans `_removed-ks_economy-1.4.0/` et `_removed-ks_economy-1.4.1/`). Actif après redémarrage. Statut : non testé en jeu
 (aucun des 28 écrans n'a été ouvert ; seule la coupe des descriptions a été essayée hors serveur).** La 1.5.0 part de
 la 1.4.1 (Kixster, non testée) : elle garde `KSEconomy.resume` pour KS_AntiCheat 1.3.0. Event est en 1.4.0.

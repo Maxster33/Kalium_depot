@@ -177,3 +177,6 @@ Proposé, sans réponse : garantir la moitié de chaque récompense en récompen
   (baisser leurs prix, ou un « jackpot » rare dans les coffres moyens et gros), sans réponse : rien de changé.
 - Reste à faire : accord de LeKiwi06 pour déployer KLM_Menu 2.11.0 (6 serveurs Paper) et KS_Economy 1.5.0 (Event,
   Kixster) ; test en jeu (Java et Bedrock) ; sa décision sur la rareté des badges et du Raccommodage.
+- 19:09, « oui déploie » : KLM_Menu 2.11.0 envoyé sur les 6 serveurs Paper, KS_Economy 1.5.0 sur Event et Kixster ;
+  jars en place vérifiés avant l'envoi ; anciens jars dans `_removed-…` ; réservations libérées. Non testés, actifs
+  après redémarrage (l'humain).
