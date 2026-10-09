@@ -38,6 +38,14 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
+- KS_Jetons — LeKiwi06 — depuis le 2026-10-09 17:35 — envoi de la catégorie 7 sur Kixster (déploiement groupé, aucun changement de code)
+- KS_KaliumGive — LeKiwi06 — depuis le 2026-10-09 17:35 — envoi de la catégorie 7 sur Kixster (déploiement groupé, aucun changement de code)
+- KS_CoffreMort — LeKiwi06 — depuis le 2026-10-09 17:35 — envoi de la catégorie 7 sur Kixster (déploiement groupé, aucun changement de code)
+- KS_Fly — LeKiwi06 — depuis le 2026-10-09 17:35 — envoi de la catégorie 7 sur Kixster (déploiement groupé, aucun changement de code)
+- KS_Teleport — LeKiwi06 — depuis le 2026-10-09 17:35 — envoi de la catégorie 7 sur Kixster (déploiement groupé, aucun changement de code)
+- KS_Economy — LeKiwi06 — depuis le 2026-10-09 17:35 — envoi de la catégorie 7 sur Kixster (déploiement groupé, aucun changement de code)
+- KS_Claim — LeKiwi06 — depuis le 2026-10-09 17:35 — envoi de la catégorie 7 sur Kixster (déploiement groupé, aucun changement de code)
+
 
 
 
