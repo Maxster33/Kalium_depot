@@ -18,6 +18,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
+- KG_Rewards — LeKiwi06 — depuis le 2026-10-09 16:55 — plus de paliers de la semaine ni de tops 100, 50, 25 et 10 (décision de LeKiwi06)
 
 
 
@@ -37,6 +38,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 ## Requis parfois
+
+- KV_Rewards — LeKiwi06 — depuis le 2026-10-09 16:55 — même retouche que KG_Rewards (tops), déploiement groupé
 
 
 
