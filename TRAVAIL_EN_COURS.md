@@ -18,6 +18,11 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
+- KalGames — LeKiwi06 — depuis le 2026-10-09 05:28 — bouton « Rejouer » en fin de partie (objet 30 s, mêmes paramètres)
+- KG_Bingo — LeKiwi06 — depuis le 2026-10-09 05:28 — bouton « Rejouer » en fin de partie (objet 30 s, mêmes paramètres)
+- KG_BingoGame — LeKiwi06 — depuis le 2026-10-09 05:28 — bouton « Rejouer » en fin de partie (objet 30 s, mêmes paramètres)
+- KG_BuildBattle — LeKiwi06 — depuis le 2026-10-09 05:28 — bouton « Rejouer » en fin de partie (objet 30 s, mêmes paramètres)
+- KV_BuildBattle — LeKiwi06 — depuis le 2026-10-09 05:28 — bouton « Rejouer » en fin de partie (objet 30 s, mêmes paramètres)
 
 
 
