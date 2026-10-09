@@ -87,4 +87,4 @@ Limites : écrit sans serveur de test. Le clic droit dans le vide avec un bloc e
 dans `coffres.yml` (rien ne le nettoie). Les coffres ne s'empilent pas et ne se vendent pas en boutique (objets tous
 différents).
 
-**Déployé sur Kixster (1.0.1 dans `_removed-ks_rewardsgui-1.0.1/`) et sur Event (1.1.0 dans `_removed-ks_rewardsgui-1.1.0/`) le 09/10/2026 à 13:30 (LeKiwi06), actif après redémarrage. `config.yml` des serveurs non touchés. Statut : non testé en jeu.**
+**Déployé sur Kixster (1.0.1 dans `_removed-ks_rewardsgui-1.0.1/`) et sur Event (1.1.0 dans `_removed-ks_rewardsgui-1.1.0/`) le 09/10/2026 à 13:30 (LeKiwi06), actif depuis les redémarrages de 13:35 (journaux lus : 1.2.0 activée sur les deux serveurs, aucune erreur). `config.yml` des serveurs non touchés. Statut : non testé en jeu (premier essai de LeKiwi06 sur Kixster à 13:36 : 13 coffres récupérés, 2 ouverts ; 10 des 11 restés fermés contiennent un jeton de fly ou un badge, absents de Kixster ; pas encore confirmé par lui).**
