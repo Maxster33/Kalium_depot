@@ -24,6 +24,32 @@ public final class KGBingo extends JavaPlugin {
     private BingoResults results;
     /** 1.6.0 : joueurs en Bingo sur Serveur Jeux (bouton du menu de kal-games). */
     private RelayCounter players;
+    private BingoMenus menus;
+    /** 1.10.0 : a appeler pour chaque joueur envoye en partie (lien avec KLM_Contacts), ou null. */
+    private java.util.function.BiConsumer<org.bukkit.entity.Player, BingoParty> contactsLink;
+
+    /** 1.10.0 : ce joueur part en partie ; son groupe de jeu (KLM_Contacts) le suit s'il en est le chef. */
+    void contactsEntered(org.bukkit.entity.Player player, BingoParty party) {
+        if (contactsLink == null) {
+            return;
+        }
+        try {
+            contactsLink.accept(player, party);
+        } catch (LinkageError | RuntimeException e) {
+            getLogger().warning("Annonce a KLM_Contacts impossible : " + e);
+        }
+    }
+
+    /** 1.10.0 : un membre d'un groupe de jeu rejoint la partie de son chef (meme chemin que « Rejoindre avec un code »). */
+    void groupJoin(org.bukkit.entity.Player player, String code) {
+        BingoParty party = parties.join(player, code);
+        if (party == null) {
+            player.sendMessage(kg.prefix().append(menus.t("bingo.join-invalid", "<red>Code invalide, partie pleine ou introuvable.")));
+            return;
+        }
+        player.sendMessage(kg.prefix().append(menus.t("bingo.joined", "<green>Partie rejointe, transfert en cours…")));
+        parties.transferToBingo(player);
+    }
 
     @Override
     public void onEnable() {
@@ -55,6 +81,18 @@ public final class KGBingo extends JavaPlugin {
         BingoMenus menus = new BingoMenus(this, kg);
         // 1.9.0 : « Rejouer » - le joueur revenu du serveur Bingo par l'objet « Rejouer » recree ou rejoint la partie.
         getServer().getPluginManager().registerEvents(new BingoReplay(this, kg, menus), this);
+        // 1.10.0 : groupes de jeu de KLM_Contacts (softdepend). Sans lui, ou avec une version sans cette fonction
+        // (avant la 1.2.0), rien ne change.
+        this.menus = menus;
+        Plugin klmContacts = getServer().getPluginManager().getPlugin("KLM_Contacts");
+        if (klmContacts != null) {
+            try {
+                contactsLink = ContactsLink.create(this, klmContacts);
+            } catch (LinkageError | RuntimeException e) {
+                getLogger().warning("KLM_Contacts trop ancien (1.2.0 ou plus attendu) : les groupes de jeu ne suivent pas "
+                        + "leur chef au Bingo (" + e + ").");
+            }
+        }
         // Bingo : serveur dedie separe, pas un Minigame/Arena classique de KalGames - bouton visible de tous
         // (comme /bingo create et /bingo join).
         // 1.3.0 : boutons fournis a KG_Menu (menu du serveur kal-games), decouverts au demarrage - remplace les prises

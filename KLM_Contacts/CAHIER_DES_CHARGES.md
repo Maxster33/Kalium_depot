@@ -1,7 +1,7 @@
 # KLM_Contacts — cahier des charges (demande de LeKiwi06, 09/10/2026)
 
 **Validé par LeKiwi06 le 09/10/2026** (« oui pour les deux, tu peux coder KLM_Contacts ») : partie 4 validée, questions 5.3 et 5.4 tranchées (oui aux deux).
-**Code : étape 1 « amis » - KLM_Contacts 1.0.0 et KLM_Menu 2.10.0 déployés sur les 6 serveurs Paper, KaliumRelay 1.6.0 sur le proxy, le 09/10/2026 à 6 h 06 ; non testés** (détail dans les `JOURNAL.md`). **Étape 2 « groupe de jeu » codée le 09/10/2026 sans attendre le test de l'étape 1 (demande de LeKiwi06) : KLM_Contacts 1.1.0 et KaliumRelay 1.7.0, déployés le 09/10/2026 à 6 h 29, non testés.** Étape 3 (parties) : à coder ensuite.
+**Code : étape 1 « amis » - KLM_Contacts 1.0.0 et KLM_Menu 2.10.0 déployés sur les 6 serveurs Paper, KaliumRelay 1.6.0 sur le proxy, le 09/10/2026 à 6 h 06 ; non testés** (détail dans les `JOURNAL.md`). **Étape 2 « groupe de jeu » codée le 09/10/2026 sans attendre le test de l'étape 1 (demande de LeKiwi06) : KLM_Contacts 1.1.0 et KaliumRelay 1.7.0, déployés le 09/10/2026 à 6 h 29, non testés.** **Étape 3 « parties » codée le 09/10/2026 sans attendre les tests (demande de LeKiwi06) : KLM_Contacts 1.2.0, KaliumRelay 1.8.0, KalGames 1.25.0, KG_Bingo 1.10.0, KG_BuildBattle 0.5.0, compilés, non déployés, non testés.**
 
 Nouveau plugin `KLM_Contacts` (préfixe `KLM_` : réseau entier), présent sur **chaque serveur Paper** (lobby,
 kal-games, Serveur Jeux, Kixster, Event, Kanvas), comme KLM_Menu et KLM_Chat.
@@ -138,3 +138,21 @@ kal-games, Serveur Jeux, Kixster, Event, Kanvas), comme KLM_Menu et KLM_Chat.
 6. Les groupes sont en mémoire sur le proxy : un redémarrage du proxy les efface.
 7. Modération : le tchat de groupe est écrit dans le journal du proxy ; `gc` est à ajouter aux commandes bloquées de
    LibertyBans, avec `mp` et `r`.
+
+## 8. Choix faits au code de l'étape 3 (09/10/2026)
+
+1. Étape 3 du cahier (« Bingo et Build Battle ensuite ») : les trois sont faits ensemble (jeux du moteur de KalGames,
+   Bingo, Build Battle), par un même mécanisme : le jeu annonce l'entrée de chaque joueur, le proxy fait suivre le
+   groupe de celui qui en est le chef.
+2. Règle 10 : le chef crée ou rejoint une partie privée, ou entre dans une file publique : les membres y entrent avec
+   lui, d'office s'ils sont libres. En « me demander avant », déjà en partie, ou sur Serveur Jeux : proposition
+   `/partie accepter` (2 minutes).
+3. Question 5.4 (« Rejouer ») : le clic du chef sur « Rejouer » passe par les mêmes entrées en partie, donc le groupe
+   le suit, pour les jeux du moteur, le Bingo et le Build Battle.
+4. Règle 3, « Inviter dans ma partie » : bouton de la fiche d'un ami, pour une partie privée d'un jeu du moteur de
+   KalGames (comme écrit dans la réponse du 09/10/2026 : « partie privée de Kal-Games ») ; l'invité a 60 s, commande
+   `/partie accepter | refuser`. Pas pour le Bingo ni le Build Battle (leurs salles d'attente sont sur un autre
+   serveur que celui où l'on entre dans la partie).
+5. Build Battle en file publique : les membres rejoignent la même file ; ils ne sont pas forcément dans la même
+   équipe que leur chef.
+6. Un membre exclu d'une partie parce qu'elle est pleine reste où il est, avec le message habituel du jeu.

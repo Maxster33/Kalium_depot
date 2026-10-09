@@ -84,6 +84,8 @@ final class Parties {
 
     /** File publique : tempo normal, équipes de la taille choisie. */
     void envoyerPublic(Player joueur, int tailleEquipes) {
+        // 0.5.0 : le groupe de jeu de ce joueur le suit dans la même file (KLM_Contacts).
+        plugin.annoncer(joueur, LienContacts.publique(Math.max(1, Math.min(4, tailleEquipes))));
         envoyer(joueur, "type=public\n"
                 + "tailleEquipes=" + Math.max(1, Math.min(4, tailleEquipes)) + "\n"
                 + "equipesMax=" + equipesMax() + "\n"
@@ -92,6 +94,8 @@ final class Parties {
     }
 
     void envoyerPrive(Player joueur, Partie p) {
+        // 0.5.0 : le groupe de jeu de ce joueur le suit dans la même partie (KLM_Contacts).
+        plugin.annoncer(joueur, LienContacts.privee(p));
         envoyer(joueur, "type=prive\n"
                 + "partie=" + p.id + "\n"
                 + "code=" + p.code + "\n"

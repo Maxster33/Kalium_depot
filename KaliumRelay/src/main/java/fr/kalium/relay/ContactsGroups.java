@@ -66,6 +66,36 @@ final class ContactsGroups {
     private record PendingFollow(String server) {
     }
 
+    /**
+     * 1.8.0 (etape 3) - partie proposee a un joueur : celle ou son chef de groupe vient d'entrer, ou celle ou un joueur
+     * l'invite. server = serveur ou le jeu sait faire entrer le joueur (kal-games) ; game et ref designent la partie
+     * pour le plugin du jeu (voir fr.kalium.contacts.api.JeuDeGroupe).
+     */
+    private static final class Offer {
+        final UUID from;
+        final String server;
+        final String game;
+        final String ref;
+        final String label;
+        final long expires;
+        /** Invitation d'un joueur (toujours a accepter), sinon partie du chef du groupe. */
+        final boolean invite;
+        /** Le joueur a accepte (/partie accepter, /groupe suivre) : il entre meme s'il etait en partie. */
+        boolean confirmed;
+        /** La proposition lui a deja ete envoyee. */
+        boolean proposed;
+
+        Offer(UUID from, String server, String game, String ref, String label, long expires, boolean invite) {
+            this.from = from;
+            this.server = server;
+            this.game = game;
+            this.ref = ref;
+            this.label = label;
+            this.expires = expires;
+            this.invite = invite;
+        }
+    }
+
     private final Contacts contacts;
     private final Object plugin;
     private final ProxyServer server;
@@ -80,6 +110,10 @@ final class ContactsGroups {
     private final Map<UUID, Long> offlineSince = new HashMap<>();
     /** Membres dont on attend la reponse du serveur (« en partie ? ») avant de les deplacer. */
     private final Map<UUID, PendingFollow> pendingFollow = new HashMap<>();
+    /** 1.8.0 : partie proposee a chaque joueur (une seule a la fois). */
+    private final Map<UUID, Offer> offers = new HashMap<>();
+    /** 1.8.0 : instant ou un joueur vient d'entrer dans une partie proposee (il va peut-etre changer de serveur). */
+    private final Map<UUID, Long> joinedAt = new HashMap<>();
 
     ContactsGroups(Contacts contacts, Object plugin, ProxyServer server, Logger logger, RelayConfig config,
                    ActiveGameRegistry activeGames) {
@@ -121,6 +155,29 @@ final class ContactsGroups {
                         return;
                     }
                     chat(player, String.join(" ", invocation.arguments()));
+                });
+        // 1.8.0 : /partie accepter | refuser (partie du chef du groupe, ou invitation d'un joueur dans sa partie).
+        server.getCommandManager().register(server.getCommandManager().metaBuilder("partie").plugin(plugin).build(),
+                new SimpleCommand() {
+                    @Override
+                    public void execute(Invocation invocation) {
+                        if (!(invocation.source() instanceof Player player)) {
+                            return;
+                        }
+                        String sub = invocation.arguments().length == 0 ? "" : invocation.arguments()[0].toLowerCase(Locale.ROOT);
+                        synchronized (contacts) {
+                            switch (sub) {
+                                case "accepter" -> acceptOffer(player.getUniqueId());
+                                case "refuser" -> denyOffer(player.getUniqueId());
+                                default -> player.sendMessage(info("Utilisation : /partie accepter | refuser"));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public List<String> suggest(Invocation invocation) {
+                        return invocation.arguments().length <= 1 ? List.of("accepter", "refuser") : List.of();
+                    }
                 });
         server.getScheduler().buildTask(plugin, this::sweep).repeat(20L, TimeUnit.SECONDS).schedule();
     }
@@ -282,7 +339,8 @@ final class ContactsGroups {
 
     boolean handles(String action) {
         return switch (action) {
-            case "group", "ginvite", "gaccept", "gdeny", "gleave", "gkick", "gleader", "gdisband", "gfollow", "ggo" -> true;
+            case "group", "ginvite", "gaccept", "gdeny", "gleave", "gkick", "gleader", "gdisband", "gfollow", "ggo",
+                 "ggame", "ginvitegame", "ggameget", "ggameaccept", "ggamedeny", "whereami" -> true;
             default -> false;
         };
     }
@@ -305,6 +363,16 @@ final class ContactsGroups {
             case "gdisband" -> disband(id);
             case "ggo" -> go(id);
             case "gfollow" -> followAnswer(id, Boolean.parseBoolean(params.getOrDefault("busy", "false")));
+            // 1.8.0 (etape 3) : parties.
+            case "ggame" -> announce(id, params);
+            case "ginvitegame" -> inviteGame(id, target, params);
+            case "ggameget" -> gameGet(id, Boolean.parseBoolean(params.getOrDefault("busy", "false")));
+            case "ggameaccept" -> acceptOffer(id);
+            case "ggamedeny" -> denyOffer(id);
+            case "whereami" -> {
+                String where = contacts.serverOf(id);
+                yield where == null ? "err:offline" : "ok:" + where;
+            }
             default -> "err:action";
         };
     }
@@ -325,6 +393,11 @@ final class ContactsGroups {
         Invite invite = invites.get(id);
         if (invite != null && invite.expires() > System.currentTimeMillis()) {
             out.append("I\t").append(invite.from()).append('\t').append(name(invite.from())).append('\n');
+        }
+        Offer offer = liveOffer(id);
+        if (offer != null) {
+            // 1.8.0 : partie proposee (« O », pseudo de celui qui la propose, nom du jeu).
+            out.append("O\t").append(name(offer.from)).append('\t').append(offer.label).append('\n');
         }
         return out.toString();
     }
@@ -575,6 +648,12 @@ final class ContactsGroups {
         Player player = event.getPlayer();
         UUID id = player.getUniqueId();
         synchronized (contacts) {
+            String here = contacts.serverOf(id);
+            // 1.8.0 : une partie l'attend sur ce serveur (celle de son chef, ou une invitation acceptee).
+            Offer offer = liveOffer(id);
+            if (offer != null && offer.server.equals(here)) {
+                sendGame(id);
+            }
             Group group = groupOf.get(id);
             if (group == null) {
                 return;
@@ -583,7 +662,6 @@ final class ContactsGroups {
             if (offlineSince.remove(id) != null) {
                 broadcast(group, info(player.getUsername() + " est de retour dans le groupe."));
             }
-            String here = contacts.serverOf(id);
             if (group.leader.equals(id)) {
                 for (UUID member : new ArrayList<>(group.members)) {
                     if (!member.equals(id)) {
@@ -606,6 +684,11 @@ final class ContactsGroups {
     }
 
     private void propose(UUID member, Group group, String leaderServer) {
+        Offer offer = liveOffer(member);
+        if (offer != null && offer.from.equals(group.leader)) {
+            proposeGame(member, offer); // 1.8.0 : le chef est entre dans une partie
+            return;
+        }
         contacts.tell(member, prefix().append(Component.text(name(group.leader), NamedTextColor.WHITE))
                 .append(Component.text(" (chef) est sur " + pretty(leaderServer) + " : ", NamedTextColor.GRAY))
                 .append(Component.text("/groupe suivre", NamedTextColor.GREEN).clickEvent(ClickEvent.runCommand("/groupe suivre"))));
@@ -614,6 +697,14 @@ final class ContactsGroups {
     /** Le chef est sur leaderServer : ce membre le suit d'office, ou recoit une proposition. Appele sous verrou. */
     private void follow(Group group, UUID member, String leaderServer) {
         if (leaderServer == null || config.noJoin(leaderServer) || member.equals(group.leader)) {
+            return;
+        }
+        // 1.8.0 : le chef vient d'entrer dans une partie qui se joue ailleurs (Build Battle sur Kanvas...) : c'est la
+        // partie proposee qui emmene le membre, pas le changement de serveur du chef.
+        Offer offer = liveOffer(member);
+        Long joined = joinedAt.get(member);
+        if ((offer != null && offer.from.equals(group.leader) && !offer.server.equals(leaderServer))
+                || (joined != null && System.currentTimeMillis() - joined < 10_000L)) {
             return;
         }
         Optional<Player> player = server.getPlayer(member);
@@ -639,7 +730,7 @@ final class ContactsGroups {
             synchronized (contacts) {
                 if (pendingFollow.remove(member, pending)) {
                     Group current = groupOf.get(member);
-                    String where = current == null ? null : contacts.serverOf(current.leader);
+                    String where = current == null ? null : target(member, current);
                     if (where != null && !config.noJoin(where) && !where.equals(contacts.serverOf(member))) {
                         propose(member, current, where);
                     }
@@ -654,7 +745,7 @@ final class ContactsGroups {
             return "err:none";
         }
         Group group = groupOf.get(member);
-        String where = group == null ? null : contacts.serverOf(group.leader);
+        String where = group == null ? null : target(member, group);
         if (where == null || config.noJoin(where) || where.equals(contacts.serverOf(member))) {
             return "ok";
         }
@@ -685,6 +776,10 @@ final class ContactsGroups {
         if (group.leader.equals(id)) {
             return fail(id, "leader", "Tu es le chef : ce sont les autres qui te suivent.");
         }
+        Offer offer = liveOffer(id);
+        if (offer != null && offer.from.equals(group.leader)) {
+            return acceptOffer(id); // 1.8.0 : le chef est en partie, « suivre » = entrer dans sa partie
+        }
         String where = contacts.serverOf(group.leader);
         if (where == null) {
             return fail(id, "offline", "Le chef du groupe n'est pas en ligne.");
@@ -699,12 +794,195 @@ final class ContactsGroups {
         return move(id, group, where) ? "ok" : "err:closed";
     }
 
+    // ------------------------------------------------------------------ parties (1.8.0, etape 3)
+
+    private static final long GROUP_OFFER_MILLIS = 120_000L;
+    private static final long INVITE_OFFER_MILLIS = 60_000L;
+
+    private Offer liveOffer(UUID id) {
+        Offer offer = offers.get(id);
+        if (offer != null && offer.expires <= System.currentTimeMillis()) {
+            offers.remove(id);
+            return null;
+        }
+        return offer;
+    }
+
+    /** Serveur ou ce membre doit aller : celui de la partie proposee par son chef, sinon celui du chef. */
+    private String target(UUID member, Group group) {
+        Offer offer = liveOffer(member);
+        return offer != null && offer.from.equals(group.leader) ? offer.server : contacts.serverOf(group.leader);
+    }
+
+    /** Demande au serveur du joueur de le faire entrer dans la partie proposee (il repondra par ggameget). */
+    private boolean sendGame(UUID id) {
+        Optional<ServerConnection> connection = server.getPlayer(id).flatMap(Player::getCurrentServer);
+        return connection.isPresent() && connection.get().sendPluginMessage(channel, "game".getBytes(StandardCharsets.UTF_8));
+    }
+
+    private void proposeGame(UUID id, Offer offer) {
+        offer.proposed = true;
+        Component line = prefix().append(Component.text(name(offer.from), NamedTextColor.WHITE))
+                .append(Component.text((offer.invite ? " t'invite dans sa partie" : " (chef) entre dans une partie")
+                        + (offer.label.isEmpty() ? "" : " (" + offer.label + ")") + " : ", NamedTextColor.GRAY))
+                .append(Component.text("/partie accepter", NamedTextColor.GREEN).clickEvent(ClickEvent.runCommand("/partie accepter")));
+        if (offer.invite) {
+            line = line.append(Component.text(" ou ", NamedTextColor.GRAY))
+                    .append(Component.text("/partie refuser", NamedTextColor.RED).clickEvent(ClickEvent.runCommand("/partie refuser")))
+                    .append(Component.text(" (60 s)", NamedTextColor.GRAY));
+        }
+        contacts.tell(id, line);
+    }
+
+    /** Partie decrite par un serveur Paper : jeu, reference, nom affiche, serveur ou l'on y entre. */
+    private Offer offer(UUID from, Map<String, String> params, boolean invite) {
+        String game = params.getOrDefault("game", "");
+        String ref = params.getOrDefault("ref", "");
+        String where = params.getOrDefault("server", "");
+        if (where.isBlank()) {
+            where = contacts.serverOf(from);
+        }
+        if (where == null || !game.matches("[a-z]{1,16}") || !ref.matches("[^\\s]{1,64}")) {
+            return null;
+        }
+        String label = Contacts.clean(params.getOrDefault("label", ""));
+        return new Offer(from, where, game, ref, label.length() > 40 ? label.substring(0, 40) : label,
+                System.currentTimeMillis() + (invite ? INVITE_OFFER_MILLIS : GROUP_OFFER_MILLIS), invite);
+    }
+
+    /**
+     * Un joueur vient d'entrer dans une partie (annonce par le plugin du jeu). S'il est chef d'un groupe, chaque membre
+     * connecte y entre avec lui : d'office, ou sur proposition (« me demander avant », membre en partie ou sur Serveur
+     * Jeux). Sans groupe, ou simple membre : rien.
+     */
+    private String announce(UUID id, Map<String, String> params) {
+        Group group = groupOf.get(id);
+        if (group == null || !group.leader.equals(id)) {
+            return "ok:ignored";
+        }
+        for (UUID member : new ArrayList<>(group.members)) {
+            if (member.equals(id) || server.getPlayer(member).isEmpty()) {
+                continue;
+            }
+            Offer offer = offer(id, params, false);
+            if (offer == null) {
+                return "err:bad";
+            }
+            offers.put(member, offer);
+            String memberServer = contacts.serverOf(member);
+            if (ContactsStore.FOLLOW_ASK.equals(contacts.store.get(member).follow) || activeGames.get(member).isPresent()
+                    || (memberServer != null && config.noJoin(memberServer))) {
+                proposeGame(member, offer);
+            } else if (offer.server.equals(memberServer)) {
+                if (!sendGame(member)) {
+                    proposeGame(member, offer);
+                }
+            } else {
+                follow(group, member, offer.server);
+            }
+        }
+        return "ok";
+    }
+
+    /** « Inviter dans ma partie » : l'invite a 60 s pour accepter (/partie accepter). */
+    private String inviteGame(UUID id, String targetName, Map<String, String> params) {
+        Optional<Player> found = server.getPlayer(targetName);
+        if (found.isEmpty() || contacts.store.get(found.get().getUniqueId()).invisible) {
+            return fail(id, "offline", targetName + " n'est pas en ligne.");
+        }
+        Player target = found.get();
+        UUID to = target.getUniqueId();
+        if (to.equals(id)) {
+            return fail(id, "self", "Tu ne peux pas t'inviter toi-même.");
+        }
+        ContactsStore.Profile me = contacts.store.get(id);
+        ContactsStore.Profile other = contacts.store.get(to);
+        if (me.blocked.contains(to)) {
+            return fail(id, "blocked", "Tu as bloqué ce joueur : /debloquer " + target.getUsername());
+        }
+        if (ContactsStore.MP_FRIENDS.equals(other.invites) && !other.friends.contains(id)) {
+            return fail(id, "friends-only", target.getUsername() + " n'accepte que les invitations de ses amis.");
+        }
+        Offer offer = offer(id, params, true);
+        if (offer == null) {
+            return fail(id, "bad", "Tu n'es pas dans une partie où l'on peut inviter.");
+        }
+        contacts.tell(id, info("Invitation envoyée à " + target.getUsername() + " (60 s pour répondre)."));
+        if (other.blocked.contains(id)) {
+            return "ok"; // bloque par ce joueur : rien n'arrive, et rien ne le lui apprend
+        }
+        offers.put(to, offer);
+        proposeGame(to, offer);
+        return "ok";
+    }
+
+    /** « /partie accepter » : le joueur va sur le serveur de la partie s'il n'y est pas, puis y entre. */
+    private String acceptOffer(UUID id) {
+        Offer offer = liveOffer(id);
+        if (offer == null) {
+            return fail(id, "none", "Aucune partie ne t'est proposée pour le moment.");
+        }
+        offer.confirmed = true;
+        if (offer.server.equals(contacts.serverOf(id))) {
+            return sendGame(id) ? "ok" : fail(id, "closed", "Impossible de rejoindre cette partie pour le moment.");
+        }
+        Optional<Player> player = server.getPlayer(id);
+        Optional<RegisteredServer> destination = server.getServer(offer.server);
+        if (player.isEmpty() || destination.isEmpty()) {
+            return fail(id, "closed", "Impossible de rejoindre cette partie pour le moment.");
+        }
+        pendingFollow.remove(id);
+        player.get().sendMessage(info("Tu rejoins " + name(offer.from) + " sur " + pretty(offer.server) + "."));
+        // A l'arrivee (onServerPostConnect), le serveur le fait entrer dans la partie.
+        player.get().createConnectionRequest(destination.get()).fireAndForget();
+        return "ok";
+    }
+
+    private String denyOffer(UUID id) {
+        Offer offer = liveOffer(id);
+        if (offer == null) {
+            return fail(id, "none", "Aucune partie ne t'est proposée pour le moment.");
+        }
+        offers.remove(id);
+        contacts.tell(id, info("Proposition refusée."));
+        if (offer.invite) {
+            contacts.tell(offer.from, info(name(id) + " a refusé ton invitation."));
+        }
+        return "ok";
+    }
+
+    /**
+     * Le serveur du joueur demande la partie ou le faire entrer (reponse au message « game »). En partie ailleurs, en
+     * « me demander avant » ou simple invitation : tant qu'il n'a pas accepte, il recoit la proposition et rien ne bouge.
+     * Reponse : « ok », puis une ligne « jeu TAB reference ».
+     */
+    private String gameGet(UUID id, boolean busy) {
+        Offer offer = liveOffer(id);
+        if (offer == null) {
+            return "err:none";
+        }
+        if (!offer.server.equals(contacts.serverOf(id))) {
+            return "err:elsewhere";
+        }
+        if (!offer.confirmed && (busy || offer.invite || ContactsStore.FOLLOW_ASK.equals(contacts.store.get(id).follow))) {
+            if (!offer.proposed) {
+                proposeGame(id, offer);
+            }
+            return "err:busy";
+        }
+        offers.remove(id);
+        joinedAt.put(id, System.currentTimeMillis());
+        return "ok\n" + offer.game + "\t" + offer.ref + "\n";
+    }
+
     // ------------------------------------------------------------------ deconnexions
 
     /** Deconnexion d'un joueur (appele sous verrou par Contacts). */
     void disconnected(UUID id, String username) {
         invites.remove(id);
         pendingFollow.remove(id);
+        offers.remove(id);
+        joinedAt.remove(id);
         Group group = groupOf.get(id);
         if (group == null) {
             return;
@@ -721,6 +999,8 @@ final class ContactsGroups {
         synchronized (contacts) {
             long now = System.currentTimeMillis();
             invites.values().removeIf(invite -> invite.expires() <= now);
+            offers.values().removeIf(offer -> offer.expires <= now);
+            joinedAt.values().removeIf(at -> now - at > 60_000L);
             for (Map.Entry<UUID, Long> entry : new ArrayList<>(offlineSince.entrySet())) {
                 if (now - entry.getValue() < OFFLINE_MILLIS) {
                     continue;

@@ -371,3 +371,31 @@ partie », lien avec « Rejouer ».
 
 **À déployer avec KLM_Contacts 1.1.0.** **Déployé sur le proxy le 09/10/2026 à 06:29 (LeKiwi06 ; 1.6.0 dans `_removed-kaliumrelay-1.6.0/`), actif après redémarrage du proxy. Statut : non testé en jeu** (logique
 essayée hors jeu avec un faux proxy et de faux joueurs : 64 cas pour les groupes, 32 pour les amis, tout passe).
+
+## 1.8.0 - contacts : le groupe entre en partie, invitations en partie (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « code l'étape 3 sans attendre le test » (étape 3 du cahier de KLM_Contacts : le groupe de jeu
+entre ensemble dans une partie, « Inviter dans ma partie », le groupe suit son chef quand il clique sur « Rejouer »).
+Empilé sur la 1.7.0 non testée : accord explicite de LeKiwi06.
+
+- **Le chef entre dans une partie** (annoncé par le plugin du jeu, `POST /contacts/ggame` : jeu, référence, nom affiché,
+  serveur où l'on y entre) : chaque membre connecté reçoit cette partie (2 minutes). Sur le même serveur et libre : son
+  serveur le fait entrer tout de suite. Sur un autre serveur : même règle que « suivre le chef » (déplacé d'office s'il
+  est libre), puis entrée dans la partie à l'arrivée. En « me demander avant », déjà en partie, ou sur Serveur Jeux :
+  proposition **`/partie accepter`** (cliquable), et rien ne bouge avant.
+- L'annonce d'un joueur qui n'est pas chef d'un groupe est ignorée (les plugins de jeu annoncent toutes les entrées).
+- **« Inviter dans ma partie »** (`ginvitegame`) : l'invité a 60 s ; `/partie accepter` l'amène sur le serveur de la
+  partie et l'y fait entrer, `/partie refuser` prévient l'inviteur. Mêmes refus que pour une invitation de groupe
+  (hors ligne ou invisible, « amis seulement », bloqué).
+- **Nouvelle commande du proxy `/partie accepter | refuser`**. `/groupe suivre` vaut `/partie accepter` quand le chef est
+  en partie.
+- L'entrée elle-même est faite par le serveur : message de plugin « game » sur `kalium:contacts`, auquel KLM_Contacts
+  1.2.0 répond par `ggameget` (`busy=true|false`) ; le proxy rend alors le jeu et la référence, une seule fois.
+- Une partie qui se joue ailleurs (Bingo, Build Battle) est annoncée avec le serveur où l'on y entre (kal-games) :
+  le départ du chef vers Kanvas juste après ne rappelle pas les membres, c'est la partie proposée qui les emmène.
+- Autres actions : `ggameaccept`, `ggamedeny` (menu), `whereami` (nom Velocity du serveur d'un joueur, demandé une fois
+  par chaque serveur). La réponse de `group` contient la partie proposée (ligne « O »).
+
+**À déployer avec KLM_Contacts 1.2.0** (puis KalGames 1.25.0, KG_Bingo 1.10.0, KG_BuildBattle 0.5.0 sur kal-games).
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu** (logique essayée hors jeu avec un faux proxy : 48 cas
+pour les parties, 64 pour les groupes, 32 pour les amis, tout passe).

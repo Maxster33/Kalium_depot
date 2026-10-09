@@ -5,6 +5,8 @@ api-version: '26.2'
 description: Partie Bingo du hub kal-games (creer / rejoindre une partie, transfert vers le serveur Bingo).
 authors: [KaLium]
 depend: [KalGames, KLM_Menu, KG_Menu, KG_ScoreBoards]
+# 1.10.0 : lien facultatif avec KLM_Contacts (groupes de jeu).
+softdepend: [KLM_Contacts]
 
 commands:
   bingo:

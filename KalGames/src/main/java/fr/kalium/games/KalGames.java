@@ -79,6 +79,17 @@ public final class KalGames extends JavaPlugin {
         admin = new AdminMenus(this, gui);
         instances = new InstanceManager(this);
         replay = new fr.kalium.games.game.ReplayService(this);
+        // 1.25.0 : groupes de jeu de KLM_Contacts (softdepend). Sans lui, ou avec une version sans cette fonction
+        // (avant la 1.2.0), rien ne change.
+        org.bukkit.plugin.Plugin klmContacts = getServer().getPluginManager().getPlugin("KLM_Contacts");
+        if (klmContacts != null) {
+            try {
+                contactsLink = fr.kalium.games.game.ContactsLink.create(this, klmContacts);
+            } catch (LinkageError | RuntimeException e) {
+                getLogger().warning("KLM_Contacts trop ancien (1.2.0 ou plus attendu) : les groupes de jeu ne suivent pas "
+                        + "leur chef en partie (" + e + ").");
+            }
+        }
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getPluginManager().registerEvents(new ConnectionListener(this), this);
@@ -233,6 +244,21 @@ public final class KalGames extends JavaPlugin {
 
     public ScoreBridge scores() {
         return scores;
+    }
+
+    /** 1.25.0 : a appeler a chaque entree d'un joueur dans une partie (lien avec KLM_Contacts), ou null. */
+    private java.util.function.BiConsumer<Player, fr.kalium.games.game.GameInstance> contactsLink;
+
+    /** 1.25.0 : un joueur vient d'entrer dans une partie ; son groupe de jeu (KLM_Contacts) le suit s'il en est le chef. */
+    public void contactsEntered(Player player, fr.kalium.games.game.GameInstance instance) {
+        if (contactsLink == null) {
+            return;
+        }
+        try {
+            contactsLink.accept(player, instance);
+        } catch (LinkageError | RuntimeException e) {
+            getLogger().warning("Annonce a KLM_Contacts impossible : " + e);
+        }
     }
 
     /** 1.24.0 : objet « Rejouer » de fin de partie (aussi utilise par KG_BuildBattle). */

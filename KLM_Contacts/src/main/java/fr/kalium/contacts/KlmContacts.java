@@ -31,9 +31,11 @@ import net.kyori.adventure.text.Component;
  * 1.1.0 - étape 2 « groupe de jeu » : les groupes vivent sur le proxy (KaliumRelay 1.7.0), qui fournit aussi les commandes
  * /groupe et /gc ; ici : le menu « Groupe de jeu », le réglage « Suivre le chef » et la réponse au proxy quand il demande
  * si un joueur est en partie avant de le déplacer avec son chef.
- * Invitations en partie et entrée du groupe en partie : étape 3 du cahier des charges, pas dans cette version.
+ * 1.2.0 - étape 3 « parties » : les plugins de jeu se déclarent ({@link fr.kalium.contacts.api.JeuDeGroupe}) et annoncent
+ * les entrées en partie ({@link #annoncer}) ; quand le proxy le demande (message « game »), le joueur entre dans la partie
+ * de son chef de groupe ou dans celle où il a été invité. Bouton « Inviter dans ma partie » sur la fiche d'un ami.
  */
-public final class KlmContacts extends JavaPlugin {
+public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Listener {
 
     /** 1.1.0 : canal des messages du proxy (KaliumRelay) vers ce plugin. */
     private static final String CANAL = "kalium:contacts";
@@ -43,6 +45,10 @@ public final class KlmContacts extends JavaPlugin {
     private Lang lang;
     private Relais relais;
     private Menus menus;
+    /** 1.2.0 : nom de CE serveur dans le velocity.toml, demandé une fois au proxy (null tant qu'il n'est pas connu). */
+    private String monServeur;
+    /** 1.2.0 : instant d'arrivée de chaque joueur sur ce serveur. */
+    private final Map<java.util.UUID, Long> arrivees = new java.util.HashMap<>();
 
     @Override
     public void onEnable() {
@@ -97,13 +103,135 @@ public final class KlmContacts extends JavaPlugin {
                 relais.appelerEnSilence(joueur, "gfollow", Map.of("busy", String.valueOf(enPartie(joueur))));
             } else if (texte.equals("groupe")) {
                 menus.groupe(joueur, null);
+            } else if (texte.equals("game")) {
+                entrerEnPartie(joueur); // 1.2.0
             }
         });
+        getServer().getPluginManager().registerEvents(this, this);
         lang.saveIfNeeded();
         if (getConfig().getString("relay-token", "").isBlank()) {
             getLogger().warning("relay-token est vide dans config.yml : les contacts sont indisponibles tant qu'il n'est pas "
                     + "rempli (même valeur que sur les autres plugins reliés au relais).");
         }
+    }
+
+    // ------------------------------------------------------------------ parties (1.2.0, étape 3)
+
+    @org.bukkit.event.EventHandler
+    public void onJoin(org.bukkit.event.player.PlayerJoinEvent event) {
+        Player joueur = event.getPlayer();
+        arrivees.put(joueur.getUniqueId(), System.currentTimeMillis());
+        if (monServeur == null && !getConfig().getString("relay-token", "").isBlank()) {
+            // Nom de ce serveur pour le proxy : demandé une fois, quand un joueur est là (2 s après son arrivée).
+            getServer().getScheduler().runTaskLater(this, () -> {
+                if (monServeur == null && joueur.isOnline()) {
+                    relais.appelerEnSilence(joueur, "whereami", Map.of(), reponse -> {
+                        if (reponse != null && reponse.ok() && !reponse.detail().isBlank()) {
+                            monServeur = reponse.detail();
+                        }
+                    });
+                }
+            }, 40L);
+        }
+    }
+
+    @org.bukkit.event.EventHandler
+    public void onQuit(org.bukkit.event.player.PlayerQuitEvent event) {
+        arrivees.remove(event.getPlayer().getUniqueId());
+    }
+
+    private fr.kalium.contacts.api.JeuDeGroupe jeu(String id) {
+        for (var service : getServer().getServicesManager().getRegistrations(fr.kalium.contacts.api.JeuDeGroupe.class)) {
+            if (service.getPlugin().isEnabled() && service.getProvider().id().equals(id)) {
+                return service.getProvider();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * API pour les plugins de jeu : ce joueur vient d'entrer dans une partie (voir {@link fr.kalium.contacts.api.JeuDeGroupe}).
+     * S'il est chef d'un groupe, le proxy y fait entrer ses membres ; sinon rien. Sans effet si le relais n'est pas réglé.
+     */
+    public void annoncer(Player joueur, String jeu, String reference, String libelle) {
+        if (joueur == null || !joueur.isOnline() || getConfig().getString("relay-token", "").isBlank()) {
+            return;
+        }
+        Map<String, String> parametres = new java.util.HashMap<>();
+        parametres.put("game", jeu);
+        parametres.put("ref", reference);
+        parametres.put("label", libelle == null ? "" : libelle);
+        if (monServeur != null) {
+            parametres.put("server", monServeur);
+        }
+        relais.appelerEnSilence(joueur, "ggame", parametres);
+    }
+
+    /** Partie privée où se trouve ce joueur et où il peut inviter : {jeu, référence, nom affiché}, ou null. */
+    String[] partieDe(Player joueur) {
+        for (var service : getServer().getServicesManager().getRegistrations(fr.kalium.contacts.api.JeuDeGroupe.class)) {
+            try {
+                String[] partie = service.getPlugin().isEnabled() ? service.getProvider().partieDe(joueur) : null;
+                if (partie != null && partie.length >= 2) {
+                    return new String[]{service.getProvider().id(), partie[0], partie[1]};
+                }
+            } catch (RuntimeException e) {
+                getLogger().warning("Partie de " + service.getPlugin().getName() + " illisible : " + e);
+            }
+        }
+        return null;
+    }
+
+    /** « Inviter dans ma partie » : le proxy prévient l'invité (60 s pour accepter) et dit le résultat dans le tchat. */
+    void inviterEnPartie(Player joueur, String cible) {
+        String[] partie = partieDe(joueur);
+        if (partie == null) {
+            dire(joueur, "partie.aucune", "<red>Tu n'es pas dans une partie privée où l'on peut inviter.");
+            return;
+        }
+        Map<String, String> parametres = new java.util.HashMap<>();
+        parametres.put("target", cible);
+        parametres.put("game", partie[0]);
+        parametres.put("ref", partie[1]);
+        parametres.put("label", partie[2]);
+        if (monServeur != null) {
+            parametres.put("server", monServeur);
+        }
+        relais.appeler(joueur, "ginvitegame", parametres, reponse -> { });
+    }
+
+    /**
+     * Message « game » du proxy : une partie attend ce joueur ici (celle de son chef de groupe, ou une invitation
+     * acceptée). On demande laquelle au proxy, en disant si le joueur est déjà en partie (il n'est alors pas déplacé
+     * tant qu'il n'a pas accepté), puis le plugin du jeu le fait entrer. Juste après son arrivée sur le serveur, on
+     * attend la remise à zéro du joueur par le hub.
+     */
+    private void entrerEnPartie(Player joueur) {
+        java.util.UUID id = joueur.getUniqueId();
+        long depuis = System.currentTimeMillis() - arrivees.getOrDefault(id, 0L);
+        getServer().getScheduler().runTaskLater(this, () -> {
+            Player present = getServer().getPlayer(id);
+            if (present == null) {
+                return;
+            }
+            relais.appelerEnSilence(present, "ggameget", Map.of("busy", String.valueOf(enPartie(present))), reponse -> {
+                if (reponse == null || !reponse.ok() || reponse.lignes().isEmpty()) {
+                    return;
+                }
+                String[] partie = reponse.lignes().get(0).split("\t", -1);
+                fr.kalium.contacts.api.JeuDeGroupe jeu = partie.length < 2 ? null : jeu(partie[0].trim());
+                if (jeu == null) {
+                    dire(present, "partie.introuvable", "<red>Cette partie n'est plus disponible.");
+                    return;
+                }
+                try {
+                    jeu.rejoindre(present, partie[1].trim());
+                } catch (RuntimeException e) {
+                    getLogger().warning("Entrée en partie (" + jeu.owner().getName() + ") impossible : " + e);
+                    dire(present, "partie.introuvable", "<red>Cette partie n'est plus disponible.");
+                }
+            });
+        }, depuis < 2000L ? 30L : 1L);
     }
 
     /** Le joueur est-il dans une partie (salle d'attente, jeu, spectateur) d'un plugin de ce serveur ? */

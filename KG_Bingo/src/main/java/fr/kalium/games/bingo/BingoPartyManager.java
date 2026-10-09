@@ -192,6 +192,7 @@ public final class BingoPartyManager {
         BingoParty party = byPlayer.get(player.getUniqueId());
         if (party != null) {
             pushAssignment(player.getUniqueId(), party);
+            plugin.contactsEntered(player, party); // 1.10.0 : le groupe de jeu de ce joueur le suit (KLM_Contacts)
         }
         String server = plugin.getConfig().getString("bingo.server-name", "kixster");
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();

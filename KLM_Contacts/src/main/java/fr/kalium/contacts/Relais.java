@@ -87,6 +87,11 @@ final class Relais {
         appeler(joueur, action, parametres, reponse -> { }, true);
     }
 
+    /** 1.2.0 - demande en arrière-plan dont on attend la réponse (null si le relais est indisponible). */
+    void appelerEnSilence(Player joueur, String action, Map<String, String> parametres, Consumer<Reponse> suite) {
+        appeler(joueur, action, parametres, suite, true);
+    }
+
     private void appeler(Player joueur, String action, Map<String, String> parametres, Consumer<Reponse> suite,
                          boolean silence) {
         String url = plugin.getConfig().getString("relay-url", "");
@@ -150,6 +155,9 @@ final class Relais {
         int maximum = 8;
         /** Pseudo de celui qui m'invite dans son groupe, ou null. */
         String invitePar;
+        /** 1.2.0 - partie proposée (celle du chef, ou invitation d'un joueur) : pseudo et nom du jeu, ou null. */
+        String partiePar;
+        String partieJeu = "";
 
         boolean existe() {
             return !membres.isEmpty();
@@ -183,6 +191,10 @@ final class Relais {
                         }
                         case "P" -> groupe.membres.add(new Membre(UUID.fromString(c[1]), c[2], c[3], Boolean.parseBoolean(c[4].trim())));
                         case "I" -> groupe.invitePar = c[2].trim();
+                        case "O" -> {
+                            groupe.partiePar = c[1].trim();
+                            groupe.partieJeu = c.length > 2 ? c[2].trim() : "";
+                        }
                         default -> {
                         }
                     }

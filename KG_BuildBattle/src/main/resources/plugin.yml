@@ -5,3 +5,5 @@ api-version: '26.2'
 description: Build Battle du hub kal-games (file publique, parties privees, envoi vers Kanvas ou se joue la partie).
 authors: [KaLium]
 depend: [KLM_Menu, KG_Menu, KalGames]
+# 0.5.0 : lien facultatif avec KLM_Contacts (groupes de jeu).
+softdepend: [KLM_Contacts]

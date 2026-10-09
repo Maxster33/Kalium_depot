@@ -201,3 +201,21 @@ Limite : si deux joueurs cliquent dans la même seconde, chacun peut créer sa p
 
 **À déployer avec KG_BingoGame 0.11.0** (sans lui, rien ne change : la clé n'est jamais déposée). **Compilé le
 09/10/2026. Statut : non testé en jeu.**
+
+## 1.10.0 - groupes de jeu de KLM_Contacts : le groupe suit son chef au Bingo (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « code l'étape 3 sans attendre le test » (étape 3 du cahier de KLM_Contacts : le groupe de jeu
+entre ensemble dans une partie, « Inviter dans ma partie », le groupe suit son chef quand il clique sur « Rejouer »).
+Empilé sur la 1.9.0 non testée : accord explicite.
+
+- Nouveau `ContactsLink` (chargé seulement si KLM_Contacts est installé : `softdepend`) : le Bingo se déclare à
+  KLM_Contacts (`JeuDeGroupe`, identifiant `bingo`, référence `code:<code>`).
+- Chaque joueur envoyé vers le serveur Bingo (`transferToBingo` : partie créée, rejointe par code, ou relancée par
+  « Rejouer ») est annoncé. Si c'est le chef d'un groupe, ses membres rejoignent la partie par kal-games, comme avec le
+  code (`KGBingo.groupJoin`), puis sont transférés.
+- Un membre qui est dans la salle d'attente d'après-partie de Serveur Jeux n'est pas déplacé d'office : il reçoit la
+  proposition `/partie accepter` (il a aussi l'objet « Rejoindre la partie de X »).
+- Partie pleine ou fermée : « Code invalide, partie pleine ou introuvable ».
+
+**À déployer après KLM_Contacts 1.2.0 et KaliumRelay 1.8.0.** **Compilé le 09/10/2026, non déployé. Statut : non testé
+en jeu.**

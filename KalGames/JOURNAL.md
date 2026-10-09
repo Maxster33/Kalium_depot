@@ -928,3 +928,23 @@ Limites : si l'arène d'origine n'est plus utilisable, une autre est tirée au h
 quand quelqu'un a relancé la partie (ensuite : liste des parties ou code).
 
 **À déployer avec KG_BuildBattle 0.4.0** (qui exige 1.24.0). **Compilé le 09/10/2026. Statut : non testé en jeu.**
+
+## 1.25.0 - groupes de jeu de KLM_Contacts : le groupe entre en partie avec son chef (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « code l'étape 3 sans attendre le test » (étape 3 du cahier de KLM_Contacts : le groupe de jeu
+entre ensemble dans une partie, « Inviter dans ma partie », le groupe suit son chef quand il clique sur « Rejouer »).
+Empilé sur la 1.24.0 non testée : accord explicite.
+
+- Nouveau `ContactsLink` (chargé seulement si KLM_Contacts est installé : `softdepend`) : les jeux du moteur se
+  déclarent à KLM_Contacts (`JeuDeGroupe`, identifiant `kalgames`).
+- **Chaque entrée d'un joueur dans une partie** (`InstanceManager.enter` : partie privée créée ou rejointe, file
+  publique, « Rejouer ») est annoncée à KLM_Contacts. Si ce joueur est chef d'un groupe, ses membres entrent dans la
+  même partie (même code) ou la même file ; pour les autres joueurs, rien ne se passe.
+- Références : `code:<code>` (partie privée), `public:<mini-jeu>` (file publique), `public:<mini-jeu>@<arène>` (Rush).
+- **« Inviter dans ma partie »** (fiche d'un ami dans KLM_Contacts) : possible quand on est dans une partie privée.
+- Un membre entre par le même chemin que le menu (`joinPrivate`, `joinPublic`) : partie pleine ou fermée, le motif
+  habituel lui est affiché.
+- Avec un KLM_Contacts sans cette fonction (avant la 1.2.0) : un avertissement au démarrage, rien d'autre ne change.
+
+**À déployer après KLM_Contacts 1.2.0 et KaliumRelay 1.8.0.** **Compilé le 09/10/2026, non déployé. Statut : non testé
+en jeu.**

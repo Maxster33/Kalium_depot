@@ -67,3 +67,22 @@ Limite : un joueur qui quitte Kanvas pendant l'annonce des résultats et revient
 aussi l'objet.
 
 **À déployer avec KalGames 1.24.0 et KV_BuildBattle 0.4.0.** **Compilé le 09/10/2026. Statut : non testé en jeu.**
+
+## 0.5.0 - groupes de jeu de KLM_Contacts : le groupe suit son chef au Build Battle (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « code l'étape 3 sans attendre le test » (étape 3 du cahier de KLM_Contacts : le groupe de jeu
+entre ensemble dans une partie, « Inviter dans ma partie », le groupe suit son chef quand il clique sur « Rejouer »).
+Empilé sur la 0.4.0 non testée : accord explicite.
+
+- Nouveau `LienContacts` (chargé seulement si KLM_Contacts est installé : `softdepend`) : le Build Battle se déclare à
+  KLM_Contacts (`JeuDeGroupe`, identifiant `buildbattle`).
+- Chaque joueur envoyé sur Kanvas est annoncé : `public:<taille des équipes>` (file publique) ou `code:<code>` (partie
+  privée), « Rejouer » compris. Si c'est le chef d'un groupe, ses membres sont envoyés dans la même file ou la même
+  partie, depuis kal-games.
+- Partie privée disparue ou complète : message au membre, il reste sur kal-games.
+
+Limite : en file publique, les membres rejoignent la file de la même taille d'équipes ; rien ne garantit qu'ils soient
+dans la même équipe que leur chef (les équipes se forment sur Kanvas).
+
+**À déployer après KLM_Contacts 1.2.0 et KaliumRelay 1.8.0.** **Compilé le 09/10/2026, non déployé. Statut : non testé
+en jeu.**

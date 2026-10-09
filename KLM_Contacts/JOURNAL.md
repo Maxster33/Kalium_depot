@@ -67,3 +67,26 @@ Pas dans cette version (étape 3 du cahier) : « Inviter dans ma partie », entr
 « Rejouer ».
 
 **À déployer avec KaliumRelay 1.7.0.** **Déployé sur les 6 serveurs Paper le 09/10/2026 à 06:29 (LeKiwi06 ; 1.0.0 dans `_removed-klm_contacts-1.0.0/`), actif après redémarrage de chaque serveur. Statut : non testé en jeu.**
+
+## 1.2.0 - étape 3 : parties (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « code l'étape 3 sans attendre le test » (étape 3 du cahier de KLM_Contacts : le groupe de jeu
+entre ensemble dans une partie, « Inviter dans ma partie », le groupe suit son chef quand il clique sur « Rejouer »).
+Empilé sur la 1.1.0 non testée : accord explicite.
+
+- **Nouvelle API `fr.kalium.contacts.api.JeuDeGroupe`** : un plugin de jeu s'y déclare (registre de services) avec un
+  identifiant (`kalgames`, `bingo`, `buildbattle`), sait faire entrer un joueur dans une partie à partir d'une
+  référence (`rejoindre`), et peut dire dans quelle partie privée se trouve un joueur (`partieDe`).
+- **`KlmContacts.annoncer(joueur, jeu, référence, nom affiché)`** : appelé par les jeux à chaque entrée en partie ; le
+  proxy (KaliumRelay 1.8.0) fait suivre les membres si ce joueur est chef d'un groupe.
+- Quand le proxy le demande (message « game »), le plugin demande la partie au relais en disant si le joueur est déjà
+  en partie, puis le plugin du jeu le fait entrer. Juste après une arrivée sur le serveur, il attend 1,5 s (remise à
+  zéro du joueur par le hub).
+- **Fiche d'un ami : « Inviter dans ma partie »**, quand je suis dans une partie privée d'un jeu déclaré (jeux du moteur
+  de KalGames).
+- **Menu « Groupe de jeu »** : partie proposée (celle du chef, ou une invitation) avec « Rejoindre la partie » /
+  « Refuser la partie ».
+- Le plugin demande une fois au proxy le nom Velocity de son serveur (au premier joueur connecté).
+
+**À déployer avec KaliumRelay 1.8.0** ; les jeux suivent avec KalGames 1.25.0, KG_Bingo 1.10.0 et KG_BuildBattle 0.5.0.
+**Compilé le 09/10/2026, non déployé. Statut : non testé en jeu.**

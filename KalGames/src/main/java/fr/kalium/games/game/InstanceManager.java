@@ -501,6 +501,7 @@ public final class InstanceManager {
             detach(player.getUniqueId(), current, false);
         }
         byPlayer.put(player.getUniqueId(), instance);
+        plugin.contactsEntered(player, instance); // 1.25.0 : le groupe de jeu de ce joueur le suit (KLM_Contacts)
         return null;
     }
 

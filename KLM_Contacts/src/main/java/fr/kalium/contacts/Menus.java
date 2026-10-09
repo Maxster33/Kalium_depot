@@ -149,6 +149,12 @@ final class Menus {
                         t("fiche.inviter-info", "<gray>S'il accepte, vous jouez en groupe (tu es le chef si tu n'as pas encore de groupe)."),
                         j -> relais.appeler(j, "ginvite", Map.of("target", ami.nom()), r -> { })));
             }
+            if (ami.enLigne() && plugin.partieDe(joueur) != null) {
+                // 1.2.0 : je suis dans une partie privée où l'on peut inviter.
+                boutons.add(gui.button(t("fiche.inviter-partie", "<gold>Inviter dans ma partie"),
+                        t("fiche.inviter-partie-info", "<gray>S'il accepte (60 s), il est amené sur ce serveur et entre dans ta partie."),
+                        j -> plugin.inviterEnPartie(j, ami.nom())));
+            }
             boutons.add(gui.button(t("fiche.retirer", "<yellow>Retirer des amis"), null,
                     j -> gui.confirm(j, t("fiche.retirer-titre", "<yellow>Retirer des amis"),
                             t("fiche.retirer-corps", "<gray>Retirer <white><nom></white> de tes amis ?", "nom", ami.nom()),
@@ -374,6 +380,17 @@ final class Menus {
             Consumer<Player> ici = j -> groupe(j, retour);
             List<ActionButton> boutons = new ArrayList<>();
             List<Component> corps = new ArrayList<>();
+            if (groupe.partiePar != null) {
+                // 1.2.0 : partie du chef du groupe, ou invitation d'un joueur dans sa partie.
+                corps.add(groupe.partieJeu.isEmpty()
+                        ? t("groupe.partie", "<white><nom></white> <gray>te propose de rejoindre sa partie.", "nom", groupe.partiePar)
+                        : t("groupe.partie-jeu", "<white><nom></white> <gray>te propose de rejoindre sa partie (<jeu>).",
+                        "nom", groupe.partiePar, "jeu", groupe.partieJeu));
+                boutons.add(gui.button(t("groupe.partie-accepter", "<green>Rejoindre la partie"), null,
+                        j -> agirGroupe(j, "ggameaccept", null, null)));
+                boutons.add(gui.button(t("groupe.partie-refuser", "<red>Refuser la partie"), null,
+                        j -> agirGroupe(j, "ggamedeny", null, ici)));
+            }
             if (!groupe.existe()) {
                 corps.add(t("groupe.aucun", "<gray>Tu n'es dans aucun groupe. Invite un joueur : dès qu'il accepte, le groupe "
                         + "est créé et tu en es le chef."));
