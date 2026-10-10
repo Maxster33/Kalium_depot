@@ -1272,8 +1272,8 @@ snowball;neige;0.01596;m;;;
 snowy_village_map;carte au trésor;1.999;-;;;
 soul_campfire;torche;0.1107;m;;;nether
 soul_lantern;torche;0.1128;m;;;nether
-soul_sand;sable des âmes;0.04322;m;;;nether
-soul_soil;sable des âmes;0.04322;m;;;nether
+soul_sand;sable;0.04322;m;;;nether
+soul_soil;terres;0.04322;m;;;nether
 soul_torch;torche;0.02393;m;;;nether
 spectral_arrow;flèche;0.1616;m;;;nether
 spider_eye;spider_eye;0.09766;m;;;

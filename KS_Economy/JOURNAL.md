@@ -417,3 +417,21 @@ une nether star ».
 - Aucun autre changement : reconnaissance des objets à la vente, prix, tirage, quota inchangés. Pas de nouveau texte.
 
 **Compilé le 09/10/2026 (`sortie/KS_Economy-1.5.1.jar`). Non déployé. Statut : non testé en jeu.**
+
+## 1.5.2 - barème : familles de la terre des âmes et du sable des âmes (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « ajoute la terre des ames aux terres , et le sables des ames aux sables » (rachats de la semaine
+et coffres de récompense : « Les deux »).
+
+- `rachats.csv` : la terre des âmes (`soul_soil`) passe dans la famille « terres » (terre, terre stérile, terre
+  racinaire, podzol, bloc d'herbe, mycélium) et le sable des âmes (`soul_sand`) dans la famille « sable » (sable, sable
+  rouge). La famille « sable des âmes » n'existe plus : 178 familles au lieu de 179. Seules ces 2 lignes changent.
+- Effet au tirage des rachats : ces deux blocs ne forment plus une famille à eux seuls ; ils sont tirés quand la
+  famille « terres » ou « sable » sort, parmi ses objets. Ils restent marqués « nether » : jamais tirés quand
+  KS_Dimensions ferme le Nether (le filtre porte sur l'objet, avant le choix de la famille).
+- Prix (0,04322 émeraude l'unité), reconnaissance à la vente, lots, quota : inchangés. Aucun changement de code.
+- Les rachats déjà tirés pour la semaine en cours ne sont pas refaits.
+- Contient la 1.5.1 (objets custom des rachats), jamais déployée : empilé sur une version non testée, à la demande de
+  LeKiwi06.
+
+**Compilé le 11/10/2026 (`sortie/KS_Economy-1.5.2.jar`). Non déployé. Statut : non testé en jeu.**

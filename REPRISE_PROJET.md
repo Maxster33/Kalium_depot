@@ -96,6 +96,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Economy 1.5.2** (11/10/2026, LeKiwi06) : barème des rachats, terre des âmes dans la famille « terres » et sable des âmes dans la famille « sable » ; contient la 1.5.1 (objets custom des rachats montrés par leur vrai objet), jamais déployée ; **compilé, non déployé, non testé en jeu**, réservation gardée. À envoyer sur Event et Kixster.
+
 
 
 
@@ -425,6 +427,8 @@ sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre par
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (11/10/2026, 01:55) : terre des âmes et sable des âmes : familles des rachats (KS_Economy 1.5.2) et butin des coffres de récompense ; compilé, prêt, non déployé, non testé.** Demande de LeKiwi06 : « ajoute la terre des ames aux terres , et le sables des ames aux sables », puis « Les deux » (rachats de la semaine et coffres de récompense). KS_Economy 1.5.2 : dans `rachats.csv`, `soul_soil` passe dans la famille « terres » et `soul_sand` dans la famille « sable » (la famille « sable des âmes » disparaît, 178 familles) ; prix inchangés, aucun changement de code ; contient la 1.5.1 jamais déployée. Coffres : `butin.yml` de KG_Rewards et de KV_Rewards régénérés hors dépôt (`sortie/rewards/butin/`) avec 4 entrées de plus dans la famille « Blocs » (4 x et 24 x de chacun des deux blocs, pools Commun et Peu commun) ; les fréquences de quelques niveaux bougent de 1 sur 1 000, valeurs moyennes inchangées ; vérifiés (aucune erreur). Avant l'envoi des `butin.yml` : comparer avec ceux des serveurs (le plugin réécrit le fichier quand une table est modifiée dans l'interface admin). Réservations gardées (KS_Economy, KG_Rewards, KV_Rewards) jusqu'au déploiement, en attente de l'accord de LeKiwi06.
 
 **Ajout (10/10/2026, 00:25) : récompenses automatiques du 09/10 au soir à redonner sur Kixster ; fichier posé, commande à lancer par LeKiwi06.** Demande de LeKiwi06 : « donne les récompenses de ce soir sur kixster ». Journaux de Kal-Games lus : 16 récompenses automatiques sont parties vers la boîte d'Event entre 19:42 et 00:14 (Kal-Games n'a redémarré qu'à 00:19 avec `boite: kixster`) : LeKiwi06 : paliers de 900 points aux Piliers de la Fortune (mois et permanent, 19:42) et de 6 000 points au général (permanent, 00:10), 23 émeraudes ; valoux20 : top 50 % général (19:43), paliers de 100 points aux Piliers et au général (mois et permanent, 23:58), top 5 aux Piliers (00:03) et à Hide and Seek (00:13), paliers de 200 points au général (mois et permanent, 00:14), 19,5 émeraudes ; .MRMister7866 : palier de 5 000 points au Bingo (mois, 21:32), 10 émeraudes ; .PatientLime2170 : paliers de 500 points à Hide and Seek (mois et permanent) et de 8 000 points au général (mois), 00:10, 25 émeraudes. Aucune sur Kanvas. Pas de console : un `rattrapage.yml` posé sur Kal-Games à 00:23 contient un coffre par joueur (valeur moyenne de ses récompenses, 9 piles) plus le coffre de Maaxster, pas encore lancé à ce moment-là ; une seule commande envoie les 5 : `/kgrewards rattrapage kixster` puis `confirmer`. Choix de Claude signalés : un coffre par joueur au lieu d'un coffre par récompense (comme le rattrapage du 09/10) ; contenu tiré à nouveau ; les 16 récompenses restent aussi dans la boîte d'Event. Redémarrages lus (« j'ai restart les serveurs ») : Kixster 23:53 (KS_CoffreMort 1.0.3), Kanvas 23:53, Kal-Games 00:19, aucune erreur. Réservation libérée.
 
