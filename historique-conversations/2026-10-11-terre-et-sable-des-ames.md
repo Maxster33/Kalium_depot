@@ -157,6 +157,8 @@ les deux ? » : « Les deux ».
 
 - LeKiwi06 : « oui déploie tout », puis « att stop » (rien n'a été envoyé), puis : « fait en sorte qu'on puisse avoir un concours de build en cours pendant que le précédent est en phase de votes , essaie aussi de reduire tout les sidebar trop long , sur kanvas , mais aussi pour kixster " exploration journalière : 10 / 10 " est bien trop long " exploration : 0/10 " suffit ».
 - KV_Plots 1.7.0 + KV_Menu 1.4.0 (Kanvas, ensemble) et KS_Tableau 1.0.1 (Kixster) : compilés, poussés, non déployés.
+- Puis : « pour les lignes trop longues comme un thème de build , rend le déroulant de la meme façon que la boss bar
+  dans le lobby » : thème du concours et titre du plot défilent dans le tableau de Kanvas (KV_Plots 1.7.0 revu).
 
 ## Reste à faire
 

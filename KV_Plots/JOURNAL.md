@@ -25,7 +25,15 @@ Demande de LeKiwi06 : « fait en sorte qu'on puisse avoir un concours de build e
     minutes. Un concours en construction et un concours en votes s'affichent ensemble (3 lignes).
   - « Ancien concours : thème » → « Ancien concours » ; « État : travaux en cours » → « État : travaux » ;
     « Note globale : » → « Note : ».
-  - Non raccourcis : le titre du plot et le thème du concours (écrits par les joueurs et le staff), les pseudos.
+  - **Texte qui défile** (demande suivante de LeKiwi06, le même jour, avant tout déploiement : « pour les lignes trop
+    longues comme un thème de build , rend le déroulant de la meme façon que la boss bar dans le lobby ») : le thème du
+    concours et le titre du plot, écrits par le staff et les joueurs, défilent quand ils dépassent leur place (une ligne
+    de 26 caractères, libellé compris). Comme le texte défilant de KLM_Hub : un caractère tous les 3 ticks, un arrêt
+    de 3 secondes quand le début du texte est affiché, 4 espaces avant son retour ; les couleurs « & » sont gardées.
+    Un texte qui tient dans sa place ne bouge pas.
+  - Pour cela, le tableau n'est plus recréé toutes les 2 secondes : seulement quand son nombre de lignes change ;
+    sinon ses lignes sont réécrites en place, et les lignes qui défilent toutes les 3 ticks.
+  - Non raccourcis : les pseudos (créateur, éditeurs).
 - Contient la 1.6.0 (points de notes au carré), jamais déployée.
 
 À déployer avec KV_Menu 1.4.0 (son menu des concours utilise la nouvelle API).
