@@ -85,3 +85,18 @@ déploiement (la clé y existe déjà).
 `prix.claim: 0`). Statut : non testé en jeu.**
 
 **Envoyé sur Kixster le 09/10/2026 à 17:31 (LeKiwi06, envoi groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_KaliumGive 1.9.0, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.4.0, KS_Claim 1.2.0 ; demande de LeKiwi06 : « envoie la catégorie 7 sur kixster » ; 2.0.1 ; 1.0.0 et son `config.yml` dans `_removed-ks_jetons-1.0.0/` ; `config.yml` du serveur remplacé par celui de la 2.0.1 (`prix.tp: 20`, `prix.claim: 0` ; l'ancien avait tous les prix à 0) ; `jetons.yml` contenait 2 jetons de téléportation de LeKiwi06, repris par la 2.0 au démarrage), actif après redémarrage de Kixster. Jars en place vérifiés identiques aux références avant l'envoi. Statut : non testé en jeu.**
+
+## 2.0.2 - description du jeton de localisation (11/10/2026, LeKiwi06)
+
+Signalé par Claude en expliquant l'usage du jeton à LeKiwi06, qui a répondu « oui corrige le texte » : la description du
+jeton de localisation disait « À ranger dans tes jetons : /jetons », comme les autres jetons, alors qu'il ne sert pas
+depuis l'inventaire spécial : il s'utilise en main (clic droit : la magnétite est enregistrée dans un emplacement,
+KS_Teleport).
+
+- Jeton de localisation : dernière ligne de la description = « Clic droit, jeton en main, pour l'utiliser ». Les autres
+  jetons gardent « À ranger dans tes jetons : /jetons ».
+- Aucun autre changement. KS_Teleport n'est pas à recompiler (il prend la description de ce plugin).
+- Les jetons de localisation déjà fabriqués gardent l'ancienne ligne (elle est écrite dans l'objet) ; un jeton neuf ne
+  s'empile donc pas avec un ancien de la même magnétite.
+
+**Compilé le 11/10/2026 (`sortie/KS_Jetons-2.0.2.jar`). Non déployé. Statut : non testé en jeu.**

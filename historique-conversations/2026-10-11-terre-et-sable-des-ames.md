@@ -1,6 +1,6 @@
 # 2026-10-11 — Terre des âmes et sable des âmes : familles des rachats et butin des coffres
 
-- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI, KS_Decapitator, KS_Crafts
+- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI, KS_Decapitator, KS_Crafts, KS_Jetons
 - Versions avant / après : KS_Economy 1.5.0 en service (1.5.1 jamais déployée) / 1.5.2 déployée sur Event et
   Kixster ; KG_Rewards 1.3.0 et KV_Rewards 1.3.0 inchangés (`butin.yml` remplacés)
 
@@ -99,6 +99,11 @@ les deux ? » : « Les deux ».
   joueur sur Kixster ; à vérifier dans le livre de recettes d’un établi.
 - Usage d’un badge et d’un jeton de localisation expliqué à LeKiwi06 (rien de modifié). Signalé : la description du
   jeton de localisation dit de le ranger dans ses jetons, alors qu’il s’utilise en main (clic droit).
+
+## Description du jeton de localisation
+
+- « oui corrige le texte » (LeKiwi06) : KS_Jetons 2.0.2, « Clic droit, jeton en main, pour l'utiliser ». Compilé,
+  poussé, non déployé.
 
 ## Reste à faire
 

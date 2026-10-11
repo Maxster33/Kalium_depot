@@ -238,8 +238,9 @@ public final class KSJetons extends JavaPlugin implements Listener {
         ItemStack item = new ItemStack(Material.KNOWLEDGE_BOOK);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(texte(type.nom, NamedTextColor.AQUA));
-        meta.lore(List.of(texte(type.effet, NamedTextColor.GRAY),
-                texte("À ranger dans tes jetons : /jetons", NamedTextColor.DARK_GRAY)));
+        // 2.0.2 (LeKiwi06) : le jeton de localisation ne sert pas depuis l'inventaire spécial, il s'utilise en main.
+        meta.lore(List.of(texte(type.effet, NamedTextColor.GRAY), texte(type == Type.LOCALISATION
+                ? "Clic droit, jeton en main, pour l'utiliser" : "À ranger dans tes jetons : /jetons", NamedTextColor.DARK_GRAY)));
         meta.setItemModel(NamespacedKey.minecraft(type.modele));
         meta.setEnchantmentGlintOverride(true);
         meta.setMaxStackSize(64);

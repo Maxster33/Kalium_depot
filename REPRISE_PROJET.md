@@ -96,6 +96,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Jetons 2.0.2** (11/10/2026, LeKiwi06) : description du jeton de localisation (« Clic droit, jeton en main, pour l'utiliser » au lieu de « À ranger dans tes jetons : /jetons ») ; **compilé, non déployé, non testé en jeu**, réservation gardée.
+
 - **KS_Crafts 1.12.0** (11/10/2026, LeKiwi06) : une pièce d'armure (casque, plastron, jambières, bottes ; fer, or, cuivre, cotte de mailles) fondue au four ou au haut fourneau donne un lingot au lieu d'une pépite ; outils, armes et armure de cheval inchangés ; **compilé, non déployé, non testé en jeu**, réservation gardée.
 
 - **KS_Economy 1.6.0** (11/10/2026, LeKiwi06) : `/accepter` accepte une demande d'échange ; un joueur garde une demande par demandeur et, s'il en a de plusieurs joueurs, un menu en coffre lui fait choisir laquelle accepter ; **compilé, non déployé, non testé en jeu**, réservation gardée.
@@ -435,6 +437,8 @@ sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre par
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (11/10/2026, 07:14) : KS_Jetons 2.0.2 compilée, non déployée, non testée : description du jeton de localisation.** Accord de LeKiwi06 (« oui corrige le texte ») : la description disait de ranger le jeton dans l'inventaire spécial, alors qu'il s'utilise en main. Les jetons déjà fabriqués gardent l'ancienne ligne. Réservation gardée jusqu'au déploiement.
 
 **Ajout (11/10/2026, 07:09) : jetons non empilables sur Bedrock : correspondance Geyser corrigée dans le dépôt, non envoyée sur le proxy ; recette de la Clé de l’End : débloquée côté serveur.** Signalements de LeKiwi06 : « les joueurs bedrock ne peuvent pas stacker leurs jetons » ; « je n’ai pas débloqué le craft de la clé de l’end alors que j’ai eu plusieurs items du craft ». (1) Jetons : livres de connaissances dont le serveur porte la pile à 64 ; la correspondance Geyser ne le disait pas, donc pile de 1 sur Bedrock ; `"components": {"minecraft:max_stack_size": 64}` ajouté aux 5 jetons de `geyser-bedrock/custom_mappings/kalium_objets.json` (pack inchangé, 1.3.0). À envoyer sur le proxy (redémarrage du proxy). Même défaut signalé, non corrigé : Clé de l’End, Bedrock Breaker, Fragment et Cœur de Spawner, Changeur de Biome. (2) Clé de l’End : le fichier du joueur sur Kixster (lu en lecture seule) contient `ks_crafts:cle_de_l_end` parmi 28 recettes de KS_Crafts connues : le déblocage a bien eu lieu, c’est l’affichage qui est en cause (recette à 9 ingrédients : visible dans le livre de l’établi, pas dans celui de l’inventaire ; à confirmer par LeKiwi06).
 
