@@ -63,3 +63,11 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   ligne. Le niveau d'un badge est dans son nom (même image pour tous les niveaux). Envoyé sur le proxy le 08/10/2026 à
   19:40 (1.2.0 dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.2.0/` ; supprimable par l'humain :
   `_removed-kalium-objets-1.0.0/`) ; actif après redémarrage du proxy. **Non testé.**
+- **Correspondance seule, sans nouveau pack (11/10/2026, LeKiwi06)** : signalement de LeKiwi06, « les joueurs bedrock ne
+  peuvent pas stacker leurs jetons ». Cause : un jeton est un livre de connaissances (pile de 1) dont le serveur porte la
+  pile à 64 ; Geyser ne reprend pas ce réglage tout seul, donc l'objet Bedrock gardait une pile de 1. Correction :
+  `"components": {"minecraft:max_stack_size": 64}` sur les 5 jetons de `kalium_objets.json` (format des
+  correspondances de Geyser, version 2). Les images ne changent pas : pack 1.3.0 gardé, pas de nouveau `.mcpack`.
+  Les badges restent à 1 (ils ne s'empilent pas non plus sur Java). **Même défaut, non corrigé, signalé** : Clé de
+  l'End, Bedrock Breaker, Fragment de Spawner, Cœur de Spawner et Changeur de Biome s'empilent par 64 sur Java et pas
+  sur Bedrock. **Non envoyé sur le proxy. Non testé.**

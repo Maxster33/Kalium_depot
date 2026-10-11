@@ -91,8 +91,18 @@ les deux ? » : « Les deux ».
   une pépite , ça redonnerai de l'utilité a cette fonctionnalité ».
 - KS_Crafts 1.12.0 : compilé, poussé, non déployé. Détail : `KS_Crafts/JOURNAL.md`.
 
+## Jetons sur Bedrock, recette de la Clé de l’End, usage des badges
+
+- « les joueurs bedrock ne peuvent pas stacker leurs jetons » : `geyser-bedrock/custom_mappings/kalium_objets.json`
+  corrigé (pile de 64 déclarée pour les 5 jetons), poussé, non envoyé sur le proxy.
+- « je n’ai pas débloqué le craft de la clé de l’end » : la recette est dans les recettes connues de son fichier de
+  joueur sur Kixster ; à vérifier dans le livre de recettes d’un établi.
+- Usage d’un badge et d’un jeton de localisation expliqué à LeKiwi06 (rien de modifié). Signalé : la description du
+  jeton de localisation dit de le ranger dans ses jetons, alors qu’il s’utilise en main (clic droit).
+
 ## Reste à faire
 
+- Envoyer `kalium_objets.json` sur le proxy, sur accord de LeKiwi06 (redémarrage du proxy : tout le réseau).
 - Déploiement de KS_Crafts 1.12.0, sur accord de LeKiwi06 ; lire la console au démarrage (6 recettes remplacées) ;
   test : fondre un casque en fer, une pioche en fer, une armure de cheval.
 - Déploiement de KS_Economy 1.6.0, sur accord de LeKiwi06 ; test à trois joueurs (deux demandes vers le même).
