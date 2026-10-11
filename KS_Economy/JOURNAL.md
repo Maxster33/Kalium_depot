@@ -596,4 +596,10 @@ Limites :
 - Contient la 1.7.1 (jamais déployée) et la 1.7.0 (déployée le 11/10/2026, non testée en jeu) : empilé à la demande de
   LeKiwi06.
 
-**Compilé le 12/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster et Event le 12/10/2026 à 01:17 (LeKiwi06 ; accord : « oui déploie tout » ; jar en place vérifié identique à `jars-deployes/` sur les deux serveurs avant l'envoi ; 1.7.0 dans `_removed-ks_economy-1.7.0/` ; supprimables par l'humain : sur Kixster `_removed-ks_economy-1.3.0/`, `1.4.0/`, `1.4.1/`, `1.5.0/`, `1.5.2/` ; sur Event `_removed-ks_economy-1.0.0/` à `1.5.0/`, 15 dossiers), actif après redémarrage de chaque serveur. Statut : non testé en jeu.**
+
+Offres de la semaine 42 qui seront remplacées au redémarrage (objets au prix modifié) : sur Kixster `waxed_oxidized_chiseled_copper`, `dripstone_block`, `brown_egg`, `cinnabar_brick_wall`, `diorite_wall` ; sur Event `straw_bed`, `string`, `raw_copper` (ligne « objets au prix modifié remplacés » de la console).
+
+Décision de LeKiwi06 le même jour : la perle de l'Ender reste à 0,5 (« ils ne savent pas pour l'endermite, donc aucune raison que la valeur de la perle grimpe »).
+
+Ventes de cinabre avant la correction (Kixster, 12/10 de 00:09 à 00:30, `cinnabar_brick_wall` à 10 pour 1 point ; journal du serveur et `rachats.yml`) : 316 points pour 3 160 murets, 3 joueurs. Demande de LeKiwi06 : « retire aussi les points obtenus via le cinabre » : à faire dans `comptes.yml`, serveur éteint (pas de commande d'administration des soldes).

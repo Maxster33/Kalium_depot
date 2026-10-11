@@ -1,7 +1,7 @@
 # 2026-10-12 — Barème corrigé après les premiers rachats
 
 - Plugin(s) concerné(s) : KS_Economy
-- Versions avant / après : 1.7.0 en service (Kixster et Event) / 1.8.0 compilée, non déployée (contient la 1.7.1)
+- Versions avant / après : 1.7.0 en service (Kixster et Event) / 1.8.0 déployée sur les deux le 12/10/2026 à 01:17 (contient la 1.7.1)
 
 ## Demandé
 
@@ -28,9 +28,17 @@ les items qui ont été modifiés, on tire un nouvel objet à la place ».
   colorant blanc au prix de la poudre d'os ; coussin = 1,5 laine ; `straw_bed` = 0,75 botte de foin.
 - Catégories 1 à 4 de la liste validées telles que proposées ; reste de la catégorie 6 validé tel quel.
 
+## Déploiement (12/10/2026, 01:17)
+
+Accord de LeKiwi06 : « oui déploie tout ». KS_Economy 1.8.0 sur Kixster et Event, 1.7.0 dans
+`_removed-ks_economy-1.7.0/`, jars en place vérifiés identiques à `jars-deployes/` avant l'envoi. Active après
+redémarrage ; non testée en jeu. Perle de l'Ender laissée à 0,5 (« ils ne savent pas pour l'endermite »).
+
 ## Reste à faire
 
-- Déployer KS_Economy 1.8.0 sur Kixster et Event (accord de LeKiwi06 attendu), puis tester en jeu.
-- Perle de l'Ender / endermite : baisser l'améthyste bourgeonnante (250) ou sa part dans le tirage de l'endermite ?
+- Tester en jeu ; lire la ligne « objets au prix modifié remplacés » de la console après le redémarrage.
+- Retirer les points gagnés avec le cinabre sur Kixster (demande de LeKiwi06 : « retire aussi les points obtenus via
+  le cinabre ») : 316 points, 3 joueurs (journal du serveur du 12/10, 00:09 à 00:30) ; `comptes.yml` à modifier serveur
+  éteint.
 - Silex (0,029) à 2,9 fois le gravier (0,01) ; fiole de miel à 0,05 au lieu de 0,06.
 - Tables de butin des coffres de récompense (`butin.yml`) : calculées avec l'ancien barème, à régénérer ou non.
