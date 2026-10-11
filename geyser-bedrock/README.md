@@ -79,3 +79,11 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   Clé de l'End, le Bedrock Breaker, le Fragment et le Cœur de Spawner et le Changeur de Biome (11 objets empilables sur
   16 ; l'Estomac du gardien et les badges restent à 1, comme sur Java). Pack 1.4.0 inchangé. **Envoyé sur le proxy le 11/10/2026 à 10:47 (LeKiwi06 ; `kalium_objets.json` seul ; celui de 09:00 dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.4.0-correspondance/`), actif après redémarrage du proxy. Non testé.**
 
+- **Réglage de pile retiré, en test (11/10/2026, Maxster33)** : après le redémarrage du proxy de 15:05, un téléphone
+  Android restait bloqué au chargement des packs (côté proxy : aucune erreur, Geyser charge les 17 objets ; le
+  téléphone abandonne seul, « Bedrock client disconnected »). Le pack 1.4.0 a été vérifié (identique au 1.3.0 à part
+  le Cristal de purification) ; seule autre nouveauté depuis le 10/10, où Bedrock fonctionnait : les 11
+  `"minecraft:max_stack_size": 64`. Retirés de `kalium_objets.json` (pack 1.4.0 inchangé). **Envoyé sur le proxy le
+  11/10/2026 à 15:25 (Maxster33 ; l'ancien dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.4.0-pile64/`),
+  actif après redémarrage du proxy. En attente du test** : si le téléphone entre, le réglage de pile est la cause et
+  les objets reviennent à une pile de 1 sur Bedrock.
