@@ -1,6 +1,6 @@
 # 2026-10-11 — Terre des âmes et sable des âmes : familles des rachats et butin des coffres
 
-- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI, KS_Decapitator
+- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI, KS_Decapitator, KS_Crafts
 - Versions avant / après : KS_Economy 1.5.0 en service (1.5.1 jamais déployée) / 1.5.2 déployée sur Event et
   Kixster ; KG_Rewards 1.3.0 et KV_Rewards 1.3.0 inchangés (`butin.yml` remplacés)
 
@@ -85,8 +85,16 @@ les deux ? » : « Les deux ».
   (2.11.3) parle Java 26.2, ViaBackwards remplace ce qui n'existe pas en 26.2 ; le passage de Geyser en 26.3
   (GeyserMC/Geyser#6712) était encore ouvert le 11/10/2026. Rien à corriger de notre côté.
 
+## Fonte des pièces d'armure
+
+- Demande de LeKiwi06 : « j'aimerai également que le fait de faire fondre des pieces d'armure donne un lingot et pas
+  une pépite , ça redonnerai de l'utilité a cette fonctionnalité ».
+- KS_Crafts 1.12.0 : compilé, poussé, non déployé. Détail : `KS_Crafts/JOURNAL.md`.
+
 ## Reste à faire
 
+- Déploiement de KS_Crafts 1.12.0, sur accord de LeKiwi06 ; lire la console au démarrage (6 recettes remplacées) ;
+  test : fondre un casque en fer, une pioche en fer, une armure de cheval.
 - Déploiement de KS_Economy 1.6.0, sur accord de LeKiwi06 ; test à trois joueurs (deux demandes vers le même).
 - Déploiement de KS_RewardsGUI 1.5.0 avec `fusion.yml`, sur accord de LeKiwi06 ; test : deux coffres non ouverts,
   un coffre ouvert (refus), pas assez de points d'expérience, Java et Bedrock.

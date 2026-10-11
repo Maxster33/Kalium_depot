@@ -226,3 +226,32 @@ Limite : le résultat affiché reste le crâne de wither squelette, même pour u
 résultat apparaît en posant les objets). Affichage chez les joueurs Bedrock : non vérifié.
 
 **Déployé sur Kixster et Event le 09/10/2026 à 00:39 (LeKiwi06 ; 1.10.0 dans `_removed-ks_crafts-1.10.0/`), actif depuis le redémarrage de 00:46 (journaux : 44 crafts, aucun avertissement). Statut : non testé en jeu.**
+
+## 1.12.0 - une pièce d'armure fondue donne un lingot (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « j'aimerai également que le fait de faire fondre des pieces d'armure donne un lingot et pas une
+pépite , ça redonnerai de l'utilité a cette fonctionnalité ».
+
+- **Casque, plastron, jambières, bottes** en fer, en or, en cuivre et en cotte de mailles : fondus au four ou au haut
+  fourneau, ils donnent **1 lingot** (fer, or, cuivre ; cotte de mailles : fer) au lieu d'une pépite. Même durée et
+  même expérience qu'avant ; l'usure de la pièce ne compte pas (comme en vanilla).
+- **Inchangé** : outils, armes et armure de cheval donnent toujours une pépite.
+- Comment : les recettes de fonte du jeu (une de four et une de haut fourneau par métal) sont lues au démarrage,
+  retirées, puis remises en deux recettes chacune : les pièces d'armure vers le lingot, le reste vers la pépite. Elles
+  sont de vraies recettes de four (trémies, livre de recettes du four, plusieurs lingots qui s'empilent en sortie).
+  Lues dans le jeu et non recopiées : une pièce ajoutée par une version future suivra.
+- Console au démarrage : « Fonte des armures : n recettes du jeu remplacées » (6 attendues), ou un avertissement si
+  aucune n'est trouvée (rien n'est alors changé).
+- Livre de recettes : ces recettes se débloquent comme les autres crafts du plugin, dès qu'on obtient un de leurs
+  objets ; un joueur qui avait déjà débloqué la recette vanilla la retrouve en reprenant un de ces objets.
+
+Choix de Claude, signalés : « pièces d'armure » = les 4 pièces portées par un joueur, pas l'armure de cheval ni les
+outils ; le cuivre et la cotte de mailles sont compris.
+
+À savoir : une pièce d'armure lâchée par un monstre (zombie, squelette) vaut maintenant un lingot une fois fondue, soit
+9 fois plus qu'avant. Écrit sans serveur de test : les noms et le contenu des recettes du jeu sont lus au démarrage,
+à vérifier dans la console.
+
+Empilé sur la 1.11.0, jamais testée en jeu, à la demande de LeKiwi06.
+
+**Compilé le 11/10/2026 (`sortie/KS_Crafts-1.12.0.jar`). Non déployé. Statut : non testé en jeu.**

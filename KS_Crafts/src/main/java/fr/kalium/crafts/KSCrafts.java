@@ -36,6 +36,7 @@ import java.util.Map;
  * 1.7.0 : les recettes des spawners prennent les têtes de KS_Decapitator (voir onEnable).
  * 1.10.0 (LeKiwi06) : plus de brassage au bloc de verrue (« une erreur ») et verrue du Nether refusée à l'alambic :
  * les potions ne viennent plus que du butin et de /rewards ; boîte de shulker fabriquée avec un coffre de l'Ender.
+ * 1.12.0 (LeKiwi06) : une pièce d'armure fondue au four donne un lingot, plus une pépite (voir fonteDesArmures).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -183,6 +184,8 @@ public final class KSCrafts extends JavaPlugin implements Listener {
         shulker.setIngredient('E', Material.ENDER_CHEST);
         add(shulker);
 
+        fonteDesArmures();
+
         getLogger().info(added.size() + " crafts ajoutés.");
         // Joueurs déjà connectés (rechargement du plugin) qui ont un ingrédient d'une recette du livre.
         Bukkit.getOnlinePlayers().forEach(this::livreDeRecettes);
@@ -191,6 +194,69 @@ public final class KSCrafts extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         added.forEach(Bukkit::removeRecipe);
+    }
+
+    // ------------------------------------------------------------------ fonte des armures
+
+    private static final Map<Material, Material> LINGOTS = Map.of(Material.IRON_NUGGET, Material.IRON_INGOT,
+            Material.GOLD_NUGGET, Material.GOLD_INGOT, Material.COPPER_NUGGET, Material.COPPER_INGOT);
+
+    /** Casque, plastron, jambières ou bottes. */
+    private static boolean armure(Material objet) {
+        String nom = objet.name();
+        return nom.endsWith("_HELMET") || nom.endsWith("_CHESTPLATE") || nom.endsWith("_LEGGINGS") || nom.endsWith("_BOOTS");
+    }
+
+    /**
+     * 1.12.0 (LeKiwi06, 11/10/2026 : « j'aimerai également que le fait de faire fondre des pieces d'armure donne un lingot
+     * et pas une pépite, ça redonnerai de l'utilité a cette fonctionnalité »). Le jeu a une recette de four et une de
+     * haut fourneau par métal (fer, or, cuivre), qui change en pépite les outils, les armes, les armures et l'armure
+     * de cheval. Chacune est remplacée par deux recettes de même durée et de même expérience : les pièces d'armure
+     * (casque, plastron, jambières, bottes ; cotte de mailles comprise) donnent un lingot, le reste garde sa pépite.
+     * Les recettes sont lues dans le jeu, pas recopiées : un objet ajouté par une version future suit sa recette.
+     */
+    private void fonteDesArmures() {
+        List<org.bukkit.inventory.CookingRecipe<?>> recettes = new ArrayList<>();
+        Bukkit.recipeIterator().forEachRemaining(r -> {
+            if ((r instanceof org.bukkit.inventory.FurnaceRecipe || r instanceof org.bukkit.inventory.BlastingRecipe)
+                    && r instanceof org.bukkit.inventory.CookingRecipe<?> cuisson
+                    && NamespacedKey.MINECRAFT.equals(cuisson.getKey().getNamespace())
+                    && LINGOTS.containsKey(cuisson.getResult().getType())
+                    && cuisson.getInputChoice() instanceof RecipeChoice.MaterialChoice choix
+                    && choix.getChoices().stream().anyMatch(KSCrafts::armure)) {
+                recettes.add(cuisson);
+            }
+        });
+        for (org.bukkit.inventory.CookingRecipe<?> recette : recettes) {
+            List<Material> entrees = ((RecipeChoice.MaterialChoice) recette.getInputChoice()).getChoices();
+            List<Material> armures = entrees.stream().filter(KSCrafts::armure).toList();
+            List<Material> autres = entrees.stream().filter(m -> !armure(m)).toList();
+            Material pepite = recette.getResult().getType();
+            String nom = recette.getKey().getKey();
+            Bukkit.removeRecipe(recette.getKey());
+            if (!autres.isEmpty()) {
+                add(cuisson(recette, key(nom), new ItemStack(pepite), autres));
+            }
+            add(cuisson(recette, key(nom + "_armure"), new ItemStack(LINGOTS.get(pepite)), armures));
+        }
+        if (recettes.isEmpty()) {
+            getLogger().warning("Fonte des armures : aucune recette du jeu trouvée, rien n'est changé.");
+        } else {
+            getLogger().info("Fonte des armures : " + recettes.size() + " recettes du jeu remplacées (lingot pour une pièce"
+                    + " d'armure).");
+        }
+    }
+
+    /** La même recette de four ou de haut fourneau (durée, expérience, groupe, catégorie), avec ces entrées et ce résultat. */
+    private static org.bukkit.inventory.CookingRecipe<?> cuisson(org.bukkit.inventory.CookingRecipe<?> modele,
+            NamespacedKey cle, ItemStack resultat, List<Material> entrees) {
+        RecipeChoice choix = new RecipeChoice.MaterialChoice(entrees);
+        org.bukkit.inventory.CookingRecipe<?> recette = modele instanceof org.bukkit.inventory.BlastingRecipe
+                ? new org.bukkit.inventory.BlastingRecipe(cle, resultat, choix, modele.getExperience(), modele.getCookingTime())
+                : new org.bukkit.inventory.FurnaceRecipe(cle, resultat, choix, modele.getExperience(), modele.getCookingTime());
+        recette.setGroup(modele.getGroup());
+        recette.setCategory(modele.getCategory());
+        return recette;
     }
 
     // ------------------------------------------------------------------ verrue du Nether refusee a l'alambic
@@ -345,6 +411,8 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             shaped.getChoiceMap().values().stream().filter(java.util.Objects::nonNull).forEach(choix::add);
         } else if (recipe instanceof ShapelessRecipe shapeless) {
             choix.addAll(shapeless.getChoiceList());
+        } else if (recipe instanceof org.bukkit.inventory.CookingRecipe<?> cuisson) {
+            choix.add(cuisson.getInputChoice());
         }
         ingredients.put(cle, choix);
     }

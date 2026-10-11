@@ -96,6 +96,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Crafts 1.12.0** (11/10/2026, LeKiwi06) : une pièce d'armure (casque, plastron, jambières, bottes ; fer, or, cuivre, cotte de mailles) fondue au four ou au haut fourneau donne un lingot au lieu d'une pépite ; outils, armes et armure de cheval inchangés ; **compilé, non déployé, non testé en jeu**, réservation gardée.
+
 - **KS_Economy 1.6.0** (11/10/2026, LeKiwi06) : `/accepter` accepte une demande d'échange ; un joueur garde une demande par demandeur et, s'il en a de plusieurs joueurs, un menu en coffre lui fait choisir laquelle accepter ; **compilé, non déployé, non testé en jeu**, réservation gardée.
 
 - **KS_Decapitator 1.2.0** (11/10/2026, LeKiwi06) : `/tetes` ouvert à tous les joueurs, il montre les têtes déjà obtenues (une tête compte dès qu'elle a été dans l'inventaire ; vitre grise pour les autres ; les opérateurs gardent le clic qui donne une tête) ; nouveau fichier `plugins/KS_Decapitator/collection.yml` ; **compilé, non déployé, non testé en jeu**, réservation gardée.
@@ -433,6 +435,8 @@ sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre par
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (11/10/2026, 07:03) : KS_Crafts 1.12.0 compilée, non déployée, non testée : une pièce d'armure fondue donne un lingot.** Demande de LeKiwi06 : « j'aimerai également que le fait de faire fondre des pieces d'armure donne un lingot et pas une pépite , ça redonnerai de l'utilité a cette fonctionnalité ». Les recettes de fonte du jeu (four et haut fourneau, fer, or, cuivre) sont lues au démarrage et remplacées chacune par deux recettes : pièces d'armure → lingot, le reste (outils, armes, armure de cheval) → pépite. Choix de Claude signalé : armure de cheval et outils non compris. À vérifier dans la console au démarrage : « Fonte des armures : 6 recettes du jeu remplacées ». Réservation gardée jusqu'au déploiement.
 
 **Ajout (11/10/2026, 06:59) : KS_Economy 1.6.0 compilée, non déployée, non testée : `/accepter` pour les demandes d'échange.** Demande de LeKiwi06 : « il faut pouvoir faire /accepter pour accepter une demande d'échanger , c'est plus court , si le joueur à reçu des demandes d'échange de plusieurs joueurs , ouvrir un menu cliquable pour choisir quelle demande accepter ». Avant, une seule demande était gardée par joueur (la nouvelle effaçait l'ancienne) : une demande par demandeur maintenant ; menu « Demandes d'échange » (une tête par demandeur) quand il y en a plusieurs ; les boutons du message répondent à la demande de leur demandeur. `/echange refuser` sans nom refuse toutes les demandes (signalé). Réservation gardée jusqu'au déploiement sur Kixster et Event.
 
