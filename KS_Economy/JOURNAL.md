@@ -620,4 +620,4 @@ marron et rouge), il faut donc doubler le prix des tiges de champignon ».
 - `rachats-modifies.txt` inchangé (il ne sert qu'aux offres tirées avant la 1.8.0).
 - Contient la 1.8.0 (déployée le 12/10/2026, vérifiée dans la console de Kixster, non testée en jeu).
 
-**Compilé le 12/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster et Event le 12/10/2026 à 01:32 (LeKiwi06 ; accord : « oui déploie tout » ; jar en place vérifié identique à `jars-deployes/` sur les deux serveurs avant l'envoi ; 1.8.0 dans `_removed-ks_economy-1.8.0/` ; supprimables par l'humain : sur Kixster `_removed-ks_economy-1.3.0/` à `1.6.0/`, 6 dossiers ; sur Event `_removed-ks_economy-1.0.0/` à `1.5.2/`, 16 dossiers), actif après redémarrage de chaque serveur. Event n'avait pas redémarré depuis le 11/10 à 17:36 : il passera directement de la 1.7.0 à la 1.8.1. Statut : non testé en jeu.**

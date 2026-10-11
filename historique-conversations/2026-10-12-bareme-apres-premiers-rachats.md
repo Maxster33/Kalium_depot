@@ -1,7 +1,7 @@
 # 2026-10-12 — Barème corrigé après les premiers rachats
 
 - Plugin(s) concerné(s) : KS_Economy
-- Versions avant / après : 1.7.0 en service (Kixster et Event) / 1.8.0 déployée sur les deux le 12/10/2026 à 01:17 (contient la 1.7.1)
+- Versions avant / après : 1.7.0 en service (Kixster et Event) / 1.8.0 déployée sur les deux le 12/10/2026 à 01:17, puis 1.8.1 à 01:32
 
 ## Demandé
 
@@ -50,7 +50,7 @@ Event : journal lu à 01:29, aucun redémarrage depuis le 11/10 à 17:36 (toujou
 
 ## Reste à faire
 
-- Déployer KS_Economy 1.8.1 sur Kixster et Event (accord de LeKiwi06 attendu).
+- KS_Economy 1.8.1 déployée sur Kixster et Event le 12/10/2026 à 01:32 (« oui déploie tout ») : active après redémarrage de chaque serveur ; lire la console (« objets au prix modifié remplacés »).
 
 - Tester en jeu ; redémarrer Event et y lire la ligne « objets au prix modifié remplacés ».
 - Silex (0,029) à 2,9 fois le gravier (0,01) ; fiole de miel à 0,05 au lieu de 0,06.
