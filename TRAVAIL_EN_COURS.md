@@ -19,6 +19,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 
+- KS_Economy — LeKiwi06 — depuis le 2026-10-11 07:50 — rachats du marchand ambulant (10 objets, stock limité)
 
 ## Requis parfois
 
