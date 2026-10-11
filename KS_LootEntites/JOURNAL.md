@@ -127,3 +127,12 @@ diversité »), blocs du biome seulement, minerais extrêmement rares, 1 bloc, X
 
 **Déployé sur Event le 30/09/2026 à 22:44 (LeKiwi06 ; 1.3.0 dans `_removed-ks_lootentites-1.3.0/` ; supprimables par l'humain, 3 versions derrière ou plus : `_removed-ks_lootentites-1.0.0/`, `1.1.0/`, `1.2.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
 
+## 1.5.0 - chauve-souris : éclat d'écho à 10 % (11/10/2026, LeKiwi06)
+
+Signalement de LeKiwi06 : « je n'ai eu aucune echo shard sur les chauve souris , normalement le taux de drop était de
+10% , mais rien du tout ». Cause : ce butin n'avait jamais été codé (aucun plugin ne le donnait ; relevé le 04/10/2026
+comme « à décider »). L'éclat d'écho ne venait que des coffres de la cité antique.
+- Chauve-souris tuée par un joueur : 10 % d'un éclat d'écho (l'ingrédient de l'Élixir de chauve-souris).
+- Le reste est inchangé.
+
+**Compilé le 11/10/2026 (`sortie/KS_LootEntites-1.5.0.jar`). Non déployé. Statut : non testé en jeu.**

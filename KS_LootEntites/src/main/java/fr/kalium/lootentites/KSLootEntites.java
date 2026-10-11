@@ -117,6 +117,12 @@ public final class KSLootEntites extends JavaPlugin implements Listener {
             }
             // Seul un capitaine (patrouille ou raid) lache une fiole sinistre.
             case PILLAGER -> drops.removeIf(stack -> stack.getType() == Material.OMINOUS_BOTTLE);
+            // 1.5.0 (LeKiwi06) : éclat d'écho de l'Élixir de chauve-souris, 10 % quand un joueur tue la chauve-souris.
+            case BAT -> {
+                if (byPlayer && chance(0.10)) {
+                    drops.add(new ItemStack(Material.ECHO_SHARD));
+                }
+            }
             case ENDERMITE -> {
                 ItemStack loot = byPlayer && chance(0.50) ? endermiteLoot() : null;
                 if (loot != null) {

@@ -94,3 +94,27 @@ gagnables qui offrent une utilisation de claim gratuite (ça ne fait pas monter 
 d'Event. Statut : non testé en jeu.**
 
 **Envoyé sur Kixster le 09/10/2026 à 17:31 (LeKiwi06, envoi groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_KaliumGive 1.9.0, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.4.0, KS_Claim 1.2.0 ; demande de LeKiwi06 : « envoie la catégorie 7 sur kixster » ; 1.2.0 ; 1.1.2 dans `_removed-ks_claim-1.1.2/`), actif après redémarrage de Kixster. Jars en place vérifiés identiques aux références avant l'envoi. Statut : non testé en jeu.**
+
+## 1.3.0 - bateaux et wagonnets posables et cassables partout (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « rend les bateaux , minecraft , etc posable et cassable dans les zones protégés et claims »
+(lu : minecart). Constat du même jour dans les journaux de Kixster : WorldGuard 7.0.19 plante quand un joueur pose un
+bateau sur Paper 26.3 (sa protection ne s'applique plus à ce clic).
+
+- **Poser** : un bateau, un radeau ou un wagonnet (simple, à coffre, à entonnoir, motorisé) se pose partout, même là où
+  une région WorldGuard ou un claim de SimpleClaimSystem le refuse à ce joueur. Le bloc visé reste protégé (on ne peut
+  toujours pas ouvrir le coffre d'un autre en cliquant dessus avec un bateau).
+- **Casser** : un bateau, un radeau ou un wagonnet **sans inventaire** se casse partout.
+- Comment : écoutes passées après celles des protections (priorité HIGHEST, plugin activé après WorldGuard et
+  SimpleClaimSystem), qui lèvent leur refus pour ces objets et ces entités seulement.
+
+Choix de Claude, signalés :
+- les véhicules **à inventaire** (bateau à coffre, wagonnet à coffre, wagonnet à entonnoir) restent protégés par les
+  lieux : sinon n'importe qui viderait un wagonnet à coffre dans le claim d'un autre en le cassant ;
+- le wagonnet à TNT ne se pose pas dans une zone protégée (inchangé) ;
+- monter dans un bateau ou un wagonnet n'est pas touché (déjà libre dans les claims : `blocked-entities` de SCS).
+
+Limites : écrit sans serveur de test ; dépend de la façon dont WorldGuard et SimpleClaimSystem refusent (événements
+annulés) : à vérifier en jeu avec un compte non opérateur, dans la zone du spawn et dans le claim d'un autre.
+
+**Compilé le 11/10/2026 (`sortie/KS_Claim-1.3.0.jar`). Non déployé. Statut : non testé en jeu.**

@@ -58,3 +58,15 @@ Demande de LeKiwi06 (travail sur le barème des prix) : « la potion devrait don
 - Le reste est inchangé.
 
 **Déployé sur Event le 04/10/2026 à 22:01 (LeKiwi06 ; 1.1.2 dans `_removed-ks_lootpotions-1.1.2/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.2.0 - chauve-souris : potion de vision nocturne à 25 % (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « la night vision doit se drop a 25% de chance sur les chauve souris ». Avant : aucun mob ne
+donnait cette potion (seulement le tirage au hasard de la verrue et du capitaine), alors que l'Élixir de chauve-souris
+en demande 8.
+- Chauve-souris tuée par un joueur : 25 % d'une potion basique de vision nocturne. Mêmes règles que les autres (pas
+  pour un mob né d'un spawner ; Butin sans effet).
+- Le reste est inchangé. Une proposition d'équilibrage des autres taux a été faite à LeKiwi06 le même jour : rien
+  d'autre n'est modifié tant qu'il ne l'a pas validée.
+
+**Compilé le 11/10/2026 (`sortie/KS_LootPotions-1.2.0.jar`). Non déployé. Statut : non testé en jeu.**

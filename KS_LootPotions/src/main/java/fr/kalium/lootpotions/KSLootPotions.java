@@ -129,6 +129,8 @@ public final class KSLootPotions extends JavaPlugin implements Listener {
             case WANDERING_TRADER -> add(drops, 1.0, PotionType.INVISIBILITY);
             case BLAZE -> add(drops, 0.10, PotionType.STRENGTH);
             case HORSE, DONKEY, MULE -> add(drops, 0.10, PotionType.SWIFTNESS);
+            // 1.2.0 (LeKiwi06) : aucun mob ne donnait la vision nocturne (8 par Élixir de chauve-souris).
+            case BAT -> add(drops, 0.25, PotionType.NIGHT_VISION);
             default -> {
             }
         }

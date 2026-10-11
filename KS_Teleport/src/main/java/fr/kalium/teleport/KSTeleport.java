@@ -34,6 +34,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
@@ -426,15 +427,40 @@ public final class KSTeleport extends JavaPlugin implements Listener {
         if (joueur.hasPlayedBefore()) {
             return;
         }
+        Location arrivee = arrivee(joueur);
+        if (arrivee != null) {
+            joueur.teleport(arrivee);
+        }
+    }
+
+    /**
+     * 1.2.0 (LeKiwi06, 11/10/2026 : « pour le toit du spawn je ne sais pas comment fix le soucis ») : un joueur qui
+     * réapparaît sans lit ni ancre (mort, retour de l'End) est posé par le jeu comme un nouveau joueur, sur le bloc le
+     * plus haut : il réapparaît maintenant au point d'apparition exact du monde, lui aussi.
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onReapparition(PlayerRespawnEvent event) {
+        if (event.isBedSpawn() || event.isAnchorSpawn()
+                || !event.getRespawnLocation().getWorld().equals(getServer().getWorlds().get(0))) {
+            return;
+        }
+        Location arrivee = arrivee(event.getPlayer());
+        if (arrivee != null) {
+            event.setRespawnLocation(arrivee);
+        }
+    }
+
+    /** Le point d'apparition exact du monde principal (centre du bloc), ou null s'il n'y a pas la place de s'y tenir. */
+    private Location arrivee(Player joueur) {
         Location point = getServer().getWorlds().get(0).getSpawnLocation();
         Block pieds = point.getBlock();
         if (!pieds.isPassable() || !pieds.getRelative(0, 1, 0).isPassable()) {
             getLogger().warning("Point d'apparition du monde bouché (" + pieds.getX() + " " + pieds.getY() + " "
                     + pieds.getZ() + ") : " + joueur.getName() + " reste là où le jeu l'a posé.");
-            return;
+            return null;
         }
-        joueur.teleport(new Location(point.getWorld(), pieds.getX() + 0.5, pieds.getY(), pieds.getZ() + 0.5,
-                point.getYaw(), point.getPitch()));
+        return new Location(point.getWorld(), pieds.getX() + 0.5, pieds.getY(), pieds.getZ() + 0.5, point.getYaw(),
+                point.getPitch());
     }
 
     // ------------------------------------------------------------------ destinations

@@ -68,6 +68,8 @@ public final class KSClaim extends JavaPlugin {
         fichier = new File(getDataFolder(), "donnees.yml");
         charger();
         menus = new Menus(this);
+        // 1.3.0 : bateaux et wagonnets posables et cassables partout (voir Vehicules).
+        getServer().getPluginManager().registerEvents(new Vehicules(), this);
         getCommand("ksclaim").setExecutor(this);
         getCommand("ksclaims").setExecutor(this);
         if (getServer().getPluginManager().isPluginEnabled("KS_Menu")) {

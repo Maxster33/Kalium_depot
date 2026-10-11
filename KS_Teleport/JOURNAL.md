@@ -92,3 +92,15 @@ deux » (avec l'alias `/reward` de KS_RewardsGUI 1.4.2).
 - Empilé sur la 1.0.1 et la 1.0.0, jamais testées en jeu, à la demande de LeKiwi06.
 
 **Déployé sur Kixster le 11/10/2026 à 07:45 (LeKiwi06, envoi groupé : KS_Teleport 1.1.0, KS_Decapitator 1.2.0, KS_RewardsGUI 1.5.0, KS_Economy 1.6.0, KS_Crafts 1.12.0, KS_Jetons 2.0.2, KS_Meule 1.0.0 ; accord de LeKiwi06 : « oui déploie tout sur kixster » ; 1.0.1 dans `_removed-ks_teleport-1.0.1/` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.0.0). Statut : non testé en jeu.**
+
+## 1.2.0 - réapparition sans lit au point d'apparition du monde (11/10/2026, LeKiwi06)
+
+Signalé avec la 1.1.0 ; LeKiwi06 : « pour le toit du spawn je ne sais pas comment fix le soucis ». Un joueur qui meurt
+sans lit (ou revient de l'End sans lit) est posé par le jeu comme un nouveau joueur : sur le bloc le plus haut de la
+colonne, donc sur le toit du spawn de Kixster.
+- Réapparition sans lit ni ancre de réapparition, dans le monde principal : le joueur réapparaît au point d'apparition
+  exact du monde (`/setworldspawn`), comme un nouveau joueur depuis la 1.1.0. Avec un lit ou une ancre : inchangé.
+- Si le point est bouché (moins de 2 blocs libres) : le joueur reste où le jeu le pose, une ligne le dit dans la console.
+- Aucun nouveau réglage, aucun nouveau texte.
+
+**Compilé le 11/10/2026 (`sortie/KS_Teleport-1.2.0.jar`). Non déployé. Statut : non testé en jeu.**
