@@ -170,7 +170,9 @@ public final class KSTableau extends JavaPlugin implements Listener {
         }
         int[] exploration = Sources.exploration(joueur.getUniqueId());
         if (exploration != null) {
-            lignes.add(lang.c("ligne-exploration", "<gray>Exploration journalière : <white><n> / <limite>", "n",
+            // 1.0.1 (LeKiwi06 : « "exploration journalière : 10 / 10" est bien trop long, "exploration : 0/10" suffit ») :
+            // nouvelle clé, l'ancien texte reste dans le lang.yml des serveurs.
+            lignes.add(lang.c("ligne-exploration-courte", "<gray>Exploration : <white><n>/<limite>", "n",
                     exploration[0], "limite", exploration[1]));
         }
         Integer n = claims.get(joueur.getUniqueId());

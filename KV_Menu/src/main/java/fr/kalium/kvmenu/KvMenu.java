@@ -243,10 +243,51 @@ public final class KvMenu extends JavaPlugin {
         };
     }
 
-    /** Menu du concours (joueurs), et « Gérer le concours » pour le staff. */
+    private static boolean actif(ConcoursInfo c) {
+        return c != null && (c.phase() == PhaseConcours.EN_COURS || c.phase() == PhaseConcours.VOTES);
+    }
+
+    /**
+     * Menu des concours (joueurs), et « Gérer le concours » pour le staff. 1.4.0 (LeKiwi06, 11/10/2026) : un concours
+     * peut être en construction pendant les votes du précédent ; avec plusieurs concours actifs, on choisit d'abord
+     * lequel regarder.
+     */
     private void concours(Player joueur, Consumer<Player> retour) {
+        List<ConcoursInfo> actifs = plots.concoursActifs();
+        if (actifs.size() < 2) {
+            concoursUn(joueur, actifs.isEmpty() ? 0 : actifs.get(0).id(), retour, true);
+            return;
+        }
         Consumer<Player> ici = p -> concours(p, retour);
-        ConcoursInfo c = plots.concoursActuel();
+        List<ActionButton> boutons = new ArrayList<>();
+        for (ConcoursInfo c : actifs) {
+            long reste = (c.phase() == PhaseConcours.EN_COURS ? c.fin() : c.finVotes()) - System.currentTimeMillis();
+            boutons.add(gui.button(t("contest.entry", "<light_purple><theme> <gray>: ", "theme", lore(c.theme())).append(phase(c)),
+                    c.phase() == PhaseConcours.EN_COURS
+                            ? t("contest.ends", "<gray>Fin dans : <white><time>", "time", plots.duree(reste))
+                            : t("contest.votes-end", "<gray>Fin des votes dans : <white><time>", "time", plots.duree(reste)),
+                    p -> concoursUn(p, c.id(), ici, false)));
+        }
+        if (!plots.anciensConcours().isEmpty()) {
+            boutons.add(gui.button(t("contest.past", "<gray>Anciens concours"), null, p -> anciensConcours(p, ici)));
+        }
+        if (staff(joueur)) {
+            boutons.add(gui.button(t("contest.manage", "<light_purple>Gérer le concours"), t("home.reports-tip", "<gray>Réservé au staff."),
+                    p -> gererConcours(p, ici)));
+        }
+        boutons.add(retour(retour));
+        gui.open(joueur, t("contest.title", "<light_purple><bold>Concours de build"),
+                List.of(t("contest.several", "<gray>Plusieurs concours sont en cours : choisis-en un.")), List.of(), boutons, null, 1);
+    }
+
+    /**
+     * Un concours actif (id 0 ou concours fini : « aucun concours »). « seul » : c'est le seul écran des concours, les
+     * anciens concours et la gestion du staff y sont aussi.
+     */
+    private void concoursUn(Player joueur, int id, Consumer<Player> retour, boolean seul) {
+        Consumer<Player> ici = p -> concoursUn(p, id, retour, seul);
+        ConcoursInfo trouve = id == 0 ? null : plots.concours(id);
+        ConcoursInfo c = actif(trouve) ? trouve : null;
         List<Component> corps = new ArrayList<>();
         List<ActionButton> boutons = new ArrayList<>();
         if (c == null) {
@@ -260,7 +301,7 @@ public final class KvMenu extends JavaPlugin {
                     ? t("contest.ends", "<gray>Fin dans : <white><time>", "time", plots.duree(reste))
                     : t("contest.votes-end", "<gray>Fin des votes dans : <white><time>", "time", plots.duree(reste)));
             corps.add(t("contest.count", "<gray>Participants : <white><n>", "n", c.participants()));
-            PlotInfo mien = plots.participation(joueur.getUniqueId());
+            PlotInfo mien = plots.participation(joueur.getUniqueId(), c.id());
             if (mien == null && c.phase() == PhaseConcours.EN_COURS) {
                 boutons.add(gui.button(t("contest.join", "<green><bold>Participer"),
                         t("contest.join-tip", "<gray>Un plot <size> en plus, pour la durée du concours.", "size", nomTaille(c.taille())),
@@ -301,10 +342,10 @@ public final class KvMenu extends JavaPlugin {
             boutons.add(gui.button(t("contest.participants", "<yellow>Participants <gray>(<n>)", "n", c.participants()),
                     t("contest.participants-tip", "<gray>Voir leurs plots et s'y téléporter."), p -> participants(p, c.id(), ici)));
         }
-        if (!plots.anciensConcours().isEmpty()) {
+        if (seul && !plots.anciensConcours().isEmpty()) {
             boutons.add(gui.button(t("contest.past", "<gray>Anciens concours"), null, p -> anciensConcours(p, ici)));
         }
-        if (staff(joueur)) {
+        if (seul && staff(joueur)) {
             boutons.add(gui.button(t("contest.manage", "<light_purple>Gérer le concours"), t("home.reports-tip", "<gray>Réservé au staff."),
                     p -> gererConcours(p, ici)));
         }
@@ -364,10 +405,43 @@ public final class KvMenu extends JavaPlugin {
         return Math.round(j == null ? 0 : j) * JOUR + Math.round(h == null ? 0 : h) * HEURE;
     }
 
+    /**
+     * Staff. 1.4.0 : sans concours actif, le formulaire d'un nouveau concours ; avec un seul concours, en construction,
+     * sa gestion ; sinon la liste des concours actifs, et « Nouveau concours » si aucun n'est en construction.
+     */
     private void gererConcours(Player joueur, Consumer<Player> retour) {
         if (!staff(joueur)) return;
         Consumer<Player> ici = p -> gererConcours(p, retour);
-        ConcoursInfo c = plots.concoursActuel();
+        List<ConcoursInfo> actifs = plots.concoursActifs();
+        boolean enConstruction = actifs.stream().anyMatch(x -> x.phase() == PhaseConcours.EN_COURS);
+        if (actifs.isEmpty() || (actifs.size() == 1 && enConstruction)) {
+            gererUn(joueur, actifs.isEmpty() ? 0 : actifs.get(0).id(), retour);
+            return;
+        }
+        List<ActionButton> liste = new ArrayList<>();
+        for (ConcoursInfo x : actifs) {
+            liste.add(gui.button(t("contest.manage-entry", "<yellow>Gérer : <theme> <gray>(", "theme", lore(x.theme()))
+                    .append(phase(x)).append(Component.text(")", net.kyori.adventure.text.format.NamedTextColor.GRAY)), null,
+                    p -> gererUn(p, x.id(), ici)));
+        }
+        if (!enConstruction) {
+            liste.add(gui.button(t("contest.new", "<green>Nouveau concours"),
+                    t("contest.new-tip", "<gray>Il démarre pendant les votes du précédent."), p -> gererUn(p, 0, ici)));
+        }
+        liste.add(retour(retour));
+        gui.open(joueur, t("contest.manage-title", "<light_purple><bold>Gérer le concours"), List.of(), List.of(), liste, null, 1);
+    }
+
+    /** Staff : gérer ce concours actif ; id 0 : formulaire d'un nouveau concours. */
+    private void gererUn(Player joueur, int id, Consumer<Player> retour) {
+        if (!staff(joueur)) return;
+        Consumer<Player> ici = p -> gererUn(p, id, retour);
+        ConcoursInfo trouve = id == 0 ? null : plots.concours(id);
+        ConcoursInfo c = actif(trouve) ? trouve : null;
+        if (id != 0 && c == null) {
+            retour.accept(joueur);
+            return;
+        }
         List<ActionButton> boutons = new ArrayList<>();
         if (c == null) {
             List<io.papermc.paper.registry.data.dialog.input.DialogInput> champs = new ArrayList<>();
@@ -393,7 +467,7 @@ public final class KvMenu extends JavaPlugin {
         }
         boolean construction = c.phase() == PhaseConcours.EN_COURS;
         boutons.add(gui.button(t("contest.edit", "<yellow>Modifier"), t("contest.edit-tip", "<gray>Thème, fin du concours, durée des votes."),
-                p -> modifierConcours(p, ici)));
+                p -> modifierConcours(p, c.id(), ici)));
         boutons.add(gui.button(t("contest.moderate", "<yellow>Modérer les plots <gray>(<n>)", "n", c.participants()), null,
                 p -> modererConcours(p, c.id(), ici)));
         if (construction) {
@@ -405,12 +479,12 @@ public final class KvMenu extends JavaPlugin {
             boutons.add(gui.button(t("contest.close-votes", "<gold>Clore les votes maintenant"), null,
                     p -> gui.confirm(p, t("contest.close-votes-title", "<gold><bold>Clore les votes"),
                             t("contest.close-votes-body", "<gray>Le classement est arrêté et annoncé ; les plots sont gardés dans « Anciens concours »."),
-                            q -> action(q, () -> plots.cloreVotes(q), ici), ici::accept)));
+                            q -> action(q, () -> plots.cloreVotes(q, c.id()), retour), ici::accept)));
         }
         boutons.add(gui.button(t("contest.cancel", "<red>Annuler le concours"), null,
                 p -> gui.confirm(p, t("contest.cancel-title", "<red><bold>Annuler le concours"),
                         t("contest.cancel-body", "<gray>Tous les plots du concours seront supprimés. Impossible d'annuler."),
-                        q -> action(q, () -> plots.annulerConcours(q), ici), ici::accept)));
+                        q -> action(q, () -> plots.annulerConcours(q, c.id()), retour), ici::accept)));
         boutons.add(retour(retour));
         long reste = (construction ? c.fin() : c.finVotes()) - System.currentTimeMillis();
         gui.open(joueur, t("contest.manage-title", "<light_purple><bold>Gérer le concours"),
@@ -431,9 +505,9 @@ public final class KvMenu extends JavaPlugin {
         }
     }
 
-    private void modifierConcours(Player joueur, Consumer<Player> retour) {
-        ConcoursInfo c = plots.concoursActuel();
-        if (c == null || !staff(joueur)) {
+    private void modifierConcours(Player joueur, int id, Consumer<Player> retour) {
+        ConcoursInfo c = plots.concours(id);
+        if (!actif(c) || !staff(joueur)) {
             retour.accept(joueur);
             return;
         }
@@ -446,7 +520,7 @@ public final class KvMenu extends JavaPlugin {
         List<ActionButton> boutons = new ArrayList<>();
         boutons.add(gui.form(t("lore.save", "<green>Enregistrer"), null, (p, vue) -> {
             try {
-                plots.modifierConcours(p, vue.getText("theme"), construction ? lireDuree(vue, "duree") : 0, lireDuree(vue, "votes"));
+                plots.modifierConcours(p, id, vue.getText("theme"), construction ? lireDuree(vue, "duree") : 0, lireDuree(vue, "votes"));
                 retour.accept(p);
             } catch (Refus r) {
                 refus(p, r, retour);

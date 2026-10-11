@@ -113,8 +113,14 @@ public interface KanvasPlots {
 
     // --- Concours de build ---
 
-    /** Concours en cours ou en votes, ou null. */
+    /** Premier concours actif (celui en construction, sinon le plus ancien en votes), ou null. */
     ConcoursInfo concoursActuel();
+
+    /**
+     * 1.7.0 (LeKiwi06, 11/10/2026) : concours actifs. Un seul concours est en construction à la fois, mais il peut
+     * démarrer pendant les votes du précédent : celui en construction d'abord, puis ceux en votes.
+     */
+    List<ConcoursInfo> concoursActifs();
 
     /**
      * 1.5.0 (catégorie 4 « Récompenses ») : points de notes reçus par un joueur sur les plots dont il est créateur ou
@@ -136,8 +142,11 @@ public interface KanvasPlots {
     /** Plots d'un concours ; classés (points puis moyenne) une fois les votes ouverts, sinon par numéro. */
     List<PlotInfo> plotsDuConcours(int id);
 
-    /** Plot du joueur (créateur) dans le concours actif, ou null. */
+    /** Plot du joueur (créateur) dans le concours en construction, ou null. */
     PlotInfo participation(UUID joueur);
+
+    /** 1.7.0 : plot du joueur (créateur) dans ce concours, ou null. */
+    PlotInfo participation(UUID joueur, int concours);
 
     /** Participer : un plot en plus (hors limites) de la taille du concours, téléportation. */
     PlotInfo participer(Player joueur) throws Refus;
@@ -164,7 +173,14 @@ public interface KanvasPlots {
     /** Staff : annule le concours actif (ses plots sont supprimés). */
     void annulerConcours(Player staff) throws Refus;
 
-    /** Staff : exclut un plot du concours actif (il est supprimé). */
+    /** 1.7.0, staff : les mêmes actions pour un concours actif donné (il peut y en avoir un en construction et un en votes). */
+    void modifierConcours(Player staff, int concours, String theme, long duree, long dureeVotes) throws Refus;
+
+    void cloreVotes(Player staff, int concours) throws Refus;
+
+    void annulerConcours(Player staff, int concours) throws Refus;
+
+    /** Staff : exclut un plot de son concours actif (il est supprimé). */
     void exclureDuConcours(Player staff, int id) throws Refus;
 
     // --- Signalements ---

@@ -27,7 +27,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 /**
  * Dans un plot : un tableau sur le côté de l'écran (sidebar) avec ses informations - titre, numéro et taille,
- * créateur, éditeurs, état, note globale, points, note donnée par le joueur - mis à jour toutes les 2 secondes.
+ * créateur, éditeurs, état, note, points, note donnée par le joueur - mis à jour toutes les 2 secondes.
  * En entrant dans un plot, sa description est écrite dans le chat. Sur les routes, le tableau disparaît (le tableau
  * d'avant est remis). Demande de LeKiwi06, 26/09/2026 : le tableau remplace le titre au centre de l'écran.
  */
@@ -66,20 +66,24 @@ final class EntreePlot implements Listener {
     private List<Component> lignes(Player joueur, Plot p) {
         UUID u = joueur.getUniqueId();
         List<Component> l = new ArrayList<>();
-        Concours.Un c = plugin.concours().actuel();
-        if (c != null) {
-            l.add(Component.text("Concours de build : ", NamedTextColor.LIGHT_PURPLE).append(texte(c.theme)));
-            long reste = (c.phase == fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.EN_COURS ? c.fin : c.finVotes)
-                    - System.currentTimeMillis();
-            l.add(Component.text(c.phase == fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.EN_COURS ? "Fin dans : " : "Votes : fin dans ",
-                    NamedTextColor.GRAY).append(blanc(Concours.duree(reste))));
+        // 1.7.0 (LeKiwi06 : « reduire tout les sidebar trop long ») : lignes courtes ; un concours en construction et
+        // un autre en votes peuvent être affichés ensemble.
+        long maintenant = System.currentTimeMillis();
+        List<Concours.Un> actifs = plugin.concours().actifs();
+        for (Concours.Un c : actifs) {
+            if (c.phase == fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.EN_COURS) {
+                l.add(Component.text("Concours : ", NamedTextColor.LIGHT_PURPLE).append(texte(c.theme)));
+                l.add(ligne("Fin : ", blanc(Concours.dureeCourte(c.fin - maintenant))));
+            } else {
+                l.add(Component.text("Fin des votes : ", NamedTextColor.LIGHT_PURPLE)
+                        .append(blanc(Concours.dureeCourte(c.finVotes - maintenant))));
+            }
         }
-        l.add(Component.empty());
+        if (!actifs.isEmpty()) l.add(Component.empty());
         l.add(Component.text("Plot n°" + p.id + " · " + p.taille.nom, NamedTextColor.GOLD));
         if (p.concours != 0) {
             Concours.Un du = plugin.concours().parId(p.concours);
-            l.add(Component.text(du != null && du.actif() ? "Plot du concours" : "Ancien concours"
-                    + (du == null ? "" : " : " + du.theme), NamedTextColor.LIGHT_PURPLE));
+            l.add(Component.text(du != null && du.actif() ? "Plot du concours" : "Ancien concours", NamedTextColor.LIGHT_PURPLE));
         }
         l.add(ligne("Créateur : ", blanc(KVPlots.nom(p.createur))));
         if (p.editeurs.isEmpty()) {
@@ -95,10 +99,10 @@ final class EntreePlot implements Listener {
                 l.add(Component.text(" " + KVPlots.nom(e), NamedTextColor.WHITE));
             }
         }
-        l.add(ligne("État : ", p.chantier != Plot.Chantier.AUCUN ? Component.text("travaux en cours", NamedTextColor.YELLOW)
+        l.add(ligne("État : ", p.chantier != Plot.Chantier.AUCUN ? Component.text("travaux", NamedTextColor.YELLOW)
                 : p.etat == Plot.Etat.VALIDE ? Component.text("validé", NamedTextColor.GREEN) : blanc("en travaux")));
         l.add(Component.empty());
-        l.add(ligne("Note globale : ", p.votes.isEmpty() ? blanc("aucune")
+        l.add(ligne("Note : ", p.votes.isEmpty() ? blanc("aucune")
                 : blanc(String.format(Locale.FRANCE, "%.1f/5", p.moyenne()))));
         l.add(ligne("Votes : ", blanc(String.valueOf(p.votes.size()))));
         l.add(ligne("Points : ", blanc(String.valueOf(p.points()))));

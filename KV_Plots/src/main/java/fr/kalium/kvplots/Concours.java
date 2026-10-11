@@ -16,7 +16,8 @@ import fr.kalium.kvplots.api.KanvasPlots.PhaseConcours;
 import fr.kalium.kvplots.api.Taille;
 
 /**
- * Concours de build (demande de LeKiwi06, 26/09/2026), gardés dans concours.yml. Un seul concours actif à la fois :
+ * Concours de build (demande de LeKiwi06, 26/09/2026), gardés dans concours.yml. 1.7.0 (LeKiwi06, 11/10/2026) : un
+ * seul concours en construction à la fois, mais il peut démarrer pendant les votes du précédent. Phases :
  * EN_COURS (participation et construction jusqu'à « fin »), puis VOTES (plots figés et notables jusqu'à « finVotes »),
  * puis TERMINE (votes clos, plots gardés à part) ; ANNULE si le staff l'annule.
  */
@@ -58,12 +59,29 @@ final class Concours {
         return parId.get(id);
     }
 
-    /** Concours en cours ou en votes, ou null. */
-    Un actuel() {
+    /** Concours en construction (un seul à la fois), ou null. */
+    Un enConstruction() {
         for (Un c : parId.values()) {
-            if (c.actif()) return c;
+            if (c.phase == PhaseConcours.EN_COURS) return c;
         }
         return null;
+    }
+
+    /** 1.7.0 : concours actifs : celui en construction d'abord, puis ceux en votes, du plus ancien au plus récent. */
+    List<Un> actifs() {
+        List<Un> l = new ArrayList<>();
+        Un construction = enConstruction();
+        if (construction != null) l.add(construction);
+        for (Un c : parId.values()) {
+            if (c.phase == PhaseConcours.VOTES) l.add(c);
+        }
+        return l;
+    }
+
+    /** Premier concours actif (celui en construction, sinon le plus ancien en votes), ou null. */
+    Un actuel() {
+        List<Un> l = actifs();
+        return l.isEmpty() ? null : l.get(0);
     }
 
     /** Concours terminés, du plus récent au plus ancien. */
@@ -91,6 +109,13 @@ final class Concours {
         if (j > 0) sb.append(j).append(" j ");
         if (j > 0 || h > 0) sb.append(h).append(" h ");
         return sb.append(m).append(" min").toString();
+    }
+
+    /** 1.7.0 : durée courte pour le tableau sur le côté : « 2 j 3 h », « 3 h 10 min », « 10 min ». */
+    static String dureeCourte(long ms) {
+        long minutes = Math.max(0, ms) / 60_000L;
+        long j = minutes / 1440, h = minutes / 60 % 24, m = minutes % 60;
+        return j > 0 ? j + " j " + h + " h" : h > 0 ? h + " h " + m + " min" : m + " min";
     }
 
     void charger() {

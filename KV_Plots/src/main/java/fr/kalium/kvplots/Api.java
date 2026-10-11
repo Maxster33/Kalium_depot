@@ -158,6 +158,11 @@ final class Api implements KanvasPlots {
     }
 
     @Override
+    public List<ConcoursInfo> concoursActifs() {
+        return plugin.concours().actifs().stream().map(this::vue).toList();
+    }
+
+    @Override
     public List<ConcoursInfo> anciensConcours() {
         return plugin.concours().termines().stream().map(this::vue).toList();
     }
@@ -216,6 +221,11 @@ final class Api implements KanvasPlots {
     }
 
     @Override
+    public PlotInfo participation(UUID joueur, int concours) {
+        return vue(plugin.participation(joueur, concours));
+    }
+
+    @Override
     public PlotInfo participer(Player joueur) throws Refus {
         return vue(plugin.participer(joueur));
     }
@@ -253,6 +263,21 @@ final class Api implements KanvasPlots {
     @Override
     public void annulerConcours(Player staff) throws Refus {
         plugin.annulerConcours(staff);
+    }
+
+    @Override
+    public void modifierConcours(Player staff, int concours, String theme, long duree, long dureeVotes) throws Refus {
+        plugin.modifierConcours(staff, concours, theme, duree, dureeVotes);
+    }
+
+    @Override
+    public void cloreVotes(Player staff, int concours) throws Refus {
+        plugin.cloreVotes(staff, concours);
+    }
+
+    @Override
+    public void annulerConcours(Player staff, int concours) throws Refus {
+        plugin.annulerConcours(staff, concours);
     }
 
     @Override

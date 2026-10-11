@@ -14,3 +14,16 @@ trouve »).
 - `depend` KLM_Menu ; `softdepend` KS_Economy, KS_FairPlay, SimpleClaimSystem.
 
 **Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.0.0 ; nouveau), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.0.1 - ligne « Exploration : n/10 » (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « essaie aussi de reduire tout les sidebar trop long [...] pour kixster " exploration journalière
+: 10 / 10 " est bien trop long " exploration : 0/10 " suffit ».
+
+- Ligne du tableau : « Exploration : 3/10 » (avant : « Exploration journalière : 3 / 10 »). Nouvelle clé de `lang.yml`
+  (`ligne-exploration-courte`) : l'ancien texte reste dans le fichier des serveurs sous `ligne-exploration`, qui ne
+  sert plus.
+- Les autres lignes ne changent pas (score, claims, coordonnées, biome) : aucune n'est plus longue que celle-ci. Le
+  message du tchat de KS_FairPlay (« Exploration journalière : n / 10 ») n'est pas un tableau : inchangé.
+
+**Compilé le 11/10/2026 (`sortie/KS_Tableau-1.0.1.jar`). Non déployé. Statut : non testé en jeu.**

@@ -402,20 +402,31 @@ public final class KVPlots extends JavaPlugin {
         return l;
     }
 
-    /** Plot du joueur (créateur) dans le concours actif, ou null. */
+    /** Plot du joueur (créateur) dans le concours en construction, ou null. */
     Plot participation(UUID joueur) {
-        Concours.Un c = concours.actuel();
-        if (c == null) return null;
-        for (Plot p : plotsDuConcours(c.id)) {
+        Concours.Un c = concours.enConstruction();
+        return c == null ? null : participation(joueur, c.id);
+    }
+
+    /** 1.7.0 : plot du joueur (créateur) dans ce concours, ou null. */
+    Plot participation(UUID joueur, int id) {
+        for (Plot p : plotsDuConcours(id)) {
             if (p.createur.equals(joueur)) return p;
         }
         return null;
     }
 
+    /** 1.7.0 : ce concours, s'il est en construction ou en votes. */
+    private Concours.Un actif(int id) throws Refus {
+        Concours.Un c = concours.parId(id);
+        if (c == null || !c.actif()) throw new Refus("Ce concours n'est plus en cours.");
+        return c;
+    }
+
     /** Participer : un plot en plus (hors limites), de la taille du concours, pour la durée du concours. */
     Plot participer(Player joueur) throws Refus {
-        Concours.Un c = concours.actuel();
-        if (c == null || c.phase != fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.EN_COURS) {
+        Concours.Un c = concours.enConstruction();
+        if (c == null) {
             throw new Refus("Aucun concours n'est ouvert aux participations.");
         }
         if (participation(joueur.getUniqueId()) != null) throw new Refus("Tu participes déjà à ce concours.");
@@ -426,11 +437,15 @@ public final class KVPlots extends JavaPlugin {
 
     /** Annuler sa participation (pendant le concours) : le plot est supprimé. */
     void annulerParticipation(Player joueur) throws Refus {
-        Concours.Un c = concours.actuel();
+        Concours.Un c = concours.enConstruction();
         Plot p = participation(joueur.getUniqueId());
-        if (c == null || p == null) throw new Refus("Tu ne participes à aucun concours.");
-        if (c.phase != fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.EN_COURS) {
-            throw new Refus("Le concours est terminé : les participations ne peuvent plus être annulées.");
+        if (c == null || p == null) {
+            for (Concours.Un autre : concours.actifs()) {
+                if (participation(joueur.getUniqueId(), autre.id) != null) {
+                    throw new Refus("Le concours est terminé : les participations ne peuvent plus être annulées.");
+                }
+            }
+            throw new Refus("Tu ne participes à aucun concours.");
         }
         if (p.chantier != Plot.Chantier.AUCUN) throw new Refus("Des travaux sont en cours sur ce plot, réessaie dans un instant.");
         lancerSuppression(p, joueur);
@@ -448,7 +463,8 @@ public final class KVPlots extends JavaPlugin {
 
     Concours.Un lancerConcours(Player staff, String theme, Taille taille, long duree, long dureeVotes) throws Refus {
         verifierStaff(staff);
-        if (concours.actuel() != null) throw new Refus("Un concours est déjà en cours.");
+        // 1.7.0 : un nouveau concours peut démarrer pendant les votes du précédent.
+        if (concours.enConstruction() != null) throw new Refus("Un concours est déjà en construction.");
         theme = theme == null ? "" : theme.strip();
         if (theme.isEmpty()) throw new Refus("Indique le thème du concours.");
         if (duree < 60_000L) throw new Refus("La durée du concours doit être d'au moins une minute.");
@@ -464,6 +480,13 @@ public final class KVPlots extends JavaPlugin {
         verifierStaff(staff);
         Concours.Un c = concours.actuel();
         if (c == null) throw new Refus("Aucun concours en cours.");
+        modifierConcours(staff, c.id, theme, duree, dureeVotes);
+    }
+
+    /** 1.7.0 : le même réglage, pour un concours actif donné. */
+    void modifierConcours(Player staff, int id, String theme, long duree, long dureeVotes) throws Refus {
+        verifierStaff(staff);
+        Concours.Un c = actif(id);
         theme = theme == null ? "" : theme.strip();
         if (!theme.isEmpty()) c.theme = theme;
         long maintenant = System.currentTimeMillis();
@@ -518,15 +541,27 @@ public final class KVPlots extends JavaPlugin {
 
     void terminerConcours(Player staff) throws Refus {
         verifierStaff(staff);
-        Concours.Un c = concours.actuel();
-        if (c == null || c.phase != fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.EN_COURS) throw new Refus("Aucun concours en cours de construction.");
+        Concours.Un c = concours.enConstruction();
+        if (c == null) throw new Refus("Aucun concours en cours de construction.");
         passerAuxVotes(c);
     }
 
     void cloreVotes(Player staff) throws Refus {
         verifierStaff(staff);
-        Concours.Un c = concours.actuel();
-        if (c == null || c.phase != fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.VOTES) throw new Refus("Aucun concours en phase de votes.");
+        for (Concours.Un c : concours.actifs()) {
+            if (c.phase == fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.VOTES) {
+                terminer(c);
+                return;
+            }
+        }
+        throw new Refus("Aucun concours en phase de votes.");
+    }
+
+    /** 1.7.0 : clôt les votes de ce concours. */
+    void cloreVotes(Player staff, int id) throws Refus {
+        verifierStaff(staff);
+        Concours.Un c = actif(id);
+        if (c.phase != fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.VOTES) throw new Refus("Ce concours n'est pas en phase de votes.");
         terminer(c);
     }
 
@@ -535,6 +570,13 @@ public final class KVPlots extends JavaPlugin {
         verifierStaff(staff);
         Concours.Un c = concours.actuel();
         if (c == null) throw new Refus("Aucun concours en cours.");
+        annulerConcours(staff, c.id);
+    }
+
+    /** 1.7.0 : annule ce concours actif ; tous ses plots sont supprimés. */
+    void annulerConcours(Player staff, int id) throws Refus {
+        verifierStaff(staff);
+        Concours.Un c = actif(id);
         c.phase = fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.ANNULE;
         concours.sauver();
         for (Plot p : plotsDuConcours(c.id)) {
@@ -547,8 +589,8 @@ public final class KVPlots extends JavaPlugin {
     /** Staff : exclut un plot du concours actif (il est supprimé). */
     void exclure(Player staff, Plot p) throws Refus {
         verifierStaff(staff);
-        Concours.Un c = concours.actuel();
-        if (c == null || p.concours != c.id) throw new Refus("Ce plot ne fait pas partie du concours en cours.");
+        Concours.Un c = p.concours == 0 ? null : concours.parId(p.concours);
+        if (c == null || !c.actif()) throw new Refus("Ce plot ne fait pas partie d'un concours en cours.");
         if (p.chantier != Plot.Chantier.AUCUN) throw new Refus("Des travaux sont en cours sur ce plot.");
         lancerSuppression(p, staff);
         getLogger().info("Plot n°" + p.id + " exclu du concours n°" + c.id + " par " + staff.getName() + ".");
@@ -556,11 +598,11 @@ public final class KVPlots extends JavaPlugin {
 
     /** Passages automatiques de phase (vérifiés toutes les 20 s). */
     private void horlogeConcours() {
-        Concours.Un c = concours.actuel();
-        if (c == null) return;
         long maintenant = System.currentTimeMillis();
-        if (c.phase == fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.EN_COURS && maintenant >= c.fin) passerAuxVotes(c);
-        else if (c.phase == fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.VOTES && maintenant >= c.finVotes) terminer(c);
+        for (Concours.Un c : concours.actifs()) {
+            if (c.phase == fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.EN_COURS && maintenant >= c.fin) passerAuxVotes(c);
+            else if (c.phase == fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.VOTES && maintenant >= c.finVotes) terminer(c);
+        }
     }
 
     // --- Validation, votes ---

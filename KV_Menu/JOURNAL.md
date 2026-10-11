@@ -5,6 +5,26 @@ actions de **KV_Plots** (par son API `fr.kalium.kvplots.api.KanvasPlots`). Menus
 (boîte à outils `Gui` / `Lang` de KLM_Menu), textes modifiables dans `lang.yml`. Cahier des charges :
 `KV_Plots/CAHIER_DES_CHARGES.md`.
 
+## 1.4.0 - plusieurs concours actifs (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « fait en sorte qu'on puisse avoir un concours de build en cours pendant que le précédent est en
+phase de votes » (KV_Plots 1.7.0).
+
+- **Menu « Concours de build »** : avec un seul concours actif (ou aucun), l'écran d'avant. Avec plusieurs (un en
+  construction, un en votes), une première liste : un bouton par concours (thème et état, temps restant en bulle),
+  puis l'écran du concours choisi (thème, état, fin, participants, participer, mon plot, participants).
+  « Mon plot du concours » est celui du concours affiché.
+- **Staff, « Gérer le concours »** : sans concours actif, le formulaire d'un nouveau concours ; avec un seul concours,
+  en construction, sa gestion ; sinon la liste des concours actifs (« Gérer : thème (état) ») et, si aucun n'est en
+  construction, **« Nouveau concours »** (« Il démarre pendant les votes du précédent. »). Modifier, clore les votes
+  et annuler agissent sur le concours choisi.
+- Nouveaux textes (`lang.yml`, ajoutés au premier usage) : `contest.entry`, `contest.several`, `contest.manage-entry`,
+  `contest.new`, `contest.new-tip`. Aucun texte existant ne change.
+
+**Exige KV_Plots 1.7.0** (à déployer ensemble).
+
+**Compilé le 11/10/2026 (`sortie/KV_Menu-1.4.0.jar`). Non déployé. Statut : non testé en jeu.**
+
 ## 1.3.1 - comparateur « Informations » rangé sur son plot (28/09/2026)
 
 Demande de LeKiwi06 (28/09/2026) : le nouveau comparateur « Informations » de KLM_Menu 2.4.0 (case de gauche) doit

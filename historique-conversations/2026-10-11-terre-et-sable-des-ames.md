@@ -1,6 +1,6 @@
 # 2026-10-11 — Terre des âmes et sable des âmes : familles des rachats et butin des coffres
 
-- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI, KS_Decapitator, KS_Crafts, KS_Jetons, KS_Meule (nouveau), KS_KaliumGive, geyser-bedrock, KV_Plots
+- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI, KS_Decapitator, KS_Crafts, KS_Jetons, KS_Meule (nouveau), KS_KaliumGive, geyser-bedrock, KV_Plots, KV_Menu, KS_Tableau
 - Versions avant / après : KS_Economy 1.5.0 en service (1.5.1 jamais déployée) / 1.5.2 déployée sur Event et
   Kixster ; KG_Rewards 1.3.0 et KV_Rewards 1.3.0 inchangés (`butin.yml` remplacés)
 
@@ -153,8 +153,15 @@ les deux ? » : « Les deux ».
 - KV_Plots 1.6.0 (carré de la note, x2 sur un grand plot) et `butin.yml` de KV_Rewards (0,12 et 0,24 émeraude par
   point) : prêts, non déployés. Détail : `KV_Plots/JOURNAL.md`, `KV_Rewards/JOURNAL.md`.
 
+## Concours simultanés et tableaux plus courts
+
+- LeKiwi06 : « oui déploie tout », puis « att stop » (rien n'a été envoyé), puis : « fait en sorte qu'on puisse avoir un concours de build en cours pendant que le précédent est en phase de votes , essaie aussi de reduire tout les sidebar trop long , sur kanvas , mais aussi pour kixster " exploration journalière : 10 / 10 " est bien trop long " exploration : 0/10 " suffit ».
+- KV_Plots 1.7.0 + KV_Menu 1.4.0 (Kanvas, ensemble) et KS_Tableau 1.0.1 (Kixster) : compilés, poussés, non déployés.
+
 ## Reste à faire
 
+- Déployer, sur accord de LeKiwi06 : Kanvas (KV_Plots 1.7.0, KV_Menu 1.4.0, `butin.yml`), Kixster (KS_Tableau 1.0.1 en
+  plus du reste). Test : lancer un concours pendant les votes d'un autre ; tableau dans un plot.
 - Déployer sur Kanvas, ensemble : KV_Plots 1.6.0 et le `butin.yml` de KV_Rewards, sur accord de LeKiwi06.
 - Déployer ensemble, sur accord de LeKiwi06 : KS_Meule 1.1.0 + KS_KaliumGive 1.10.0 + `fusion.yml` (Kixster),
   `butin.yml` (Kal-Games, Kanvas), `kalium_objets.json` + `KaLium-objets-1.4.0.mcpack` (proxy, redémarrage).

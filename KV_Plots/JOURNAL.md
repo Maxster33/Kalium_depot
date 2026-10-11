@@ -4,6 +4,34 @@ Serveur Kanvas (ex Kal-Test-Dev). Cahier des charges : `KV_Plots/CAHIER_DES_CHAR
 de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` télécharge aussi les API WorldGuard
 7.0.19 et WorldEdit 7.4.5 (compilation seulement ; en jeu, ce sont les plugins du serveur qui servent).
 
+## 1.7.0 - un concours en construction pendant les votes du précédent, tableau plus court (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « fait en sorte qu'on puisse avoir un concours de build en cours pendant que le précédent est en phase de votes , essaie aussi de reduire tout les sidebar trop long , sur kanvas , mais aussi pour kixster " exploration journalière : 10 / 10 " est bien trop long " exploration : 0/10 " suffit ».
+
+- **Concours** : un seul concours **en construction** à la fois, comme avant, mais un nouveau concours peut être lancé
+  pendant que le précédent est **en votes** (avant : « Un concours est déjà en cours. » tant que les votes n'étaient
+  pas clos). Si la construction du nouveau se termine avant la fin des votes de l'ancien, les deux sont en votes en même
+  temps ; chacun se clôt à sa date.
+  - Participer et annuler sa participation : concours en construction. Les plots d'un concours en votes restent figés
+    et notables.
+  - Passages de phase automatiques : chaque concours actif est suivi (toutes les 20 s).
+  - API : `concoursActifs()` (celui en construction d'abord, puis ceux en votes), `participation(joueur, concours)`,
+    et pour le staff `modifierConcours`, `cloreVotes`, `annulerConcours` avec le numéro du concours. Les anciennes
+    méthodes restent (`concoursActuel()` : le concours en construction, sinon le plus ancien en votes).
+  - `concours.yml` : format inchangé.
+- **Tableau sur le côté** (dans un plot) : lignes raccourcies.
+  - « Concours de build : thème » → « Concours : thème » ; « Fin dans : 2 j 3 h 10 min » → « Fin : 2 j 3 h » ;
+    « Votes : fin dans ... » → « Fin des votes : 2 j 3 h ». Durée courte : jours et heures, ou heures et minutes, ou
+    minutes. Un concours en construction et un concours en votes s'affichent ensemble (3 lignes).
+  - « Ancien concours : thème » → « Ancien concours » ; « État : travaux en cours » → « État : travaux » ;
+    « Note globale : » → « Note : ».
+  - Non raccourcis : le titre du plot et le thème du concours (écrits par les joueurs et le staff), les pseudos.
+- Contient la 1.6.0 (points de notes au carré), jamais déployée.
+
+À déployer avec KV_Menu 1.4.0 (son menu des concours utilise la nouvelle API).
+
+**Compilé le 11/10/2026 (`sortie/KV_Plots-1.7.0.jar`). Non déployé. Statut : non testé en jeu.**
+
 ## 1.6.0 - points des bâtisseurs : carré de la note, doublé sur un grand plot (11/10/2026, LeKiwi06)
 
 Demande de LeKiwi06 : « il faut que chaque note rapporte son carré en point aux joueurs ( faire un build 5 étoiles est
@@ -23,7 +51,7 @@ donc un 5 étoiles sur un grand plot vaut 50 points ».
 - À déployer avec le nouveau `butin.yml` de KV_Rewards (sans lui, les anciens paliers, 3 fois trop gros pour ces
   points, s'appliqueraient).
 
-**Compilé le 11/10/2026 (`sortie/KV_Plots-1.6.0.jar`). Non déployé. Statut : non testé en jeu.**
+**Compilé le 11/10/2026 (`sortie/KV_Plots-1.6.0.jar`). Jamais déployé seul : contenu dans la 1.7.0. Statut : non testé en jeu.**
 
 ## 1.5.0 - API des récompenses (03/10/2026)
 
