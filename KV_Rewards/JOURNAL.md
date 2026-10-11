@@ -94,4 +94,4 @@ récompenses en conséquences ».
 - Repères : un bon plot moyen vaut au total environ 110 émeraudes de paliers, un bon grand plot 215 ; l'exceptionnelle
   (100 000 points) demande environ 330 plots moyens, soit 1 500 heures de build.
 
-**`butin.yml` régénéré et vérifié le 11/10/2026. Non envoyé sur Kanvas. Non testé.**
+**`butin.yml` envoyé sur Kanvas le 11/10/2026 à 09:00 (LeKiwi06, avec KV_Plots 1.7.0 et KV_Menu 1.4.0 ; accord de LeKiwi06 : « oui déploie tout » ; il contient aussi le Cristal de purification dans le pool Légendaire ; le fichier en place était celui envoyé à 06:05 ; ancien fichier dans `_removed-kv_rewards-butin-2026-10-11-2/`), actif après redémarrage de Kanvas. Non testé.**

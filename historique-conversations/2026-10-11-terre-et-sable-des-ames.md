@@ -160,21 +160,20 @@ les deux ? » : « Les deux ».
 - Puis : « pour les lignes trop longues comme un thème de build , rend le déroulant de la meme façon que la boss bar
   dans le lobby » : thème du concours et titre du plot défilent dans le tableau de Kanvas (KV_Plots 1.7.0 revu).
 
+## Deuxième déploiement (11/10/2026, 09:00)
+
+- Accord de LeKiwi06 : « oui déploie tout » (après un premier « oui déploie tout » suivi de « att stop »).
+- Kixster : KS_Meule 1.1.0, KS_KaliumGive 1.10.0, KS_Economy 1.7.0, KS_Tableau 1.0.1, `fusion.yml`.
+- Kanvas : KV_Plots 1.7.0, KV_Menu 1.4.0, `butin.yml`. Kal-Games : `butin.yml`.
+- Proxy : `kalium_objets.json` et `KaLium-objets-1.4.0.mcpack` (`geyser-bedrock` 1.4.0).
+- Anciens fichiers dans leurs dossiers `_removed-…`. Réservations libérées. Event n'a rien reçu.
+
 ## Reste à faire
 
-- Déployer, sur accord de LeKiwi06 : Kanvas (KV_Plots 1.7.0, KV_Menu 1.4.0, `butin.yml`), Kixster (KS_Tableau 1.0.1 en
-  plus du reste). Test : lancer un concours pendant les votes d'un autre ; tableau dans un plot.
-- Déployer sur Kanvas, ensemble : KV_Plots 1.6.0 et le `butin.yml` de KV_Rewards, sur accord de LeKiwi06.
-- Déployer ensemble, sur accord de LeKiwi06 : KS_Meule 1.1.0 + KS_KaliumGive 1.10.0 + `fusion.yml` (Kixster),
-  `butin.yml` (Kal-Games, Kanvas), `kalium_objets.json` + `KaLium-objets-1.4.0.mcpack` (proxy, redémarrage).
-- À confirmer par LeKiwi06 : nom et apparence du cristal ; l'équilibrage des potions des mobs est-il toujours voulu ?
-- Déploiement de KS_Economy 1.7.0, sur accord de LeKiwi06 ; test : œuf de marchand ambulant, deux joueurs sur le
-  même marchand (stock commun).
-- Redémarrer Kixster (LeKiwi06), puis lire la console : « Fonte des armures : 6 recettes du jeu remplacées »,
-  « fusion.yml : 516 entrées dans 5 pools, 213 réglages », KS_Meule activé, aucune erreur.
-- Tests en jeu : arrivée d'un compte jamais connecté ; `/tetes` sans être opérateur ; fusion de deux coffres
-  (Java et Bedrock) ; `/accepter` à trois joueurs ; fonte d'un casque et d'une pioche en fer ; malédiction à la
-  meule (accroupi, main vide).
-- À décider par LeKiwi06 : envoi de `kalium_objets.json` sur le proxy (et les 5 autres objets empilables) ;
-  ces plugins sur Event ; WorldGuard (erreur à la pose d'un bateau), CoreProtect sur Kixster, région
-  `ile_du_dragon`, réapparition sans lit sur le toit du spawn.
+- Redémarrer Kixster, Kanvas, Kal-Games et le proxy (LeKiwi06), puis lire les consoles.
+- Tests en jeu : voir `REPRISE_PROJET.md` (ajouts du 11/10/2026) : arrivée d'un nouveau compte, `/tetes`, fusion de coffres,
+  `/accepter`, fonte des armures, meule et Cristal de purification, marchand ambulant, concours simultanés, tableaux,
+  jetons empilables et cristal sur Bedrock.
+- À décider par LeKiwi06 : équilibrage du drop des potions des mobs (demande interrompue) ; plafond de l'exceptionnelle de
+  Kanvas ; les 5 autres objets empilables sur Bedrock ; ces plugins sur Event ; points de Kixster signalés (WorldGuard
+  et bateaux, CoreProtect, région `ile_du_dragon`, réapparition sans lit).

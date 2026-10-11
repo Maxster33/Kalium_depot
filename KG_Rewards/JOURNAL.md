@@ -155,3 +155,14 @@ récompenses gagnées depuis le début des scores », valeur moyenne affichée s
 **Redémarrage de Kal-Games du 10/10/2026 à 00:19 lu : 1.3.0 activée, aucune erreur ; `boite: kixster` actif depuis.**
 
 **Récompenses du 09/10 au soir à redonner sur Kixster (demande de LeKiwi06, 10/10/2026, 00 h 15 : « donne les récompenses de ce soir sur kixster »)** : 16 récompenses automatiques sont parties vers la boîte d'Event entre 19:42 et 00:14 (LeKiwi06 : paliers de 900 points aux Piliers de la Fortune (mois et permanent, 19:42) et de 6 000 points au général (permanent, 00:10), 23 émeraudes ; valoux20 : top 50 % général (19:43), paliers de 100 points aux Piliers et au général (mois et permanent, 23:58), top 5 aux Piliers (00:03) et à Hide and Seek (00:13), paliers de 200 points au général (mois et permanent, 00:14), 19,5 émeraudes ; .MRMister7866 : palier de 5 000 points au Bingo (mois, 21:32), 10 émeraudes ; .PatientLime2170 : paliers de 500 points à Hide and Seek (mois et permanent) et de 8 000 points au général (mois), 00:10, 25 émeraudes). Aucun changement de code : `rattrapage.yml` posé sur Kal-Games à 00:23 avec un coffre par joueur (valeur moyenne de ses récompenses, mêmes valeurs et mêmes règles de piles que le rattrapage du 09/10) et le coffre de Maaxster, qui n'avait pas encore été lancé (son fichier seul est dans `_removed-kg_rewards-rattrapage-2026-10-10/`). LeKiwi06 lance `/kgrewards rattrapage kixster` puis `confirmer` : 5 coffres. Le motif affiché reste « Rattrapage : n récompenses gagnées depuis le début des scores ». **Pas encore envoyé : il part sur la commande de LeKiwi06.**
+
+## Cristal de purification dans le butin, sans nouvelle version (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (objet qui retire les malédictions, KS_Meule 1.1.0) : « cet item sera droppable dans les reward, il
+aura une valeur théorique de 600 emeraudes , met let dans les pool adaptés ». `butin.yml` régénéré hors dépôt : le
+Cristal de purification (`type: custom`, `cristal_purification`) entre dans le pool Légendaire (3,3 % d'un tirage
+Légendaire ; le jeton de claim passe de 9,0 à 6,7 %, le Changeur de Biome de 2,2 à 1,7 %, la Clé de l'End de 1,8 à
+1,3 %). Valeurs des niveaux inchangées. Aucun changement de code.
+
+**`butin.yml` envoyé sur Kal-Games le 11/10/2026 à 09:00 (LeKiwi06 ; accord de LeKiwi06 : « oui déploie tout » ; le fichier en place était celui envoyé à 06:05 ; ancien fichier
+dans `_removed-kg_rewards-butin-2026-10-11-2/`), actif après redémarrage de Kal-Games. Non testé.**

@@ -26,4 +26,4 @@ Demande de LeKiwi06 : « essaie aussi de reduire tout les sidebar trop long [...
 - Les autres lignes ne changent pas (score, claims, coordonnées, biome) : aucune n'est plus longue que celle-ci. Le
   message du tchat de KS_FairPlay (« Exploration journalière : n / 10 ») n'est pas un tableau : inchangé.
 
-**Compilé le 11/10/2026 (`sortie/KS_Tableau-1.0.1.jar`). Non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster le 11/10/2026 à 09:00 (LeKiwi06, envoi groupé : KS_Meule 1.1.0, KS_KaliumGive 1.10.0, KS_Economy 1.7.0, KS_Tableau 1.0.1 et `fusion.yml` de KS_RewardsGUI ; accord de LeKiwi06 : « oui déploie tout » ; 1.0.0 dans `_removed-ks_tableau-1.0.0/`), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.0.0). Statut : non testé en jeu.**

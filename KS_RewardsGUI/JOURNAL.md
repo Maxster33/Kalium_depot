@@ -218,3 +218,7 @@ Choix de Claude, signalés :
 - Empilé sur les 1.4.0 à 1.4.2, jamais testées en jeu, à la demande de LeKiwi06. Écrit sans serveur de test.
 
 **Déployé sur Kixster le 11/10/2026 à 07:45 (LeKiwi06, envoi groupé : KS_Teleport 1.1.0, KS_Decapitator 1.2.0, KS_RewardsGUI 1.5.0, KS_Economy 1.6.0, KS_Crafts 1.12.0, KS_Jetons 2.0.2, KS_Meule 1.0.0 ; accord de LeKiwi06 : « oui déploie tout sur kixster » ; 1.4.1 dans `_removed-ks_rewardsgui-1.4.1/` ; avec `plugins/KS_RewardsGUI/fusion.yml` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.4.0). Statut : non testé en jeu.**
+
+**`fusion.yml` remplacé sur Kixster le 11/10/2026 à 09:00 (LeKiwi06 ; accord de LeKiwi06 : « oui déploie tout » ; Cristal de purification dans le pool Légendaire, comme dans les
+`butin.yml` ; ancien fichier dans `_removed-ks_rewardsgui-fusion-2026-10-11/` ; jar inchangé), actif après redémarrage de
+Kixster. Non testé.**

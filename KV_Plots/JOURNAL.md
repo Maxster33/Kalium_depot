@@ -38,7 +38,7 @@ Demande de LeKiwi06 : « fait en sorte qu'on puisse avoir un concours de build e
 
 À déployer avec KV_Menu 1.4.0 (son menu des concours utilise la nouvelle API).
 
-**Compilé le 11/10/2026 (`sortie/KV_Plots-1.7.0.jar`). Non déployé. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 11/10/2026 à 09:00 (LeKiwi06, envoi groupé : KV_Plots 1.7.0, KV_Menu 1.4.0 et `butin.yml` de KV_Rewards ; accord de LeKiwi06 : « oui déploie tout » ; 1.5.0 dans `_removed-kv_plots-1.5.0/`), actif après redémarrage de Kanvas. Statut : non testé en jeu.**
 
 ## 1.6.0 - points des bâtisseurs : carré de la note, doublé sur un grand plot (11/10/2026, LeKiwi06)
 

@@ -80,4 +80,4 @@ pas quelle apparence lui donner ») ; 1 cristal par malédiction ; pas de recett
 reste fermé) ; `butin.yml` de KG_Rewards et de KV_Rewards, `fusion.yml` de KS_RewardsGUI ; `geyser-bedrock` 1.4.0 sur le
 proxy.
 
-**Compilé le 11/10/2026 (`sortie/KS_Meule-1.1.0.jar`). Non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster le 11/10/2026 à 09:00 (LeKiwi06, envoi groupé : KS_Meule 1.1.0, KS_KaliumGive 1.10.0, KS_Economy 1.7.0, KS_Tableau 1.0.1 et `fusion.yml` de KS_RewardsGUI ; accord de LeKiwi06 : « oui déploie tout » ; 1.0.0 dans `_removed-ks_meule-1.0.0/`), actif après redémarrage de Kixster. Pas sur Event. Statut : non testé en jeu.**

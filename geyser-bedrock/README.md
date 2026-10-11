@@ -71,7 +71,7 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   correspondances de Geyser, version 2). Les images ne changent pas : pack 1.3.0 gardé, pas de nouveau `.mcpack`.
   Les badges restent à 1 (ils ne s'empilent pas non plus sur Java). **Même défaut, non corrigé, signalé** : Clé de
   l'End, Bedrock Breaker, Fragment de Spawner, Cœur de Spawner et Changeur de Biome s'empilent par 64 sur Java et pas
-  sur Bedrock. **Non envoyé sur le proxy. Non testé.**
+  sur Bedrock. Envoyée avec la 1.4.0 (ci-dessous).
 - **1.4.0 (11/10/2026, LeKiwi06)** : Cristal de purification de KS_Meule 1.1.0 (éclat d'améthyste, pile de 64 déclarée).
   Contient la correction des jetons (pile de 64). Pack `KaLium-objets-1.4.0.mcpack` construit (image extraite du jeu
-  26.2). **Non envoyé sur le proxy. Non testé.**
+  26.2). **Envoyé sur le proxy le 11/10/2026 à 09:00 (LeKiwi06 ; accord de LeKiwi06 : « oui déploie tout » ; `kalium_objets.json` et `KaLium-objets-1.4.0.mcpack` ; 1.3.0 dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.3.0/` ; supprimables par l'humain : `_removed-kalium-objets-1.0.0/`, `1.1.0/`), actif après redémarrage du proxy. Non testé.**

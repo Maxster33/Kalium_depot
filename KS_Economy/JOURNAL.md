@@ -505,4 +505,4 @@ de 0,1), 100 (0,1 à 1), 320 (1 à 10), 640 (10 à 100), le prix de l'objet au-d
 Contient la 1.6.0 (déployée sur Kixster le 11/10/2026, non testée en jeu). Empilé à la demande de LeKiwi06. Écrit sans
 serveur de test.
 
-**Compilé le 11/10/2026 (`sortie/KS_Economy-1.7.0.jar`). Non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster le 11/10/2026 à 09:00 (LeKiwi06, envoi groupé : KS_Meule 1.1.0, KS_KaliumGive 1.10.0, KS_Economy 1.7.0, KS_Tableau 1.0.1 et `fusion.yml` de KS_RewardsGUI ; accord de LeKiwi06 : « oui déploie tout » ; 1.6.0 dans `_removed-ks_economy-1.6.0/`), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.5.2). Statut : non testé en jeu.**

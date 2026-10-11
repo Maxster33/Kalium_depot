@@ -23,7 +23,7 @@ phase de votes » (KV_Plots 1.7.0).
 
 **Exige KV_Plots 1.7.0** (à déployer ensemble).
 
-**Compilé le 11/10/2026 (`sortie/KV_Menu-1.4.0.jar`). Non déployé. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 11/10/2026 à 09:00 (LeKiwi06, envoi groupé : KV_Plots 1.7.0, KV_Menu 1.4.0 et `butin.yml` de KV_Rewards ; accord de LeKiwi06 : « oui déploie tout » ; 1.3.1 dans `_removed-kv_menu-1.3.1/`), actif après redémarrage de Kanvas. Statut : non testé en jeu.**
 
 ## 1.3.1 - comparateur « Informations » rangé sur son plot (28/09/2026)
 
