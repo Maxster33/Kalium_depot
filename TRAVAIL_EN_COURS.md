@@ -17,6 +17,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 ## Utilisés actuellement
 
 
+- KS_Economy — LeKiwi06 — depuis le 2026-10-12 01:05 — barème : prix corrigés après les premiers rachats (cinabre, soufre, butin de monstres, disque Bounce, cartes de structure)
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 
 
