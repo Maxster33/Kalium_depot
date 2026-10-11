@@ -75,3 +75,7 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
 - **1.4.0 (11/10/2026, LeKiwi06)** : Cristal de purification de KS_Meule 1.1.0 (éclat d'améthyste, pile de 64 déclarée).
   Contient la correction des jetons (pile de 64). Pack `KaLium-objets-1.4.0.mcpack` construit (image extraite du jeu
   26.2). **Envoyé sur le proxy le 11/10/2026 à 09:00 (LeKiwi06 ; accord de LeKiwi06 : « oui déploie tout » ; `kalium_objets.json` et `KaLium-objets-1.4.0.mcpack` ; 1.3.0 dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.3.0/` ; supprimables par l'humain : `_removed-kalium-objets-1.0.0/`, `1.1.0/`), actif après redémarrage du proxy. Non testé.**
+- **Correspondance seule (11/10/2026, LeKiwi06 : « oui fix le soucis pour tout les items »)** : pile de 64 déclarée aussi pour la
+  Clé de l'End, le Bedrock Breaker, le Fragment et le Cœur de Spawner et le Changeur de Biome (11 objets empilables sur
+  16 ; l'Estomac du gardien et les badges restent à 1, comme sur Java). Pack 1.4.0 inchangé. **Non envoyé sur le proxy.**
+
