@@ -87,3 +87,9 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   11/10/2026 à 15:25 (Maxster33 ; l'ancien dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.4.0-pile64/`),
   actif après redémarrage du proxy. En attente du test** : si le téléphone entre, le réglage de pile est la cause et
   les objets reviennent à une pile de 1 sur Bedrock.
+  **Résultat (15:30, après redémarrage) : toujours bloqué, le réglage de pile n'est pas la cause.** MRMister7866 est
+  entré sur mobile à 15:31 (le proxy envoie bien les packs). Téléphone de Maxster33 en Minecraft 26.52 ; Geyser du
+  proxy en b1249 (prise en charge de 26.52 depuis le 06/10) ; la b1250 (09/10) corrige le téléchargement des packs.
+  **Points ouverts (relais à LeKiwi06)** : passer Geyser-Velocity en b1251 sur le proxy et retester ; puis remettre
+  le réglage de pile (fichier gardé dans `_removed-kalium-objets-1.4.0-pile64/` sur le proxy, et dans le commit
+  e428b1e du dépôt).
