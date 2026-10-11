@@ -19,13 +19,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 
-- KS_Teleport — LeKiwi06 — depuis le 2026-10-11 06:18 — Kixster : un nouveau joueur arrive au point d'apparition du monde, plus sur le toit du spawn
-- KS_RewardsGUI — LeKiwi06 — depuis le 2026-10-11 06:18 — alias /reward de /rewards ; fusion de deux coffres de récompense à l'enclume
-- KS_Decapitator — LeKiwi06 — depuis le 2026-10-11 06:25 — /tetes pour tous les joueurs : têtes déjà obtenues
-- KS_Economy — LeKiwi06 — depuis le 2026-10-11 06:58 — /accepter pour une demande d’échange, menu de choix s’il y en a plusieurs
-- KS_Crafts — LeKiwi06 — depuis le 2026-10-11 07:03 — une pièce d’armure fondue donne un lingot
-- KS_Jetons — LeKiwi06 — depuis le 2026-10-11 07:14 — description du jeton de localisation
-- KS_Meule — LeKiwi06 — depuis le 2026-10-11 07:20 — nouveau plugin : retirer les malédictions à la meule
 
 ## Requis parfois
 

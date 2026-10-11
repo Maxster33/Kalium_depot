@@ -99,4 +99,4 @@ KS_Teleport).
 - Les jetons de localisation déjà fabriqués gardent l'ancienne ligne (elle est écrite dans l'objet) ; un jeton neuf ne
   s'empile donc pas avec un ancien de la même magnétite.
 
-**Compilé le 11/10/2026 (`sortie/KS_Jetons-2.0.2.jar`). Non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster le 11/10/2026 à 07:45 (LeKiwi06, envoi groupé : KS_Teleport 1.1.0, KS_Decapitator 1.2.0, KS_RewardsGUI 1.5.0, KS_Economy 1.6.0, KS_Crafts 1.12.0, KS_Jetons 2.0.2, KS_Meule 1.0.0 ; accord de LeKiwi06 : « oui déploie tout sur kixster » ; 2.0.1 dans `_removed-ks_jetons-2.0.1/` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 2.0.1). Statut : non testé en jeu.**

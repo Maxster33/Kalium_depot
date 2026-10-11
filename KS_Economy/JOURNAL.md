@@ -461,4 +461,4 @@ Limites : sur Bedrock, la tête d'un joueur peut s'afficher en tête de Steve da
 `/accepter` ne sert qu'aux échanges : les demandes d'ami et les invitations de partie gardent leurs commandes
 (`/amis accepter`, `/partie accepter`). Contient les 1.5.1 et 1.5.2, déployées le 11/10/2026 et non testées en jeu.
 
-**Compilé le 11/10/2026 (`sortie/KS_Economy-1.6.0.jar`). Non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster le 11/10/2026 à 07:45 (LeKiwi06, envoi groupé : KS_Teleport 1.1.0, KS_Decapitator 1.2.0, KS_RewardsGUI 1.5.0, KS_Economy 1.6.0, KS_Crafts 1.12.0, KS_Jetons 2.0.2, KS_Meule 1.0.0 ; accord de LeKiwi06 : « oui déploie tout sur kixster » ; 1.5.2 dans `_removed-ks_economy-1.5.2/` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.5.2). Statut : non testé en jeu.**

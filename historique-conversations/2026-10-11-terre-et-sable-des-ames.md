@@ -115,19 +115,20 @@ les deux ? » : « Les deux ».
   selectionne la pièce d'armure dans l'inventaire ( pas le stuff porté ) ». Main vide pour ouvrir le menu, objet
   choisi d'un clic dans l'inventaire.
 
+## Déploiement sur Kixster (11/10/2026, 07:45)
+
+- Accord de LeKiwi06 : « oui déploie tout sur kixster ».
+- Envoyés : KS_Teleport 1.1.0, KS_Decapitator 1.2.0, KS_RewardsGUI 1.5.0, KS_Economy 1.6.0, KS_Crafts 1.12.0, KS_Jetons 2.0.2, KS_Meule 1.0.0, et `plugins/KS_RewardsGUI/fusion.yml`. Anciens jars dans leurs dossiers `_removed-…`.
+- Actifs après redémarrage de Kixster par LeKiwi06. Réservations libérées. Event n'a rien reçu.
+- Non envoyé : `kalium_objets.json` sur le proxy (jetons empilables sur Bedrock), en attente de sa décision.
+
 ## Reste à faire
 
-- Déploiement de KS_Meule 1.0.0, sur accord de LeKiwi06.
-- Envoyer `kalium_objets.json` sur le proxy, sur accord de LeKiwi06 (redémarrage du proxy : tout le réseau).
-- Déploiement de KS_Crafts 1.12.0, sur accord de LeKiwi06 ; lire la console au démarrage (6 recettes remplacées) ;
-  test : fondre un casque en fer, une pioche en fer, une armure de cheval.
-- Déploiement de KS_Economy 1.6.0, sur accord de LeKiwi06 ; test à trois joueurs (deux demandes vers le même).
-- Déploiement de KS_RewardsGUI 1.5.0 avec `fusion.yml`, sur accord de LeKiwi06 ; test : deux coffres non ouverts,
-  un coffre ouvert (refus), pas assez de points d'expérience, Java et Bedrock.
-- Déploiement de KS_Decapitator 1.2.0, sur accord de LeKiwi06 ; test avec un compte non opérateur.
-- Déploiement de KS_Teleport 1.1.0 et KS_RewardsGUI 1.4.2 sur Kixster, sur accord de LeKiwi06 ; test avec un compte
-  jamais connecté.
-- Redémarrage d'Event, Kixster, Kal-Games et Kanvas par LeKiwi06, puis lecture des journaux.
-- À tester en jeu : `/rachat` (objets custom montrés par leur vrai objet ; une semaine où « terres » ou
-  « sable » sort) ; `/kgrewards test` pour voir sortir les deux blocs dans un coffre.
-- Points de Kixster ci-dessus : en attente de la décision de LeKiwi06.
+- Redémarrer Kixster (LeKiwi06), puis lire la console : « Fonte des armures : 6 recettes du jeu remplacées »,
+  « fusion.yml : 519 entrées dans 5 pools, 213 réglages », KS_Meule activé, aucune erreur.
+- Tests en jeu : arrivée d'un compte jamais connecté ; `/tetes` sans être opérateur ; fusion de deux coffres
+  (Java et Bedrock) ; `/accepter` à trois joueurs ; fonte d'un casque et d'une pioche en fer ; malédiction à la
+  meule (accroupi, main vide).
+- À décider par LeKiwi06 : envoi de `kalium_objets.json` sur le proxy (et les 5 autres objets empilables) ;
+  ces plugins sur Event ; WorldGuard (erreur à la pose d'un bateau), CoreProtect sur Kixster, région
+  `ile_du_dragon`, réapparition sans lit sur le toit du spawn.
