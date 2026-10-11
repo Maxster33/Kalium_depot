@@ -67,6 +67,7 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
     private Gui gui;
     private Menu menu;
     private Coffres coffres;
+    private Fusion fusion;
 
     @Override
     public void onEnable() {
@@ -80,6 +81,9 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
         menu = new Menu(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(coffres, this);
+        // 1.5.0 : fusion de deux coffres de récompense (clic droit sur une enclume, coffre en main).
+        fusion = new Fusion(this);
+        getServer().getPluginManager().registerEvents(fusion, this);
         getServer().getPluginManager().registerEvents(new Contenant.Ecoute(), this);
         getCommand("rewards").setExecutor(this);
         // Bouton « Récompenses » du comparateur « Informations » de KLM_Menu 2.6.0 (s'il est présent).
@@ -125,6 +129,10 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
 
     Coffres coffres() {
         return coffres;
+    }
+
+    Fusion fusion() {
+        return fusion;
     }
 
     @Override

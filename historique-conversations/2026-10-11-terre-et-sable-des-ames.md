@@ -63,8 +63,22 @@ les deux ? » : « Les deux ».
   pas la peine de l'avoir tué soit même ) ».
 - KS_Decapitator 1.2.0 : compilé, poussé, non déployé. Détail et choix signalés : `KS_Decapitator/JOURNAL.md`.
 
+## Fusion de deux coffres de récompense
+
+- Demande de LeKiwi06 : « j'aimerai qu'on puisse fusionner 2 coffres de récompenses dans l'enclume ce qui
+  additionnerait leurs valeurs , et couterait un nombre de point d'xp égale au nouveau montant en emeraude du
+  coffres [...] le coffre s'appellera " coffre de récompense fusionné " , ça permettrait de stacker pleins de
+  petits coffres pour essayer d'avoir une grosse récompense sur la longueur ».
+- Ses réponses : « le clique droit sur l'enclume ouvre une interface de coffre avec un bouton valider sur la case
+  du centre bas et le cout en xp affiché entre parenthèse , ne pas accepter les coffres déjà ouvert » ; contenu :
+  « Nouveau tirage ».
+- KS_RewardsGUI 1.5.0 : compilé, poussé, non déployé. `fusion.yml` généré hors dépôt et vérifié. Détail et choix
+  signalés : `KS_RewardsGUI/JOURNAL.md`.
+
 ## Reste à faire
 
+- Déploiement de KS_RewardsGUI 1.5.0 avec `fusion.yml`, sur accord de LeKiwi06 ; test : deux coffres non ouverts,
+  un coffre ouvert (refus), pas assez de points d'expérience, Java et Bedrock.
 - Déploiement de KS_Decapitator 1.2.0, sur accord de LeKiwi06 ; test avec un compte non opérateur.
 - Déploiement de KS_Teleport 1.1.0 et KS_RewardsGUI 1.4.2 sur Kixster, sur accord de LeKiwi06 ; test avec un compte
   jamais connecté.

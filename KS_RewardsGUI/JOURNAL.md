@@ -157,3 +157,64 @@ Accord de LeKiwi06 : « oui fais les deux » (avec KS_Teleport 1.1.0).
 - Empilé sur la 1.4.1 et la 1.4.0, jamais testées en jeu, à la demande de LeKiwi06.
 
 **Compilé le 11/10/2026 (`sortie/KS_RewardsGUI-1.4.2.jar`). Non déployé. Statut : non testé en jeu.**
+
+## 1.5.0 - fusion de deux coffres de récompense à l'enclume (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « j'aimerai qu'on puisse fusionner 2 coffres de récompenses dans l'enclume ce qui additionnerait
+leurs valeurs , et couterait un nombre de point d'xp égale au nouveau montant en emeraude du coffres , donc si le coffre
+vaut 1000 points , ça demande 1000 points d'xp , le coffre s'appellera " coffre de récompense fusionné " , ça
+permettrait de stacker pleins de petits coffres pour essayer d'avoir une grosse récompense sur la longueur ».
+Ses réponses aux deux questions de Claude : interface : « le clique droit sur l'enclume ouvre une interface de coffre
+avec un bouton valider sur la case du centre bas et le cout en xp affiché entre parenthèse , ne pas accepter les coffres
+déjà ouvert » ; contenu : « Nouveau tirage » (les contenus des 2 coffres sont abandonnés, un nouveau contenu est tiré
+comme une seule récompense de la valeur totale).
+
+- **Ouverture** : clic droit sur une enclume (neuve ou abîmée), **un coffre de récompense en main** : le menu « Fusion
+  de coffres » s'ouvre, à la place du coffre. Sans coffre en main, l'enclume s'ouvre comme d'habitude. La vraie fenêtre
+  de l'enclume refuse toujours les coffres (le jeu Bedrock y calcule lui-même le résultat).
+- **Menu** (coffre de 3 rangées) : un clic sur un coffre de récompense de son inventaire le choisit (2 au plus ; celui
+  tenu en main l'est d'office), un clic sur un coffre choisi le retire. Les coffres **ne quittent pas l'inventaire** :
+  le menu n'en montre que l'image, rien ne s'y prend ni ne s'y dépose (rien à rendre à la fermeture, rien à perdre si
+  le serveur s'arrête).
+- **Refusés** (message au-dessus de la barre d'objets) : coffre déjà ouvert, coffre sans valeur moyenne, coffre inconnu
+  du serveur.
+- **Bouton « Valider (N XP) »**, case du centre de la rangée du bas : N = valeur du coffre fusionné (somme des deux
+  valeurs moyennes), arrondie à l'unité supérieure, en **points d'expérience** (pas en niveaux). Vert si le joueur les
+  a, rouge sinon ; sa description donne le nom du coffre, sa valeur moyenne, le coût et les points du joueur. En
+  créatif : gratuit.
+- **Résultat** : les deux coffres disparaissent avec leur contenu ; le joueur reçoit, à la place du premier, un coffre
+  **« Coffre de récompense fusionné »** (« Origine : Fusion », « Valeur moyenne : n émeraude(s) », « Non ouvert »), qui
+  s'ouvre, s'échange et se fusionne à nouveau comme les autres. Il reste choisi dans le menu, pour lui ajouter aussitôt
+  un autre coffre.
+- **Nouveau tirage** : le contenu des coffres ordinaires est tiré par le serveur qui donne la récompense (KG_Rewards,
+  KV_Rewards) ; pour un coffre fusionné, ce plugin tire lui-même, dans `plugins/KS_RewardsGUI/fusion.yml` (classe
+  `Tables`) : les mêmes pools que `butin.yml`, et des « réglages » qui donnent, pour toute valeur, le nombre de tirages
+  et la fréquence de chaque pool, de sorte que la moyenne du tirage soit la valeur du coffre (écart maximal 0,6 %).
+  Fichier généré hors dépôt par `sortie/rewards/generer_fusion.py`, contrôlé par `verifier_fusion.py` (comme
+  `butin.yml` : il donnerait les chances de chaque objet). **Sans ce fichier, la fusion est désactivée** (message).
+- Journal `recuperations.log` : une ligne « FUSION » (qui, coût, les deux coffres avec leur contenu abandonné, le
+  nouveau coffre avec sa valeur et son contenu).
+- Nouveaux textes : clés `fusion.*` et `coffre.fusionne` de `lang.yml` (ajoutées au premier usage).
+- Contient la 1.4.2 (alias `/reward`), jamais déployée.
+
+Choix de Claude, signalés :
+- un coffre de récompense en main est nécessaire pour ouvrir le menu (sinon l'enclume ne s'ouvrirait plus) ;
+- nombre de tirages d'un coffre fusionné : celui des niveaux déjà en service, reliés entre eux (1 → 4 ; 5 → 6 ;
+  10 → 8 ; 100 → 12 ; 1 000 → 16 ; 2 000 → 24 ; 8 000 → 27 ; 40 000 → 40 ; 80 000 → 80 ; au-delà, 1 tirage par
+  1 000) ; fréquences : même calcul que les niveaux, corrigé dans deux plages qu'aucun niveau n'atteint (7 à 7,9 et
+  224 à 250 émeraudes par tirage), où il s'écartait de la valeur de 5 à 10 % ;
+- tous les coffres non ouverts qui ont une valeur moyenne se fusionnent, coffres de tops, de concours et de
+  rattrapage compris (leur contenu fixe est abandonné comme le reste) ;
+- le coffre fusionné reste choisi dans le menu après la fusion.
+
+À savoir :
+- Empiler coûte de plus en plus : chaque fusion coûte la valeur du **nouveau** coffre. Dix coffres de 10 émeraudes
+  fusionnés un par un coûtent 20 + 30 + ... + 100 = 540 points ; fusionnés deux par deux (puis les fusionnés entre
+  eux), moins.
+- La fusion ne crée pas de valeur : la moyenne du coffre fusionné est la somme des deux ; elle change la répartition
+  (moins de tirages au total, pools plus rares).
+- Les tables de `fusion.yml` ne suivent pas une modification faite dans l'interface admin de KG_Rewards ou de
+  KV_Rewards : régénérer et renvoyer les trois fichiers ensemble.
+- Empilé sur les 1.4.0 à 1.4.2, jamais testées en jeu, à la demande de LeKiwi06. Écrit sans serveur de test.
+
+**Compilé le 11/10/2026 (`sortie/KS_RewardsGUI-1.5.0.jar`). Non déployé. Statut : non testé en jeu.**

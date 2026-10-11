@@ -53,6 +53,7 @@ import java.util.UUID;
  *   (1.3.0 : les points du score d'une récompense y sont mis en émeraudes). Un clic sur un objet le prend ; on ne peut rien y
  *   déposer. Un coffre vidé disparaît ; sinon il garde ce qui reste et se rouvre.
  * - Le coffre ne se pose pas, ne se renomme pas à l'enclume, ne sert ni d'ingrédient ni de combustible.
+ * - 1.5.0 : clic droit sur une enclume, coffre en main : menu de fusion de deux coffres non ouverts (voir Fusion).
  */
 final class Coffres implements Listener {
 
@@ -110,7 +111,10 @@ final class Coffres implements Listener {
     private ItemStack objet(String id, Coffre c) {
         ItemStack objet = new ItemStack(Material.CHEST);
         ItemMeta meta = objet.getItemMeta();
-        meta.displayName(sansItalique(lang.c("coffre.nom", "<gold>Coffre : <white><raison>", "raison", c.recompense.raison)));
+        // 1.5.0 (LeKiwi06 : « le coffre s'appellera "coffre de récompense fusionné" »)
+        meta.displayName(sansItalique(c.recompense.fusion
+                ? lang.c("coffre.fusionne", "<gold>Coffre de récompense fusionné")
+                : lang.c("coffre.nom", "<gold>Coffre : <white><raison>", "raison", c.recompense.raison)));
         List<Component> lore = new ArrayList<>();
         lore.add(sansItalique(lang.c("coffre.origine", "<gray>Origine : <origine>", "origine", c.recompense.origine)));
         // 1.3.0 (LeKiwi06 : « il faut afficher sur le coffre de loot sa valeur moyenne ») : celle de son niveau.
@@ -138,7 +142,7 @@ final class Coffres implements Listener {
     }
 
     /** Identifiant du coffre porté par cet objet, ou null. */
-    private String id(ItemStack objet) {
+    String id(ItemStack objet) {
         if (objet == null || objet.getType() != Material.CHEST || !objet.hasItemMeta()) {
             return null;
         }
@@ -146,7 +150,7 @@ final class Coffres implements Listener {
     }
 
     /** Case de l'inventaire du joueur qui contient ce coffre (main secondaire comprise), ou -1. */
-    private int caseDe(Player joueur, String id) {
+    int caseDe(Player joueur, String id) {
         ItemStack[] contenu = joueur.getInventory().getContents();
         for (int i = 0; i < contenu.length; i++) {
             if (id.equals(id(contenu[i]))) {
@@ -170,6 +174,16 @@ final class Coffres implements Listener {
         // Le coffre ne se pose jamais : le clic droit l'ouvre.
         event.setCancelled(true);
         Player joueur = event.getPlayer();
+        // 1.5.0 : sur une enclume (neuve ou abîmée), le clic droit ouvre le menu de fusion.
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null
+                && org.bukkit.Tag.ANVIL.isTagged(event.getClickedBlock().getType())) {
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (joueur.isOnline() && caseDe(joueur, id) >= 0) {
+                    plugin.fusion().ouvrir(joueur, id);
+                }
+            });
+            return;
+        }
         Bukkit.getScheduler().runTask(plugin, () -> ouvrir(joueur, id));
     }
 
@@ -312,6 +326,71 @@ final class Coffres implements Listener {
                 joueur.closeInventory();
             }
         }
+    }
+
+    // ------------------------------------------------------------------ 1.5.0 : fusion (voir Fusion)
+
+    /** Pourquoi ce coffre ne peut pas être fusionné, ou null s'il peut l'être. */
+    Component refusFusion(String id) {
+        Coffre c = coffres.get(id);
+        if (c == null) {
+            return lang.c("fusion.refus-inconnu", "<red>Ce coffre est inconnu de ce serveur.");
+        }
+        if (c.ouvert || ouverts.contains(id)) {
+            return lang.c("fusion.refus-ouvert", "<red>Ce coffre a déjà été ouvert.");
+        }
+        if (c.recompense.valeur <= 0) {
+            return lang.c("fusion.refus-valeur", "<red>Ce coffre n'a pas de valeur moyenne.");
+        }
+        return null;
+    }
+
+    /** Valeur moyenne d'un coffre (0 : inconnu). */
+    double valeur(String id) {
+        Coffre c = id == null ? null : coffres.get(id);
+        return c == null ? 0 : c.recompense.valeur;
+    }
+
+    /** L'objet d'un coffre, pour le montrer dans un menu (null s'il n'existe plus). */
+    ItemStack image(String id) {
+        Coffre c = coffres.get(id);
+        return c == null ? null : objet(id, c);
+    }
+
+    /**
+     * Remplace deux coffres non ouverts de l'inventaire du joueur par un coffre de récompense fusionné, de la valeur
+     * et du contenu donnés (le contenu des deux coffres est abandonné). Renvoie l'identifiant du nouveau coffre, posé
+     * à la place du premier.
+     */
+    String fusionner(Player joueur, String a, String b, double valeur, int cout, List<Map<String, Object>> contenu) {
+        Coffre ca = coffres.remove(a);
+        Coffre cb = coffres.remove(b);
+        int place = caseDe(joueur, a);
+        joueur.getInventory().setItem(caseDe(joueur, b), null);
+        YamlConfiguration yaml = new YamlConfiguration();
+        yaml.set("joueur", joueur.getUniqueId().toString());
+        yaml.set("nom", joueur.getName());
+        yaml.set("origine", "Fusion");
+        yaml.set("raison", "Récompense fusionnée");
+        yaml.set("date", System.currentTimeMillis());
+        yaml.set("valeur", valeur);
+        yaml.set("fusion", true);
+        yaml.set("contenu", contenu);
+        Coffre c = new Coffre();
+        c.recompense = Recompense.lire(yaml.saveToString());
+        String id = UUID.randomUUID().toString();
+        coffres.put(id, c);
+        joueur.getInventory().setItem(place, objet(id, c));
+        sauver();
+        plugin.journal("FUSION | " + joueur.getName() + " (" + joueur.getUniqueId() + ") | coût " + cout + " points d'expérience"
+                + " | coffre " + a + " (" + decrit(ca) + ") + coffre " + b + " (" + decrit(cb) + ") | nouveau coffre " + id
+                + " (valeur " + nombre(valeur) + " ; contenu : " + c.recompense.resume() + ")");
+        return id;
+    }
+
+    private static String decrit(Coffre c) {
+        return c.recompense.origine + " ; " + c.recompense.raison + " ; gagné par " + c.recompense.nom + " ; valeur "
+                + nombre(c.recompense.valeur) + " ; contenu abandonné : " + c.recompense.resume();
     }
 
     // ------------------------------------------------------------------ protections

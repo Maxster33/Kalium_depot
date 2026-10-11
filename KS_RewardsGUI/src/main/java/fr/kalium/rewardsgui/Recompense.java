@@ -32,6 +32,7 @@ import java.util.UUID;
  *     montant: 500
  * locale: true                                   # 1.1.0 : déposée par un plugin d'Event (KSRewardsGUI.deposer)
  * valeur: 100.0                                  # 1.3.0 : valeur moyenne du niveau, affichée sur le coffre (facultatif)
+ * fusion: true                                   # 1.5.0 : coffre né de la fusion de deux coffres (écrit par ce plugin)
  * </pre>
  */
 final class Recompense {
@@ -49,6 +50,8 @@ final class Recompense {
     boolean locale;
     /** 1.3.0 : valeur moyenne du niveau de la récompense, en émeraudes (« valeur » du message ; 0 : inconnue). */
     double valeur;
+    /** 1.5.0 : coffre de récompense fusionné (contenu tiré par ce serveur, voir Tables). */
+    boolean fusion;
     final List<Element> contenu = new ArrayList<>();
     /** Texte d'origine (enregistré tel quel). */
     String texte;
@@ -71,6 +74,7 @@ final class Recompense {
         r.date = yaml.getLong("date", System.currentTimeMillis());
         r.locale = yaml.getBoolean("locale", false);
         r.valeur = yaml.getDouble("valeur", 0);
+        r.fusion = yaml.getBoolean("fusion", false);
         for (Map<?, ?> element : yaml.getMapList("contenu")) {
             String type = String.valueOf(element.get("type"));
             Object nombre = element.containsKey("nombre") ? element.get("nombre") : element.get("montant");
