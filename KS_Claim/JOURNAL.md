@@ -117,4 +117,4 @@ Choix de Claude, signalés :
 Limites : écrit sans serveur de test ; dépend de la façon dont WorldGuard et SimpleClaimSystem refusent (événements
 annulés) : à vérifier en jeu avec un compte non opérateur, dans la zone du spawn et dans le claim d'un autre.
 
-**Compilé le 11/10/2026 (`sortie/KS_Claim-1.3.0.jar`). Non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster et sur Event le 11/10/2026 à 10:47 (LeKiwi06 ; demandes du 11/10/2026 ; 1.2.0 dans `_removed-ks_claim-1.2.0/` sur les deux serveurs), actif après redémarrage. Statut : non testé en jeu.**

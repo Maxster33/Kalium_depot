@@ -103,4 +103,4 @@ colonne, donc sur le toit du spawn de Kixster.
 - Si le point est bouché (moins de 2 blocs libres) : le joueur reste où le jeu le pose, une ligne le dit dans la console.
 - Aucun nouveau réglage, aucun nouveau texte.
 
-**Compilé le 11/10/2026 (`sortie/KS_Teleport-1.2.0.jar`). Non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster et sur Event le 11/10/2026 à 10:47 (LeKiwi06 ; demandes du 11/10/2026 ; 1.1.0 dans `_removed-ks_teleport-1.1.0/` sur Kixster, 1.0.0 dans `_removed-ks_teleport-1.0.0/` sur Event), actif après redémarrage. Statut : non testé en jeu.**

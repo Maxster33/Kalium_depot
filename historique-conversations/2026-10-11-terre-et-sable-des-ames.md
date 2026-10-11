@@ -168,12 +168,21 @@ les deux ? » : « Les deux ».
 - Proxy : `kalium_objets.json` et `KaLium-objets-1.4.0.mcpack` (`geyser-bedrock` 1.4.0).
 - Anciens fichiers dans leurs dossiers `_removed-…`. Réservations libérées. Event n'a rien reçu.
 
+## Troisième déploiement (11/10/2026, 10:47)
+
+- Réponses de LeKiwi06 : pas de plafond pour l'exceptionnelle de Kanvas ; corriger la pile de tous les objets sur
+  Bedrock « et pense a le faire a l'avenir » ; « oui met event a jour par rapport a kixster » ; « rend les bateaux ,
+  minecraft , etc posable et cassable dans les zones protégés et claims , rajoute core protect » ; île du dragon plus
+  tard ; toit du spawn : « je ne sais pas comment fix le soucis » ; vision nocturne à 25 % sur les chauves-souris ;
+  éclat d'écho attendu à 10 % (n'avait jamais été codé).
+- Codé et envoyé (Kixster et Event) : KS_Teleport 1.2.0, KS_Claim 1.3.0, KS_LootPotions 1.2.0, KS_LootEntites 1.5.0.
+- Kixster : CoreProtect CE 24.1 (jar d'Event copié). Event : aligné sur Kixster (14 jars + `fusion.yml`).
+- Proxy : `kalium_objets.json` (pile de 64 pour les 11 objets empilables).
+- Proposition d'équilibrage des potions présentée, en attente de validation.
+
 ## Reste à faire
 
-- Redémarrer Kixster, Kanvas, Kal-Games et le proxy (LeKiwi06), puis lire les consoles.
-- Tests en jeu : voir `REPRISE_PROJET.md` (ajouts du 11/10/2026) : arrivée d'un nouveau compte, `/tetes`, fusion de coffres,
-  `/accepter`, fonte des armures, meule et Cristal de purification, marchand ambulant, concours simultanés, tableaux,
-  jetons empilables et cristal sur Bedrock.
-- À décider par LeKiwi06 : équilibrage du drop des potions des mobs (demande interrompue) ; plafond de l'exceptionnelle de
-  Kanvas ; les 5 autres objets empilables sur Bedrock ; ces plugins sur Event ; points de Kixster signalés (WorldGuard
-  et bateaux, CoreProtect, région `ile_du_dragon`, réapparition sans lit).
+- Redémarrer Event, Kixster, Kanvas, Kal-Games et le proxy (LeKiwi06), puis lire les consoles.
+- Tests en jeu : voir `REPRISE_PROJET.md` (ajouts du 11/10/2026).
+- À décider par LeKiwi06 : le reste de l'équilibrage des potions ; région `ile_du_dragon` à l'ouverture de l'End ;
+  version de WorldGuard pour Paper 26.3 (erreur à la pose d'un bateau) ; alertes GrimAC sur les joueurs Java.

@@ -69,4 +69,4 @@ en demande 8.
 - Le reste est inchangé. Une proposition d'équilibrage des autres taux a été faite à LeKiwi06 le même jour : rien
   d'autre n'est modifié tant qu'il ne l'a pas validée.
 
-**Compilé le 11/10/2026 (`sortie/KS_LootPotions-1.2.0.jar`). Non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster et sur Event le 11/10/2026 à 10:47 (LeKiwi06 ; demandes du 11/10/2026 ; 1.1.3 dans `_removed-ks_lootpotions-1.1.3/` sur les deux serveurs), actif après redémarrage. Statut : non testé en jeu.**

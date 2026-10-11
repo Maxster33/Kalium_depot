@@ -135,4 +135,4 @@ comme « à décider »). L'éclat d'écho ne venait que des coffres de la cité
 - Chauve-souris tuée par un joueur : 10 % d'un éclat d'écho (l'ingrédient de l'Élixir de chauve-souris).
 - Le reste est inchangé.
 
-**Compilé le 11/10/2026 (`sortie/KS_LootEntites-1.5.0.jar`). Non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster et sur Event le 11/10/2026 à 10:47 (LeKiwi06 ; demandes du 11/10/2026 ; 1.4.0 dans `_removed-ks_lootentites-1.4.0/` sur les deux serveurs), actif après redémarrage. Statut : non testé en jeu.**

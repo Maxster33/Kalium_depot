@@ -19,10 +19,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 
-- KS_LootPotions — LeKiwi06 — depuis le 2026-10-11 10:45 — chauve-souris : potion de vision nocturne à 25 %
-- KS_LootEntites — LeKiwi06 — depuis le 2026-10-11 10:45 — chauve-souris : éclat d'écho à 10 %
-- KS_Teleport — LeKiwi06 — depuis le 2026-10-11 10:45 — réapparition sans lit au point d'apparition exact du monde
-- KS_Claim — LeKiwi06 — depuis le 2026-10-11 10:45 — bateaux et wagonnets posables et cassables dans les zones protégées et les claims
 
 ## Requis parfois
 
