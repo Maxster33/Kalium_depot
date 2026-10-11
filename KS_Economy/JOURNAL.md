@@ -607,3 +607,17 @@ Ventes de cinabre avant la correction (Kixster, 12/10 de 00:09 à 00:30, `cinnab
 **Fait le 12/10/2026 à 01:24, Kixster arrêté (LeKiwi06 : « kixster est arrêté, retire tout »)** : 316 points retirés de `plugins/KS_Economy/comptes.yml` (3 soldes : - 250, - 57, - 9 ; aucun n'est passé sous zéro ; montants de `rachats.yml` recoupés avec le journal du serveur ; les murets vendus ne sont pas rendus) ; ancien fichier dans `/plugins/_removed-ks_economy-comptes-2026-10-12/` ; fichier relu identique après l'envoi. Kixster était arrêté depuis 00:33 : aucune vente de cinabre après le relevé.
 
 **Journal de Kixster lu le 12/10/2026 après le redémarrage de 01:25 (demande de LeKiwi06)** : KS_Economy 1.8.0 active, « Barème : 1929 objets (0 inconnus de cette version) », aucune erreur. Ligne attendue présente : « Rachats de la semaine 2026-S42 : objets au prix modifié remplacés (waxed_oxidized_chiseled_copper, dripstone_block, brown_egg, cinnabar_brick_wall, diorite_wall) » ; les 5 autres offres sont gardées, les 5 nouvelles sont `golden_apple`, `potion(tissage)`, `ladder`, `mushroom_stem`, `deepslate_lapis_ore`. `rachats.yml` : les 10 offres portent leur prix du barème. `comptes.yml` : soldes corrigés conservés après le redémarrage. Statut : vérifié dans la console, non testé en jeu. Event : pas encore redémarré.
+
+## 1.8.1 - barème : pied de champignon doublé (12/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « les troncs de champignons sont trop peu chers, ils sont pénibles à avoir (plus que les blocs
+marron et rouge), il faut donc doubler le prix des tiges de champignon ».
+
+- `rachats.csv` : pied de champignon (`mushroom_stem`) 0,03 au lieu de 0,015. Seule cette ligne change ; blocs de
+  champignon marron et rouge inchangés (0,015). Aucun changement de code.
+- Effet au déploiement : une offre de la semaine sur le pied de champignon (tirée sur Kixster le 12/10 à 01:25, 64 pour
+  1 point) est remplacée par un nouveau tirage au redémarrage, comme tout objet au prix modifié (1.8.0).
+- `rachats-modifies.txt` inchangé (il ne sert qu'aux offres tirées avant la 1.8.0).
+- Contient la 1.8.0 (déployée le 12/10/2026, vérifiée dans la console de Kixster, non testée en jeu).
+
+**Compilé le 12/10/2026, non déployé. Statut : non testé en jeu.**

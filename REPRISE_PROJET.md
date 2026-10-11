@@ -112,6 +112,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 
 
+- **KS_Economy 1.8.1** (12/10/2026, LeKiwi06) : barème : pied de champignon 0,03 au lieu de 0,015 (une seule ligne de `rachats.csv`) ; **compilé, non déployé, non testé en jeu**, réservation gardée jusqu'au déploiement.
+
 - **KG_BoatRace 1.6.0** (09/10/2026, LeKiwi06) : essai d'équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock, derrière le réglage « Bedrock : bateau serveur (essai) » désactivé par défaut ; **compilé, non déployé, non testé en jeu**, réservation gardée jusqu'au test. Empilé sur la 1.5.1 non testée (accord explicite de LeKiwi06).
 
 - **KG_Pong 0.1.0** (06/10/2026, LeKiwi06) : prototype d'un nouveau mini-jeu Pong pour Kal-Games (2 joueurs, vu de dessus, raquettes en vrais blocs, balle = Sulfur Cube à bloc de glace), branché sur le moteur de parties de KalGames (aucun changement dans KalGames) ; **compilé, non déployé, non testé en jeu**, réservation gardée. Après le déploiement, un modérateur doit construire un terrain plat entouré de murs, créer l'arène et poser 5 points (voir `KG_Pong/JOURNAL.md`).
@@ -440,6 +442,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (12/10/2026, 01:35) : KS_Economy 1.8.1 compilée, non déployée, non testée : pied de champignon doublé (0,03).** Demande de LeKiwi06 : « il faut donc doubler le prix des tiges de champignon » (plus pénibles à obtenir que les blocs marron et rouge). Event n'a pas redémarré depuis le 11/10 à 17:36 (journal lu à 01:29) : il tourne encore en 1.7.0, le jar 1.8.0 en place attend le redémarrage.
 
 **Ajout (12/10/2026, 01:30) : KS_Economy 1.8.0 active sur Kixster, journal lu.** Redémarrage de 01:25 : KS_Economy 1.8.0 active, « Barème : 1929 objets (0 inconnus de cette version) », aucune erreur. Ligne attendue présente : « Rachats de la semaine 2026-S42 : objets au prix modifié remplacés (waxed_oxidized_chiseled_copper, dripstone_block, brown_egg, cinnabar_brick_wall, diorite_wall) » ; les 5 autres offres sont gardées, les 5 nouvelles sont `golden_apple`, `potion(tissage)`, `ladder`, `mushroom_stem`, `deepslate_lapis_ore`. `rachats.yml` : les 10 offres portent leur prix du barème. `comptes.yml` : soldes corrigés conservés après le redémarrage. Statut : vérifié dans la console, non testé en jeu. Event : pas encore redémarré.
 

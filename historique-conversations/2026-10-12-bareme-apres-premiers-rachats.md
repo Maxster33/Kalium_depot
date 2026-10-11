@@ -42,7 +42,15 @@ redémarrage ; non testée en jeu. Perle de l'Ender laissée à 0,5 (« ils ne s
 
 **Journal de Kixster lu le 12/10/2026 après le redémarrage de 01:25 (demande de LeKiwi06)** : KS_Economy 1.8.0 active, « Barème : 1929 objets (0 inconnus de cette version) », aucune erreur. Ligne attendue présente : « Rachats de la semaine 2026-S42 : objets au prix modifié remplacés (waxed_oxidized_chiseled_copper, dripstone_block, brown_egg, cinnabar_brick_wall, diorite_wall) » ; les 5 autres offres sont gardées, les 5 nouvelles sont `golden_apple`, `potion(tissage)`, `ladder`, `mushroom_stem`, `deepslate_lapis_ore`. `rachats.yml` : les 10 offres portent leur prix du barème. `comptes.yml` : soldes corrigés conservés après le redémarrage. Statut : vérifié dans la console, non testé en jeu. Event : pas encore redémarré.
 
+## Pied de champignon doublé (KS_Economy 1.8.1)
+
+LeKiwi06 : « les troncs de champignons sont trop peu chers, ils sont pénibles à avoir (plus que les blocs marron et rouge), il faut donc doubler le prix des tiges de champignon ». `mushroom_stem` 0,03 au lieu de 0,015 ; compilé, non déployé.
+
+Event : journal lu à 01:29, aucun redémarrage depuis le 11/10 à 17:36 (toujours en 1.7.0).
+
 ## Reste à faire
+
+- Déployer KS_Economy 1.8.1 sur Kixster et Event (accord de LeKiwi06 attendu).
 
 - Tester en jeu ; redémarrer Event et y lire la ligne « objets au prix modifié remplacés ».
 - Silex (0,029) à 2,9 fois le gravier (0,01) ; fiole de miel à 0,05 au lieu de 0,06.
