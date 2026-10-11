@@ -602,4 +602,6 @@ Offres de la semaine 42 qui seront remplacées au redémarrage (objets au prix m
 
 Décision de LeKiwi06 le même jour : la perle de l'Ender reste à 0,5 (« ils ne savent pas pour l'endermite, donc aucune raison que la valeur de la perle grimpe »).
 
-Ventes de cinabre avant la correction (Kixster, 12/10 de 00:09 à 00:30, `cinnabar_brick_wall` à 10 pour 1 point ; journal du serveur et `rachats.yml`) : 316 points pour 3 160 murets, 3 joueurs. Demande de LeKiwi06 : « retire aussi les points obtenus via le cinabre » : à faire dans `comptes.yml`, serveur éteint (pas de commande d'administration des soldes).
+Ventes de cinabre avant la correction (Kixster, 12/10 de 00:09 à 00:30, `cinnabar_brick_wall` à 10 pour 1 point ; journal du serveur et `rachats.yml`) : 316 points pour 3 160 murets, 3 joueurs. Demande de LeKiwi06 : « retire aussi les points obtenus via le cinabre » (pas de commande d'administration des soldes : `comptes.yml` modifié serveur éteint).
+
+**Fait le 12/10/2026 à 01:24, Kixster arrêté (LeKiwi06 : « kixster est arrêté, retire tout »)** : 316 points retirés de `plugins/KS_Economy/comptes.yml` (3 soldes : - 250, - 57, - 9 ; aucun n'est passé sous zéro ; montants de `rachats.yml` recoupés avec le journal du serveur ; les murets vendus ne sont pas rendus) ; ancien fichier dans `/plugins/_removed-ks_economy-comptes-2026-10-12/` ; fichier relu identique après l'envoi. Kixster était arrêté depuis 00:33 : aucune vente de cinabre après le relevé.

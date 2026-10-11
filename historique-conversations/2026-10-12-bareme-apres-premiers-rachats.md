@@ -34,11 +34,12 @@ Accord de LeKiwi06 : « oui déploie tout ». KS_Economy 1.8.0 sur Kixster et Ev
 `_removed-ks_economy-1.7.0/`, jars en place vérifiés identiques à `jars-deployes/` avant l'envoi. Active après
 redémarrage ; non testée en jeu. Perle de l'Ender laissée à 0,5 (« ils ne savent pas pour l'endermite »).
 
+## Points du cinabre retirés (12/10/2026, 01:24)
+
+**Fait le 12/10/2026 à 01:24, Kixster arrêté (LeKiwi06 : « kixster est arrêté, retire tout »)** : 316 points retirés de `plugins/KS_Economy/comptes.yml` (3 soldes : - 250, - 57, - 9 ; aucun n'est passé sous zéro ; montants de `rachats.yml` recoupés avec le journal du serveur ; les murets vendus ne sont pas rendus) ; ancien fichier dans `/plugins/_removed-ks_economy-comptes-2026-10-12/` ; fichier relu identique après l'envoi. Kixster était arrêté depuis 00:33 : aucune vente de cinabre après le relevé.
+
 ## Reste à faire
 
 - Tester en jeu ; lire la ligne « objets au prix modifié remplacés » de la console après le redémarrage.
-- Retirer les points gagnés avec le cinabre sur Kixster (demande de LeKiwi06 : « retire aussi les points obtenus via
-  le cinabre ») : 316 points, 3 joueurs (journal du serveur du 12/10, 00:09 à 00:30) ; `comptes.yml` à modifier serveur
-  éteint.
 - Silex (0,029) à 2,9 fois le gravier (0,01) ; fiole de miel à 0,05 au lieu de 0,06.
 - Tables de butin des coffres de récompense (`butin.yml`) : calculées avec l'ancien barème, à régénérer ou non.
