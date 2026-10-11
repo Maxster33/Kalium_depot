@@ -25,6 +25,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KG_Rewards — LeKiwi06 — depuis le 2026-10-11 08:05 — butin.yml : Cristal de purification dans les pools
 - KV_Rewards — LeKiwi06 — depuis le 2026-10-11 08:05 — butin.yml : Cristal de purification dans les pools
 - KS_RewardsGUI — LeKiwi06 — depuis le 2026-10-11 08:05 — fusion.yml : Cristal de purification dans les pools
+- KV_Plots — LeKiwi06 — depuis le 2026-10-11 08:20 — points des bâtisseurs : carré de la note, x2 sur un grand plot
 
 ## Requis parfois
 
