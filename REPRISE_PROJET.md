@@ -96,6 +96,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Meule 1.0.0** (11/10/2026, LeKiwi06) : **nouveau plugin** : accroupi, clic droit sur une meule avec un objet maudit en main : menu de confirmation, 45 niveaux par malédiction retirée ; dépend de KLM_Menu ; **compilé, non déployé, non testé en jeu**, réservation gardée.
+
 - **KS_Jetons 2.0.2** (11/10/2026, LeKiwi06) : description du jeton de localisation (« Clic droit, jeton en main, pour l'utiliser » au lieu de « À ranger dans tes jetons : /jetons ») ; **compilé, non déployé, non testé en jeu**, réservation gardée.
 
 - **KS_Crafts 1.12.0** (11/10/2026, LeKiwi06) : une pièce d'armure (casque, plastron, jambières, bottes ; fer, or, cuivre, cotte de mailles) fondue au four ou au haut fourneau donne un lingot au lieu d'une pépite ; outils, armes et armure de cheval inchangés ; **compilé, non déployé, non testé en jeu**, réservation gardée.
@@ -437,6 +439,8 @@ sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre par
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (11/10/2026, 07:20) : KS_Meule 1.0.0 (nouveau plugin) compilé, non déployé, non testé : retirer les malédictions à la meule.** Question de LeKiwi06 : « est-ce qu'on a fait le plugin pour retirer les malédictions des items ? » : non, aucune trace (dépôt, cahiers des charges, liste d'origine). Sa demande : « il faut faire sneak+click sur une meule avec l'item concerné , cela coute 45 niveaux par malédiction ( interface de confirmation avant ) ». Fait : menu en coffre (objet au centre, un bouton par malédiction, « Tout retirer », « Annuler »), 45 niveaux par malédiction (`niveaux-par-malediction`), livres enchantés compris. Signalé, non fait : une armure de Liaison déjà portée ne peut pas être prise en main, donc pas traitée. Réservation gardée jusqu'au déploiement.
 
 **Ajout (11/10/2026, 07:14) : KS_Jetons 2.0.2 compilée, non déployée, non testée : description du jeton de localisation.** Accord de LeKiwi06 (« oui corrige le texte ») : la description disait de ranger le jeton dans l'inventaire spécial, alors qu'il s'utilise en main. Les jetons déjà fabriqués gardent l'ancienne ligne. Réservation gardée jusqu'au déploiement.
 

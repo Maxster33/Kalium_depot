@@ -1,6 +1,6 @@
 # 2026-10-11 — Terre des âmes et sable des âmes : familles des rachats et butin des coffres
 
-- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI, KS_Decapitator, KS_Crafts, KS_Jetons
+- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI, KS_Decapitator, KS_Crafts, KS_Jetons, KS_Meule (nouveau)
 - Versions avant / après : KS_Economy 1.5.0 en service (1.5.1 jamais déployée) / 1.5.2 déployée sur Event et
   Kixster ; KG_Rewards 1.3.0 et KV_Rewards 1.3.0 inchangés (`butin.yml` remplacés)
 
@@ -105,8 +105,16 @@ les deux ? » : « Les deux ».
 - « oui corrige le texte » (LeKiwi06) : KS_Jetons 2.0.2, « Clic droit, jeton en main, pour l'utiliser ». Compilé,
   poussé, non déployé.
 
+## Malédictions à la meule
+
+- « est-ce qu'on a fait le plugin pour retirer les malédictions des items ? » : non. Puis : « il faut faire
+  sneak+click sur une meule avec l'item concerné , cela coute 45 niveaux par malédiction ( interface de
+  confirmation avant ) ».
+- KS_Meule 1.0.0 (nouveau plugin) : compilé, poussé, non déployé. Détail et limites : `KS_Meule/JOURNAL.md`.
+
 ## Reste à faire
 
+- Déploiement de KS_Meule 1.0.0, sur accord de LeKiwi06 ; à décider : armure de Liaison déjà portée.
 - Envoyer `kalium_objets.json` sur le proxy, sur accord de LeKiwi06 (redémarrage du proxy : tout le réseau).
 - Déploiement de KS_Crafts 1.12.0, sur accord de LeKiwi06 ; lire la console au démarrage (6 recettes remplacées) ;
   test : fondre un casque en fer, une pioche en fer, une armure de cheval.
