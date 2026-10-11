@@ -22,6 +22,7 @@ côté serveur (aucun effet du vrai sac ou de la vraie clé).
 | Badge de la mort (KS_Jetons) | `knowledge_book` | `minecraft:netherite_block` | `kalium:badge_mort` | face du bloc de netherite (image plate) |
 | Badge de téléportation (KS_Jetons) | `knowledge_book` | `minecraft:gold_block` | `kalium:badge_tp` | face du bloc d'or (image plate) |
 | Badge de localisation (KS_Jetons) | `knowledge_book` | `minecraft:copper_block` | `kalium:badge_localisation` | face du bloc de cuivre (image plate) |
+| Cristal de purification (KS_Meule) | `knowledge_book` | `minecraft:amethyst_shard` | `kalium:cristal_purification` | éclat d'améthyste |
 
 Attention : **tout** livre de connaissances qui a l'un de ces `item_model` prend cette apparence ; un futur objet
 custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne ici.
@@ -71,3 +72,6 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   Les badges restent à 1 (ils ne s'empilent pas non plus sur Java). **Même défaut, non corrigé, signalé** : Clé de
   l'End, Bedrock Breaker, Fragment de Spawner, Cœur de Spawner et Changeur de Biome s'empilent par 64 sur Java et pas
   sur Bedrock. **Non envoyé sur le proxy. Non testé.**
+- **1.4.0 (11/10/2026, LeKiwi06)** : Cristal de purification de KS_Meule 1.1.0 (éclat d'améthyste, pile de 64 déclarée).
+  Contient la correction des jetons (pile de 64). Pack `KaLium-objets-1.4.0.mcpack` construit (image extraite du jeu
+  26.2). **Non envoyé sur le proxy. Non testé.**

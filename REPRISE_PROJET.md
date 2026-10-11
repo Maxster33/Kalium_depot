@@ -96,6 +96,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Meule 1.1.0 + KS_KaliumGive 1.10.0** (11/10/2026, LeKiwi06) : nouvel objet **Cristal de purification** (éclat d'améthyste, id `cristal_purification`) ; une malédiction retirée à la meule coûte 1 cristal au lieu de 45 niveaux ; à déployer ensemble, avec les `butin.yml` (Kal-Games, Kanvas), `fusion.yml` (Kixster) et `geyser-bedrock` 1.4.0 (proxy) ; **compilés, non déployés, non testés en jeu**, réservations gardées.
+
 - **KS_Economy 1.7.0** (11/10/2026, LeKiwi06) : le marchand ambulant rachète 10 objets (tirage des rachats de la semaine, refait pour chaque marchand ; menu en coffre au clic droit ; points du score ; chaque rachat sert 10, 10, 5, 2 ou 1 fois selon le prix, pour tous les joueurs ensemble) ; **compilé, non déployé, non testé en jeu**, réservation gardée.
 
 
@@ -434,6 +436,8 @@ sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre par
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (11/10/2026, 08:07) : Cristal de purification : KS_Meule 1.1.0, KS_KaliumGive 1.10.0, tables de butin et geyser-bedrock 1.4.0 prêts, non déployés, non testés.** Demande de LeKiwi06 : « on va plutot faire un item pour enlever les malédictions au lieu d'une quantité d'xp , cet item sera droppable dans les reward, il aura une valeur théorique de 600 emeraudes , met let dans les pool adaptés ( [...] il faut également le déclarer au proxy pour que les joueurs bedrock le voient ) ». Fait : objet « Cristal de purification » (éclat d'améthyste brillant, pile de 64 ; nom et apparence choisis par Claude) ; à la meule, 1 cristal par malédiction ; id `cristal_purification` dans KS_KaliumGive ; pools : valeur 600, donc pool Légendaire (3,3 % d'un tirage Légendaire ; jeton de claim 9,0 → 6,7 %, Changeur de Biome 2,2 → 1,7 %, Clé de l'End 1,8 → 1,3 % ; moyenne du pool 1 138 → 1 109) ; `butin.yml` ×2 et `fusion.yml` régénérés hors dépôt et vérifiés (aucune erreur) ; classeur des valeurs régénéré ; `geyser-bedrock` 1.4.0 (correspondance + pack construit). Demande interrompue juste avant par LeKiwi06, non commencée : « équilibre mieux le drop des potions sur les différents mobs ». Réservations gardées jusqu'au déploiement.
 
 **Ajout (11/10/2026, 07:51) : KS_Economy 1.7.0 compilée, non déployée, non testée : rachats du marchand ambulant.** Demande de LeKiwi06 : « j'aimerai que le wandering trader propose aussi 10 échanges , les moins cher ont echangeable jusqu'a 10 fois [...] diamant [...] 5 fois [...] totem [...] 1 exemplaire : les règles de trades sont les mêmes que pour les rachats de la semaine ». Ses réponses : le marchand achète ; menu en coffre et score ; un tirage par marchand, stock commun. Rachats gardés dans les données du marchand (aucun fichier). Choix de Claude signalés : paliers 10 / 10 / 5 / 2 / 1 par gamme de prix, un clic = un lot. Réservation gardée jusqu'au déploiement.
 

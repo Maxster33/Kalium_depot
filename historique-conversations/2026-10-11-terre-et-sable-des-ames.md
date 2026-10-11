@@ -1,6 +1,6 @@
 # 2026-10-11 — Terre des âmes et sable des âmes : familles des rachats et butin des coffres
 
-- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI, KS_Decapitator, KS_Crafts, KS_Jetons, KS_Meule (nouveau)
+- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI, KS_Decapitator, KS_Crafts, KS_Jetons, KS_Meule (nouveau), KS_KaliumGive, geyser-bedrock
 - Versions avant / après : KS_Economy 1.5.0 en service (1.5.1 jamais déployée) / 1.5.2 déployée sur Event et
   Kixster ; KG_Rewards 1.3.0 et KV_Rewards 1.3.0 inchangés (`butin.yml` remplacés)
 
@@ -132,8 +132,21 @@ les deux ? » : « Les deux ».
 - KS_Economy 1.7.0 : compilé, poussé, non déployé (après le déploiement de la 1.6.0 sur Kixster). Détail :
   `KS_Economy/JOURNAL.md`.
 
+## Cristal de purification
+
+- Demande de LeKiwi06 (après avoir interrompu « équilibre mieux le drop des potions sur les différents mobs », non
+  commencé) : « on va plutot faire un item pour enlever les malédictions au lieu d'une quantité d'xp , cet item
+  sera droppable dans les reward, il aura une valeur théorique de 600 emeraudes , met let dans les pool adaptés
+  ( je ne sais pas quelle apparence lui donner , mais il faut également le déclarer au proxy pour que les joueurs
+  bedrock le voient ) ».
+- KS_Meule 1.1.0, KS_KaliumGive 1.10.0, `butin.yml` ×2, `fusion.yml`, `geyser-bedrock` 1.4.0 : prêts, poussés (code),
+  non déployés. Détail : `KS_Meule/JOURNAL.md`.
+
 ## Reste à faire
 
+- Déployer ensemble, sur accord de LeKiwi06 : KS_Meule 1.1.0 + KS_KaliumGive 1.10.0 + `fusion.yml` (Kixster),
+  `butin.yml` (Kal-Games, Kanvas), `kalium_objets.json` + `KaLium-objets-1.4.0.mcpack` (proxy, redémarrage).
+- À confirmer par LeKiwi06 : nom et apparence du cristal ; l'équilibrage des potions des mobs est-il toujours voulu ?
 - Déploiement de KS_Economy 1.7.0, sur accord de LeKiwi06 ; test : œuf de marchand ambulant, deux joueurs sur le
   même marchand (stock commun).
 - Redémarrer Kixster (LeKiwi06), puis lire la console : « Fonte des armures : 6 recettes du jeu remplacées »,

@@ -106,3 +106,13 @@ supprimables par l'humain : `_removed-ks_kaliumgive-1.0.0/` à `1.6.0/`), actif 
 testé en jeu.**
 
 **Envoyé sur Kixster le 09/10/2026 à 17:31 (LeKiwi06, envoi groupé de la catégorie 7 : KS_Jetons 2.0.1, KS_KaliumGive 1.9.0, KS_CoffreMort 1.0.1, KS_Fly 1.0.0, KS_Teleport 1.0.0, KS_Economy 1.4.0, KS_Claim 1.2.0 ; demande de LeKiwi06 : « envoie la catégorie 7 sur kixster » ; 1.9.0 ; 1.8.0 dans `_removed-ks_kaliumgive-1.8.0/`), actif après redémarrage de Kixster. Jars en place vérifiés identiques aux références avant l'envoi. Statut : non testé en jeu.**
+
+## 1.10.0 - Cristal de purification (11/10/2026, LeKiwi06)
+
+KS_Meule 1.1.0 (demande de LeKiwi06 : un objet qui retire les malédictions, donné par les coffres de récompense) :
+nouvel id_custom `cristal_purification`, créé par KS_Meule (`softdepend`). C'est par cet id que KS_RewardsGUI crée
+l'objet à l'ouverture d'un coffre.
+
+À déployer avec KS_Meule 1.1.0.
+
+**Compilé le 11/10/2026 (`sortie/KS_KaliumGive-1.10.0.jar`). Non déployé. Statut : non testé en jeu.**

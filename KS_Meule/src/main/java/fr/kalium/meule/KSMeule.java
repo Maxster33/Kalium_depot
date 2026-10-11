@@ -2,12 +2,16 @@ package fr.kalium.meule;
 
 import fr.kalium.menu.api.Contenant;
 import fr.kalium.menu.api.Lang;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,6 +22,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -26,37 +31,104 @@ import java.util.List;
 /**
  * KS_Meule (LeKiwi06, 11/10/2026) : retirer les malédictions d'un objet à la meule.
  *
- * « il faut faire sneak+click sur une meule [...], cela coute 45 niveaux par malédiction (interface de confirmation
- * avant) », puis : « fait en sorte que le menu soit uniquement a main nu et qu'on selectionne la pièce d'armure dans
- * l'inventaire (pas le stuff porté) ».
+ * « il faut faire sneak+click sur une meule [...] (interface de confirmation avant) », puis : « fait en sorte que le
+ * menu soit uniquement a main nu et qu'on selectionne la pièce d'armure dans l'inventaire (pas le stuff porté) ».
+ * 1.1.0 : « on va plutot faire un item pour enlever les malédictions au lieu d'une quantité d'xp, cet item sera
+ * droppable dans les reward, il aura une valeur théorique de 600 emeraudes ».
  *
  * - Accroupi, clic droit sur une meule, la main vide : le menu s'ouvre (pas la meule). Avec un objet en main, rien ne
  *   change : le clic fait ce qu'il fait d'habitude.
  * - Dans le menu, un clic sur un objet maudit de son inventaire le choisit (l'armure portée et la main secondaire n'y
  *   sont pas : un coffre ne montre que l'inventaire). L'objet reste à sa place, le menu n'en montre que l'image.
- * - Un bouton par malédiction, « Tout retirer » s'il y en a plusieurs, « Annuler ». 45 niveaux d'expérience par
- *   malédiction retirée (config.yml : niveaux-par-malediction), gratuit en créatif. Les autres enchantements, le nom
- *   et l'usure de l'objet ne changent pas.
+ * - Un bouton par malédiction, « Tout retirer » s'il y en a plusieurs, « Annuler ». Chaque malédiction retirée coûte
+ *   un Cristal de purification de l'inventaire (1.1.0 ; avant : 45 niveaux), gratuit en créatif. Les autres
+ *   enchantements, le nom et l'usure de l'objet ne changent pas.
  * - Un livre enchanté qui porte une malédiction compte aussi ; s'il ne lui reste aucun enchantement, il redevient un
  *   livre.
+ *
+ * Cristal de purification : livre de connaissances à l'apparence d'un éclat d'améthyste, empilable par 64, obtenu dans
+ * les coffres de récompense. Autres plugins : creerCristal(), estCristal(objet) (KS_KaliumGive).
  */
 public final class KSMeule extends JavaPlugin implements Listener {
 
     private static final String MARQUE = "meule";
 
+    private static NamespacedKey marqueur;
+
     private Lang lang;
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
+        marqueur = new NamespacedKey(this, "cristal");
         lang = new Lang(this);
         getServer().getPluginManager().registerEvents(this, this);
         lang.saveIfNeeded();
     }
 
-    private int niveaux() {
-        return Math.max(0, getConfig().getInt("niveaux-par-malediction", 45));
+    // ------------------------------------------------------------------ Cristal de purification
+
+    private static Component ligne(String texte, NamedTextColor couleur) {
+        return Component.text(texte, couleur).decoration(TextDecoration.ITALIC, false);
     }
+
+    /** Un Cristal de purification. Nécessite que le plugin soit activé. */
+    public static ItemStack creerCristal() {
+        ItemStack item = new ItemStack(Material.KNOWLEDGE_BOOK);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(ligne("Cristal de purification", NamedTextColor.LIGHT_PURPLE));
+        meta.lore(List.of(ligne("Retire une malédiction d'un objet", NamedTextColor.GRAY),
+                ligne("Accroupi, main vide : clic sur une meule", NamedTextColor.DARK_GRAY)));
+        meta.setItemModel(NamespacedKey.minecraft("amethyst_shard"));
+        meta.setEnchantmentGlintOverride(true);
+        meta.setMaxStackSize(64);
+        meta.getPersistentDataContainer().set(marqueur, PersistentDataType.BYTE, (byte) 1);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public static boolean estCristal(ItemStack item) {
+        return item != null && item.getType() == Material.KNOWLEDGE_BOOK && item.hasItemMeta()
+                && item.getItemMeta().getPersistentDataContainer().has(marqueur, PersistentDataType.BYTE);
+    }
+
+    private static int cristaux(Player joueur) {
+        int total = 0;
+        for (ItemStack objet : joueur.getInventory().getStorageContents()) {
+            if (estCristal(objet)) {
+                total += objet.getAmount();
+            }
+        }
+        return total;
+    }
+
+    private static void prendreCristaux(Player joueur, int nombre) {
+        ItemStack[] contenu = joueur.getInventory().getStorageContents();
+        int reste = nombre;
+        for (int i = 0; i < contenu.length && reste > 0; i++) {
+            if (!estCristal(contenu[i])) {
+                continue;
+            }
+            int pris = Math.min(reste, contenu[i].getAmount());
+            reste -= pris;
+            if (pris == contenu[i].getAmount()) {
+                contenu[i] = null;
+            } else {
+                contenu[i].setAmount(contenu[i].getAmount() - pris);
+            }
+        }
+        joueur.getInventory().setStorageContents(contenu);
+    }
+
+    /** Livre de connaissances : clic droit vanilla annulé (il serait consommé). */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onUtiliser(PlayerInteractEvent event) {
+        if ((event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)
+                && estCristal(event.getItem())) {
+            event.setUseItemInHand(Event.Result.DENY);
+        }
+    }
+
+    // ------------------------------------------------------------------ malédictions
 
     /** Malédictions de l'objet (posées sur lui, ou gardées dans un livre enchanté). */
     private static List<Enchantment> maledictions(ItemStack objet) {
@@ -73,7 +145,7 @@ public final class KSMeule extends JavaPlugin implements Listener {
     }
 
     private static boolean assez(Player joueur, int cout) {
-        return joueur.getGameMode() == GameMode.CREATIVE || joueur.getLevel() >= cout;
+        return joueur.getGameMode() == GameMode.CREATIVE || cristaux(joueur) >= cout;
     }
 
     // Le clic est traité même s'il a été refusé par une protection (zone du spawn, claim d'un autre) : la meule ne
@@ -117,6 +189,10 @@ public final class KSMeule extends JavaPlugin implements Listener {
         Contenant.apres(() -> ouvrir(joueur, place));
     }
 
+    private Component possede(Player joueur) {
+        return lang.c("tes-cristaux", "<gray>Tu en as <white><n></white>.", "n", cristaux(joueur));
+    }
+
     /**
      * Le menu : sans objet choisi (place -1, ou objet sans malédiction), une invitation à en choisir un ; sinon l'objet
      * et les boutons de confirmation.
@@ -124,14 +200,15 @@ public final class KSMeule extends JavaPlugin implements Listener {
     private void ouvrir(Player joueur, int place) {
         ItemStack choisi = place < 0 ? null : joueur.getInventory().getItem(place);
         List<Enchantment> maledictions = maledictions(choisi);
-        int prix = niveaux();
         Contenant menu = Contenant.pour(joueur, 2, lang.c("titre", "<dark_gray>Retirer une malédiction"), MARQUE);
         menu.barre();
         if (maledictions.isEmpty()) {
             menu.poser(4, Contenant.objet(Material.GRINDSTONE, lang.c("choisir", "<gold>Retirer une malédiction"), List.of(
                     lang.c("choisir-1", "<gray>Clique sur un objet maudit"),
                     lang.c("choisir-2", "<gray>de ton inventaire."),
-                    lang.c("choisir-3", "<gray><cout> niveaux par malédiction.", "cout", prix))), null);
+                    lang.c("choisir-cristal", "<gray>1 Cristal de purification"),
+                    lang.c("choisir-cristal-2", "<gray>par malédiction."),
+                    possede(joueur))), null);
             menu.poser(menu.bas(4), Contenant.objet(Material.BARRIER, lang.c("fermer", "<red>Fermer"), List.of()),
                     Contenant::fermer);
             menu.ouvrir(joueur);
@@ -145,20 +222,21 @@ public final class KSMeule extends JavaPlugin implements Listener {
             if (colonne > 4) {
                 break;
             }
-            boolean assez = assez(joueur, prix);
-            menu.poser(menu.bas(colonne++), Contenant.objet(Material.ENCHANTED_BOOK, lang.c(assez ? "retirer" : "retirer-manque",
-                    assez ? "<green>Retirer (<cout> niveaux)" : "<red>Retirer (<cout> niveaux)", "cout", prix), List.of(
+            boolean assez = assez(joueur, 1);
+            menu.poser(menu.bas(colonne++), Contenant.objet(Material.ENCHANTED_BOOK, lang.c(
+                    assez ? "retirer-cristal" : "retirer-cristal-manque",
+                    assez ? "<green>Retirer (1 cristal)" : "<red>Retirer (1 cristal)"), List.of(
                     malediction.description().colorIfAbsent(NamedTextColor.RED),
-                    lang.c("tes-niveaux", "<gray>Tu as <n> niveaux.", "n", joueur.getLevel()))),
+                    lang.c("cout-cristal", "<gray>Coût : 1 Cristal de purification"), possede(joueur))),
                     j -> retirer(j, place, objet, List.of(malediction)));
         }
         if (maledictions.size() > 1) {
-            int total = prix * maledictions.size();
+            int total = maledictions.size();
             boolean assez = assez(joueur, total);
-            menu.poser(menu.bas(5), Contenant.objet(Material.GRINDSTONE, lang.c(assez ? "tout" : "tout-manque",
-                    assez ? "<green>Tout retirer (<cout> niveaux)" : "<red>Tout retirer (<cout> niveaux)", "cout", total), List.of(
-                    lang.c("tout-1", "<gray><n> malédictions", "n", maledictions.size()),
-                    lang.c("tes-niveaux", "<gray>Tu as <n> niveaux.", "n", joueur.getLevel()))),
+            menu.poser(menu.bas(5), Contenant.objet(Material.GRINDSTONE, lang.c(assez ? "tout-cristaux" : "tout-cristaux-manque",
+                    assez ? "<green>Tout retirer (<n> cristaux)" : "<red>Tout retirer (<n> cristaux)", "n", total), List.of(
+                    lang.c("tout-1", "<gray><n> malédictions", "n", total),
+                    lang.c("cout-cristaux", "<gray>Coût : <n> Cristaux de purification", "n", total), possede(joueur))),
                     j -> retirer(j, place, objet, maledictions));
         }
         menu.poser(menu.bas(maledictions.size() == 1 ? 5 : 7), Contenant.objet(Material.BARRIER,
@@ -167,7 +245,7 @@ public final class KSMeule extends JavaPlugin implements Listener {
         lang.saveIfNeeded();
     }
 
-    /** Retire ces malédictions de l'objet choisi, s'il est toujours à sa place et si le joueur a les niveaux. */
+    /** Retire ces malédictions de l'objet choisi, s'il est toujours à sa place et si le joueur a les cristaux. */
     private void retirer(Player joueur, int place, ItemStack attendu, List<Enchantment> maledictions) {
         ItemStack objet = joueur.getInventory().getItem(place);
         if (!attendu.equals(objet)) {
@@ -176,9 +254,10 @@ public final class KSMeule extends JavaPlugin implements Listener {
             lang.saveIfNeeded();
             return;
         }
-        int cout = niveaux() * maledictions.size();
+        int cout = maledictions.size();
         if (!assez(joueur, cout)) {
-            Contenant.message(joueur, lang.c("manque", "<red>Il te faut <cout> niveaux d'expérience.", "cout", cout), true);
+            Contenant.message(joueur, cout == 1 ? lang.c("manque-cristal", "<red>Il te faut 1 Cristal de purification.")
+                    : lang.c("manque-cristaux", "<red>Il te faut <n> Cristaux de purification.", "n", cout), true);
             lang.saveIfNeeded();
             return;
         }
@@ -195,14 +274,14 @@ public final class KSMeule extends JavaPlugin implements Listener {
             objet = new ItemStack(Material.BOOK, objet.getAmount());
         }
         if (joueur.getGameMode() != GameMode.CREATIVE) {
-            joueur.giveExpLevels(-cout);
+            prendreCristaux(joueur, cout);
         }
         joueur.getInventory().setItem(place, objet);
         joueur.playSound(joueur.getLocation(), Sound.BLOCK_GRINDSTONE_USE, 0.8f, 1f);
         joueur.sendActionBar(maledictions.size() == 1 ? lang.c("fait", "<green>Malédiction retirée.")
                 : lang.c("fait-plusieurs", "<green><n> malédictions retirées.", "n", maledictions.size()));
         getLogger().info(joueur.getName() + " retire " + maledictions.size() + " malédiction(s) de " + objet.getType()
-                + " pour " + cout + " niveaux.");
+                + " pour " + cout + " Cristal(aux) de purification.");
         // S'il reste une malédiction sur l'objet, ses boutons sont remis ; sinon le menu attend un autre objet.
         Contenant.apres(() -> ouvrir(joueur, place));
         lang.saveIfNeeded();

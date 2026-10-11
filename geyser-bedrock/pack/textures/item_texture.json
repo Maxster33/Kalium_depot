@@ -46,6 +46,9 @@
     },
     "kalium.badge_localisation": {
       "textures": ["textures/items/kalium_badge_localisation"]
+    },
+    "kalium.cristal_purification": {
+      "textures": ["textures/items/kalium_cristal_purification"]
     }
   }
 }

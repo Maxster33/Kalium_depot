@@ -4,7 +4,7 @@
 # Usage : sh geyser-bedrock/build.sh [chemin du .jar du jeu] (par defaut : version 26.2 du launcher officiel).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.3.0
+VERSION=1.4.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 GAME_JAR="${1:-$APPDATA/.minecraft/versions/26.2/26.2.jar}"
 DEST="$DIR/../sortie"
@@ -30,6 +30,8 @@ unzip -p "$GAME_JAR" assets/minecraft/textures/block/iron_block.png > "$WORK/tex
 unzip -p "$GAME_JAR" assets/minecraft/textures/block/netherite_block.png > "$WORK/textures/items/kalium_badge_mort.png"
 unzip -p "$GAME_JAR" assets/minecraft/textures/block/gold_block.png > "$WORK/textures/items/kalium_badge_tp.png"
 unzip -p "$GAME_JAR" assets/minecraft/textures/block/copper_block.png > "$WORK/textures/items/kalium_badge_localisation.png"
+# 1.4.0 : Cristal de purification de KS_Meule (eclat d'amethyste).
+unzip -p "$GAME_JAR" assets/minecraft/textures/item/amethyst_shard.png > "$WORK/textures/items/kalium_cristal_purification.png"
 for f in "$WORK"/textures/items/*.png; do [ -s "$f" ] || { echo "Image manquante : $f"; exit 1; }; done
 rm -f "$DEST/KaLium-objets-$VERSION.mcpack"
 (cd "$WORK" && jar cfM "../KaLium-objets-$VERSION.mcpack" .)

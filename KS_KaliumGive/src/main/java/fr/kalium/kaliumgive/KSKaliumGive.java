@@ -48,6 +48,9 @@ public final class KSKaliumGive extends JavaPlugin {
                 () -> fr.kalium.itemsimple.KSItemSimple.creerCoeurSpawner()));
         OBJETS.put("changeur_biome", new ObjetCustom("KS_BiomeChanger",
                 () -> fr.kalium.biomechanger.KSBiomeChanger.creerChangeur()));
+        // 1.10.0 (LeKiwi06) : Cristal de purification de KS_Meule (retire une malédiction à la meule).
+        OBJETS.put("cristal_purification", new ObjetCustom("KS_Meule",
+                () -> fr.kalium.meule.KSMeule.creerCristal()));
         for (String creature : List.of("zombi", "squelette", "araignee", "creeper", "blaze", "mouton", "vache", "poule")) {
             OBJETS.put("spawner_" + creature, new ObjetCustom("KS_Spawners",
                     () -> fr.kalium.spawners.KSSpawners.creerSpawner(creature)));

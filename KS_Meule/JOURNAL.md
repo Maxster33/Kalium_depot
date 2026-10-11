@@ -47,3 +47,37 @@ Limites :
 - Écrit sans serveur de test.
 
 **Déployé sur Kixster le 11/10/2026 à 07:45 (LeKiwi06, envoi groupé : KS_Teleport 1.1.0, KS_Decapitator 1.2.0, KS_RewardsGUI 1.5.0, KS_Economy 1.6.0, KS_Crafts 1.12.0, KS_Jetons 2.0.2, KS_Meule 1.0.0 ; accord de LeKiwi06 : « oui déploie tout sur kixster » ; nouveau sur Kixster ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. pas envoyé sur Event. Statut : non testé en jeu.**
+
+## 1.1.0 - Cristal de purification à la place des niveaux (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « on va plutot faire un item pour enlever les malédictions au lieu d'une quantité d'xp , cet item
+sera droppable dans les reward, il aura une valeur théorique de 600 emeraudes , met let dans les pool adaptés ( je ne
+sais pas quelle apparence lui donner , mais il faut également le déclarer au proxy pour que les joueurs bedrock le
+voient ) ».
+
+- **Cristal de purification** (nouvel objet) : nom violet clair, « Retire une malédiction d'un objet », « Accroupi,
+  main vide : clic sur une meule ». Livre de connaissances à l'apparence d'un **éclat d'améthyste** brillant
+  (`item_model` `minecraft:amethyst_shard`), empilable par 64, marqué `ks_meule:cristal`. Son clic droit ne fait rien
+  (il n'est pas consommé). Autres plugins : `KSMeule.creerCristal()`, `estCristal(objet)`.
+- **Coût** : chaque malédiction retirée prend **1 cristal** dans l'inventaire du joueur (plus aucun niveau
+  d'expérience). Boutons « Retirer (1 cristal) » et « Tout retirer (2 cristaux) », verts si le joueur a les cristaux,
+  rouges sinon ; le menu d'accueil et chaque bouton disent combien il en a. Gratuit en créatif.
+- Le geste et le menu ne changent pas : accroupi, clic droit sur une meule, main vide ; objet maudit choisi d'un clic
+  dans l'inventaire.
+- `config.yml` supprimé (il ne contenait que `niveaux-par-malediction`) ; un fichier déjà créé sur un serveur ne sert
+  plus à rien.
+- Textes changés sous de nouvelles clés de `lang.yml` (`retirer-cristal`, `tout-cristaux`, `cout-cristal`,
+  `tes-cristaux`, `manque-cristal`...) ; les anciennes (`retirer`, `tout`, `tes-niveaux`, `manque`) ne servent plus.
+- **Où il s'obtient** : coffres de récompense seulement (pool Légendaire, valeur 600 émeraudes : voir ci-dessous) et
+  `/kaliumgive <joueur> cristal_purification` (KS_KaliumGive 1.10.0). Aucune recette.
+- **Bedrock** : entrée `kalium:cristal_purification` dans `geyser-bedrock` 1.4.0 (image de l'éclat d'améthyste, pile
+  de 64), à envoyer sur le proxy.
+
+Choix de Claude, signalés : nom « Cristal de purification » et apparence d'éclat d'améthyste (LeKiwi06 : « je ne sais
+pas quelle apparence lui donner ») ; 1 cristal par malédiction ; pas de recette.
+
+À déployer ensemble : KS_Meule 1.1.0 et KS_KaliumGive 1.10.0 (sans lui, un coffre de récompense qui contient un cristal
+reste fermé) ; `butin.yml` de KG_Rewards et de KV_Rewards, `fusion.yml` de KS_RewardsGUI ; `geyser-bedrock` 1.4.0 sur le
+proxy.
+
+**Compilé le 11/10/2026 (`sortie/KS_Meule-1.1.0.jar`). Non déployé. Statut : non testé en jeu.**

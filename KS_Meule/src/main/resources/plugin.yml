@@ -2,6 +2,6 @@ name: KS_Meule
 version: '${project.version}'
 main: fr.kalium.meule.KSMeule
 api-version: '26.2'
-description: Retirer les maledictions d'un objet a la meule (accroupi, clic droit, main vide), contre des niveaux.
+description: Retirer les maledictions d'un objet a la meule (accroupi, clic droit, main vide), contre un Cristal de purification.
 authors: [KaLium]
 depend: [KLM_Menu]
