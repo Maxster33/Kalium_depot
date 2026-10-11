@@ -96,7 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-- **KS_Meule 1.0.0** (11/10/2026, LeKiwi06) : **nouveau plugin** : accroupi, clic droit sur une meule avec un objet maudit en main : menu de confirmation, 45 niveaux par malédiction retirée ; dépend de KLM_Menu ; **compilé, non déployé, non testé en jeu**, réservation gardée.
+- **KS_Meule 1.0.0** (11/10/2026, LeKiwi06) : **nouveau plugin** : accroupi, clic droit sur une meule, main vide : menu où l'on choisit un objet maudit de son inventaire (pas l'équipement porté), confirmation, 45 niveaux par malédiction retirée ; dépend de KLM_Menu ; **compilé, non déployé, non testé en jeu**, réservation gardée.
 
 - **KS_Jetons 2.0.2** (11/10/2026, LeKiwi06) : description du jeton de localisation (« Clic droit, jeton en main, pour l'utiliser » au lieu de « À ranger dans tes jetons : /jetons ») ; **compilé, non déployé, non testé en jeu**, réservation gardée.
 
@@ -439,6 +439,8 @@ sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre par
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (11/10/2026, 07:27) : KS_Meule 1.0.0 revu avant déploiement : main vide, objet choisi dans l'inventaire.** Demande de LeKiwi06 : « fait en sorte que le menu soit uniquement a main nu et qu'on selectionne la pièce d'armure dans l'inventaire ( pas le stuff porté ) ». Le menu s'ouvre accroupi, main vide, sur une meule ; un clic sur un objet maudit de l'inventaire le choisit, puis les boutons de confirmation apparaissent. La version « objet en main » poussée plus tôt le même jour est remplacée (jamais déployée ; même numéro 1.0.0). Compilé, non déployé, non testé ; réservation gardée.
 
 **Ajout (11/10/2026, 07:20) : KS_Meule 1.0.0 (nouveau plugin) compilé, non déployé, non testé : retirer les malédictions à la meule.** Question de LeKiwi06 : « est-ce qu'on a fait le plugin pour retirer les malédictions des items ? » : non, aucune trace (dépôt, cahiers des charges, liste d'origine). Sa demande : « il faut faire sneak+click sur une meule avec l'item concerné , cela coute 45 niveaux par malédiction ( interface de confirmation avant ) ». Fait : menu en coffre (objet au centre, un bouton par malédiction, « Tout retirer », « Annuler »), 45 niveaux par malédiction (`niveaux-par-malediction`), livres enchantés compris. Signalé, non fait : une armure de Liaison déjà portée ne peut pas être prise en main, donc pas traitée. Réservation gardée jusqu'au déploiement.
 

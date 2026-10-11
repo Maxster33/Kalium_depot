@@ -111,10 +111,13 @@ les deux ? » : « Les deux ».
   sneak+click sur une meule avec l'item concerné , cela coute 45 niveaux par malédiction ( interface de
   confirmation avant ) ».
 - KS_Meule 1.0.0 (nouveau plugin) : compilé, poussé, non déployé. Détail et limites : `KS_Meule/JOURNAL.md`.
+- Revu le même jour, avant déploiement : « fait en sorte que le menu soit uniquement a main nu et qu'on
+  selectionne la pièce d'armure dans l'inventaire ( pas le stuff porté ) ». Main vide pour ouvrir le menu, objet
+  choisi d'un clic dans l'inventaire.
 
 ## Reste à faire
 
-- Déploiement de KS_Meule 1.0.0, sur accord de LeKiwi06 ; à décider : armure de Liaison déjà portée.
+- Déploiement de KS_Meule 1.0.0, sur accord de LeKiwi06.
 - Envoyer `kalium_objets.json` sur le proxy, sur accord de LeKiwi06 (redémarrage du proxy : tout le réseau).
 - Déploiement de KS_Crafts 1.12.0, sur accord de LeKiwi06 ; lire la console au démarrage (6 recettes remplacées) ;
   test : fondre un casque en fer, une pioche en fer, une armure de cheval.
