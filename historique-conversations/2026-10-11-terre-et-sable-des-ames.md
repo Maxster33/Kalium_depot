@@ -125,7 +125,7 @@ les deux ? » : « Les deux ».
 ## Reste à faire
 
 - Redémarrer Kixster (LeKiwi06), puis lire la console : « Fonte des armures : 6 recettes du jeu remplacées »,
-  « fusion.yml : 519 entrées dans 5 pools, 213 réglages », KS_Meule activé, aucune erreur.
+  « fusion.yml : 516 entrées dans 5 pools, 213 réglages », KS_Meule activé, aucune erreur.
 - Tests en jeu : arrivée d'un compte jamais connecté ; `/tetes` sans être opérateur ; fusion de deux coffres
   (Java et Bedrock) ; `/accepter` à trois joueurs ; fonte d'un casque et d'une pioche en fer ; malédiction à la
   meule (accroupi, main vide).
