@@ -416,7 +416,7 @@ une nether star ».
   sur Event et Kixster (1.9.0).
 - Aucun autre changement : reconnaissance des objets à la vente, prix, tirage, quota inchangés. Pas de nouveau texte.
 
-**Compilé le 09/10/2026 (`sortie/KS_Economy-1.5.1.jar`). Non déployé. Statut : non testé en jeu.**
+**Compilé le 09/10/2026 (`sortie/KS_Economy-1.5.1.jar`). Jamais déployé seul : contenu dans la 1.5.2, déployée le 11/10/2026. Statut : non testé en jeu.**
 
 ## 1.5.2 - barème : familles de la terre des âmes et du sable des âmes (11/10/2026, LeKiwi06)
 
@@ -434,4 +434,4 @@ et coffres de récompense : « Les deux »).
 - Contient la 1.5.1 (objets custom des rachats), jamais déployée : empilé sur une version non testée, à la demande de
   LeKiwi06.
 
-**Compilé le 11/10/2026 (`sortie/KS_Economy-1.5.2.jar`). Non déployé. Statut : non testé en jeu.**
+**Déployé sur Event et Kixster le 11/10/2026 à 06:05 (LeKiwi06 ; 1.5.0 dans `_removed-ks_economy-1.5.0/`), actif après redémarrage. Statut : non testé en jeu.**

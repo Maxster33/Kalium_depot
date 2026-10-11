@@ -1,8 +1,8 @@
 # 2026-10-11 — Terre des âmes et sable des âmes : familles des rachats et butin des coffres
 
 - Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement)
-- Versions avant / après : KS_Economy 1.5.1 (non déployée) / 1.5.2 (compilée, non déployée) ; KG_Rewards 1.3.0 et
-  KV_Rewards 1.3.0 inchangés
+- Versions avant / après : KS_Economy 1.5.0 en service (1.5.1 jamais déployée) / 1.5.2 déployée sur Event et
+  Kixster ; KG_Rewards 1.3.0 et KV_Rewards 1.3.0 inchangés (`butin.yml` remplacés)
 
 ## Demandé
 
@@ -28,11 +28,27 @@ les deux ? » : « Les deux ».
 - Les fréquences de quelques niveaux bougent de 1 sur 1 000 (la moyenne des pools change à peine) ; valeurs moyennes
   des niveaux inchangées.
 
+## Déploiement (11/10/2026, 06:05)
+
+- Accord de LeKiwi06 : « oui déploie », puis « je te donne la permission de le faire » (le premier envoi avait
+  été refusé par le filtre de permissions de la session de Claude, rien n'était parti).
+- KS_Economy 1.5.2 sur Event et Kixster (1.5.0 dans `_removed-ks_economy-1.5.0/`) ; `butin.yml` sur Kal-Games
+  et Kanvas (anciens dans `_removed-kg_rewards-butin-2026-10-11/` et `_removed-kv_rewards-butin-2026-10-11/`).
+- Les `butin.yml` des serveurs étaient identiques à ceux du 09/10 : rien d'écrasé.
+- Actifs après redémarrage par LeKiwi06. Réservations libérées.
+
+## Autre demande de la session
+
+- « as tu des remarques quant au départ de kixster SMP ? » : journaux de Kixster lus en lecture seule (09/10
+  19:52 au 11/10 05:30). Aucune erreur de nos plugins, aucun ralentissement. Signalé à LeKiwi06, rien de
+  corrigé : nouveaux joueurs qui apparaissent entre Y 118 et Y 123 au-dessus du spawn (2 morts de chute à la
+  première connexion) ; erreur de WorldGuard 7.0.19 à la pose d'un bateau ; alertes GrimAC sur les joueurs
+  Java ; CoreProtect absent de Kixster ; région `ile_du_dragon` absente de l'End ; `/reward` tapé par des
+  joueurs (seul `/rewards` existe).
+
 ## Reste à faire
 
-- Déploiement, sur accord de LeKiwi06 : KS_Economy 1.5.2 sur Event et Kixster ; `butin.yml` sur Kal-Games et Kanvas.
-  Avant d'envoyer les `butin.yml`, les comparer à ceux des serveurs : le plugin réécrit le fichier dès qu'une table
-  est modifiée dans l'interface admin.
-- Réservations gardées jusque-là (KS_Economy, KG_Rewards, KV_Rewards).
-- À tester en jeu : `/rachat` (aucune erreur au démarrage ; une semaine où « terres » ou « sable » sort) ;
-  `/kgrewards test` pour voir sortir les deux blocs dans un coffre.
+- Redémarrage d'Event, Kixster, Kal-Games et Kanvas par LeKiwi06, puis lecture des journaux.
+- À tester en jeu : `/rachat` (objets custom montrés par leur vrai objet ; une semaine où « terres » ou
+  « sable » sort) ; `/kgrewards test` pour voir sortir les deux blocs dans un coffre.
+- Points de Kixster ci-dessus : en attente de la décision de LeKiwi06.

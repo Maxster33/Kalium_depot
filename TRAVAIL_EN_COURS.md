@@ -18,9 +18,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
-- KS_Economy — LeKiwi06 — depuis le 2026-10-09 20:12 — rachats de la semaine : les objets custom s'affichent en étoile du Nether ; depuis le 2026-10-11 01:54 : familles de la terre des âmes (terres) et du sable des âmes (sable) dans le barème
-- KG_Rewards — LeKiwi06 — depuis le 2026-10-11 01:54 — butin.yml : terre des âmes et sable des âmes ajoutés aux blocs des coffres
-- KV_Rewards — LeKiwi06 — depuis le 2026-10-11 01:54 — butin.yml : terre des âmes et sable des âmes ajoutés aux blocs des coffres
 
 
 ## Requis parfois
