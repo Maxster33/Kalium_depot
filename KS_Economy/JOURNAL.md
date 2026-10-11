@@ -506,3 +506,41 @@ Contient la 1.6.0 (déployée sur Kixster le 11/10/2026, non testée en jeu). Em
 serveur de test.
 
 **Déployé sur Kixster le 11/10/2026 à 09:00 (LeKiwi06, envoi groupé : KS_Meule 1.1.0, KS_KaliumGive 1.10.0, KS_Economy 1.7.0, KS_Tableau 1.0.1 et `fusion.yml` de KS_RewardsGUI ; accord de LeKiwi06 : « oui déploie tout » ; 1.6.0 dans `_removed-ks_economy-1.6.0/`), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.5.2). Statut : non testé en jeu.**
+
+## 1.7.1 - barème : prix corrigés après les premiers rachats (12/10/2026, LeKiwi06)
+
+Signalement de LeKiwi06 : « le cinabre est bien trop boosté, il vaut autant que du fer ». Cause : le cinabre et le
+soufre n'avaient jamais reçu de prix validé ; leur note provisoire (« bloc récent : note à vérifier en jeu »), jamais
+vérifiée, donnait 0,0764 émeraude par la formule (0,051, puis × 1,5 « non automatisable »), contre 0,10 pour le lingot
+de fer ; avec le prix de la semaine à plus ou moins 25 %, les deux se croisaient.
+
+Seul `rachats.csv` change (113 prix sur 1 929 ; aucun changement de code, familles inchangées). Décisions de LeKiwi06 :
+- **Cinabre et soufre : 0,01**, le prix de la pierre taillée (« une fois dans le biome, on en a en abondance, et vu la
+  taille de la carte ça aura le temps de ruiner l'économie avant qu'on épuise la ressource ») ; leurs variantes suivent
+  par leurs recettes (dalles 0,005). Pointe de soufre, soufre concentré et seau de cube de soufre : inchangés.
+- **Butin de monstres et poissons divisé par 2** : crème de magma 0,0845 ; boule de slime 0,0685 ; poudre à canon
+  0,0635 ; œil d'araignée 0,049 ; poisson tropical et poisson-globe 0,045 ; ficelle 0,034 ; os 0,0295. Les objets
+  fabriqués suivent (TNT 0,39 ; bloc de slime 0,62 ; poudre d'os 0,0098 ; arc 0,11 ; laisse 0,085...).
+- **Disque Bounce : 83,9**, comme le disque Relic (« dans les mineshafts des sulfur caves, aussi rare que le disque
+  relic je pense ») ; avant : 22,8.
+- **Cartes de structure (15) : 10** (« pas de valeur réelle, mais mets-les à 10 pour la valeur estimée ») ; avant : 2.
+  Elles restent jamais tirées. Carte au trésor enfoui : 30, inchangée.
+- **Cuivre brut : 0,015**, le prix du lingot (« le cuivre en lingot se trouve en grande quantité dans les trial
+  chambers, donc le prix de cuisson est négligeable ») ; avant : 0,005. Bloc de cuivre brut 0,135 ; minerai de cuivre
+  0,06 (avant 0,02). Lingot et objets en cuivre : inchangés.
+- Coussins et `straw_bed` (26.3) : prix de leur recette, inchangés (recettes comptées : 2 laines ; 3 bottes de foin +
+  3 planches).
+
+À savoir :
+- Les rachats déjà tirés (semaine en cours, marchands ambulants déjà ouverts) gardent leur prix et leur lot : ils sont
+  enregistrés dans `rachats.yml` et dans les données du marchand. Les nouveaux prix s'appliquent au tirage suivant, ou
+  en supprimant `rachats.yml` serveur éteint (l'humain), ce qui refait tout le tirage de la semaine.
+- Effet de bord signalé, non corrigé : la poudre d'os (0,0098) vaut maintenant moins que le colorant blanc (0,0221)
+  qu'elle fabrique à 1 pour 1.
+- Les tables de butin des coffres de récompense (`butin.yml`, hors dépôt) sont calculées avec ces prix : non
+  régénérées.
+- Autres anomalies listées à LeKiwi06 le 12/10 (œufs, objets qui se multiplient à la poudre d'os, blocs abondants,
+  capteur sculk...) : prix en attente de sa décision, inchangés ici.
+- Contient la 1.7.0 (déployée le 11/10/2026, non testée en jeu) : seul le barème change.
+
+**Compilé le 12/10/2026, non déployé. Statut : non testé en jeu.**
