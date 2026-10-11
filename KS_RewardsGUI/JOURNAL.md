@@ -146,3 +146,14 @@ modération). Aucun changement pour les joueurs ; empilé sur la 1.4.0 non test�
 **Déployé sur Kixster le 09/10/2026 à 18:31 (LeKiwi06, envoi groupé : KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2, KS_RewardsGUI 1.4.1 ; accord de LeKiwi06 : « Oui, sur Kixster » ; 1.4.0 dans `_removed-ks_rewardsgui-1.4.0/` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (KS_RewardsGUI 1.4.0). Statut : non testé en jeu.**
 
 **Journal de Kixster lu après le redémarrage de 18:36 (09/10/2026) : activé sans erreur, avec KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2 et KS_RewardsGUI 1.4.1 ; KS_AntiCheat démarre après eux. Personne n'avait encore ouvert la fiche d'un joueur : reste à tester en jeu.**
+
+## 1.4.2 - alias /reward (11/10/2026, LeKiwi06)
+
+Constat fait dans les journaux de Kixster : deux joueurs ont tapé `/reward` (deux fois chacun), qui n'existait pas.
+Accord de LeKiwi06 : « oui fais les deux » (avec KS_Teleport 1.1.0).
+
+- `/reward` ouvre les récompenses, comme `/rewards` et `/recompenses` (alias dans `plugin.yml`). Aucun changement de
+  code, aucun nouveau texte.
+- Empilé sur la 1.4.1 et la 1.4.0, jamais testées en jeu, à la demande de LeKiwi06.
+
+**Compilé le 11/10/2026 (`sortie/KS_RewardsGUI-1.4.2.jar`). Non déployé. Statut : non testé en jeu.**

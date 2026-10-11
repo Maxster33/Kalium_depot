@@ -1,6 +1,6 @@
 # 2026-10-11 — Terre des âmes et sable des âmes : familles des rachats et butin des coffres
 
-- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement)
+- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI
 - Versions avant / après : KS_Economy 1.5.0 en service (1.5.1 jamais déployée) / 1.5.2 déployée sur Event et
   Kixster ; KG_Rewards 1.3.0 et KV_Rewards 1.3.0 inchangés (`butin.yml` remplacés)
 
@@ -46,8 +46,20 @@ les deux ? » : « Les deux ».
   Java ; CoreProtect absent de Kixster ; région `ile_du_dragon` absente de l'End ; `/reward` tapé par des
   joueurs (seul `/rewards` existe).
 
+## Corrections pour Kixster (« oui fais les deux »)
+
+- KS_Teleport 1.1.0 : première connexion au point d'apparition exact du monde (-54 73 212 sur Kixster) au lieu du toit
+  du spawn. La proposition parlait du « point de `/spawn` », qui n'existe pas (`/spawn` = maison de chaque joueur) :
+  remplacé par le point d'apparition du monde, signalé à LeKiwi06.
+- KS_RewardsGUI 1.4.2 : alias `/reward`.
+- Compilés, poussés, non déployés ; réservations gardées jusqu'à l'accord de déploiement sur Kixster.
+- Autre question : chances d'obtenir un livre Raccommodage sur Kixster (coffres de récompense : 10 % d'un tirage
+  Légendaire ; livres des coffres de structures restés vanilla ; ni villageois, ni pêche, ni table d'enchantement).
+
 ## Reste à faire
 
+- Déploiement de KS_Teleport 1.1.0 et KS_RewardsGUI 1.4.2 sur Kixster, sur accord de LeKiwi06 ; test avec un compte
+  jamais connecté.
 - Redémarrage d'Event, Kixster, Kal-Games et Kanvas par LeKiwi06, puis lecture des journaux.
 - À tester en jeu : `/rachat` (objets custom montrés par leur vrai objet ; une semaine où « terres » ou
   « sable » sort) ; `/kgrewards test` pour voir sortir les deux blocs dans un coffre.

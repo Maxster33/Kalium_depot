@@ -96,6 +96,9 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Teleport 1.1.0** (11/10/2026, LeKiwi06) : un joueur qui se connecte pour la première fois est posé au point d'apparition exact du monde (`/setworldspawn`), plus sur le bloc le plus haut de la colonne (toit du spawn de Kixster) ; **compilé, non déployé, non testé en jeu**, réservation gardée. Pour Kixster.
+- **KS_RewardsGUI 1.4.2** (11/10/2026, LeKiwi06) : alias `/reward` de `/rewards` ; **compilé, non déployé, non testé en jeu**, réservation gardée. Pour Kixster.
+
 
 
 
@@ -426,6 +429,8 @@ sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre par
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (11/10/2026, 06:25) : départ de Kixster SMP, journaux lus ; KS_Teleport 1.1.0 et KS_RewardsGUI 1.4.2 compilés, non déployés, non testés.** Question de LeKiwi06 : « as tu des remarques quant au départ de kixster SMP ? bugs , éléments manquants, points a améliorer ». Journaux de Kixster lus en lecture seule (09/10 19:52 au 11/10 05:30, 6 joueurs) : aucune erreur de nos plugins, aucun ralentissement. Constats : (1) les 6 nouveaux comptes apparaissent entre Y 118 et Y 123 au-dessus du spawn protégé (point d'apparition du monde : -54 73 212), 2 morts de chute à la première connexion ; (2) WorldGuard 7.0.19 plante à la pose d'un bateau sur Paper 26.3 (35 erreurs, sa protection ne s'applique pas à ce clic) ; (3) alertes GrimAC sur les joueurs Java seulement (alpha, montage avec ViaBackwards non pris en charge, retours en arrière actifs) ; (4) CoreProtect absent de Kixster ; (5) région `ile_du_dragon` absente de l'End (`zone_spawn` et `protected_spawn` existent) ; (6) `/reward` tapé par des joueurs ; (7) à chaque connexion d'un joueur Bedrock, 24 à 119 avertissements « moved too quickly » dans la même seconde, sans effet visible. Sur accord de LeKiwi06 (« oui fais les deux ») : KS_Teleport 1.1.0 pour (1) et KS_RewardsGUI 1.4.2 pour (6), réservations gardées jusqu'au déploiement sur Kixster. Les autres points attendent sa décision. Non fait, signalé : la réapparition après une mort sans lit suit la même règle du jeu que la première connexion.
 
 **Ajout (11/10/2026, 06:10) : terre des âmes et sable des âmes déployés : KS_Economy 1.5.2 sur Event et Kixster, `butin.yml` sur Kal-Games et Kanvas ; non testés, actifs après redémarrage ; réservations libérées.** Accord de LeKiwi06 : « oui déploie », puis « je te donne la permission de le faire ». Envoi à 06:05. Vérifié avant : KS_Economy 1.5.0 était bien le jar en place sur les deux serveurs (240 796 octets, celui de `jars-deployes/`) ; les `butin.yml` des serveurs étaient identiques à ceux envoyés le 09/10. Vérifié après : un seul jar KS_Economy par serveur (241 318 octets), `butin.yml` de 66 516 octets (Kal-Games) et 65 670 octets (Kanvas). KS_Economy 1.5.2 contient la 1.5.1 (objets custom des rachats), jamais déployée seule. À tester en jeu : `/rachat` (objets custom montrés par leur vrai objet ; familles « terres » et « sable ») et `/kgrewards test` pour voir sortir les deux blocs. Journaux des redémarrages non lus.
 

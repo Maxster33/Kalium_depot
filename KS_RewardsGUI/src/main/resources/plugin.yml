@@ -9,5 +9,5 @@ softdepend: [KS_Menu, KS_Economy, KS_KaliumGive]
 commands:
   rewards:
     description: Recuperer ses recompenses.
-    aliases: [recompenses]
+    aliases: [recompenses, reward]
     usage: /rewards

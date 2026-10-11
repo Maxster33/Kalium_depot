@@ -66,3 +66,29 @@ pour les joueurs.
 **Déployé sur Kixster le 09/10/2026 à 18:31 (LeKiwi06, envoi groupé : KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2, KS_RewardsGUI 1.4.1 ; accord de LeKiwi06 : « Oui, sur Kixster » ; 1.0.0 dans `_removed-ks_teleport-1.0.0/` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (KS_Teleport 1.0.0). Statut : non testé en jeu.**
 
 **Journal de Kixster lu après le redémarrage de 18:36 (09/10/2026) : activé sans erreur, avec KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2 et KS_RewardsGUI 1.4.1 ; KS_AntiCheat démarre après eux. Personne n'avait encore ouvert la fiche d'un joueur : reste à tester en jeu.**
+
+## 1.1.0 - un nouveau joueur arrive au point d'apparition du monde (11/10/2026, LeKiwi06)
+
+Constat fait dans les journaux de Kixster (09/10 au 11/10/2026) : les 6 nouveaux comptes sont apparus entre Y 118 et
+Y 123 au-dessus du spawn protégé, alors que le point d'apparition du monde est en -54 73 212 ; deux sont morts de
+chute dans la minute (LeKiwi06 en 12 s le 09/10, .TomHeroes57 en 52 s le 10/10). Accord de LeKiwi06 : « oui fais les
+deux » (avec l'alias `/reward` de KS_RewardsGUI 1.4.2).
+
+- **Cause** : pour un nouveau joueur, le jeu ne garde du point d'apparition du monde que la colonne (et ses voisines,
+  dans le rayon d'apparition) et pose le joueur sur le bloc le plus haut : ici le toit du spawn. La règle de jeu du
+  rayon ne change pas la hauteur (`/gamerule spawnRadius 0`, tapée le 09/10, a d'ailleurs été refusée : le nom n'existe
+  plus en 26.3).
+- **Correction** : à sa première connexion (`hasPlayedBefore()` faux), le joueur est posé au point d'apparition exact du
+  monde principal (centre du bloc, orientation du point), s'il y a la place de s'y tenir (2 blocs libres). Sinon il
+  reste là où le jeu l'a posé et une ligne le dit dans la console.
+- Le point se règle avec la commande du jeu `/setworldspawn` (position et orientation). Aucun nouveau réglage, aucune
+  nouvelle commande, aucun nouveau texte.
+- Écart avec la proposition faite à LeKiwi06 (« envoyer les nouveaux joueurs au point de `/spawn` ») : ce point
+  n'existe pas, `/spawn` mène à la maison du spawn de chaque joueur. Le point d'apparition du monde le remplace
+  (choix de Claude, signalé).
+- Non fait, signalé : un joueur qui meurt **sans lit** réapparaît par la même règle du jeu, donc sans doute sur le
+  toit lui aussi (non vérifiable dans les journaux). Les connexions suivantes ne sont pas concernées (le joueur revient
+  où il s'est déconnecté).
+- Empilé sur la 1.0.1 et la 1.0.0, jamais testées en jeu, à la demande de LeKiwi06.
+
+**Compilé le 11/10/2026 (`sortie/KS_Teleport-1.1.0.jar`). Non déployé. Statut : non testé en jeu.**

@@ -31,6 +31,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -71,6 +72,8 @@ import java.util.UUID;
  * - Jeton de localisation : craft d'une boussole liée à une magnétite entourée de 8 blocs de cuivre ciré ; clic droit :
  *   enregistre la magnétite dans un emplacement libre (refusé si elle a été cassée). Une magnétite enregistrée par au
  *   moins un joueur est indestructible. Un emplacement libéré ne se réutilise que 15 minutes plus tard.
+ * - 1.1.0 (LeKiwi06, 11/10/2026) : un joueur qui se connecte pour la première fois est posé au point d'apparition
+ *   du monde exact (/setworldspawn), au lieu du bloc le plus haut de la colonne choisi par le jeu (toit du spawn).
  */
 public final class KSTeleport extends JavaPlugin implements Listener {
 
@@ -410,6 +413,28 @@ public final class KSTeleport extends JavaPlugin implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         annuler(event.getPlayer(), null);
+    }
+
+    /**
+     * 1.1.0 (LeKiwi06, 11/10/2026) : première connexion. Le jeu pose un nouveau joueur sur le bloc le plus haut de
+     * la colonne, près du point d'apparition du monde : sur Kixster, le toit du spawn (Y 118 à 123 pour un point en
+     * Y 73), d'où des morts de chute. On le pose au point exact, s'il y a la place de s'y tenir.
+     */
+    @EventHandler
+    public void onArrivee(PlayerJoinEvent event) {
+        Player joueur = event.getPlayer();
+        if (joueur.hasPlayedBefore()) {
+            return;
+        }
+        Location point = getServer().getWorlds().get(0).getSpawnLocation();
+        Block pieds = point.getBlock();
+        if (!pieds.isPassable() || !pieds.getRelative(0, 1, 0).isPassable()) {
+            getLogger().warning("Point d'apparition du monde bouché (" + pieds.getX() + " " + pieds.getY() + " "
+                    + pieds.getZ() + ") : " + joueur.getName() + " reste là où le jeu l'a posé.");
+            return;
+        }
+        joueur.teleport(new Location(point.getWorld(), pieds.getX() + 0.5, pieds.getY(), pieds.getZ() + 0.5,
+                point.getYaw(), point.getPitch()));
     }
 
     // ------------------------------------------------------------------ destinations
