@@ -34,3 +34,11 @@ rachats:
     pourcent: 5.0
     # Part quand le joueur masque sa cagnotte.
     pourcent-masque: 7.5
+
+# 1.7.0 - rachats du marchand ambulant (a ajouter a la main dans le config.yml du serveur pour les modifier).
+marchand:
+  # Objets tires pour chaque marchand (memes regles que les rachats de la semaine).
+  objets: 10
+  # Nombre de fois qu'un rachat sert, pour tous les joueurs ensemble, selon le prix a l'unite :
+  # moins de 0,1 ; 0,1 a 1 ; 1 a 10 ; 10 a 100 ; 100 et plus.
+  echanges: [10, 10, 5, 2, 1]

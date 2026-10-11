@@ -122,8 +122,20 @@ les deux ? » : « Les deux ».
 - Actifs après redémarrage de Kixster par LeKiwi06. Réservations libérées. Event n'a rien reçu.
 - Non envoyé : `kalium_objets.json` sur le proxy (jetons empilables sur Bedrock), en attente de sa décision.
 
+## Rachats du marchand ambulant
+
+- Demande de LeKiwi06 : « j'aimerai que le wandering trader propose aussi 10 échanges , les moins cher ont
+  echangeable jusqu'a 10 fois , puis plus ça vaut moins on peux échanger , un item comme le diamant serait
+  échangeable 5 fois par exemple , un item comme le totem ne le serait qu'en 1 exemplaire : les règles de trades
+  sont les mêmes que pour les rachats de la semaine concernant les items tirés , leurs quantité , et leurs prix ».
+- Ses réponses : « Le marchand achète » ; « Menu en coffre, score » ; « Par marchand, stock commun ».
+- KS_Economy 1.7.0 : compilé, poussé, non déployé (après le déploiement de la 1.6.0 sur Kixster). Détail :
+  `KS_Economy/JOURNAL.md`.
+
 ## Reste à faire
 
+- Déploiement de KS_Economy 1.7.0, sur accord de LeKiwi06 ; test : œuf de marchand ambulant, deux joueurs sur le
+  même marchand (stock commun).
 - Redémarrer Kixster (LeKiwi06), puis lire la console : « Fonte des armures : 6 recettes du jeu remplacées »,
   « fusion.yml : 516 entrées dans 5 pools, 213 réglages », KS_Meule activé, aucune erreur.
 - Tests en jeu : arrivée d'un compte jamais connecté ; `/tetes` sans être opérateur ; fusion de deux coffres

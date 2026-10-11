@@ -96,6 +96,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Economy 1.7.0** (11/10/2026, LeKiwi06) : le marchand ambulant rachète 10 objets (tirage des rachats de la semaine, refait pour chaque marchand ; menu en coffre au clic droit ; points du score ; chaque rachat sert 10, 10, 5, 2 ou 1 fois selon le prix, pour tous les joueurs ensemble) ; **compilé, non déployé, non testé en jeu**, réservation gardée.
+
 
 
 
@@ -432,6 +434,8 @@ sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre par
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (11/10/2026, 07:51) : KS_Economy 1.7.0 compilée, non déployée, non testée : rachats du marchand ambulant.** Demande de LeKiwi06 : « j'aimerai que le wandering trader propose aussi 10 échanges , les moins cher ont echangeable jusqu'a 10 fois [...] diamant [...] 5 fois [...] totem [...] 1 exemplaire : les règles de trades sont les mêmes que pour les rachats de la semaine ». Ses réponses : le marchand achète ; menu en coffre et score ; un tirage par marchand, stock commun. Rachats gardés dans les données du marchand (aucun fichier). Choix de Claude signalés : paliers 10 / 10 / 5 / 2 / 1 par gamme de prix, un clic = un lot. Réservation gardée jusqu'au déploiement.
 
 **Ajout (11/10/2026, 07:50) : sept plugins déployés sur Kixster ; non testés, actifs après redémarrage ; réservations libérées.** Accord de LeKiwi06 : « oui déploie tout sur kixster ». Envoi à 07:45 : KS_Teleport 1.1.0, KS_Decapitator 1.2.0, KS_RewardsGUI 1.5.0, KS_Economy 1.6.0, KS_Crafts 1.12.0, KS_Jetons 2.0.2, KS_Meule 1.0.0, et `plugins/KS_RewardsGUI/fusion.yml`. Vérifié avant : les six jars remplacés étaient ceux de `jars-deployes/` (mêmes tailles), aucun dossier `_removed-…` du même nom, pas de `fusion.yml` sur le serveur. Vérifié après : un seul jar par plugin, tailles identiques aux jars compilés. Event n'a rien reçu (non demandé). **Non envoyé : `geyser-bedrock/custom_mappings/kalium_objets.json` sur le proxy** (jetons empilables sur Bedrock ; redémarrage du proxy nécessaire), en attente de la décision de LeKiwi06. À lire après le redémarrage de Kixster : console (KS_Crafts : « Fonte des armures : 6 recettes du jeu remplacées » ; KS_RewardsGUI : « fusion.yml : 516 entrées dans 5 pools, 213 réglages » ; KS_Meule activé). À tester en jeu : compte jamais connecté (arrivée au sol), `/tetes` avec un compte non opérateur, fusion de deux coffres (Java et Bedrock), `/accepter` à trois joueurs, fonte d'un casque et d'une pioche en fer, malédiction à la meule (accroupi, main vide).
 

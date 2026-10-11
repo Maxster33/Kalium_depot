@@ -141,7 +141,7 @@ final class Rachats implements CommandExecutor {
         return e == null ? 0 : e.prix();
     }
 
-    private static int gamme(double prix) {
+    static int gamme(double prix) {
         int g = 0;
         while (g < BORNES.length && prix >= BORNES[g]) {
             g++;
@@ -154,7 +154,7 @@ final class Rachats implements CommandExecutor {
         return !e.cible().equals("-") && (e.pile() > 1 || e.prix() >= 1);
     }
 
-    private Component nom(Entree e) {
+    Component nom(Entree e) {
         if (!e.nom().isEmpty()) {
             return Component.text(e.nom());
         }
@@ -216,7 +216,7 @@ final class Rachats implements CommandExecutor {
         return false;
     }
 
-    private static int compter(Player joueur, Entree e) {
+    static int compter(Player joueur, Entree e) {
         int total = 0;
         for (ItemStack objet : joueur.getInventory().getStorageContents()) {
             if (correspond(objet, e)) {
@@ -226,7 +226,7 @@ final class Rachats implements CommandExecutor {
         return total;
     }
 
-    private static void retirer(Player joueur, Entree e, int nombre) {
+    static void retirer(Player joueur, Entree e, int nombre) {
         ItemStack[] contenu = joueur.getInventory().getStorageContents();
         int reste = nombre;
         for (int i = 0; i < contenu.length && reste > 0; i++) {
@@ -292,8 +292,12 @@ final class Rachats implements CommandExecutor {
      * ses objets. Une famille déjà présente ne revient que s'il n'en reste pas d'autre.
      */
     private void completer(boolean nether, boolean end) {
+        completer(offres, Math.max(1, plugin.getConfig().getInt("rachats.objets", 10)), nether, end);
+    }
+
+    /** Le même tirage, dans la liste donnée (rachats de la semaine, ou d'un marchand ambulant depuis la 1.7.0). */
+    private void completer(List<Offre> offres, int nombre, boolean nether, boolean end) {
         ThreadLocalRandom hasard = ThreadLocalRandom.current();
-        int nombre = Math.max(1, plugin.getConfig().getInt("rachats.objets", 10));
         Set<String> prises = new HashSet<>();
         Set<String> offerts = new HashSet<>();
         for (Offre o : offres) {
@@ -314,6 +318,22 @@ final class Rachats implements CommandExecutor {
             List<Entree> choix = familles.get(noms.get(k));
             offres.add(offre(choix.get(hasard.nextInt(choix.size())), hasard));
         }
+    }
+
+    /**
+     * 1.7.0 (marchand ambulant) : un tirage à part, selon les règles des rachats de la semaine (familles, objets tirables,
+     * dimensions ouvertes, prix à plus ou moins 25 %, lot de la gamme du prix).
+     */
+    List<Offre> tirage(int nombre) {
+        List<Offre> liste = new ArrayList<>();
+        completer(liste, nombre, ouverte("nether-portals-enabled"), ouverte("end-portals-enabled"));
+        return liste;
+    }
+
+    /** 1.7.0 : un rachat déjà tiré, retrouvé par l'id de son objet (null si l'objet n'est plus dans le barème). */
+    Offre offre(String id, double unite, int quantite, long points) {
+        Entree e = base.get(id);
+        return e == null || e.cible().equals("-") || quantite <= 0 || points <= 0 ? null : new Offre(e, unite, quantite, points);
     }
 
     private void journal(String debut, boolean nether, boolean end) {
@@ -451,7 +471,7 @@ final class Rachats implements CommandExecutor {
      * 1.5.0 : l'objet d'un rachat dans le menu (l'objet du jeu, la potion ; 1.5.1 : l'objet custom lui-même, avant
      * une étoile du Nether pour tous).
      */
-    private ItemStack icone(Offre o) {
+    ItemStack icone(Offre o) {
         Entree e = o.entree();
         ItemStack objet;
         if (e.materiel() != null) {

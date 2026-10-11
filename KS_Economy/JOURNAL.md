@@ -462,3 +462,47 @@ Limites : sur Bedrock, la tête d'un joueur peut s'afficher en tête de Steve da
 (`/amis accepter`, `/partie accepter`). Contient les 1.5.1 et 1.5.2, déployées le 11/10/2026 et non testées en jeu.
 
 **Déployé sur Kixster le 11/10/2026 à 07:45 (LeKiwi06, envoi groupé : KS_Teleport 1.1.0, KS_Decapitator 1.2.0, KS_RewardsGUI 1.5.0, KS_Economy 1.6.0, KS_Crafts 1.12.0, KS_Jetons 2.0.2, KS_Meule 1.0.0 ; accord de LeKiwi06 : « oui déploie tout sur kixster » ; 1.5.2 dans `_removed-ks_economy-1.5.2/` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.5.2). Statut : non testé en jeu.**
+
+## 1.7.0 - rachats du marchand ambulant (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « j'aimerai que le wandering trader propose aussi 10 échanges , les moins cher ont echangeable
+jusqu'a 10 fois , puis plus ça vaut moins on peux échanger , un item comme le diamant serait échangeable 5 fois par
+exemple , un item comme le totem ne le serait qu'en 1 exemplaire : les règles de trades sont les mêmes que pour les
+rachats de la semaine concernant les items tirés , leurs quantité , et leurs prix ». Ses réponses aux trois questions
+de Claude : **le marchand achète** (le joueur donne l'objet et reçoit des émeraudes) ; **menu en coffre, score** ;
+**un tirage par marchand, stock commun** à tous les joueurs.
+
+- **Clic droit sur un marchand ambulant** : menu « Marchand ambulant » (coffre), ses 10 rachats en deux rangées de 5,
+  comme les rachats de la semaine : la pile montre le lot, la description donne le prix du lot, « Encore n fois » (ou
+  « Épuisé »), ce que le joueur possède. Un clic vend **1 lot** : objets retirés de l'inventaire, points versés sur le
+  score. La fenêtre d'échange du jeu ne s'ouvre pas (le marchand n'a aucun échange : KS_Villageois).
+- **Tirage** : celui des rachats de la semaine, refait pour chaque marchand à son premier clic : 10 familles au
+  hasard, un objet par famille, jamais un objet d'une dimension fermée, prix du barème à plus ou moins 25 %, lot de la
+  gamme du prix (1, 10, 64 ou 320 émeraudes ; à l'unité à partir de 100 ou pour un objet non empilable). Les objets
+  custom du barème (têtes, élixirs...) peuvent sortir, comme pour les rachats.
+- **Nombre de fois** par rachat, pour tous les joueurs ensemble, selon le prix à l'unité : moins de 0,1 : **10** ;
+  0,1 à 1 : **10** ; 1 à 10 : **5** (le diamant) ; 10 à 100 : **2** ; 100 et plus : **1** (le totem). Réglable :
+  `marchand.echanges` du `config.yml` (et `marchand.objets`, 10) ; valeurs par défaut dans le code.
+- **Gardé sur le marchand lui-même** (ses données) : les rachats et ce qu'il en reste disparaissent avec lui et
+  survivent à un redémarrage tant qu'il est là. Aucun fichier.
+- Le joueur doit rester à 8 blocs du marchand ; s'il est parti (ou mort) : « Le marchand ambulant n'est plus là. »
+- **Pas de quota du jour** ici (le quota des rachats de la semaine ne s'applique pas) : le stock du marchand fait la
+  limite. Le tirage d'un marchand est écrit dans la console, comme chaque vente (« marchand ambulant »).
+- Un marchand qui porte l'étiquette `ks_pnj` (PNJ à échanges prévu par KS_Villageois) n'est pas concerné.
+- Technique : le tirage des rachats de la semaine sert aux deux (même code) ; rien ne change pour `/rachat`.
+- Nouveaux textes : clés `marchand.*` de `lang.yml` (ajoutées au premier usage).
+
+Choix de Claude, signalés :
+- les paliers 0,1 à 1 (10 fois) et 10 à 100 (2 fois) : LeKiwi06 n'a donné que 10 pour les moins chers, 5 pour le
+  diamant et 1 pour le totem ;
+- un clic = 1 lot (pas de « Tout vendre ») ;
+- le tirage se fait au premier clic sur le marchand, pas à son apparition (même résultat pour les joueurs).
+
+À savoir : un marchand peut verser beaucoup si les joueurs ont les objets. Par rachat, au plus : 10 émeraudes (moins
+de 0,1), 100 (0,1 à 1), 320 (1 à 10), 640 (10 à 100), le prix de l'objet au-delà. Les marchands ambulants sont rares
+(le jeu en fait apparaître un de temps en temps près d'un joueur, pour 40 minutes).
+
+Contient la 1.6.0 (déployée sur Kixster le 11/10/2026, non testée en jeu). Empilé à la demande de LeKiwi06. Écrit sans
+serveur de test.
+
+**Compilé le 11/10/2026 (`sortie/KS_Economy-1.7.0.jar`). Non déployé. Statut : non testé en jeu.**

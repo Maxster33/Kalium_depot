@@ -120,6 +120,8 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         // 1.3.0 : barème des prix et rachats de la semaine (après Boutiques : noms français des objets).
         rachats = new Rachats(this);
         getCommand("rachat").setExecutor(rachats);
+        // 1.7.0 : rachats du marchand ambulant (mêmes règles de tirage).
+        getServer().getPluginManager().registerEvents(new Marchand(this, rachats), this);
         // 1.1.4 : signalements dans la rubrique « Modération » de /menu (KLM_Menu 2.7.0 ; avant : Paramètres).
         getServer().getServicesManager().register(fr.kalium.menu.api.MenuSection.class,
                 fr.kalium.menu.api.MenuSection.moderation(this, "signalements-magasins", Signalements.PERMISSION_STAFF, 50,
