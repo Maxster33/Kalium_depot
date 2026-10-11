@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -63,8 +64,11 @@ final class Rachats implements CommandExecutor {
                   String dimensions) {
     }
 
-    /** Un objet racheté cette semaine : quantité par lot et points payés par lot. */
-    record Offre(Entree entree, double unite, int quantite, long points) {
+    /**
+     * Un objet racheté cette semaine : quantité par lot et points payés par lot. bareme (1.8.0) : prix du barème au
+     * moment du tirage ; NaN pour une offre tirée avant la 1.8.0 ou gardée par un marchand ambulant.
+     */
+    record Offre(Entree entree, double unite, int quantite, long points, double bareme) {
     }
 
     /** Bornes des gammes de prix : moins de 0,1 ; 0,1 à 1 ; 1 à 10 ; 10 à 100 ; 100 et plus. */
@@ -77,6 +81,8 @@ final class Rachats implements CommandExecutor {
     private final File fichier;
     private final Map<String, Entree> base = new LinkedHashMap<>();
     private final List<Offre> offres = new ArrayList<>();
+    /** 1.8.0 : objets au prix changé depuis le barème des versions 1.3.0 à 1.7.0 (rachats-modifies.txt du jar). */
+    private final Set<String> modifies = new HashSet<>();
     /** Points gagnés aujourd'hui : joueur -> id de l'objet -> points. */
     private final Map<UUID, Map<String, Long>> gains = new HashMap<>();
     private String semaine;
@@ -88,6 +94,7 @@ final class Rachats implements CommandExecutor {
         this.menus = plugin.menus();
         this.fichier = new File(plugin.getDataFolder(), "rachats.yml");
         chargerBase();
+        chargerModifies();
         charger();
         verifier();
     }
@@ -97,6 +104,23 @@ final class Rachats implements CommandExecutor {
     }
 
     // ------------------------------------------------------------------ barème
+
+    private void chargerModifies() {
+        try (InputStream in = plugin.getResource("rachats-modifies.txt")) {
+            if (in == null) {
+                return;
+            }
+            BufferedReader lecteur = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            String ligne;
+            while ((ligne = lecteur.readLine()) != null) {
+                if (!ligne.startsWith("#") && !ligne.isBlank()) {
+                    modifies.add(ligne.trim());
+                }
+            }
+        } catch (IOException e) {
+            plugin.getLogger().warning("rachats-modifies.txt illisible : " + e.getMessage());
+        }
+    }
 
     private void chargerBase() {
         int absents = 0;
@@ -268,6 +292,9 @@ final class Rachats implements CommandExecutor {
             tirer();
             change = true;
         }
+        if (remplacerModifies()) {
+            change = true;
+        }
         if (remplacerFermes()) {
             change = true;
         }
@@ -297,9 +324,14 @@ final class Rachats implements CommandExecutor {
 
     /** Le même tirage, dans la liste donnée (rachats de la semaine, ou d'un marchand ambulant depuis la 1.7.0). */
     private void completer(List<Offre> offres, int nombre, boolean nether, boolean end) {
+        completer(offres, nombre, nether, end, Set.of());
+    }
+
+    /** 1.8.0 : le même tirage, sans les objets de « exclus » (ceux qu'on vient de retirer des offres). */
+    private void completer(List<Offre> offres, int nombre, boolean nether, boolean end, Set<String> exclus) {
         ThreadLocalRandom hasard = ThreadLocalRandom.current();
         Set<String> prises = new HashSet<>();
-        Set<String> offerts = new HashSet<>();
+        Set<String> offerts = new HashSet<>(exclus);
         for (Offre o : offres) {
             prises.add(o.entree().famille());
             offerts.add(o.entree().id());
@@ -333,7 +365,8 @@ final class Rachats implements CommandExecutor {
     /** 1.7.0 : un rachat déjà tiré, retrouvé par l'id de son objet (null si l'objet n'est plus dans le barème). */
     Offre offre(String id, double unite, int quantite, long points) {
         Entree e = base.get(id);
-        return e == null || e.cible().equals("-") || quantite <= 0 || points <= 0 ? null : new Offre(e, unite, quantite, points);
+        return e == null || e.cible().equals("-") || quantite <= 0 || points <= 0 ? null
+                : new Offre(e, unite, quantite, points, Double.NaN);
     }
 
     private void journal(String debut, boolean nether, boolean end) {
@@ -369,17 +402,67 @@ final class Rachats implements CommandExecutor {
         return true;
     }
 
+    /**
+     * 1.8.0 (demande de LeKiwi06 : « refaire un tirage pour les items qui ont été modifiés, on tire un nouvel objet à la
+     * place ») : une offre dont le prix du barème a changé depuis son tirage (nouveau rachats.csv) est retirée et
+     * remplacée par un nouveau tirage, jamais par le même objet. Vrai si une offre a changé.
+     */
+    private boolean remplacerModifies() {
+        Set<String> retires = new LinkedHashSet<>();
+        offres.removeIf(o -> modifiee(o) && retires.add(o.entree().id()));
+        // les offres gardées qui datent d'avant la 1.8.0 reçoivent le prix actuel : un prochain changement sera vu
+        boolean marquees = false;
+        for (int i = 0; i < offres.size(); i++) {
+            Offre o = offres.get(i);
+            if (Double.isNaN(o.bareme())) {
+                offres.set(i, new Offre(o.entree(), o.unite(), o.quantite(), o.points(), o.entree().prix()));
+                marquees = true;
+            }
+        }
+        if (retires.isEmpty()) {
+            return marquees;
+        }
+        boolean nether = ouverte("nether-portals-enabled");
+        boolean end = ouverte("end-portals-enabled");
+        completer(offres, Math.max(1, plugin.getConfig().getInt("rachats.objets", 10)), nether, end, retires);
+        journal("Rachats de la semaine " + semaine + " : objets au prix modifié remplacés (" + String.join(", ", retires)
+                + ")", nether, end);
+        return true;
+    }
+
+    /**
+     * Vrai si le prix du barème de l'objet n'est plus celui du tirage. Offre tirée avant la 1.8.0 (prix du barème non
+     * enregistré) : vrai si l'objet est dans rachats-modifies.txt, ou si son prix de la semaine sort de l'écart permis
+     * autour du prix actuel (un prix de 1 émeraude ou plus est arrondi à l'unité, d'où la marge de 0,5).
+     */
+    private boolean modifiee(Offre o) {
+        double prix = o.entree().prix();
+        if (!Double.isNaN(o.bareme())) {
+            return Math.abs(o.bareme() - prix) > 1e-9;
+        }
+        if (modifies.contains(o.entree().id())) {
+            return true;
+        }
+        double ecart = ecart();
+        double marge = (o.unite() >= 1 ? 0.5 : 0) + 1e-9;
+        return o.unite() < prix * (1 - ecart) - marge || o.unite() > prix * (1 + ecart) + marge;
+    }
+
+    private double ecart() {
+        return Math.max(0, Math.min(90, plugin.getConfig().getDouble("rachats.variation-pourcent", 25))) / 100;
+    }
+
     /** Prix de la semaine (barème à plus ou moins 25 %) puis lot de la gamme de ce prix. */
     private Offre offre(Entree e, ThreadLocalRandom hasard) {
-        double ecart = Math.max(0, Math.min(90, plugin.getConfig().getDouble("rachats.variation-pourcent", 25))) / 100;
+        double ecart = ecart();
         double brut = e.prix() * (1 + (hasard.nextDouble() * 2 - 1) * ecart);
         double unite = brut >= 1 ? Math.rint(brut) : brut;
         int g = gamme(unite);
         if (g >= LOTS.length || e.pile() <= 1) {
-            return new Offre(e, unite, 1, Math.max(1, Math.round(unite)));
+            return new Offre(e, unite, 1, Math.max(1, Math.round(unite)), e.prix());
         }
         int quantite = (int) Math.max(1, Math.floor(LOTS[g] / unite + 1e-9));
-        return new Offre(e, unite, quantite, Math.max(1, Math.round(quantite * unite)));
+        return new Offre(e, unite, quantite, Math.max(1, Math.round(quantite * unite)), e.prix());
     }
 
     // ------------------------------------------------------------------ quota
@@ -625,7 +708,8 @@ final class Rachats implements CommandExecutor {
                 int quantite = liste.getInt(cle + ".quantite");
                 long points = liste.getLong(cle + ".points");
                 if (e != null && !e.cible().equals("-") && quantite > 0 && points > 0) {
-                    offres.add(new Offre(e, liste.getDouble(cle + ".unite"), quantite, points));
+                    offres.add(new Offre(e, liste.getDouble(cle + ".unite"), quantite, points,
+                            liste.getDouble(cle + ".bareme", Double.NaN)));
                 }
             }
         }
@@ -658,6 +742,9 @@ final class Rachats implements CommandExecutor {
             yaml.set(cle + ".unite", o.unite());
             yaml.set(cle + ".quantite", o.quantite());
             yaml.set(cle + ".points", o.points());
+            if (!Double.isNaN(o.bareme())) {
+                yaml.set(cle + ".bareme", o.bareme());
+            }
         }
         yaml.set("gains-du", jourGains == null ? null : jourGains.toString());
         gains.forEach((uuid, duJoueur) -> {

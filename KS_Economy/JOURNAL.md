@@ -543,4 +543,57 @@ Seul `rachats.csv` change (113 prix sur 1 929 ; aucun changement de code, famill
   capteur sculk...) : prix en attente de sa décision, inchangés ici.
 - Contient la 1.7.0 (déployée le 11/10/2026, non testée en jeu) : seul le barème change.
 
+**Compilé le 12/10/2026, jamais déployé : remplacé par la 1.8.0, qui le contient.**
+
+## 1.8.0 - barème : suite des prix corrigés ; une offre au prix modifié est remplacée (12/10/2026, LeKiwi06)
+
+**Barème** (`rachats.csv` ; par rapport au barème en service, celui des versions 1.3.0 à 1.7.0 : 678 prix changent sur
+1 929, dont 659 objets tirables ; aucun ne monte depuis la 1.7.1). Réponse de LeKiwi06 à la liste d'anomalies du 12/10 :
+« catégorie 1 à 4 et le reste de la 6 validé », plus ses corrections :
+- **Erreurs franches** : œuf brun et œuf bleu au prix de l'œuf ; pousses, propagule et champignons du Nether à la
+  moitié de leur bûche ou tige (règle « graine ≤ fruit », comme les feuilles) ; capteur sculk 0,10 (avant 1,32),
+  hurleur 0,30 (3,80), catalyseur 1 (2,53) ; mousse pâle au prix de la mousse.
+- **Revenu passif** : œuf 0,01 (avant 0,031 ; brun et bleu 0,043) ; écaille de tatou et rayon de miel 0,03 ; cactus,
+  citrouille, laine blanche 0,0125 (graines de citrouille : le quart, 0,0031).
+- **Se multiplie seul ou à la poudre d'os** : mycélium et podzol 0,02 ; nyliums, racines, germes et lianes du Nether,
+  blocs de verrues, herbes marines 0,015 ; champilampe, cornichon de mer, grande foliogoutte, buisson à lucioles, baies
+  lumineuses, lichen lumineux 0,03 ; œilchidées 0,04 ; coraux et éventails vivants 0,03 ; blocs de corail vivants 0,05.
+- **Blocs abondants une fois leur biome trouvé : 0,01** : coraux morts, mousse, boue, sable, sable rouge, gravier,
+  spéléothème, tuf, basalte, bloc d'herbe, pierre de l'End, ardoise taillée, terre stérile, granite, diorite, andésite,
+  sable et terre des âmes, bloc de magma, terre cuite, pierre noire. Calcite, terre racineuse, blocs et pied de
+  champignon 0,015. Poudre de glowstone 0,02 (bloc 0,08). Les objets fabriqués suivent (verre 0,02 ; béton blanc
+  0,036 ; grès 0,04...).
+- **Colorant blanc** au prix de la poudre d'os (0,0098 ; « mets le colorant blanc au même prix que la poudre d'os »).
+- **Coussin** : 1,5 laine (0,019 en blanc) ; **`straw_bed`** : 0,75 botte de foin (0,33) ; **carte au trésor enfoui :
+  10** (avant 30).
+- Validés tels quels (reste de la catégorie 6) : pointe de soufre 0,135 ; soufre concentré 0,50 ; seau de cube de soufre
+  0,56 ; `red_shrub` et `shelf_mushroom` 0,060.
+
+Écarts par rapport aux nombres de la liste, signalés à LeKiwi06 :
+- fiole de miel : 0,05 et non 0,06 (somme de ses ingrédients : la fiole en verre a baissé avec le sable) ;
+- bloc de corail vivant : 0,05 comme validé, donc moins que les 4 coraux de son craft KS_Crafts (0,12) ;
+- perle de l'Ender et endermite (une perle lancée rapporte en moyenne plus que son prix, par l'améthyste bourgeonnante
+  à 250) : rien de changé, la proposition n'était pas un prix ;
+- le silex (0,029) vaut maintenant 2,9 fois le gravier (0,01) qui le donne : non corrigé.
+
+**Offre au prix modifié** (demande de LeKiwi06 : « il faut refaire un tirage d'économie pour les items qui ont été
+modifiés, on tire un nouvel objet à la place ») :
+- chaque offre des rachats de la semaine enregistre le prix du barème au moment du tirage (`offres.N.bareme` dans
+  `rachats.yml`) ; à chaque vérification (démarrage, toutes les minutes, ouverture du menu), une offre dont le prix du
+  barème n'est plus le même est retirée et remplacée par un nouveau tirage (mêmes règles : familles, dimensions
+  ouvertes), jamais par l'objet retiré. Console : « Rachats de la semaine ... : objets au prix modifié remplacés
+  (ids) ». Les autres offres ne bougent pas ; les gains du jour (quota) non plus.
+- Offres tirées avant la 1.8.0 (pas de prix enregistré) : remplacées si l'objet est dans `rachats-modifies.txt` (dans le
+  jar : les 678 objets dont le prix a changé par rapport au barème des versions 1.3.0 à 1.7.0), ou si le prix de la
+  semaine sort de l'écart permis autour du prix actuel ; les autres reçoivent le prix actuel.
+- `build.sh` copie `rachats-modifies.txt` dans le jar.
+
+Limites :
+- Les rachats d'un marchand ambulant déjà ouvert gardent leur prix (ses données ne portent pas le prix du barème ; un
+  marchand reste 40 minutes).
+- Les tables de butin des coffres de récompense (`butin.yml`, hors dépôt) sont calculées avec ces prix : non régénérées.
+- Remplacement écrit sans serveur de test : la règle de détection a été simulée sur les deux barèmes, pas en jeu.
+- Contient la 1.7.1 (jamais déployée) et la 1.7.0 (déployée le 11/10/2026, non testée en jeu) : empilé à la demande de
+  LeKiwi06.
+
 **Compilé le 12/10/2026, non déployé. Statut : non testé en jeu.**

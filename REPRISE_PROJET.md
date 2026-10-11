@@ -112,7 +112,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 
 
-- **KS_Economy 1.7.1** (12/10/2026, LeKiwi06) : barème corrigé après les premiers rachats (cinabre et soufre 0,01 ; butin de monstres et poissons divisé par 2 ; disque Bounce au prix du Relic ; cartes de structure 10 ; cuivre brut au prix du lingot) ; seul `rachats.csv` change ; **compilé, non déployé, non testé en jeu**, réservation gardée jusqu'au déploiement. D'autres prix attendent la décision de LeKiwi06 (liste du 12/10).
+- **KS_Economy 1.8.0** (12/10/2026, LeKiwi06) : barème corrigé après les premiers rachats (678 prix sur 1 929 : cinabre, soufre et blocs abondants à 0,01 ; œufs 0,01 ; butin de monstres divisé par 2 ; objets multipliés à la poudre d'os, sculk, pousses, cuivre brut, disque Bounce, cartes à 10...) et **une offre de la semaine dont le prix du barème a changé est remplacée par un nouveau tirage** ; contient la 1.7.1 jamais déployée ; **compilé, non déployé, non testé en jeu**, réservation gardée jusqu'au déploiement. `butin.yml` des coffres de récompense non régénéré.
 
 - **KG_BoatRace 1.6.0** (09/10/2026, LeKiwi06) : essai d'équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock, derrière le réglage « Bedrock : bateau serveur (essai) » désactivé par défaut ; **compilé, non déployé, non testé en jeu**, réservation gardée jusqu'au test. Empilé sur la 1.5.1 non testée (accord explicite de LeKiwi06).
 
@@ -442,6 +442,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (12/10/2026, 02:00) : KS_Economy 1.8.0 compilée, non déployée, non testée : suite du barème et remplacement des offres au prix modifié.** Réponses de LeKiwi06 : « catégorie 1 à 4 et le reste de la 6 validé » (liste d'anomalies du 12/10) ; coussin = 1,5 laine, `straw_bed` = 0,75 botte de foin ; carte au trésor à 10 ; colorant blanc au prix de la poudre d'os ; « il faut refaire un tirage d'économie pour les items qui ont été modifiés, on tire un nouvel objet à la place ». 678 prix changent par rapport au barème en service. Une offre de la semaine au prix modifié est remplacée au démarrage (jamais par le même objet). Restent ouverts : perle de l'Ender / endermite (améthyste bourgeonnante à 250), silex 2,9 fois le gravier, `butin.yml` des coffres de récompense à régénérer ou non. Détail : `KS_Economy/JOURNAL.md`.
 
 **Ajout (12/10/2026, 01:30) : KS_Economy 1.7.1 compilée, non déployée, non testée : barème corrigé après les premiers rachats.** Signalement de LeKiwi06 : « le cinabre est bien trop boosté, il vaut autant que du fer ». Cause : note provisoire jamais vérifiée (0,0764 pour un fer à 0,10). Ses décisions : cinabre et soufre 0,01 ; butin de monstres et poissons divisé par 2 ; disque Bounce au prix du Relic ; cartes de structure à 10 ; cuivre brut au prix du lingot ; coussins et `straw_bed` au prix de leur recette. 113 prix changent, aucun code. Les rachats déjà tirés gardent leur prix (`rachats.yml`). En attente de sa décision : le reste de la liste d'anomalies du 12/10 (œufs, poudre d'os, blocs abondants, sculk). `butin.yml` des coffres de récompense non régénéré. Détail : `KS_Economy/JOURNAL.md`. Réservation gardée jusqu'au déploiement.
 
