@@ -38,8 +38,12 @@ redémarrage ; non testée en jeu. Perle de l'Ender laissée à 0,5 (« ils ne s
 
 **Fait le 12/10/2026 à 01:24, Kixster arrêté (LeKiwi06 : « kixster est arrêté, retire tout »)** : 316 points retirés de `plugins/KS_Economy/comptes.yml` (3 soldes : - 250, - 57, - 9 ; aucun n'est passé sous zéro ; montants de `rachats.yml` recoupés avec le journal du serveur ; les murets vendus ne sont pas rendus) ; ancien fichier dans `/plugins/_removed-ks_economy-comptes-2026-10-12/` ; fichier relu identique après l'envoi. Kixster était arrêté depuis 00:33 : aucune vente de cinabre après le relevé.
 
+## Journal de Kixster après redémarrage (12/10/2026, 01:25)
+
+**Journal de Kixster lu le 12/10/2026 après le redémarrage de 01:25 (demande de LeKiwi06)** : KS_Economy 1.8.0 active, « Barème : 1929 objets (0 inconnus de cette version) », aucune erreur. Ligne attendue présente : « Rachats de la semaine 2026-S42 : objets au prix modifié remplacés (waxed_oxidized_chiseled_copper, dripstone_block, brown_egg, cinnabar_brick_wall, diorite_wall) » ; les 5 autres offres sont gardées, les 5 nouvelles sont `golden_apple`, `potion(tissage)`, `ladder`, `mushroom_stem`, `deepslate_lapis_ore`. `rachats.yml` : les 10 offres portent leur prix du barème. `comptes.yml` : soldes corrigés conservés après le redémarrage. Statut : vérifié dans la console, non testé en jeu. Event : pas encore redémarré.
+
 ## Reste à faire
 
-- Tester en jeu ; lire la ligne « objets au prix modifié remplacés » de la console après le redémarrage.
+- Tester en jeu ; redémarrer Event et y lire la ligne « objets au prix modifié remplacés ».
 - Silex (0,029) à 2,9 fois le gravier (0,01) ; fiole de miel à 0,05 au lieu de 0,06.
 - Tables de butin des coffres de récompense (`butin.yml`) : calculées avec l'ancien barème, à régénérer ou non.
