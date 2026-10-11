@@ -48,6 +48,21 @@ LeKiwi06 : « les troncs de champignons sont trop peu chers, ils sont pénibles 
 
 Event : journal lu à 01:29, aucun redémarrage depuis le 11/10 à 17:36 (toujours en 1.7.0).
 
+## Fusions de coffres « perdues » au redémarrage de Kixster : vérification (lecture seule)
+
+Signalement relayé par LeKiwi06 : un joueur dit avoir perdu des fusions de coffres au redémarrage de Kixster. Lu :
+journaux du serveur, `recuperations.log`, `coffres.yml` de KS_RewardsGUI et la sauvegarde du joueur (copies hors dépôt).
+- Jusqu'à l'arrêt de 00:33, Kixster tournait encore avec les versions d'avant le 11/10 (KS_RewardsGUI 1.4.1, KS_Economy
+  1.5.0...) : la fusion (1.5.0) n'existe sur Kixster que depuis le redémarrage de 01:25.
+- Session de 01:25 à 01:31 : 4 coffres récupérés (01:30:40 à 01:31:02), 1 fusion à 01:31:32 (20 + 10 = 30), arrêt du
+  serveur à 01:31:37 pour la 1.8.1. La sauvegarde du joueur à l'arrêt contient le coffre fusionné de 30 et les deux
+  autres coffres, non fusionnés.
+- Après le redémarrage de 01:33 : 2 fusions à 01:35:08 et 01:35:11 (30 + 5 = 35, puis 35 + 10 = 45).
+- Bilan : aucun coffre ni aucune fusion enregistrée n'a été perdu ; il reste un coffre fusionné de 45, non ouvert, connu
+  du serveur ; coût total 110 points d'expérience (30 + 35 + 45), sans double prélèvement. Hypothèse : des clics faits
+  dans les 5 secondes avant l'arrêt n'ont pas été traités. Aucun changement.
+- Au passage : KS_Economy 1.8.1 active sur Kixster depuis 01:33, offre du pied de champignon remplacée.
+
 ## Reste à faire
 
 - KS_Economy 1.8.1 déployée sur Kixster et Event le 12/10/2026 à 01:32 (« oui déploie tout ») : active après redémarrage de chaque serveur ; lire la console (« objets au prix modifié remplacés »).
