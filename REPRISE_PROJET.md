@@ -96,6 +96,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Decapitator 1.2.0** (11/10/2026, LeKiwi06) : `/tetes` ouvert à tous les joueurs, il montre les têtes déjà obtenues (une tête compte dès qu'elle a été dans l'inventaire ; vitre grise pour les autres ; les opérateurs gardent le clic qui donne une tête) ; nouveau fichier `plugins/KS_Decapitator/collection.yml` ; **compilé, non déployé, non testé en jeu**, réservation gardée.
+
 - **KS_Teleport 1.1.0** (11/10/2026, LeKiwi06) : un joueur qui se connecte pour la première fois est posé au point d'apparition exact du monde (`/setworldspawn`), plus sur le bloc le plus haut de la colonne (toit du spawn de Kixster) ; **compilé, non déployé, non testé en jeu**, réservation gardée. Pour Kixster.
 - **KS_RewardsGUI 1.4.2** (11/10/2026, LeKiwi06) : alias `/reward` de `/rewards` ; **compilé, non déployé, non testé en jeu**, réservation gardée. Pour Kixster.
 
@@ -429,6 +431,8 @@ sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre par
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (11/10/2026, 06:45) : KS_Decapitator 1.2.0 compilée, non déployée, non testée : `/tetes` pour tous les joueurs.** Demande de LeKiwi06 : « j'aimerai aussi que les joueurs aient accès au /tetes mais que celui ci leur servent a savoir celle qu'ils ont déjà obtenus ( l'avoir eu dans son inventaire via un échange par exemple compte aussi ) ». Chaque joueur voit ses têtes obtenues (la tête, « Obtenue ») et les autres en vitre grise à leur nom (« Pas encore obtenue ») ; compte dans le titre ; une tête est notée dès qu'elle est dans son inventaire (ramassage, contrôle toutes les 5 secondes, connexion, déconnexion, ouverture du menu). Opérateurs : inchangé (toutes les têtes, clic = une tête). Choix de Claude signalés : nom des têtes manquantes visible, pas de message à l'obtention, pas de bouton de menu. Réservation gardée jusqu'au déploiement (Kixster, et Event si LeKiwi06 le veut).
 
 **Ajout (11/10/2026, 06:25) : départ de Kixster SMP, journaux lus ; KS_Teleport 1.1.0 et KS_RewardsGUI 1.4.2 compilés, non déployés, non testés.** Question de LeKiwi06 : « as tu des remarques quant au départ de kixster SMP ? bugs , éléments manquants, points a améliorer ». Journaux de Kixster lus en lecture seule (09/10 19:52 au 11/10 05:30, 6 joueurs) : aucune erreur de nos plugins, aucun ralentissement. Constats : (1) les 6 nouveaux comptes apparaissent entre Y 118 et Y 123 au-dessus du spawn protégé (point d'apparition du monde : -54 73 212), 2 morts de chute à la première connexion ; (2) WorldGuard 7.0.19 plante à la pose d'un bateau sur Paper 26.3 (35 erreurs, sa protection ne s'applique pas à ce clic) ; (3) alertes GrimAC sur les joueurs Java seulement (alpha, montage avec ViaBackwards non pris en charge, retours en arrière actifs) ; (4) CoreProtect absent de Kixster ; (5) région `ile_du_dragon` absente de l'End (`zone_spawn` et `protected_spawn` existent) ; (6) `/reward` tapé par des joueurs ; (7) à chaque connexion d'un joueur Bedrock, 24 à 119 avertissements « moved too quickly » dans la même seconde, sans effet visible. Sur accord de LeKiwi06 (« oui fais les deux ») : KS_Teleport 1.1.0 pour (1) et KS_RewardsGUI 1.4.2 pour (6), réservations gardées jusqu'au déploiement sur Kixster. Les autres points attendent sa décision. Non fait, signalé : la réapparition après une mort sans lit suit la même règle du jeu que la première connexion.
 

@@ -78,7 +78,9 @@ import java.util.concurrent.ThreadLocalRandom;
  * - Têtes de joueur à texture (table tetes.txt dans le jar), nom « Tête de ... » blanc non italique, marquées (id).
  *   Posées puis cassées (outil, explosion, piston...), elles redonnent exactement le même objet : toute tête du plugin
  *   qui apparaît au sol sans marqueur est reconstruite (reconnue au profil de la tête, propre à chaque id).
- * - /tetes (opérateurs) : menu de toutes les têtes, pour les vérifier en jeu.
+ * - /tetes : menu de toutes les têtes. 1.2.0 : ouvert à tous, il montre à chaque joueur les têtes qu'il a déjà
+ *   obtenues (une tête compte dès qu'elle a été dans son inventaire) ; les opérateurs les voient toutes et en
+ *   prennent une d'un clic, pour les vérifier en jeu.
  *
  * Autres plugins : creerTete(id), idTete(objet), ids(), tetesDe(créature) (KS_Crafts, KS_KaliumGive).
  */
@@ -97,6 +99,8 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
     private static final Map<UUID, Tete> PAR_UUID = new LinkedHashMap<>();
 
     private static NamespacedKey marqueur;
+    /** 1.2.0 : têtes déjà obtenues par chaque joueur. */
+    private static Collection collection;
 
     @Override
     public void onEnable() {
@@ -109,11 +113,24 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
             return;
         }
         getServer().getPluginManager().registerEvents(this, this);
+        collection = new Collection(this);
+        getServer().getPluginManager().registerEvents(collection, this);
         getServer().getPluginManager().registerEvents(new MenuTetes(), this);
         // 1.1.0 : tête de wither squelette sale, endommagée, désactivée (réparée par les crafts de KS_Crafts).
         getServer().getPluginManager().registerEvents(new Defauts(this), this);
         getCommand("tetes").setExecutor(this);
         getLogger().info(PAR_ID.size() + " têtes chargées.");
+    }
+
+    @Override
+    public void onDisable() {
+        if (collection != null) {
+            collection.sauver();
+        }
+    }
+
+    static Collection collection() {
+        return collection;
     }
 
     // ------------------------------------------------------------------ table des têtes
@@ -396,10 +413,8 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
         return true;
     }
 
-    /** Têtes de la table, dans l'ordre (menu). */
-    static List<ItemStack> toutes() {
-        List<ItemStack> tetes = new ArrayList<>();
-        PAR_ID.values().forEach(tete -> tetes.add(creer(tete)));
-        return tetes;
+    /** Nom affiché d'une tête de la table (menu). */
+    static String nom(String id) {
+        return PAR_ID.get(id).nom();
     }
 }

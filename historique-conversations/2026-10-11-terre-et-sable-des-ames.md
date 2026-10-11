@@ -1,6 +1,6 @@
 # 2026-10-11 — Terre des âmes et sable des âmes : familles des rachats et butin des coffres
 
-- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI
+- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI, KS_Decapitator
 - Versions avant / après : KS_Economy 1.5.0 en service (1.5.1 jamais déployée) / 1.5.2 déployée sur Event et
   Kixster ; KG_Rewards 1.3.0 et KV_Rewards 1.3.0 inchangés (`butin.yml` remplacés)
 
@@ -56,8 +56,16 @@ les deux ? » : « Les deux ».
 - Autre question : chances d'obtenir un livre Raccommodage sur Kixster (coffres de récompense : 10 % d'un tirage
   Légendaire ; livres des coffres de structures restés vanilla ; ni villageois, ni pêche, ni table d'enchantement).
 
+## /tetes pour tous les joueurs
+
+- Demande de LeKiwi06 : « j'aimerai aussi que les joueurs aient accès au /tetes mais que celui ci leur servent a
+  savoir celle qu'ils ont déjà obtenus ( l'avoir eu dans son inventaire via un échange par exemple compte aussi ,
+  pas la peine de l'avoir tué soit même ) ».
+- KS_Decapitator 1.2.0 : compilé, poussé, non déployé. Détail et choix signalés : `KS_Decapitator/JOURNAL.md`.
+
 ## Reste à faire
 
+- Déploiement de KS_Decapitator 1.2.0, sur accord de LeKiwi06 ; test avec un compte non opérateur.
 - Déploiement de KS_Teleport 1.1.0 et KS_RewardsGUI 1.4.2 sur Kixster, sur accord de LeKiwi06 ; test avec un compte
   jamais connecté.
 - Redémarrage d'Event, Kixster, Kal-Games et Kanvas par LeKiwi06, puis lecture des journaux.

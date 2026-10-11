@@ -62,3 +62,41 @@ n'importe quel ordre ; réparée des 3, elle devient un **vrai crâne de wither 
 - API : `estTeteWitherSquelette`, `defautsTete`, `reparer(tête, défaut)`.
 
 **Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.1.0 ; ancienne version dans `_removed-ks_decapitator-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.2.0 - /tetes pour tous : têtes déjà obtenues (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « j'aimerai aussi que les joueurs aient accès au /tetes mais que celui ci leur servent a savoir
+celle qu'ils ont déjà obtenus ( l'avoir eu dans son inventaire via un échange par exemple compte aussi , pas la peine
+de l'avoir tué soit même ) ».
+
+- **`/tetes` ouvert à tous les joueurs** (plus de permission sur la commande). Même menu, 45 têtes par page ; le titre
+  donne le compte du joueur (« Têtes 12/332 - page 1/8 »).
+  - Tête déjà obtenue : la tête elle-même, avec « Obtenue » en dernière ligne de sa description.
+  - Tête jamais obtenue : une vitre grise à son nom, avec « Pas encore obtenue ».
+  - Un clic ne donne rien à un joueur.
+- **Opérateurs** (`ks.decapitator.tetes`, comme avant) : toutes les têtes sont montrées (avec leur état) et un clic en
+  met une dans l'inventaire.
+- **Une tête est « obtenue » dès qu'elle a été dans l'inventaire du joueur**, quelle que soit sa provenance (mob tué,
+  échange, coffre, don, récompense) : notée quand il la ramasse au sol, et par un contrôle de son inventaire (armure et
+  main secondaire comprises) toutes les 5 secondes, à la connexion, à la déconnexion et à l'ouverture de `/tetes`.
+  Une tête obtenue le reste, même donnée, posée ou perdue ensuite.
+- Données : `plugins/KS_Decapitator/collection.yml` (créé à la première tête notée), enregistré dans les 5 secondes
+  qui suivent un changement et à l'arrêt.
+- Textes écrits dans le code, comme le reste du plugin (pas de `lang.yml`).
+
+Choix de Claude, signalés :
+- une tête jamais obtenue montre son nom (la liste des 332 têtes est donc visible de tous), pas sa texture ;
+- pas de message quand une nouvelle tête est notée ; pas de bouton dans le menu du serveur : `/tetes` seulement.
+
+Limites :
+- Rien n'est rattrapé pour le passé : une tête rangée dans un coffre ou posée avant cette version ne compte que
+  lorsqu'elle repasse par l'inventaire du joueur. Celles qu'il porte sur lui sont notées à sa première connexion.
+- Une tête prise puis reposée en moins de 5 secondes sans passer par le sol (d'un coffre à un autre, sans fermer)
+  peut échapper au contrôle.
+- Le coffre de l'Ender et les boîtes de shulker ne sont pas regardés.
+- Bedrock : dans un inventaire, Geyser montre peut-être une tête de Steve (limite déjà notée en 1.0.0) ; le nom et
+  « Obtenue » restent lisibles, et une tête manquante est une vitre grise sur les deux éditions.
+- Le crâne de wither squelette entièrement réparé est un objet du jeu : il ne compte pas (la tête abîmée, oui).
+- Empilé sur la 1.1.0, jamais testée en jeu, à la demande de LeKiwi06.
+
+**Compilé le 11/10/2026 (`sortie/KS_Decapitator-1.2.0.jar`). Non déployé. Statut : non testé en jeu.**
