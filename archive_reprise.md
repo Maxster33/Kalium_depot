@@ -5,6 +5,29 @@ d'oubli : l'état actuel du projet est dans `REPRISE_PROJET.md`.
 
 ---
 
+### 2026-10-05 — Maxster33
+
+*(Session du 05/10/2026, de 12 h 54 à 13 h 40. Fin de session : réservations libérées.)*
+
+**KG_BingoGame 0.10.0 (Serveur Jeux) et KG_Bingo 1.7.3 (Kal-Games), déployés à 13:34, non testés, actifs après redémarrage des deux serveurs (à garder ensemble)** : réserve de mondes par lots. Constat de Maxster33 : deux
+parties à deux jours d'écart sur la même seed. Cause : en 0.8.5, le monde ajouté à la réserve reprenait la seed du
+monde restant, qui pouvait donc revenir indéfiniment jusqu'au redémarrage (parties créées pendant une autre partie).
+Désormais : au démarrage, mondes de réserve supprimés puis 3 lots de 4 mondes et 3 lots solo préparés (une seed neuve
+par lot) ; une partie créée pendant une autre prend un lot (mondes en trop, équipes vides, partie annulée : supprimés ;
+sans autre partie en cours : mondes neufs, réserve non entamée) ; le lot est remplacé
+à la fin de la partie, une fois ses mondes effacés du disque ; pendant une partie, seul le terrain de la réserve avance
+(5 chunks/s) ; à 4 parties en cours, réserve en pause ; aucun lot libre : mondes créés pour la partie. Nouvelles clés
+(valeurs par défaut dans le code) : `instances.reserve-lots-4-teams`, `reserve-lots-solo`,
+`reserve-chunks-per-second-during-games`. Détail : `KG_BingoGame/JOURNAL.md`,
+`historique-conversations/2026-10-05-bingo-reserve-lots.md`.
+
+**Contre la montre en bingos (KG_BingoGame 0.10.0 + KG_Bingo 1.7.3, mêmes jars, déployés
+ensemble)** : victoire avec le nombre de bingos choisi (3 par défaut) au lieu de toute la grille ; 10 bingos au plus
+à 1 équipe (tous modes), 12 à plusieurs ; bonus inchangés (temps restant ; bingos comme dans toute partie à 1 équipe,
+sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre partie en cours
+garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
+
+
 ### 2026-10-03 — Maxster33
 
 *(Session du 03/10/2026, de 8 h 40 à 9 h 50. Fin de session : réservations libérées.)*
