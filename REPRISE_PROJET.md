@@ -96,6 +96,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Economy 1.6.0** (11/10/2026, LeKiwi06) : `/accepter` accepte une demande d'échange ; un joueur garde une demande par demandeur et, s'il en a de plusieurs joueurs, un menu en coffre lui fait choisir laquelle accepter ; **compilé, non déployé, non testé en jeu**, réservation gardée.
+
 - **KS_Decapitator 1.2.0** (11/10/2026, LeKiwi06) : `/tetes` ouvert à tous les joueurs, il montre les têtes déjà obtenues (une tête compte dès qu'elle a été dans l'inventaire ; vitre grise pour les autres ; les opérateurs gardent le clic qui donne une tête) ; nouveau fichier `plugins/KS_Decapitator/collection.yml` ; **compilé, non déployé, non testé en jeu**, réservation gardée.
 
 - **KS_Teleport 1.1.0** (11/10/2026, LeKiwi06) : un joueur qui se connecte pour la première fois est posé au point d'apparition exact du monde (`/setworldspawn`), plus sur le bloc le plus haut de la colonne (toit du spawn de Kixster) ; **compilé, non déployé, non testé en jeu**, réservation gardée. Pour Kixster.
@@ -431,6 +433,8 @@ sans bonus « en 1er »). Réserve de mondes : une partie créée sans autre par
 garde des mondes neufs (la réserve n'est entamée que pendant une autre partie).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (11/10/2026, 06:59) : KS_Economy 1.6.0 compilée, non déployée, non testée : `/accepter` pour les demandes d'échange.** Demande de LeKiwi06 : « il faut pouvoir faire /accepter pour accepter une demande d'échanger , c'est plus court , si le joueur à reçu des demandes d'échange de plusieurs joueurs , ouvrir un menu cliquable pour choisir quelle demande accepter ». Avant, une seule demande était gardée par joueur (la nouvelle effaçait l'ancienne) : une demande par demandeur maintenant ; menu « Demandes d'échange » (une tête par demandeur) quand il y en a plusieurs ; les boutons du message répondent à la demande de leur demandeur. `/echange refuser` sans nom refuse toutes les demandes (signalé). Réservation gardée jusqu'au déploiement sur Kixster et Event.
 
 **Ajout (11/10/2026, 06:50) : KS_RewardsGUI 1.5.0 compilée, non déployée, non testée : fusion de deux coffres de récompense à l'enclume.** Demande de LeKiwi06 : « j'aimerai qu'on puisse fusionner 2 coffres de récompenses dans l'enclume ce qui additionnerait leurs valeurs , et couterait un nombre de point d'xp égale au nouveau montant en emeraude du coffres [...] le coffre s'appellera " coffre de récompense fusionné " ». Ses réponses : menu en coffre au clic droit sur l'enclume, bouton valider au centre de la rangée du bas avec le coût entre parenthèses, coffres déjà ouverts refusés ; nouveau tirage à la valeur totale. Le tirage se fait sur le serveur du joueur : nouveau fichier `plugins/KS_RewardsGUI/fusion.yml` (mêmes pools que `butin.yml` + réglages par valeur), généré hors dépôt par `sortie/rewards/generer_fusion.py` et vérifié (aucune erreur, moyenne du tirage = valeur du coffre à 0,6 % près). Sans ce fichier, la fusion est désactivée. Choix de Claude signalés dans `KS_RewardsGUI/JOURNAL.md` (coffre en main pour ouvrir le menu, nombre de tirages, coffres de tops et de rattrapage acceptés). À déployer : jar + `fusion.yml` sur Kixster (et Event), après la présentation à LeKiwi06.
 

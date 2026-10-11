@@ -75,8 +75,19 @@ les deux ? » : « Les deux ».
 - KS_RewardsGUI 1.5.0 : compilé, poussé, non déployé. `fusion.yml` généré hors dépôt et vérifié. Détail et choix
   signalés : `KS_RewardsGUI/JOURNAL.md`.
 
+## /accepter pour les demandes d'échange
+
+- Demande de LeKiwi06 : « il faut pouvoir faire /accepter pour accepter une demande d'échanger , c'est plus court ,
+  si le joueur à reçu des demandes d'échange de plusieurs joueurs , ouvrir un menu cliquable pour choisir quelle
+  demande accepter ».
+- KS_Economy 1.6.0 : compilé, poussé, non déployé. Détail : `KS_Economy/JOURNAL.md`.
+- Autre question de la session : blocs de la 26.3 remplacés par d'autres pour les joueurs Bedrock. Cause : Geyser
+  (2.11.3) parle Java 26.2, ViaBackwards remplace ce qui n'existe pas en 26.2 ; le passage de Geyser en 26.3
+  (GeyserMC/Geyser#6712) était encore ouvert le 11/10/2026. Rien à corriger de notre côté.
+
 ## Reste à faire
 
+- Déploiement de KS_Economy 1.6.0, sur accord de LeKiwi06 ; test à trois joueurs (deux demandes vers le même).
 - Déploiement de KS_RewardsGUI 1.5.0 avec `fusion.yml`, sur accord de LeKiwi06 ; test : deux coffres non ouverts,
   un coffre ouvert (refus), pas assez de points d'expérience, Java et Bedrock.
 - Déploiement de KS_Decapitator 1.2.0, sur accord de LeKiwi06 ; test avec un compte non opérateur.

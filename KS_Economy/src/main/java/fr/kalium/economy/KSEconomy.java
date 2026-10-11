@@ -104,6 +104,9 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         getCommand("economie").setExecutor(this);
         getCommand("echange").setExecutor(echanges);
         getCommand("echange").setTabCompleter(echanges);
+        // 1.6.0 : /accepter, raccourci de /echange accepter.
+        getCommand("accepter").setExecutor(echanges);
+        getCommand("accepter").setTabCompleter(echanges);
         // 1.1.0 : magasins et boutiques (cahier, « Magasins » révisés le 02/10/2026).
         magasins = new Magasins(this);
         boutiques = new Boutiques(this, magasins);

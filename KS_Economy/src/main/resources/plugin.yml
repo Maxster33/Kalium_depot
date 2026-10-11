@@ -13,7 +13,10 @@ commands:
     usage: /economie
   echange:
     description: Echange d'objets et de points avec un joueur proche.
-    usage: /echange <joueur> | accepter | refuser
+    usage: /echange <joueur> | accepter [joueur] | refuser [joueur]
+  accepter:
+    description: Accepte une demande d'echange (un menu s'ouvre s'il y en a plusieurs).
+    usage: /accepter [joueur]
   rachat:
     description: Rachats de la semaine (10 objets rachetes par le serveur).
     aliases: [rachats]

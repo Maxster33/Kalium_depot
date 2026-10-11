@@ -1,5 +1,6 @@
 package fr.kalium.economy;
 
+import fr.kalium.menu.api.Contenant;
 import fr.kalium.menu.api.Lang;
 import io.papermc.paper.dialog.Dialog;
 import io.papermc.paper.registry.data.dialog.ActionButton;
@@ -33,6 +34,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -41,6 +43,8 @@ import java.util.UUID;
  * /echange (cahier des charges, catégorie 2) : échange d'objets et de points entre 2 joueurs à 5 blocs au plus.
  *
  * - « /echange &lt;joueur&gt; » envoie une demande (valable 60 s) ; l'autre accepte d'un clic ou par « /echange accepter ».
+ *   1.6.0 (LeKiwi06, 11/10/2026) : « /accepter » fait de même ; un joueur garde une demande par demandeur, et s'il en
+ *   a reçu de plusieurs joueurs, un menu lui fait choisir laquelle accepter.
  * - Panneau d'échange (coffre de 6 rangées) : à gauche sa part, à droite celle de l'autre (objets et montant), leurs
  *   validations. Bouton « Objets » : coffre où le joueur dépose ses objets (16 cases) ; bouton « Montant » : saisie
  *   du montant (limité à son solde).
@@ -115,15 +119,12 @@ final class Echanges implements Listener, TabExecutor {
         boolean fini;
     }
 
-    private record Demande(UUID demandeur, long expire) {
-    }
-
     private final KSEconomy plugin;
     private final Lang lang;
     /** Joueur -> sa part (échange en cours). */
     private final Map<UUID, Part> parts = new HashMap<>();
-    /** Joueur demandé -> demande reçue. */
-    private final Map<UUID, Demande> demandes = new HashMap<>();
+    /** Joueur demandé -> demandeur -> fin de validité de sa demande (1.6.0 : une demande par demandeur). */
+    private final Map<UUID, Map<UUID, Long>> demandes = new HashMap<>();
 
     Echanges(KSEconomy plugin) {
         this.plugin = plugin;
@@ -139,13 +140,20 @@ final class Echanges implements Listener, TabExecutor {
             sender.sendMessage("Commande réservée aux joueurs.");
             return true;
         }
-        if (args.length != 1) {
+        // 1.6.0 (LeKiwi06 : « il faut pouvoir faire /accepter pour accepter une demande d'échanger, c'est plus court »)
+        if (command.getName().equalsIgnoreCase("accepter")) {
+            accepter(joueur, args.length == 0 ? null : args[0]);
+            lang.saveIfNeeded();
+            return true;
+        }
+        String action = args.length == 0 ? "" : args[0].toLowerCase();
+        if (args.length == 0 || args.length > 2 || (args.length == 2 && !action.equals("accepter") && !action.equals("refuser"))) {
             dire(joueur, lang.c("echange.usage", "<red>/echange <joueur>, /echange accepter ou /echange refuser"));
             return true;
         }
-        switch (args[0].toLowerCase()) {
-            case "accepter" -> accepter(joueur);
-            case "refuser" -> refuser(joueur);
+        switch (action) {
+            case "accepter" -> accepter(joueur, args.length == 2 ? args[1] : null);
+            case "refuser" -> refuser(joueur, args.length == 2 ? args[1] : null);
             default -> demander(joueur, Bukkit.getPlayerExact(args[0]));
         }
         lang.saveIfNeeded();
@@ -155,6 +163,14 @@ final class Echanges implements Listener, TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> choix = new ArrayList<>();
+        if (command.getName().equalsIgnoreCase("accepter") || (args.length == 2
+                && (args[0].equalsIgnoreCase("accepter") || args[0].equalsIgnoreCase("refuser")))) {
+            if (sender instanceof Player joueur && args.length >= 1) {
+                recues(joueur).forEach(demandeur -> choix.add(demandeur.getName()));
+                choix.removeIf(c -> !c.toLowerCase().startsWith(args[args.length - 1].toLowerCase()));
+            }
+            return choix;
+        }
         if (args.length == 1) {
             choix.add("accepter");
             choix.add("refuser");
@@ -190,36 +206,102 @@ final class Echanges implements Listener, TabExecutor {
             dire(joueur, lang.c("echange.trop-loin", "<red>Vous devez être à 5 blocs au plus l'un de l'autre."));
             return;
         }
-        demandes.put(cible.getUniqueId(), new Demande(joueur.getUniqueId(), System.currentTimeMillis() + DEMANDE_MS));
+        demandes.computeIfAbsent(cible.getUniqueId(), u -> new LinkedHashMap<>())
+                .put(joueur.getUniqueId(), System.currentTimeMillis() + DEMANDE_MS);
         dire(joueur, lang.c("echange.envoye", "<green>Demande d'échange envoyée à <cible>.", "cible", cible.getName()));
+        // Les boutons nomment le demandeur : avec plusieurs demandes, chacun répond à la sienne.
         dire(cible, lang.c("echange.recu", "<yellow><joueur> te propose un échange. ", "joueur", joueur.getName())
                 .append(lang.c("echange.bouton-accepter", "<green><bold>[Accepter]")
-                        .clickEvent(ClickEvent.runCommand("/echange accepter")))
+                        .clickEvent(ClickEvent.runCommand("/echange accepter " + joueur.getName())))
                 .append(Component.text(" "))
                 .append(lang.c("echange.bouton-refuser", "<red><bold>[Refuser]")
-                        .clickEvent(ClickEvent.runCommand("/echange refuser"))));
+                        .clickEvent(ClickEvent.runCommand("/echange refuser " + joueur.getName()))));
     }
 
-    private void refuser(Player joueur) {
-        Demande demande = demandes.remove(joueur.getUniqueId());
-        if (demande == null) {
+    /** 1.6.0 : joueurs en ligne dont la demande d'échange à ce joueur est encore valable, de la plus ancienne à la plus récente. */
+    private List<Player> recues(Player joueur) {
+        List<Player> demandeurs = new ArrayList<>();
+        Map<UUID, Long> recues = demandes.get(joueur.getUniqueId());
+        if (recues != null) {
+            long maintenant = System.currentTimeMillis();
+            recues.forEach((demandeur, expire) -> {
+                Player p = Bukkit.getPlayer(demandeur);
+                if (p != null && expire >= maintenant) {
+                    demandeurs.add(p);
+                }
+            });
+        }
+        return demandeurs;
+    }
+
+    /** La demande de ce demandeur n'attend plus de réponse. */
+    private void oublier(Player joueur, Player demandeur) {
+        Map<UUID, Long> recues = demandes.get(joueur.getUniqueId());
+        if (recues != null) {
+            recues.remove(demandeur.getUniqueId());
+        }
+    }
+
+    /** Refuse la demande du joueur nommé ; sans nom : toutes les demandes reçues. */
+    private void refuser(Player joueur, String nom) {
+        List<Player> demandeurs = recues(joueur);
+        if (nom != null) {
+            demandeurs.removeIf(d -> !d.getName().equalsIgnoreCase(nom));
+        }
+        if (demandeurs.isEmpty()) {
             dire(joueur, lang.c("echange.aucune", "<red>Aucune demande d'échange."));
             return;
         }
-        Player demandeur = Bukkit.getPlayer(demande.demandeur());
-        if (demandeur != null) {
+        for (Player demandeur : demandeurs) {
+            oublier(joueur, demandeur);
             dire(demandeur, lang.c("echange.refuse", "<red><joueur> a refusé l'échange.", "joueur", joueur.getName()));
         }
         dire(joueur, lang.c("echange.refuse-toi", "<gray>Échange refusé."));
     }
 
-    private void accepter(Player joueur) {
-        Demande demande = demandes.remove(joueur.getUniqueId());
-        Player demandeur = demande == null ? null : Bukkit.getPlayer(demande.demandeur());
-        if (demande == null || demande.expire() < System.currentTimeMillis() || demandeur == null) {
-            dire(joueur, lang.c("echange.aucune", "<red>Aucune demande d'échange."));
-            return;
+    /**
+     * Accepte la demande du joueur nommé. Sans nom (« /accepter », « /echange accepter ») : la seule demande reçue, ou,
+     * s'il y en a de plusieurs joueurs, un menu pour choisir laquelle (1.6.0, LeKiwi06 : « ouvrir un menu cliquable
+     * pour choisir quelle demande accepter »).
+     */
+    private void accepter(Player joueur, String nom) {
+        List<Player> demandeurs = recues(joueur);
+        if (nom != null) {
+            demandeurs.removeIf(d -> !d.getName().equalsIgnoreCase(nom));
         }
+        if (demandeurs.isEmpty()) {
+            dire(joueur, lang.c("echange.aucune", "<red>Aucune demande d'échange."));
+        } else if (demandeurs.size() == 1) {
+            accepter(joueur, demandeurs.get(0));
+        } else {
+            choisir(joueur, demandeurs);
+        }
+    }
+
+    /** 1.6.0 : menu des demandes reçues, une tête par demandeur ; un clic accepte sa demande. */
+    private void choisir(Player joueur, List<Player> demandeurs) {
+        Contenant menu = plugin.menus().menu(joueur, Math.min(6, (demandeurs.size() + 8) / 9 + 1),
+                lang.c("echange.choix-titre", "<dark_gray>Demandes d'échange"), "echange-demandes");
+        for (int i = 0; i < demandeurs.size() && i < menu.taille() - 9; i++) {
+            Player demandeur = demandeurs.get(i);
+            menu.poser(i, Contenant.objet(Menus.tete(demandeur.getUniqueId()),
+                    lang.c("echange.choix-nom", "<yellow><joueur>", "joueur", demandeur.getName()),
+                    List.of(lang.c("echange.choix-clic", "<gray>Clic : accepter son échange"))), j -> Contenant.apres(() -> {
+                        if (demandeur.isOnline() && recues(j).contains(demandeur)) {
+                            accepter(j, demandeur);
+                        } else {
+                            j.closeInventory();
+                            dire(j, lang.c("echange.expiree", "<red>Cette demande d'échange n'est plus valable."));
+                        }
+                        lang.saveIfNeeded();
+                    }));
+        }
+        plugin.menus().sortie(menu, null);
+        menu.ouvrir(joueur);
+    }
+
+    private void accepter(Player joueur, Player demandeur) {
+        oublier(joueur, demandeur);
         if (parts.containsKey(joueur.getUniqueId()) || parts.containsKey(demandeur.getUniqueId())) {
             dire(joueur, lang.c("echange.occupe", "<red>Un échange est déjà en cours."));
             return;
@@ -478,7 +560,8 @@ final class Echanges implements Listener, TabExecutor {
     /** Toutes les demi-secondes : distance, joueurs en ligne, saisie du montant trop longue, demandes expirées. */
     private void surveiller() {
         long maintenant = System.currentTimeMillis();
-        demandes.values().removeIf(d -> d.expire() < maintenant);
+        demandes.values().forEach(recues -> recues.values().removeIf(expire -> expire < maintenant));
+        demandes.values().removeIf(Map::isEmpty);
         for (Part part : List.copyOf(parts.values())) {
             Echange echange = part.echange;
             if (echange.fini || part != echange.a) {

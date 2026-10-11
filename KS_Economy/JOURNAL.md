@@ -435,3 +435,30 @@ et coffres de récompense : « Les deux »).
   LeKiwi06.
 
 **Déployé sur Event et Kixster le 11/10/2026 à 06:05 (LeKiwi06 ; 1.5.0 dans `_removed-ks_economy-1.5.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.6.0 - /accepter, plusieurs demandes d'échange, menu de choix (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « il faut pouvoir faire /accepter pour accepter une demande d'échanger , c'est plus court , si le
+joueur à reçu des demandes d'échange de plusieurs joueurs , ouvrir un menu cliquable pour choisir quelle demande
+accepter ».
+
+- **`/accepter`** (nouvelle commande) : accepte la demande d'échange reçue, comme `/echange accepter`.
+- **Plusieurs demandes** : avant, une nouvelle demande effaçait la précédente (une seule gardée par joueur).
+  Maintenant un joueur garde une demande par demandeur, chacune valable 60 secondes.
+  - Une seule demande valable : `/accepter` l'accepte.
+  - Des demandes de plusieurs joueurs : `/accepter` ouvre le menu « Demandes d'échange » (coffre), une tête par
+    demandeur à son nom ; un clic accepte sa demande. Une demande expirée entre-temps : « Cette demande d'échange n'est
+    plus valable. »
+- Les boutons « [Accepter] » et « [Refuser] » du message nomment maintenant le demandeur : ils répondent à **sa**
+  demande, même s'il y en a d'autres.
+- Techniquement nécessaire, signalé : `/accepter <joueur>`, `/echange accepter <joueur>` et `/echange refuser <joueur>`
+  (ce que lancent les boutons) ; `/echange refuser` sans nom refuse **toutes** les demandes reçues (avant : la seule).
+- Le reste est inchangé : distance de 5 blocs, échange déjà en cours, panneau d'échange.
+- Nouveaux textes : `echange.choix-titre`, `echange.choix-nom`, `echange.choix-clic`, `echange.expiree` (ajoutés à
+  `lang.yml` au premier usage).
+
+Limites : sur Bedrock, la tête d'un joueur peut s'afficher en tête de Steve dans le menu (son nom reste lisible).
+`/accepter` ne sert qu'aux échanges : les demandes d'ami et les invitations de partie gardent leurs commandes
+(`/amis accepter`, `/partie accepter`). Contient les 1.5.1 et 1.5.2, déployées le 11/10/2026 et non testées en jeu.
+
+**Compilé le 11/10/2026 (`sortie/KS_Economy-1.6.0.jar`). Non déployé. Statut : non testé en jeu.**
