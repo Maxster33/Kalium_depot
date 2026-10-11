@@ -180,7 +180,8 @@ final class Api implements KanvasPlots {
             long somme = 0;
             for (Plot.Vote v : p.votes.values()) {
                 if (v.heure() >= depuis) {
-                    somme += v.note();
+                    // 1.6.0 (LeKiwi06) : une note rapporte son carré, doublé sur un grand plot.
+                    somme += (long) v.note() * v.note() * (p.taille == fr.kalium.kvplots.api.Taille.GRAND ? 2 : 1);
                 }
             }
             if (somme == 0) {

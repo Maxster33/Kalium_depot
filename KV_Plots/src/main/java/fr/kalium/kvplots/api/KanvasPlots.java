@@ -117,12 +117,15 @@ public interface KanvasPlots {
     ConcoursInfo concoursActuel();
 
     /**
-     * 1.5.0 (catégorie 4 « Récompenses ») : notes reçues par un joueur sur les plots dont il est créateur ou éditeur,
-     * données depuis cette date (millisecondes ; 0 = depuis toujours). Un vote remplacé compte à sa nouvelle date.
+     * 1.5.0 (catégorie 4 « Récompenses ») : points de notes reçus par un joueur sur les plots dont il est créateur ou
+     * éditeur, pour les votes donnés depuis cette date (millisecondes ; 0 = depuis toujours). Un vote remplacé compte à
+     * sa nouvelle date. 1.6.0 (LeKiwi06, 11/10/2026) : une note de 1 à 5 rapporte son carré (1, 4, 9, 16, 25), doublé
+     * sur un grand plot (5 étoiles sur un grand plot : 50 points). Le score affiché d'un plot (PlotInfo.points, somme
+     * des notes) ne change pas.
      */
     long notesRecues(UUID joueur, long depuis);
 
-    /** 1.5.0 : notes reçues par chaque bâtisseur (créateur et éditeurs) depuis cette date. */
+    /** 1.5.0 : points de notes reçus par chaque bâtisseur (créateur et éditeurs) depuis cette date (même calcul). */
     java.util.Map<UUID, Long> notesParBatisseur(long depuis);
 
     /** Concours terminés, du plus récent au plus ancien. */

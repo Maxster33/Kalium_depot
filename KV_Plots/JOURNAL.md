@@ -4,6 +4,27 @@ Serveur Kanvas (ex Kal-Test-Dev). Cahier des charges : `KV_Plots/CAHIER_DES_CHAR
 de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` télécharge aussi les API WorldGuard
 7.0.19 et WorldEdit 7.4.5 (compilation seulement ; en jeu, ce sont les plugins du serveur qui servent).
 
+## 1.6.0 - points des bâtisseurs : carré de la note, doublé sur un grand plot (11/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « il faut que chaque note rapporte son carré en point aux joueurs ( faire un build 5 étoiles est
+pas juste 5 fois plus dure que faire un build 1 étoile ) [...] il faut donc valoriser les points des gros plots a x2
+donc un 5 étoiles sur un grand plot vaut 50 points ».
+
+- `notesRecues` et `notesParBatisseur` (les points que KV_Rewards compte pour les paliers et les tops) : une note de
+  1, 2, 3, 4 ou 5 rapporte **1, 4, 9, 16 ou 25 points** ; **le double sur un grand plot** (2, 8, 18, 32, 50). Avant :
+  la note elle-même.
+- **Inchangé** (choix de Claude, signalé) : le score d'un plot (« Points : n », somme des notes), sa moyenne sur 5, le
+  seuil de déblocage des tailles de plot et le classement d'un concours de build restent sur la somme des notes. Un
+  plot peut donc afficher 20 points alors que son bâtisseur en a reçu 100 pour ses récompenses.
+- Effet sur les données du 11/10/2026 (Kanvas, lecture seule : 11 plots, 27 votes, 3 ou 4 votes par plot noté) : le
+  bâtisseur le mieux noté passe de 36 à 128 points, les autres de 19, 18, 12 et 5 à 91, 82, 50 et 7. Un seul passe
+  le premier palier (100) : il recevra ses coffres « minimale » à la prochaine note reçue. Rien d'autre n'est donné.
+- Les valeurs des paliers de Kanvas sont recalées en même temps (`butin.yml` de KV_Rewards, voir son journal).
+- À déployer avec le nouveau `butin.yml` de KV_Rewards (sans lui, les anciens paliers, 3 fois trop gros pour ces
+  points, s'appliqueraient).
+
+**Compilé le 11/10/2026 (`sortie/KV_Plots-1.6.0.jar`). Non déployé. Statut : non testé en jeu.**
+
 ## 1.5.0 - API des récompenses (03/10/2026)
 
 Catégorie 4 « Récompenses » (cahier de LeKiwi06, validé le 30/09/2026), pour KV_Rewards :

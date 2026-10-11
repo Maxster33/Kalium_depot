@@ -71,3 +71,27 @@ régénéré. Même changement que KG_Rewards 1.3.0.
 **`boite: kixster` sur Kanvas le 09/10/2026 à 23:32 (LeKiwi06 : « oui passe les deux en boite kixster »)** : le `config.yml` du serveur contenait encore `boite: event`, les récompenses automatiques partaient donc vers la boîte d'Event alors que le `/rewards` de Kixster lit la boîte `kixster`. Seule cette ligne est changée ; ancien fichier dans `_removed-kv_rewards-config-2026-10-09/` ; aucun changement de code, jar inchangé (le `config.yml` fourni avec le plugin garde `boite: event`). Actif après redémarrage de Kanvas. Statut : non testé en jeu.
 
 **Journal de Kanvas lu après le redémarrage du 09/10/2026 à 23:53 : 1.3.0 activée sans erreur ; `boite: kixster` actif depuis.**
+
+## Valeurs des paliers recalées, sans nouvelle version (11/10/2026, LeKiwi06)
+
+Remarque de LeKiwi06 : « j'ai l'impression que les récompenses exceptionnelles permanente sont surpuissante ». Constat :
+les valeurs de Kanvas reposaient sur une hypothèse de Claude jamais validée (20 points de notes par heure de build),
+soit 0,4 émeraude par point au mois et 0,8 en permanent (exceptionnelle permanente : 80 000 émeraudes). Sa règle :
+« chaque note rapporte son carré », « x2 » sur un grand plot, « un bon buildeur mettre 4 a 5 heures minimum à faire un
+plot moyen et 10 a 15h pour un grand plot », « 10 a 20 personnes voteront chaque build », « ajuste les valeurs des
+récompenses en conséquences ».
+
+- **Points** : KV_Plots 1.6.0 (carré de la note, doublé sur un grand plot). Aucun changement de code ici.
+- **Calcul** (hypothèses de LeKiwi06, complétées par Claude : 15 votes par build, 20 points par vote pour un bon
+  build, entre le 4 étoiles à 16 et le 5 étoiles à 25) : un plot moyen rapporte environ 300 points en 4 h 30, un grand
+  plot 600 points en 12 h 30, soit **55 à 60 points par heure de build**.
+- **Ancrage gardé** : une heure de build d'un bon bâtisseur rapporte à peu près autant qu'une heure de mini-jeu d'un
+  joueur régulier (environ 22 émeraudes). Donc **0,12 émeraude par point au mois, 0,24 en permanent** (avant : 0,4
+  et 0,8), soit environ 20 émeraudes par heure de build.
+- **Nouvelles valeurs** (`butin.yml`, généré hors dépôt) : mois : minimale 12, petite 60, moyenne 120, grosse 1 200,
+  exceptionnelle 12 000 ; permanent : 24, 120, 240, 2 400, 24 000 (avant : 40 à 40 000 et 80 à 80 000). Tirages
+  inchangés, sauf la moyenne du mois (15 au lieu de 16). Tops et concours inchangés.
+- Repères : un bon plot moyen vaut au total environ 110 émeraudes de paliers, un bon grand plot 215 ; l'exceptionnelle
+  (100 000 points) demande environ 330 plots moyens, soit 1 500 heures de build.
+
+**`butin.yml` régénéré et vérifié le 11/10/2026. Non envoyé sur Kanvas. Non testé.**

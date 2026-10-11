@@ -1,6 +1,6 @@
 # 2026-10-11 — Terre des âmes et sable des âmes : familles des rachats et butin des coffres
 
-- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI, KS_Decapitator, KS_Crafts, KS_Jetons, KS_Meule (nouveau), KS_KaliumGive, geyser-bedrock
+- Plugin(s) concerné(s) : KS_Economy, KG_Rewards, KV_Rewards (`butin.yml` seulement), KS_Teleport, KS_RewardsGUI, KS_Decapitator, KS_Crafts, KS_Jetons, KS_Meule (nouveau), KS_KaliumGive, geyser-bedrock, KV_Plots
 - Versions avant / après : KS_Economy 1.5.0 en service (1.5.1 jamais déployée) / 1.5.2 déployée sur Event et
   Kixster ; KG_Rewards 1.3.0 et KV_Rewards 1.3.0 inchangés (`butin.yml` remplacés)
 
@@ -142,8 +142,20 @@ les deux ? » : « Les deux ».
 - KS_Meule 1.1.0, KS_KaliumGive 1.10.0, `butin.yml` ×2, `fusion.yml`, `geyser-bedrock` 1.4.0 : prêts, poussés (code),
   non déployés. Détail : `KS_Meule/JOURNAL.md`.
 
+## Kanvas : points de notes et paliers
+
+- LeKiwi06 : « j’ai l’impression que les récompenses exceptionnelles permanente sont surpuissante non ? » ; « 100 notes
+  c’est 100 points récus via les notes pour toi c’est ça ? » (oui : somme des notes de 1 à 5) ; puis : « il faut que
+  chaque note rapporte son carré en point aux joueurs [...] un bon buildeur mettre 4 a 5 heures minimum à faire un
+  plot moyen et 10 a 15h pour un grand plot , il faut donc valoriser les points des gros plots a x2 donc un 5 étoiles
+  sur un grand plot vaut 50 points . en partant du principe que 10 a 20 personnes voteront chaque build , ajuste les
+  valeurs des récompenses en conséquences ».
+- KV_Plots 1.6.0 (carré de la note, x2 sur un grand plot) et `butin.yml` de KV_Rewards (0,12 et 0,24 émeraude par
+  point) : prêts, non déployés. Détail : `KV_Plots/JOURNAL.md`, `KV_Rewards/JOURNAL.md`.
+
 ## Reste à faire
 
+- Déployer sur Kanvas, ensemble : KV_Plots 1.6.0 et le `butin.yml` de KV_Rewards, sur accord de LeKiwi06.
 - Déployer ensemble, sur accord de LeKiwi06 : KS_Meule 1.1.0 + KS_KaliumGive 1.10.0 + `fusion.yml` (Kixster),
   `butin.yml` (Kal-Games, Kanvas), `kalium_objets.json` + `KaLium-objets-1.4.0.mcpack` (proxy, redémarrage).
 - À confirmer par LeKiwi06 : nom et apparence du cristal ; l'équilibrage des potions des mobs est-il toujours voulu ?
