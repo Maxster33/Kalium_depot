@@ -21,6 +21,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KS_Teleport — LeKiwi06 — depuis le 2026-10-11 06:18 — Kixster : un nouveau joueur arrive au point d'apparition du monde, plus sur le toit du spawn
 - KS_RewardsGUI — LeKiwi06 — depuis le 2026-10-11 06:18 — alias /reward de /rewards
+- KS_Decapitator — LeKiwi06 — depuis le 2026-10-11 06:25 — /tetes pour tous les joueurs : têtes déjà obtenues
 
 ## Requis parfois
 
