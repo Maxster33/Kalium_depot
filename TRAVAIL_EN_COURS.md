@@ -20,6 +20,11 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 
 - KS_Economy — LeKiwi06 — depuis le 2026-10-11 07:50 — rachats du marchand ambulant (10 objets, stock limité)
+- KS_Meule — LeKiwi06 — depuis le 2026-10-11 08:05 — Cristal de purification : l'objet qui retire une malédiction (au lieu des niveaux)
+- KS_KaliumGive — LeKiwi06 — depuis le 2026-10-11 08:05 — id cristal_purification
+- KG_Rewards — LeKiwi06 — depuis le 2026-10-11 08:05 — butin.yml : Cristal de purification dans les pools
+- KV_Rewards — LeKiwi06 — depuis le 2026-10-11 08:05 — butin.yml : Cristal de purification dans les pools
+- KS_RewardsGUI — LeKiwi06 — depuis le 2026-10-11 08:05 — fusion.yml : Cristal de purification dans les pools
 
 ## Requis parfois
 
