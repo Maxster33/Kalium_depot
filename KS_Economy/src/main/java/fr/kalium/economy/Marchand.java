@@ -195,7 +195,7 @@ final class Marchand implements Listener {
                     "quantite", o.quantite(), "objet", rachats.nom(o.entree())), true);
         } else {
             Rachats.retirer(joueur, o.entree(), o.quantite());
-            KSEconomy.crediter(joueur.getUniqueId(), o.points());
+            KSEconomy.crediterVente(joueur.getUniqueId(), o.points());
             echanges.set(numero, new Echange(o, e.reste() - 1));
             ecrire(marchand, echanges);
             plugin.getLogger().info(joueur.getName() + " vend " + o.quantite() + " x " + o.entree().id() + " pour "

@@ -112,7 +112,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 
 
-- **KS_Economy 1.8.2** (12/10/2026, LeKiwi06) : quota des rachats de la semaine : dès 2 500 de cagnotte (avant 25 000), 0,5 % de la cagnotte par objet et par jour (0,75 % solde masqué ; avant 5 % et 7,5 %) ; **compilé, non déployé, non testé en jeu**, réservation gardée jusqu'au déploiement.
+- **KS_Economy 1.8.2** (12/10/2026, LeKiwi06) : quota des rachats de la semaine calculé sur un **compteur des points gagnés en vendant au serveur** (`gagne` dans `comptes.yml`, ne baisse jamais ; part du solde actuel pour les comptes existants) : aucun quota jusqu'à 2 500 gagnés, puis 0,5 % du compteur par objet et par jour (0,75 % solde masqué) ; **compilé, non déployé, non testé en jeu**, réservation gardée jusqu'au déploiement.
 
 - **KG_BoatRace 1.6.0** (09/10/2026, LeKiwi06) : essai d'équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock, derrière le réglage « Bedrock : bateau serveur (essai) » désactivé par défaut ; **compilé, non déployé, non testé en jeu**, réservation gardée jusqu'au test. Empilé sur la 1.5.1 non testée (accord explicite de LeKiwi06).
 
@@ -442,6 +442,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (12/10/2026, 05:30) : KS_Economy 1.8.2 recompilée avec un compteur des points gagnés ; non déployée, non testée.** LeKiwi06 : « oui il faut mettre un compteur d'argent gagné, sinon les joueurs vont juste retirer les émeraudes en items pour outrepasser le quota ». Ses choix : seules les ventes au serveur comptent (rachats de la semaine, marchand ambulant) ; le compteur des comptes existants part de leur solde. Le quota (seuil 2 500, 0,5 %, 0,75 % masqué) porte sur ce compteur, plus sur le solde. Détail : `KS_Economy/JOURNAL.md`.
 
 **Ajout (12/10/2026, 05:10) : KS_Economy 1.8.2 compilée, non déployée, non testée : quota des rachats.** Demande de LeKiwi06 : « que le quota débute à 2500 gagné, pas 25000, et que le quota par item soit de 0,5 % de notre monnaie gagnée, et 0,75 % avec le solde masqué ». Valeurs par défaut changées (les `config.yml` des serveurs n'ont pas de section `rachats`). Le quota reste calculé sur le solde du joueur (signalé à LeKiwi06 : « monnaie gagnée » compris comme la cagnotte).
 

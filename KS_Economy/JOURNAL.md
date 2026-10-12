@@ -628,21 +628,35 @@ remplacés (mushroom_stem) ». Statut : vérifié dans la console, non testé en
 
 **Journal d'Event lu le 12/10/2026 à 02:42, après le redémarrage de 01:42 (heure de Paris ; 23:42 dans le journal, en UTC)** : KS_Economy 1.8.1 active (passage direct depuis la 1.7.0), « Barème : 1929 objets (0 inconnus de cette version) », aucune erreur ; « Rachats de la semaine 2026-S42 : objets au prix modifié remplacés (straw_bed, string, raw_copper) » ; les 7 autres offres sont gardées, les 3 nouvelles sont `cinnabar_brick_stairs` (121 pour 1 point, au nouveau prix), `verdant_froglight`, `crimson_fence_gate`. `rachats.yml` : les 10 offres portent leur prix du barème. Statut : vérifié dans la console des deux serveurs, non testé en jeu.
 
-## 1.8.2 - quota des rachats : dès 2 500, 0,5 % par objet (12/10/2026, LeKiwi06)
+## 1.8.2 - quota des rachats : compteur des points gagnés, dès 2 500, 0,5 % par objet (12/10/2026, LeKiwi06)
 
 Demande de LeKiwi06 : « fais en sorte que le quota débute à 2500 gagné, pas 25000, et que le quota par item soit de
-0,5 % de notre monnaie gagnée, et 0,75 % avec le solde masqué ».
+0,5 % de notre monnaie gagnée, et 0,75 % avec le solde masqué », puis : « oui il faut mettre un compteur d'argent
+gagné, sinon les joueurs vont juste retirer les émeraudes en items pour outrepasser le quota ».
 
-- Valeurs par défaut du code et du `config.yml` du jar : `rachats.quota.seuil` 2 500 (avant 25 000),
-  `rachats.quota.pourcent` 0,5 (avant 5), `rachats.quota.pourcent-masque` 0,75 (avant 7,5). Le `config.yml` de Kixster
-  et celui d'Event n'ont pas de section `rachats` (lus le 12/10) : ce sont donc ces valeurs qui s'appliquent.
-- Règle inchangée : aucun quota tant que la cagnotte ne dépasse pas le seuil ; au-dessus, un objet ne rapporte pas plus
-  par jour que cette part de la cagnotte (le **solde** du joueur au moment de la vente, comme avant, pas le total gagné
-  depuis le début) ; la vente qui fait dépasser passe, les suivantes sont refusées jusqu'à minuit.
-- Exemples (points par objet et par jour ; solde masqué entre parenthèses) : 2 500 : aucun quota ; 2 600 : 13 (19) ;
-  5 000 : 25 (37) ; 10 000 : 50 (75) ; 25 000 : 125 (187) ; avant, à 25 001 : 1 250 (1 875).
-- Textes inchangés : ils affichent le seuil et le pourcentage lus dans les réglages (« 0,5 % de ta cagnotte »).
-- Les rachats du marchand ambulant n'ont pas de quota (son stock fait la limite) : inchangé.
+- **Compteur « gagné »** par compte (`gagne` dans `comptes.yml`) : il ne baisse jamais (ni retrait d'émeraudes, ni
+  achat, ni échange, ni prélèvement du solde masqué). Il monte seulement avec les **ventes au serveur** : rachats de la
+  semaine et rachats du marchand ambulant (choix de LeKiwi06 : « Ventes au serveur » ; les dépôts d'émeraudes, les
+  échanges et les ventes en boutique ne comptent pas, pour qu'il ne puisse pas être gonflé entre joueurs).
+- **Départ** (choix de LeKiwi06 : « Du solde actuel ») : au premier démarrage en 1.8.2, le compteur de chaque compte
+  existant prend la valeur de son solde ; un compte créé ensuite part de 0.
+- **Quota** par objet, par joueur et par jour : aucun tant que le compteur ne dépasse pas `rachats.quota.seuil`,
+  2 500 (avant : 25 000 de solde) ; au-dessus, un objet ne rapporte pas plus de `rachats.quota.pourcent`, 0,5 % du
+  compteur (avant : 5 % du solde), ou `rachats.quota.pourcent-masque`, 0,75 %, si le solde est masqué (avant 7,5 %).
+  La vente qui fait dépasser passe, les suivantes sont refusées jusqu'à minuit ; le quota suit le compteur pendant la
+  vente. Valeurs par défaut du code et du `config.yml` du jar ; le `config.yml` de Kixster et celui d'Event n'ont pas
+  de section `rachats` (lus le 12/10) : ce sont ces valeurs qui s'appliquent.
+- Exemples (points par objet et par jour ; solde masqué entre parenthèses) : 2 500 gagnés : aucun quota ; 2 600 :
+  13 (19) ; 5 000 : 25 (37) ; 10 000 : 50 (75) ; 25 000 : 125 (187).
+- **Textes** (nouvelles clés de `lang.yml`, les anciennes restent sur le serveur sans effet) : `rachats.sans-quota-gains`
+  « Aucun quota avant 2 500 points gagnés en rachats (toi : 745). » et `rachats.quota-gains` « Quota du jour : 13 points
+  par objet (0,5 % de tes 2 600 points gagnés en rachats). ».
+- Autres plugins : `KSEconomy.gagne(uuid)`.
+- Les rachats du marchand ambulant n'ont toujours pas de quota (son stock fait la limite), mais ils alimentent le
+  compteur.
+- Limite : au départ, le compteur vaut le solde, donc le texte « gagnés en rachats » n'est pas exact pour les comptes
+  existants tant qu'ils n'ont rien vendu.
 - Contient la 1.8.1 (déployée le 12/10/2026, vérifiée dans la console, non testée en jeu). Aucun changement du barème.
+  Écrit sans serveur de test.
 
 **Compilé le 12/10/2026, non déployé. Statut : non testé en jeu.**

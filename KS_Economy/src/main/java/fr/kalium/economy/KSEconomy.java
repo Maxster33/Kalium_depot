@@ -54,9 +54,13 @@ public final class KSEconomy extends JavaPlugin implements Listener {
     /** Valeur en émeraudes d'un bloc compressé : tier n = 10^n blocs d'émeraude = 9 x 10^n émeraudes. */
     static final int TIER_MAX = 6;
 
-    /** Un compte : solde en points, solde masqué ou non, dernier pseudo connu. */
+    /**
+     * Un compte : solde en points, solde masqué ou non, dernier pseudo connu. gagne (1.8.2) : points gagnés en vendant
+     * au serveur (rachats de la semaine, marchand ambulant) ; ne baisse jamais, base du quota des rachats.
+     */
     static final class Compte {
         long solde;
+        long gagne;
         boolean masque;
         String nom;
     }
@@ -277,6 +281,26 @@ public final class KSEconomy extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------ comptes (autres plugins)
 
+    /** 1.8.2 : points gagnés par un joueur en vendant au serveur (0 s'il n'a pas de compte) ; ne baisse jamais. */
+    public static long gagne(UUID joueur) {
+        synchronized (instance.comptes) {
+            Compte compte = instance.comptes.get(joueur);
+            return compte == null ? 0 : compte.gagne;
+        }
+    }
+
+    /** 1.8.2 : crédite une vente au serveur : le solde, et le compteur des points gagnés. */
+    static void crediterVente(UUID joueur, long points) {
+        if (points <= 0) {
+            return;
+        }
+        synchronized (instance.comptes) {
+            Compte compte = instance.compte(joueur);
+            compte.gagne = Math.addExact(compte.gagne, points);
+        }
+        crediter(joueur, points);
+    }
+
     /** Solde d'un joueur, en points (0 s'il n'a pas de compte). */
     public static long solde(UUID joueur) {
         synchronized (instance.comptes) {
@@ -475,6 +499,13 @@ public final class KSEconomy extends JavaPlugin implements Listener {
                 try {
                     Compte compte = new Compte();
                     compte.solde = Math.max(0, section.getLong(cle + ".solde"));
+                    // 1.8.2 (LeKiwi06) : un compte d'avant le compteur part de son solde du moment
+                    if (section.contains(cle + ".gagne")) {
+                        compte.gagne = Math.max(0, section.getLong(cle + ".gagne"));
+                    } else {
+                        compte.gagne = compte.solde;
+                        aSauver = true;
+                    }
                     compte.masque = section.getBoolean(cle + ".masque");
                     compte.nom = section.getString(cle + ".nom");
                     comptes.put(UUID.fromString(cle), compte);
@@ -499,6 +530,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
                 String cle = "comptes." + uuid;
                 yaml.set(cle + ".nom", compte.nom);
                 yaml.set(cle + ".solde", compte.solde);
+                yaml.set(cle + ".gagne", compte.gagne);
                 yaml.set(cle + ".masque", compte.masque);
             });
             aSauver = false;

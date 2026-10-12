@@ -69,7 +69,7 @@ journaux du serveur, `recuperations.log`, `coffres.yml` de KS_RewardsGUI et la s
 
 ## Quota des rachats (KS_Economy 1.8.2)
 
-LeKiwi06 : « fais en sorte que le quota débute à 2500 gagné, pas 25000, et que le quota par item soit de 0,5 % de notre monnaie gagnée, et 0,75 % avec le solde masqué ». Valeurs par défaut changées dans le code et le `config.yml` du jar ; quota toujours calculé sur le solde ; compilé, non déployé.
+LeKiwi06 : « fais en sorte que le quota débute à 2500 gagné, pas 25000, et que le quota par item soit de 0,5 % de notre monnaie gagnée, et 0,75 % avec le solde masqué ». Valeurs par défaut changées dans le code et le `config.yml` du jar. Puis : « oui il faut mettre un compteur d'argent gagné, sinon les joueurs vont juste retirer les émeraudes en items pour outrepasser le quota » : compteur `gagne` par compte, qui ne baisse jamais ; choix de LeKiwi06 : seules les ventes au serveur comptent, départ au solde actuel. Le quota porte sur ce compteur ; compilé, non déployé.
 
 ## Reste à faire
 

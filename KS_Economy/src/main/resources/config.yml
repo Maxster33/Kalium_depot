@@ -29,10 +29,11 @@ rachats:
   # Ecart maximal du prix de la semaine autour du prix du bareme, en %.
   variation-pourcent: 25
   quota:
-    # Au-dessus de cette cagnotte, un objet ne rapporte par jour qu'une part de la cagnotte du joueur.
+    # 1.8.2 : au-dessus de ce total de points gagnes en vendant au serveur (rachats de la semaine, marchand ambulant ;
+    # compteur qui ne baisse jamais), un objet ne rapporte par jour qu'une part de ces gains, en %.
     seuil: 2500
     pourcent: 0.5
-    # Part quand le joueur masque sa cagnotte.
+    # Part quand le joueur masque son solde.
     pourcent-masque: 0.75
 
 # 1.7.0 - rachats du marchand ambulant (a ajouter a la main dans le config.yml du serveur pour les modifier).

@@ -54,9 +54,10 @@ import java.util.concurrent.ThreadLocalRandom;
  * - Prix de la semaine : prix du barème à plus ou moins 25 %, arrondi à l'unité dès 1 émeraude.
  * - Lot : la quantité (arrondie à l'unité inférieure) qui approche 1 / 10 / 64 / 320 émeraudes selon la gamme du prix
  *   de la semaine, payée au nombre entier le plus proche ; à l'unité à partir de 100 et pour un objet non empilable.
- * - Quota par objet, par joueur et par jour : au-dessus de 2 500 de cagnotte, un objet ne rapporte pas plus de 0,5 %
- *   de la cagnotte (0,75 % si elle est masquée) ; la vente qui fait dépasser passe, les suivantes sont refusées
- *   (1.8.2, LeKiwi06 ; avant : 25 000, 5 % et 7,5 %).
+ * - Quota par objet, par joueur et par jour (1.8.2, LeKiwi06) : au-dessus de 2 500 points gagnés en vendant au serveur
+ *   (compteur du compte, qui ne baisse jamais : retirer ses émeraudes n'y change rien), un objet ne rapporte pas plus
+ *   de 0,5 % de ces gains (0,75 % si le solde est masqué) ; la vente qui fait dépasser passe, les suivantes sont
+ *   refusées. Avant : 25 000 de cagnotte (le solde), 5 % et 7,5 %.
  */
 final class Rachats implements CommandExecutor {
 
@@ -473,19 +474,19 @@ final class Rachats implements CommandExecutor {
         return duJoueur == null ? 0 : duJoueur.getOrDefault(id, 0L);
     }
 
-    /** Quota du jour par objet pour ce joueur, ou -1 tant que sa cagnotte ne dépasse pas le seuil. */
+    /** Quota du jour par objet pour ce joueur, ou -1 tant que ses points gagnés ne dépassent pas le seuil. */
     private long quota(UUID joueur) {
-        return quota(joueur, KSEconomy.solde(joueur));
+        return quota(joueur, KSEconomy.gagne(joueur));
     }
 
-    private long quota(UUID joueur, long solde) {
-        if (solde <= plugin.getConfig().getLong("rachats.quota.seuil", 2500)) {
+    private long quota(UUID joueur, long gagnes) {
+        if (gagnes <= plugin.getConfig().getLong("rachats.quota.seuil", 2500)) {
             return -1;
         }
         double pourcent = plugin.estMasque(joueur)
                 ? plugin.getConfig().getDouble("rachats.quota.pourcent-masque", 0.75)
                 : plugin.getConfig().getDouble("rachats.quota.pourcent", 0.5);
-        return (long) Math.floor(solde * pourcent / 100);
+        return (long) Math.floor(gagnes * pourcent / 100);
     }
 
     // ------------------------------------------------------------------ menus
@@ -513,11 +514,13 @@ final class Rachats implements CommandExecutor {
     private Component ligneQuota(Player joueur) {
         long quota = quota(joueur.getUniqueId());
         if (quota < 0) {
-            return t("rachats.sans-quota", "<gray>Aucun quota tant que ta cagnotte ne dépasse pas <seuil>.", "seuil",
-                    KSEconomy.points(plugin.getConfig().getLong("rachats.quota.seuil", 2500)));
+            return t("rachats.sans-quota-gains", "<gray>Aucun quota avant <seuil> gagnés en rachats (toi : <gagne>).",
+                    "seuil", KSEconomy.points(plugin.getConfig().getLong("rachats.quota.seuil", 2500)), "gagne",
+                    KSEconomy.nombre(KSEconomy.gagne(joueur.getUniqueId())));
         }
-        return t("rachats.quota", "<gray>Quota du jour : <white><quota></white> par objet (<pourcent> % de ta "
-                + "cagnotte).", "quota", KSEconomy.points(quota), "pourcent", pourcent(joueur.getUniqueId()));
+        return t("rachats.quota-gains", "<gray>Quota du jour : <white><quota></white> par objet (<pourcent> % de tes "
+                + "<gagne> gagnés en rachats).", "quota", KSEconomy.points(quota), "pourcent",
+                pourcent(joueur.getUniqueId()), "gagne", KSEconomy.points(KSEconomy.gagne(joueur.getUniqueId())));
     }
 
     /**
@@ -661,14 +664,14 @@ final class Rachats implements CommandExecutor {
                     "quantite", o.quantite(), "objet", nom(o.entree())), true);
             return;
         }
-        // Lots vendus : la vente qui fait dépasser le quota passe, on ne bloque qu'ensuite. Le quota suit la
-        // cagnotte, qui grossit à chaque lot.
-        long solde = KSEconomy.solde(id);
+        // Lots vendus : la vente qui fait dépasser le quota passe, on ne bloque qu'ensuite. Le quota suit les points
+        // gagnés (1.8.2 ; avant : la cagnotte), qui grossissent à chaque lot.
+        long gagnes = KSEconomy.gagne(id);
         long deja = gagne(id, objet);
         int vendus = 0;
         while (vendus < lots) {
             long gain = (long) vendus * o.points();
-            long quota = quota(id, solde + gain);
+            long quota = quota(id, gagnes + gain);
             if (quota >= 0 && deja + gain >= quota) {
                 break;
             }
@@ -680,7 +683,7 @@ final class Rachats implements CommandExecutor {
         long total = (long) vendus * o.points();
         if (vendus > 0) {
             retirer(joueur, o.entree(), vendus * o.quantite());
-            KSEconomy.crediter(id, total);
+            KSEconomy.crediterVente(id, total);
             gains.computeIfAbsent(id, u -> new HashMap<>()).merge(objet, total, Long::sum);
         }
         if (vendus == 0) {
