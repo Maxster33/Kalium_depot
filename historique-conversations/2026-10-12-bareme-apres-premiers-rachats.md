@@ -63,6 +63,10 @@ journaux du serveur, `recuperations.log`, `coffres.yml` de KS_RewardsGUI et la s
   dans les 5 secondes avant l'arrêt n'ont pas été traités. Aucun changement.
 - Au passage : KS_Economy 1.8.1 active sur Kixster depuis 01:33, offre du pied de champignon remplacée.
 
+## Journal d'Event après redémarrage (12/10/2026, 01:42)
+
+**Journal d'Event lu le 12/10/2026 à 02:42, après le redémarrage de 01:42 (heure de Paris ; 23:42 dans le journal, en UTC)** : KS_Economy 1.8.1 active (passage direct depuis la 1.7.0), « Barème : 1929 objets (0 inconnus de cette version) », aucune erreur ; « Rachats de la semaine 2026-S42 : objets au prix modifié remplacés (straw_bed, string, raw_copper) » ; les 7 autres offres sont gardées, les 3 nouvelles sont `cinnabar_brick_stairs` (121 pour 1 point, au nouveau prix), `verdant_froglight`, `crimson_fence_gate`. `rachats.yml` : les 10 offres portent leur prix du barème. Statut : vérifié dans la console des deux serveurs, non testé en jeu.
+
 ## Reste à faire
 
 - KS_Economy 1.8.1 déployée sur Kixster et Event le 12/10/2026 à 01:32 (« oui déploie tout ») : active après redémarrage de chaque serveur ; lire la console (« objets au prix modifié remplacés »).

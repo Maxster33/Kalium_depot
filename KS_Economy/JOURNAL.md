@@ -625,3 +625,5 @@ marron et rouge), il faut donc doubler le prix des tiges de champignon ».
 **Journal de Kixster lu le 12/10/2026 après le redémarrage de 01:33** : KS_Economy 1.8.1 active, « Barème : 1929
 objets (0 inconnus de cette version) », aucune erreur ; « Rachats de la semaine 2026-S42 : objets au prix modifié
 remplacés (mushroom_stem) ». Statut : vérifié dans la console, non testé en jeu. Event : pas encore redémarré.
+
+**Journal d'Event lu le 12/10/2026 à 02:42, après le redémarrage de 01:42 (heure de Paris ; 23:42 dans le journal, en UTC)** : KS_Economy 1.8.1 active (passage direct depuis la 1.7.0), « Barème : 1929 objets (0 inconnus de cette version) », aucune erreur ; « Rachats de la semaine 2026-S42 : objets au prix modifié remplacés (straw_bed, string, raw_copper) » ; les 7 autres offres sont gardées, les 3 nouvelles sont `cinnabar_brick_stairs` (121 pour 1 point, au nouveau prix), `verdant_froglight`, `crimson_fence_gate`. `rachats.yml` : les 10 offres portent leur prix du barème. Statut : vérifié dans la console des deux serveurs, non testé en jeu.
