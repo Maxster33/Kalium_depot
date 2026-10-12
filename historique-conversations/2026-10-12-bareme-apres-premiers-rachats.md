@@ -1,7 +1,7 @@
 # 2026-10-12 — Barème corrigé après les premiers rachats
 
 - Plugin(s) concerné(s) : KS_Economy
-- Versions avant / après : 1.7.0 en service (Kixster et Event) / 1.8.0 déployée sur les deux le 12/10/2026 à 01:17, puis 1.8.1 à 01:32
+- Versions avant / après : 1.7.0 en service (Kixster et Event) / 1.8.0 déployée sur les deux le 12/10/2026 à 01:17, puis 1.8.1 à 01:32 et 1.8.2 à 05:13
 
 ## Demandé
 
@@ -73,7 +73,7 @@ LeKiwi06 : « fais en sorte que le quota débute à 2500 gagné, pas 25000, et q
 
 ## Reste à faire
 
-- Déployer KS_Economy 1.8.2 sur Kixster et Event (accord de LeKiwi06 attendu).
+- KS_Economy 1.8.2 déployée sur Kixster et Event le 12/10/2026 à 05:13 (« oui déploie tout ») : active après redémarrage de chaque serveur ; vérifier dans `comptes.yml` la ligne `gagne` de chaque compte et le texte du quota dans `/rachat`.
 
 - KS_Economy 1.8.1 déployée sur Kixster et Event le 12/10/2026 à 01:32 (« oui déploie tout ») : active après redémarrage de chaque serveur ; lire la console (« objets au prix modifié remplacés »).
 

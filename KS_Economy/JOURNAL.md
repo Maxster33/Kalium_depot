@@ -659,4 +659,4 @@ gagné, sinon les joueurs vont juste retirer les émeraudes en items pour outrep
 - Contient la 1.8.1 (déployée le 12/10/2026, vérifiée dans la console, non testée en jeu). Aucun changement du barème.
   Écrit sans serveur de test.
 
-**Compilé le 12/10/2026, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster et Event le 12/10/2026 à 05:13 (LeKiwi06 ; accord : « oui déploie tout » ; jar en place vérifié identique à `jars-deployes/` sur les deux serveurs avant l'envoi ; 1.8.1 dans `_removed-ks_economy-1.8.1/` ; supprimables par l'humain : sur Kixster `_removed-ks_economy-1.3.0/` à `1.7.0/`, 7 dossiers ; sur Event `_removed-ks_economy-1.0.0/` à `1.7.0/`, 17 dossiers), actif après redémarrage de chaque serveur. Au premier démarrage : `comptes.yml` reçoit la ligne `gagne` de chaque compte (égale au solde), écrite dans la minute. Statut : non testé en jeu.**

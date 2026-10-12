@@ -17,7 +17,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 ## Utilisés actuellement
 
 
-- KS_Economy — LeKiwi06 — depuis le 2026-10-12 05:06 — quota des rachats : seuil 2 500, 0,5 % (0,75 % masqué)
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 
 
