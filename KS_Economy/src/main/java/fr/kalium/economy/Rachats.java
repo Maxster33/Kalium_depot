@@ -54,8 +54,9 @@ import java.util.concurrent.ThreadLocalRandom;
  * - Prix de la semaine : prix du barème à plus ou moins 25 %, arrondi à l'unité dès 1 émeraude.
  * - Lot : la quantité (arrondie à l'unité inférieure) qui approche 1 / 10 / 64 / 320 émeraudes selon la gamme du prix
  *   de la semaine, payée au nombre entier le plus proche ; à l'unité à partir de 100 et pour un objet non empilable.
- * - Quota par objet, par joueur et par jour : au-dessus de 25 000 de cagnotte, un objet ne rapporte pas plus de 5 % de
- *   la cagnotte (7,5 % si elle est masquée) ; la vente qui fait dépasser passe, les suivantes sont refusées.
+ * - Quota par objet, par joueur et par jour : au-dessus de 2 500 de cagnotte, un objet ne rapporte pas plus de 0,5 %
+ *   de la cagnotte (0,75 % si elle est masquée) ; la vente qui fait dépasser passe, les suivantes sont refusées
+ *   (1.8.2, LeKiwi06 ; avant : 25 000, 5 % et 7,5 %).
  */
 final class Rachats implements CommandExecutor {
 
@@ -478,12 +479,12 @@ final class Rachats implements CommandExecutor {
     }
 
     private long quota(UUID joueur, long solde) {
-        if (solde <= plugin.getConfig().getLong("rachats.quota.seuil", 25000)) {
+        if (solde <= plugin.getConfig().getLong("rachats.quota.seuil", 2500)) {
             return -1;
         }
         double pourcent = plugin.estMasque(joueur)
-                ? plugin.getConfig().getDouble("rachats.quota.pourcent-masque", 7.5)
-                : plugin.getConfig().getDouble("rachats.quota.pourcent", 5.0);
+                ? plugin.getConfig().getDouble("rachats.quota.pourcent-masque", 0.75)
+                : plugin.getConfig().getDouble("rachats.quota.pourcent", 0.5);
         return (long) Math.floor(solde * pourcent / 100);
     }
 
@@ -504,8 +505,8 @@ final class Rachats implements CommandExecutor {
     }
 
     private String pourcent(UUID joueur) {
-        double valeur = plugin.estMasque(joueur) ? plugin.getConfig().getDouble("rachats.quota.pourcent-masque", 7.5)
-                : plugin.getConfig().getDouble("rachats.quota.pourcent", 5.0);
+        double valeur = plugin.estMasque(joueur) ? plugin.getConfig().getDouble("rachats.quota.pourcent-masque", 0.75)
+                : plugin.getConfig().getDouble("rachats.quota.pourcent", 0.5);
         return valeur == Math.rint(valeur) ? String.valueOf((long) valeur) : String.valueOf(valeur).replace('.', ',');
     }
 
@@ -513,7 +514,7 @@ final class Rachats implements CommandExecutor {
         long quota = quota(joueur.getUniqueId());
         if (quota < 0) {
             return t("rachats.sans-quota", "<gray>Aucun quota tant que ta cagnotte ne dépasse pas <seuil>.", "seuil",
-                    KSEconomy.points(plugin.getConfig().getLong("rachats.quota.seuil", 25000)));
+                    KSEconomy.points(plugin.getConfig().getLong("rachats.quota.seuil", 2500)));
         }
         return t("rachats.quota", "<gray>Quota du jour : <white><quota></white> par objet (<pourcent> % de ta "
                 + "cagnotte).", "quota", KSEconomy.points(quota), "pourcent", pourcent(joueur.getUniqueId()));

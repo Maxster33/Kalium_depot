@@ -67,7 +67,13 @@ journaux du serveur, `recuperations.log`, `coffres.yml` de KS_RewardsGUI et la s
 
 **Journal d'Event lu le 12/10/2026 à 02:42, après le redémarrage de 01:42 (heure de Paris ; 23:42 dans le journal, en UTC)** : KS_Economy 1.8.1 active (passage direct depuis la 1.7.0), « Barème : 1929 objets (0 inconnus de cette version) », aucune erreur ; « Rachats de la semaine 2026-S42 : objets au prix modifié remplacés (straw_bed, string, raw_copper) » ; les 7 autres offres sont gardées, les 3 nouvelles sont `cinnabar_brick_stairs` (121 pour 1 point, au nouveau prix), `verdant_froglight`, `crimson_fence_gate`. `rachats.yml` : les 10 offres portent leur prix du barème. Statut : vérifié dans la console des deux serveurs, non testé en jeu.
 
+## Quota des rachats (KS_Economy 1.8.2)
+
+LeKiwi06 : « fais en sorte que le quota débute à 2500 gagné, pas 25000, et que le quota par item soit de 0,5 % de notre monnaie gagnée, et 0,75 % avec le solde masqué ». Valeurs par défaut changées dans le code et le `config.yml` du jar ; quota toujours calculé sur le solde ; compilé, non déployé.
+
 ## Reste à faire
+
+- Déployer KS_Economy 1.8.2 sur Kixster et Event (accord de LeKiwi06 attendu).
 
 - KS_Economy 1.8.1 déployée sur Kixster et Event le 12/10/2026 à 01:32 (« oui déploie tout ») : active après redémarrage de chaque serveur ; lire la console (« objets au prix modifié remplacés »).
 

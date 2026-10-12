@@ -30,10 +30,10 @@ rachats:
   variation-pourcent: 25
   quota:
     # Au-dessus de cette cagnotte, un objet ne rapporte par jour qu'une part de la cagnotte du joueur.
-    seuil: 25000
-    pourcent: 5.0
+    seuil: 2500
+    pourcent: 0.5
     # Part quand le joueur masque sa cagnotte.
-    pourcent-masque: 7.5
+    pourcent-masque: 0.75
 
 # 1.7.0 - rachats du marchand ambulant (a ajouter a la main dans le config.yml du serveur pour les modifier).
 marchand:

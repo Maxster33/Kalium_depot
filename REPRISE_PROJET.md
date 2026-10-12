@@ -112,6 +112,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 
 
+- **KS_Economy 1.8.2** (12/10/2026, LeKiwi06) : quota des rachats de la semaine : dès 2 500 de cagnotte (avant 25 000), 0,5 % de la cagnotte par objet et par jour (0,75 % solde masqué ; avant 5 % et 7,5 %) ; **compilé, non déployé, non testé en jeu**, réservation gardée jusqu'au déploiement.
+
 - **KG_BoatRace 1.6.0** (09/10/2026, LeKiwi06) : essai d'équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock, derrière le réglage « Bedrock : bateau serveur (essai) » désactivé par défaut ; **compilé, non déployé, non testé en jeu**, réservation gardée jusqu'au test. Empilé sur la 1.5.1 non testée (accord explicite de LeKiwi06).
 
 - **KG_Pong 0.1.0** (06/10/2026, LeKiwi06) : prototype d'un nouveau mini-jeu Pong pour Kal-Games (2 joueurs, vu de dessus, raquettes en vrais blocs, balle = Sulfur Cube à bloc de glace), branché sur le moteur de parties de KalGames (aucun changement dans KalGames) ; **compilé, non déployé, non testé en jeu**, réservation gardée. Après le déploiement, un modérateur doit construire un terrain plat entouré de murs, créer l'arène et poser 5 points (voir `KG_Pong/JOURNAL.md`).
@@ -440,6 +442,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (12/10/2026, 05:10) : KS_Economy 1.8.2 compilée, non déployée, non testée : quota des rachats.** Demande de LeKiwi06 : « que le quota débute à 2500 gagné, pas 25000, et que le quota par item soit de 0,5 % de notre monnaie gagnée, et 0,75 % avec le solde masqué ». Valeurs par défaut changées (les `config.yml` des serveurs n'ont pas de section `rachats`). Le quota reste calculé sur le solde du joueur (signalé à LeKiwi06 : « monnaie gagnée » compris comme la cagnotte).
 
 **Ajout (12/10/2026, 02:45) : KS_Economy 1.8.1 active sur Kixster (redémarrage de 01:33) et sur Event (redémarrage de 01:42), journaux lus, aucune erreur.** Offres au prix modifié remplacées : `mushroom_stem` sur Kixster ; `straw_bed`, `string`, `raw_copper` sur Event. Vérifié dans la console, non testé en jeu. À savoir : jusqu'à l'arrêt du 12/10 à 00:33, Kixster tournait encore avec les versions d'avant le 11/10 (KS_Economy 1.5.0, KS_RewardsGUI 1.4.1...) : les déploiements du 11/10 n'y sont actifs que depuis le redémarrage de 01:25.
 
