@@ -96,7 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-- **KS_JukeboxBoat 1.0.0 (nouveau) + KS_Crafts 1.13.0** (LeKiwi06, 13/10/2026) : bateau à jukebox et sa recette, déployés sur Event le 13/10 à 07:39 ; **pas encore sur Kixster** (après les tests de LeKiwi06 sur Event ; à déployer ensemble). Détail : `KS_JukeboxBoat/JOURNAL.md`.
+- **KS_JukeboxBoat 1.1.0 + KS_Crafts 1.14.0** (LeKiwi06, 13/10/2026) : bateau à coffre et jukebox (lecture en boucle des disques du coffre, tracté à la laisse) et sa recette, correction du jukebox fantôme ; à déployer ensemble ; non testés. Event est en 1.0.0 / 1.13.0 (bateau à jukebox simple, testé par LeKiwi06 le 13/10) ; **Kixster n'a encore aucune de ces versions**. Détail : `KS_JukeboxBoat/JOURNAL.md`.
 
 
 
@@ -442,6 +442,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (13/10/2026, 08:15) : KS_JukeboxBoat 1.1.0 et KS_Crafts 1.14.0 compilés, non déployés, non testés : bateau à coffre et jukebox, jukebox fantôme corrigé.** LeKiwi06 a testé la 1.0.0 sur Event : « je l'ai testé en jeu, ça fonctionne bien, si je le casse alors qu'il joue une musique il rend le disque etc ». Nouvelle demande : « un bateau avec coffre et jukebox ? on ne peux pas monter dedans, mais on peux le tracter avec une laisse [...] le juke box lirait en automatique les disque présent dans le coffre en boucle » ; ses choix : les deux bateaux existent, accroupi + clic ouvre le coffre, clic normal alterne lecture et pause, recette bateau à coffre + jukebox. Défaut signalé par lui pendant le code : en montant dans un bateau à jukebox tiré par un Happy Ghast, il est aussitôt descendu et un jukebox fantôme reste en l'air. Enquête (journal d'Event, base de GrimAC, code du jeu 26.3 lu sur le PC) : la descente vient de **GrimAC** (3 signalements « Simulation » à 08:00, il éjecte tous les passagers du bateau), pas du plugin ni du jeu ; le fantôme était un défaut du plugin (jukebox éjecté jamais repris), corrigé en 1.1.0. **Point ouvert, non traité : GrimAC fait descendre un joueur d'un bateau tiré par un Happy Ghast** (à vérifier avec un bateau vanilla ; réglage de GrimAC à décider avec Maxster33). Question de LeKiwi06 restée ouverte : afficher le jukebox aux joueurs Bedrock avec un porte-armure invisible coiffé d'un jukebox (essai en jeu à faire par lui). Réservations de KS_JukeboxBoat et KS_Crafts gardées jusqu'au déploiement.
 
 **Ajout (13/10/2026, 07:50) : KS_JukeboxBoat 1.0.0 et KS_Crafts 1.13.0 actifs sur Event, journal lu.** Event a redémarré le 13/10 à 07:44 (05:44 UTC dans son journal) : KS_JukeboxBoat 1.0.0 et KS_Crafts 1.13.0 chargés et activés sans erreur, « 78 crafts ajoutés », pas d'avertissement « KS_JukeboxBoat absent » (la recette du bateau à jukebox est donc enregistrée), `config.yml` et `lang.yml` de KS_JukeboxBoat créés ; 49 plugins, démarrage en 12 s, aucune erreur ni exception dans le journal. Statut : vérifié dans la console, non testé en jeu.
 

@@ -278,3 +278,20 @@ Compilé le 13/10/2026.
 **Déployé sur Event le 13/10/2026 à 07:39 (LeKiwi06 : « oui déploie sur event » ; envoyé avec KS_JukeboxBoat 1.0.0), actif après redémarrage d'Event. 1.12.0 dans `_removed-ks_crafts-1.12.0/` ; jar en place vérifié identique à la référence avant l'envoi. Kixster n'est pas touché (il reste en 1.12.0). Statut : non testé en jeu.**
 
 Actif depuis le redémarrage d'Event du 13/10/2026 à 07:44 (journal lu : chargé et activé sans erreur ; « 78 crafts ajoutés », pas d'avertissement « KS_JukeboxBoat absent »). Statut : non testé en jeu.
+
+## 1.14.0 - recette du bateau à coffre et jukebox (13/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « est ce qu'on pourrait créer un bateau avec coffre et jukebox ? » ; recette « bateau à coffre +
+jukebox » confirmée par lui (« oui »). L'objet et son fonctionnement sont dans KS_JukeboxBoat 1.1.0.
+
+- **1 bateau à coffre ou 1 radeau à coffre (n'importe quel bois) + 1 jukebox**, sans forme → **1 bateau à coffre et
+  jukebox** du même bois. Une recette par bois (`bateau_coffre_jukebox_<bois>`), lue dans la liste des bateaux à
+  coffre du jeu.
+- La recette du bateau à jukebox simple (1.13.0) est inchangée.
+
+**À déployer avec KS_JukeboxBoat 1.1.0.**
+
+Empilé sur la 1.13.0, dont la recette n'a pas été confirmée en jeu en toutes lettres (LeKiwi06 a testé le bateau à
+jukebox le 13/10/2026 : « ça fonctionne bien »), à sa demande.
+
+Compilé le 13/10/2026 (`sortie/KS_Crafts-1.14.0.jar`). **Statut : non déployé, non testé en jeu.**

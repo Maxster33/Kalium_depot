@@ -72,3 +72,79 @@ Compilé le 13/10/2026.
 **Déployé sur Event le 13/10/2026 à 07:39 (LeKiwi06 : « oui déploie sur event » ; envoyé avec KS_Crafts 1.13.0), actif après redémarrage d'Event. Kixster n'est pas touché. Statut : non testé en jeu.**
 
 Actif depuis le redémarrage d'Event du 13/10/2026 à 07:44 (journal lu : chargé et activé sans erreur ; `config.yml` et `lang.yml` créés). Statut : non testé en jeu.
+
+**Testé en jeu par LeKiwi06 le 13/10/2026 sur Event (Java)** : « je l'ai testé en jeu, ça fonctionne bien, si je le
+casse alors qu'il joue une musique il rend le disque etc ». Défaut trouvé par lui le même jour (jukebox fantôme) :
+corrigé en 1.1.0.
+
+## 1.1.0 - bateau à coffre et jukebox, plus de jukebox fantôme (13/10/2026, LeKiwi06)
+
+### Bateau à coffre et jukebox
+
+Demande de LeKiwi06 : « est ce qu'on pourrait créer un bateau avec coffre et jukebox ? on ne peux pas monter dedans,
+mais on peux le tracter avec une laisse, alors on pourrait l'accorcher a notre bateau ? comme ça le juke box lirait en
+automatique les disque présent dans le coffre en boucle (on pourrait aussi mettre d'autre choses dans le coffres, pas
+uniquement des disques) ».
+
+Ses réponses : les deux bateaux existent ; « le sneak clique ouvre le coffre, et un clique normal permet de switch
+entre play et pause » ; recette bateau à coffre + jukebox.
+
+- **Objet** : un bateau à coffre ou un radeau à coffre vanilla, nommé « Bateau à coffre et jukebox » (« Radeau à
+  coffre et jukebox »), 4 lignes de description. Recette dans KS_Crafts 1.14.0.
+- **Bateau posé** : un vrai bateau à coffre (27 cases, tout objet ; les joueurs Bedrock le voient comme tel), le
+  jukebox affiché devant le coffre, à la place du siège. **Personne n'y monte.**
+- **Accroupi + clic droit** : le coffre s'ouvre (comportement du jeu). **Clic droit normal** : lecture / pause, avec
+  un message au-dessus de la barre d'objets (« Lecture : morceau », « Pause », « Aucun disque dans le coffre »).
+- **Lecture en boucle** : en lecture (état de départ), les disques du coffre sont joués l'un après l'autre, dans
+  l'ordre des cases, puis on recommence ; 1 seconde de silence entre deux. Les disques restent dans le coffre. Le
+  disque retiré pendant qu'il joue s'arrête et le suivant démarre. L'état lecture / pause et la case en cours sont
+  gardés avec le bateau.
+- **Laisse** : c'est le jeu qui s'en charge (lu dans le code du jeu 26.3). Laisse en main, clic droit sur le bateau :
+  on le tient. Puis accroupi + clic droit sur son propre bateau : la laisse passe du joueur à ce bateau, qui le
+  tracte. Clic droit sur le bateau tenu : on reprend la laisse. Cisailles : toutes les laisses sont coupées.
+- **Cassé** : il lâche le bateau à coffre et jukebox du même bois et le contenu du coffre.
+- `config.yml` : nouvelle clé `jukebox.position-coffre` (0.4), valeur par défaut dans le code. **Elle n'est pas
+  ajoutée au `config.yml` déjà créé sur Event** : l'y écrire à la main s'il faut la régler.
+
+Techniquement nécessaire, signalé :
+
+- Le clic droit normal ne fait pas lecture / pause, et le jeu agit comme d'habitude, quand le joueur a une laisse ou
+  des cisailles en main (attacher, couper) ou tient la laisse de ce bateau (la reprendre) : sans cela on ne pourrait
+  plus l'attacher ni le détacher.
+- Bateau à jukebox simple : accroupi + clic droit n'ouvre pas le menu des disques quand le joueur tient une entité en
+  laisse, sinon on ne pourrait pas y accrocher le bateau à coffre.
+
+Choix de Claude, signalés :
+
+- Rien ne joue sans joueur à portée de la musique (64 blocs) : un joueur qui arrive en cours de morceau ne
+  l'entendrait pas (limite du jeu). Dès qu'un joueur revient à portée, le disque interrompu reprend à son début. Avec
+  plusieurs joueurs, celui qui arrive en cours de morceau attend le suivant.
+- « Pause » arrête le morceau ; « lecture » le reprend à son début (le jeu ne sait pas reprendre un son au milieu).
+- N'importe qui peut faire lecture / pause, sauf là où une protection interdit de toucher au bateau. Le coffre, lui,
+  est protégé comme tout bateau à coffre (KS_Claim : il ne se casse pas chez les autres).
+
+Limites connues : celles de la 1.0.0 (Bedrock : pas de jukebox visible, musique qui ne suit sans doute pas le
+bateau, ce qui gêne davantage pour un bateau tracté). Position du jukebox devant le coffre écrite sans test en jeu.
+
+### Jukebox fantôme (correction)
+
+Signalé par LeKiwi06 le 13/10/2026, avec une capture : « le jeu refuse que je monte dans le bateau quand il est
+accroché a un happy ghast, il m'en fait déscendre direct et laisse derrière un juke box fantome immobile et
+invulnérable ».
+
+- **Cause de la descente** : pas le plugin, ni le jeu (rien dans le code du jeu 26.3 n'éjecte les passagers d'un
+  bateau tenu en laisse). Le journal de GrimAC sur Event porte 3 signalements « Simulation » (déplacement différent
+  de celui prévu) pour LeKiwi06 à 08:00:13, 08:00:13 et 08:00:27, au moment des essais : l'anti-triche ne sait pas
+  prévoir le mouvement d'un bateau tiré par un Happy Ghast, et renvoie le joueur en éjectant tous les passagers du
+  bateau. **Non corrigé ici** (réglage de GrimAC, à décider) ; un bateau vanilla accroché à un Happy Ghast devrait
+  faire descendre le joueur de la même façon (à vérifier par LeKiwi06).
+- **Cause du fantôme** (défaut du plugin) : le jukebox était éjecté avec le joueur, restait sur place, et le bateau
+  en recevait un nouveau.
+- **Correction** : un jukebox descendu de son bateau y remonte au tick suivant ; sans bateau, ou si le bateau en a
+  déjà un, il disparaît. Les fantômes déjà laissés sur Event disparaissent au chargement de leur chunk (donc au
+  redémarrage).
+- **Simplification** : le jukebox ne quitte plus le bateau quand un joueur monte. Le jeu place de lui-même un
+  joueur en premier passager (celui qui conduit), lu dans le code du jeu 26.3 : le détour de la 1.0.0 était inutile.
+
+**À déployer avec KS_Crafts 1.14.0.** Compilé le 13/10/2026 (`sortie/KS_JukeboxBoat-1.1.0.jar`).
+**Statut : non déployé, non testé en jeu.**

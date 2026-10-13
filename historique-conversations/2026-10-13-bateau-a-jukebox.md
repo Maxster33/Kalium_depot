@@ -1,6 +1,6 @@
 # 2026-10-13 — Bateau à jukebox
 
-- Plugin(s) concerné(s) : KS_JukeboxBoat (nouveau), KS_Crafts
+- Plugin(s) concerné(s) : KS_JukeboxBoat (nouveau), KS_Crafts ; GrimAC (constat seulement)
 - Versions avant / après : KS_JukeboxBoat (n'existait pas) / 1.0.0 compilée ; KS_Crafts 1.12.0 en service / 1.13.0
   compilée. Les deux déployées sur Event le 13/10/2026 à 07:39 ; Kixster inchangé.
 
@@ -20,6 +20,17 @@ là il peut lire les disques de notre inventaire ».
   identique à la référence avant l'envoi ; 1.12.0 dans `_removed-ks_crafts-1.12.0/`). Actifs après redémarrage, non
   testés. Réservations libérées.
 
+- Journal d'Event lu après le redémarrage de 07:44 : les deux plugins activés sans erreur.
+- LeKiwi06 a testé la 1.0.0 : « ça fonctionne bien, si je le casse alors qu'il joue une musique il rend le disque ».
+- Deuxième demande : « un bateau avec coffre et jukebox ? on ne peux pas monter dedans, mais on peux le tracter avec
+  une laisse [...] le juke box lirait en automatique les disque présent dans le coffre en boucle ». KS_JukeboxBoat
+  1.1.0 et KS_Crafts 1.14.0 compilés, non déployés.
+- Défaut signalé par LeKiwi06 (capture à 08:01) : bateau à jukebox tiré par un Happy Ghast, joueur descendu aussitôt,
+  jukebox fantôme laissé en l'air. Cause de la descente : GrimAC (3 signalements « Simulation » à 08:00 dans sa base,
+  lue hors dépôt) ; cause du fantôme : le plugin. Fantôme corrigé en 1.1.0.
+- Question de LeKiwi06 : « est ce qu'il y a possibilité de render un mob avec une tête de jukebox sur bedrock ? ».
+  Réponse : probablement (porte-armure invisible coiffé d'un jukebox), commande d'essai donnée ; pas encore essayé.
+
 ## Décisions
 
 Choix de LeKiwi06 :
@@ -34,11 +45,22 @@ Choix de LeKiwi06 :
 - À bord : touche de saut seulement (ni clic droit avec un disque en main, ni coup dans le vide).
 - Nom : KS_JukeboxBoat, plutôt que KS_BateauJukebox.
 
+Choix de LeKiwi06 pour le bateau à coffre : les deux bateaux existent ; accroupi + clic droit ouvre le coffre, clic
+droit normal alterne lecture et pause ; recette bateau à coffre + jukebox.
+
 Choix de Claude, signalés : recette dans KS_Crafts (comme les autres objets) ; seul un joueur monte à bord ; le
 bateau à jukebox ne sert pas d'ingrédient et ne sort pas d'un distributeur ; n'importe qui peut reprendre le disque
 d'un bateau ; le disque reste dans le bateau à la fin du morceau ; réglages d'affichage du jukebox dans `config.yml`.
 
 ## Reste à faire
+
+- Déployer KS_JukeboxBoat 1.1.0 et KS_Crafts 1.14.0 ensemble, avec l'accord de LeKiwi06.
+- GrimAC fait descendre un joueur d'un bateau tiré par un Happy Ghast : vérifier avec un bateau vanilla, puis décider
+  du réglage de GrimAC (avec Maxster33).
+- Essai Bedrock du porte-armure invisible coiffé d'un jukebox (LeKiwi06) ; s'il se voit, remplacer le modèle 3D.
+- Tests du bateau à coffre : recette, jukebox bien placé devant le coffre, personne ne monte, lecture / pause,
+  enchaînement et boucle des disques, disque retiré en cours, laisse (tenir, accrocher à son bateau, reprendre),
+  cassé (objet et contenu rendus).
 
 - Fait : Event redémarré à 07:44, journal lu (les deux plugins activés sans erreur, 78 crafts).
 - Après les tests : déployer KS_JukeboxBoat 1.0.0 et KS_Crafts 1.13.0 ensemble sur Kixster, avec l'accord de LeKiwi06.

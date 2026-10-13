@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import fr.kalium.menu.api.Contenant;
 import fr.kalium.menu.api.Lang;
 import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.entity.Leashable;
 import io.papermc.paper.datacomponent.item.JukeboxPlayable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -17,6 +18,7 @@ import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Boat;
+import org.bukkit.entity.ChestBoat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -24,6 +26,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.EntityRemoveEvent;
@@ -34,7 +37,7 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -63,12 +66,32 @@ import java.util.UUID;
  * les joueurs proches ; un clic sur le disque du bateau arrête la musique et le rend. Le disque reste dans le bateau
  * sans joueur à bord, et tombe si le bateau est cassé.
  *
+ * 1.1.0 (LeKiwi06, 13/10/2026 : « un bateau avec coffre et jukebox ? on ne peut pas monter dedans, mais on peut le
+ * tracter avec une laisse [...] le jukebox lirait en automatique les disques présents dans le coffre en boucle ») :
+ * bateau à coffre et jukebox, en plus du premier. C'est un bateau à coffre vanilla marqué (27 cases, tout objet), le
+ * jukebox affiché à la place du siège : personne n'y monte. Accroupi + clic droit ouvre le coffre (comportement du
+ * jeu) ; un clic droit normal alterne lecture et pause. En lecture, les disques du coffre sont joués l'un après
+ * l'autre, dans l'ordre des cases, en boucle, tant qu'un joueur est à portée de la musique ; ils restent dans le coffre.
+ *
+ * 1.1.0, correction (LeKiwi06 : bateau tenu en laisse par un Happy Ghast, « il m'en fait descendre direct et laisse
+ * derrière un jukebox fantôme immobile et invulnérable ») : c'est l'anti-triche (GrimAC, « Simulation ») qui éjecte
+ * tous les passagers du bateau, jukebox compris. Un jukebox éjecté remonte maintenant dans son bateau au tick suivant,
+ * ou disparaît s'il n'a plus de bateau (onEjecter). Le jukebox ne quitte plus le bateau quand un joueur monte : le
+ * jeu place de lui-même le joueur en premier passager (lu dans le code du jeu 26.3, Entity.addPassenger).
+ *
  * Autres plugins : creerBateau() (KS_Crafts), estBateau().
  */
 public final class KSJukeboxBoat extends JavaPlugin implements Listener {
 
     /** Recul du 2e passager d'un bateau par rapport à son centre (valeur du jeu). */
     private static final float PLACE_ARRIERE = -0.6f;
+
+    /** Avance du passager d'un bateau à coffre par rapport à son centre (valeur du jeu). */
+    private static final float PLACE_COFFRE = 0.15f;
+
+    /** 1.1.0 : rythme de la lecture en boucle, et silence entre deux disques, en ticks. */
+    private static final long PAS_BOUCLE = 10;
+    private static final long SILENCE = 20;
 
     /** Distance au-delà de laquelle le menu ne commande plus le bateau. */
     private static final double PORTEE = 8;
@@ -78,10 +101,20 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
     private NamespacedKey cleBateau;
     private NamespacedKey cleDisque;
     private NamespacedKey cleJukebox;
+    /** 1.1.0, bateau à coffre : 1 = lecture (aussi sans la clé), 0 = pause. */
+    private NamespacedKey cleLecture;
+    /** 1.1.0, bateau à coffre : case du coffre où chercher le prochain disque. */
+    private NamespacedKey clePiste;
     private Lang lang;
 
     /** Bateaux à jukebox présents dans les mondes chargés. */
     private final Map<UUID, Boat> bateaux = new HashMap<>();
+
+    /** 1.1.0 : disque en cours de lecture dans chaque bateau à coffre (case, disque, tick de fin). */
+    private final Map<UUID, Piste> pistes = new HashMap<>();
+
+    private record Piste(int place, ItemStack disque, long fin) {
+    }
 
     /** Ce qu'affiche un menu : le bateau qu'il commande. */
     private record Marque(UUID bateau) {
@@ -94,13 +127,23 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
         cleBateau = new NamespacedKey(this, "bateau");
         cleDisque = new NamespacedKey(this, "disque");
         cleJukebox = new NamespacedKey(this, "jukebox");
+        cleLecture = new NamespacedKey(this, "lecture");
+        clePiste = new NamespacedKey(this, "piste");
         lang = new Lang(this);
         getServer().getPluginManager().registerEvents(this, this);
         for (World monde : Bukkit.getWorlds()) {
             monde.getEntitiesByClass(Boat.class).forEach(this::accueillir);
+            // Jukebox restés sans bateau (fantômes de la 1.0.0).
+            for (BlockDisplay jukebox : monde.getEntitiesByClass(BlockDisplay.class)) {
+                if (estJukebox(jukebox) && !estBateau(jukebox.getVehicle())) {
+                    jukebox.remove();
+                }
+            }
         }
         getServer().getScheduler().runTaskTimer(this, this::orienter, 1L, 1L);
+        getServer().getScheduler().runTaskTimer(this, this::boucle, PAS_BOUCLE, PAS_BOUCLE);
         creerBateau(Material.OAK_BOAT);
+        creerBateau(Material.OAK_CHEST_BOAT);
         lang.saveIfNeeded();
     }
 
@@ -110,18 +153,33 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------ objet
 
-    /** Le bateau à jukebox de ce bois (objet de bateau ou de radeau sans coffre). Nécessite que le plugin soit activé. */
+    /**
+     * Le bateau à jukebox de ce bois : objet de bateau ou de radeau sans coffre, ou (1.1.0) avec coffre pour le bateau
+     * à coffre et jukebox. Nécessite que le plugin soit activé.
+     */
     public static ItemStack creerBateau(Material bateau) {
         KSJukeboxBoat p = instance;
         ItemStack objet = new ItemStack(bateau);
         ItemMeta meta = objet.getItemMeta();
-        meta.displayName((bateau.name().endsWith("_RAFT")
-                ? p.t("objet.nom-radeau", "<white>Radeau à jukebox") : p.t("objet.nom", "<white>Bateau à jukebox"))
-                .decoration(TextDecoration.ITALIC, false));
+        boolean radeau = bateau.name().endsWith("_RAFT");
+        Component nom;
+        List<Component> description;
+        if (Tag.ITEMS_CHEST_BOATS.isTagged(bateau)) {
+            nom = radeau ? p.t("objet-coffre.nom-radeau", "<white>Radeau à coffre et jukebox")
+                    : p.t("objet-coffre.nom", "<white>Bateau à coffre et jukebox");
+            description = List.of(p.t("objet-coffre.ligne-1", "<gray>Lit en boucle les disques du coffre"),
+                    p.t("objet-coffre.ligne-2", "<gray>Clic droit : lecture / pause"),
+                    p.t("objet-coffre.ligne-3", "<gray>Accroupi + clic droit : coffre"),
+                    p.t("objet-coffre.ligne-4", "<gray>On n'y monte pas : laisse"));
+        } else {
+            nom = radeau ? p.t("objet.nom-radeau", "<white>Radeau à jukebox") : p.t("objet.nom", "<white>Bateau à jukebox");
+            description = List.of(p.t("objet.ligne-1", "<gray>Joue les disques de ton inventaire"),
+                    p.t("objet.ligne-2", "<gray>À pied : accroupi + clic droit"),
+                    p.t("objet.ligne-3", "<gray>À bord : touche de saut"));
+        }
+        meta.displayName(nom.decoration(TextDecoration.ITALIC, false));
         List<Component> lignes = new ArrayList<>();
-        for (Component ligne : List.of(p.t("objet.ligne-1", "<gray>Joue les disques de ton inventaire"),
-                p.t("objet.ligne-2", "<gray>À pied : accroupi + clic droit"),
-                p.t("objet.ligne-3", "<gray>À bord : touche de saut"))) {
+        for (Component ligne : description) {
             lignes.add(ligne.decoration(TextDecoration.ITALIC, false));
         }
         meta.lore(lignes);
@@ -135,9 +193,14 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
                 && objet.getItemMeta().getPersistentDataContainer().has(instance.cleBateau, PersistentDataType.BYTE);
     }
 
+    /** Bateau à jukebox posé, avec ou sans coffre. */
     private boolean estBateau(Entity entite) {
-        return entite instanceof Boat && !(entite instanceof InventoryHolder)
-                && entite.getPersistentDataContainer().has(cleBateau, PersistentDataType.BYTE);
+        return entite instanceof Boat && entite.getPersistentDataContainer().has(cleBateau, PersistentDataType.BYTE);
+    }
+
+    /** 1.1.0 : bateau à coffre et jukebox posé. */
+    private boolean aCoffre(Entity entite) {
+        return entite instanceof ChestBoat && estBateau(entite);
     }
 
     private boolean estJukebox(Entity entite) {
@@ -172,7 +235,7 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
         Player joueur = event.getPlayer();
         EquipmentSlot main = event.getHand();
         if (joueur == null || main == null || !(event.getEntity() instanceof Boat bateau)
-                || bateau instanceof InventoryHolder || !estBateau(joueur.getInventory().getItem(main))) {
+                || !estBateau(joueur.getInventory().getItem(main))) {
             return;
         }
         bateau.getPersistentDataContainer().set(cleBateau, PersistentDataType.BYTE, (byte) 1);
@@ -186,7 +249,7 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
         if (estBateau(entite)) {
             getServer().getScheduler().runTask(this, () -> accueillir((Boat) entite));
         } else if (estJukebox(entite)) {
-            // Jukebox resté sans bateau (arrêt du serveur pendant qu'un joueur montait à bord).
+            // Jukebox resté sans bateau (fantôme de la 1.0.0).
             getServer().getScheduler().runTaskLater(this, () -> {
                 if (entite.isValid() && !estBateau(entite.getVehicle())) {
                     entite.remove();
@@ -207,9 +270,11 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
                 j.setRotation(bateau.getLocation().getYaw(), 0);
                 j.setTeleportDuration(1);
             });
-            bateau.addPassenger(jukebox);
+            if (!bateau.addPassenger(jukebox)) {
+                jukebox.remove();
+            }
         }
-        regler(bateau);
+        regler(bateau, bateau.getPassengers().size());
     }
 
     private BlockDisplay jukebox(Boat bateau) {
@@ -223,17 +288,22 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
 
     /**
      * Place le jukebox à l'arrière du bateau. Seul à bord, il est assis au centre ; derrière un conducteur, à la place
-     * arrière : le décalage du modèle compense, pour qu'il reste au même endroit.
+     * arrière : le décalage du modèle compense, pour qu'il reste au même endroit. 1.1.0, bateau à coffre : le jukebox
+     * est devant le coffre, là où s'assoit le passager.
+     *
+     * @param passagers nombre de passagers du bateau, jukebox compris (celui d'après, quand un joueur monte ou descend)
      */
-    private void regler(Boat bateau) {
+    private void regler(Boat bateau, int passagers) {
         BlockDisplay jukebox = jukebox(bateau);
         if (jukebox == null) {
             return;
         }
         float taille = (float) getConfig().getDouble("jukebox.taille", 0.55);
         float hauteur = (float) getConfig().getDouble("jukebox.hauteur", 0.0);
-        float position = (float) getConfig().getDouble("jukebox.position", -0.4);
-        float place = bateau.getPassengers().size() > 1 ? PLACE_ARRIERE : 0f;
+        boolean coffre = bateau instanceof ChestBoat;
+        float position = (float) (coffre ? getConfig().getDouble("jukebox.position-coffre", 0.4)
+                : getConfig().getDouble("jukebox.position", -0.4));
+        float place = coffre ? PLACE_COFFRE : passagers > 1 ? PLACE_ARRIERE : 0f;
         jukebox.setTransformation(new Transformation(
                 new Vector3f(-taille / 2, hauteur, position - place - taille / 2), new Quaternionf(),
                 new Vector3f(taille, taille, taille), new Quaternionf()));
@@ -256,41 +326,62 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------ passagers
 
-    /** Seul un joueur monte à bord : un animal y prendrait la place du jukebox ou du conducteur. */
+    /**
+     * Seul un joueur monte à bord : un animal y prendrait la place du jukebox ou du conducteur. 1.1.0 : personne ne
+     * monte dans le bateau à coffre.
+     */
     @EventHandler(ignoreCancelled = true)
     public void onMonter(VehicleEnterEvent event) {
-        if (estBateau(event.getVehicle()) && !(event.getEntered() instanceof Player)
-                && !estJukebox(event.getEntered())) {
+        if (estBateau(event.getVehicle()) && !estJukebox(event.getEntered())
+                && (!(event.getEntered() instanceof Player) || aCoffre(event.getVehicle()))) {
             event.setCancelled(true);
         }
     }
 
-    /** Le conducteur doit être le premier passager : le jukebox lui laisse la place, puis remonte derrière lui. */
+    /**
+     * Le joueur qui monte devient de lui-même le premier passager (celui qui conduit), et le jukebox passe à la place
+     * arrière : son décalage est refait tout de suite, puis vérifié au tick suivant (montée refusée entre-temps).
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onConduire(VehicleEnterEvent event) {
-        if (!(event.getEntered() instanceof Player) || !estBateau(event.getVehicle())) {
-            return;
+        if (event.getEntered() instanceof Player && estBateau(event.getVehicle())) {
+            Boat bateau = (Boat) event.getVehicle();
+            regler(bateau, bateau.getPassengers().size() + 1);
+            getServer().getScheduler().runTask(this, () -> accueillir(bateau));
         }
-        Boat bateau = (Boat) event.getVehicle();
-        BlockDisplay jukebox = jukebox(bateau);
-        if (jukebox != null) {
-            bateau.removePassenger(jukebox);
-        }
-        getServer().getScheduler().runTask(this, () -> {
-            if (jukebox != null && jukebox.isValid()
-                    && !(bateau.isValid() && jukebox(bateau) == null && bateau.addPassenger(jukebox))) {
-                jukebox.remove();
-            }
-            accueillir(bateau);
-        });
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDescendre(VehicleExitEvent event) {
         if (event.getExited() instanceof Player && estBateau(event.getVehicle())) {
             Boat bateau = (Boat) event.getVehicle();
+            regler(bateau, bateau.getPassengers().size() - 1);
             getServer().getScheduler().runTask(this, () -> accueillir(bateau));
         }
+    }
+
+    /**
+     * 1.1.0 : jukebox descendu de son bateau sans que le bateau disparaisse (anti-triche qui éjecte les passagers,
+     * colonne de bulles, bateau resté sous l'eau) : il y remonte au tick suivant. Sans bateau, ou si le bateau en a
+     * déjà un autre, il disparaît : plus de jukebox fantôme.
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEjecter(EntityDismountEvent event) {
+        if (!estJukebox(event.getEntity())) {
+            return;
+        }
+        Entity jukebox = event.getEntity();
+        Entity bateau = event.getDismounted();
+        getServer().getScheduler().runTask(this, () -> {
+            if (!jukebox.isValid() || jukebox.getVehicle() != null) {
+                return;
+            }
+            if (bateau.isValid() && estBateau(bateau) && jukebox((Boat) bateau) == null && bateau.addPassenger(jukebox)) {
+                regler((Boat) bateau, bateau.getPassengers().size());
+            } else {
+                jukebox.remove();
+            }
+        });
     }
 
     // ------------------------------------------------------------------ bateau cassé
@@ -303,7 +394,8 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
         }
         Item lache = event.getItemDrop();
         ItemStack objet = lache.getItemStack();
-        if (Tag.ITEMS_BOATS.isTagged(objet.getType()) && !estBateau(objet)) {
+        // Le contenu d'un coffre ne passe pas par ici : seul le bateau lui-même est lâché ainsi.
+        if (objet.getType() == ((Boat) event.getEntity()).getBoatMaterial() && !estBateau(objet)) {
             ItemStack bateau = creerBateau(objet.getType());
             Component nom = event.getEntity().customName();
             if (nom != null) {
@@ -322,6 +414,7 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
         }
         Boat bateau = (Boat) event.getEntity();
         bateaux.remove(bateau.getUniqueId());
+        couper(bateau);
         // Chunk déchargé, ou joueur déconnecté à bord (le bateau est gardé avec lui) : le bateau existe toujours.
         if (event.getCause() != EntityRemoveEvent.Cause.UNLOAD
                 && event.getCause() != EntityRemoveEvent.Cause.PLAYER_QUIT) {
@@ -345,6 +438,7 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
     /** Bateau disparu pour de bon : son disque tombe, la musique s'arrête, le jukebox disparaît. Sans effet la 2e fois. */
     private void detruire(Boat bateau) {
         bateaux.remove(bateau.getUniqueId());
+        couper(bateau);
         ItemStack disque = disque(bateau);
         if (disque != null) {
             bateau.getPersistentDataContainer().remove(cleDisque);
@@ -407,23 +501,156 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
         }
     }
 
+    // ------------------------------------------------------------------ lecture en boucle (1.1.0, bateau à coffre)
+
+    private boolean enLecture(ChestBoat bateau) {
+        Byte lecture = bateau.getPersistentDataContainer().get(cleLecture, PersistentDataType.BYTE);
+        return lecture == null || lecture != 0;
+    }
+
+    /** Clic droit normal : lecture / pause. La lecture reprend au début du disque interrompu. */
+    private void alterner(Player joueur, ChestBoat bateau) {
+        boolean lecture = !enLecture(bateau);
+        bateau.getPersistentDataContainer().set(cleLecture, PersistentDataType.BYTE, (byte) (lecture ? 1 : 0));
+        if (!lecture) {
+            couper(bateau);
+            Contenant.message(joueur, t("boucle.pause", "<yellow>Pause"), false);
+        } else {
+            avancer(bateau);
+            Piste piste = pistes.get(bateau.getUniqueId());
+            Contenant.message(joueur, piste == null ? t("boucle.vide", "<yellow>Aucun disque dans le coffre")
+                    : t("boucle.lecture", "<green>Lecture : <disque>", "disque",
+                            chanson(piste.disque()).getDescription()), piste == null);
+        }
+        lang.saveIfNeeded();
+    }
+
+    private void boucle() {
+        for (Boat bateau : List.copyOf(bateaux.values())) {
+            if (bateau instanceof ChestBoat coffre && bateau.isValid()) {
+                avancer(coffre);
+            }
+        }
+    }
+
+    /**
+     * Fait suivre les disques du coffre, dans l'ordre des cases, en boucle. Rien ne joue sans joueur à portée de la
+     * musique (il ne l'entendrait pas en arrivant en cours de morceau) : le disque interrompu reprend à son début.
+     */
+    private void avancer(ChestBoat bateau) {
+        if (!enLecture(bateau)) {
+            return;
+        }
+        Inventory coffre = bateau.getInventory();
+        long tick = Bukkit.getCurrentTick();
+        boolean ecoute = ecoute(bateau);
+        Piste piste = pistes.get(bateau.getUniqueId());
+        if (piste != null) {
+            ItemStack enPlace = coffre.getItem(piste.place());
+            boolean retire = enPlace == null || !enPlace.isSimilar(piste.disque());
+            if (!retire && ecoute && tick < piste.fin()) {
+                return;
+            }
+            couper(bateau);
+            if (!retire && ecoute) {
+                // Morceau terminé : au suivant.
+                suivant(bateau, piste.place() + 1);
+            }
+        }
+        if (!ecoute) {
+            return;
+        }
+        Integer depart = bateau.getPersistentDataContainer().get(clePiste, PersistentDataType.INTEGER);
+        for (int i = 0; i < coffre.getSize(); i++) {
+            int place = Math.floorMod((depart == null ? 0 : depart) + i, coffre.getSize());
+            ItemStack disque = coffre.getItem(place);
+            JukeboxSong chanson = chanson(disque);
+            if (chanson != null) {
+                suivant(bateau, place);
+                jouer(bateau, disque);
+                pistes.put(bateau.getUniqueId(), new Piste(place, disque.asOne(),
+                        tick + (long) Math.ceil(chanson.getLengthInSeconds() * 20) + SILENCE));
+                return;
+            }
+        }
+    }
+
+    /** Retient la case où chercher le prochain disque (gardée avec le bateau). */
+    private void suivant(ChestBoat bateau, int place) {
+        Integer avant = bateau.getPersistentDataContainer().get(clePiste, PersistentDataType.INTEGER);
+        if (avant == null || avant != place) {
+            bateau.getPersistentDataContainer().set(clePiste, PersistentDataType.INTEGER, place);
+        }
+    }
+
+    /** Arrête le disque en cours d'un bateau à coffre ; la lecture reprendra à ce disque. Sans effet sinon. */
+    private void couper(Boat bateau) {
+        Piste piste = pistes.remove(bateau.getUniqueId());
+        if (piste != null) {
+            arreter(bateau, piste.disque());
+        }
+    }
+
+    /** Vrai si un joueur est à portée de la musique du bateau. */
+    private boolean ecoute(Boat bateau) {
+        double portee = 16 * Math.max(1f, volume());
+        for (Player joueur : bateau.getWorld().getPlayers()) {
+            if (joueur.getLocation().distanceSquared(bateau.getLocation()) <= portee * portee) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // ------------------------------------------------------------------ menu
 
     /** À pied : accroupi + clic droit sur le bateau (refusé là où une protection interdit de toucher aux bateaux). */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onCliquer(PlayerInteractEntityEvent event) {
-        if (event.getHand() == EquipmentSlot.HAND && event.getPlayer().isSneaking()
-                && estBateau(event.getRightClicked())) {
-            event.setCancelled(true);
-            ouvrir(event.getPlayer(), (Boat) event.getRightClicked());
+        if (!estBateau(event.getRightClicked())) {
+            return;
         }
+        Player joueur = event.getPlayer();
+        if (event.getRightClicked() instanceof ChestBoat bateau) {
+            // 1.1.0 : accroupi, le jeu ouvre le coffre ; laisse ou cisailles en main, ou laisse du bateau tenue par le
+            // joueur, le jeu attache, coupe ou lâche la laisse. Sinon : lecture / pause (le jeu ouvrirait le coffre).
+            if (!joueur.isSneaking() && !laisse(joueur, bateau)) {
+                event.setCancelled(true);
+                if (event.getHand() == EquipmentSlot.HAND) {
+                    alterner(joueur, bateau);
+                }
+            }
+        } else if (event.getHand() == EquipmentSlot.HAND && joueur.isSneaking() && !tientUneLaisse(joueur)) {
+            event.setCancelled(true);
+            ouvrir(joueur, (Boat) event.getRightClicked());
+        }
+    }
+
+    /**
+     * 1.1.0 : accroupi + clic droit sur une entité, le jeu y attache les entités que le joueur tient en laisse (c'est
+     * ainsi qu'on accroche le bateau à coffre et jukebox à son propre bateau) : le menu des disques ne s'ouvre pas alors.
+     */
+    private static boolean tientUneLaisse(Player joueur) {
+        for (Entity proche : joueur.getNearbyEntities(16, 16, 16)) {
+            if (proche instanceof Leashable tenu && tenu.isLeashed() && joueur.equals(tenu.getLeashHolder())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean laisse(Player joueur, ChestBoat bateau) {
+        Material main = joueur.getInventory().getItemInMainHand().getType();
+        Material autre = joueur.getInventory().getItemInOffHand().getType();
+        return main == Material.LEAD || main == Material.SHEARS || autre == Material.LEAD || autre == Material.SHEARS
+                || (bateau.isLeashed() && joueur.equals(bateau.getLeashHolder()));
     }
 
     /** À bord : touche de saut (sans effet dans un bateau). */
     @EventHandler
     public void onSauter(PlayerInputEvent event) {
         Player joueur = event.getPlayer();
-        if (event.getInput().isJump() && estBateau(joueur.getVehicle())
+        if (event.getInput().isJump() && estBateau(joueur.getVehicle()) && !aCoffre(joueur.getVehicle())
                 && !(joueur.getOpenInventory().getTopInventory().getHolder() instanceof Contenant)) {
             ouvrir(joueur, (Boat) joueur.getVehicle());
         }

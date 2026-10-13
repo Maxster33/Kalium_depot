@@ -38,6 +38,7 @@ import java.util.Map;
  * les potions ne viennent plus que du butin et de /rewards ; boîte de shulker fabriquée avec un coffre de l'Ender.
  * 1.12.0 (LeKiwi06) : une pièce d'armure fondue au four donne un lingot, plus une pépite (voir fonteDesArmures).
  * 1.13.0 (LeKiwi06) : recette du bateau à jukebox de KS_JukeboxBoat (voir onEnable).
+ * 1.14.0 (LeKiwi06) : recette du bateau à coffre et jukebox de KS_JukeboxBoat 1.1.0 (voir onEnable).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -167,6 +168,12 @@ public final class KSCrafts extends JavaPlugin implements Listener {
         if (actif("KS_JukeboxBoat")) {
             for (Material bateau : org.bukkit.Tag.ITEMS_BOATS.getValues()) {
                 shapeless("bateau_jukebox_" + bateau.getKey().getKey(),
+                        fr.kalium.jukeboxboat.KSJukeboxBoat.creerBateau(bateau),
+                        List.of(new RecipeChoice.MaterialChoice(bateau), new RecipeChoice.MaterialChoice(Material.JUKEBOX)));
+            }
+            // 1.14.0 (LeKiwi06) : bateau à coffre et jukebox (KS_JukeboxBoat 1.1.0) : un bateau à coffre + un jukebox.
+            for (Material bateau : org.bukkit.Tag.ITEMS_CHEST_BOATS.getValues()) {
+                shapeless("bateau_coffre_jukebox_" + bateau.getKey().getKey(),
                         fr.kalium.jukeboxboat.KSJukeboxBoat.creerBateau(bateau),
                         List.of(new RecipeChoice.MaterialChoice(bateau), new RecipeChoice.MaterialChoice(Material.JUKEBOX)));
             }

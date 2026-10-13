@@ -11,3 +11,5 @@ jukebox:
   hauteur: 0.0
   # Centre du jukebox par rapport au centre du bateau (negatif = vers l'arriere).
   position: -0.4
+  # Meme reglage pour le bateau a coffre et jukebox (le jukebox est devant le coffre).
+  position-coffre: 0.4
