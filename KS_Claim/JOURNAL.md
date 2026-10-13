@@ -145,3 +145,5 @@ LeKiwi06 : le claim qui porte la maison ne compte plus dans les claims du joueur
 À déployer ensemble : KS_Claim 1.4.0 et KS_Teleport 1.3.0.
 
 **Déployé sur Kixster le 13/10/2026 à 16:30 (LeKiwi06, envoi groupé : KS_Economy 1.9.0, KS_Teleport 1.3.0, KS_Claim 1.4.0 ; accord de LeKiwi06 : « Kixster seulement » ; jars en place vérifiés identiques à `jars-deployes/` avant l'envoi, jars envoyés vérifiés identiques à ceux compilés après l'envoi ; 1.3.0 dans `_removed-ks_claim-1.3.0/` ; supprimable par l'humain : `_removed-ks_claim-1.1.2/`), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.3.0). Statut : non testé en jeu.**
+
+**Journal de Kixster lu après le redémarrage du 13/10/2026 à 16:36 (demande de LeKiwi06) : KS_Economy 1.9.0, KS_Teleport 1.3.0 et KS_Claim 1.4.0 chargés et activés sans erreur ni avertissement (KS_Teleport avant KS_Claim), 49 plugins, démarrage en 15 s. Aucun joueur ne s'était encore connecté : aucune commande (`/magasin`, `/setspawn`, `/ksclaims`) n'a tourné, reste à tester en jeu.**
