@@ -40,7 +40,7 @@ d'un bateau ; le disque reste dans le bateau à la fin du morceau ; réglages d'
 
 ## Reste à faire
 
-- Redémarrer Event (LeKiwi06), puis lire son journal.
+- Fait : Event redémarré à 07:44, journal lu (les deux plugins activés sans erreur, 78 crafts).
 - Après les tests : déployer KS_JukeboxBoat 1.0.0 et KS_Crafts 1.13.0 ensemble sur Kixster, avec l'accord de LeKiwi06.
 - Tests en jeu : recette et livre de recettes ; pose, jukebox bien placé à l'arrière (seul et avec un conducteur,
   bateau et radeau) et qui tourne avec le bateau ; conduite normale ; menu à pied et à bord ; musique qui suit le

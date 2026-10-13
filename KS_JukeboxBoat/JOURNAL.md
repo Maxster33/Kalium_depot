@@ -70,3 +70,5 @@ Limites connues :
 Compilé le 13/10/2026.
 
 **Déployé sur Event le 13/10/2026 à 07:39 (LeKiwi06 : « oui déploie sur event » ; envoyé avec KS_Crafts 1.13.0), actif après redémarrage d'Event. Kixster n'est pas touché. Statut : non testé en jeu.**
+
+Actif depuis le redémarrage d'Event du 13/10/2026 à 07:44 (journal lu : chargé et activé sans erreur ; `config.yml` et `lang.yml` créés). Statut : non testé en jeu.
