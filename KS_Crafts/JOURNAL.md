@@ -318,3 +318,5 @@ Compilé le 13/10/2026 (`sortie/KS_Crafts-1.14.1.jar`). **Statut : non déployé
 **Déployé sur Event le 13/10/2026 à 10:34 (LeKiwi06 : « oui déploie la 1.14.1 sur event » ; 1.14.0 dans `_removed-ks_crafts-1.14.0/` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage d'Event. Kixster n'est pas touché. Statut : non testé en jeu.**
 
 Actif depuis le redémarrage d'Event du 13/10/2026 à 10:46 (journal lu : 1.14.1 activée sans erreur, « 78 crafts ajoutés » comme attendu, contre 89 en 1.14.0). Statut : non testé en jeu.
+
+**Déployé sur Kixster le 13/10/2026 à 14:07 (LeKiwi06 : « tu peux déployer sur kixster » ; envoi groupé avec KS_JukeboxBoat 1.1.2 et KS_KaliumGive 1.11.0 ; 1.12.0 dans `_removed-ks_crafts-1.12.0/` ; jar en place vérifié identique à la référence avant l'envoi ; les 1.13.0 et 1.14.0 n'ont jamais été sur Kixster), actif après redémarrage de Kixster. Statut : non testé en jeu sur Kixster.**

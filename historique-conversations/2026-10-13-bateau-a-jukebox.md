@@ -54,8 +54,9 @@ d'un bateau ; le disque reste dans le bateau à la fin du morceau ; réglages d'
 
 ## Reste à faire
 
-- KS_KaliumGive 1.11.0 (« met les dans le kaliumgive aussi » : `jukebox_<id du bateau>`) : compilée, à déployer sur
-  Event avec l'accord de LeKiwi06.
+- Fait le 13/10 à 14:07 sur « tu peux déployer sur kixster » : KS_JukeboxBoat 1.1.2, KS_Crafts 1.14.1 et
+  KS_KaliumGive 1.11.0 sur Kixster. Reste : redémarrer Kixster, lire son journal ; KS_KaliumGive d'Event encore en
+  1.10.0 ; GrimAC de Kixster inchangé (éjection d'un bateau tiré par un Happy Ghast).
 - KS_JukeboxBoat 1.1.2 (jukebox de la taille exacte du coffre, 0,75 bloc, demande de LeKiwi06) : déployée sur Event le
   13/10 à 10:39 ; active depuis le redémarrage de 10:46 (journal lu, aucune erreur, 78 crafts). Reste : regarder en jeu
   les deux bateaux et le radeau de bambou.
