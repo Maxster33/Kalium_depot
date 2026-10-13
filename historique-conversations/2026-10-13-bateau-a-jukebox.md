@@ -56,8 +56,10 @@ d'un bateau ; le disque reste dans le bateau à la fin du morceau ; réglages d'
 
 - Fait le 13/10 à 08:21 sur « tu peux configurer grimAC, et déployer le nouveau jar » : KS_JukeboxBoat 1.1.0 et
   KS_Crafts 1.14.0 sur Event. Reste : redémarrer Event, tester, puis Kixster.
-- GrimAC fait descendre un joueur d'un bateau tiré par un Happy Ghast : confirmé par LeKiwi06 avec un bateau vanilla
-  (« le bateau normal m'ejecte aussi ») ; il demande de configurer GrimAC.
+- GrimAC : fait le 13/10 à 08:25 sur Event, réglage global choisi par LeKiwi06 (plutôt qu'une exemption ciblée dans
+  KS_AntiCheat, recommandée par Claude) : `Simulation.immediate-setback-threshold` et `Simulation.max-advantage` à -1.
+  GrimAC d'Event ne corrige plus la vitesse ni le vol anormaux, il les signale seulement. À tester : monter dans un
+  bateau tiré par un Happy Ghast. Kixster : GrimAC inchangé, à décider.
 - Laisses figées de la capture : non reproduites avec le bateau vanilla, pas d'enquête tant que cela ne revient pas.
 - Essai Bedrock du porte-armure invisible coiffé d'un jukebox (LeKiwi06) ; s'il se voit, remplacer le modèle 3D.
 - Tests du bateau à coffre : recette, jukebox bien placé devant le coffre, personne ne monte, lecture / pause,
