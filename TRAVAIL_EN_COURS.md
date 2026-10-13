@@ -18,6 +18,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
+- KS_KaliumGive — LeKiwi06 — depuis le 2026-10-13 11:00 — bateaux à jukebox dans /kaliumgive
 
 
 ## Requis parfois
