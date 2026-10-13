@@ -40,6 +40,7 @@ import java.util.UUID;
  * 1.5.0 (LeKiwi06, 09/10/2026) : menus en coffres (voir Menus) : mon magasin, mes boutiques (l'objet vendu par case),
  * gestion d'une boutique, catalogue (tête du propriétaire par case), magasin d'un joueur, favoris. Restent en fenêtre
  * de Gui les saisies de texte : nom et description du magasin, nom d'une boutique.
+ * 1.9.0 (LeKiwi06, 13/10/2026) : création à 450 points ou 5 blocs tier 1 ; tier du magasin, 3 agrandissements au plus.
  */
 final class MenuMagasin implements Listener, TabExecutor {
 
@@ -139,9 +140,9 @@ final class MenuMagasin implements Listener, TabExecutor {
         if (m == null) {
             Contenant c = menus.menu(joueur, 4, t("magasin.titre-coffre", "<dark_gray>Mon magasin"), "magasin-aucun");
             c.poser(11, Menus.objet(Material.PAPER, t("magasin.aucun", "<white>Tu n'as pas encore de magasin."),
-                    t("magasin.aide-creer", "<gray>Place-toi dans un de tes claims de la zone des magasins, puis "
+                    t("magasin.aide-creer-tier1", "<gray>Place-toi dans un de tes claims de la zone des magasins, puis "
                             + "« Créer mon magasin » (ou /magasin create) : <prix> ou <blocs> blocs d'émeraude "
-                            + "compressés tier 3.", "prix", KSEconomy.points(magasins.prixCreation()), "blocs",
+                            + "compressés tier 1.", "prix", KSEconomy.points(magasins.prixCreation()), "blocs",
                             magasins.blocsCreation())), null);
             c.poser(15, Menus.objet(Material.EMERALD_BLOCK, t("magasin.bouton-creer", "<green>Créer mon magasin"),
                     t("magasin.creer-info", "<gray>Sur le claim où tu te trouves")), this::creer);
@@ -158,6 +159,8 @@ final class MenuMagasin implements Listener, TabExecutor {
             fiche.addAll(Menus.lignes(t("magasin.description", "<gray><description>", "description", m.description)));
         }
         fiche.addAll(Menus.lignes(
+                t("magasin.fiche-tier", "<white>Tier <tier> / <max>", "tier", magasins.tier(m), "max",
+                        magasins.agrandissementsMax() + 1),
                 t("magasin.fiche-boutiques", "<white>Boutiques : <nombre> / <max>", "nombre", mes.size(), "max",
                         magasins.boutiquesMax(m)),
                 t("magasin.fiche-claims", "<white>Claims : <claims>", "claims", m.claims.size()),
@@ -180,14 +183,21 @@ final class MenuMagasin implements Listener, TabExecutor {
         c.poser(23, Menus.objet(Material.COMPASS, t("magasin.bouton-position", "<white>Position ici"),
                 t("magasin.position-info", "<gray>La position de ton magasin dans le catalogue devient l'endroit où "
                         + "tu te trouves")), this::position);
-        c.poser(25, Menus.objet(Material.GOLDEN_SHOVEL, t("magasin.bouton-agrandir", "<white>Agrandir ici"),
-                t("magasin.agrandir-info", "<gray>Ajoute le claim où tu te trouves : <prix>, +1 boutique", "prix",
-                        KSEconomy.points(magasins.prixAgrandissement()))), this::agrandir);
+        // 1.9.0 : le prochain agrandissement (tier, prix, boutiques gagnées), ou le tier maximal atteint.
+        int prochain = magasins.agrandissements(m) + 1;
+        Component agrandir = prochain > magasins.agrandissementsMax()
+                ? t("magasin.agrandir-max", "<gray>Ton magasin est au tier maximal.")
+                : t("magasin.agrandir-info-tier", "<gray>Ajoute le claim où tu te trouves : tier <tier>, <prix>, +<gain> "
+                + "boutiques", "tier", prochain + 1, "prix", KSEconomy.points(Magasins.prixAgrandissement(prochain)),
+                "gain", magasins.gain(prochain));
+        c.poser(25, Menus.objet(Material.GOLDEN_SHOVEL, t("magasin.bouton-agrandir", "<white>Agrandir ici"), agrandir),
+                this::agrandir);
         menus.aide(c, t("magasin.aide-titre", "<aqua>Créer une boutique"),
-                t("magasin.aide-2", "<gray>Pose un panneau sur un coffre (en cuivre compris), un tonneau ou une "
-                        + "shulker dans un claim du magasin pour créer une boutique. /magasin agrandir dans un autre de "
-                        + "tes claims de la zone : <prix>, +1 boutique.", "prix",
-                        KSEconomy.points(magasins.prixAgrandissement())));
+                t("magasin.aide-boutique", "<gray>Pose un panneau sur un coffre (en cuivre compris), un tonneau ou une "
+                        + "shulker dans un claim du magasin pour créer une boutique."),
+                t("magasin.aide-agrandir", "<gray>/magasin agrandir dans un autre de tes claims de la zone : le magasin "
+                        + "monte d'un tier (<max> au plus) et gagne des boutiques.", "max",
+                        magasins.agrandissementsMax() + 1));
         boutonCatalogue(c);
         menus.sortie(c, null);
         c.ouvrir(joueur);
@@ -219,7 +229,7 @@ final class MenuMagasin implements Listener, TabExecutor {
             refus(joueur, refus);
             return;
         }
-        ItemStack bloc = KSEconomy.creerBloc(3);
+        ItemStack bloc = KSEconomy.creerBloc(Magasins.TIER_BLOCS_CREATION);
         int blocs = Boutiques.compter(joueur.getInventory().getStorageContents(), bloc);
         Contenant c = menus.menu(joueur, 4, t("magasin.titre-creer-coffre", "<dark_gray>Créer mon magasin"),
                 "magasin-creer");
@@ -231,7 +241,7 @@ final class MenuMagasin implements Listener, TabExecutor {
                         KSEconomy.points(KSEconomy.solde(joueur.getUniqueId())))),
                 p -> payerCreation(p, chunk, false));
         c.poser(15, Menus.objet(Menus.telQuel(bloc, magasins.blocsCreation()),
-                t("magasin.payer-blocs", "<green>Payer <blocs> blocs tier 3", "blocs", magasins.blocsCreation()),
+                t("magasin.payer-blocs-tier1", "<green>Payer <blocs> blocs tier 1", "blocs", magasins.blocsCreation()),
                 t("magasin.blocs-possedes", "<white>Dans ton inventaire : <blocs>", "blocs", blocs)),
                 p -> payerCreation(p, chunk, true));
         menus.sortie(c, this::ouvrir);
@@ -246,10 +256,10 @@ final class MenuMagasin implements Listener, TabExecutor {
             return;
         }
         if (enBlocs) {
-            ItemStack modele = KSEconomy.creerBloc(3);
+            ItemStack modele = KSEconomy.creerBloc(Magasins.TIER_BLOCS_CREATION);
             if (Boutiques.compter(joueur.getInventory().getStorageContents(), modele) < magasins.blocsCreation()) {
-                refus(joueur, t("magasin.pas-assez-blocs", "<red>Il te faut <blocs> blocs d'émeraude compressés tier 3.",
-                        "blocs", magasins.blocsCreation()));
+                refus(joueur, t("magasin.pas-assez-blocs-tier1", "<red>Il te faut <blocs> blocs d'émeraude compressés "
+                        + "tier 1.", "blocs", magasins.blocsCreation()));
                 return;
             }
             Boutiques.piles(modele, magasins.blocsCreation()).forEach(p -> joueur.getInventory().removeItem(p));
@@ -293,6 +303,13 @@ final class MenuMagasin implements Listener, TabExecutor {
             refus(joueur, t("magasin.aucun", "<white>Tu n'as pas encore de magasin."));
             return;
         }
+        // 1.9.0 : 3 agrandissements au plus ; le x-ième a son prix et son nombre de boutiques.
+        int x = magasins.agrandissements(m) + 1;
+        if (x > magasins.agrandissementsMax()) {
+            refus(joueur, t("magasin.agrandir-complet", "<red>Ton magasin est déjà au tier maximal (<max> boutiques).",
+                    "max", magasins.boutiquesMax(m)));
+            return;
+        }
         Chunk chunk = joueur.getLocation().getChunk();
         Component refus = refusZone(joueur, chunk);
         if (refus == null && magasins.magasinDuChunk(chunk) != null) {
@@ -302,26 +319,29 @@ final class MenuMagasin implements Listener, TabExecutor {
             refus(joueur, refus);
             return;
         }
+        long prix = Magasins.prixAgrandissement(x);
         menus.confirmer(joueur, t("magasin.titre-agrandir-coffre", "<dark_gray>Agrandir mon magasin"),
-                t("magasin.agrandir-texte", "<white>Ajouter ce claim au magasin (+1 boutique) pour <yellow><prix></yellow> ?",
-                        "prix", KSEconomy.points(magasins.prixAgrandissement())),
+                t("magasin.agrandir-texte-tier", "<white>Ajouter ce claim au magasin : tier <tier>, +<gain> boutiques, "
+                        + "pour <yellow><prix></yellow> ?", "tier", x + 1, "gain", magasins.gain(x), "prix",
+                        KSEconomy.points(prix)),
                 p -> {
-                    if (magasins.magasinDuChunk(chunk) != null || refusZone(p, chunk) != null) {
+                    if (magasins.agrandissements(m) + 1 != x || magasins.magasinDuChunk(chunk) != null
+                            || refusZone(p, chunk) != null) {
                         ouvrir(p);
                         refus(p, t("magasin.agrandir-impossible", "<red>Impossible d'ajouter ce claim au magasin."));
                         return;
                     }
-                    if (!KSEconomy.debiter(p.getUniqueId(), magasins.prixAgrandissement())) {
+                    if (!KSEconomy.debiter(p.getUniqueId(), prix)) {
                         ouvrir(p);
                         refus(p, t("magasin.solde", "<red>Solde insuffisant : il faut <prix>.", "prix",
-                                KSEconomy.points(magasins.prixAgrandissement())));
+                                KSEconomy.points(prix)));
                         return;
                     }
                     m.claims.add(Magasins.cleChunk(chunk));
-                    m.agrandissements++;
+                    m.agrandissements = x;
                     magasins.sauver();
-                    fait(p, t("magasin.agrandi", "<green>Claim ajouté au magasin : <max> boutiques au plus.", "max",
-                            magasins.boutiquesMax(m)));
+                    fait(p, t("magasin.agrandi-tier", "<green>Magasin au tier <tier> : <max> boutiques au plus.", "tier",
+                            x + 1, "max", magasins.boutiquesMax(m)));
                 }, this::ouvrir);
     }
 

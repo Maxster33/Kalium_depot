@@ -617,7 +617,10 @@ final class Boutiques implements Listener {
             return null;
         }
         if (attente == 0) {
-            return t("boutique.limite", "<red>Ton magasin a déjà <max> boutiques. /magasin agrandir pour en "
+            // 1.9.0 : au tier maximal, plus d'agrandissement à proposer.
+            return magasins.agrandissements(magasin) >= magasins.agrandissementsMax()
+                    ? t("boutique.limite-max", "<red>Ton magasin a déjà <max> boutiques (tier maximal).", "max", max)
+                    : t("boutique.limite", "<red>Ton magasin a déjà <max> boutiques. /magasin agrandir pour en "
                     + "ajouter.", "max", max);
         }
         return t("boutique.limite-delai", "<red>Ton magasin est complet : <max> places, dont <attente> encore prise(s) "

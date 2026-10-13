@@ -14,11 +14,14 @@ masquage:
 magasins:
   # Region WorldGuard du spawn : magasins (et maisons de KS_Teleport) ; drapeaux build allow et scs-claim allow.
   region: zone_spawn
-  prix-creation: 45000
-  blocs-tier3-creation: 5
-  prix-agrandissement: 10000
-  # Boutiques d'un magasin, +1 par agrandissement.
+  # 1.9.0 : creation a 450 points, ou 5 blocs d'emeraude compresses tier 1 (meme valeur).
+  prix-creation: 450
+  blocs-tier1-creation: 5
+  # Boutiques d'un magasin a sa creation (tier 1).
   boutiques: 10
+  # 1.9.0 : boutiques ajoutees par chaque agrandissement (autant d'agrandissements que de nombres : tier 4 = 20
+  # boutiques). Le x-ieme agrandissement coute 10x^2 + 450x - 50 points (410, 890, 1390) : formule ecrite dans le code.
+  boutiques-par-agrandissement: [2, 3, 5]
   # Heures pendant lesquelles la place d'une boutique supprimee reste prise (0 : aucune attente).
   delai-suppression-heures: 3
 

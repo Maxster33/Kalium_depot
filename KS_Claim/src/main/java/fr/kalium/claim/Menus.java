@@ -112,16 +112,22 @@ final class Menus {
         int nombre = KSClaim.nombreDeClaims(uuid);
         // 1.2.0 : claims gratuits (de base + jetons de claim utilisés) et ceux qui restent libres.
         int jetons = plugin.jetons(uuid);
-        int gratuits = plugin.claimsGratuits() + jetons;
-        List<Component> corps = List.of(
-                t("accueil.nombre", "<white>Claims : <green><nombre></green> / <max>", "nombre", nombre, "max",
-                        plugin.claimsMax()),
-                t("accueil.gratuits", "<white>Claims gratuits : <green><gratuits></green> <gray>(dont <jetons> par jetons "
+        // 1.4.0 : le claim qui porte la maison du spawn ne compte pas : un claim gratuit de plus.
+        int maison = plugin.claimMaison(uuid);
+        int gratuits = plugin.claimsGratuits() + jetons + maison;
+        List<Component> corps = new ArrayList<>();
+        corps.add(t("accueil.nombre", "<white>Claims : <green><nombre></green> / <max>", "nombre", nombre, "max",
+                plugin.claimsMax()));
+        corps.add(t("accueil.gratuits", "<white>Claims gratuits : <green><gratuits></green> <gray>(dont <jetons> par jetons "
                         + "de claim) ; encore libres : <white><libres>", "gratuits", gratuits, "jetons", jetons, "libres",
-                        Math.max(0, gratuits - nombre)),
-                t("accueil.prochain", "<white>Prochain claim : <yellow><prix>", "prix", pts(plugin.prochainPrix(uuid))),
-                t("accueil.aide", "<gray>1 claim = 1 chunk (16 x 16 blocs, toute la hauteur). « Claimer ici » "
-                        + "claime le chunk où tu te trouves (aussi : /ksclaim)."));
+                Math.max(0, gratuits - nombre)));
+        if (maison > 0) {
+            corps.add(t("accueil.maison", "<gray>Le claim de ta maison du spawn ne compte pas : il te donne un claim "
+                    + "gratuit de plus."));
+        }
+        corps.add(t("accueil.prochain", "<white>Prochain claim : <yellow><prix>", "prix", pts(plugin.prochainPrix(uuid))));
+        corps.add(t("accueil.aide", "<gray>1 claim = 1 chunk (16 x 16 blocs, toute la hauteur). « Claimer ici » "
+                + "claime le chunk où tu te trouves (aussi : /ksclaim)."));
         List<ActionButton> boutons = new ArrayList<>();
         if (jetonsEnStock(uuid) > 0) {
             boutons.add(gui.button(t("bouton.jeton-utiliser", "<aqua>Utiliser un jeton de claim"),
@@ -144,17 +150,22 @@ final class Menus {
     private void prixSuivants(Player joueur) {
         int n = KSClaim.nombreDeClaims(joueur.getUniqueId()) + 1;
         int jetons = plugin.jetons(joueur.getUniqueId());
+        int maison = plugin.claimMaison(joueur.getUniqueId());
         List<Component> corps = new ArrayList<>();
         corps.add(t("prix.regle", "<gray>Les <gratuits> premiers claims sont gratuits, puis le n-ième coûte 16n + n²/2 "
                 + "points (arrondi au-dessus) ; <max> claims au plus. Supprimer un claim rembourse le dernier prix payé.",
                 "gratuits", plugin.claimsGratuits(), "max", plugin.claimsMax()));
         for (int i = n; i < n + 5 && i <= plugin.claimsMax(); i++) {
             corps.add(t("prix.ligne", "<white><n>e claim : <yellow><prix>", "n", i, "prix",
-                    pts(plugin.prix(i - jetons))));
+                    pts(plugin.prix(i - jetons - maison))));
         }
         if (jetons > 0) {
             corps.add(t("prix.jetons", "<gray>Tes <jetons> jeton(s) de claim utilisé(s) donnent autant de claims "
                     + "gratuits en plus, sans faire monter les prix.", "jetons", jetons));
+        }
+        if (maison > 0) {
+            corps.add(t("prix.maison", "<gray>Le claim de ta maison du spawn ne compte pas : il ne fait pas monter les "
+                    + "prix."));
         }
         gui.open(joueur, t("prix.titre", "<aqua><bold>Prix des claims"), corps, List.of(), List.of(retour(this::ouvrir)),
                 null, 1);
@@ -195,7 +206,7 @@ final class Menus {
             ouvrir(joueur);
             return;
         }
-        boolean libre = plugin.claimsGratuits() + jetons > KSClaim.nombreDeClaims(uuid);
+        boolean libre = plugin.claimsGratuits() + jetons + plugin.claimMaison(uuid) > KSClaim.nombreDeClaims(uuid);
         long prix = libre ? 0 : plugin.prochainPrix(uuid);
         gui.confirm(joueur, t("titre", "<aqua><bold>Claims"), libre
                 ? t("jeton.retirer-libre", "<white>Retirer un jeton de claim ? Tu perds un claim gratuit encore libre ; "
@@ -209,7 +220,7 @@ final class Menus {
                 ouvrir(p);
                 return;
             }
-            boolean encoreLibre = plugin.claimsGratuits() + actuels > KSClaim.nombreDeClaims(id);
+            boolean encoreLibre = plugin.claimsGratuits() + actuels + plugin.claimMaison(id) > KSClaim.nombreDeClaims(id);
             long aPayer = encoreLibre ? 0 : plugin.prochainPrix(id);
             if (aPayer > 0 && !KSEconomy.debiter(id, aPayer)) {
                 message(p, t("jeton.solde", "<red>Il te faut <prix>.", "prix", pts(aPayer)), this::ouvrir);
@@ -926,8 +937,14 @@ final class Menus {
         }
         List<Long> payes = plugin.joueur(joueur.getUniqueId()).prixPayes;
         long rembourse = payes.isEmpty() ? 0 : payes.get(payes.size() - 1);
-        gui.confirm(joueur, t("supprimer.titre", "<red><bold>Supprimer ce claim"),
-                t("supprimer.texte", "<white>Le claim <nom> est supprimé (le terrain n'est plus protégé). "
+        // 1.4.0 : le claim de la maison du spawn ne comptait pas dans les claims : le supprimer ne rembourse rien.
+        boolean maison = plugin.estClaimMaison(joueur.getUniqueId(), claim.getChunks().iterator().next());
+        gui.confirm(joueur, t("supprimer.titre", "<red><bold>Supprimer ce claim"), maison
+                ? t("supprimer.texte-maison", "<white>Le claim <nom> est supprimé (le terrain n'est plus protégé). Il "
+                + "porte ta maison du spawn et ne comptait pas dans tes claims : <yellow>aucun remboursement</yellow>, "
+                + "et /spawn ne marchera plus tant que tu n'auras pas refait /setspawn dans un autre de tes claims de "
+                + "la zone du spawn.", "nom", claim.getName())
+                : t("supprimer.texte", "<white>Le claim <nom> est supprimé (le terrain n'est plus protégé). "
                         + "Remboursement : <yellow><prix></yellow> (le dernier prix payé).", "nom", claim.getName(),
                         "prix", rembourse == 0 ? "rien" : pts(rembourse)),
                 p -> {
@@ -937,12 +954,14 @@ final class Menus {
                         return;
                     }
                     Chunk chunkSupprime = c.getChunks().iterator().next();
+                    // À lire avant la suppression : ensuite la maison n'est plus dans un claim du joueur.
+                    boolean claimMaison = plugin.estClaimMaison(p.getUniqueId(), chunkSupprime);
                     boolean[] ok = {false};
                     plugin.async(() -> ok[0] = KSClaim.api().unclaim(c), () -> {
                         if (ok[0]) {
                             plugin.ranger(p.getUniqueId(), id, null);
                             KSEconomy.claimRetire(p.getUniqueId(), chunkSupprime);
-                            long montant = plugin.retirerDernierPrix(p.getUniqueId());
+                            long montant = claimMaison ? 0 : plugin.retirerDernierPrix(p.getUniqueId());
                             KSEconomy.crediter(p.getUniqueId(), montant);
                             message(p, t("supprimer.fait", "<green>Claim supprimé. Remboursé : <prix>.", "prix",
                                     montant == 0 ? "rien" : pts(montant)), this::ouvrir);

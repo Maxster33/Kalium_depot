@@ -662,3 +662,42 @@ gagné, sinon les joueurs vont juste retirer les émeraudes en items pour outrep
 **Déployé sur Kixster et Event le 12/10/2026 à 05:13 (LeKiwi06 ; accord : « oui déploie tout » ; jar en place vérifié identique à `jars-deployes/` sur les deux serveurs avant l'envoi ; 1.8.1 dans `_removed-ks_economy-1.8.1/` ; supprimables par l'humain : sur Kixster `_removed-ks_economy-1.3.0/` à `1.7.0/`, 7 dossiers ; sur Event `_removed-ks_economy-1.0.0/` à `1.7.0/`, 17 dossiers), actif après redémarrage de chaque serveur. Au premier démarrage : `comptes.yml` reçoit la ligne `gagne` de chaque compte (égale au solde), écrite dans la minute. Statut : non testé en jeu.**
 
 **Journaux de Kixster lus le 13/10/2026 à 05:32 (demande de LeKiwi06)** : KS_Economy 1.8.2 y est active depuis le redémarrage du 12/10 à 05:15 (4 démarrages depuis, le dernier le 13/10 à 05:32), « Barème : 1929 objets (0 inconnus de cette version) », aucune erreur. `comptes.yml` : les 8 comptes portent la ligne `gagne`. Compteur vérifié sur les ventes du journal : une vente de 312 points aux rachats de la semaine (12/10, 13:40) a monté le solde et le compteur du vendeur de 745 à 1 057 ; des ventes au marchand ambulant (13/10, 03:29) sont comptées aussi ; un compte dont le solde a monté sans vente a un compteur resté plus bas (421 pour 455). Personne ne dépasse 2 500 gagnés : le quota lui-même n'a encore servi à personne. Statut : vérifié dans la console et les fichiers, non testé en jeu. Event : à lire après son redémarrage.
+
+## 1.9.0 - magasin : création à 450 points, 3 agrandissements, tiers (13/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « le prix du magasin create est de 45000, il doit passer à 450 ; le prix du magasin agrandir est
+calculé tel que x est le nombre d'agrandissement : 10x²+450x-50 ; le nombre maximum d'agrandissement est de 3 ; le
+premier accorde 2 slots de boutique supplémentaires, le deuxième 3, le troisième 5 ; on doit normalement arriver à un
+magasin tier 4 avec 20 slots de boutique ; on ne peut créer qu'une boutique par joueur ».
+
+- **Création** : **450 points** (avant : 45 000), `magasins.prix-creation`. Paiement en blocs (choix de LeKiwi06 :
+  « 5 blocs tier 1 ») : **5 blocs d'émeraude compressés tier 1** (= 450 points ; avant : 5 blocs tier 3),
+  `magasins.blocs-tier1-creation` (l'ancienne clé `blocs-tier3-creation` n'est plus lue).
+- **Agrandissements** : **3 au plus**. Le x-ième coûte **10x² + 450x - 50 points** (formule dans le code ; l'ancienne
+  clé `prix-agrandissement` n'est plus lue) et ajoute les boutiques de `magasins.boutiques-par-agrandissement`
+  (`[2, 3, 5]` ; le nombre de valeurs est le maximum d'agrandissements) :
+
+  | Tier | Agrandissement | Prix | Boutiques |
+  |---|---|---|---|
+  | 1 | création | 450 | 10 |
+  | 2 | 1er | 410 | 12 |
+  | 3 | 2e | 890 | 15 |
+  | 4 | 3e | 1 390 | 20 |
+
+  Au tier 4, « Agrandir ici » et `/magasin agrandir` répondent que le magasin est au tier maximal.
+- **Non changé** : un agrandissement se fait toujours dans un autre de ses claims de la zone, qui rejoint le magasin
+  (la demande ne parle que du prix, du nombre et des boutiques). **Un magasin par joueur** : déjà le cas depuis la
+  1.1.0 (« Tu as déjà un magasin (un seul par joueur). »), relu dans le code, rien à changer.
+- Choix de Claude, signalé : le **tier** est affiché (fiche du magasin « Tier 1 / 4 », bouton et confirmation de
+  l'agrandissement « tier 2, 410 points, +2 boutiques »), puisque les textes de l'agrandissement devaient être réécrits.
+- **Textes** (nouvelles clés de `lang.yml`, les anciennes restent sur le serveur sans effet) : `magasin.aide-creer-tier1`,
+  `magasin.payer-blocs-tier1`, `magasin.pas-assez-blocs-tier1`, `magasin.fiche-tier`, `magasin.agrandir-info-tier`,
+  `magasin.agrandir-max`, `magasin.aide-boutique`, `magasin.aide-agrandir`, `magasin.agrandir-complet`,
+  `magasin.agrandir-texte-tier`, `magasin.agrandi-tier`, `boutique.limite-max`.
+- **Serveurs** (fichiers lus le 13/10/2026, hors dépôt) : le `config.yml` de Kixster et celui d'Event n'ont pas de
+  section `magasins` : les nouvelles valeurs du code s'appliquent sans rien modifier à la main. Kixster : aucun
+  magasin. Event : un magasin, sans agrandissement (il reste à 10 boutiques, tier 1).
+- Un magasin qui aurait plus de 3 agrandissements (ancienne règle, aucun cas sur les serveurs) est compté au tier 4.
+- Écrit sans serveur de test. Empilé sur la 1.8.2, non testée en jeu (demande de LeKiwi06).
+
+**Compilé le 13/10/2026, non déployé, non testé en jeu.**

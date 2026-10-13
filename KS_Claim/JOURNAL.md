@@ -118,3 +118,30 @@ Limites : écrit sans serveur de test ; dépend de la façon dont WorldGuard et 
 annulés) : à vérifier en jeu avec un compte non opérateur, dans la zone du spawn et dans le claim d'un autre.
 
 **Déployé sur Kixster et sur Event le 11/10/2026 à 10:47 (LeKiwi06 ; demandes du 11/10/2026 ; 1.2.0 dans `_removed-ks_claim-1.2.0/` sur les deux serveurs), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.4.0 - le claim de la maison du spawn ne compte plus (13/10/2026, LeKiwi06)
+
+Signalé par LeKiwi06 : « le fait de faire maison create ne rend pas le claim (source : Maaxster) ». Choix de
+LeKiwi06 : le claim qui porte la maison ne compte plus dans les claims du joueur (maison seulement, pas le magasin).
+
+- Tant que la maison du spawn d'un joueur (KS_Teleport 1.3.0) est dans **un de ses claims de la zone du spawn**, ce
+  claim **ne compte pas** : un claim gratuit de plus, et les prix ne montent pas, comme avec un jeton de claim. Avec
+  10 claims dont celui de la maison, le 11e est gratuit et le 12e coûte 237 comme un 11e.
+- Accueil : « Claims gratuits » compte ce claim, avec la ligne « Le claim de ta maison du spawn ne compte pas : il te
+  donne un claim gratuit de plus. ». « Prix des claims » et « Retirer un jeton de claim » en tiennent compte. Le
+  maximum de 100 claims reste compté sur tous les claims.
+- Si la maison n'est plus dans un de ses claims (claim supprimé ou vendu, ou `/setspawn` jamais refait), le claim
+  compte de nouveau.
+- Choix de Claude, signalé : **supprimer le claim de la maison ne rembourse rien** (le nombre de claims comptés ne
+  baisse pas : sans cela, on se ferait rembourser un claim payé tout en le gardant) ; la confirmation le dit, et
+  rappelle que `/spawn` ne marchera plus avant un nouveau `/setspawn`. Rien n'est remboursé non plus au moment de
+  `/maison create` : c'est le prochain claim qui coûte moins cher (comme pour un jeton de claim).
+- `softdepend` KS_Teleport ; `build.sh` compile contre KS_Teleport (à compiler avant). Sans KS_Teleport : rien ne change.
+- **Textes** (nouvelles clés de `lang.yml`) : `accueil.maison`, `prix.maison`, `supprimer.texte-maison`.
+- Kixster (fichiers lus le 13/10/2026, hors dépôt) : aucun joueur n'a encore payé de claim ; Maaxster récupère un
+  claim gratuit dès le déploiement.
+- Écrit sans serveur de test. Empilé sur la 1.3.0, non testée en jeu (demande de LeKiwi06).
+
+À déployer ensemble : KS_Claim 1.4.0 et KS_Teleport 1.3.0.
+
+**Compilé le 13/10/2026, non déployé, non testé en jeu.**

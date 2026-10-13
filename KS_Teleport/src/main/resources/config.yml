@@ -10,6 +10,7 @@ attente-secondes: 5
 emplacement-libere-minutes: 15
 
 # Maison du spawn (/maison create) : prix en points, region WorldGuard ou elle doit se trouver.
+# 1.3.0 : /setspawn (boussole liee a une magnetite en main) deplace le point de /spawn, dans la meme region.
 # (Prix du jeton de teleportation : config.yml de KS_Jetons, prix.tp.)
 maison:
   prix: 500

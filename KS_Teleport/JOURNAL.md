@@ -104,3 +104,46 @@ colonne, donc sur le toit du spawn de Kixster.
 - Aucun nouveau réglage, aucun nouveau texte.
 
 **Déployé sur Kixster et sur Event le 11/10/2026 à 10:47 (LeKiwi06 ; demandes du 11/10/2026 ; 1.1.0 dans `_removed-ks_teleport-1.1.0/` sur Kixster, 1.0.0 dans `_removed-ks_teleport-1.0.0/` sur Event), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.3.0 - /setspawn avec une boussole liée à une magnétite ; le claim de la maison est rendu (13/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « on ne peut créer qu'une seule maison ; on doit tenir en main la boussole magnétisée de la
+lodestone pour notre tp de maison et faire /setspawn, ce qui consomme la boussole et met notre point de /spawn au-dessus
+de la lodestone » et « le fait de faire maison create ne rend pas le claim (source : Maaxster, vérifier les logs) ».
+
+Journal de Kixster lu (13/10/2026) : Maaxster a fait `/maison create` à 15:47:56, « Maaxster déclare sa maison du spawn
+pour 500 points » à 15:48:02, sans erreur ; puis `/magasin create` (aucun magasin créé), `/maison` et
+`/maison position`. Rien n'était prévu pour le claim : c'est ajouté ici.
+
+- **`/setspawn`** (nouvelle commande) : une **boussole liée à une magnétite** dans la main. La boussole est
+  **consommée** et le point de `/spawn` passe **au-dessus de la magnétite**. Conditions : avoir déjà sa maison
+  (`/maison create`) ; la magnétite existe encore et se trouve dans **un de ses claims de la zone du spawn**
+  (`maison.region`). Refus, sans consommer la boussole : pas de maison, pas de boussole liée en main, magnétite hors de
+  ses claims de la zone, magnétite cassée, point déjà sur cette magnétite. Pas de confirmation.
+- **`/maison position` n'existe plus** (choix de LeKiwi06 : « Remplace /maison position ») : `/setspawn` est la seule
+  façon de déplacer le point. **`/maison create` ne change pas** : 500 points, enregistre l'endroit où l'on se tient,
+  qui reste le point de `/spawn` jusqu'au premier `/setspawn` (la maison de Maaxster garde donc son point).
+- **Une seule maison par joueur** : déjà le cas depuis la 1.0.0, relu dans le code ; le texte le dit maintenant
+  (« Tu as déjà une maison au spawn (une seule par joueur). »).
+- **Magnétite indestructible** (choix de LeKiwi06) tant qu'elle sert de point de `/spawn` : comme celles des
+  emplacements (ni cassée, ni soufflée, ni poussée par un piston, ni changée par une créature). Elle redevient cassable
+  quand le joueur refait `/setspawn` ailleurs. Choix de Claude, signalé : elle redevient cassable aussi si son claim
+  n'est plus à ce joueur (supprimé ou vendu), pour qu'un terrain ne garde pas un bloc incassable ; `/spawn` est alors
+  refusé de toute façon.
+- **`/spawn`** avec un point placé par `/setspawn` : arrivée au-dessus de la magnétite, refusée si la magnétite n'existe
+  plus ou si la place est bouchée (2 blocs libres), comme pour un emplacement.
+- **Le claim de la maison est rendu** (choix de LeKiwi06 : « Ne compte plus (maison) ») : le claim qui porte la maison
+  ne compte plus dans les claims du joueur. Fait dans **KS_Claim 1.4.0**, qui lit `KSTeleport.maisonDansSonClaim(joueur)`
+  (la maison, si elle est dans un de ses claims de la zone du spawn ; sinon rien). Le claim du magasin n'est pas
+  concerné.
+- Données : `joueurs.<uuid>.maison-magnetite` (monde, x, y, z) dans `teleport.yml`. `plugin.yml` : commande `setspawn`.
+- **Textes** (nouvelles clés de `lang.yml`) : `maison.perdue-setspawn`, `maison.aide-setspawn`, `maison.deja-setspawn`,
+  `maison.creee-setspawn`, `setspawn.boussole`, `setspawn.lieu`, `setspawn.cassee`, `setspawn.deja`, `setspawn.fait`.
+- Limites, à vérifier en jeu : écrit sans serveur de test ; boussole liée tenue par un joueur Bedrock ; aucun autre
+  plugin de Kixster ne déclare `/setspawn` (liste des plugins lue dans le journal), non vérifié sur Event.
+- Empilé sur les versions 1.0.0 à 1.2.0, jamais testées en jeu (demande de LeKiwi06).
+
+À déployer ensemble : KS_Teleport 1.3.0 et KS_Claim 1.4.0 (KS_Claim 1.4.0 appelle une méthode absente de KS_Teleport
+1.2.0 : erreur à l'ouverture du menu des claims).
+
+**Compilé le 13/10/2026, non déployé, non testé en jeu.**

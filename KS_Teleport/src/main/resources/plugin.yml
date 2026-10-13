@@ -2,7 +2,7 @@ name: KS_Teleport
 version: '${project.version}'
 main: fr.kalium.teleport.KSTeleport
 api-version: '26.2'
-description: Teleportations du serveur Event (/home, /spawn, /maison), jetons de localisation et magnetites.
+description: Teleportations du serveur Event (/home, /spawn, /maison, /setspawn), jetons de localisation et magnetites.
 authors: [KaLium]
 depend: [KLM_Menu, KS_Jetons]
 softdepend: [KS_Menu, KS_Economy, KS_Dimensions, WorldGuard, SimpleClaimSystem]
@@ -15,4 +15,7 @@ commands:
     usage: /spawn
   maison:
     description: Ta maison du spawn (dans un de tes claims de la zone du spawn).
-    usage: /maison [create | position]
+    usage: /maison [create]
+  setspawn:
+    description: Place le point de /spawn de ta maison au-dessus de la magnetite de la boussole tenue en main (boussole utilisee).
+    usage: /setspawn

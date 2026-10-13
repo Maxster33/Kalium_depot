@@ -28,8 +28,10 @@ import java.util.UUID;
  * 1.1.0 - magasins et boutiques (cahier des charges, catégorie 2, partie « Magasins » révisée par LeKiwi06 le
  * 02/10/2026) : données, enregistrement (plugins/KS_Economy/magasins.yml), zone des magasins, claims.
  *
- * - Magasin : 1 par joueur, créé dans un de ses claims de la région WorldGuard « zone_shop » ; des claims (les chunks
- *   où il peut poser des boutiques), 10 boutiques + 1 par agrandissement, une fiche (nom, description, position).
+ * - Magasin : 1 par joueur, créé dans un de ses claims de la région WorldGuard « zone_spawn » ; des claims (les chunks
+ *   où il peut poser des boutiques), une fiche (nom, description, position).
+ * - 1.9.0 (LeKiwi06, 13/10/2026) : création à 450 points (ou 5 blocs tier 1) ; 3 agrandissements au plus, le x-ième
+ *   coûte 10x² + 450x - 50 points et ajoute 2, 3 puis 5 boutiques : tier 1 = 10 boutiques, tier 4 = 20.
  * - Boutique : un panneau sur un contenant (coffre, coffre piégé, tonneau, shulker, coffre en cuivre), dans un claim du
  *   magasin ; un objet vendu (quantité) contre un objet (quantité) ou des points ; les points payés attendent dans la
  *   boutique. 1.1.2 : nom, fermeture temporaire ; une boutique supprimée garde sa place 3 h (délai réglable).
@@ -99,15 +101,45 @@ final class Magasins {
     }
 
     long prixCreation() {
-        return Math.max(0, plugin.getConfig().getLong("magasins.prix-creation", 45_000));
+        return Math.max(0, plugin.getConfig().getLong("magasins.prix-creation", 450));
     }
+
+    /** 1.9.0 : tier des blocs compressés acceptés à la création (5 blocs tier 1 = 450 points). */
+    static final int TIER_BLOCS_CREATION = 1;
 
     int blocsCreation() {
-        return Math.max(0, plugin.getConfig().getInt("magasins.blocs-tier3-creation", 5));
+        return Math.max(0, plugin.getConfig().getInt("magasins.blocs-tier1-creation", 5));
     }
 
-    long prixAgrandissement() {
-        return Math.max(0, plugin.getConfig().getLong("magasins.prix-agrandissement", 10_000));
+    /** 1.9.0 : boutiques ajoutées par chaque agrandissement ; leur nombre est le maximum d'agrandissements. */
+    private List<Integer> gains() {
+        List<Integer> gains = plugin.getConfig().getIntegerList("magasins.boutiques-par-agrandissement");
+        return gains.isEmpty() ? List.of(2, 3, 5) : gains;
+    }
+
+    int agrandissementsMax() {
+        return gains().size();
+    }
+
+    /** Agrandissements du magasin qui comptent (un magasin d'avant la 1.9.0 peut en avoir plus que le maximum). */
+    int agrandissements(Magasin magasin) {
+        return Math.max(0, Math.min(magasin.agrandissements, agrandissementsMax()));
+    }
+
+    /** Tier du magasin : 1 à la création, +1 par agrandissement. */
+    int tier(Magasin magasin) {
+        return agrandissements(magasin) + 1;
+    }
+
+    /** Boutiques ajoutées par le x-ième agrandissement (x à partir de 1). */
+    int gain(int x) {
+        List<Integer> gains = gains();
+        return x < 1 || x > gains.size() ? 0 : Math.max(0, gains.get(x - 1));
+    }
+
+    /** 1.9.0 : prix du x-ième agrandissement (x à partir de 1) : 10x² + 450x - 50 points (410, 890, 1 390). */
+    static long prixAgrandissement(int x) {
+        return Math.max(0, 10L * x * x + 450L * x - 50);
     }
 
     int boutiquesDeBase() {
@@ -115,7 +147,11 @@ final class Magasins {
     }
 
     int boutiquesMax(Magasin magasin) {
-        return boutiquesDeBase() + magasin.agrandissements;
+        int max = boutiquesDeBase();
+        for (int x = 1; x <= agrandissements(magasin); x++) {
+            max += gain(x);
+        }
+        return max;
     }
 
     /** 1.1.2 : pendant ce délai après une suppression, la place de la boutique reste prise (anti « switch »). */

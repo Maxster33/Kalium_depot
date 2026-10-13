@@ -35,6 +35,7 @@ import java.util.UUID;
  * - Supprimer un claim rembourse le dernier prix payé (liste des prix payés de chaque joueur).
  * - Groupes de claims : membres et réglages modifiés sur le groupe s'appliquent à tous ses claims.
  * - Vente entre joueurs : refusée si le prix est inférieur au prochain prix de claim de l'acheteur (sauf sous 10 claims).
+ * - 1.4.0 : le claim qui porte la maison du spawn du joueur (KS_Teleport) ne compte pas dans ses claims.
  *
  * Données : plugins/KS_Claim/donnees.yml (prix payés, groupes).
  */
@@ -220,11 +221,41 @@ public final class KSClaim extends JavaPlugin {
     }
 
     /**
+     * 1.4.0 (LeKiwi06, 13/10/2026 : « /maison create ne rend pas le claim ») : la maison du spawn du joueur
+     * (KS_Teleport), si elle est dans un de ses claims de la zone du spawn ; sinon null.
+     */
+    private static org.bukkit.Location maison(UUID joueur) {
+        return Bukkit.getPluginManager().isPluginEnabled("KS_Teleport")
+                ? fr.kalium.teleport.KSTeleport.maisonDansSonClaim(joueur) : null;
+    }
+
+    /** 1.4.0 : 1 si le joueur a un claim qui porte sa maison du spawn : ce claim ne compte pas dans ses claims. */
+    int claimMaison(UUID joueur) {
+        return maison(joueur) == null ? 0 : 1;
+    }
+
+    /** 1.4.0 : ce chunk est-il le claim qui porte la maison du spawn du joueur ? */
+    boolean estClaimMaison(UUID joueur, Chunk chunk) {
+        org.bukkit.Location maison = maison(joueur);
+        return maison != null && chunk.getWorld().equals(maison.getWorld())
+                && chunk.getX() == maison.getBlockX() >> 4 && chunk.getZ() == maison.getBlockZ() >> 4;
+    }
+
+    /**
+     * 1.4.0 : claims gratuits en plus des claims de base, qui ne font pas monter les prix : jetons de claim utilisés
+     * et claim de la maison du spawn.
+     */
+    int offerts(UUID joueur) {
+        return jetons(joueur) + claimMaison(joueur);
+    }
+
+    /**
      * Prix du prochain claim du joueur. 1.2.0 : chaque jeton de claim utilisé donne un claim gratuit de plus et ne
-     * fait pas monter les prix : le claim compte comme le (n - jetons)-ième.
+     * fait pas monter les prix : le claim compte comme le (n - jetons)-ième. 1.4.0 : le claim de la maison du spawn
+     * non plus.
      */
     long prochainPrix(UUID joueur) {
-        return prix(nombreDeClaims(joueur) + 1 - jetons(joueur));
+        return prix(nombreDeClaims(joueur) + 1 - offerts(joueur));
     }
 
     synchronized void noterPrixPaye(UUID joueur, long prix) {

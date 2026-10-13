@@ -75,6 +75,10 @@ import java.util.UUID;
  *   moins un joueur est indestructible. Un emplacement libéré ne se réutilise que 15 minutes plus tard.
  * - 1.1.0 (LeKiwi06, 11/10/2026) : un joueur qui se connecte pour la première fois est posé au point d'apparition
  *   du monde exact (/setworldspawn), au lieu du bloc le plus haut de la colonne choisi par le jeu (toit du spawn).
+ * - 1.3.0 (LeKiwi06, 13/10/2026) : /setspawn, une boussole liée à une magnétite en main : la boussole est consommée
+ *   et le point de /spawn passe au-dessus de cette magnétite (dans un de ses claims de la zone du spawn), qui devient
+ *   indestructible. /maison position n'existe plus. Le claim qui porte la maison ne compte plus dans les claims du
+ *   joueur (KS_Claim 1.4.0, qui lit maisonDansSonClaim).
  */
 public final class KSTeleport extends JavaPlugin implements Listener {
 
@@ -90,6 +94,8 @@ public final class KSTeleport extends JavaPlugin implements Listener {
         /** Dates des téléportations gratuites dont le délai court encore (millisecondes). */
         final List<Long> utilisees = new ArrayList<>();
         Location maison;
+        /** 1.3.0 : magnétite du point de /spawn placé par /setspawn (null : point de /maison create). */
+        Pos magnetiteMaison;
         /** Emplacement (0, 1, 2...) -> magnétite enregistrée. */
         final TreeMap<Integer, Pos> emplacements = new TreeMap<>();
         /** Emplacement -> date à laquelle il a été libéré. */
@@ -119,6 +125,8 @@ public final class KSTeleport extends JavaPlugin implements Listener {
     private final Map<UUID, Fiche> fiches = new HashMap<>();
     /** Magnétites enregistrées -> joueurs qui les ont dans un emplacement. */
     private final Map<Pos, Set<UUID>> magnetites = new HashMap<>();
+    /** 1.3.0 : magnétites des points de /spawn (/setspawn) -> joueurs dont c'est le point. */
+    private final Map<Pos, Set<UUID>> magnetitesMaison = new HashMap<>();
     private final Map<UUID, Depart> departs = new HashMap<>();
 
     @Override
@@ -143,6 +151,7 @@ public final class KSTeleport extends JavaPlugin implements Listener {
         getCommand("home").setExecutor(this);
         getCommand("spawn").setExecutor(this);
         getCommand("maison").setExecutor(this);
+        getCommand("setspawn").setExecutor(this);
         if (getServer().getPluginManager().isPluginEnabled("KS_Menu")) {
             fr.kalium.ksmenu.KSMenu.ajouterBouton(this, "teleport", lang.c("bouton.nom", "<green><bold>Téléportations"),
                     lang.c("bouton.description", "<gray>Ton lit, ta maison du spawn, tes emplacements"), 41, this::ouvrir);
@@ -185,6 +194,16 @@ public final class KSTeleport extends JavaPlugin implements Listener {
             }
         });
         return r;
+    }
+
+    /**
+     * 1.3.0 (KS_Claim 1.4.0) : la maison du spawn de ce joueur, en ligne ou hors ligne, si elle est dans un de ses
+     * claims de la zone du spawn (le claim qui la porte ne compte alors plus dans ses claims) ; sinon null.
+     */
+    public static Location maisonDansSonClaim(UUID joueur) {
+        Fiche fiche = instance == null ? null : instance.fiches.get(joueur);
+        return fiche != null && fiche.maison != null && fiche.maison.isWorldLoaded()
+                && instance.maisonValide(joueur, fiche.maison) ? fiche.maison.clone() : null;
     }
 
     private long delai() {
@@ -492,11 +511,20 @@ public final class KSTeleport extends JavaPlugin implements Listener {
             return;
         }
         if (!maisonValide(joueur.getUniqueId(), fiche.maison)) {
-            joueur.sendMessage(t("maison.perdue", "<red>Ta maison n'est plus dans un de tes claims de la zone du spawn. "
-                    + "<gray>Replace-la avec <white>/maison position</white>."));
+            joueur.sendMessage(t("maison.perdue-setspawn", "<red>Ta maison n'est plus dans un de tes claims de la zone du "
+                    + "spawn. <gray>Replace son point avec <white>/setspawn</white>, une boussole liée à une magnétite en "
+                    + "main."));
             return;
         }
-        demander(joueur, fiche.maison);
+        Location arrivee = fiche.maison;
+        if (fiche.magnetiteMaison != null) {
+            // 1.3.0 : point placé par /setspawn : au-dessus de la magnétite, si elle est toujours là.
+            arrivee = surMagnetite(joueur, fiche.magnetiteMaison);
+            if (arrivee == null) {
+                return;
+            }
+        }
+        demander(joueur, arrivee);
     }
 
     /** Dessus de la magnétite, si elle est toujours là et que la place est libre. */
@@ -545,6 +573,7 @@ public final class KSTeleport extends JavaPlugin implements Listener {
         switch (command.getName()) {
             case "spawn" -> versSpawn(joueur);
             case "maison" -> maison(joueur, args.length == 0 ? "" : args[0].toLowerCase());
+            case "setspawn" -> placerSpawn(joueur);
             default -> {
                 if (args.length > 0 && args[0].equalsIgnoreCase("bed")) {
                     versLit(joueur);
@@ -617,34 +646,24 @@ public final class KSTeleport extends JavaPlugin implements Listener {
     private void maison(Player joueur, String action) {
         UUID id = joueur.getUniqueId();
         Fiche fiche = fiche(id);
-        boolean creer = action.equals("create");
-        if (!creer && !action.equals("position")) {
+        // 1.3.0 : plus de /maison position, le point de /spawn se déplace avec /setspawn.
+        if (!action.equals("create")) {
             joueur.sendMessage(fiche.maison == null
                     ? t("maison.aide", "<gray>Maison du spawn : dans un de tes claims de la zone du spawn, "
                     + "<white>/maison create</white> (<prix> points). Elle te donne <white>/spawn</white>.", "prix",
                     prixMaison())
-                    : t("maison.aide-faite", "<gray>Tu as une maison au spawn : <white>/spawn</white> t'y emmène. "
-                    + "<white>/maison position</white> la replace là où tu es."));
+                    : t("maison.aide-setspawn", "<gray>Tu as une maison au spawn : <white>/spawn</white> t'y emmène. "
+                    + "Pour déplacer ce point : <white>/setspawn</white>, une boussole liée à une magnétite en main "
+                    + "(magnétite dans un de tes claims de la zone du spawn)."));
             return;
         }
-        if (creer && fiche.maison != null) {
-            joueur.sendMessage(t("maison.deja", "<red>Tu as déjà une maison au spawn. <gray>/maison position la replace "
-                    + "là où tu es."));
-            return;
-        }
-        if (!creer && fiche.maison == null) {
-            joueur.sendMessage(t("maison.aucune", "<red>Tu n'as pas encore de maison au spawn. <gray>Dans un de tes "
-                    + "claims de la zone du spawn : <white>/maison create</white> (<prix> points).", "prix", prixMaison()));
+        if (fiche.maison != null) {
+            joueur.sendMessage(t("maison.deja-setspawn", "<red>Tu as déjà une maison au spawn (une seule par joueur). "
+                    + "<gray>/setspawn déplace son point de /spawn."));
             return;
         }
         if (!maisonValide(id, joueur.getLocation())) {
             joueur.sendMessage(t("maison.lieu", "<red>Place-toi dans un de tes claims de la zone du spawn."));
-            return;
-        }
-        if (!creer) {
-            fiche.maison = joueur.getLocation();
-            sauver();
-            joueur.sendMessage(t("maison.replacee", "<green>Ta maison du spawn est maintenant ici."));
             return;
         }
         long prix = prixMaison();
@@ -662,9 +681,78 @@ public final class KSTeleport extends JavaPlugin implements Listener {
             f.maison = p.getLocation();
             sauver();
             getLogger().info(p.getName() + " déclare sa maison du spawn pour " + prix + " points.");
-            p.sendMessage(t("maison.creee", "<green>Maison du spawn déclarée : <white>/spawn</white> t'y emmène."));
+            p.sendMessage(t("maison.creee-setspawn", "<green>Maison du spawn déclarée : <white>/spawn</white> t'y emmène. "
+                    + "<gray>/setspawn, une boussole liée à une magnétite en main, déplace ce point."));
             lang.saveIfNeeded();
         }, null);
+    }
+
+    /**
+     * 1.3.0 (LeKiwi06, 13/10/2026) : /setspawn, une boussole liée à une magnétite dans la main : la boussole est
+     * consommée et le point de /spawn de la maison passe au-dessus de cette magnétite, qui doit être dans un de ses
+     * claims de la zone du spawn. Remplace /maison position.
+     */
+    private void placerSpawn(Player joueur) {
+        UUID id = joueur.getUniqueId();
+        Fiche fiche = fiche(id);
+        if (fiche.maison == null) {
+            joueur.sendMessage(t("maison.aucune", "<red>Tu n'as pas encore de maison au spawn. <gray>Dans un de tes "
+                    + "claims de la zone du spawn : <white>/maison create</white> (<prix> points).", "prix", prixMaison()));
+            return;
+        }
+        ItemStack main = joueur.getInventory().getItemInMainHand();
+        Location cible = main.getType() == Material.COMPASS && main.getItemMeta() instanceof CompassMeta meta
+                && meta.hasLodestone() ? meta.getLodestone() : null;
+        if (cible == null || cible.getWorld() == null) {
+            joueur.sendMessage(t("setspawn.boussole", "<red>Tiens en main une boussole liée à une magnétite. <gray>Clic "
+                    + "droit sur la magnétite avec une boussole pour la lier."));
+            return;
+        }
+        // La zone d'abord : le chunk d'une magnétite lointaine n'est pas chargé pour rien.
+        if (!maisonValide(id, cible)) {
+            joueur.sendMessage(t("setspawn.lieu", "<red>La magnétite de cette boussole n'est pas dans un de tes claims de "
+                    + "la zone du spawn."));
+            return;
+        }
+        Block bloc = cible.getBlock();
+        if (bloc.getType() != Material.LODESTONE) {
+            joueur.sendMessage(t("setspawn.cassee", "<red>La magnétite de cette boussole n'existe plus."));
+            return;
+        }
+        Pos pos = Pos.de(bloc);
+        if (pos.equals(fiche.magnetiteMaison)) {
+            joueur.sendMessage(t("setspawn.deja", "<red>Ton point de /spawn est déjà au-dessus de cette magnétite."));
+            return;
+        }
+        main.setAmount(main.getAmount() - 1);
+        joueur.getInventory().setItemInMainHand(main.getAmount() > 0 ? main : null);
+        oublierMagnetiteMaison(id, fiche);
+        fiche.magnetiteMaison = pos;
+        magnetitesMaison.computeIfAbsent(pos, p -> new HashSet<>()).add(id);
+        fiche.maison = bloc.getLocation().add(0.5, 1, 0.5);
+        fiche.maison.setYaw(joueur.getLocation().getYaw());
+        fiche.maison.setPitch(joueur.getLocation().getPitch());
+        sauver();
+        getLogger().info(joueur.getName() + " place son point de /spawn au-dessus de la magnétite " + pos.x() + " "
+                + pos.y() + " " + pos.z() + ".");
+        joueur.sendMessage(t("setspawn.fait", "<green>Ton point de /spawn est maintenant au-dessus de la magnétite "
+                + "<white><x> <y> <z></white>. <gray>La boussole est utilisée ; la magnétite est indestructible tant "
+                + "qu'elle sert de point de /spawn.", "x", pos.x(), "y", pos.y(), "z", pos.z()));
+    }
+
+    /** La magnétite du point de /spawn de ce joueur ne l'est plus (elle redevient cassable si personne d'autre ne l'a). */
+    private void oublierMagnetiteMaison(UUID joueur, Fiche fiche) {
+        if (fiche.magnetiteMaison == null) {
+            return;
+        }
+        Set<UUID> joueurs = magnetitesMaison.get(fiche.magnetiteMaison);
+        if (joueurs != null) {
+            joueurs.remove(joueur);
+            if (joueurs.isEmpty()) {
+                magnetitesMaison.remove(fiche.magnetiteMaison);
+            }
+        }
+        fiche.magnetiteMaison = null;
     }
 
     // ------------------------------------------------------------------ jeton de localisation
@@ -818,7 +906,24 @@ public final class KSTeleport extends JavaPlugin implements Listener {
     // ------------------------------------------------------------------ magnétites indestructibles
 
     private boolean enregistree(Block bloc) {
-        return !magnetites.isEmpty() && bloc.getType() == Material.LODESTONE && magnetites.containsKey(Pos.de(bloc));
+        if (bloc.getType() != Material.LODESTONE || (magnetites.isEmpty() && magnetitesMaison.isEmpty())) {
+            return false;
+        }
+        Pos pos = Pos.de(bloc);
+        if (magnetites.containsKey(pos)) {
+            return true;
+        }
+        // 1.3.0 : magnétite d'un point de /spawn, tant qu'elle est dans un claim de son joueur (zone du spawn) : un
+        // claim supprimé ou vendu ne garde pas un bloc incassable.
+        Set<UUID> joueurs = magnetitesMaison.get(pos);
+        if (joueurs != null) {
+            for (UUID joueur : joueurs) {
+                if (maisonValide(joueur, bloc.getLocation())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -881,6 +986,12 @@ public final class KSTeleport extends JavaPlugin implements Listener {
                 } catch (RuntimeException e) {
                     getLogger().warning("Maison du spawn illisible (monde absent ?) : " + cle);
                 }
+                ConfigurationSection magnetite = s.getConfigurationSection("maison-magnetite");
+                if (magnetite != null && fiche.maison != null) {
+                    fiche.magnetiteMaison = new Pos(magnetite.getString("monde", ""), magnetite.getInt("x"),
+                            magnetite.getInt("y"), magnetite.getInt("z"));
+                    magnetitesMaison.computeIfAbsent(fiche.magnetiteMaison, p -> new HashSet<>()).add(id);
+                }
                 ConfigurationSection emplacements = s.getConfigurationSection("emplacements");
                 if (emplacements != null) {
                     for (String numero : emplacements.getKeys(false)) {
@@ -916,6 +1027,12 @@ public final class KSTeleport extends JavaPlugin implements Listener {
             }
             if (fiche.maison != null) {
                 yaml.set(chemin + "maison", fiche.maison);
+            }
+            if (fiche.magnetiteMaison != null) {
+                yaml.set(chemin + "maison-magnetite.monde", fiche.magnetiteMaison.monde());
+                yaml.set(chemin + "maison-magnetite.x", fiche.magnetiteMaison.x());
+                yaml.set(chemin + "maison-magnetite.y", fiche.magnetiteMaison.y());
+                yaml.set(chemin + "maison-magnetite.z", fiche.magnetiteMaison.z());
             }
             fiche.emplacements.forEach((numero, pos) -> {
                 yaml.set(chemin + "emplacements." + numero + ".monde", pos.monde());
