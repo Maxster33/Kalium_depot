@@ -37,6 +37,7 @@ import java.util.Map;
  * 1.10.0 (LeKiwi06) : plus de brassage au bloc de verrue (« une erreur ») et verrue du Nether refusée à l'alambic :
  * les potions ne viennent plus que du butin et de /rewards ; boîte de shulker fabriquée avec un coffre de l'Ender.
  * 1.12.0 (LeKiwi06) : une pièce d'armure fondue au four donne un lingot, plus une pépite (voir fonteDesArmures).
+ * 1.13.0 (LeKiwi06) : recette du bateau à jukebox de KS_JukeboxBoat (voir onEnable).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -159,6 +160,18 @@ public final class KSCrafts extends JavaPlugin implements Listener {
                             new RecipeChoice.MaterialChoice(Material.BROWN_MUSHROOM))));
         } else {
             getLogger().warning("KS_ItemSimple ou KS_BiomeChanger absent : craft du Changeur de Biome ignoré.");
+        }
+
+        // 1.13.0 (LeKiwi06) : bateau à jukebox (KS_JukeboxBoat), sans forme : un bateau ou un radeau sans coffre, de
+        // n'importe quel bois, + un jukebox ; le bateau à jukebox est du même bois.
+        if (actif("KS_JukeboxBoat")) {
+            for (Material bateau : org.bukkit.Tag.ITEMS_BOATS.getValues()) {
+                shapeless("bateau_jukebox_" + bateau.getKey().getKey(),
+                        fr.kalium.jukeboxboat.KSJukeboxBoat.creerBateau(bateau),
+                        List.of(new RecipeChoice.MaterialChoice(bateau), new RecipeChoice.MaterialChoice(Material.JUKEBOX)));
+            }
+        } else {
+            getLogger().warning("KS_JukeboxBoat absent : craft du bateau à jukebox ignoré.");
         }
 
         // 1.8.0 (LeKiwi06) : réparation de la tête de wither squelette (KS_Decapitator 1.1.0), bloc de charbon de bois.

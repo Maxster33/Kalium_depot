@@ -96,6 +96,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_JukeboxBoat 1.0.0 (nouveau) + KS_Crafts 1.13.0** (LeKiwi06, 13/10/2026) : bateau à jukebox et sa recette, à déployer ensemble sur Event puis Kixster ; non testés. Détail : `KS_JukeboxBoat/JOURNAL.md`.
+
 
 
 
@@ -440,6 +442,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (13/10/2026, 06:50) : KS_JukeboxBoat 1.0.0 (nouveau plugin) et KS_Crafts 1.13.0 compilés, non déployés, non testés : bateau à jukebox.** Demande de LeKiwi06 : « j'aimerai créer un plugin de bateau avec jukebox, un bateau très similaire au bateau avec coffres, mais là il peut lire les disques de notre inventaire ». Ses choix (questions posées avant le code, menu jugé sur maquette) : bateau simple avec un jukebox visible à l'arrière sur Java (modèle 3D de bloc, 2e place prise ; les joueurs Bedrock voient un bateau vide), musique pour tous les joueurs proches et qui suit le bateau, disque rangé dans le bateau (rendu à l'arrêt, lâché si le bateau est cassé), craft bateau + jukebox pour tous les bois, menu en coffre (disques de l'inventaire en haut, disque du bateau et « Fermer » en bas), ouverture à pied par accroupi + clic droit et à bord par la touche de saut, nom KS_JukeboxBoat. La recette est dans KS_Crafts 1.13.0 (empilée sur la 1.12.0 jamais testée, car nécessaire) : les deux jars sont à déployer ensemble. Écrit sans serveur de test : position du jukebox (`config.yml`), touche de saut et musique sur Bedrock à vérifier en jeu. Limites et choix signalés : `KS_JukeboxBoat/JOURNAL.md`. Réservations de KS_JukeboxBoat et KS_Crafts gardées jusqu'au déploiement.
 
 **Ajout (13/10/2026, 05:40) : KS_Economy 1.8.2 active sur Kixster, journaux et `comptes.yml` lus.** KS_Economy 1.8.2 y est active depuis le redémarrage du 12/10 à 05:15 (4 démarrages depuis, le dernier le 13/10 à 05:32), « Barème : 1929 objets (0 inconnus de cette version) », aucune erreur. `comptes.yml` : les 8 comptes portent la ligne `gagne`. Compteur vérifié sur les ventes du journal : une vente de 312 points aux rachats de la semaine (12/10, 13:40) a monté le solde et le compteur du vendeur de 745 à 1 057 ; des ventes au marchand ambulant (13/10, 03:29) sont comptées aussi ; un compte dont le solde a monté sans vente a un compteur resté plus bas (421 pour 455). Personne ne dépasse 2 500 gagnés : le quota lui-même n'a encore servi à personne. Statut : vérifié dans la console et les fichiers, non testé en jeu. Event : à lire après son redémarrage.
 

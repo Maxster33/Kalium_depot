@@ -1,0 +1,13 @@
+# KS_JukeboxBoat - valeurs par defaut aussi dans le code.
+
+# Volume de la musique : elle s'entend jusqu'a 16 x volume blocs du bateau (4.0 = 64 blocs, comme un jukebox).
+volume: 4.0
+
+# Jukebox affiche a l'arriere du bateau (joueurs Java seulement), en blocs.
+jukebox:
+  # Cote du jukebox (1.0 = un bloc entier).
+  taille: 0.55
+  # Hauteur au-dessus du fond du bateau.
+  hauteur: 0.0
+  # Centre du jukebox par rapport au centre du bateau (negatif = vers l'arriere).
+  position: -0.4

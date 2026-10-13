@@ -255,3 +255,22 @@ outils ; le cuivre et la cotte de mailles sont compris.
 Empilé sur la 1.11.0, jamais testée en jeu, à la demande de LeKiwi06.
 
 **Déployé sur Kixster le 11/10/2026 à 07:45 (LeKiwi06, envoi groupé : KS_Teleport 1.1.0, KS_Decapitator 1.2.0, KS_RewardsGUI 1.5.0, KS_Economy 1.6.0, KS_Crafts 1.12.0, KS_Jetons 2.0.2, KS_Meule 1.0.0 ; accord de LeKiwi06 : « oui déploie tout sur kixster » ; 1.11.0 dans `_removed-ks_crafts-1.11.0/` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.11.0). Statut : non testé en jeu.**
+
+## 1.13.0 - recette du bateau à jukebox (13/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « j'aimerai créer un plugin de bateau avec jukebox » ; obtention choisie par lui : « Craft
+bateau + jukebox ». L'objet et son fonctionnement sont dans KS_JukeboxBoat 1.0.0 ; seule la recette est ici, comme
+pour les autres objets.
+
+- **1 bateau ou 1 radeau de bambou (sans coffre, n'importe quel bois) + 1 jukebox**, sans forme → **1 bateau à
+  jukebox** du même bois. Une recette par bois (`bateau_jukebox_<bois>`), lue dans la liste des bateaux du jeu : un
+  bois ajouté par une version future suivra.
+- Livre de recettes : comme les autres, débloquée dès qu'on obtient un de ses ingrédients (le bateau de ce bois, ou
+  un jukebox pour toutes).
+- Sans KS_JukeboxBoat : avertissement dans la console, recette ignorée (`softdepend`).
+
+**À déployer avec KS_JukeboxBoat 1.0.0** (et après lui : sans ce plugin, la recette n'existe pas).
+
+Empilé sur la 1.12.0, jamais testée en jeu : la recette est nécessaire au bateau à jukebox.
+
+Compilé le 13/10/2026 (`sortie/KS_Crafts-1.13.0.jar`). **Statut : non déployé, non testé en jeu.**

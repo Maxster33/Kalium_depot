@@ -27,6 +27,7 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 | `KS_Dimensions/` | Menu des opérateurs (`/dimensions`) pour activer / désactiver les portails du Nether et de l'End | event |
 | `KS_Enclume/` | Enclume sans plafond de prix (coût vanilla) | event |
 | `KS_Meule/` | Meule : retirer les malédictions d'un objet contre des niveaux (accroupi, clic droit, main vide, objet choisi dans l'inventaire) | kixster, event |
+| `KS_JukeboxBoat/` | Bateau à jukebox : joue les disques de l'inventaire, la musique suit le bateau (recette dans KS_Crafts, dépend de KLM_Menu) | compilé, non déployé (kixster, event) |
 | `KS_Villageois/` | Villageois et marchands ambulants sans échanges (sauf étiquette `ks_pnj`) | event |
 | `KS_Crafts/` | Crafts du serveur Event (sable rouge, blocs bruts, calcite, froglights, recette du Bedrock Breaker, Clé de l'End, bloc de verrue...) | event |
 | `KS_BedrockBreaker/` | Bedrock Breaker : objet à usage unique qui retire un bloc de bedrock (protections WorldGuard respectées) | event |

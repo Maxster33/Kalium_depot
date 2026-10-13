@@ -1,0 +1,7 @@
+name: KS_JukeboxBoat
+version: '${project.version}'
+main: fr.kalium.jukeboxboat.KSJukeboxBoat
+api-version: '26.2'
+description: Bateau a jukebox - joue les disques de l'inventaire, la musique suit le bateau.
+authors: [KaLium]
+depend: [KLM_Menu]
