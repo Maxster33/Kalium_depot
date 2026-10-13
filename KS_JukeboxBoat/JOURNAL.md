@@ -175,3 +175,23 @@ deux bateaux ».
 Compilé le 13/10/2026 (`sortie/KS_JukeboxBoat-1.1.1.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 13/10/2026 à 10:34 (LeKiwi06 : « Les deux bateaux », envoi annoncé avec KS_Crafts 1.14.1 ; 1.1.0 et son `config.yml` dans `_removed-ks_jukeboxboat-1.1.0/` ; `config.yml` du serveur, identique à celui de la 1.1.0, remplacé par celui de la 1.1.1 ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage d'Event. Kixster n'est pas touché. Statut : non testé en jeu.**
+
+## 1.1.2 - jukebox de la taille exacte du coffre (13/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « si tu connais la taille du coffre, est-ce que tu peux faire en sorte que le jukebox fasse pile
+la même taille ? ».
+
+Mesures lues dans le modèle du jeu 26.3 (`BoatModel.createChestBoatModel`, rendu sans mise à l'échelle : 1 pixel =
+1/16 de bloc) : le coffre est un cube de **12 pixels = 0,75 bloc** (fond de 8 pixels + couvercle de 4), posé sur le
+fond du bateau, centré en largeur, de 0,125 à 0,875 bloc derrière le centre du bateau ; sa serrure dépasse d'un pixel
+vers l'avant.
+
+- `jukebox.taille` : 0.72 → **0.75**, pour les deux bateaux (choix « Les deux bateaux » de la 1.1.1). Hauteur
+  inchangée : le jukebox repose déjà sur le fond du bateau, comme le coffre.
+- Techniquement nécessaire, signalé : positions refaites sur ces mesures (celles de la 1.1.1 partaient d'un coffre
+  mal situé). Bateau à coffre : `jukebox.position-coffre` 0.49 → **0.3125**, le jukebox touche la serrure du coffre
+  sans y entrer. Bateau simple : `jukebox.position` -0.36 → **-0.5**, la place exacte du coffre d'un bateau à coffre.
+- Radeau de bambou : son modèle est différent (`RaftModel`), les mêmes valeurs s'y appliquent sans avoir été
+  recalculées.
+
+Compilé le 13/10/2026 (`sortie/KS_JukeboxBoat-1.1.2.jar`). **Statut : non déployé, non testé en jeu.**

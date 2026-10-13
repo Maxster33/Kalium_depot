@@ -83,6 +83,12 @@ import java.util.UUID;
  * petit par rapport au coffre », sur les deux bateaux) : jukebox de 0,72 bloc au lieu de 0,55, replacé pour ne pas
  * entrer dans le coffre ni dépasser de la poupe (valeurs par défaut de regler() et du config.yml).
  *
+ * 1.1.2 (LeKiwi06 : « si tu connais la taille du coffre, est-ce que tu peux faire en sorte que le jukebox fasse pile
+ * la même taille ? ») : le coffre d'un bateau à coffre est un cube de 12 pixels, soit 0,75 bloc, posé sur le fond du
+ * bateau, de 0,125 à 0,875 bloc derrière le centre, serrure d'un pixel vers l'avant (modèle du jeu 26.3, BoatModel).
+ * Le jukebox fait 0,75 bloc ; bateau à coffre : contre la serrure du coffre ; bateau simple : à la place exacte
+ * qu'aurait le coffre.
+ *
  * Autres plugins : creerBateau() (KS_Crafts), estBateau().
  */
 public final class KSJukeboxBoat extends JavaPlugin implements Listener {
@@ -302,11 +308,11 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
         if (jukebox == null) {
             return;
         }
-        float taille = (float) getConfig().getDouble("jukebox.taille", 0.72);
+        float taille = (float) getConfig().getDouble("jukebox.taille", 0.75);
         float hauteur = (float) getConfig().getDouble("jukebox.hauteur", 0.0);
         boolean coffre = bateau instanceof ChestBoat;
-        float position = (float) (coffre ? getConfig().getDouble("jukebox.position-coffre", 0.49)
-                : getConfig().getDouble("jukebox.position", -0.36));
+        float position = (float) (coffre ? getConfig().getDouble("jukebox.position-coffre", 0.3125)
+                : getConfig().getDouble("jukebox.position", -0.5));
         float place = coffre ? PLACE_COFFRE : passagers > 1 ? PLACE_ARRIERE : 0f;
         jukebox.setTransformation(new Transformation(
                 new Vector3f(-taille / 2, hauteur, position - place - taille / 2), new Quaternionf(),

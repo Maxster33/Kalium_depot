@@ -96,6 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_JukeboxBoat 1.1.2** (LeKiwi06, 13/10/2026) : jukebox de la taille exacte du coffre (0,75 bloc), replacé d'après le modèle du jeu ; compilée, non déployée (Event est en 1.1.1).
 - **KS_JukeboxBoat 1.1.1 + KS_Crafts 1.14.1** (LeKiwi06, 13/10/2026) : déployés sur Event le 13/10 à 10:34 ; **pas encore sur Kixster** (qui n'a aucune version du bateau à jukebox ; après les tests de LeKiwi06 sur Event ; à déployer ensemble). Détail : `KS_JukeboxBoat/JOURNAL.md`.
 
 
@@ -442,6 +443,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (13/10/2026, 10:50) : KS_JukeboxBoat 1.1.2 compilée, non déployée, non testée : jukebox de la taille exacte du coffre.** Demande de LeKiwi06 : « si tu connais la taille du coffre, est-ce que tu peux faire en sorte que le jukebox fasse pile la même taille ? ». Le coffre d'un bateau à coffre mesure 0,75 bloc de côté (modèle du jeu 26.3 lu sur le PC) : `jukebox.taille` 0.75, positions refaites (bateau à coffre : contre la serrure du coffre ; bateau simple : à la place qu'aurait le coffre). Réservation gardée jusqu'au déploiement.
 
 **Ajout (13/10/2026, 10:34) : KS_JukeboxBoat 1.1.1 et KS_Crafts 1.14.1 déployés sur Event ; non testés, actifs après redémarrage ; réservations libérées.** LeKiwi06 : « oui déploie la 1.14.1 sur event, j'ai testé c'est juste un bug visuel coté client les laisses. il faudrait que le jukebox soit a peut près 30% plus gros dans le bateau, je le trouve trop petit par rapport au coffre » ; à la question « sur quel bateau ? » (envoi annoncé avec la 1.14.1) : « Les deux bateaux ». KS_JukeboxBoat 1.1.1 : jukebox de 0,72 bloc au lieu de 0,55, replacé en conséquence (valeurs calculées, non vues en jeu). Avant l'envoi : les deux jars en place identiques aux références, `config.yml` du plugin identique à celui de la 1.1.0. Laisses figées : sans suite, défaut d'affichage du client (constat de LeKiwi06).
 
