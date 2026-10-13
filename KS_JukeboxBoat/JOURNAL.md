@@ -148,3 +148,7 @@ invulnérable ».
 
 **À déployer avec KS_Crafts 1.14.0.** Compilé le 13/10/2026 (`sortie/KS_JukeboxBoat-1.1.0.jar`).
 **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 13/10/2026 à 08:21 (LeKiwi06 : « déployer le nouveau jar » ; envoyé avec KS_Crafts 1.14.0 ; 1.0.0 et son `config.yml` dans `_removed-ks_jukeboxboat-1.0.0/` ; le `config.yml` du serveur, identique à celui de la 1.0.0, est remplacé par celui de la 1.1.0 : la clé `jukebox.position-coffre` y est donc ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage d'Event. Kixster n'est pas touché. Statut : non testé en jeu.**
+
+Essai de LeKiwi06 (13/10/2026) avec un bateau vanilla accroché à un Happy Ghast : « le bateau normal m'ejecte aussi, mais les laisses n'ont pas buggué ». La descente vient donc de GrimAC, pas du plugin. Les laisses figées de sa capture ne se sont pas reproduites : pas d'enquête tant que cela ne revient pas (sa décision).

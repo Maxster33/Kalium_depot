@@ -295,3 +295,5 @@ Empilé sur la 1.13.0, dont la recette n'a pas été confirmée en jeu en toutes
 jukebox le 13/10/2026 : « ça fonctionne bien »), à sa demande.
 
 Compilé le 13/10/2026 (`sortie/KS_Crafts-1.14.0.jar`). **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 13/10/2026 à 08:21 (LeKiwi06 : « déployer le nouveau jar » ; envoyé avec KS_JukeboxBoat 1.1.0 ; 1.13.0 dans `_removed-ks_crafts-1.13.0/` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage d'Event. Kixster n'est pas touché. Statut : non testé en jeu.**
