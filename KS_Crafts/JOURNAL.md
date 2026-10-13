@@ -314,3 +314,5 @@ seconde : même ingrédients, même résultat, mais deux lignes dans le livre de
   coffre (jukebox perdu). Depuis KS_JukeboxBoat 1.1.0, un tel objet posé devient bien un bateau à coffre et jukebox.
 
 Compilé le 13/10/2026 (`sortie/KS_Crafts-1.14.1.jar`). **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 13/10/2026 à 10:34 (LeKiwi06 : « oui déploie la 1.14.1 sur event » ; 1.14.0 dans `_removed-ks_crafts-1.14.0/` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage d'Event. Kixster n'est pas touché. Statut : non testé en jeu.**

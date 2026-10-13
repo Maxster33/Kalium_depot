@@ -54,15 +54,16 @@ d'un bateau ; le disque reste dans le bateau à la fin du morceau ; réglages d'
 
 ## Reste à faire
 
-- Déployer KS_Crafts 1.14.1 (recette du bateau à coffre et jukebox en double dans le livre de recettes, défaut trouvé
-  dans le journal d'Event après le redémarrage de 10:07), avec l'accord de LeKiwi06.
+- Fait le 13/10 à 10:34 : KS_Crafts 1.14.1 (recette en double corrigée) et KS_JukeboxBoat 1.1.1 (jukebox 30 % plus
+  gros sur les deux bateaux, demande de LeKiwi06) sur Event. Reste : redémarrer, regarder la taille et la place du
+  jukebox sur les deux bateaux.
 - Fait le 13/10 à 08:21 sur « tu peux configurer grimAC, et déployer le nouveau jar » : KS_JukeboxBoat 1.1.0 et
   KS_Crafts 1.14.0 sur Event. Reste : redémarrer Event, tester, puis Kixster.
 - GrimAC : fait le 13/10 à 08:25 sur Event, réglage global choisi par LeKiwi06 (plutôt qu'une exemption ciblée dans
   KS_AntiCheat, recommandée par Claude) : `Simulation.immediate-setback-threshold` et `Simulation.max-advantage` à -1.
   GrimAC d'Event ne corrige plus la vitesse ni le vol anormaux, il les signale seulement. À tester : monter dans un
   bateau tiré par un Happy Ghast. Kixster : GrimAC inchangé, à décider.
-- Laisses figées de la capture : non reproduites avec le bateau vanilla, pas d'enquête tant que cela ne revient pas.
+- Laisses figées de la capture : LeKiwi06 a refait l'essai, « c'est juste un bug visuel coté client ». Sans suite.
 - Essai Bedrock du porte-armure invisible coiffé d'un jukebox (LeKiwi06) ; s'il se voit, remplacer le modèle 3D.
 - Tests du bateau à coffre : recette, jukebox bien placé devant le coffre, personne ne monte, lecture / pause,
   enchaînement et boucle des disques, disque retiré en cours, laisse (tenir, accrocher à son bateau, reprendre),

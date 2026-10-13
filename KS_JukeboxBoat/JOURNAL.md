@@ -173,3 +173,5 @@ deux bateaux ».
   `config.yml`, il faut aussi le remplacer.
 
 Compilé le 13/10/2026 (`sortie/KS_JukeboxBoat-1.1.1.jar`). **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 13/10/2026 à 10:34 (LeKiwi06 : « Les deux bateaux », envoi annoncé avec KS_Crafts 1.14.1 ; 1.1.0 et son `config.yml` dans `_removed-ks_jukeboxboat-1.1.0/` ; `config.yml` du serveur, identique à celui de la 1.1.0, remplacé par celui de la 1.1.1 ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage d'Event. Kixster n'est pas touché. Statut : non testé en jeu.**
