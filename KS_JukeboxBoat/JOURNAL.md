@@ -154,3 +154,22 @@ invulnérable ».
 Essai de LeKiwi06 (13/10/2026) avec un bateau vanilla accroché à un Happy Ghast : « le bateau normal m'ejecte aussi, mais les laisses n'ont pas buggué ». La descente vient donc de GrimAC, pas du plugin. Les laisses figées de sa capture ne se sont pas reproduites : pas d'enquête tant que cela ne revient pas (sa décision).
 
 Actif depuis le redémarrage d'Event du 13/10/2026 (journal lu : 1.1.0 chargée et activée sans erreur ; `lang.yml` complété). Statut : non testé en jeu.
+
+Laisses figées de la capture du 13/10 : LeKiwi06 a refait l'essai, « c'est juste un bug visuel coté client les
+laisses ». Rien à corriger dans le plugin.
+
+## 1.1.1 - jukebox 30 % plus gros (13/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 après son essai du bateau à coffre et jukebox : « il faudrait que le jukebox soit a peut près 30%
+plus gros dans le bateau, je le trouve trop petit par rapport au coffre ». À la question « sur quel bateau ? » : « Les
+deux bateaux ».
+
+- `jukebox.taille` : 0.55 → **0.72** (0,55 x 1,3 = 0,715), pour les deux bateaux.
+- Techniquement nécessaire, signalé : le jukebox est replacé pour sa nouvelle taille. Bateau à coffre :
+  `jukebox.position-coffre` 0.4 → 0.49 (il ne rentre pas dans le coffre). Bateau simple : `jukebox.position`
+  -0.4 → -0.36 (il dépasse à peine de la poupe et reste derrière le dos du conducteur). Valeurs calculées sur les
+  dimensions du modèle du jeu, non vues en jeu.
+- Seules ces trois valeurs par défaut changent (code et `config.yml` fourni). Sur un serveur qui a déjà son
+  `config.yml`, il faut aussi le remplacer.
+
+Compilé le 13/10/2026 (`sortie/KS_JukeboxBoat-1.1.1.jar`). **Statut : non déployé, non testé en jeu.**

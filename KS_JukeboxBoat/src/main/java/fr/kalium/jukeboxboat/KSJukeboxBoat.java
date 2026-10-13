@@ -79,6 +79,10 @@ import java.util.UUID;
  * ou disparaît s'il n'a plus de bateau (onEjecter). Le jukebox ne quitte plus le bateau quand un joueur monte : le
  * jeu place de lui-même le joueur en premier passager (lu dans le code du jeu 26.3, Entity.addPassenger).
  *
+ * 1.1.1 (LeKiwi06 : « il faudrait que le jukebox soit à peu près 30% plus gros dans le bateau, je le trouve trop
+ * petit par rapport au coffre », sur les deux bateaux) : jukebox de 0,72 bloc au lieu de 0,55, replacé pour ne pas
+ * entrer dans le coffre ni dépasser de la poupe (valeurs par défaut de regler() et du config.yml).
+ *
  * Autres plugins : creerBateau() (KS_Crafts), estBateau().
  */
 public final class KSJukeboxBoat extends JavaPlugin implements Listener {
@@ -298,11 +302,11 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
         if (jukebox == null) {
             return;
         }
-        float taille = (float) getConfig().getDouble("jukebox.taille", 0.55);
+        float taille = (float) getConfig().getDouble("jukebox.taille", 0.72);
         float hauteur = (float) getConfig().getDouble("jukebox.hauteur", 0.0);
         boolean coffre = bateau instanceof ChestBoat;
-        float position = (float) (coffre ? getConfig().getDouble("jukebox.position-coffre", 0.4)
-                : getConfig().getDouble("jukebox.position", -0.4));
+        float position = (float) (coffre ? getConfig().getDouble("jukebox.position-coffre", 0.49)
+                : getConfig().getDouble("jukebox.position", -0.36));
         float place = coffre ? PLACE_COFFRE : passagers > 1 ? PLACE_ARRIERE : 0f;
         jukebox.setTransformation(new Transformation(
                 new Vector3f(-taille / 2, hauteur, position - place - taille / 2), new Quaternionf(),

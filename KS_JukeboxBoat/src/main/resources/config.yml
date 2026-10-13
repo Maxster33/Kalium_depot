@@ -6,10 +6,10 @@ volume: 4.0
 # Jukebox affiche a l'arriere du bateau (joueurs Java seulement), en blocs.
 jukebox:
   # Cote du jukebox (1.0 = un bloc entier).
-  taille: 0.55
+  taille: 0.72
   # Hauteur au-dessus du fond du bateau.
   hauteur: 0.0
   # Centre du jukebox par rapport au centre du bateau (negatif = vers l'arriere).
-  position: -0.4
+  position: -0.36
   # Meme reglage pour le bateau a coffre et jukebox (le jukebox est devant le coffre).
-  position-coffre: 0.4
+  position-coffre: 0.49
