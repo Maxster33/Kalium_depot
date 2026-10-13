@@ -297,3 +297,20 @@ jukebox le 13/10/2026 : « ça fonctionne bien »), à sa demande.
 Compilé le 13/10/2026 (`sortie/KS_Crafts-1.14.0.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 13/10/2026 à 08:21 (LeKiwi06 : « déployer le nouveau jar » ; envoyé avec KS_JukeboxBoat 1.1.0 ; 1.13.0 dans `_removed-ks_crafts-1.13.0/` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage d'Event. Kixster n'est pas touché. Statut : non testé en jeu.**
+
+Actif depuis le redémarrage d'Event du 13/10/2026 (journal lu : activé sans erreur, « 89 crafts ajoutés »). Statut : non testé en jeu.
+
+## 1.14.1 - recette du bateau à coffre et jukebox en double (13/10/2026, LeKiwi06)
+
+Défaut trouvé par Claude en lisant le journal d'Event après le déploiement de la 1.14.0 (« 89 crafts ajoutés », 11 de
+plus que prévu) : la liste des bateaux du jeu (`#minecraft:boats`) contient aussi les bateaux à coffre. La boucle de
+la 1.13.0 enregistrait donc déjà une recette « bateau à coffre + jukebox » par bois, et la 1.14.0 en a ajouté une
+seconde : même ingrédients, même résultat, mais deux lignes dans le livre de recettes.
+
+- La première boucle saute les bateaux à coffre : une seule recette par bois pour chacun des deux bateaux (11 bois :
+  22 recettes au lieu de 33 ; « 78 crafts ajoutés » attendu dans la console).
+- **Défaut de la 1.13.0, à savoir** : du 13/10 à 07:44 au redémarrage suivant d'Event (KS_JukeboxBoat 1.0.0), un
+  bateau à coffre + un jukebox donnait un bateau à coffre nommé « Bateau à jukebox » qui, posé, n'était qu'un bateau à
+  coffre (jukebox perdu). Depuis KS_JukeboxBoat 1.1.0, un tel objet posé devient bien un bateau à coffre et jukebox.
+
+Compilé le 13/10/2026 (`sortie/KS_Crafts-1.14.1.jar`). **Statut : non déployé, non testé en jeu.**

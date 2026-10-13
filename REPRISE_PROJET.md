@@ -96,6 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Crafts 1.14.1** (LeKiwi06, 13/10/2026) : la recette du bateau à coffre et jukebox n'est plus en double dans le livre de recettes ; compilée, non déployée (Event est en 1.14.0).
 - **KS_JukeboxBoat 1.1.0 + KS_Crafts 1.14.0** (LeKiwi06, 13/10/2026) : déployés sur Event le 13/10 à 08:21 ; **pas encore sur Kixster** (qui n'a aucune version du bateau à jukebox ; après les tests de LeKiwi06 sur Event ; à déployer ensemble). Détail : `KS_JukeboxBoat/JOURNAL.md`.
 
 
@@ -442,6 +443,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (13/10/2026, 10:15) : journal d'Event lu après redémarrage ; KS_Crafts 1.14.1 compilée, non déployée.** Dernier démarrage d'Event le 13/10 à 10:07 (08:07 UTC dans son journal) : KS_JukeboxBoat 1.1.0 et KS_Crafts 1.14.0 chargés et activés sans erreur, GrimAC activé sans erreur avec son nouveau `config.yml`, 49 plugins, démarrage en 12 s, aucune exception. Défaut trouvé par Claude : « 89 crafts ajoutés » au lieu de 88, car la liste des bateaux du jeu contient aussi les bateaux à coffre (et la 26.3 a un 11e bois) : la recette du bateau à coffre et jukebox est en double dans le livre de recettes (sans autre effet). Corrigé dans KS_Crafts 1.14.1 (compilée, non déployée). Détail : `KS_Crafts/JOURNAL.md`.
 
 **Ajout (13/10/2026, 08:30) : GrimAC d'Event ne renvoie plus les joueurs pour un déplacement anormal (réglage global choisi par LeKiwi06) ; réservations libérées.** But : pouvoir monter dans un bateau tiré par un Happy Ghast. Constat (jar de GrimAC 2.3.74-abb95b6 lu hors dépôt) : à chaque renvoi d'un joueur assis dans un véhicule, GrimAC envoie au client une fausse position du véhicule et éjecte tous ses passagers ; son `config.yml` n'a aucun réglage propre aux véhicules ou aux laisses. Trois voies proposées à LeKiwi06 : exemption ciblée dans KS_AntiCheat (permission `grim.nosetback` donnée pendant qu'un joueur est dans un bateau tenu en laisse, recommandée), réglage global, ne rien changer. **Son choix : « Réglage global ».** Fait à 08:25 sur Event : dans le bloc `Simulation` du `config.yml` de GrimAC, `immediate-setback-threshold: -1` et `max-advantage: -1` (lu dans le code : -1 = jamais de renvoi par cette vérification). **Conséquence : sur Event, la vitesse et le vol anormaux ne sont plus corrigés par GrimAC pour aucun joueur ; ils restent signalés** (KS_AntiCheat : alerte légère à 10 signalements « Simulation » d'écart 0,05 ou plus en 10 minutes ; pas de suspension automatique, « Simulation » n'est pas dans `grimac.lourdes`). Les autres vérifications de GrimAC (Reach, Timer, Phase...) sont inchangées. Un joueur dans un bateau tiré par un Happy Ghast déclenchera donc des alertes légères. Actif après redémarrage d'Event ou `/grim reload`. Non testé. Kixster : GrimAC inchangé (à décider au moment d'y déployer le bateau à jukebox ; l'exemption ciblée reste possible).
 

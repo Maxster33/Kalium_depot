@@ -54,6 +54,8 @@ d'un bateau ; le disque reste dans le bateau à la fin du morceau ; réglages d'
 
 ## Reste à faire
 
+- Déployer KS_Crafts 1.14.1 (recette du bateau à coffre et jukebox en double dans le livre de recettes, défaut trouvé
+  dans le journal d'Event après le redémarrage de 10:07), avec l'accord de LeKiwi06.
 - Fait le 13/10 à 08:21 sur « tu peux configurer grimAC, et déployer le nouveau jar » : KS_JukeboxBoat 1.1.0 et
   KS_Crafts 1.14.0 sur Event. Reste : redémarrer Event, tester, puis Kixster.
 - GrimAC : fait le 13/10 à 08:25 sur Event, réglage global choisi par LeKiwi06 (plutôt qu'une exemption ciblée dans

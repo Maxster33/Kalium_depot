@@ -39,6 +39,7 @@ import java.util.Map;
  * 1.12.0 (LeKiwi06) : une pièce d'armure fondue au four donne un lingot, plus une pépite (voir fonteDesArmures).
  * 1.13.0 (LeKiwi06) : recette du bateau à jukebox de KS_JukeboxBoat (voir onEnable).
  * 1.14.0 (LeKiwi06) : recette du bateau à coffre et jukebox de KS_JukeboxBoat 1.1.0 (voir onEnable).
+ * 1.14.1 : cette recette n'est plus en double (la liste des bateaux du jeu contient aussi les bateaux à coffre).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -167,6 +168,10 @@ public final class KSCrafts extends JavaPlugin implements Listener {
         // n'importe quel bois, + un jukebox ; le bateau à jukebox est du même bois.
         if (actif("KS_JukeboxBoat")) {
             for (Material bateau : org.bukkit.Tag.ITEMS_BOATS.getValues()) {
+                // 1.14.1 : la liste des bateaux du jeu contient aussi les bateaux à coffre (recette plus bas).
+                if (org.bukkit.Tag.ITEMS_CHEST_BOATS.isTagged(bateau)) {
+                    continue;
+                }
                 shapeless("bateau_jukebox_" + bateau.getKey().getKey(),
                         fr.kalium.jukeboxboat.KSJukeboxBoat.creerBateau(bateau),
                         List.of(new RecipeChoice.MaterialChoice(bateau), new RecipeChoice.MaterialChoice(Material.JUKEBOX)));
