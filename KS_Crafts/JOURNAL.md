@@ -316,3 +316,5 @@ seconde : même ingrédients, même résultat, mais deux lignes dans le livre de
 Compilé le 13/10/2026 (`sortie/KS_Crafts-1.14.1.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 13/10/2026 à 10:34 (LeKiwi06 : « oui déploie la 1.14.1 sur event » ; 1.14.0 dans `_removed-ks_crafts-1.14.0/` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage d'Event. Kixster n'est pas touché. Statut : non testé en jeu.**
+
+Actif depuis le redémarrage d'Event du 13/10/2026 à 10:46 (journal lu : 1.14.1 activée sans erreur, « 78 crafts ajoutés » comme attendu, contre 89 en 1.14.0). Statut : non testé en jeu.

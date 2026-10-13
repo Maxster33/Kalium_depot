@@ -55,7 +55,8 @@ d'un bateau ; le disque reste dans le bateau à la fin du morceau ; réglages d'
 ## Reste à faire
 
 - KS_JukeboxBoat 1.1.2 (jukebox de la taille exacte du coffre, 0,75 bloc, demande de LeKiwi06) : déployée sur Event le
-  13/10 à 10:39. Reste : redémarrer Event, regarder en jeu les deux bateaux et le radeau de bambou.
+  13/10 à 10:39 ; active depuis le redémarrage de 10:46 (journal lu, aucune erreur, 78 crafts). Reste : regarder en jeu
+  les deux bateaux et le radeau de bambou.
 - Fait le 13/10 à 10:34 : KS_Crafts 1.14.1 (recette en double corrigée) et KS_JukeboxBoat 1.1.1 (jukebox 30 % plus
   gros sur les deux bateaux, demande de LeKiwi06) sur Event. Reste : redémarrer, regarder la taille et la place du
   jukebox sur les deux bateaux.

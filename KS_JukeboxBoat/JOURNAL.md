@@ -197,3 +197,5 @@ vers l'avant.
 Compilé le 13/10/2026 (`sortie/KS_JukeboxBoat-1.1.2.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 13/10/2026 à 10:39 (LeKiwi06 : « oui déploie la 1.1.2 sur event » ; 1.1.1 et son `config.yml` dans `_removed-ks_jukeboxboat-1.1.1/` ; `config.yml` du serveur, identique à celui de la 1.1.1, remplacé par celui de la 1.1.2 ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage d'Event. Kixster n'est pas touché. Statut : non testé en jeu.**
+
+Actif depuis le redémarrage d'Event du 13/10/2026 à 10:46 (journal lu : 1.1.2 chargée et activée sans erreur). Statut : non testé en jeu.
