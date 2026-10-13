@@ -71,6 +71,10 @@ journaux du serveur, `recuperations.log`, `coffres.yml` de KS_RewardsGUI et la s
 
 LeKiwi06 : « fais en sorte que le quota débute à 2500 gagné, pas 25000, et que le quota par item soit de 0,5 % de notre monnaie gagnée, et 0,75 % avec le solde masqué ». Valeurs par défaut changées dans le code et le `config.yml` du jar. Puis : « oui il faut mettre un compteur d'argent gagné, sinon les joueurs vont juste retirer les émeraudes en items pour outrepasser le quota » : compteur `gagne` par compte, qui ne baisse jamais ; choix de LeKiwi06 : seules les ventes au serveur comptent, départ au solde actuel. Le quota porte sur ce compteur ; compilé, non déployé.
 
+## Journaux de Kixster en 1.8.2 (13/10/2026, 05:32)
+
+**Journaux de Kixster lus le 13/10/2026 à 05:32 (demande de LeKiwi06)** : KS_Economy 1.8.2 y est active depuis le redémarrage du 12/10 à 05:15 (4 démarrages depuis, le dernier le 13/10 à 05:32), « Barème : 1929 objets (0 inconnus de cette version) », aucune erreur. `comptes.yml` : les 8 comptes portent la ligne `gagne`. Compteur vérifié sur les ventes du journal : une vente de 312 points aux rachats de la semaine (12/10, 13:40) a monté le solde et le compteur du vendeur de 745 à 1 057 ; des ventes au marchand ambulant (13/10, 03:29) sont comptées aussi ; un compte dont le solde a monté sans vente a un compteur resté plus bas (421 pour 455). Personne ne dépasse 2 500 gagnés : le quota lui-même n'a encore servi à personne. Statut : vérifié dans la console et les fichiers, non testé en jeu. Event : à lire après son redémarrage.
+
 ## Reste à faire
 
 - KS_Economy 1.8.2 déployée sur Kixster et Event le 12/10/2026 à 05:13 (« oui déploie tout ») : active après redémarrage de chaque serveur ; vérifier dans `comptes.yml` la ligne `gagne` de chaque compte et le texte du quota dans `/rachat`.
