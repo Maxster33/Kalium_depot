@@ -2,7 +2,7 @@
 
 - Plugin(s) concerné(s) : KS_Economy, KS_Teleport, KS_Claim
 - Versions avant / après : KS_Economy 1.8.2 / 1.9.0 ; KS_Teleport 1.2.0 / 1.3.0 ; KS_Claim 1.3.0 / 1.4.0. Les trois
-  compilées, non déployées, non testées en jeu.
+  compilées ; déployées sur Kixster le 13/10/2026 à 16:30 (Event inchangé) ; non testées en jeu.
 
 ## Demandé
 
@@ -29,6 +29,10 @@ boussole et met notre point de /spawn au-dessus de la lodestone ».
   modifier à la main) ; Kixster : aucun magasin, une maison (Maaxster), aucun claim payé ; Event : un magasin sans
   agrandissement, aucune maison.
 
+- Sur « Kixster seulement » (LeKiwi06) : les trois jars envoyés sur Kixster à 16:30 (jars en place vérifiés identiques aux
+  références avant, jars envoyés vérifiés après ; anciens jars dans `_removed-…`). Actifs après redémarrage.
+  Réservations libérées.
+
 ## Décisions
 
 Choix de LeKiwi06 (réponses aux questions) :
@@ -51,7 +55,7 @@ Choix de Claude, signalés :
 
 ## Reste à faire
 
-- Déployer (accord de LeKiwi06 à demander, serveurs à choisir : Kixster, Event) : KS_Teleport 1.3.0 et KS_Claim 1.4.0
-  ensemble, KS_Economy 1.9.0.
+- Redémarrer Kixster (par l'humain) pour activer les trois plugins.
+- Event : resté aux anciennes versions, à décider par LeKiwi06 (KS_Teleport 1.3.0 et KS_Claim 1.4.0 ensemble).
 - Tester en jeu : `/magasin create` à 450, les trois agrandissements, `/setspawn` (Java et Bedrock), magnétite
   incassable, claim gratuit rendu dans `/ksclaims`.

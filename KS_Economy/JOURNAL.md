@@ -700,4 +700,4 @@ magasin tier 4 avec 20 slots de boutique ; on ne peut créer qu'une boutique par
 - Un magasin qui aurait plus de 3 agrandissements (ancienne règle, aucun cas sur les serveurs) est compté au tier 4.
 - Écrit sans serveur de test. Empilé sur la 1.8.2, non testée en jeu (demande de LeKiwi06).
 
-**Compilé le 13/10/2026, non déployé, non testé en jeu.**
+**Déployé sur Kixster le 13/10/2026 à 16:30 (LeKiwi06, envoi groupé : KS_Economy 1.9.0, KS_Teleport 1.3.0, KS_Claim 1.4.0 ; accord de LeKiwi06 : « Kixster seulement » ; jars en place vérifiés identiques à `jars-deployes/` avant l'envoi, jars envoyés vérifiés identiques à ceux compilés après l'envoi ; 1.8.2 dans `_removed-ks_economy-1.8.2/` ; supprimables par l'humain : `_removed-ks_economy-1.3.0/`, `1.4.0/`, `1.4.1/`, `1.5.0/`, `1.5.2/`, `1.6.0/`, `1.7.0/`, `1.8.0/`, 8 dossiers ; `config.yml` du serveur non modifié (pas de section `magasins`)), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.8.2). Statut : non testé en jeu.**

@@ -146,4 +146,4 @@ pour 500 points » à 15:48:02, sans erreur ; puis `/magasin create` (aucun maga
 À déployer ensemble : KS_Teleport 1.3.0 et KS_Claim 1.4.0 (KS_Claim 1.4.0 appelle une méthode absente de KS_Teleport
 1.2.0 : erreur à l'ouverture du menu des claims).
 
-**Compilé le 13/10/2026, non déployé, non testé en jeu.**
+**Déployé sur Kixster le 13/10/2026 à 16:30 (LeKiwi06, envoi groupé : KS_Economy 1.9.0, KS_Teleport 1.3.0, KS_Claim 1.4.0 ; accord de LeKiwi06 : « Kixster seulement » ; jars en place vérifiés identiques à `jars-deployes/` avant l'envoi, jars envoyés vérifiés identiques à ceux compilés après l'envoi ; 1.2.0 dans `_removed-ks_teleport-1.2.0/` ; supprimables par l'humain : `_removed-ks_teleport-1.0.0/`, `1.0.1/` ; `config.yml` du serveur non modifié), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.2.0). Statut : non testé en jeu.**

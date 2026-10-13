@@ -18,13 +18,10 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
-- KS_Teleport — LeKiwi06 — depuis le 2026-10-13 16:07 — /setspawn (boussole liée à une magnétite) à la place de /maison position ; le claim de la maison ne compte plus
 
 
 ## Requis parfois
 
-- KS_Economy — LeKiwi06 — depuis le 2026-10-13 16:07 — magasin : création à 450 points, 3 agrandissements (+2, +3, +5 boutiques), nouveau prix
-- KS_Claim — LeKiwi06 — depuis le 2026-10-13 16:07 — le claim de la maison du spawn ne compte plus dans les claims du joueur
 
 
 
