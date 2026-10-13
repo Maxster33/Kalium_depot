@@ -137,3 +137,5 @@ Exige KS_JukeboxBoat 1.1.0 ou plus (les bateaux à coffre).
 Compilé le 13/10/2026 (`sortie/KS_KaliumGive-1.11.0.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Kixster le 13/10/2026 à 14:07 (LeKiwi06 : « tu peux déployer sur kixster » ; envoi groupé avec KS_JukeboxBoat 1.1.2 et KS_Crafts 1.14.1 ; 1.10.0 dans `_removed-ks_kaliumgive-1.10.0/` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.10.0). Statut : non testé en jeu.**
+
+Actif sur Kixster depuis son redémarrage du 13/10/2026 à 14:11 (journal lu : 1.11.0 chargée et activée sans erreur). Statut : non testé en jeu sur Kixster.

@@ -54,6 +54,9 @@ d'un bateau ; le disque reste dans le bateau à la fin du morceau ; réglages d'
 
 ## Reste à faire
 
+- Kixster redémarré à 14:11, journal lu : les trois plugins actifs sans erreur. Erreur de WorldGuard 7.0.19 à chaque
+  pose d'un bateau en peuplier (bois de la 26.3 qu'il ne connaît pas) : signalée, non corrigée, à voir avec une
+  version de WorldGuard pour la 26.3.
 - Fait le 13/10 à 14:07 sur « tu peux déployer sur kixster » : KS_JukeboxBoat 1.1.2, KS_Crafts 1.14.1 et
   KS_KaliumGive 1.11.0 sur Kixster. Reste : redémarrer Kixster, lire son journal ; KS_KaliumGive d'Event encore en
   1.10.0 ; GrimAC de Kixster inchangé (éjection d'un bateau tiré par un Happy Ghast).

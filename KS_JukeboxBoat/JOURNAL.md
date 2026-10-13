@@ -203,3 +203,7 @@ Actif depuis le redémarrage d'Event du 13/10/2026 à 10:46 (journal lu : 1.1.2 
 **Déployé sur Kixster le 13/10/2026 à 14:07 (LeKiwi06 : « tu peux déployer sur kixster » ; envoi groupé avec KS_Crafts 1.14.1 et KS_KaliumGive 1.11.0 ; nouveau sur ce serveur, son `config.yml` y sera créé au premier démarrage ; KLM_Menu 2.11.0 présent), actif après redémarrage de Kixster. Statut : non testé en jeu sur Kixster.**
 
 À savoir sur Kixster : GrimAC y garde son réglage d'origine (seul Event a été modifié) : un joueur qui monte dans un bateau à jukebox tiré par un Happy Ghast en sera éjecté, comme d'un bateau normal ; le jukebox, lui, reste sur le bateau (correction de la 1.1.0).
+
+Actif sur Kixster depuis son redémarrage du 13/10/2026 à 14:11 (journal lu : 1.1.2 chargée et activée sans erreur ; `config.yml` et `lang.yml` créés). Statut : non testé en jeu sur Kixster.
+
+À savoir (constaté dans ce journal, 14:13) : WorldGuard 7.0.19 ne connaît pas le bois ajouté par la 26.3 (peuplier, `poplar_boat`). Poser un bateau de ce bois, à jukebox ou non, lui fait écrire une erreur dans la console (« Could not pass event PlayerInteractEvent to WorldGuard », `NullPointerException` dans `SpawnEntityEvent`) et il ne contrôle pas cette pose. Le bateau est posé normalement. Défaut de WorldGuard, pas du plugin.
