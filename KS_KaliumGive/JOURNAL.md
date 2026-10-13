@@ -116,3 +116,22 @@ l'objet à l'ouverture d'un coffre.
 À déployer avec KS_Meule 1.1.0.
 
 **Déployé sur Kixster le 11/10/2026 à 09:00 (LeKiwi06, envoi groupé : KS_Meule 1.1.0, KS_KaliumGive 1.10.0, KS_Economy 1.7.0, KS_Tableau 1.0.1 et `fusion.yml` de KS_RewardsGUI ; accord de LeKiwi06 : « oui déploie tout » ; 1.9.0 dans `_removed-ks_kaliumgive-1.9.0/`), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.9.0). Statut : non testé en jeu.**
+
+## 1.11.0 - bateaux à jukebox (13/10/2026, LeKiwi06)
+
+Demande de LeKiwi06, après ses essais des deux bateaux de KS_JukeboxBoat sur Event : « met les dans le kaliumgive
+aussi ».
+
+- Nouveaux id_custom, lus au démarrage dans la liste des bateaux du jeu (comme les têtes et les jetons) : un par
+  bateau, **`jukebox_<id du bateau dans le jeu>`**. Exemples : `jukebox_oak_boat` (bateau à jukebox en chêne),
+  `jukebox_oak_chest_boat` (bateau à coffre et jukebox en chêne), `jukebox_bamboo_raft`, `jukebox_bamboo_chest_raft`.
+  22 ids en 26.3 (11 bois) ; un bois ajouté par une version future suivra.
+- L'objet est créé par KS_JukeboxBoat (`softdepend`) : identique à celui de la recette.
+- Le message d'id inconnu ne liste pas chaque bateau (`jukebox_<bateau> (complétion)`), comme pour les badges.
+
+Choix de Claude, signalé : ids formés sur les noms du jeu (en anglais) plutôt que traduits, pour suivre d'eux-mêmes
+les bois du jeu.
+
+Exige KS_JukeboxBoat 1.1.0 ou plus (les bateaux à coffre).
+
+Compilé le 13/10/2026 (`sortie/KS_KaliumGive-1.11.0.jar`). **Statut : non déployé, non testé en jeu.**

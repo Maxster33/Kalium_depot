@@ -96,6 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_KaliumGive 1.11.0** (LeKiwi06, 13/10/2026) : bateaux à jukebox dans `/kaliumgive` (`jukebox_<id du bateau>`, 22 ids) ; compilée, non déployée (Event et Kixster sont en 1.10.0).
 - **KS_JukeboxBoat 1.1.2 + KS_Crafts 1.14.1** (LeKiwi06, 13/10/2026) : déployés sur Event le 13/10 (10:34 et 10:39) ; **pas encore sur Kixster** (qui n'a aucune version du bateau à jukebox ; après les tests de LeKiwi06 sur Event ; à déployer ensemble). Détail : `KS_JukeboxBoat/JOURNAL.md`.
 
 
@@ -442,6 +443,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (13/10/2026, 11:05) : KS_KaliumGive 1.11.0 compilée, non déployée, non testée : bateaux à jukebox dans `/kaliumgive`.** Demande de LeKiwi06 : « met les dans le kaliumgive aussi ». Un id par bateau du jeu, `jukebox_<id du bateau>` (ex. `jukebox_oak_boat`, `jukebox_oak_chest_boat`), objets créés par KS_JukeboxBoat. Réservation gardée jusqu'au déploiement.
 
 **Ajout (13/10/2026, 10:50) : KS_JukeboxBoat 1.1.2 et KS_Crafts 1.14.1 actifs sur Event, journal lu.** Event a redémarré le 13/10 à 10:46 (08:46 UTC dans son journal ; une première lecture à 10:42 montrait qu'il n'avait pas encore redémarré) : KS_JukeboxBoat 1.1.2 et KS_Crafts 1.14.1 chargés et activés sans erreur, « 78 crafts ajoutés » (89 en 1.14.0 : les 11 recettes en double ont disparu), GrimAC activé, 49 plugins, démarrage en 12 s, aucune exception. La 1.1.1 n'a jamais tourné. Statut : vérifié dans la console, non testé en jeu.
 

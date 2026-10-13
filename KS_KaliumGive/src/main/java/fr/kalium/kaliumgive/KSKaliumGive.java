@@ -86,6 +86,13 @@ public final class KSKaliumGive extends JavaPlugin {
     private static final String BADGE = "badge_";
 
     /**
+     * 1.11.0 (LeKiwi06 : « met les dans le kaliumgive aussi ») : bateaux à jukebox de KS_JukeboxBoat, un par bois :
+     * jukebox_<id du bateau dans le jeu>, ex. jukebox_oak_boat (bateau à jukebox), jukebox_oak_chest_boat (bateau à
+     * coffre et jukebox), jukebox_bamboo_raft ; liste lue dans les bateaux du jeu.
+     */
+    private static final String JUKEBOX = "jukebox_";
+
+    /**
      * 1.7.0 (catégorie 4 « Récompenses ») : un objet custom par son id_custom (comme /kaliumgive), ou null si l'id est
      * inconnu ou si son plugin n'est pas activé. Utilisé par KS_RewardsGUI.
      */
@@ -112,6 +119,15 @@ public final class KSKaliumGive extends JavaPlugin {
                 OBJETS.put(id, new ObjetCustom("KS_Jetons", () -> fr.kalium.jetons.KSJetons.creerCustom(id)));
             }
         }
+        // 1.11.0 : bateaux à jukebox (la liste des bateaux du jeu contient aussi les bateaux à coffre).
+        if (getServer().getPluginManager().isPluginEnabled("KS_JukeboxBoat")) {
+            List<org.bukkit.Material> bateaux = new ArrayList<>(org.bukkit.Tag.ITEMS_BOATS.getValues());
+            bateaux.sort(java.util.Comparator.comparing(m -> m.getKey().getKey()));
+            for (org.bukkit.Material bateau : bateaux) {
+                OBJETS.put(JUKEBOX + bateau.getKey().getKey(), new ObjetCustom("KS_JukeboxBoat",
+                        () -> fr.kalium.jukeboxboat.KSJukeboxBoat.creerBateau(bateau)));
+            }
+        }
     }
 
     @Override
@@ -127,9 +143,10 @@ public final class KSKaliumGive extends JavaPlugin {
         ObjetCustom objet = trouver(args[1].toLowerCase());
         if (objet == null) {
             List<String> liste = new ArrayList<>(OBJETS.keySet());
-            liste.removeIf(id -> id.startsWith(TETE) || id.startsWith(BADGE));
+            liste.removeIf(id -> id.startsWith(TETE) || id.startsWith(BADGE) || id.startsWith(JUKEBOX));
             sender.sendMessage(Component.text("id_custom inconnu : " + args[1] + ". Liste : "
                     + String.join(", ", liste) + ", fiole_exp(<niveaux>), " + BADGE + "<type>_<niveau> (complétion), "
+                    + JUKEBOX + "<bateau> (complétion), "
                     + TETE + "<tête> (liste : /tetes ou complétion)", NamedTextColor.RED));
             return true;
         }
