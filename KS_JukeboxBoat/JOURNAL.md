@@ -67,4 +67,6 @@ Limites connues :
 - Reprendre le disque coupe aussi, pour les joueurs proches, un vrai jukebox qui jouerait le même morceau.
 - Position et taille du jukebox écrites sans serveur de test : à régler en jeu (`config.yml`).
 
-Compilé le 13/10/2026 (`sortie/KS_JukeboxBoat-1.0.0.jar`). **Statut : non déployé, non testé en jeu.**
+Compilé le 13/10/2026.
+
+**Déployé sur Event le 13/10/2026 à 07:39 (LeKiwi06 : « oui déploie sur event » ; envoyé avec KS_Crafts 1.13.0), actif après redémarrage d'Event. Kixster n'est pas touché. Statut : non testé en jeu.**

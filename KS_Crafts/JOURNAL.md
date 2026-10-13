@@ -273,4 +273,6 @@ pour les autres objets.
 
 Empilé sur la 1.12.0, jamais testée en jeu : la recette est nécessaire au bateau à jukebox.
 
-Compilé le 13/10/2026 (`sortie/KS_Crafts-1.13.0.jar`). **Statut : non déployé, non testé en jeu.**
+Compilé le 13/10/2026.
+
+**Déployé sur Event le 13/10/2026 à 07:39 (LeKiwi06 : « oui déploie sur event » ; envoyé avec KS_JukeboxBoat 1.0.0), actif après redémarrage d'Event. 1.12.0 dans `_removed-ks_crafts-1.12.0/` ; jar en place vérifié identique à la référence avant l'envoi. Kixster n'est pas touché (il reste en 1.12.0). Statut : non testé en jeu.**

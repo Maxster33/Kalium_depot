@@ -2,7 +2,7 @@
 
 - Plugin(s) concerné(s) : KS_JukeboxBoat (nouveau), KS_Crafts
 - Versions avant / après : KS_JukeboxBoat (n'existait pas) / 1.0.0 compilée ; KS_Crafts 1.12.0 en service / 1.13.0
-  compilée. Rien de déployé.
+  compilée. Les deux déployées sur Event le 13/10/2026 à 07:39 ; Kixster inchangé.
 
 ## Demandé
 
@@ -16,7 +16,9 @@ là il peut lire les disques de notre inventaire ».
 - KS_JukeboxBoat 1.0.0 : objet, bateau posé avec son jukebox affiché, menu des disques, musique qui suit le bateau,
   bateau cassé. Détail : `KS_JukeboxBoat/JOURNAL.md`.
 - KS_Crafts 1.13.0 : recette bateau + jukebox, une par bois. Détail : `KS_Crafts/JOURNAL.md`.
-- Les deux compilent (`sortie/KS_JukeboxBoat-1.0.0.jar`, `sortie/KS_Crafts-1.13.0.jar`). Non déployés, non testés.
+- Les deux compilent. Sur « oui déploie sur event » : envoyés sur Event à 07:39 (jar de KS_Crafts en place vérifié
+  identique à la référence avant l'envoi ; 1.12.0 dans `_removed-ks_crafts-1.12.0/`). Actifs après redémarrage, non
+  testés. Réservations libérées.
 
 ## Décisions
 
@@ -38,9 +40,9 @@ d'un bateau ; le disque reste dans le bateau à la fin du morceau ; réglages d'
 
 ## Reste à faire
 
-- Déployer KS_JukeboxBoat 1.0.0 et KS_Crafts 1.13.0 ensemble (Event d'abord), avec l'accord de LeKiwi06.
+- Redémarrer Event (LeKiwi06), puis lire son journal.
+- Après les tests : déployer KS_JukeboxBoat 1.0.0 et KS_Crafts 1.13.0 ensemble sur Kixster, avec l'accord de LeKiwi06.
 - Tests en jeu : recette et livre de recettes ; pose, jukebox bien placé à l'arrière (seul et avec un conducteur,
   bateau et radeau) et qui tourne avec le bateau ; conduite normale ; menu à pied et à bord ; musique qui suit le
   bateau ; reprise du disque ; bateau cassé (objet et disque rendus) ; déconnexion à bord puis retour ; passage par un
   portail ; côté Bedrock : menu, touche de saut, musique.
-- Publier le cahier des charges dans `KS_JukeboxBoat/CAHIER_DES_CHARGES.md` au déploiement.
