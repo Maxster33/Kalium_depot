@@ -1,0 +1,43 @@
+# KS_LaisseBateau - journal
+
+Plugin de la survie (Kixster) : laisse courte entre deux bateaux. Aucune dépendance.
+
+## 1.0.0 - laisse de 3 blocs entre deux bateaux (14/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « tu peux réduire la longueur de la laisse si deux bateaux sont accrochés l'un à l'autre
+aussi ? »
+
+Lu dans le code du jeu 26.3 (`Leashable`) : une laisse ne tire qu'au-delà de **6 blocs** (comme un élastique) et casse
+à **12 blocs** ; rien de propre aux bateaux, et ces valeurs ne se règlent pas.
+
+Ses réponses aux questions posées avant le code :
+
+| Question | Réponse de LeKiwi06 |
+|---|---|
+| Longueur | 3 blocs de centre à centre (environ 1,5 bloc d'eau entre deux bateaux) |
+| Bateaux concernés | Tout bateau tiré par un bateau (avec ou sans coffre, à jukebox ou non) ; laisse tenue par un joueur ou une barrière inchangée |
+| Serveurs | Kixster seul |
+
+- Chaque seconde, le plugin relève les bateaux et radeaux tenus en laisse par un autre bateau. À chaque tick, un tel
+  bateau plus loin que `longueur` blocs (à l'horizontale) de celui qui le tracte prend la vitesse de ce dernier
+  (mesurée d'un tick à l'autre), plus un rappel vers lui proportionnel à l'écart (`raideur`, 0,3 de l'écart par
+  tick). En deçà de la longueur, le jeu fait comme d'habitude (le bateau glisse et ralentit). La corde s'affiche
+  entre les deux bateaux : elle paraît plus courte.
+- `config.yml` : `longueur` (3.0), `raideur` (0.3), valeurs par défaut aussi dans le code (réglables sans recompiler,
+  rechargées au redémarrage).
+
+Techniquement nécessaire, signalé :
+
+- Un bateau remorqué **conduit par un joueur** n'est pas tiré : son mouvement est calculé par le jeu de ce joueur, le
+  serveur ne peut pas le corriger. Le bateau à coffre et jukebox (personne n'y monte) et un bateau vide sont bien
+  tirés.
+- Vitesse donnée au bateau remorqué bornée à 1,5 bloc par tick (contre un saut de position du bateau qui tracte).
+- Nouveau plugin plutôt qu'un ajout à KS_JukeboxBoat (« un plugin = un rôle » : la laisse vaut pour tous les bateaux) ;
+  nom choisi par Claude.
+
+Limites connues : un arrêt brusque du bateau qui tracte laisse le bateau remorqué glisser jusqu'à le cogner (comme
+avec la laisse du jeu). Valeurs écrites sans test en jeu : `longueur` et `raideur` sont à ajuster dans `config.yml`
+si le remorquage paraît trop mou ou trop sec.
+
+Écrit sans serveur de test. Compilé le 14/10/2026 (`sortie/KS_LaisseBateau-1.0.0.jar`). **Statut : non déployé, non
+testé en jeu.**

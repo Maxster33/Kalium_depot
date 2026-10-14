@@ -1,0 +1,6 @@
+name: KS_LaisseBateau
+version: '${project.version}'
+main: fr.kalium.laissebateau.KSLaisseBateau
+api-version: '26.2'
+description: Laisse courte entre deux bateaux (3 blocs au lieu de 6 a 12).
+authors: [KaLium]

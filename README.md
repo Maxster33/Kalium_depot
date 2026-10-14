@@ -28,6 +28,7 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 | `KS_Enclume/` | Enclume sans plafond de prix (coût vanilla) | event |
 | `KS_Meule/` | Meule : retirer les malédictions d'un objet contre des niveaux (accroupi, clic droit, main vide, objet choisi dans l'inventaire) | kixster, event |
 | `KS_JukeboxBoat/` | Bateau à jukebox : joue les disques de l'inventaire, la musique suit le bateau ; bateau à coffre et jukebox : lit en boucle les disques de son coffre, se tracte à la laisse (recettes dans KS_Crafts, dépend de KLM_Menu) | kixster, event |
+| `KS_LaisseBateau/` | Laisse courte entre deux bateaux : un bateau tiré par un autre bateau reste à 3 blocs (au lieu de 6 à 12) | kixster |
 | `KS_VerrouVehicule/` | Verrou de véhicule : contenant d'un bateau ou wagonnet à coffre, d'un wagonnet à entonnoir ou d'un âne / mule / lama à coffre protégé tant qu'il n'est pas vide (ni ouvert, ni cassé, ni déplacé, ni vidé par entonnoir) ; recette dans KS_Crafts, dépend de KLM_Menu | kixster |
 | `KS_Villageois/` | Villageois et marchands ambulants sans échanges (sauf étiquette `ks_pnj`) | event |
 | `KS_Crafts/` | Crafts du serveur Event (sable rouge, blocs bruts, calcite, froglights, recette du Bedrock Breaker, Clé de l'End, bloc de verrue...) | event |

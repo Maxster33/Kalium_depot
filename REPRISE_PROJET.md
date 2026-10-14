@@ -96,6 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_LaisseBateau 1.0.0 (nouveau)** (LeKiwi06, 14/10/2026) : laisse de 3 blocs entre deux bateaux ; **compilé, non déployé, non testé** ; prévu pour **Kixster seulement**. Détail : `KS_LaisseBateau/JOURNAL.md`.
 - **KS_VerrouVehicule 1.0.0 (nouveau) + KS_Crafts 1.15.0** (LeKiwi06, 14/10/2026) : sur Kixster depuis le 14/10 à 18:03 ; **pas sur Event** (prévu pour Kixster seulement, choix de LeKiwi06 ; Event reste en KS_Crafts 1.14.1). Détail : `KS_VerrouVehicule/JOURNAL.md`.
 - **KS_Economy 1.9.0, KS_Teleport 1.3.0, KS_Claim 1.4.0** (LeKiwi06, 13/10/2026) : sur Kixster depuis le 13/10 à 16:30 ; **pas sur Event**, resté en KS_Economy 1.8.2, KS_Teleport 1.2.0 et KS_Claim 1.3.0 (à décider par LeKiwi06 ; KS_Teleport 1.3.0 et KS_Claim 1.4.0 à déployer ensemble). Détail : `JOURNAL.md` de chaque plugin.
 - **KS_KaliumGive 1.11.0** (LeKiwi06, 13/10/2026) : sur Kixster depuis le 13/10 à 14:07 ; **pas sur Event**, resté en 1.10.0 (à décider par LeKiwi06).
@@ -445,6 +446,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (14/10/2026, 20:40) : KS_LaisseBateau 1.0.0 (nouveau plugin) compilé, non déployé, non testé : laisse courte entre deux bateaux.** Demande de LeKiwi06 : « tu peux réduire la longueur de la laisse si deux bateaux sont accrochés l'un à l'autre aussi ? ». Lu dans le code du jeu 26.3 : la laisse tire au-delà de 6 blocs et casse à 12, sans réglage. Ses choix : 3 blocs de centre à centre, tout bateau tiré par un bateau, Kixster seulement. Le plugin tire lui-même le bateau remorqué (vitesse du bateau qui tracte + rappel) ; un bateau remorqué conduit par un joueur n'est pas tiré (calculé par son jeu). `longueur` et `raideur` réglables dans `config.yml`. Réservation gardée jusqu'au déploiement.
 
 **Ajout (14/10/2026, 18:10) : KS_VerrouVehicule 1.0.0 et KS_Crafts 1.15.0 actifs sur Kixster, journal lu.** Redémarrage du 14/10 à 18:04 : les deux plugins chargés et activés sans erreur ni avertissement, « 79 crafts ajoutés » (78 + la recette du verrou), démarrage en 15,5 s. Avertissement déjà présent, sans lien avec ce déploiement : GrimAC signale que ViaBackwards sur un serveur 1.21.2+ pose des problèmes de véhicules aux anciens clients. Reste à tester en jeu.
 

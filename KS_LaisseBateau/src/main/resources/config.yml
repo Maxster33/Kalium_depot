@@ -1,0 +1,4 @@
+# Longueur de la laisse entre deux bateaux, de centre a centre, en blocs (un bateau mesure environ 1,4 bloc).
+longueur: 3.0
+# Force du rappel : part de l'ecart rattrapee a chaque tick (entre 0 et 1).
+raideur: 0.3
