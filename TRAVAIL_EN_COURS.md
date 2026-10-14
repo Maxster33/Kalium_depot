@@ -16,14 +16,12 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_VerrouVehicule — LeKiwi06 — depuis le 2026-10-14 16:03 — nouveau plugin : verrou de véhicule (contenant d'un bateau, wagonnet ou animal à coffre protégé tant qu'il n'est pas vide)
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 
 
 ## Requis parfois
 
-- KS_Crafts — LeKiwi06 — depuis le 2026-10-14 16:03 — recette du verrou de véhicule (KS_VerrouVehicule)
 
 
 
