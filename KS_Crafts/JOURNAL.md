@@ -322,3 +322,18 @@ Actif depuis le redémarrage d'Event du 13/10/2026 à 10:46 (journal lu : 1.14.1
 **Déployé sur Kixster le 13/10/2026 à 14:07 (LeKiwi06 : « tu peux déployer sur kixster » ; envoi groupé avec KS_JukeboxBoat 1.1.2 et KS_KaliumGive 1.11.0 ; 1.12.0 dans `_removed-ks_crafts-1.12.0/` ; jar en place vérifié identique à la référence avant l'envoi ; les 1.13.0 et 1.14.0 n'ont jamais été sur Kixster), actif après redémarrage de Kixster. Statut : non testé en jeu sur Kixster.**
 
 Actif sur Kixster depuis son redémarrage du 13/10/2026 à 14:11 (journal lu : 1.14.1 activée sans erreur, « 78 crafts ajoutés »). Statut : non testé en jeu sur Kixster.
+
+## 1.15.0 - recette du verrou de véhicule (14/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (KS_VerrouVehicule 1.0.0) : craft du verrou de véhicule, recette choisie par lui : « crochet + 4
+lingots de fer ».
+
+- **1 crochet au centre, 4 lingots de fer en croix** (haut, bas, gauche, droite), recette en forme
+  (`verrou_vehicule`) → **1 verrou de véhicule**. Débloquée dans le livre de recettes dès qu'on obtient un crochet ou
+  un lingot de fer (comme les autres recettes, 1.9.0).
+- Sans KS_VerrouVehicule : la recette est ignorée (avertissement dans la console) ; c'est le cas sur Event, où
+  KS_VerrouVehicule n'est pas prévu.
+
+**À déployer avec KS_VerrouVehicule 1.0.0 (Kixster).**
+
+Compilé le 14/10/2026 (`sortie/KS_Crafts-1.15.0.jar`). **Statut : non déployé, non testé en jeu.**

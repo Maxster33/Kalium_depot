@@ -40,6 +40,7 @@ import java.util.Map;
  * 1.13.0 (LeKiwi06) : recette du bateau à jukebox de KS_JukeboxBoat (voir onEnable).
  * 1.14.0 (LeKiwi06) : recette du bateau à coffre et jukebox de KS_JukeboxBoat 1.1.0 (voir onEnable).
  * 1.14.1 : cette recette n'est plus en double (la liste des bateaux du jeu contient aussi les bateaux à coffre).
+ * 1.15.0 (LeKiwi06) : recette du verrou de véhicule de KS_VerrouVehicule (voir onEnable).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -184,6 +185,18 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             }
         } else {
             getLogger().warning("KS_JukeboxBoat absent : craft du bateau à jukebox ignoré.");
+        }
+
+        // 1.15.0 (LeKiwi06) : verrou de véhicule (KS_VerrouVehicule) : un crochet au centre, 4 lingots de fer en croix.
+        if (actif("KS_VerrouVehicule")) {
+            ShapedRecipe verrou = new ShapedRecipe(key("verrou_vehicule"),
+                    fr.kalium.verrouvehicule.KSVerrouVehicule.creerVerrou());
+            verrou.shape(" F ", "FCF", " F ");
+            verrou.setIngredient('F', Material.IRON_INGOT);
+            verrou.setIngredient('C', Material.TRIPWIRE_HOOK);
+            add(verrou);
+        } else {
+            getLogger().warning("KS_VerrouVehicule absent : craft du verrou de véhicule ignoré.");
         }
 
         // 1.8.0 (LeKiwi06) : réparation de la tête de wither squelette (KS_Decapitator 1.1.0), bloc de charbon de bois.

@@ -1,0 +1,12 @@
+name: KS_VerrouVehicule
+version: '${project.version}'
+main: fr.kalium.verrouvehicule.KSVerrouVehicule
+api-version: '26.2'
+description: Verrou de vehicule - contenant d'un bateau, wagonnet ou animal a coffre protege tant qu'il n'est pas vide.
+authors: [KaLium]
+depend: [KLM_Menu]
+softdepend: [SimpleClaimSystem]
+permissions:
+  ksverrouvehicule.contourner:
+    description: Ouvrir et deplacer un vehicule verrouille par un autre joueur.
+    default: op
