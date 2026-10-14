@@ -1917,4 +1917,4 @@ dernière case est sur une diagonale (elle achève alors 3 bingos d'un coup).
 
 Rien à changer sur Kal-Games (l'aide de KG_Bingo dit seulement « bonus selon le temps restant »).
 
-**Compilé le 14/10/2026. Non déployé. Statut : non testé en jeu** (la 0.11.0 non plus).
+**Compilé le 14/10/2026. Déployé sur Serveur Jeux le 14/10/2026 à 16:06 (LeKiwi06 ; 0.11.0 dans `_removed-kg_bingogame-0.11.0/`), actif après redémarrage. Statut : non testé en jeu** (la 0.11.0 non plus).

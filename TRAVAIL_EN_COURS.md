@@ -18,8 +18,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KS_VerrouVehicule — LeKiwi06 — depuis le 2026-10-14 16:03 — nouveau plugin : verrou de véhicule (contenant d'un bateau, wagonnet ou animal à coffre protégé tant qu'il n'est pas vide)
 
-- KG_BingoGame — LeKiwi06 — depuis le 2026-10-14 16:04 — contre la montre : bonus de temps selon la difficulté de la grille (accord de Maxster33)
-
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 
 
