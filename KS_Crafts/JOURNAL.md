@@ -340,3 +340,5 @@ Compilé le 14/10/2026 (`sortie/KS_Crafts-1.15.0.jar`). **Statut : non déployé
 
 **Déployé sur Kixster le 14/10/2026 à 18:03 (LeKiwi06 : « oui déploie sur kixster » ; envoi groupé : KS_VerrouVehicule 1.0.0 (nouveau) et KS_Crafts 1.15.0 ; KS_Crafts 1.14.1 en place vérifié identique à la référence avant l'envoi, dans `_removed-ks_crafts-1.14.1/` ; jars du serveur vérifiés identiques à ceux compilés après l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.14.1, sans KS_VerrouVehicule). Statut : non testé en jeu.**
 Supprimables par l'humain sur Kixster (3 versions ou plus derrière la 1.15.0) : `_removed-ks_crafts-1.10.0/`, `1.11.0/`, `1.12.0/`.
+
+Actif sur Kixster depuis son redémarrage du 14/10/2026 à 18:04 (journal lu : KS_VerrouVehicule 1.0.0 et KS_Crafts 1.15.0 chargés et activés sans erreur ni avertissement, « 79 crafts ajoutés » soit la recette du verrou en plus des 78, SimpleClaimSystem trouvé, `lang.yml` créé). Statut : non testé en jeu.
