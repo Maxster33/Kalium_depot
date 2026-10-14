@@ -1893,3 +1893,28 @@ avec les mêmes paramètres » ; « il faut proposer ça aux joueurs pendant 30 
 Non fait : les **observateurs** (KG_BingoObservateur) ne reçoivent pas l'objet (question ouverte du cahier des charges).
 
 **À déployer avec KG_Bingo 1.9.0.** **Compilé le 09/10/2026. Statut : non testé en jeu.**
+
+## 0.12.0 - contre la montre : bonus de temps selon la grille (14/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « le bonus de temps n'est pas assez conséquent, le faire à cette vitesse devrait rapporter
+bien plus, aux alentours de 1800 » (grille de 25 objectifs difficiles finie en 1 h 30 en solo). Repère : la même grille
+en blackout finie en 1 h 30 rapporte 880 × 2 = 1 760 points. Formule choisie par LeKiwi06 parmi trois (taux unique de
+1 point par 5 s, multiplicateur du blackout, valeur selon la grille).
+
+- **Chaque minute restante au chrono vaut la valeur moyenne d'un objectif de la grille** (facile 2, normal 6,
+  difficile 10, extrême 20), au prorata des secondes, arrondi au dixième inférieur (`BingoSettings.chronoTimeBonus`).
+  Avant (0.8.5) : 1 point par tranche de 20 s, quelle que soit la grille (`CHRONO_SECONDS_PER_POINT`, supprimé).
+- Inchangé : bonus seulement en cas de victoire, ajouté tel quel à l'équipe et à chacun de ses joueurs encore en jeu,
+  sans multiplicateur ; message de fin « N min SS s restantes : +X pts ».
+
+Exemples (grille de 25 difficiles, 10 bingos, dernière case sur une diagonale, soit 880 points d'objectifs) : finie en
+1 h 30 → 82 min 30 restantes → +825 (avant +247), **1 705 points** ; à 5 min par objectif (2 h 05) → +475 (avant +142),
+1 355 points. Grille par défaut (10 faciles, 10 normaux, 5 difficiles) : 5,2 points par minute restante (avant 3) ;
+grille de faciles seulement : 2 points par minute.
+
+Rappel : en solo, 10 bingos au plus ; la partie s'arrête au 10e bingo, la grille entière n'est validée que si la
+dernière case est sur une diagonale (elle achève alors 3 bingos d'un coup).
+
+Rien à changer sur Kal-Games (l'aide de KG_Bingo dit seulement « bonus selon le temps restant »).
+
+**Compilé le 14/10/2026. Non déployé. Statut : non testé en jeu** (la 0.11.0 non plus).

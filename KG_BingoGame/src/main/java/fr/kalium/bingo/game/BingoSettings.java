@@ -23,7 +23,7 @@ public record BingoSettings(Mode mode, int bingosRequired, int easy, int medium,
     /**
      * 0.8.5 - CHRONO (contre la montre, demande de Maxster33, 03/10/2026) : une seule equipe, 10 min au depart, + temps
      * par objectif valide ; victoire seulement si toute la grille est remplie avant la fin du chrono (bonus de
-     * victoire habituel + 1 point par tranche de 20 s restantes) ; sinon defaite, les points des objectifs restent.
+     * victoire habituel + bonus de temps, voir chronoTimeBonus) ; sinon defaite, les points des objectifs restent.
      * 0.10.0 (demande de Maxster33, 05/10/2026) : victoire avec le nombre de bingos choisi (bingosRequired, 3 a 12) au
      * lieu de toute la grille ; bonus de victoire + bonus de temps, inchanges ; les bingos rapportent comme dans toute
      * partie a une equipe (bareme des parties a plusieurs equipes, sans les bonus « en 1er »).
@@ -32,7 +32,7 @@ public record BingoSettings(Mode mode, int bingosRequired, int easy, int medium,
         BINGOS, BLACKOUT, CHRONO
     }
 
-    /** Contre la montre : chrono de depart, temps gagne par objectif, secondes restantes par point de bonus. */
+    /** Contre la montre : chrono de depart, temps gagne par objectif, bonus de temps a la victoire. */
     public static final java.time.Duration CHRONO_START = java.time.Duration.ofMinutes(10);
     /**
      * 0.8.7 - temps gagne par objectif valide, selon sa difficulte (demande de Maxster33, 03/10/2026 ; avant : 5 min
@@ -52,7 +52,27 @@ public record BingoSettings(Mode mode, int bingosRequired, int easy, int medium,
         long seconds = duration.getSeconds();
         return seconds % 60 == 0 ? (seconds / 60) + " min" : (seconds / 60) + " min " + String.format("%02d", seconds % 60);
     }
-    public static final int CHRONO_SECONDS_PER_POINT = 20;
+
+    /**
+     * 0.12.0 - bonus de temps du contre la montre gagne (demande de LeKiwi06, 14/10/2026 : « le bonus de temps n'est pas
+     * assez consequent », environ 1 800 points pour une grille de 25 difficiles finie en 1 h 30) : chaque minute restante
+     * au chrono vaut la valeur moyenne d'un objectif de la grille (facile 2, normal 6, difficile 10, extreme 20), au
+     * prorata des secondes, arrondi au dixieme inferieur. Avant (0.8.5) : 1 point par tranche de 20 s pour toute grille.
+     */
+    public static double chronoTimeBonus(long secondsLeft, fr.kalium.bingo.grid.BingoGrid grid) {
+        if (grid == null) {
+            return 0;
+        }
+        var cells = grid.getCells();
+        if (secondsLeft <= 0 || cells.isEmpty()) {
+            return 0;
+        }
+        double total = 0;
+        for (var cell : cells) {
+            total += cell.getObjective().difficulty().points();
+        }
+        return Math.floor(secondsLeft / 60.0 * (total / cells.size()) * 10) / 10;
+    }
 
     public static final int MIN_BINGOS = 3;
     public static final int MAX_BINGOS = 12;

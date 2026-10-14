@@ -423,13 +423,13 @@ public final class GameEndService {
             }
         }
 
-        // 0.8.5 - contre la montre gagne (demande de Maxster33, 03/10/2026) : bonus de victoire habituel + 1 point par
-        // tranche de 20 s restantes au chrono, ajoute tel quel a l'equipe et a chacun de ses joueurs encore en jeu
-        // (sans multiplicateur).
+        // 0.8.5 - contre la montre gagne (demande de Maxster33, 03/10/2026) : bonus de victoire habituel + bonus de temps
+        // restant au chrono, ajoute tel quel a l'equipe et a chacun de ses joueurs encore en jeu (sans multiplicateur).
+        // 0.12.0 : chaque minute restante vaut la valeur moyenne d'un objectif de la grille (voir chronoTimeBonus).
         double timeBonus = 0;
         if (win && game.getSettings().isChrono()) {
             long seconds = Math.max(0, game.getRemaining().getSeconds());
-            timeBonus = seconds / BingoSettings.CHRONO_SECONDS_PER_POINT;
+            timeBonus = BingoSettings.chronoTimeBonus(seconds, game.getGrid());
             reason = reason + " — " + (seconds / 60) + " min " + String.format("%02d", seconds % 60) + " s restantes : +"
                     + ScoreEngine.format(timeBonus) + " pts";
         }
