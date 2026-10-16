@@ -96,6 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Trains 1.2.0 + KS_VerrouVehicule 1.1.0** (LeKiwi06, 16/10/2026) : étape 3 de KS_Trains (wagons à entonnoir, entrée / sortie des wagons à coffre, wagons verrouillés attelés par leur propriétaire et non ancrés dans un train) ; **compilés, non déployés, non testés**, à déployer ensemble (KS_Crafts reste en 1.17.0). Détail : `KS_Trains/JOURNAL.md`.
 - **KS_Trains 1.1.0 + KS_Crafts 1.17.0** (LeKiwi06, 16/10/2026) : étapes 1 et 2 (wagon contrôleur, 4 niveaux de vitesse, consommation selon le niveau) ; **sur Event depuis le 16/10 à 20:40 pour les tests de LeKiwi06**, pas sur Kixster ; nouvelle physique des wagonnets pas encore activée. Détail : `KS_Trains/JOURNAL.md`.
 - **KS_LaisseBateau 1.0.0 (nouveau)** (LeKiwi06, 14/10/2026) : laisse de 3 blocs entre deux bateaux ; **sur Event depuis le 16/10 à 20:00 pour les tests**, prévu pour Kixster (pas encore envoyé). Détail : `KS_LaisseBateau/JOURNAL.md`.
 - **KS_VerrouVehicule 1.0.0** (LeKiwi06, 14/10/2026) : sur Kixster depuis le 14/10 à 18:03 (avec KS_Crafts 1.15.0) et sur Event depuis le 16/10 à 20:00 (avec KS_Crafts 1.16.0). Détail : `KS_VerrouVehicule/JOURNAL.md`.
@@ -447,6 +448,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (16/10/2026, 21:10) : KS_Trains 1.2.0 (étape 3, dernière du cahier) et KS_VerrouVehicule 1.1.0 compilés, non déployés, non testés.** Wagons à entonnoir (prennent dans les 3 wagons derrière, donnent aux 3 devant, carburant des fours, seau de lave et seau vide), réglages entrée / sortie des wagons à coffre dans le menu du train, wagons verrouillés attelés et réglés par leur propriétaire, plus ancrés dans un train. Les 3 étapes du cahier de KS_Trains sont codées.
 
 **Ajout (16/10/2026, 20:45) : KS_Trains 1.1.0 et KS_Crafts 1.17.0 déployés sur Event (tests de LeKiwi06) ; actifs après redémarrage.** Event n'avait pas redémarré depuis l'envoi de 20:00 : KS_Trains 1.0.0 et KS_Crafts 1.16.0 n'y ont jamais tourné, retirés de `jars-deployes/`. Nouvelle physique pas activée. Étape 3 de KS_Trains en cours.
 

@@ -135,3 +135,34 @@ Choix de Claude, signalés :
 (`sortie/KS_Trains-1.1.0.jar`). **À déployer avec KS_Crafts 1.17.0. Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 16/10/2026 à 20:40 (LeKiwi06 : « envoie sur event et continue l'étape 3 » ; envoi groupé : KS_Trains 1.1.0, KS_Crafts 1.17.0 ; jars en place (KS_Trains 1.0.0, KS_Crafts 1.16.0) vérifiés identiques aux références avant l'envoi, rangés dans `_removed-ks_trains-1.0.0/` et `_removed-ks_crafts-1.16.0/` ; jars du serveur vérifiés identiques à ceux compilés ; Event n'avait pas redémarré depuis l'envoi de 20:00 : la 1.0.0 n'y a jamais tourné et le `config.yml` de KS_Trains sera créé avec les clés de la 1.1.0), actif après redémarrage d'Event. Nouvelle physique des wagonnets pas encore activée. Statut : non testé en jeu.**
+
+## 1.2.0 - étape 3 : wagons à entonnoir, réglages des coffres, wagons verrouillés (16/10/2026, LeKiwi06)
+
+LeKiwi06 : « envoie sur event et continue l'étape 3 ». Règles 8 et 9 du cahier (wagon à entonnoir, entrée / sortie des
+wagons à coffre) et wagons verrouillés de KS_VerrouVehicule. Empilé sur la 1.1.0 non testée, à sa demande.
+
+- **Wagon à entonnoir** (dans un train) : tous les 8 ticks (rythme d'un entonnoir du jeu), il **prend un objet** dans
+  les 3 wagons derrière lui, le plus proche d'abord (coffres dont la sortie est autorisée, autres entonnoirs), et en
+  **donne un** aux 3 wagons devant lui, le plus proche d'abord (fours : carburant seulement, dans leur case, si elle est
+  vide ou a le même carburant avec de la place ; coffres dont l'entrée est autorisée ; autres entonnoirs). Devant =
+  côté locomotive, même en marche arrière.
+- **Seau de lave** donné à un four : accepté seulement si sa réserve est vide ; elle prend 1 000 blocs et le **seau vide
+  reste dans l'entonnoir**, qui le donne ensuite à un coffre devant lui dont l'entrée est autorisée.
+- Dans un train, l'entonnoir **n'aspire plus** les objets au sol ni les contenants au-dessus de lui.
+- **Wagon à coffre** : réglages **Entrée** et **Sortie** (autorisées par défaut), dans sa page du menu du train
+  (colorant vert / rouge, clic pour changer). Seuls les entonnoirs du train les respectent ; un entonnoir posé au sol
+  fait comme d'habitude.
+- **Menu du train** : un coffre affiche son entrée, sa sortie et son verrou ; un entonnoir, le nombre d'objets qu'il
+  contient et sa règle.
+- **Wagon verrouillé** (KS_VerrouVehicule) : il s'attelle désormais, mais **seulement par le propriétaire du verrou**
+  (ou un opérateur, permission `ksverrouvehicule.contourner`), qui est aussi le seul à régler son entrée et sa sortie.
+  Il n'est plus ancré quand il est dans un train (KS_VerrouVehicule 1.1.0, à déployer avec).
+
+Choix de Claude, signalés :
+
+- Un entonnoir du train prend aussi dans un coffre verrouillé et protégé si sa sortie est autorisée : seul le
+  propriétaire peut l'autoriser.
+- Un objet par transfert et par sens (comme un entonnoir du jeu), même si l'inventaire voisin en a plusieurs.
+
+Écrit sans serveur de test. Compilé le 16/10/2026 (`sortie/KS_Trains-1.2.0.jar`). **À déployer avec
+KS_VerrouVehicule 1.1.0** (KS_Crafts inchangé, 1.17.0). **Statut : non déployé, non testé en jeu.**

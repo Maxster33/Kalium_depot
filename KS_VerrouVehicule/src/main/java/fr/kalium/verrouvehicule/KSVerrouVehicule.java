@@ -85,6 +85,9 @@ import java.util.UUID;
  * Le propriétaire retire son verrou par le petit menu qui s'ouvre avant le coffre (« Ouvrir le coffre », « Retirer le
  * verrou », « Fermer »). Véhicule vide : véhicule normal ; cassé (ou animal mort), il lâche son verrou.
  *
+ * 1.1.0 (KS_Trains 1.2.0, étape 3) : un wagon attelé dans un train de KS_Trains n'est pas ancré (le train le place) ;
+ * KS_Trains ne laisse atteler un wagon verrouillé et régler son coffre que par son propriétaire.
+ *
  * Autres plugins : creerVerrou() (KS_Crafts), estVerrou().
  */
 public final class KSVerrouVehicule extends JavaPlugin implements Listener {
@@ -107,6 +110,8 @@ public final class KSVerrouVehicule extends JavaPlugin implements Listener {
     private NamespacedKey cleProprietaire;
     private NamespacedKey cleNom;
     private NamespacedKey cleSiege;
+    /** 1.1.0 : wagon attelé dans un train de KS_Trains (identifiant du train). */
+    private static final NamespacedKey CLE_TRAIN = NamespacedKey.fromString("ks_trains:train");
     private Lang lang;
     private boolean claims;
     private long tick;
@@ -753,7 +758,9 @@ public final class KSVerrouVehicule extends JavaPlugin implements Listener {
                 continue;
             }
             Location ici = vehicule.getLocation();
-            if (!protege(vehicule) || !ici.getWorld().equals(suivi.ancre.getWorld())) {
+            // 1.1.0 : un wagon attelé dans un train de KS_Trains est placé par ce plugin : il n'est pas ancré.
+            if (!protege(vehicule) || !ici.getWorld().equals(suivi.ancre.getWorld())
+                    || (CLE_TRAIN != null && vehicule.getPersistentDataContainer().has(CLE_TRAIN, PersistentDataType.STRING))) {
                 suivi.ancre = ici;
                 continue;
             }

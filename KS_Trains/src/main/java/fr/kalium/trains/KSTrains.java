@@ -82,6 +82,10 @@ import java.util.UUID;
  * un appui sur reculer descend d'un niveau (à l'arrêt : marche arrière) ; le train passe d'un niveau à l'autre en
  * accélérant ou freinant en douceur ; le conducteur descend, le train garde son niveau. En marche arrière, le dernier
  * wagon mène et les autres suivent son trajet.
+ *
+ * 1.2.0 (étape 3) : wagons à entonnoir et réglages entrée / sortie des wagons à coffre (voir Entonnoirs) ; wagon à
+ * coffre verrouillé (KS_VerrouVehicule) : attelé et réglé par son propriétaire seulement (ou un opérateur), il n'est
+ * plus ancré quand il est dans un train (KS_VerrouVehicule 1.1.0).
  */
 public final class KSTrains extends JavaPlugin implements Listener {
 
@@ -103,6 +107,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
     private final NamespacedKey cleVerrou = NamespacedKey.fromString("ks_verrouvehicule:proprietaire");
     private Lang lang;
     private Foyers foyers;
+    private Entonnoirs entonnoirs;
     private long tick;
 
     private final Map<UUID, Train> trains = new HashMap<>();
@@ -133,8 +138,10 @@ public final class KSTrains extends JavaPlugin implements Listener {
         cleControleur = new NamespacedKey(this, "controleur");
         lang = new Lang(this);
         foyers = new Foyers(this);
+        entonnoirs = new Entonnoirs(this, foyers);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(foyers, this);
+        getServer().getPluginManager().registerEvents(entonnoirs, this);
         for (World monde : Bukkit.getWorlds()) {
             for (Minecart wagon : monde.getEntitiesByClass(Minecart.class)) {
                 arriver(wagon);
@@ -256,7 +263,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
         return wagon.getPersistentDataContainer().has(cleLoco, PersistentDataType.BYTE);
     }
 
-    private Train trainDe(Entity wagon) {
+    Train trainDe(Entity wagon) {
         UUID id = parWagon.get(wagon.getUniqueId());
         return id == null ? null : trains.get(id);
     }
@@ -530,6 +537,17 @@ public final class KSTrains extends JavaPlugin implements Listener {
         }
     }
 
+    /**
+     * 1.2.0 : vrai si le wagon n'a pas de verrou (KS_VerrouVehicule), ou si le joueur en est le propriétaire ou peut
+     * le contourner (opérateur).
+     */
+    private boolean maitreDuVerrou(Player joueur, Entity wagon) {
+        String proprietaire = cleVerrou == null ? null
+                : wagon.getPersistentDataContainer().get(cleVerrou, PersistentDataType.STRING);
+        return proprietaire == null || proprietaire.equals(joueur.getUniqueId().toString())
+                || joueur.hasPermission("ksverrouvehicule.contourner");
+    }
+
     private boolean arrete(Minecart wagon) {
         Train train = trainDe(wagon);
         return train != null ? train.vitesse <= 0 : wagon.getVelocity().lengthSquared() < 0.01;
@@ -541,8 +559,8 @@ public final class KSTrains extends JavaPlugin implements Listener {
     }
 
     private void atteler(Player joueur, Minecart wagon, ItemStack chaine) {
-        if (cleVerrou != null && wagon.getPersistentDataContainer().has(cleVerrou, PersistentDataType.STRING)) {
-            Contenant.message(joueur, t("atteler.verrou", "<red>Un wagon verrouillé ne s'attelle pas encore"), true);
+        if (!maitreDuVerrou(joueur, wagon)) {
+            Contenant.message(joueur, t("atteler.verrou", "<red>Seul le propriétaire du verrou attelle ce wagon"), true);
             return;
         }
         if (!surRail(wagon)) {
@@ -899,6 +917,9 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 deplacement = new Vector();
             }
             placer(train, ici.clone().add(deplacement), espacement);
+            if (tick % Entonnoirs.RYTHME == 0) {
+                entonnoirs.transferer(train);
+            }
         }
     }
 
@@ -1073,12 +1094,28 @@ public final class KSTrains extends JavaPlugin implements Listener {
             lignes.add(t("wagon.reserve", "<gray>Réserve : <b> blocs", "b", Math.round(foyers.reserve(four))));
             lignes.add(foyers.alimente(four) ? t("wagon.alimente", "<green>Alimenté")
                     : t("wagon.vide", "<red>Sans carburant"));
-        } else if (wagon instanceof StorageMinecart) {
+        } else if (wagon instanceof StorageMinecart coffre) {
             materiau = Material.CHEST_MINECART;
             nom = t("wagon.coffre", "<white><n>. Coffre", "n", numero);
-        } else if (wagon instanceof HopperMinecart) {
+            lignes.add(entonnoirs.entree(coffre) ? t("wagon.entree-oui", "<green>Entrée : autorisée")
+                    : t("wagon.entree-non", "<red>Entrée : refusée"));
+            lignes.add(entonnoirs.sortie(coffre) ? t("wagon.sortie-oui", "<green>Sortie : autorisée")
+                    : t("wagon.sortie-non", "<red>Sortie : refusée"));
+            String nomVerrou = coffre.getPersistentDataContainer().get(
+                    NamespacedKey.fromString("ks_verrouvehicule:nom"), PersistentDataType.STRING);
+            if (cleVerrou != null && coffre.getPersistentDataContainer().has(cleVerrou, PersistentDataType.STRING)) {
+                lignes.add(t("wagon.verrou", "<gray>Verrouillé par <p>", "p", nomVerrou == null ? "?" : nomVerrou));
+            }
+        } else if (wagon instanceof HopperMinecart entonnoir) {
             materiau = Material.HOPPER_MINECART;
             nom = t("wagon.entonnoir", "<white><n>. Entonnoir", "n", numero);
+            int objets = 0;
+            for (ItemStack objet : entonnoir.getInventory().getContents()) {
+                objets += objet == null ? 0 : objet.getAmount();
+            }
+            lignes.add(t("wagon.entonnoir-objets", "<gray><o> objets dedans", "o", objets));
+            lignes.add(t("wagon.entonnoir-regle-1", "<gray>Prend dans les 3 wagons derrière,"));
+            lignes.add(t("wagon.entonnoir-regle-2", "<gray>donne aux 3 wagons devant"));
         } else if (estControleur(wagon)) {
             materiau = Material.COMPARATOR;
             nom = t("wagon.controleur", "<white><n>. Wagon contrôleur", "n", numero);
@@ -1093,7 +1130,8 @@ public final class KSTrains extends JavaPlugin implements Listener {
                     : t("wagon.sans-passager", "<gray>Aucun passager"));
         }
         if (cliquable) {
-            lignes.add(t("wagon.clic", "<gray>Clic : sa page (dételer)"));
+            lignes.add(wagon instanceof StorageMinecart ? t("wagon.clic-coffre", "<gray>Clic : réglages, dételer")
+                    : t("wagon.clic", "<gray>Clic : sa page (dételer)"));
         }
         return Contenant.objet(materiau, nom, lignes);
     }
@@ -1105,7 +1143,27 @@ public final class KSTrains extends JavaPlugin implements Listener {
         }
         Contenant menu = Contenant.pour(joueur, 1, t("page.titre", "Wagon <n>", "n", rang + 1), new Marque(id));
         menu.barre();
-        menu.poser(3, icone(train, rang, false), null);
+        Minecart wagon = train.wagons.get(rang);
+        if (wagon instanceof StorageMinecart coffre) {
+            // 1.2.0 : réglages du coffre pour les entonnoirs du train.
+            menu.poser(1, icone(train, rang, false), null);
+            menu.poser(2, entonnoirs.entree(coffre)
+                    ? Contenant.objet(Material.LIME_DYE, t("page.entree-oui", "<green>Entrée autorisée"),
+                    List.of(t("page.entree-clic", "<gray>Clic : refuser (les entonnoirs"), t("page.entree-clic-2",
+                            "<gray>du train n'y déposent plus)")))
+                    : Contenant.objet(Material.RED_DYE, t("page.entree-non", "<red>Entrée refusée"),
+                    List.of(t("page.entree-clic-oui", "<gray>Clic : autoriser"))),
+                    j -> reglerCoffre(j, id, rang, page, true));
+            menu.poser(3, entonnoirs.sortie(coffre)
+                    ? Contenant.objet(Material.LIME_DYE, t("page.sortie-oui", "<green>Sortie autorisée"),
+                    List.of(t("page.sortie-clic", "<gray>Clic : refuser (les entonnoirs"), t("page.sortie-clic-2",
+                            "<gray>du train n'y prennent plus)")))
+                    : Contenant.objet(Material.RED_DYE, t("page.sortie-non", "<red>Sortie refusée"),
+                    List.of(t("page.sortie-clic-oui", "<gray>Clic : autoriser"))),
+                    j -> reglerCoffre(j, id, rang, page, false));
+        } else {
+            menu.poser(3, icone(train, rang, false), null);
+        }
         int coupe = Math.max(1, rang);
         menu.poser(4, Contenant.objet(Material.SHEARS, t("page.deteler", "<yellow>Dételer ici"), rang == 0
                 ? List.of(t("page.deteler-tete", "<gray>Le sépare du wagon suivant"))
@@ -1120,6 +1178,25 @@ public final class KSTrains extends JavaPlugin implements Listener {
         menu.poser(5, Contenant.objet(Material.OAK_DOOR, t("page.retour", "<white>Retour"), List.of()),
                 j -> menu(j, id, page));
         menu.ouvrir(joueur);
+    }
+
+    /** 1.2.0 : change l'entrée ou la sortie d'un wagon à coffre (verrouillé : son propriétaire seulement). */
+    private void reglerCoffre(Player joueur, UUID id, int rang, int page, boolean entree) {
+        Train train = trainDuMenu(joueur, id);
+        if (train == null || rang >= train.wagons.size()
+                || !(train.wagons.get(rang) instanceof StorageMinecart coffre)) {
+            return;
+        }
+        if (!maitreDuVerrou(joueur, coffre)) {
+            Contenant.message(joueur, t("page.verrou", "<red>Seul le propriétaire du verrou règle ce coffre"), true);
+            return;
+        }
+        if (entree) {
+            entonnoirs.basculerEntree(coffre);
+        } else {
+            entonnoirs.basculerSortie(coffre);
+        }
+        pageWagon(joueur, id, rang, page);
     }
 
     private void basculer(Player joueur, UUID id, int page) {

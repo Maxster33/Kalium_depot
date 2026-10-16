@@ -102,3 +102,15 @@ KS_Crafts 1.15.0** (recette). **Statut : non déployé, non testé en jeu.**
 Actif sur Kixster depuis son redémarrage du 14/10/2026 à 18:04 (journal lu : KS_VerrouVehicule 1.0.0 et KS_Crafts 1.15.0 chargés et activés sans erreur ni avertissement, « 79 crafts ajoutés » soit la recette du verrou en plus des 78, SimpleClaimSystem trouvé, `lang.yml` créé). Statut : non testé en jeu.
 
 **Déployé sur Event le 16/10/2026 à 20:00 (LeKiwi06 : « envoie tout sur event je vais faire les tests là-bas » ; envoi groupé : KS_VerrouVehicule 1.0.0, KS_LaisseBateau 1.0.0, KS_Trains 1.0.0, KS_Crafts 1.16.0 ; KS_Crafts 1.14.1 en place vérifié identique à la référence avant l'envoi, dans `_removed-ks_crafts-1.14.1/` ; jars du serveur vérifiés identiques à ceux compilés après l'envoi), actif après redémarrage d'Event. Kixster reste en 1.0.0 (même version). Statut : non testé en jeu.**
+
+## 1.1.0 - wagon verrouillé dans un train de KS_Trains (16/10/2026, LeKiwi06)
+
+Étape 3 de KS_Trains (cahier des charges validé par LeKiwi06) : « un wagon à coffre verrouillé ne s'attelle que par
+son propriétaire ; seul lui change ses réglages ; il n'est plus ancré quand il roule dans un train ».
+
+- Un wagon qui porte l'identifiant d'un train de KS_Trains (`ks_trains:train`) **n'est pas ancré** : c'est le train qui
+  le place. Toutes les autres protections restent (ouverture, casse, entonnoirs posés au sol, laisse...).
+- L'attelage et les réglages du coffre (propriétaire seulement) sont dans KS_Trains 1.2.0.
+
+Compilé le 16/10/2026 (`sortie/KS_VerrouVehicule-1.1.0.jar`). **À déployer avec KS_Trains 1.2.0. Statut : non
+déployé, non testé en jeu.**

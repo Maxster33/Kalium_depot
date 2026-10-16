@@ -179,6 +179,46 @@ final class Foyers implements Listener {
         }
     }
 
+    /**
+     * 1.2.0 : un wagon à entonnoir verse un seau de lave : accepté seulement si la réserve du four est vide (règle du
+     * cahier) ; la réserve prend 1 000 blocs.
+     */
+    boolean verserLave(PoweredMinecart four) {
+        if (reserve(four) > 0) {
+            return false;
+        }
+        reserve(four, cuisson(Material.LAVA_BUCKET) / 20.0);
+        Inventory ouverte = ouvertes.get(four.getUniqueId());
+        if (ouverte != null) {
+            ouverte.setItem(CASE_RESERVE, infoReserve(four));
+        }
+        return true;
+    }
+
+    /**
+     * 1.2.0 : un wagon à entonnoir donne un carburant (un seul, pas un seau de lave) : il va dans la case, si elle est
+     * vide ou contient le même carburant avec de la place.
+     */
+    boolean ajouter(PoweredMinecart four, ItemStack objet) {
+        if (!carburant(objet) || objet.getType() == Material.LAVA_BUCKET) {
+            return false;
+        }
+        ItemStack dedans = caseCarburant(four);
+        ItemStack un = objet.clone();
+        un.setAmount(1);
+        if (dedans == null || dedans.isEmpty()) {
+            caseCarburant(four, un);
+            return true;
+        }
+        if (dedans.isSimilar(un) && dedans.getAmount() < dedans.getMaxStackSize()) {
+            ItemStack plus = dedans.clone();
+            plus.setAmount(dedans.getAmount() + 1);
+            caseCarburant(four, plus);
+            return true;
+        }
+        return false;
+    }
+
     /** Four allumé (fumée, face éclairée) tant qu'il est alimenté ; il ne pousse pas de lui-même (poussée nulle). */
     void allumer(PoweredMinecart four, boolean allume) {
         four.setPushX(0);
