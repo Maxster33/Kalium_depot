@@ -387,3 +387,5 @@ Demande de LeKiwi06 (KS_Trains 1.3.0) : wagon jukebox ; recette choisie : « wag
 
 **À déployer avec KS_Trains 1.3.0.** Compilé le 16/10/2026 (`sortie/KS_Crafts-1.18.0.jar`). **Statut : non déployé, non
 testé en jeu.**
+
+**Déployé sur Event le 16/10/2026 à 22:18 (LeKiwi06 : « j'ai arrêté event, envoie tout » ; Event arrêté proprement à 22:17:12, vérifié dans son journal ; envoi groupé : KS_Trains 1.3.0, KS_Crafts 1.18.0, KS_VerrouVehicule 1.1.1 ; jars en place (KS_Trains 1.2.0, KS_Crafts 1.17.0, KS_VerrouVehicule 1.1.0) vérifiés identiques aux références avant l'envoi, rangés dans `_removed-ks_trains-1.2.0/`, `_removed-ks_crafts-1.17.0/`, `_removed-ks_verrouvehicule-1.1.0/` ; jars du serveur vérifiés identiques à ceux compilés), actif après redémarrage d'Event. Statut : non testé en jeu.**
