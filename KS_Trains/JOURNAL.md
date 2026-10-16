@@ -409,3 +409,18 @@ Demande de LeKiwi06 : « un train qui n'a plus de carburant ralentit à la même
 
 Compilé le 16/10/2026 (`sortie/KS_Trains-1.3.6.jar`). **Statut : non déployé, non testé en jeu.**
 
+## 1.3.7 - le modèle agrandi suit les pentes (17/10/2026, LeKiwi06)
+
+Signalement de LeKiwi06 (capture sur Event, wagon à coffre sur un rail en pente) : « un minecart en pente ne bouge pas
+son bloc correctement ».
+
+- **Cause** : un modèle d'affichage posé dans un wagonnet ne suit pas l'inclinaison que le jeu donne au wagonnet sur une
+  pente ; le modèle restait droit (et n'était remis qu'une fois par seconde).
+- **Correction** : sur un rail en pente, le modèle penche de 45° vers le haut de la pente, autour de son centre ;
+  ailleurs il est droit et tourné comme le wagon. Mis à jour à chaque tick pour les wagons d'un train qui roule
+  (changement adouci sur 2 ticks), et chaque seconde à l'arrêt.
+- Sens de l'inclinaison écrit d'après les axes du jeu (est, ouest, nord, sud), à vérifier en jeu sur les 4 sens de
+  pente.
+
+Compilé le 17/10/2026 (`sortie/KS_Trains-1.3.7.jar`). **Statut : non déployé, non testé en jeu.**
+

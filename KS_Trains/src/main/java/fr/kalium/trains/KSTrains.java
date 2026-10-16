@@ -1406,6 +1406,12 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 deplacement = new Vector();
             }
             placer(train, ici.clone().add(deplacement), espacement);
+            if (train.vitesse > 0) {
+                // 1.3.7 : modèles agrandis qui suivent les pentes.
+                for (Minecart wagon : train.wagons) {
+                    decor.orienter(wagon);
+                }
+            }
             if (train.vitesse > 0 && trains.containsKey(train.id)) {
                 percuter(train);
             }

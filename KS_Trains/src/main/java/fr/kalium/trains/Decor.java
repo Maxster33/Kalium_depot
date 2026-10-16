@@ -4,8 +4,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Lightable;
+import org.bukkit.block.data.Rail;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
@@ -93,14 +95,50 @@ final class Decor {
         if (!bloc.equals(modele.getBlock())) {
             modele.setBlock(bloc);
         }
+        orienter(wagon, modele);
+    }
+
+    /** 1.3.7 : chaque tick, wagon d'un train qui roule : le modèle suit la pente. */
+    void orienter(Minecart wagon) {
+        BlockDisplay modele = decor(wagon);
+        if (modele != null) {
+            orienter(wagon, modele);
+        }
+    }
+
+    /**
+     * 1.3.7 (LeKiwi06, capture : « un minecart en pente ne bouge pas son bloc correctement ») : sur un rail en pente, le
+     * modèle penche de 45° vers le haut de la pente (le wagonnet du jeu penche ainsi), tourné autour de son centre ;
+     * ailleurs il est droit, tourné comme le wagon. Le modèle ne suit pas de lui-même l'inclinaison de son wagon (avant :
+     * remis une fois par seconde, toujours droit). Changement adouci sur 2 ticks.
+     */
+    private void orienter(Minecart wagon, BlockDisplay modele) {
         float taille = (float) plugin.getConfig().getDouble("decor.taille", 1.0);
         float hauteur = (float) plugin.getConfig().getDouble("decor.hauteur", -0.1);
-        Transformation voulue = new Transformation(new Vector3f(-taille / 2, hauteur, -taille / 2), new Quaternionf(),
-                new Vector3f(taille, taille, taille), new Quaternionf());
+        Quaternionf pente = new Quaternionf();
+        Block rail = Voie.rail(wagon);
+        boolean penche = false;
+        if (rail != null && rail.getBlockData() instanceof Rail donnees) {
+            float quart = (float) (Math.PI / 4);
+            switch (donnees.getShape()) {
+                case ASCENDING_EAST -> { pente.rotateZ(quart); penche = true; }
+                case ASCENDING_WEST -> { pente.rotateZ(-quart); penche = true; }
+                case ASCENDING_SOUTH -> { pente.rotateX(-quart); penche = true; }
+                case ASCENDING_NORTH -> { pente.rotateX(quart); penche = true; }
+                default -> { }
+            }
+        }
+        // Rotation autour du centre du bloc : le centre reste à (0, hauteur + taille / 2, 0).
+        Vector3f demi = pente.transform(new Vector3f(taille / 2, taille / 2, taille / 2));
+        Transformation voulue = new Transformation(new Vector3f(-demi.x, hauteur + taille / 2 - demi.y, -demi.z),
+                pente, new Vector3f(taille, taille, taille), new Quaternionf());
         if (!voulue.equals(modele.getTransformation())) {
+            modele.setInterpolationDelay(0);
+            modele.setInterpolationDuration(2);
             modele.setTransformation(voulue);
         }
-        float cap = wagon.getLocation().getYaw();
+        // En pente, les axes du monde (la pente est calculée dessus) ; sinon tourné comme le wagon.
+        float cap = penche ? 0 : wagon.getLocation().getYaw();
         if (Math.abs(modele.getLocation().getYaw() - cap) > 1f) {
             modele.setRotation(cap, 0);
         }
