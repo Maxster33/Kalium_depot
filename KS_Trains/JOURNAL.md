@@ -133,3 +133,5 @@ Choix de Claude, signalés :
 
 Écrit sans serveur de test (touches reçues à bord d'un wagonnet sur Java et Bedrock à vérifier). Compilé le 16/10/2026
 (`sortie/KS_Trains-1.1.0.jar`). **À déployer avec KS_Crafts 1.17.0. Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 16/10/2026 à 20:40 (LeKiwi06 : « envoie sur event et continue l'étape 3 » ; envoi groupé : KS_Trains 1.1.0, KS_Crafts 1.17.0 ; jars en place (KS_Trains 1.0.0, KS_Crafts 1.16.0) vérifiés identiques aux références avant l'envoi, rangés dans `_removed-ks_trains-1.0.0/` et `_removed-ks_crafts-1.16.0/` ; jars du serveur vérifiés identiques à ceux compilés ; Event n'avait pas redémarré depuis l'envoi de 20:00 : la 1.0.0 n'y a jamais tourné et le `config.yml` de KS_Trains sera créé avec les clés de la 1.1.0), actif après redémarrage d'Event. Nouvelle physique des wagonnets pas encore activée. Statut : non testé en jeu.**
