@@ -179,6 +179,6 @@ Limites :
   brute, cheval-squelette, cheval-zombie, marchand ambulant, nautile zombie ; grenouille (son petit est le têtard).
   Un bébé forcé par commande ne donne rien.
 - Bedrock : une barrière en inventaire s'affiche bien sur Bedrock (objet du jeu).
-- Empilé sur la 1.2.0 (Kixster) ; Event est encore en 1.1.0, la 1.3.0 contient aussi les changements de la 1.2.0.
+- Empilé sur la 1.2.0 (Kixster et Event : Event était en fait déjà en 1.2.0, envoyée le 11/10 à 10:47).
 
-**Non déployé.**
+**Déployé sur Event le 16/10/2026 à 23:20 (LeKiwi06, tests ; 1.2.0 dans `_removed-ks_decapitator-1.2.0/`, jar en place vérifié identique à la référence avant l'envoi) avec un `config.yml` à `tetes-de-joueurs: true` le temps du test (à remettre à `false` sur Event ensuite). En attente du redémarrage d'Event. Statut : non testé en jeu. Kixster reste en 1.2.0.**
