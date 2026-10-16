@@ -241,5 +241,5 @@ tête et le pseudo restent lisibles à cette hauteur (sinon ajuster le réglage)
 
 **Déploiement** : empilé sur la 1.6.0 non testée (tout ce qu'elle ajoute reste derrière « Bedrock : bateau serveur
 (essai) », désactivé par défaut) ; déployer la 1.6.1 met donc aussi la 1.6.0 en service. **Déployé sur Kal-Games le 16/10/2026 à 23:09 (LeKiwi06,
-serveur allumé : actif après redémarrage ; 1.5.1 dans `_removed-kg_boatrace-1.5.1/` ; supprimables par l'humain :
+actif depuis le redémarrage de 23:12 fait par LeKiwi06, journal sans erreur ; 1.5.1 dans `_removed-kg_boatrace-1.5.1/` ; supprimables par l'humain :
 `_removed-kg_boatrace-1.3.0/`, `1.4.0/`, `1.4.1/`, `1.4.2/`). Statut : non testé en jeu.**
