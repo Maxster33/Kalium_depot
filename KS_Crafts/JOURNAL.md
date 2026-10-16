@@ -355,3 +355,5 @@ minecart four en ligne dans la table de craft ».
 **À déployer avec KS_Trains 1.0.0 (Kixster).**
 
 Compilé le 16/10/2026 (`sortie/KS_Crafts-1.16.0.jar`). **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 16/10/2026 à 20:00 (LeKiwi06 : « envoie tout sur event je vais faire les tests là-bas » ; envoi groupé : KS_VerrouVehicule 1.0.0, KS_LaisseBateau 1.0.0, KS_Trains 1.0.0, KS_Crafts 1.16.0 ; KS_Crafts 1.14.1 en place vérifié identique à la référence avant l'envoi, dans `_removed-ks_crafts-1.14.1/` ; jars du serveur vérifiés identiques à ceux compilés après l'envoi), actif après redémarrage d'Event. Event passe de la 1.14.1 à la 1.16.0 (recettes du verrou et de la locomotive) ; Kixster reste en 1.15.0. Supprimables par l'humain sur Event (3 versions ou plus derrière la 1.16.0) : `_removed-ks_crafts-1.0.0/` à `1.13.0/`. Statut : non testé en jeu.**

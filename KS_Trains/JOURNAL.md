@@ -74,3 +74,5 @@ sans test en jeu.
 
 Écrit sans serveur de test. Compilé le 16/10/2026 (`sortie/KS_Trains-1.0.0.jar`). **À déployer avec KS_Crafts
 1.16.0**, et la nouvelle physique sur le monde de Kixster pour 1 bloc/tick. **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 16/10/2026 à 20:00 (LeKiwi06 : « envoie tout sur event je vais faire les tests là-bas » ; envoi groupé : KS_VerrouVehicule 1.0.0, KS_LaisseBateau 1.0.0, KS_Trains 1.0.0, KS_Crafts 1.16.0 ; KS_Crafts 1.14.1 en place vérifié identique à la référence avant l'envoi, dans `_removed-ks_crafts-1.14.1/` ; jars du serveur vérifiés identiques à ceux compilés après l'envoi), actif après redémarrage d'Event. Nouvelle physique des wagonnets pas encore activée sur Event (trains limités à 0,2 bloc/tick). Kixster n'est pas touché. Statut : non testé en jeu.**
