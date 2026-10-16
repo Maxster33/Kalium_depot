@@ -617,6 +617,13 @@ public final class KSTrains extends JavaPlugin implements Listener {
             resultat.addAll(bQueue ? lb : inverse(lb));
             resultat.addAll(la);
         }
+        // 1.2.1 (LeKiwi06 : « à un moment mon train a changé de sens en attachant plusieurs wagons ») : en joignant deux
+        // trains, l'ordre suivait le premier wagon cliqué et pouvait retourner le train de la locomotive. Le nouveau
+        // train garde maintenant le sens du morceau qui a une locomotive (sinon du plus long).
+        List<Minecart> reference = aLocomotive(la) ? la : aLocomotive(lb) ? lb : la.size() >= lb.size() ? la : lb;
+        if (reference.size() > 1 && rangDans(resultat, reference.get(0)) > rangDans(resultat, reference.get(1))) {
+            Collections.reverse(resultat);
+        }
         Component refus = refusControleur(resultat);
         if (refus != null) {
             Contenant.message(joueur, refus, true);
@@ -664,6 +671,24 @@ public final class KSTrains extends JavaPlugin implements Listener {
             return t("atteler.controleur-loin", "<red>Le wagon contrôleur doit être à moins de 5 wagons de la locomotive");
         }
         return null;
+    }
+
+    private boolean aLocomotive(List<Minecart> wagons) {
+        for (Minecart wagon : wagons) {
+            if (estLoco(wagon)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int rangDans(List<Minecart> wagons, Minecart wagon) {
+        for (int i = 0; i < wagons.size(); i++) {
+            if (same(wagons.get(i), wagon)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private static boolean same(Entity a, Entity b) {

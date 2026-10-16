@@ -96,6 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Trains 1.2.1** (LeKiwi06, 16/10/2026) : un train ne change plus de sens en joignant deux trains (il garde le sens du morceau qui a la locomotive) ; **compilé, non déployé** (Event est en 1.2.0). Détail : `KS_Trains/JOURNAL.md`.
 - **KS_Trains 1.2.0 + KS_VerrouVehicule 1.1.0** (LeKiwi06, 16/10/2026) : les 3 étapes de KS_Trains (locomotive, contrôleur et niveaux de vitesse, entonnoirs et coffres) ; **sur Event depuis le 16/10 à 20:46 pour les tests de LeKiwi06** (avec KS_Crafts 1.17.0 et KS_LaisseBateau 1.0.0) ; pas sur Kixster (KS_VerrouVehicule 1.0.0, KS_Crafts 1.15.0 y restent) ; nouvelle physique des wagonnets pas encore activée. Détail : `KS_Trains/JOURNAL.md`.
 - **KS_LaisseBateau 1.0.0 (nouveau)** (LeKiwi06, 14/10/2026) : laisse de 3 blocs entre deux bateaux ; **sur Event depuis le 16/10 à 20:00 pour les tests**, prévu pour Kixster (pas encore envoyé). Détail : `KS_LaisseBateau/JOURNAL.md`.
 - **KS_VerrouVehicule 1.0.0** (LeKiwi06, 14/10/2026) : sur Kixster depuis le 14/10 à 18:03 (avec KS_Crafts 1.15.0) et sur Event depuis le 16/10 à 20:00 (avec KS_Crafts 1.16.0). Détail : `KS_VerrouVehicule/JOURNAL.md`.
@@ -447,6 +448,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (16/10/2026, 21:20) : KS_Trains 1.2.1 compilé, non déployé : train retourné en joignant deux trains (signalé par LeKiwi06).** L'ordre suivait le premier wagon cliqué ; il suit maintenant le morceau qui a la locomotive. À envoyer sur Event avec la correction de `level.dat` (Event arrêté).
 
 **Ajout (16/10/2026, 21:10) : nouvelle physique refusée par Event au démarrage de 20:58.** Le pack `minecart_improvements` a été désactivé par le jeu (fonction absente de `enabled_features`, liste à ajouter aussi dans `level.dat` : erreur de lecture de Claude). Correction prête, en attente d'un nouvel arrêt d'Event par LeKiwi06.
 

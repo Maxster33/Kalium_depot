@@ -174,3 +174,18 @@ KS_VerrouVehicule 1.1.0** (KS_Crafts inchangé, 1.17.0). **Statut : non déploy�
 **Nouvelle physique des wagonnets activée sur Event le 16/10/2026 à 20:56** (LeKiwi06 : « j'ai arrêté event, active la nouvelle physique » ; Event arrêté proprement à 20:53:59, vérifié dans son journal et sur `level.dat` juste avant l'envoi). Dans `world/level.dat` (26.3 : il ne contient plus de liste `enabled_features`), le pack intégré `minecart_improvements` est passé de `DataPacks.Disabled` à `DataPacks.Enabled` ; lu dans le code du jeu 26.3 (MinecraftServer.configurePackRepository) : les fonctions activées sont recalculées au démarrage à partir des packs sélectionnés. Rien d'autre n'a changé dans le fichier (vérifié par relecture). Original sauvegardé dans `/_removed-level-dat-2026-10-16/level.dat` (le remettre en place, serveur arrêté, pour revenir en arrière). Reste à faire par LeKiwi06 après le démarrage : `/gamerule max_minecart_speed 40`. Effet sur tous les wagonnets d'Event.
 
 **Échec de l'activation (journal d'Event lu après le redémarrage du 16/10/2026 à 20:58)** : « Pack minecart_improvements requires features minecraft:minecart_improvements that are not enabled for this world, disabling pack ». Erreur de Claude en lisant le code du jeu : un pack n'est gardé que si ses fonctions sont dans la liste `enabled_features` du monde, qui vaut « vanilla » quand elle est absente de `level.dat` (WorldDataConfiguration, MinecraftServer.configurePackRepository). La nouvelle physique n'est donc pas active ; le `/gamerule max_minecart_speed 40` de LeKiwi06 (21:04) n'a pas pu servir. Correction prête : pack activé **et** `Data.enabled_features = [minecraft:vanilla, minecraft:minecart_improvements]`, à envoyer Event arrêté. Rien d'autre n'a été touché ; plugins chargés sans erreur.
+
+## 1.2.1 - le train ne change plus de sens en joignant deux trains (16/10/2026, LeKiwi06)
+
+Signalement de LeKiwi06 (tests sur Event) : « à un moment mon train a changé de sens en attachant plusieurs wagons ».
+
+- **Cause** (défaut de la 1.0.0) : en joignant deux trains de plusieurs wagons, l'ordre du nouveau train suivait le
+  morceau du **premier wagon cliqué**. Exemple : un groupe de wagons attelés entre eux, on clique d'abord son dernier
+  wagon, puis le dernier wagon du train de la locomotive : le train de la locomotive était retourné, la locomotive se
+  retrouvait à l'arrière et « avant » (le sens de la marche) pointait vers le groupe.
+- **Correction** : après un attelage, le nouveau train garde le sens du morceau qui a une **locomotive** (sinon du plus
+  long des deux). Un wagon seul se met toujours du côté où il est attelé.
+- Un train déjà retourné sur Event le reste : le dételer derrière la locomotive (cisailles ou menu) puis le rattacher
+  le remet dans le bon sens.
+
+Compilé le 16/10/2026 (`sortie/KS_Trains-1.2.1.jar`). **Statut : non déployé, non testé en jeu.**
