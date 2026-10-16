@@ -166,3 +166,5 @@ Choix de Claude, signalés :
 
 Écrit sans serveur de test. Compilé le 16/10/2026 (`sortie/KS_Trains-1.2.0.jar`). **À déployer avec
 KS_VerrouVehicule 1.1.0** (KS_Crafts inchangé, 1.17.0). **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 16/10/2026 à 20:46 (LeKiwi06 : « oui envoie sur event » ; envoi groupé : KS_Trains 1.2.0, KS_VerrouVehicule 1.1.0 ; jars en place (KS_Trains 1.1.0, KS_VerrouVehicule 1.0.0) vérifiés identiques aux références avant l'envoi, rangés dans `_removed-ks_trains-1.1.0/` et `_removed-ks_verrouvehicule-1.0.0/` ; jars du serveur vérifiés identiques à ceux compilés ; Event n'avait toujours pas redémarré depuis 20:00 : aucune version précédente n'y a tourné), actif après redémarrage d'Event. Kixster reste en KS_VerrouVehicule 1.0.0 et n'a pas KS_Trains. Statut : non testé en jeu.**
