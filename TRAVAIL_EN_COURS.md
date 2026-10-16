@@ -16,13 +16,15 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_LaisseBateau — LeKiwi06 — depuis le 2026-10-14 20:32 — nouveau plugin : laisse de 3 blocs entre deux bateaux (Kixster)
+- KS_Trains — LeKiwi06 — depuis le 2026-10-16 18:59 — nouveau plugin : trains de wagonnets, étape 1 (locomotive, attelage, déplacement, carburant, menu)
 
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 
 
 ## Requis parfois
 
+- KS_LaisseBateau — LeKiwi06 — depuis le 2026-10-14 20:32 — compilé, en attente du déploiement sur Kixster (passé en « requis parfois » le 2026-10-16)
+- KS_Crafts — LeKiwi06 — depuis le 2026-10-16 18:59 — recette de la locomotive (KS_Trains)
 
 
 
