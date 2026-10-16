@@ -76,3 +76,41 @@ sans test en jeu.
 1.16.0**, et la nouvelle physique sur le monde de Kixster pour 1 bloc/tick. **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 16/10/2026 à 20:00 (LeKiwi06 : « envoie tout sur event je vais faire les tests là-bas » ; envoi groupé : KS_VerrouVehicule 1.0.0, KS_LaisseBateau 1.0.0, KS_Trains 1.0.0, KS_Crafts 1.16.0 ; KS_Crafts 1.14.1 en place vérifié identique à la référence avant l'envoi, dans `_removed-ks_crafts-1.14.1/` ; jars du serveur vérifiés identiques à ceux compilés après l'envoi), actif après redémarrage d'Event. Nouvelle physique des wagonnets pas encore activée sur Event (trains limités à 0,2 bloc/tick). Kixster n'est pas touché. Statut : non testé en jeu.**
+
+## 1.1.0 - étape 2 : wagon contrôleur (16/10/2026, LeKiwi06)
+
+LeKiwi06 : « envoie tout sur event je vais faire les tests là-bas, et continue l'étape suivante ». Règle 11 du cahier :
+wagon contrôleur pour accélérer, freiner et faire marche arrière (1 bloc/s au plus), un par train, à moins de 5
+wagons de la locomotive. Empilé sur la 1.0.0 non testée, à sa demande.
+
+- **Objet** : wagonnet vanilla brillant, « Wagon contrôleur », 4 lignes de description. Recette dans KS_Crafts 1.17.0.
+  Clic droit sur un rail : un wagonnet marqué (comme un wagonnet du jeu). Cassé (dételé), il redonne un wagon
+  contrôleur. Un distributeur ne le pose pas.
+- **Attelage** : refusé s'il y aurait 2 wagons contrôleurs dans le train, ou si le contrôleur serait à 5 wagons ou
+  plus du four de locomotive le plus proche (écart de rang de 4 au plus). Un train sans locomotive n'a pas d'écart à
+  respecter.
+- **Conduite** : un joueur monte dans le contrôleur (clic droit). Touche **avancer** : la vitesse voulue monte de
+  0,05 bloc/tick par seconde (`pas-controleur` 0,0025 par tick) jusqu'à la vitesse maximale du train ; touche
+  **reculer** : elle descend deux fois plus vite (freinage), puis, à l'arrêt, **marche arrière** jusqu'à 0,05
+  bloc/tick (1 bloc/s, `marche-arriere-max`). Touches relâchées : la vitesse voulue est gardée. Au-dessus de la barre
+  d'objets du conducteur : sens, vitesse, vitesse voulue et maximale (toutes les demi-secondes).
+- **Marche arrière** : le train freine jusqu'à l'arrêt, puis le **dernier wagon mène** : il est poussé le long des
+  rails et les autres wagons suivent son trajet, comme en marche avant. Bout des rails, obstacle, carburant : mêmes
+  arrêts qu'en marche avant.
+- **Conducteur qui descend** : le train freine jusqu'à l'arrêt. Pendant qu'il conduit, le bouton marche / arrêt du
+  menu est refusé (message).
+- **Menu du train** : aussi par accroupi + clic droit sur le wagon contrôleur ; le contrôleur y apparaît (comparateur)
+  avec son conducteur ; la fiche du bas dit « Marche arrière » quand c'est le cas.
+- Avec le bouton « Mettre en marche » après une marche arrière, le train freine puis repart vers l'avant.
+- `config.yml` : nouvelles clés `pas-controleur` (0,0025) et `marche-arriere-max` (0,05) ; valeurs par défaut aussi
+  dans le code (non ajoutées au `config.yml` d'un serveur qui en a déjà un).
+
+Choix de Claude, signalés :
+
+- « Freiner » : la touche reculer freine deux fois plus vite qu'elle n'accélère ; le freinage réel du train reste
+  limité par `freinage` (0,05 bloc/tick par tick).
+- Conducteur descendu : le train s'arrête (un train sans conducteur ne roule qu'avec le bouton marche du menu).
+- La marche arrière demande aussi de la traction (carburant).
+
+Écrit sans serveur de test (touches reçues à bord d'un wagonnet sur Java et Bedrock à vérifier). Compilé le 16/10/2026
+(`sortie/KS_Trains-1.1.0.jar`). **À déployer avec KS_Crafts 1.17.0. Statut : non déployé, non testé en jeu.**

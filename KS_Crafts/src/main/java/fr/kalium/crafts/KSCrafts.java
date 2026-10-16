@@ -42,6 +42,7 @@ import java.util.Map;
  * 1.14.1 : cette recette n'est plus en double (la liste des bateaux du jeu contient aussi les bateaux à coffre).
  * 1.15.0 (LeKiwi06) : recette du verrou de véhicule de KS_VerrouVehicule (voir onEnable).
  * 1.16.0 (LeKiwi06) : recette de la locomotive de KS_Trains (voir onEnable).
+ * 1.17.0 (LeKiwi06) : recette du wagon contrôleur de KS_Trains (voir onEnable et onPreparerControleur).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -206,8 +207,18 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             locomotive.shape("FFF");
             locomotive.setIngredient('F', Material.FURNACE_MINECART);
             add(locomotive);
+            // 1.17.0 (LeKiwi06) : wagon contrôleur (KS_Trains 1.1.0) : un wagonnet au centre et, en forme de casque
+            // (rangée du haut et côtés de celle du wagonnet), un comparateur, un capteur sculk calibré, une lampe à
+            // redstone, une ampoule de cuivre (toutes) et un levier, dans n'importe quel ordre, chacun une fois
+            // (vérifié dans onPreparerControleur).
+            ShapedRecipe controleur = new ShapedRecipe(key("wagon_controleur"),
+                    fr.kalium.trains.KSTrains.creerControleur());
+            controleur.shape("AAA", "AWA");
+            controleur.setIngredient('A', new RecipeChoice.MaterialChoice(piecesControleur()));
+            controleur.setIngredient('W', Material.MINECART);
+            add(controleur);
         } else {
-            getLogger().warning("KS_Trains absent : craft de la locomotive ignoré.");
+            getLogger().warning("KS_Trains absent : crafts de la locomotive et du wagon contrôleur ignorés.");
         }
 
         // 1.8.0 (LeKiwi06) : réparation de la tête de wither squelette (KS_Decapitator 1.1.0), bloc de charbon de bois.
@@ -464,6 +475,40 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             choix.add(cuisson.getInputChoice());
         }
         ingredients.put(cle, choix);
+    }
+
+    /** 1.17.0 : les 5 pièces du wagon contrôleur (toutes les ampoules de cuivre comptent pour une). */
+    private static List<Material> piecesControleur() {
+        List<Material> pieces = new ArrayList<>(List.of(Material.COMPARATOR, Material.CALIBRATED_SCULK_SENSOR,
+                Material.REDSTONE_LAMP, Material.LEVER));
+        for (Material m : Material.values()) {
+            if (!m.isLegacy() && m.isItem() && m.name().endsWith("COPPER_BULB")) {
+                pieces.add(m);
+            }
+        }
+        return pieces;
+    }
+
+    /** 1.17.0 : wagon contrôleur seulement si chacune des 5 pièces est là une fois (pas 5 comparateurs). */
+    @EventHandler
+    public void onPreparerControleur(org.bukkit.event.inventory.PrepareItemCraftEvent event) {
+        if (!(event.getRecipe() instanceof ShapedRecipe recette) || !recette.getKey().equals(key("wagon_controleur"))) {
+            return;
+        }
+        java.util.Set<String> vues = new java.util.HashSet<>();
+        for (ItemStack objet : event.getInventory().getMatrix()) {
+            if (objet == null || objet.isEmpty() || objet.getType() == Material.MINECART) {
+                continue;
+            }
+            String piece = objet.getType().name().endsWith("COPPER_BULB") ? "COPPER_BULB" : objet.getType().name();
+            if (!vues.add(piece)) {
+                event.getInventory().setResult(null);
+                return;
+            }
+        }
+        if (vues.size() != 5) {
+            event.getInventory().setResult(null);
+        }
     }
 
     /** 8 objets en anneau autour de l'objet central. */

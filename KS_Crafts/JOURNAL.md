@@ -357,3 +357,19 @@ minecart four en ligne dans la table de craft ».
 Compilé le 16/10/2026 (`sortie/KS_Crafts-1.16.0.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 16/10/2026 à 20:00 (LeKiwi06 : « envoie tout sur event je vais faire les tests là-bas » ; envoi groupé : KS_VerrouVehicule 1.0.0, KS_LaisseBateau 1.0.0, KS_Trains 1.0.0, KS_Crafts 1.16.0 ; KS_Crafts 1.14.1 en place vérifié identique à la référence avant l'envoi, dans `_removed-ks_crafts-1.14.1/` ; jars du serveur vérifiés identiques à ceux compilés après l'envoi), actif après redémarrage d'Event. Event passe de la 1.14.1 à la 1.16.0 (recettes du verrou et de la locomotive) ; Kixster reste en 1.15.0. Supprimables par l'humain sur Event (3 versions ou plus derrière la 1.16.0) : `_removed-ks_crafts-1.0.0/` à `1.13.0/`. Statut : non testé en jeu.**
+
+## 1.17.0 - recette du wagon contrôleur (16/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (KS_Trains 1.1.0, cahier des charges) : « un minecart + un comparateur + un sculk calibré + une
+redstone lamp + un copper bulb + un levier (l'emplacement des items importe peu, mais il faut faire une forme de casque
+et mettre le minecart au milieu) ».
+
+- Grille `A A A` / `A W A` (casque, en haut ou en bas de la grille) : W = wagonnet, A = comparateur, capteur sculk
+  calibré, lampe à redstone, ampoule de cuivre (toutes, oxydées et cirées comprises) ou levier, **chacun une fois**,
+  dans n'importe quel ordre → **1 wagon contrôleur**. Une grille avec une pièce en double (5 comparateurs...) ne donne
+  rien (vérifié à la préparation du craft).
+- Sans KS_Trains : recette ignorée.
+
+**À déployer avec KS_Trains 1.1.0.**
+
+Compilé le 16/10/2026 (`sortie/KS_Crafts-1.17.0.jar`). **Statut : non déployé, non testé en jeu.**

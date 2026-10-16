@@ -14,23 +14,30 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Un train chargé en entier : ses wagons dans l'ordre (0 = avant, côté locomotive) et le trajet de la tête, sur lequel
- * chaque autre wagon est placé à chaque tick.
+ * Un train chargé en entier : ses wagons dans l'ordre (0 = avant, côté locomotive) et le trajet du train, sur lequel
+ * chaque wagon est placé à chaque tick derrière le wagon qui mène (la tête en marche avant ; 1.1.0 : le dernier wagon
+ * en marche arrière).
  */
 final class Train {
 
     final UUID id;
     final List<Minecart> wagons;
 
-    /** Trajet de la tête : premier point = sa position au dernier tick, puis les plus anciennes. */
+    /** Trajet : premier point côté avant du train, dernier point côté arrière. */
     final LinkedList<Vector> chemin = new LinkedList<>();
 
     boolean marche;
-    /** Vitesse voulue de la tête (bloc par tick). */
+    /** Vitesse du train (bloc par tick, toujours positive ; le sens est dans {@link #sens}). */
     double vitesse;
-    /** Position de la tête à l'arrêt (elle n'en bouge pas). */
+    /** 1.1.0 : sens de la marche (1 avant, -1 arrière), gardé à l'arrêt : il dit quel wagon mène. */
+    int sens = 1;
+    /** 1.1.0 : vitesse voulue par le conducteur du wagon contrôleur (négative en marche arrière). */
+    double consigne;
+    /** 1.1.0 : conduit depuis le wagon contrôleur au tick précédent. */
+    boolean pilote;
+    /** Position du wagon qui mène à l'arrêt (il n'en bouge pas). */
     Location arret;
-    /** Dernière position de la tête sur un rail (si elle déraille, elle y revient). */
+    /** Dernière position du wagon qui mène sur un rail (s'il déraille, il y revient). */
     Location surRail;
     /** Tick depuis lequel le train est arrêté (chunks gardés chargés encore une minute). */
     long arreteDepuis;
@@ -41,6 +48,12 @@ final class Train {
     Train(UUID id, List<Minecart> wagons) {
         this.id = id;
         this.wagons = new ArrayList<>(wagons);
+        reconstruire();
+    }
+
+    /** Trajet refait sur la position des wagons (formation du train, changement de sens). */
+    void reconstruire() {
+        chemin.clear();
         for (Minecart wagon : wagons) {
             chemin.add(wagon.getLocation().toVector());
         }
@@ -52,6 +65,16 @@ final class Train {
 
     Minecart tete() {
         return wagons.get(0);
+    }
+
+    /** Wagon qui mène : la tête en marche avant, le dernier wagon en marche arrière. */
+    Minecart meneur() {
+        return sens > 0 ? wagons.get(0) : wagons.get(wagons.size() - 1);
+    }
+
+    /** Le {@code k}-ième wagon derrière celui qui mène (0 = celui qui mène). */
+    Minecart suiveur(int k) {
+        return sens > 0 ? wagons.get(k) : wagons.get(wagons.size() - 1 - k);
     }
 
     boolean complet() {
@@ -72,15 +95,24 @@ final class Train {
         return -1;
     }
 
-    /** Direction de la marche : celle de la tête si elle roule, sinon du 2e wagon vers la tête (trajet). */
+    private Iterator<Vector> depuisMeneur() {
+        return sens > 0 ? chemin.iterator() : chemin.descendingIterator();
+    }
+
+    Vector bout() {
+        return sens > 0 ? chemin.getFirst() : chemin.getLast();
+    }
+
+    /** Direction de la marche : celle du wagon qui mène s'il roule, sinon s'éloignant du wagon qui le suit (trajet). */
     Vector direction() {
-        Vector vitesseTete = tete().getVelocity();
-        if (vitesseTete.lengthSquared() > 0.0025) {
-            return vitesseTete.clone().normalize();
+        Vector vitesseMeneur = meneur().getVelocity();
+        if (vitesseMeneur.lengthSquared() > 0.0025) {
+            return vitesseMeneur.clone().normalize();
         }
-        Vector devant = chemin.getFirst();
-        for (Vector point : chemin) {
-            Vector ecart = devant.clone().subtract(point);
+        Vector devant = bout();
+        Iterator<Vector> points = depuisMeneur();
+        while (points.hasNext()) {
+            Vector ecart = devant.clone().subtract(points.next());
             if (ecart.lengthSquared() > 0.09) {
                 return ecart.normalize();
             }
@@ -89,13 +121,15 @@ final class Train {
     }
 
     /**
-     * Point du trajet à {@code distance} blocs derrière {@code devant} (position prévue de la tête), ou null si le
-     * trajet est trop court.
+     * Point du trajet à {@code distance} blocs derrière {@code devant} (position prévue du wagon qui mène), ou null si
+     * le trajet est trop court.
      */
     Vector point(Vector devant, double distance) {
         Vector precedent = devant;
         double reste = distance;
-        for (Vector point : chemin) {
+        Iterator<Vector> points = depuisMeneur();
+        while (points.hasNext()) {
+            Vector point = points.next();
             double longueur = point.distance(precedent);
             if (longueur >= reste && longueur > 1e-6) {
                 return precedent.clone().add(point.clone().subtract(precedent).multiply(reste / longueur));
@@ -106,23 +140,27 @@ final class Train {
         return null;
     }
 
-    /** Ajoute la position de la tête au trajet et oublie ce qui est au-delà du dernier wagon. */
-    void avancer(Vector tete, double longueurUtile) {
-        if (chemin.isEmpty() || chemin.getFirst().distanceSquared(tete) > 1e-4) {
-            chemin.addFirst(tete.clone());
+    /** Ajoute la position du wagon qui mène au trajet et oublie ce qui est au-delà du dernier wagon qui le suit. */
+    void avancer(Vector meneur, double longueurUtile) {
+        if (chemin.isEmpty() || bout().distanceSquared(meneur) > 1e-4) {
+            if (sens > 0) {
+                chemin.addFirst(meneur.clone());
+            } else {
+                chemin.addLast(meneur.clone());
+            }
         }
         double total = 0;
         Vector precedent = null;
-        Iterator<Vector> iterateur = chemin.iterator();
-        while (iterateur.hasNext()) {
-            Vector point = iterateur.next();
+        Iterator<Vector> points = depuisMeneur();
+        while (points.hasNext()) {
+            Vector point = points.next();
             if (precedent != null) {
                 total += point.distance(precedent);
                 if (total > longueurUtile) {
                     // Le premier point au-delà est gardé, les suivants oubliés.
-                    while (iterateur.hasNext()) {
-                        iterateur.next();
-                        iterateur.remove();
+                    while (points.hasNext()) {
+                        points.next();
+                        points.remove();
                     }
                     break;
                 }
