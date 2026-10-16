@@ -19,6 +19,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Rail;
 import org.bukkit.entity.Entity;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.entity.minecart.SpawnerMinecart;
+import org.bukkit.entity.minecart.CommandMinecart;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.HopperMinecart;
@@ -881,40 +887,122 @@ public final class KSTrains extends JavaPlugin implements Listener {
     }
 
     /**
-     * Les wagons d'un train ne sont pas poussés (le plugin les place). 1.3.0 (LeKiwi06 : « un wagon normal traverse le
-     * train, il faudrait des collisions ») : ce que le train touche (wagonnet libre, joueur, animal) est repoussé ; deux
-     * trains qui se heurtent : celui qui roule s'arrête. Les passagers et le décor ne comptent pas.
+     * Les wagons d'un train ne poussent pas et ne sont pas poussés par le jeu (le plugin les place). 1.3.2 (LeKiwi06 :
+     * « quand le train est arrêté, il faut que les entités le traversent normalement ») : rien d'autre ici ; un train
+     * qui roule percute ce qu'il touche (percuter).
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPousser(VehicleEntityCollisionEvent event) {
-        Entity vehicule = event.getVehicle();
-        Entity autre = event.getEntity();
-        Train tv = trainDe(vehicule);
-        Train ta = trainDe(autre);
-        if (tv == null && ta == null) {
-            return;
+        if (trainDe(event.getVehicle()) != null || trainDe(event.getEntity()) != null) {
+            event.setCancelled(true);
         }
-        event.setCancelled(true);
-        if (tv == ta || decor.estDecor(autre) || vehicule.getPassengers().contains(autre)
-                || autre.getPassengers().contains(vehicule)) {
-            return;
-        }
-        if (tv != null && ta != null) {
-            for (Train train : List.of(tv, ta)) {
-                if (train.vitesse > 0) {
-                    arreter(train, t("arret.train", "<yellow>Le train s'arrête : un autre train est sur la voie"));
+    }
+
+    /** 1.3.2 : dernier tick où une entité a été projetée par un train (une fois par demi-seconde au plus). */
+    private final Map<UUID, Long> projetees = new HashMap<>();
+
+    /**
+     * 1.3.2 (LeKiwi06 : « un train qui collisionne une entité sur sa route la fait voler en l'air, comme un dragon quand
+     * il nous pousse ; plus il va vite, plus il projette loin ; à vitesse max il propulse comme le dragon ; à l'exception
+     * des wagons qui se brisent, et les autres trains déraillent (tous les wagons se décrochent et les locomotives se
+     * cassent) »). Chaque tick, train qui roule : ce qui touche un de ses wagons (et ce qui est devant le wagon qui
+     * mène, sur la distance du tick) est percuté. Passagers, décor, spectateurs et sièges invisibles ne comptent pas.
+     */
+    private void percuter(Train train) {
+        World monde = train.monde();
+        Set<UUID> vues = new HashSet<>();
+        Vector devant = train.direction().multiply(train.vitesse + 0.3);
+        for (Minecart wagon : train.wagons) {
+            BoundingBox zone = wagon.getBoundingBox().expand(0.25, 0.1, 0.25);
+            if (wagon == train.meneur()) {
+                zone = zone.expandDirectional(devant);
+            }
+            for (Entity touche : monde.getNearbyEntities(zone)) {
+                if (!vues.add(touche.getUniqueId()) || train.wagons.contains(touche) || decor.estDecor(touche)
+                        || touche.isInsideVehicle() || touche instanceof Display) {
+                    continue;
+                }
+                if (touche instanceof Minecart autre) {
+                    Train autreTrain = trainDe(autre);
+                    if (autreTrain != null) {
+                        derailler(autreTrain);
+                    } else {
+                        briser(autre);
+                    }
+                } else if (touche instanceof LivingEntity vivant && !(vivant instanceof ArmorStand support
+                        && support.isMarker()) && !(vivant instanceof Player joueur
+                        && joueur.getGameMode() == GameMode.SPECTATOR)) {
+                    projeter(train, wagon, vivant);
                 }
             }
+        }
+    }
+
+    /**
+     * Poussée du dragon (lue dans le code du jeu 26.3, EnderDragon.knockBack) : 4 x écart / distance² à l'horizontale,
+     * 0,2 vers le haut, depuis le centre du wagon ; multipliée par vitesse / vitesse maximale (1 à 20 blocs/s).
+     */
+    private void projeter(Train train, Minecart wagon, LivingEntity vivant) {
+        Long avant = projetees.get(vivant.getUniqueId());
+        if (avant != null && tick - avant < 10) {
             return;
         }
-        Entity wagon = tv != null ? vehicule : autre;
-        Entity libre = tv != null ? autre : vehicule;
-        Train train = tv != null ? tv : ta;
-        Vector ecart = libre.getLocation().toVector().subtract(wagon.getLocation().toVector()).setY(0);
-        if (ecart.lengthSquared() < 1e-4) {
-            ecart = new Vector(1, 0, 0);
+        projetees.put(vivant.getUniqueId(), tick);
+        double force = Math.min(1, train.vitesse / Math.max(0.01, reglage("vitesse-max", 1.0)));
+        double dx = vivant.getX() - wagon.getX();
+        double dz = vivant.getZ() - wagon.getZ();
+        double carre = Math.max(dx * dx + dz * dz, 0.1);
+        vivant.setVelocity(vivant.getVelocity().add(new Vector(dx / carre * 4 * force, 0.2, dz / carre * 4 * force)));
+    }
+
+    /** 1.3.2 : un wagonnet libre percuté se brise (contenu et objet au sol), sauf si une protection l'en empêche. */
+    private void briser(Minecart wagon) {
+        if (wagon instanceof CommandMinecart || wagon instanceof SpawnerMinecart || !wagon.isValid()) {
+            return;
         }
-        libre.setVelocity(ecart.normalize().multiply(0.3 + train.vitesse).setY(0.1));
+        VehicleDestroyEvent casse = new VehicleDestroyEvent(wagon,
+                org.bukkit.damage.DamageSource.builder(org.bukkit.damage.DamageType.GENERIC).build(), null);
+        getServer().getPluginManager().callEvent(casse);
+        if (casse.isCancelled()) {
+            return;
+        }
+        Location lieu = wagon.getLocation();
+        ItemStack objet = estControleur(wagon) ? creerControleur() : estJukebox(wagon) ? creerJukebox()
+                : new ItemStack(wagon.getMinecartMaterial());
+        wagon.getWorld().dropItemNaturally(lieu, objet);
+        if (wagon instanceof InventoryHolder detenteur) {
+            for (ItemStack contenu : detenteur.getInventory().getContents()) {
+                if (contenu != null && !contenu.isEmpty()) {
+                    wagon.getWorld().dropItemNaturally(lieu, contenu);
+                }
+            }
+            detenteur.getInventory().clear();
+        }
+        if (wagon instanceof PoweredMinecart four) {
+            ItemStack carburant = foyers.caseCarburant(four);
+            if (carburant != null && !carburant.isEmpty()) {
+                wagon.getWorld().dropItemNaturally(lieu, carburant);
+            }
+            foyers.oublier(four.getUniqueId());
+        }
+        wagon.getWorld().playSound(lieu, Sound.ENTITY_ITEM_BREAK, 1f, 0.8f);
+        wagon.remove();
+    }
+
+    /** 1.3.2 : déraillement : tous les wagons sont dételés et arrêtés, les fours de locomotive se brisent. */
+    private void derailler(Train train) {
+        if (!trains.containsKey(train.id)) {
+            return;
+        }
+        annoncer(train, t("arret.deraillement", "<red>Déraillement !"));
+        retirer(train);
+        for (Minecart wagon : train.wagons) {
+            effacer(wagon);
+            wagon.setVelocity(new Vector());
+            if (estLoco(wagon)) {
+                briser(wagon);
+            }
+        }
     }
 
     // ------------------------------------------------------------------ rouler
@@ -928,6 +1016,25 @@ public final class KSTrains extends JavaPlugin implements Listener {
             }
         }
         return traction;
+    }
+
+    /**
+     * 1.3.2 : vrai si un wagon du train est sur un rail courbe, ou si un virage arrive devant le wagon qui mène avant
+     * que le train ait eu le temps de freiner jusqu'à {@code ralentie} (distance de freinage + le chemin d'un tick).
+     */
+    private boolean enVirage(Train train, double ralentie, double freinage) {
+        for (Minecart wagon : train.wagons) {
+            if (Voie.virage(Voie.rail(wagon))) {
+                return true;
+            }
+        }
+        double v = train.vitesse;
+        if (v <= ralentie || freinage <= 0) {
+            return false;
+        }
+        double distance = (v * v - ralentie * ralentie) / (2 * freinage) + v + 1;
+        Block rail = Voie.rail(train.meneur());
+        return rail != null && Voie.virageDevant(rail, train.direction(), (int) Math.min(128, Math.ceil(distance)));
     }
 
     /** 1.3.1 : 1, ou traction / wagons quand le train est en surcharge (il accélère et freine plus lentement). */
@@ -1115,6 +1222,14 @@ public final class KSTrains extends JavaPlugin implements Listener {
             // cinquantaine », plus lent encore en surcharge) : 0,005 et 0,01 bloc/tick par tick de 0 à 1 bloc/tick
             // (100 et 50 blocs), multipliés par traction / wagons quand le train a plus de wagons que sa traction.
             double charge = inertie(train);
+            // 1.3.2 : virages : -25 % (sauf niveau 1 et marche arrière), anticipé sur la distance de freinage ; une
+            // diagonale (virages qui se suivent) reste un seul ralentissement.
+            if (train.niveau >= 2 && voulue > 0) {
+                double ralentie = voulue * (1 - reglage("virage.reduction", 0.25));
+                if (enVirage(train, ralentie, reglage("freinage", 0.01) * charge)) {
+                    voulue = ralentie;
+                }
+            }
             train.vitesse = train.vitesse < voulue
                     ? Math.min(voulue, train.vitesse + reglage("acceleration", 0.005) * charge)
                     : Math.max(voulue, train.vitesse - reglage("freinage", 0.01) * charge);
@@ -1135,6 +1250,9 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 deplacement = new Vector();
             }
             placer(train, ici.clone().add(deplacement), espacement);
+            if (train.vitesse > 0 && trains.containsKey(train.id)) {
+                percuter(train);
+            }
             if (tick % Entonnoirs.RYTHME == 0) {
                 entonnoirs.transferer(train);
             }
@@ -1193,6 +1311,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
     /** Chaque seconde : fours allumés selon leur carburant, chunks gardés chargés autour des trains qui roulent. */
     private void surveiller() {
         selections.values().removeIf(selection -> selection.fin() < tick);
+        projetees.values().removeIf(quand -> tick - quand > 20);
         for (Train train : List.copyOf(trains.values())) {
             if (!train.complet()) {
                 continue;

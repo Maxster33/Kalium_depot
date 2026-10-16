@@ -294,3 +294,38 @@ Choix de Claude, signalés : la surcharge ralentit aussi le freinage (un train l
 coefficient est traction / wagons.
 
 Compilé le 16/10/2026 (`sortie/KS_Trains-1.3.1.jar`). **Statut : non déployé, non testé en jeu.**
+
+## 1.3.2 - percussions et virages (16/10/2026, LeKiwi06)
+
+Demandes de LeKiwi06 : « il faut aussi qu'un train qui collisionne une entité sur sa route la fasse voler en l'air
+(comme un dragon quand il nous pousse, plus il va vite, plus il projette loin, à vitesse max il propulse comme le
+dragon), à l'exception des wagons qui se brisent, et les autres trains déraillent (le déraillement : tous les wagons se
+décrochent et les locomotives se cassent) ; par contre quand le train est arrêté, il faut que les entités le traversent
+normalement » ; puis « il faut également que le train se fasse ralentir dans les virages » (réponses : -25 % de sa
+vitesse, sauf en vitesse 1 ; il anticipe, mais en diagonale il ne faut compter qu'un virage tant qu'il reste en
+diagonale). Remplace les collisions de la 1.3.0.
+
+- **Train arrêté** : aucune collision, les entités le traversent (le jeu ne pousse plus rien).
+- **Train qui roule** : chaque tick, ce qui touche un de ses wagons (et ce qui est devant le wagon qui mène, sur la
+  distance du tick) est percuté :
+  - **créature ou joueur** : projeté comme par le dragon (lu dans le code du jeu 26.3, EnderDragon.knockBack : 4 x écart
+    / distance² à l'horizontale, 0,2 vers le haut, depuis le centre du wagon), multiplié par vitesse / vitesse maximale
+    (à 20 blocs/s : exactement le dragon). Une même entité au plus une fois par demi-seconde. Pas de dégâts (le dragon en
+    fait 5 : non repris, non demandé).
+  - **wagonnet libre** : il **se brise** (son objet et son contenu tombent ; wagon contrôleur ou jukebox : leur objet,
+    leurs cornes ou leur disque). Une protection peut l'empêcher (casse signalée aux autres plugins : un coffre
+    verrouillé et non vide de KS_VerrouVehicule ne se brise pas). Wagonnets à bloc de commande ou à spawner : ignorés.
+  - **wagon d'un autre train** : cet autre train **déraille** (« Déraillement ! ») : tous ses wagons sont dételés et
+    arrêtés, ses fours de locomotive se brisent (objet et carburant au sol). Le train qui percute continue ; les wagons
+    dételés restés sur sa route se brisent à leur tour.
+  - Passagers, décor, sièges invisibles et spectateurs ne comptent pas.
+- **Virages** : à partir du niveau 2 (pas au niveau 1 ni en marche arrière), dans un virage la vitesse voulue perd
+  **25 %** (`virage.reduction`) tant qu'un wagon du train est sur un rail courbe. Le train **anticipe** : il lit les
+  rails devant le wagon qui mène (bloc par bloc, virages et pentes compris) sur sa distance de freinage et freine pour
+  arriver au virage à la bonne vitesse. Une **diagonale** (virages qui se suivent) reste un seul ralentissement de 25 %.
+
+Choix de Claude, signalés : le train qui percute ne ralentit pas ; un wagonnet à TNT percuté se brise sans exploser ;
+deux trains qui roulent l'un contre l'autre déraillent tous les deux ; la réduction de 25 % porte sur la vitesse voulue
+(niveau ou vitesse permise par la traction).
+
+Compilé le 16/10/2026 (`sortie/KS_Trains-1.3.2.jar`). **Statut : non déployé, non testé en jeu.**

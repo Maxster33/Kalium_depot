@@ -30,3 +30,6 @@ decor:
 # 1.3.0 : wagon jukebox. Volume de la musique (4 = entendue a 64 blocs, comme un jukebox).
 jukebox:
   volume: 4.0
+# 1.3.2 : vitesse perdue dans les virages (0,25 = -25 %), sauf au niveau 1 ; le train freine avant d'y arriver.
+virage:
+  reduction: 0.25

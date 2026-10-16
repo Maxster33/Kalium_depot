@@ -96,7 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-- **KS_Trains 1.3.1** (LeKiwi06, 16/10/2026) : wagons à four, contrôleur et jukebox de nouveau incassables (KS_Claim levait la protection), décor qui ne reste plus après la casse d'un wagon, accélération sur ~100 blocs et freinage sur ~50 (plus lents en surcharge) ; **compilé, non déployé** (Event en 1.3.0 ; son `config.yml` a encore `acceleration` 0,02 et `freinage` 0,05 : à changer avec l'envoi).
+- **KS_Trains 1.3.2** (LeKiwi06, 16/10/2026) : 1.3.1 (wagons incassables, décor, accélération sur ~100 blocs / freinage ~50) + percussions (entités projetées comme par le dragon, wagonnets libres brisés, autres trains déraillés ; rien à l'arrêt) et ralentissement de 25 % dans les virages, anticipé ; **compilé, non déployé** (Event en 1.3.0 ; son `config.yml` a encore `acceleration` 0,02 et `freinage` 0,05 : à changer avec l'envoi).
 - **KS_Trains 1.3.0 + KS_Crafts 1.18.0 + KS_VerrouVehicule 1.1.1** (LeKiwi06, 16/10/2026) : **sur Event depuis le 16/10 à 22:18 pour les tests** ; pas sur Kixster (KS_VerrouVehicule 1.0.0, KS_Crafts 1.15.0 y restent). Détail : `KS_Trains/JOURNAL.md`.
 - **KS_LaisseBateau 1.0.0 (nouveau)** (LeKiwi06, 14/10/2026) : laisse de 3 blocs entre deux bateaux ; **sur Event depuis le 16/10 à 20:00 pour les tests**, prévu pour Kixster (pas encore envoyé). Détail : `KS_LaisseBateau/JOURNAL.md`.
 - **KS_VerrouVehicule 1.0.0** (LeKiwi06, 14/10/2026) : sur Kixster depuis le 14/10 à 18:03 (avec KS_Crafts 1.15.0) et sur Event depuis le 16/10 à 20:00 (avec KS_Crafts 1.16.0). Détail : `KS_VerrouVehicule/JOURNAL.md`.
@@ -449,6 +449,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (16/10/2026, 23:05) : KS_Trains 1.3.2 compilé, non déployé.** Demandes de LeKiwi06 : train qui roule = entités projetées comme par le dragon (selon la vitesse), wagonnets libres brisés, autres trains déraillés (wagons dételés, locomotives cassées) ; train arrêté traversable ; -25 % dans les virages sauf niveau 1, anticipé, une diagonale = un seul virage.
 
 **Ajout (16/10/2026, 22:45) : KS_Trains 1.3.1 compilé, non déployé.** Signalé par LeKiwi06 en test : wagons à four et contrôleur cassables (KS_Claim 1.3.0 lève en HIGHEST le refus de casser un wagonnet sans inventaire ; KS_Trains passe après lui), modèle agrandi resté en place après la casse d'un wagon ; accélération et freinage rendus progressifs (100 / 50 blocs, plus lents en surcharge).
 
