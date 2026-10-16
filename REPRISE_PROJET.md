@@ -450,7 +450,7 @@ Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
 
-**Ajout (16/10/2026, 23:10) : KS_Trains 1.3.3 compilé, non déployé.** Demandes et défaut signalés par LeKiwi06 : -10 % de vitesse par percussion (pas sous le niveau 1), wagonnets avec contenu projetés au lieu d'être brisés, message pour les wagons à TNT (déjà refusés), jukebox qui passait au morceau suivant après un rechargement (corrigé : il rejoue son disque).
+**Ajout (16/10/2026, 23:00) : KS_Trains 1.3.3 compilé, non déployé.** Demandes et défaut signalés par LeKiwi06 : -10 % de vitesse par percussion (pas sous le niveau 1), wagonnets avec contenu projetés au lieu d'être brisés, message pour les wagons à TNT (déjà refusés), jukebox qui passait au morceau suivant après un rechargement (corrigé : il rejoue son disque).
 
 **Ajout (16/10/2026, 22:55) : KS_Trains 1.3.2 compilé, non déployé.** Demandes de LeKiwi06 : train qui roule = entités projetées comme par le dragon (selon la vitesse), wagonnets libres brisés, autres trains déraillés (wagons dételés, locomotives cassées) ; train arrêté traversable ; -25 % dans les virages sauf niveau 1, anticipé, une diagonale = un seul virage.
 
