@@ -329,3 +329,29 @@ deux trains qui roulent l'un contre l'autre déraillent tous les deux ; la rédu
 (niveau ou vitesse permise par la traction).
 
 Compilé le 16/10/2026 (`sortie/KS_Trains-1.3.2.jar`). **Statut : non déployé, non testé en jeu.**
+
+## 1.3.3 - ralentissement aux percussions, wagons chargés projetés, TNT, jukebox au rechargement (16/10/2026, LeKiwi06)
+
+Demandes de LeKiwi06 : « le train qui percute doit ralentir de 10 % de sa vitesse, sauf si ça le fait descendre sous la
+vitesse 1 ; pour tous les wagons sur les rails avec un contenu, il faut les propulser en l'air comme si c'était des
+entités au lieu de les briser ; les wagons à TNT ne peuvent pas être mis dans une configuration de train ; j'ai trouvé
+un bug : quand le train se décharge puis qu'on le recharge, il passe à la musique suivante sur le jukebox ».
+
+- **Ralentissement** : à chaque percussion (entité projetée, wagonnet brisé ou projeté, train déraillé), la vitesse du
+  train perd **10 %** (`percussion.ralentissement`), sans descendre sous le niveau 1 (5 blocs/s, `palier`) ; s'il roule
+  déjà moins vite, rien. Il réaccélère ensuite vers son niveau.
+- **Wagonnet libre avec un contenu** : **projeté** comme une entité (poussée du dragon selon la vitesse) au lieu d'être
+  brisé. Contenu : coffre ou entonnoir non vide, passager, cornes d'un wagon contrôleur, disque d'un wagon jukebox. Un
+  wagonnet vide se brise comme en 1.3.2.
+- **Wagons à TNT** : déjà refusés à l'attelage depuis la 1.0.0 (comme ceux à bloc de commande et à spawner), mais sans
+  rien dire : un clic avec une chaîne affiche maintenant « Ce wagon ne s'attelle pas à un train ».
+- **Jukebox au rechargement** (défaut de la 1.3.0) : au retour d'un wagon déchargé, la fin de morceau gardée en mémoire
+  était dépassée : le disque était rendu au coffre et le suivant lancé. Le wagon oublie maintenant sa fin de morceau
+  quand il quitte le monde, et **rejoue depuis le début le disque qu'il tient** (aussi après une interruption faute
+  d'auditeur ou de coffre). Un disque n'est rendu qu'en fin de morceau ou en pause.
+- `config.yml` : nouvelle clé `percussion.ralentissement` (0,10) ; valeur par défaut aussi dans le code.
+
+Choix de Claude, signalés : « contenu » comprend les passagers, les cornes et le disque ; un wagonnet projeté plusieurs
+fois de suite ne compte qu'une fois par demi-seconde (comme une entité).
+
+Compilé le 16/10/2026 (`sortie/KS_Trains-1.3.3.jar`). **Statut : non déployé, non testé en jeu.**

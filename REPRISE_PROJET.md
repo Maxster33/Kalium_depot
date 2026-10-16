@@ -96,7 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-- **KS_Trains 1.3.2** (LeKiwi06, 16/10/2026) : 1.3.1 (wagons incassables, décor, accélération sur ~100 blocs / freinage ~50) + percussions (entités projetées comme par le dragon, wagonnets libres brisés, autres trains déraillés ; rien à l'arrêt) et ralentissement de 25 % dans les virages, anticipé ; **compilé, non déployé** (Event en 1.3.0 ; son `config.yml` a encore `acceleration` 0,02 et `freinage` 0,05 : à changer avec l'envoi).
+- **KS_Trains 1.3.3** (LeKiwi06, 16/10/2026) : 1.3.1 (wagons incassables, décor, accélération ~100 blocs / freinage ~50) + 1.3.2 (percussions, -25 % dans les virages) + 1.3.3 (-10 % par percussion sans passer sous le niveau 1, wagonnets avec contenu projetés au lieu d'être brisés, message pour les wagons à TNT, jukebox qui rejoue son disque au rechargement) ; **compilé, non déployé** (Event en 1.3.0 ; son `config.yml` a encore `acceleration` 0,02 et `freinage` 0,05 : à changer avec l'envoi).
 - **KS_Trains 1.3.0 + KS_Crafts 1.18.0 + KS_VerrouVehicule 1.1.1** (LeKiwi06, 16/10/2026) : **sur Event depuis le 16/10 à 22:18 pour les tests** ; pas sur Kixster (KS_VerrouVehicule 1.0.0, KS_Crafts 1.15.0 y restent). Détail : `KS_Trains/JOURNAL.md`.
 - **KS_LaisseBateau 1.0.0 (nouveau)** (LeKiwi06, 14/10/2026) : laisse de 3 blocs entre deux bateaux ; **sur Event depuis le 16/10 à 20:00 pour les tests**, prévu pour Kixster (pas encore envoyé). Détail : `KS_LaisseBateau/JOURNAL.md`.
 - **KS_VerrouVehicule 1.0.0** (LeKiwi06, 14/10/2026) : sur Kixster depuis le 14/10 à 18:03 (avec KS_Crafts 1.15.0) et sur Event depuis le 16/10 à 20:00 (avec KS_Crafts 1.16.0). Détail : `KS_VerrouVehicule/JOURNAL.md`.
@@ -449,6 +449,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (16/10/2026, 23:10) : KS_Trains 1.3.3 compilé, non déployé.** Demandes et défaut signalés par LeKiwi06 : -10 % de vitesse par percussion (pas sous le niveau 1), wagonnets avec contenu projetés au lieu d'être brisés, message pour les wagons à TNT (déjà refusés), jukebox qui passait au morceau suivant après un rechargement (corrigé : il rejoue son disque).
 
 **Ajout (16/10/2026, 22:55) : KS_Trains 1.3.2 compilé, non déployé.** Demandes de LeKiwi06 : train qui roule = entités projetées comme par le dragon (selon la vitesse), wagonnets libres brisés, autres trains déraillés (wagons dételés, locomotives cassées) ; train arrêté traversable ; -25 % dans les virages sauf niveau 1, anticipé, une diagonale = un seul virage.
 

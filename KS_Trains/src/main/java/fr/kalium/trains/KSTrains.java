@@ -438,6 +438,9 @@ public final class KSTrains extends JavaPlugin implements Listener {
             return;
         }
         decor.retirer(wagon);
+        if (estJukebox(wagon)) {
+            jukebox.interrompre(wagon);
+        }
         if (wagon instanceof PoweredMinecart) {
             foyers.oublier(wagon.getUniqueId());
         }
@@ -585,6 +588,16 @@ public final class KSTrains extends JavaPlugin implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCliquer(PlayerInteractEntityEvent event) {
+        if (event.getRightClicked() instanceof Minecart refuse && !accepte(refuse)
+                && chaine(event.getPlayer().getInventory().getItemInMainHand())) {
+            // 1.3.3 (LeKiwi06 : « les wagons à TNT ne peuvent pas être mis dans une configuration de train ») : refusés
+            // depuis la 1.0.0, maintenant avec un message (TNT, bloc de commande, spawner).
+            event.setCancelled(true);
+            if (event.getHand() == EquipmentSlot.HAND) {
+                Contenant.message(event.getPlayer(), t("atteler.refuse", "<red>Ce wagon ne s'attelle pas à un train"), true);
+            }
+            return;
+        }
         if (!(event.getRightClicked() instanceof Minecart wagon) || !accepte(wagon)) {
             return;
         }
@@ -926,13 +939,22 @@ public final class KSTrains extends JavaPlugin implements Listener {
                     Train autreTrain = trainDe(autre);
                     if (autreTrain != null) {
                         derailler(autreTrain);
-                    } else {
-                        briser(autre);
+                        ralentir(train);
+                    } else if (aDuContenu(autre)) {
+                        // 1.3.3 (LeKiwi06 : « pour tous les wagons sur les rails avec un contenu, il faut les propulser
+                        // en l'air comme si c'étaient des entités au lieu de les briser ») ; vide : il se brise.
+                        if (projeter(train, wagon, autre)) {
+                            ralentir(train);
+                        }
+                    } else if (briser(autre)) {
+                        ralentir(train);
                     }
                 } else if (touche instanceof LivingEntity vivant && !(vivant instanceof ArmorStand support
                         && support.isMarker()) && !(vivant instanceof Player joueur
                         && joueur.getGameMode() == GameMode.SPECTATOR)) {
-                    projeter(train, wagon, vivant);
+                    if (projeter(train, wagon, vivant)) {
+                        ralentir(train);
+                    }
                 }
             }
         }
@@ -942,10 +964,10 @@ public final class KSTrains extends JavaPlugin implements Listener {
      * Poussée du dragon (lue dans le code du jeu 26.3, EnderDragon.knockBack) : 4 x écart / distance² à l'horizontale,
      * 0,2 vers le haut, depuis le centre du wagon ; multipliée par vitesse / vitesse maximale (1 à 20 blocs/s).
      */
-    private void projeter(Train train, Minecart wagon, LivingEntity vivant) {
+    private boolean projeter(Train train, Minecart wagon, Entity vivant) {
         Long avant = projetees.get(vivant.getUniqueId());
         if (avant != null && tick - avant < 10) {
-            return;
+            return false;
         }
         projetees.put(vivant.getUniqueId(), tick);
         double force = Math.min(1, train.vitesse / Math.max(0.01, reglage("vitesse-max", 1.0)));
@@ -953,18 +975,49 @@ public final class KSTrains extends JavaPlugin implements Listener {
         double dz = vivant.getZ() - wagon.getZ();
         double carre = Math.max(dx * dx + dz * dz, 0.1);
         vivant.setVelocity(vivant.getVelocity().add(new Vector(dx / carre * 4 * force, 0.2, dz / carre * 4 * force)));
+        return true;
     }
 
-    /** 1.3.2 : un wagonnet libre percuté se brise (contenu et objet au sol), sauf si une protection l'en empêche. */
-    private void briser(Minecart wagon) {
+    /**
+     * 1.3.3 (LeKiwi06 : « le train qui percute doit ralentir de 10 % de sa vitesse, sauf si ça le fait descendre sous la
+     * vitesse 1 ») : à chaque percussion (entité projetée, wagonnet brisé ou projeté, train déraillé).
+     */
+    private void ralentir(Train train) {
+        double plancher = reglage("palier", 0.25);
+        if (train.vitesse > plancher) {
+            train.vitesse = Math.max(plancher, train.vitesse * (1 - reglage("percussion.ralentissement", 0.10)));
+        }
+    }
+
+    /**
+     * 1.3.3 : wagonnet libre « avec un contenu » : coffre ou entonnoir non vide, passager, cornes du contrôleur ou disque
+     * du wagon jukebox. Il est projeté au lieu d'être brisé.
+     */
+    private boolean aDuContenu(Minecart wagon) {
+        if (wagon instanceof InventoryHolder detenteur && !detenteur.getInventory().isEmpty()) {
+            return true;
+        }
+        for (Entity passager : wagon.getPassengers()) {
+            if (!decor.estDecor(passager)) {
+                return true;
+            }
+        }
+        return (estControleur(wagon) && klaxons.aDesCornes(wagon)) || (estJukebox(wagon) && jukebox.disque(wagon) != null);
+    }
+
+    /**
+     * 1.3.2 : un wagonnet libre percuté se brise (contenu et objet au sol), sauf si une protection l'en empêche. Vrai
+     * s'il s'est brisé.
+     */
+    private boolean briser(Minecart wagon) {
         if (wagon instanceof CommandMinecart || wagon instanceof SpawnerMinecart || !wagon.isValid()) {
-            return;
+            return false;
         }
         VehicleDestroyEvent casse = new VehicleDestroyEvent(wagon,
                 org.bukkit.damage.DamageSource.builder(org.bukkit.damage.DamageType.GENERIC).build(), null);
         getServer().getPluginManager().callEvent(casse);
         if (casse.isCancelled()) {
-            return;
+            return false;
         }
         Location lieu = wagon.getLocation();
         ItemStack objet = estControleur(wagon) ? creerControleur() : estJukebox(wagon) ? creerJukebox()
@@ -987,6 +1040,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
         }
         wagon.getWorld().playSound(lieu, Sound.ENTITY_ITEM_BREAK, 1f, 0.8f);
         wagon.remove();
+        return true;
     }
 
     /** 1.3.2 : déraillement : tous les wagons sont dételés et arrêtés, les fours de locomotive se brisent. */

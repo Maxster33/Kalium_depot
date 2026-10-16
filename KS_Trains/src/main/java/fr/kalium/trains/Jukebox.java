@@ -148,6 +148,15 @@ final class Jukebox {
         }
     }
 
+    /**
+     * 1.3.3 (LeKiwi06 : « quand le train se décharge puis qu'on le recharge, il passe à la musique suivante sur le
+     * jukebox ») : le wagon quitte le monde (chunk déchargé, redémarrage) : il oublie sa fin de morceau mais garde son
+     * disque, qu'il rejoue depuis le début à son retour (avant : rendu au coffre, puis disque suivant).
+     */
+    void interrompre(Entity wagon) {
+        fins.remove(wagon.getUniqueId());
+    }
+
     /** Toutes les 10 ticks, pour un wagon jukebox d'un train (rang dans le train). */
     void avancer(Train train, int rang) {
         Minecart wagon = train.wagons.get(rang);
@@ -156,13 +165,22 @@ final class Jukebox {
         long tick = Bukkit.getCurrentTick();
         boolean ecoute = ecoute(wagon);
         Long fin = fins.get(wagon.getUniqueId());
+        boolean fini = false;
         if (fin != null) {
             if (mode != PAUSE && ecoute && coffre != null && tick < fin) {
                 return;
             }
             couper(wagon);
+            fini = tick >= fin;
         }
         ItemStack tenu = disque(wagon);
+        if (tenu != null && !fini && mode != PAUSE) {
+            // 1.3.3 : morceau interrompu (personne à portée, coffre absent, wagon rechargé) : il reprend à son début.
+            if (ecoute && coffre != null && chanson(tenu) != null) {
+                jouer(wagon, tenu, tick);
+            }
+            return;
+        }
         if (tenu != null && coffre != null && entonnoirs.entree(coffre) && rendre(coffre.getInventory(), wagon, tenu)) {
             disque(wagon, null);
             tenu = null;
@@ -200,7 +218,11 @@ final class Jukebox {
         inventaire.setItem(place, pile.isEmpty() ? null : pile);
         disque(wagon, un);
         wagon.getPersistentDataContainer().set(clePlace, PersistentDataType.INTEGER, place);
-        JukeboxSong chanson = chanson(un);
+        jouer(wagon, un, tick);
+    }
+
+    private void jouer(Entity wagon, ItemStack disque, long tick) {
+        JukeboxSong chanson = chanson(disque);
         wagon.getWorld().playSound(wagon, chanson.getSound(), SoundCategory.RECORDS, volume(), 1f);
         fins.put(wagon.getUniqueId(), tick + (long) Math.ceil(chanson.getLengthInSeconds() * 20) + SILENCE);
     }
