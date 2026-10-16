@@ -31,6 +31,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityRemoveEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -430,6 +431,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
         if (!(event.getEntity() instanceof Minecart wagon)) {
             return;
         }
+        decor.retirer(wagon);
         if (wagon instanceof PoweredMinecart) {
             foyers.oublier(wagon.getUniqueId());
         }
@@ -819,8 +821,13 @@ public final class KSTrains extends JavaPlugin implements Listener {
         Contenant.message(joueur, t("deteler.ok", "<green>Wagon dételé"), false);
     }
 
-    /** Un wagon attelé ne se casse pas (il faut le dételer d'abord) : pas de train coupé en roulant. */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    /**
+     * Un wagon attelé ne se casse pas (il faut le dételer d'abord) : pas de train coupé en roulant. 1.3.1 (LeKiwi06 :
+     * « j'arrive à casser les wagons four et le wagon contrôleur ») : KS_Claim 1.3.0 lève, en priorité HIGHEST, tout
+     * refus de casser un wagonnet sans inventaire frappé par un joueur (four, contrôleur, jukebox) ; ces écoutes passent
+     * maintenant après lui (même priorité, KS_Trains activé après KS_Claim) et refusent de nouveau.
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onFrapper(VehicleDamageEvent event) {
         if (trainDe(event.getVehicle()) != null) {
             event.setCancelled(true);
@@ -830,10 +837,26 @@ public final class KSTrains extends JavaPlugin implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onCasser(VehicleDestroyEvent event) {
         if (trainDe(event.getVehicle()) != null) {
             event.setCancelled(true);
+        }
+    }
+
+    /**
+     * 1.3.1 (LeKiwi06 : « quand je casse un wagon, le modèle reste là où il était ») : un décor qui descend de son wagon
+     * (wagon cassé ou retiré, passagers éjectés) disparaît ; il est remis chaque seconde aux wagons des trains.
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onDecorDescend(EntityDismountEvent event) {
+        Entity modele = event.getEntity();
+        if (decor.estDecor(modele)) {
+            getServer().getScheduler().runTask(this, () -> {
+                if (modele.isValid() && !modele.isInsideVehicle()) {
+                    modele.remove();
+                }
+            });
         }
     }
 
@@ -905,6 +928,13 @@ public final class KSTrains extends JavaPlugin implements Listener {
             }
         }
         return traction;
+    }
+
+    /** 1.3.1 : 1, ou traction / wagons quand le train est en surcharge (il accélère et freine plus lentement). */
+    private double inertie(Train train) {
+        int traction = traction(train);
+        int wagons = train.wagons.size();
+        return traction <= 0 || wagons <= traction ? 1 : (double) traction / wagons;
     }
 
     private double vitesseMax(Train train) {
@@ -1081,8 +1111,13 @@ public final class KSTrains extends JavaPlugin implements Listener {
             } else {
                 train.bloque = 0;
             }
-            train.vitesse = train.vitesse < voulue ? Math.min(voulue, train.vitesse + reglage("acceleration", 0.02))
-                    : Math.max(voulue, train.vitesse - reglage("freinage", 0.05));
+            // 1.3.1 (LeKiwi06 : « une centaine de blocs pour atteindre sa vitesse maximum, et pour freiner une
+            // cinquantaine », plus lent encore en surcharge) : 0,005 et 0,01 bloc/tick par tick de 0 à 1 bloc/tick
+            // (100 et 50 blocs), multipliés par traction / wagons quand le train a plus de wagons que sa traction.
+            double charge = inertie(train);
+            train.vitesse = train.vitesse < voulue
+                    ? Math.min(voulue, train.vitesse + reglage("acceleration", 0.005) * charge)
+                    : Math.max(voulue, train.vitesse - reglage("freinage", 0.01) * charge);
             Vector deplacement = ici.clone().subtract(avant);
             train.avancer(ici, train.wagons.size() * espacement + 3);
             if (train.vitesse > 0) {

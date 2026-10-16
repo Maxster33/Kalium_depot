@@ -266,3 +266,31 @@ et KS_VerrouVehicule 1.1.1. Statut : non déployé, non testé en jeu.**
 **Nouvelle physique, deuxième essai (même envoi, Event arrêté)** : `world/level.dat` du serveur (réécrit par le jeu : pack de nouveau dans Disabled) copié dans `/_removed-level-dat-2026-10-16/level-avant-correction-2217.dat`, puis remplacé par la version corrigée : pack `minecart_improvements` dans Enabled **et** `Data.enabled_features = [minecraft:vanilla, minecraft:minecart_improvements]` (seuls changements, vérifiés par relecture ; fichier du serveur identique après l'envoi). À confirmer dans le journal au démarrage, puis `/gamerule max_minecart_speed 40`.
 
 **Actif sur Event depuis son redémarrage du 16/10/2026 à 22:20 (journal lu, heures du journal en UTC : 20:20) : KS_Trains 1.3.0, KS_Crafts 1.18.0 (« 82 crafts ajoutés » : + le wagon jukebox) et KS_VerrouVehicule 1.1.1 activés sans erreur ni avertissement. **Nouvelle physique des wagonnets active** : plus de refus du pack au démarrage, et le `level.dat` réécrit par le serveur à 22:20:16 garde `minecart_improvements` dans `enabled_features` et dans les packs activés. Reste à faire par LeKiwi06 : `/gamerule max_minecart_speed 40`. Statut : non testé en jeu.**
+
+## 1.3.1 - wagons incassables, décor qui ne reste plus, accélération progressive (16/10/2026, LeKiwi06)
+
+Signalements et demande de LeKiwi06 (tests sur Event) : « j'arrive à casser les wagons four et le wagon contrôleur
+alors que ce n'est pas censé être possible, et avec les nouveaux modèles agrandis quand je casse un wagon le modèle
+reste là où il était » ; « le train accélère et freine trop vite aussi, il faut que la vitesse soit plus progressive,
+et quand le train est en surcharge de wagons il faut que ce soit encore plus lent, par exemple un train doit mettre une
+centaine de blocs à atteindre sa vitesse maximum, et pour freiner une cinquantaine ».
+
+- **Wagons cassables** (défaut de la 1.0.0, vu en jeu) : KS_Claim 1.3.0 lève, en priorité HIGHEST, tout refus de casser
+  un wagonnet **sans inventaire** frappé par un joueur (demande du 11/10 : wagonnets cassables dans les claims). Les
+  wagons à four, le contrôleur et le wagon jukebox n'ont pas d'inventaire : la protection de KS_Trains (priorité LOW)
+  était défaite ; les coffres et entonnoirs, eux, restaient protégés. Les écoutes de KS_Trains passent maintenant en
+  HIGHEST, après KS_Claim (KS_Trains est activé après lui, `softdepend`) : un wagon attelé ne se casse plus.
+- **Décor resté sur place** (défaut de la 1.3.0) : le modèle descendait du wagon cassé et restait. Un décor qui descend
+  de son wagon disparaît ; il est aussi retiré quand le wagon quitte le monde.
+- **Accélération et freinage progressifs** : `acceleration` 0,02 → **0,005** et `freinage` 0,05 → **0,01** bloc/tick par
+  tick : de l'arrêt à 1 bloc/tick (20 blocs/s) en environ **100 blocs** (10 s), de 1 bloc/tick à l'arrêt en environ
+  **50 blocs** (5 s). **En surcharge** (plus de wagons que la traction), les deux sont multipliés par traction /
+  wagons (ex. 25 wagons pour 15 de traction : x0,6, soit environ 167 blocs pour accélérer et 83 pour freiner). Les
+  arrêts d'urgence (bout des rails, obstacle, autre train) restent immédiats.
+- `config.yml` : nouvelles valeurs de `acceleration` et `freinage` (**à changer à la main sur Event**, qui a 0,02 et
+  0,05).
+
+Choix de Claude, signalés : la surcharge ralentit aussi le freinage (un train lourd freine plus longtemps) ; le
+coefficient est traction / wagons.
+
+Compilé le 16/10/2026 (`sortie/KS_Trains-1.3.1.jar`). **Statut : non déployé, non testé en jeu.**

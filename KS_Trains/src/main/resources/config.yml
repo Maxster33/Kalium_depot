@@ -6,9 +6,10 @@ espacement: 1.4
 vitesse-max: 1.0
 # Vitesse maximale perdue par wagon au-dela de la traction (bloc par tick).
 perte-par-wagon: 0.1
-# Vitesse gagnee et perdue a chaque tick au demarrage et au freinage (bloc par tick).
-acceleration: 0.02
-freinage: 0.05
+# Vitesse gagnee et perdue a chaque tick au demarrage et au freinage (bloc par tick). 1.3.1 : 0,005 (100 blocs pour
+# aller de l'arret a 1 bloc/tick) et 0,01 (50 blocs pour s'arreter) ; multipliees par traction / wagons en surcharge.
+acceleration: 0.005
+freinage: 0.01
 # 1.1.0 : vitesse d'un niveau (1 a 4) du wagon controleur et du menu (bloc par tick ; 0,25 = 5 blocs par seconde).
 # Plafonnee par vitesse-max.
 palier: 0.25
