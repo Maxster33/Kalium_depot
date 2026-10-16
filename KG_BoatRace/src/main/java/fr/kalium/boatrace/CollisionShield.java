@@ -41,6 +41,12 @@ import java.util.UUID;
  * course sont aussi places dans une equipe « sans collision » du tableau principal : le serveur ne les pousse plus
  * l'un contre l'autre. Les copies ne comptent jamais comme hors-piste (le hors-piste ne regarde que les blocs).
  *
+ * 1.6.1 : les joueurs Bedrock heurtaient encore la copie (tete) de leurs adversaires. Le porte-armure etait place sous
+ * le bateau (pieds 0,5 bloc plus bas), sa boite de 2 blocs de haut couvrait donc tout le bateau ; Geyser la met a zero
+ * pour un porte-armure « marqueur », mais le jeu Bedrock semble la garder. Le porte-armure est maintenant place plus
+ * haut (reglage « bedrock-copy-height », 1 bloc au-dessus du fond du bateau par defaut) : sa boite est entierement
+ * au-dessus du bateau de l'adversaire, la tete flotte un peu plus haut que la vraie tete du joueur.
+ *
  * Limite : un joueur cache disparait aussi de la liste des joueurs (Tab) du coureur pendant la course.
  */
 final class CollisionShield {
@@ -80,11 +86,15 @@ final class CollisionShield {
     private final Map<UUID, Entity> boats = new HashMap<>();
     /** 1.6.0 : bateau d'un coureur (son vehicule, ou la coque de son bateau calcule par le serveur). */
     private final java.util.function.Function<Player, Entity> boatOf;
+    /** 1.6.1 : hauteur des pieds du porte-armure (copie Bedrock) au-dessus du fond du bateau, en blocs (voir en-tete). */
+    private final double bedrockLift;
 
-    CollisionShield(Plugin plugin, World world, String boatType, java.util.function.Function<Player, Entity> boatOf) {
+    CollisionShield(Plugin plugin, World world, String boatType, java.util.function.Function<Player, Entity> boatOf,
+                    double bedrockLift) {
         this.plugin = plugin;
         this.world = world;
         this.boatOf = boatOf;
+        this.bedrockLift = bedrockLift;
         Material hull = Material.matchMaterial(boatType.toUpperCase(java.util.Locale.ROOT).replace("_CHEST_BOAT", "_SLAB")
                 .replace("_BOAT", "_SLAB").replace("_CHEST_RAFT", "_SLAB").replace("_RAFT", "_SLAB"));
         this.hullMaterial = hull != null && hull.isBlock() && hull.createBlockData() instanceof Slab ? hull : Material.OAK_SLAB;
@@ -139,7 +149,7 @@ final class CollisionShield {
                     new Vector3f(1f, 1f, 1f), new AxisAngle4f()));
             prepare(display);
         });
-        org.bukkit.entity.ArmorStand stand = world.spawn(at.clone().subtract(0, 0.5, 0), org.bukkit.entity.ArmorStand.class, armor -> {
+        org.bukkit.entity.ArmorStand stand = world.spawn(at.clone().add(0, bedrockLift, 0), org.bukkit.entity.ArmorStand.class, armor -> {
             armor.setMarker(true); // aucune boite de collision
             armor.setInvisible(true);
             armor.setGravity(false);
@@ -253,7 +263,7 @@ final class CollisionShield {
             for (Entity part : copy.java()) {
                 part.teleport(at);
             }
-            copy.bedrock().teleport(at.clone().subtract(0, 0.5, 0));
+            copy.bedrock().teleport(at.clone().add(0, bedrockLift, 0));
         }
     }
 

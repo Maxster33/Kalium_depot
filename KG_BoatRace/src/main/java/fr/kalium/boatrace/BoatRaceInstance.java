@@ -49,6 +49,9 @@ import java.util.UUID;
  *
  * 1.6.0 (essai, reglage « bedrock-server-boat », desactive par defaut) : bateau calcule par le serveur pour les joueurs
  * Bedrock (ServerBoats), pour qu'ils aient la meme physique que les joueurs Java.
+ *
+ * 1.6.1 : anti-collision Bedrock, la tete des adversaires est placee au-dessus de leur bateau (reglage
+ * « bedrock-copy-height ») : les joueurs Bedrock la heurtaient encore.
  */
 public final class BoatRaceInstance extends GameInstance {
 
@@ -290,7 +293,8 @@ public final class BoatRaceInstance extends GameInstance {
                 }
             }
             shield = new CollisionShield(org.bukkit.plugin.java.JavaPlugin.getPlugin(KGBoatRace.class), world,
-                    minigame().getText("boat-type", "OAK_BOAT"), this::raceBoat);
+                    minigame().getText("boat-type", "OAK_BOAT"), this::raceBoat,
+                    minigame().getInt("bedrock-copy-height", 100) / 100.0);
             shield.start(online);
         }
     }

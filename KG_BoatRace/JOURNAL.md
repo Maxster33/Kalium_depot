@@ -211,3 +211,34 @@ sable des âmes, miel et slime sans effet.
 
 **Déploiement** : seul (KalGames 1.23.0 et KG_ScoreBoards 1.9.0 en place). **Statut : compilé, non déployé, non testé
 en jeu.**
+
+## 1.6.1 - anti-collision Bedrock : tête des adversaires au-dessus de leur bateau (16/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (16/10/2026)** : « les joueurs bedrock voient une tête de joueur en boat race pour leurs
+adversaires, mais ils collisionnent toujours dessus » ; pistes proposées : la mettre 1 ou 2 blocs plus haut, ou la
+poser sur un porte-armure.
+
+**Cause probable** : la copie vue par les joueurs Bedrock est déjà un porte-armure (invisible, « marqueur », tête +
+pseudo, depuis la 1.4.0). Ses pieds étaient placés 0,5 bloc **sous** le bateau de l'adversaire : sa boîte de
+collision (0,5 x 1,975 bloc) couvrait donc tout le bateau. Geyser 2.11.3 (lu dans le jar) met cette boîte à zéro pour
+un porte-armure marqueur, mais d'après le retour le jeu Bedrock la heurte quand même. Non vérifié en jeu.
+
+**Changements** :
+- Le porte-armure est placé **au-dessus** du bateau de l'adversaire : pieds 1 bloc au-dessus du fond du bateau par
+  défaut (1,5 bloc plus haut qu'avant). Sa boîte entière est au-dessus du bateau (haut du bateau : 0,56 bloc) ; la tête
+  et le pseudo flottent environ 1,5 bloc plus haut que la vraie tête du joueur.
+- Nouveau réglage « Bedrock : hauteur des têtes (cm) » (`bedrock-copy-height`, 100, de -50 à 300) : hauteur des pieds
+  du porte-armure au-dessus du fond du bateau. -50 = ancienne hauteur. Valeur par défaut dans le code : rien à ajouter
+  à la main sur le serveur.
+- Joueurs Java inchangés (coque, tête et pseudo en entités d'affichage, sans collision).
+
+**Limites** : si la collision venait d'autre chose que la boîte du porte-armure, la remonter ne suffira pas (à
+signaler après le test). Un adversaire nettement plus bas (marche d'un bloc, pente) peut encore amener sa tête à
+hauteur d'un bateau. Déplacement de la tête inchangé (téléportée à chaque passage de la boucle).
+
+**À vérifier en jeu (au moins deux joueurs Bedrock)** : les bateaux se croisent et se doublent sans se heurter ; la
+tête et le pseudo restent lisibles à cette hauteur (sinon ajuster le réglage).
+
+**Déploiement** : empilé sur la 1.6.0 non testée (tout ce qu'elle ajoute reste derrière « Bedrock : bateau serveur
+(essai) », désactivé par défaut) ; déployer la 1.6.1 met donc aussi la 1.6.0 en service. **Statut : compilé, non
+déployé, non testé en jeu.**

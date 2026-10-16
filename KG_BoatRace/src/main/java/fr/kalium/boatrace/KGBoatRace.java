@@ -51,6 +51,9 @@ public final class KGBoatRace extends JavaPlugin {
                                 "Hors-piste = tout autre bloc touché. Noms de blocs séparés par des virgules."),
                         bool("anti-collision", "Anti-collision entre bateaux", true,
                                 "Les adversaires sont remplacés par des copies sans collision (Java : coque, tête et pseudo ; Bedrock : tête et pseudo)."),
+                        // 1.6.1 : copie Bedrock placee au-dessus du bateau (les joueurs Bedrock la heurtaient).
+                        integer("bedrock-copy-height", "Bedrock : hauteur des têtes (cm)", 100, -50, 300,
+                                "Anti-collision, joueurs Bedrock : hauteur des têtes des adversaires au-dessus de leur bateau. Trop bas, les joueurs Bedrock les heurtent (-50 = ancienne hauteur)."),
                         // 1.6.0 : essai d'equite Java / Bedrock (cahier des charges).
                         bool("bedrock-server-boat", "Bedrock : bateau serveur (essai)", false,
                                 "Le bateau des joueurs Bedrock est calculé par le serveur, avec la physique de Java. La direction réagit avec le retard de leur connexion."),
