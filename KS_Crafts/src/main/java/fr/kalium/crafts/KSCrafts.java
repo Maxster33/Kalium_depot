@@ -41,6 +41,7 @@ import java.util.Map;
  * 1.14.0 (LeKiwi06) : recette du bateau à coffre et jukebox de KS_JukeboxBoat 1.1.0 (voir onEnable).
  * 1.14.1 : cette recette n'est plus en double (la liste des bateaux du jeu contient aussi les bateaux à coffre).
  * 1.15.0 (LeKiwi06) : recette du verrou de véhicule de KS_VerrouVehicule (voir onEnable).
+ * 1.16.0 (LeKiwi06) : recette de la locomotive de KS_Trains (voir onEnable).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -197,6 +198,16 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             add(verrou);
         } else {
             getLogger().warning("KS_VerrouVehicule absent : craft du verrou de véhicule ignoré.");
+        }
+
+        // 1.16.0 (LeKiwi06) : locomotive (KS_Trains) : 3 wagonnets à four sur une même ligne.
+        if (actif("KS_Trains")) {
+            ShapedRecipe locomotive = new ShapedRecipe(key("locomotive"), fr.kalium.trains.KSTrains.creerLocomotive());
+            locomotive.shape("FFF");
+            locomotive.setIngredient('F', Material.FURNACE_MINECART);
+            add(locomotive);
+        } else {
+            getLogger().warning("KS_Trains absent : craft de la locomotive ignoré.");
         }
 
         // 1.8.0 (LeKiwi06) : réparation de la tête de wither squelette (KS_Decapitator 1.1.0), bloc de charbon de bois.

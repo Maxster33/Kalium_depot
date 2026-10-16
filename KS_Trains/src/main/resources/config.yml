@@ -1,0 +1,10 @@
+# Distance entre deux wagons d'un train, de centre a centre (blocs).
+espacement: 1.1
+# Vitesse maximale d'un train dont la traction suffit (bloc par tick ; 1 = 20 blocs par seconde).
+# Avec l'ancienne physique du jeu, un wagonnet a four ne depasse pas 0,2 bloc par tick.
+vitesse-max: 1.0
+# Vitesse maximale perdue par wagon au-dela de la traction (bloc par tick).
+perte-par-wagon: 0.1
+# Vitesse gagnee et perdue a chaque tick au demarrage et au freinage (bloc par tick).
+acceleration: 0.02
+freinage: 0.05

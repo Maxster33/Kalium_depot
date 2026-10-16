@@ -342,3 +342,16 @@ Compilé le 14/10/2026 (`sortie/KS_Crafts-1.15.0.jar`). **Statut : non déployé
 Supprimables par l'humain sur Kixster (3 versions ou plus derrière la 1.15.0) : `_removed-ks_crafts-1.10.0/`, `1.11.0/`, `1.12.0/`.
 
 Actif sur Kixster depuis son redémarrage du 14/10/2026 à 18:04 (journal lu : KS_VerrouVehicule 1.0.0 et KS_Crafts 1.15.0 chargés et activés sans erreur ni avertissement, « 79 crafts ajoutés » soit la recette du verrou en plus des 78, SimpleClaimSystem trouvé, `lang.yml` créé). Statut : non testé en jeu.
+
+## 1.16.0 - recette de la locomotive (16/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (KS_Trains 1.0.0, cahier des charges validé) : « pour commencer à créer un train, il faut 3
+minecart four en ligne dans la table de craft ».
+
+- **3 wagonnets à four sur une même ligne** (n'importe quelle ligne de la grille), recette en forme (`locomotive`) →
+  **1 locomotive**.
+- Sans KS_Trains : recette ignorée (avertissement dans la console) ; c'est le cas sur Event.
+
+**À déployer avec KS_Trains 1.0.0 (Kixster).**
+
+Compilé le 16/10/2026 (`sortie/KS_Crafts-1.16.0.jar`). **Statut : non déployé, non testé en jeu.**
