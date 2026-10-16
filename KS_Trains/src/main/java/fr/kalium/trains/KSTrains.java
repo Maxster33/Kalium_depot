@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -125,6 +126,9 @@ public final class KSTrains extends JavaPlugin implements Listener {
     private Klaxons klaxons;
     private Jukebox jukebox;
     private Boussoles boussoles;
+    /** 1.3.4 : compteur kilométrique (blocs) et carburant brûlé (blocs de réserve) d'un four de locomotive. */
+    private NamespacedKey cleCompteur;
+    private NamespacedKey cleBrule;
     /** 1.3.0 : objet « Wagon jukebox », et wagon jukebox posé. */
     private NamespacedKey cleJukeboxObjet;
     private NamespacedKey cleJukebox;
@@ -157,6 +161,8 @@ public final class KSTrains extends JavaPlugin implements Listener {
         cleControleurObjet = new NamespacedKey(this, "controleur-objet");
         cleControleur = new NamespacedKey(this, "controleur");
         cleJukeboxObjet = new NamespacedKey(this, "jukebox-objet");
+        cleCompteur = new NamespacedKey(this, "compteur");
+        cleBrule = new NamespacedKey(this, "brule");
         cleJukebox = new NamespacedKey(this, "jukebox");
         lang = new Lang(this);
         foyers = new Foyers(this);
@@ -1091,6 +1097,51 @@ public final class KSTrains extends JavaPlugin implements Listener {
         return rail != null && Voie.virageDevant(rail, train.direction(), (int) Math.min(128, Math.ceil(distance)));
     }
 
+    /** 1.3.4 : ajoute une quantité à un compteur enregistré dans un wagon de locomotive. */
+    private static void ajouter(Entity wagon, NamespacedKey cle, double quantite) {
+        Double avant = wagon.getPersistentDataContainer().get(cle, PersistentDataType.DOUBLE);
+        wagon.getPersistentDataContainer().set(cle, PersistentDataType.DOUBLE, (avant == null ? 0 : avant) + quantite);
+    }
+
+    private static double lireCompteur(Entity wagon, NamespacedKey cle) {
+        Double valeur = wagon.getPersistentDataContainer().get(cle, PersistentDataType.DOUBLE);
+        return valeur == null ? 0 : valeur;
+    }
+
+    /**
+     * 1.3.4 (LeKiwi06 : « mettre un son reconnaissable pour la locomotive » ; réponse : tchou-tchou à vapeur) : quand
+     * le train démarre, coup de sifflet (deux notes de flûte du jeu) ; pendant qu'il roule, souffle de vapeur rythmé, de
+     * plus en plus rapide avec la vitesse (toutes les 12 ticks au pas, toutes les 3 ticks à 20 blocs/s). Le son sort du
+     * premier four de locomotive du train (trains sans locomotive : rien).
+     */
+    private void vapeur(Train train) {
+        Minecart locomotive = null;
+        for (Minecart wagon : train.wagons) {
+            if (estLoco(wagon)) {
+                locomotive = wagon;
+                break;
+            }
+        }
+        if (locomotive == null || train.vitesse <= 0) {
+            return;
+        }
+        Location lieu = locomotive.getLocation();
+        if (train.dernierSouffle == 0 || tick - train.dernierSouffle > 40) {
+            // Démarrage (ou reprise après un arrêt) : sifflet.
+            locomotive.getWorld().playSound(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, SoundCategory.NEUTRAL, 2.5f, 0.84f);
+            locomotive.getWorld().playSound(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, SoundCategory.NEUTRAL, 2.5f, 1.06f);
+            train.dernierSouffle = tick;
+            return;
+        }
+        double force = Math.min(1, train.vitesse / Math.max(0.01, reglage("vitesse-max", 1.0)));
+        long intervalle = Math.round(12 - 9 * force);
+        if (tick - train.dernierSouffle >= intervalle) {
+            locomotive.getWorld().playSound(lieu, Sound.BLOCK_FIRE_EXTINGUISH, SoundCategory.NEUTRAL, 0.5f,
+                    (tick / intervalle) % 2 == 0 ? 0.65f : 0.8f);
+            train.dernierSouffle = tick;
+        }
+    }
+
     /** 1.3.1 : 1, ou traction / wagons quand le train est en surcharge (il accélère et freine plus lentement). */
     private double inertie(Train train) {
         int traction = traction(train);
@@ -1260,7 +1311,14 @@ public final class KSTrains extends JavaPlugin implements Listener {
             if (parcouru > 0) {
                 for (Minecart wagon : train.wagons) {
                     if (wagon instanceof PoweredMinecart four && foyers.alimente(four)) {
-                        foyers.consommer(four, parcouru * consommation(train.niveau));
+                        double blocs = parcouru * consommation(train.niveau);
+                        foyers.consommer(four, blocs);
+                        if (estLoco(four)) {
+                            ajouter(four, cleBrule, blocs);
+                        }
+                    }
+                    if (estLoco(wagon)) {
+                        ajouter(wagon, cleCompteur, parcouru);
                     }
                 }
             }
@@ -1275,6 +1333,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
             // 1.3.1 (LeKiwi06 : « une centaine de blocs pour atteindre sa vitesse maximum, et pour freiner une
             // cinquantaine », plus lent encore en surcharge) : 0,005 et 0,01 bloc/tick par tick de 0 à 1 bloc/tick
             // (100 et 50 blocs), multipliés par traction / wagons quand le train a plus de wagons que sa traction.
+            vapeur(train);
             double charge = inertie(train);
             // 1.3.2 : virages : -25 % (sauf niveau 1 et marche arrière), anticipé sur la distance de freinage ; une
             // diagonale (virages qui se suivent) reste un seul ralentissement.
@@ -1498,6 +1557,24 @@ public final class KSTrains extends JavaPlugin implements Listener {
                         : t("menu.info-recul", "<gray>Marche arrière : <v> blocs/s", "v", bs(train.vitesse)),
                 t("menu.info-regle", "<gray>Fours alimentés : 5 (locomotive)"),
                 t("menu.info-regle-2", "<gray>ou 10 wagons chacun"))), null);
+        // 1.3.4 (LeKiwi06 : « un compteur kilométrique dans l'interface de la locomotive pour voir la distance
+        // parcourue », avec le carburant consommé) : distance de la locomotive (son four le plus avancé) et carburant
+        // brûlé par ses fours, en équivalent charbon (1 charbon = 80 blocs de réserve).
+        double distance = 0;
+        double brule = 0;
+        for (Minecart wagon : train.wagons) {
+            if (estLoco(wagon)) {
+                distance = Math.max(distance, lireCompteur(wagon, cleCompteur));
+                brule += lireCompteur(wagon, cleBrule);
+            }
+        }
+        if (aLocomotive(train.wagons)) {
+            menu.poser(menu.bas(2), Contenant.objet(Material.CLOCK, t("menu.compteur", "<white>Compteur : <d>", "d",
+                    distance < 1000 ? t("menu.blocs", "<b> blocs", "b", Math.round(distance))
+                            : t("menu.km", "<k> km", "k", String.format("%.1f", distance / 1000))), List.of(
+                    t("menu.brule", "<gray>Carburant brûlé : <c> charbons", "c", Math.round(brule / 80)),
+                    t("menu.brule-ligne", "<gray>(équivalent, fours de la locomotive)"))), null);
+        }
         menu.poser(menu.bas(4), train.niveau != 0
                 ? Contenant.objet(Material.RED_CONCRETE, t("menu.arret", "<red>Arrêter le train"), List.of())
                 : Contenant.objet(Material.LIME_CONCRETE, t("menu.marche", "<green>Mettre en marche"),

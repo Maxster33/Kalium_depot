@@ -45,6 +45,8 @@ final class Train {
     /** Ticks passés sans avancer alors qu'il devrait rouler (bloqué contre un obstacle). */
     int bloque;
     final Set<Long> chunks = new HashSet<>();
+    /** 1.3.4 : tick du dernier souffle de vapeur de la locomotive. */
+    long dernierSouffle;
 
     Train(UUID id, List<Minecart> wagons) {
         this.id = id;

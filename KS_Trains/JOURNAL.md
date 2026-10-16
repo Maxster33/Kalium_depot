@@ -355,3 +355,24 @@ Choix de Claude, signalés : « contenu » comprend les passagers, les cornes et
 fois de suite ne compte qu'une fois par demi-seconde (comme une entité).
 
 Compilé le 16/10/2026 (`sortie/KS_Trains-1.3.3.jar`). **Statut : non déployé, non testé en jeu.**
+
+## 1.3.4 - son de la locomotive, compteur kilométrique (16/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « il faudrait aussi mettre un son reconnaissable pour la locomotive, et un compteur kilométrique
+dans l'interface de la locomotive pour voir la distance parcourue avec aussi » ; réponses : tchou-tchou à vapeur ;
+avec le carburant consommé.
+
+- **Son** (sons du jeu, entendus aussi sur Bedrock) : au démarrage (ou en repartant après un arrêt de plus de 2 s),
+  **coup de sifflet** (deux notes de flûte ensemble) ; en roulant, **souffle de vapeur** (extinction de feu) rythmé, de
+  plus en plus rapide avec la vitesse : toutes les 12 ticks au pas, toutes les 3 ticks à 20 blocs/s, en alternant deux
+  hauteurs (tchou-tchou). Le son sort du premier four de locomotive ; un train sans locomotive ne fait pas de bruit.
+- **Compteur** : chaque four de locomotive enregistre la distance parcourue et le carburant qu'il a brûlé. Dans le menu
+  du train (bas, à gauche de la fiche de traction), une horloge : « Compteur : 850 blocs » ou « 12,3 km » (distance du
+  four le plus avancé) et « Carburant brûlé : 154 charbons » (équivalent : réserve consommée par les fours de la
+  locomotive / 80, consommation selon le niveau comprise). Les compteurs suivent les wagons (dételés puis rattachés,
+  ils gardent leur total) ; ils partent de zéro pour les locomotives posées avant cette version.
+
+Choix de Claude, signalés : sons dans la catégorie « Créatures neutres / Autres » des réglages du jeu ; distance comptée
+dans les deux sens de marche ; carburant des autres fours du train non compté (« carburant de la locomotive »).
+
+Compilé le 16/10/2026 (`sortie/KS_Trains-1.3.4.jar`). **Statut : non déployé, non testé en jeu.**
