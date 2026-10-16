@@ -1234,7 +1234,12 @@ public final class KSTrains extends JavaPlugin implements Listener {
      */
     private double cible(Train train, double max) {
         if (train.niveau != 0 && max <= 0) {
-            arreter(train, t("arret.carburant", "<yellow>Le train s'arrête : plus assez de carburant"));
+            // 1.3.6 (LeKiwi06 : « un train qui n'a plus de carburant ralentit à la même vitesse qu'un train qui
+            // freine ») : il freine jusqu'à l'arrêt (avant : arrêt net), puis repasse au niveau 0 avec le message.
+            if (train.vitesse <= 0) {
+                arreter(train, t("arret.carburant", "<yellow>Le train s'arrête : plus assez de carburant"));
+            }
+            return 0;
         }
         Player pilote = pilote(train);
         if (pilote != null && tick % 10 == 0) {

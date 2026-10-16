@@ -398,3 +398,14 @@ repartir, n'importe quel wagon du train sur un rail éteint suffit à refuser ; 
 s'ajoute (le wagon qui mène y roule un peu moins vite).
 
 Compilé le 16/10/2026 (`sortie/KS_Trains-1.3.5.jar`). **Statut : non déployé, non testé en jeu.**
+
+## 1.3.6 - panne de carburant : freinage normal (16/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « un train qui n'a plus de carburant ralentit à la même vitesse qu'un train qui freine ».
+
+- Plus de traction (carburant épuisé) en roulant : le train **freine** comme un train qu'on arrête (`freinage`, environ
+  50 blocs depuis 20 blocs/s, plus en surcharge) au lieu de s'arrêter net ; à l'arrêt : « Le train s'arrête : plus
+  assez de carburant », niveau 0.
+
+Compilé le 16/10/2026 (`sortie/KS_Trains-1.3.6.jar`). **Statut : non déployé, non testé en jeu.**
+
