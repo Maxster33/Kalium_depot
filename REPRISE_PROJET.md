@@ -450,7 +450,7 @@ Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
 
-**Ajout (16/10/2026, 23:05) : KS_Trains 1.3.2 compilé, non déployé.** Demandes de LeKiwi06 : train qui roule = entités projetées comme par le dragon (selon la vitesse), wagonnets libres brisés, autres trains déraillés (wagons dételés, locomotives cassées) ; train arrêté traversable ; -25 % dans les virages sauf niveau 1, anticipé, une diagonale = un seul virage.
+**Ajout (16/10/2026, 22:55) : KS_Trains 1.3.2 compilé, non déployé.** Demandes de LeKiwi06 : train qui roule = entités projetées comme par le dragon (selon la vitesse), wagonnets libres brisés, autres trains déraillés (wagons dételés, locomotives cassées) ; train arrêté traversable ; -25 % dans les virages sauf niveau 1, anticipé, une diagonale = un seul virage.
 
 **Ajout (16/10/2026, 22:45) : KS_Trains 1.3.1 compilé, non déployé.** Signalé par LeKiwi06 en test : wagons à four et contrôleur cassables (KS_Claim 1.3.0 lève en HIGHEST le refus de casser un wagonnet sans inventaire ; KS_Trains passe après lui), modèle agrandi resté en place après la casse d'un wagon ; accélération et freinage rendus progressifs (100 / 50 blocs, plus lents en surcharge).
 
