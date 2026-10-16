@@ -189,3 +189,74 @@ Signalement de LeKiwi06 (tests sur Event) : « à un moment mon train a changé 
   le remet dans le bon sens.
 
 Compilé le 16/10/2026 (`sortie/KS_Trains-1.2.1.jar`). **Statut : non déployé, non testé en jeu.**
+
+## 1.3.0 - collisions, écartement, entonnoirs, décor, klaxons, wagon jukebox, boussole (16/10/2026, LeKiwi06)
+
+Demandes de LeKiwi06 après ses premiers tests sur Event :
+
+> j'aimerais que les wagonnets soient un peu plus gros, le train a l'air minuscule
+> j'ai aussi remarqué qu'un wagon normal traverse le train, il faudrait des collisions
+> j'aimerais que tu écartes légèrement les wagons aussi, car quand je les décroche ils glitchent et se mettent à
+> rouler à l'infini
+> le minecart hopper ne transmettrait pas bien le charbon dans les 3 minecarts de la locomotive également, il faut
+> régler ce problème, il faudrait aussi un conteneur sur le minecart contrôleur pour y mettre les cornes de chèvre,
+> histoire d'avoir des klaxons,
+> il faut aussi créer le minecart jukebox, qui peut récupérer et reposer les disques dans les minecarts coffres devant
+> lui (le plus proche de la loco, pas de l'arrière du train)
+> il faut aussi faire en sorte que le minecart contrôleur marche comme une lodestone si on clique avec une boussole
+> dessus, pour pouvoir retrouver le train facilement
+
+Ses réponses : le jeu ne grossit pas un wagonnet ; « que le four central de la locomotive émette des particules de feu
+de camp […] mais oui grandis-le un peu pour les Java » ; klaxons : 9 cases, corne choisie ; wagon jukebox : le coffre
+juste devant lui uniquement, modes lecture, pause et aléatoire ; boussole : elle suit le train ; maquette des deux
+interfaces validée ; recette du wagon jukebox : wagonnet + jukebox. Contient la 1.2.1 (jamais déployée).
+
+- **Collisions** (la 1.0.0 supprimait toute collision avec un wagon de train) : un wagonnet libre, un joueur ou un
+  animal touché par le train est **repoussé** (plus fort si le train roule vite) ; deux trains qui se heurtent :
+  celui qui roule **s'arrête** (« un autre train est sur la voie »). Les wagons d'un même train, leurs passagers et le
+  décor ne comptent pas.
+- **Écartement** : `espacement` passe de 1,1 à **1,4** bloc (lu dans le code du jeu : deux wagonnets se poussent dès
+  que leurs centres sont à moins de 1,38 bloc environ ; à 1,1 les wagons dételés se repoussaient sans fin). Les
+  wagons dételés sont **arrêtés net**. La locomotive se pose maintenant sur **4 rails droits** (le message donne le
+  nombre).
+- **Entonnoirs** : le carburant va d'abord aux fours, **le moins rempli d'abord** (avant : le plus proche, jusqu'à 64) ;
+  la **locomotive compte comme un ensemble** : si un de ses fours est à portée (3 wagons devant), ses 3 fours sont
+  servis (avant : un contrôleur entre la locomotive et l'entonnoir mettait le premier four hors de portée). Puis un
+  objet va au coffre ou à l'entonnoir le plus proche devant, comme avant.
+- **Décor (Java seulement, choix de LeKiwi06)** : le chargement des wagons de train (four, allumé s'il est alimenté ;
+  coffre ; entonnoir ; jukebox) est affiché par un modèle 3D de bloc plus gros posé dans le wagon (`decor.taille` 1,0
+  contre 0,75 pour celui du jeu ; `decor.hauteur` -0,1, à régler en jeu). Les joueurs Bedrock voient les wagonnets du
+  jeu. Modèle non enregistré avec le monde, remis chaque seconde tant que le wagon est dans un train. Le **four du milieu
+  de la locomotive fume** (fumée de feu de camp) quand il est alimenté.
+- **Klaxons** : page du wagon contrôleur dans le menu du train, bouton « Klaxons » : contenant de 2 rangées, 9 cases
+  pour des cornes de chèvre (rien d'autre n'y entre), et sous chaque corne une vitre à cliquer pour la choisir (verte :
+  choisie). À bord du contrôleur, **touche de saut** : la corne choisie sonne, avec son son, sa portée et son attente
+  du jeu. Cornes enregistrées dans le wagon, lâchées s'il est cassé.
+- **Wagon jukebox** : objet « Wagon jukebox » (wagonnet brillant ; recette dans KS_Crafts 1.18.0 : wagonnet + jukebox),
+  posé comme un wagonnet avec un **jukebox affiché dedans** (bloc du wagonnet, vu aussi sur Bedrock) ; on n'y monte pas.
+  Dans un train, il prend un disque dans le **wagon à coffre juste devant lui** (sortie autorisée), le joue (la musique
+  sort du wagon et le suit, `jukebox.volume` 4 = 64 blocs) et le **rend au coffre** à la fin du morceau (à sa case si
+  elle est libre ; entrée autorisée). Modes : **lecture** (ordre des cases, en boucle), **aléatoire**, **pause** (le
+  disque revient) ; clic droit sur le wagon : lecture → aléatoire → pause ; ou dans sa page du menu (disque en cours,
+  trois boutons). Rien ne joue sans joueur à portée. Disque qui ne peut pas revenir : gardé dans le wagon, lâché s'il
+  est cassé. Cassé, il redonne un wagon jukebox.
+- **Boussole du train** : clic droit avec une boussole sur le wagon contrôleur : elle devient « Boussole du train »
+  (boussole de magnétite liée au contrôleur). Toutes les 2 s, les boussoles liées des joueurs connectés pointent vers
+  la position actuelle du contrôleur (mise à jour s'il a bougé de plus de 8 blocs ; dernière position connue s'il est
+  déchargé, gardée dans `controleurs.yml`).
+- `config.yml` : `espacement` 1,4 (**à changer à la main sur un serveur qui a déjà 1,1**), nouvelles clés
+  `decor.taille`, `decor.hauteur`, `jukebox.volume` (valeurs par défaut aussi dans le code).
+
+Choix de Claude, signalés :
+
+- Ce qui est repoussé : wagonnets libres, joueurs, animaux et monstres (pas seulement les wagonnets).
+- Décor sur les wagons à four, coffre, entonnoir et jukebox ; pas sur les wagonnets simples ni le contrôleur (on y
+  monte : un modèle prendrait la place du passager).
+- Fumée : seulement quand le four du milieu est alimenté (à l'arrêt aussi).
+- Wagon jukebox hors d'un train : silencieux. Le mode de départ est « lecture ».
+- La boussole est mise à jour dans tout l'inventaire du joueur ; contrôleur cassé : elle garde sa dernière position.
+- KS_VerrouVehicule 1.1.1 : un modèle d'affichage n'est plus refusé comme passager d'un véhicule verrouillé (sinon le
+  décor d'un coffre verrouillé ne se poserait pas).
+
+Écrit sans serveur de test. Compilé le 16/10/2026 (`sortie/KS_Trains-1.3.0.jar`). **À déployer avec KS_Crafts 1.18.0
+et KS_VerrouVehicule 1.1.1. Statut : non déployé, non testé en jeu.**

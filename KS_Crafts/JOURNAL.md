@@ -377,3 +377,13 @@ Compilé le 16/10/2026 (`sortie/KS_Crafts-1.17.0.jar`). **Statut : non déployé
 **Déployé sur Event le 16/10/2026 à 20:40 (LeKiwi06 : « envoie sur event et continue l'étape 3 » ; envoi groupé : KS_Trains 1.1.0, KS_Crafts 1.17.0 ; jars en place (KS_Trains 1.0.0, KS_Crafts 1.16.0) vérifiés identiques aux références avant l'envoi, rangés dans `_removed-ks_trains-1.0.0/` et `_removed-ks_crafts-1.16.0/` ; jars du serveur vérifiés identiques à ceux compilés ; Event n'avait pas redémarré depuis l'envoi de 20:00 : la 1.0.0 n'y a jamais tourné et le `config.yml` de KS_Trains sera créé avec les clés de la 1.1.0), actif après redémarrage d'Event. Nouvelle physique des wagonnets pas encore activée. Statut : non testé en jeu.**
 
 **Actif sur Event depuis son redémarrage du 16/10/2026 à 20:50 (journal lu, heures du journal en UTC : 18:50) : KS_Trains 1.2.0, KS_Crafts 1.17.0 (« 81 crafts ajoutés » : les 78 d'avant + verrou, locomotive et wagon contrôleur), KS_VerrouVehicule 1.1.0 et KS_LaisseBateau 1.0.0 chargés et activés sans erreur ni avertissement ; KS_Trains activé après KS_Claim (ordre voulu pour la pose de la locomotive) ; `config.yml` et `lang.yml` créés. Statut : non testé en jeu.**
+
+## 1.18.0 - recette du wagon jukebox (16/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (KS_Trains 1.3.0) : wagon jukebox ; recette choisie : « wagonnet + jukebox ».
+
+- **1 wagonnet + 1 jukebox**, sans forme (`wagon_jukebox`) → **1 wagon jukebox**.
+- Sans KS_Trains : recette ignorée (avec celles de la locomotive et du contrôleur).
+
+**À déployer avec KS_Trains 1.3.0.** Compilé le 16/10/2026 (`sortie/KS_Crafts-1.18.0.jar`). **Statut : non déployé, non
+testé en jeu.**

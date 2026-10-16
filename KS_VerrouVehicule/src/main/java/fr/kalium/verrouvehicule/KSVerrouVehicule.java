@@ -628,7 +628,8 @@ public final class KSVerrouVehicule extends JavaPlugin implements Listener {
     public void onMonter(VehicleEnterEvent event) {
         Entity vehicule = event.getVehicle();
         Entity entrant = event.getEntered();
-        if (estSiege(entrant) || !protege(vehicule)) {
+        // 1.1.1 : un modèle d'affichage (décor d'un wagon de KS_Trains 1.3.0) n'est pas un animal ou un monstre.
+        if (estSiege(entrant) || entrant instanceof org.bukkit.entity.Display || !protege(vehicule)) {
             return;
         }
         if (!(entrant instanceof Player joueur)) {

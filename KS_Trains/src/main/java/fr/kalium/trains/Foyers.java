@@ -146,6 +146,12 @@ final class Foyers implements Listener {
         }
     }
 
+    /** 1.3.0 : carburant d'un four en blocs (réserve + case), pour servir d'abord le moins rempli. */
+    double charge(PoweredMinecart four) {
+        ItemStack objet = caseCarburant(four);
+        return reserve(four) + (carburant(objet) ? cuisson(objet.getType()) / 20.0 * objet.getAmount() : 0);
+    }
+
     /** Vrai si le four a une réserve, ou un carburant brûlable dans sa case (pas un seau vide). */
     boolean alimente(PoweredMinecart four) {
         return reserve(four) > 0 || carburant(caseCarburant(four));

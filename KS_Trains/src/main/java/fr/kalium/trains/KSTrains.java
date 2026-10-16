@@ -38,6 +38,7 @@ import org.bukkit.event.player.PlayerInputEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -86,6 +87,11 @@ import java.util.UUID;
  * 1.2.0 (étape 3) : wagons à entonnoir et réglages entrée / sortie des wagons à coffre (voir Entonnoirs) ; wagon à
  * coffre verrouillé (KS_VerrouVehicule) : attelé et réglé par son propriétaire seulement (ou un opérateur), il n'est
  * plus ancré quand il est dans un train (KS_VerrouVehicule 1.1.0).
+ *
+ * 1.3.0 (demandes de LeKiwi06 après ses tests) : collisions (un wagonnet, un joueur ou un animal est repoussé par le
+ * train ; deux trains qui se heurtent : celui qui roule s'arrête), wagons plus écartés (1,4 bloc) et arrêtés net quand on
+ * les dételle, carburant des entonnoirs mieux réparti (Entonnoirs), chargement agrandi pour Java et fumée de la
+ * locomotive (Decor), klaxons du wagon contrôleur (Klaxons), wagon jukebox (Jukebox), boussole du train (Boussoles).
  */
 public final class KSTrains extends JavaPlugin implements Listener {
 
@@ -108,6 +114,13 @@ public final class KSTrains extends JavaPlugin implements Listener {
     private Lang lang;
     private Foyers foyers;
     private Entonnoirs entonnoirs;
+    private Decor decor;
+    private Klaxons klaxons;
+    private Jukebox jukebox;
+    private Boussoles boussoles;
+    /** 1.3.0 : objet « Wagon jukebox », et wagon jukebox posé. */
+    private NamespacedKey cleJukeboxObjet;
+    private NamespacedKey cleJukebox;
     private long tick;
 
     private final Map<UUID, Train> trains = new HashMap<>();
@@ -136,12 +149,19 @@ public final class KSTrains extends JavaPlugin implements Listener {
         cleLoco = new NamespacedKey(this, "loco");
         cleControleurObjet = new NamespacedKey(this, "controleur-objet");
         cleControleur = new NamespacedKey(this, "controleur");
+        cleJukeboxObjet = new NamespacedKey(this, "jukebox-objet");
+        cleJukebox = new NamespacedKey(this, "jukebox");
         lang = new Lang(this);
         foyers = new Foyers(this);
         entonnoirs = new Entonnoirs(this, foyers);
+        decor = new Decor(this);
+        klaxons = new Klaxons(this);
+        jukebox = new Jukebox(this, entonnoirs);
+        boussoles = new Boussoles(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(foyers, this);
         getServer().getPluginManager().registerEvents(entonnoirs, this);
+        getServer().getPluginManager().registerEvents(klaxons, this);
         for (World monde : Bukkit.getWorlds()) {
             for (Minecart wagon : monde.getEntitiesByClass(Minecart.class)) {
                 arriver(wagon);
@@ -149,14 +169,21 @@ public final class KSTrains extends JavaPlugin implements Listener {
         }
         getServer().getScheduler().runTaskTimer(this, this::rouler, 1L, 1L);
         getServer().getScheduler().runTaskTimer(this, this::surveiller, 20L, 20L);
+        getServer().getScheduler().runTaskTimer(this, this::fumer, 4L, 4L);
+        getServer().getScheduler().runTaskTimer(this, this::musique, 10L, 10L);
+        getServer().getScheduler().runTaskTimer(this, boussoles::mettreAJour, 40L, 40L);
+        getServer().getScheduler().runTaskTimer(this, () -> boussoles.enregistrer(false), 1200L, 1200L);
         creerLocomotive();
         creerControleur();
+        creerJukebox();
         lang.saveIfNeeded();
     }
 
     @Override
     public void onDisable() {
         foyers.toutFermer();
+        klaxons.toutFermer();
+        boussoles.enregistrer(true);
         for (World monde : Bukkit.getWorlds()) {
             monde.removePluginChunkTickets(this);
         }
@@ -234,10 +261,42 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 && wagon.getPersistentDataContainer().has(cleControleur, PersistentDataType.BYTE);
     }
 
+    /** 1.3.0 : un wagon jukebox (wagonnet brillant ; recette dans KS_Crafts : wagonnet + jukebox). */
+    public static ItemStack creerJukebox() {
+        KSTrains p = instance;
+        ItemStack objet = new ItemStack(Material.MINECART);
+        ItemMeta meta = objet.getItemMeta();
+        meta.displayName(p.t("jukebox-objet.nom", "<white>Wagon jukebox").decoration(TextDecoration.ITALIC, false));
+        List<Component> lignes = new ArrayList<>();
+        for (Component ligne : List.of(
+                p.t("jukebox-objet.ligne-1", "<gray>Joue les disques du coffre"),
+                p.t("jukebox-objet.ligne-2", "<gray>attelé juste devant lui"),
+                p.t("jukebox-objet.ligne-3", "<gray>Clic droit : lecture, aléatoire,"),
+                p.t("jukebox-objet.ligne-4", "<gray>pause"))) {
+            lignes.add(ligne.decoration(TextDecoration.ITALIC, false));
+        }
+        meta.lore(lignes);
+        meta.setEnchantmentGlintOverride(true);
+        meta.getPersistentDataContainer().set(p.cleJukeboxObjet, PersistentDataType.BYTE, (byte) 1);
+        objet.setItemMeta(meta);
+        return objet;
+    }
+
+    public static boolean estJukebox(ItemStack objet) {
+        return instance != null && objet != null && objet.getType() == Material.MINECART && objet.hasItemMeta()
+                && objet.getItemMeta().getPersistentDataContainer().has(instance.cleJukeboxObjet,
+                PersistentDataType.BYTE);
+    }
+
+    boolean estJukebox(Entity wagon) {
+        return wagon instanceof RideableMinecart
+                && wagon.getPersistentDataContainer().has(cleJukebox, PersistentDataType.BYTE);
+    }
+
     /** Un distributeur poserait un wagonnet ordinaire (ou un seul four) : la locomotive et le contrôleur y restent. */
     @EventHandler(ignoreCancelled = true)
     public void onDistribuer(BlockDispenseEvent event) {
-        if (estLocomotive(event.getItem()) || estControleur(event.getItem())) {
+        if (estLocomotive(event.getItem()) || estControleur(event.getItem()) || estJukebox(event.getItem())) {
             event.setCancelled(true);
         }
     }
@@ -245,9 +304,14 @@ public final class KSTrains extends JavaPlugin implements Listener {
     /** 1.1.0 : un wagon contrôleur cassé redonne un wagon contrôleur (le jeu lâcherait un wagonnet). */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onLacher(EntityDropItemEvent event) {
-        if (estControleur(event.getEntity()) && event.getItemDrop().getItemStack().getType() == Material.MINECART
-                && !estControleur(event.getItemDrop().getItemStack())) {
+        ItemStack lache = event.getItemDrop().getItemStack();
+        if (lache.getType() != Material.MINECART || estControleur(lache) || estJukebox(lache)) {
+            return;
+        }
+        if (estControleur(event.getEntity())) {
             event.getItemDrop().setItemStack(creerControleur());
+        } else if (estJukebox(event.getEntity())) {
+            event.getItemDrop().setItemStack(creerJukebox());
         }
     }
 
@@ -259,7 +323,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 || entite instanceof HopperMinecart || entite instanceof PoweredMinecart;
     }
 
-    private boolean estLoco(Entity wagon) {
+    boolean estLoco(Entity wagon) {
         return wagon.getPersistentDataContainer().has(cleLoco, PersistentDataType.BYTE);
     }
 
@@ -302,6 +366,11 @@ public final class KSTrains extends JavaPlugin implements Listener {
         parWagon.remove(wagon.getUniqueId());
         if (wagon instanceof PoweredMinecart four) {
             foyers.allumer(four, false);
+        }
+        // 1.3.0 : hors d'un train, plus de décor ni de musique.
+        decor.retirer(wagon);
+        if (estJukebox(wagon)) {
+            jukebox.couper(wagon);
         }
     }
 
@@ -407,7 +476,9 @@ public final class KSTrains extends JavaPlugin implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPoser(PlayerInteractEvent event) {
         boolean locomotive = estLocomotive(event.getItem());
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || (!locomotive && !estControleur(event.getItem()))) {
+        boolean controleur = estControleur(event.getItem());
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK
+                || (!locomotive && !controleur && !estJukebox(event.getItem()))) {
             return;
         }
         event.setUseItemInHand(Event.Result.DENY);
@@ -416,13 +487,14 @@ public final class KSTrains extends JavaPlugin implements Listener {
             if (locomotive) {
                 poser(event.getPlayer(), event.getClickedBlock(), event.getItem());
             } else {
-                poserControleur(event.getPlayer(), event.getClickedBlock(), event.getItem());
+                poserControleur(event.getPlayer(), event.getClickedBlock(), event.getItem(),
+                        controleur ? cleControleur : cleJukebox);
             }
         }
     }
 
-    /** 1.1.0 : le wagon contrôleur se pose comme un wagonnet, marqué. */
-    private void poserControleur(Player joueur, Block rail, ItemStack objet) {
+    /** 1.1.0 : le wagon contrôleur (1.3.0 : ou le wagon jukebox, avec un jukebox affiché) se pose, marqué. */
+    private void poserControleur(Player joueur, Block rail, ItemStack objet, NamespacedKey marque) {
         if (!(rail.getBlockData() instanceof Rail donnees)) {
             return;
         }
@@ -433,8 +505,12 @@ public final class KSTrains extends JavaPlugin implements Listener {
             return;
         }
         place.setYaw(joueur.getLocation().getYaw());
-        rail.getWorld().spawn(place, RideableMinecart.class,
-                w -> w.getPersistentDataContainer().set(cleControleur, PersistentDataType.BYTE, (byte) 1));
+        rail.getWorld().spawn(place, RideableMinecart.class, w -> {
+            w.getPersistentDataContainer().set(marque, PersistentDataType.BYTE, (byte) 1);
+            if (marque.equals(cleJukebox)) {
+                w.setDisplayBlockData(Material.JUKEBOX.createBlockData());
+            }
+        });
         if (joueur.getGameMode() != GameMode.CREATIVE) {
             objet.setAmount(objet.getAmount() - 1);
         }
@@ -452,16 +528,20 @@ public final class KSTrains extends JavaPlugin implements Listener {
         int dx = Math.abs(vx) >= Math.abs(vz) ? (int) Math.signum(vx) : 0;
         int dz = dx == 0 ? (int) Math.signum(vz) : 0;
         Rail.Shape droit = dx != 0 ? Rail.Shape.EAST_WEST : Rail.Shape.NORTH_SOUTH;
-        double espacement = reglage("espacement", 1.1);
+        double espacement = reglage("espacement", 1.4);
+        // 1.3.0 : tous les rails sous les 3 fours (4 avec l'écartement de 1,4 bloc).
+        int rails = (int) Math.round(2 * espacement) + 1;
+        for (int i = 0; i < rails; i++) {
+            Block bloc = rail.getRelative(-i * dx, 0, -i * dz);
+            if (!(bloc.getBlockData() instanceof Rail donnees) || donnees.getShape() != droit) {
+                Contenant.message(joueur, t("poser.rails-n", "<red>Pose-la sur <n> rails droits, dans le sens des rails",
+                        "n", rails), true);
+                return;
+            }
+        }
         List<Location> places = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             double recul = i * espacement;
-            Block bloc = rail.getRelative((int) -Math.round(recul * dx), 0, (int) -Math.round(recul * dz));
-            if (!(bloc.getBlockData() instanceof Rail donnees) || donnees.getShape() != droit) {
-                Contenant.message(joueur, t("poser.rails", "<red>Pose-la sur 3 rails droits, dans le sens des rails"),
-                        true);
-                return;
-            }
             Location place = rail.getLocation().add(0.5 - recul * dx, 0.0625, 0.5 - recul * dz);
             place.setDirection(new Vector(dx, 0, dz));
             places.add(place);
@@ -507,6 +587,22 @@ public final class KSTrains extends JavaPlugin implements Listener {
             event.setCancelled(true);
             if (main) {
                 atteler(joueur, wagon, objet);
+            }
+            return;
+        }
+        if (objet.getType() == Material.COMPASS && estControleur(wagon)) {
+            // 1.3.0 : boussole du train.
+            event.setCancelled(true);
+            if (main) {
+                boussoles.lier(joueur, wagon, objet);
+            }
+            return;
+        }
+        if (estJukebox(wagon) && objet.getType() != Material.SHEARS && !joueur.isSneaking()) {
+            // 1.3.0 : on ne monte pas dans le wagon jukebox ; clic droit : lecture, aléatoire, pause.
+            event.setCancelled(true);
+            if (main) {
+                Contenant.message(joueur, jukebox.suivant(wagon), false);
             }
             return;
         }
@@ -714,6 +810,10 @@ public final class KSTrains extends JavaPlugin implements Listener {
         retirer(train);
         former(new ArrayList<>(train.wagons.subList(0, rang)));
         former(new ArrayList<>(train.wagons.subList(rang, train.wagons.size())));
+        // 1.3.0 : les wagons dételés ne gardent aucune vitesse (avant : ils pouvaient rouler sans fin).
+        for (Minecart detache : train.wagons) {
+            detache.setVelocity(new Vector());
+        }
         wagon.getWorld().dropItemNaturally(wagon.getLocation(), new ItemStack(Material.IRON_CHAIN));
         wagon.getWorld().playSound(wagon.getLocation(), Sound.BLOCK_CHAIN_BREAK, 1f, 1f);
         Contenant.message(joueur, t("deteler.ok", "<green>Wagon dételé"), false);
@@ -737,12 +837,61 @@ public final class KSTrains extends JavaPlugin implements Listener {
         }
     }
 
-    /** Les wagons d'un train ne sont ni poussés ni ne poussent (le plugin les place). */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onPousser(VehicleEntityCollisionEvent event) {
-        if (trainDe(event.getVehicle()) != null || trainDe(event.getEntity()) != null) {
+    /** 1.3.0 : contrôleur cassé (dételé) : ses cornes tombent ; wagon jukebox cassé : son disque tombe. */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onDetruit(VehicleDestroyEvent event) {
+        Entity wagon = event.getVehicle();
+        if (estControleur(wagon)) {
+            klaxons.lacher(wagon);
+            boussoles.oublier(wagon.getUniqueId());
+        } else if (estJukebox(wagon)) {
+            jukebox.lacher(wagon);
+        }
+    }
+
+    /** 1.3.0 : personne ne monte dans un wagon jukebox (seul son décor y est posé). */
+    @EventHandler(ignoreCancelled = true)
+    public void onMonter(VehicleEnterEvent event) {
+        if (estJukebox(event.getVehicle()) && !decor.estDecor(event.getEntered())) {
             event.setCancelled(true);
         }
+    }
+
+    /**
+     * Les wagons d'un train ne sont pas poussés (le plugin les place). 1.3.0 (LeKiwi06 : « un wagon normal traverse le
+     * train, il faudrait des collisions ») : ce que le train touche (wagonnet libre, joueur, animal) est repoussé ; deux
+     * trains qui se heurtent : celui qui roule s'arrête. Les passagers et le décor ne comptent pas.
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onPousser(VehicleEntityCollisionEvent event) {
+        Entity vehicule = event.getVehicle();
+        Entity autre = event.getEntity();
+        Train tv = trainDe(vehicule);
+        Train ta = trainDe(autre);
+        if (tv == null && ta == null) {
+            return;
+        }
+        event.setCancelled(true);
+        if (tv == ta || decor.estDecor(autre) || vehicule.getPassengers().contains(autre)
+                || autre.getPassengers().contains(vehicule)) {
+            return;
+        }
+        if (tv != null && ta != null) {
+            for (Train train : List.of(tv, ta)) {
+                if (train.vitesse > 0) {
+                    arreter(train, t("arret.train", "<yellow>Le train s'arrête : un autre train est sur la voie"));
+                }
+            }
+            return;
+        }
+        Entity wagon = tv != null ? vehicule : autre;
+        Entity libre = tv != null ? autre : vehicule;
+        Train train = tv != null ? tv : ta;
+        Vector ecart = libre.getLocation().toVector().subtract(wagon.getLocation().toVector()).setY(0);
+        if (ecart.lengthSquared() < 1e-4) {
+            ecart = new Vector(1, 0, 0);
+        }
+        libre.setVelocity(ecart.normalize().multiply(0.3 + train.vitesse).setY(0.1));
     }
 
     // ------------------------------------------------------------------ rouler
@@ -771,7 +920,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
     /** 1.1.0 : touches tenues au dernier envoi, par joueur (pour reconnaître un nouvel appui). */
     private final Map<UUID, Touches> touches = new HashMap<>();
 
-    private record Touches(boolean avancer, boolean reculer) {
+    private record Touches(boolean avancer, boolean reculer, boolean saut) {
     }
 
     /**
@@ -782,10 +931,19 @@ public final class KSTrains extends JavaPlugin implements Listener {
     public void onTouches(PlayerInputEvent event) {
         Player joueur = event.getPlayer();
         Input nouvelles = event.getInput();
-        Touches avant = touches.put(joueur.getUniqueId(), new Touches(nouvelles.isForward(), nouvelles.isBackward()));
+        Touches avant = touches.put(joueur.getUniqueId(), new Touches(nouvelles.isForward(), nouvelles.isBackward(),
+                nouvelles.isJump()));
         boolean avancer = nouvelles.isForward() && (avant == null || !avant.avancer());
         boolean reculer = nouvelles.isBackward() && (avant == null || !avant.reculer());
-        if (avancer == reculer || joueur.getVehicle() == null || !estControleur(joueur.getVehicle())) {
+        boolean saut = nouvelles.isJump() && (avant == null || !avant.saut());
+        if (joueur.getVehicle() == null || !estControleur(joueur.getVehicle())) {
+            return;
+        }
+        if (saut) {
+            // 1.3.0 : klaxon.
+            klaxons.sonner(joueur, joueur.getVehicle());
+        }
+        if (avancer == reculer) {
             return;
         }
         Train train = trainDe(joueur.getVehicle());
@@ -872,7 +1030,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
      */
     private void rouler() {
         tick++;
-        double espacement = reglage("espacement", 1.1);
+        double espacement = reglage("espacement", 1.4);
         for (Train train : List.copyOf(trains.values())) {
             if (!train.complet()) {
                 continue;
@@ -1005,8 +1163,13 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 continue;
             }
             for (Minecart wagon : train.wagons) {
+                boolean alimente = wagon instanceof PoweredMinecart four && foyers.alimente(four);
                 if (wagon instanceof PoweredMinecart four) {
-                    foyers.allumer(four, foyers.alimente(four));
+                    foyers.allumer(four, alimente);
+                }
+                decor.entretenir(wagon, alimente);
+                if (estControleur(wagon)) {
+                    boussoles.noter(wagon);
                 }
             }
             Set<Long> voulus = new HashSet<>();
@@ -1030,6 +1193,36 @@ public final class KSTrains extends JavaPlugin implements Listener {
             }
             train.chunks.clear();
             train.chunks.addAll(voulus);
+        }
+    }
+
+    /** 1.3.0 : toutes les 4 ticks, le four du milieu de chaque locomotive alimentée fume (feu de camp). */
+    private void fumer() {
+        for (Train train : trains.values()) {
+            if (!train.complet()) {
+                continue;
+            }
+            for (int i = 1; i < train.wagons.size() - 1; i++) {
+                Minecart wagon = train.wagons.get(i);
+                if (wagon instanceof PoweredMinecart four && estLoco(four) && estLoco(train.wagons.get(i - 1))
+                        && estLoco(train.wagons.get(i + 1)) && foyers.alimente(four)) {
+                    decor.fumer(four);
+                }
+            }
+        }
+    }
+
+    /** 1.3.0 : toutes les 10 ticks, les wagons jukebox des trains. */
+    private void musique() {
+        for (Train train : List.copyOf(trains.values())) {
+            if (!train.complet()) {
+                continue;
+            }
+            for (int i = 0; i < train.wagons.size(); i++) {
+                if (estJukebox(train.wagons.get(i))) {
+                    jukebox.avancer(train, i);
+                }
+            }
         }
     }
 
@@ -1141,6 +1334,14 @@ public final class KSTrains extends JavaPlugin implements Listener {
             lignes.add(t("wagon.entonnoir-objets", "<gray><o> objets dedans", "o", objets));
             lignes.add(t("wagon.entonnoir-regle-1", "<gray>Prend dans les 3 wagons derrière,"));
             lignes.add(t("wagon.entonnoir-regle-2", "<gray>donne aux 3 wagons devant"));
+        } else if (estJukebox(wagon)) {
+            materiau = Material.JUKEBOX;
+            nom = t("wagon.jukebox", "<white><n>. Wagon jukebox", "n", numero);
+            lignes.add(jukebox.nomMode(jukebox.mode(wagon)));
+            ItemStack disque = jukebox.enCours(wagon);
+            lignes.add(disque == null ? t("wagon.jukebox-silence", "<gray>Aucun disque en cours")
+                    : t("wagon.jukebox-disque", "<gray>En cours : <d>", "d",
+                    Jukebox.chanson(disque).getDescription()));
         } else if (estControleur(wagon)) {
             materiau = Material.COMPARATOR;
             nom = t("wagon.controleur", "<white><n>. Wagon contrôleur", "n", numero);
@@ -1155,7 +1356,8 @@ public final class KSTrains extends JavaPlugin implements Listener {
                     : t("wagon.sans-passager", "<gray>Aucun passager"));
         }
         if (cliquable) {
-            lignes.add(wagon instanceof StorageMinecart ? t("wagon.clic-coffre", "<gray>Clic : réglages, dételer")
+            lignes.add(wagon instanceof StorageMinecart || estJukebox(wagon) || estControleur(wagon)
+                    ? t("wagon.clic-reglages", "<gray>Clic : réglages, dételer")
                     : t("wagon.clic", "<gray>Clic : sa page (dételer)"));
         }
         return Contenant.objet(materiau, nom, lignes);
@@ -1186,11 +1388,43 @@ public final class KSTrains extends JavaPlugin implements Listener {
                     : Contenant.objet(Material.RED_DYE, t("page.sortie-non", "<red>Sortie refusée"),
                     List.of(t("page.sortie-clic-oui", "<gray>Clic : autoriser"))),
                     j -> reglerCoffre(j, id, rang, page, false));
+        } else if (estJukebox(wagon)) {
+            // 1.3.0 : disque en cours et modes (maquette validée par LeKiwi06).
+            ItemStack disque = jukebox.enCours(wagon);
+            menu.poser(1, disque == null
+                    ? Contenant.objet(Material.JUKEBOX, t("page.jukebox-silence", "<gray>Aucun disque en cours"),
+                    List.of(t("page.jukebox-coffre", "<gray>Disques : coffre juste devant")))
+                    : Contenant.objet(disque, Jukebox.chanson(disque).getDescription().color(
+                    net.kyori.adventure.text.format.NamedTextColor.GREEN), List.of(t("page.jukebox-en-cours",
+                    "<gray>En cours, rendu au coffre à la fin"))), null);
+            byte mode = jukebox.mode(wagon);
+            menu.poser(2, Contenant.objet(mode == Jukebox.LECTURE ? Material.LIME_DYE : Material.GRAY_DYE,
+                    t("page.jukebox-lecture", "<white>Lecture"), List.of(t("page.jukebox-lecture-ligne",
+                    "<gray>Dans l'ordre du coffre, en boucle"))), j -> modeJukebox(j, id, rang, page, Jukebox.LECTURE));
+            menu.poser(3, Contenant.objet(mode == Jukebox.ALEATOIRE ? Material.LIME_DYE : Material.GRAY_DYE,
+                    t("page.jukebox-aleatoire", "<white>Aléatoire"), List.of(t("page.jukebox-aleatoire-ligne",
+                    "<gray>Un disque au hasard"))), j -> modeJukebox(j, id, rang, page, Jukebox.ALEATOIRE));
+            menu.poser(4, Contenant.objet(mode == Jukebox.PAUSE ? Material.LIME_DYE : Material.GRAY_DYE,
+                    t("page.jukebox-pause", "<white>Pause"), List.of(t("page.jukebox-pause-ligne",
+                    "<gray>Le disque revient au coffre"))), j -> modeJukebox(j, id, rang, page, Jukebox.PAUSE));
         } else {
             menu.poser(3, icone(train, rang, false), null);
+            if (estControleur(wagon)) {
+                // 1.3.0 : klaxons du contrôleur.
+                menu.poser(2, Contenant.objet(Material.GOAT_HORN, t("page.klaxons", "<white>Klaxons"),
+                        List.of(t("page.klaxons-ligne", "<gray>Cornes de chèvre ; à bord :"),
+                                t("page.klaxons-ligne-2", "<gray>touche de saut"))), j -> {
+                    Train actuel = trainDuMenu(j, id);
+                    if (actuel != null && rang < actuel.wagons.size()) {
+                        Minecart controleur = actuel.wagons.get(rang);
+                        Contenant.apres(() -> klaxons.ouvrir(j, controleur));
+                    }
+                });
+            }
         }
         int coupe = Math.max(1, rang);
-        menu.poser(4, Contenant.objet(Material.SHEARS, t("page.deteler", "<yellow>Dételer ici"), rang == 0
+        int caseDeteler = estJukebox(wagon) ? 5 : 4;
+        menu.poser(caseDeteler, Contenant.objet(Material.SHEARS, t("page.deteler", "<yellow>Dételer ici"), rang == 0
                 ? List.of(t("page.deteler-tete", "<gray>Le sépare du wagon suivant"))
                 : List.of(t("page.deteler-ligne-1", "<gray>Ce wagon et ceux de derrière"),
                 t("page.deteler-ligne-2", "<gray>forment un autre train"))), j -> {
@@ -1200,9 +1434,20 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 Contenant.fermer(j);
             }
         });
-        menu.poser(5, Contenant.objet(Material.OAK_DOOR, t("page.retour", "<white>Retour"), List.of()),
+        menu.poser(caseDeteler + 1, Contenant.objet(Material.OAK_DOOR, t("page.retour", "<white>Retour"), List.of()),
                 j -> menu(j, id, page));
         menu.ouvrir(joueur);
+    }
+
+    /** 1.3.0 : mode du wagon jukebox choisi dans sa page. */
+    private void modeJukebox(Player joueur, UUID id, int rang, int page, byte mode) {
+        Train train = trainDuMenu(joueur, id);
+        if (train == null || rang >= train.wagons.size() || !estJukebox(train.wagons.get(rang))) {
+            return;
+        }
+        jukebox.mode(train.wagons.get(rang), mode);
+        Contenant.message(joueur, jukebox.nomMode(mode), false);
+        pageWagon(joueur, id, rang, page);
     }
 
     /** 1.2.0 : change l'entrée ou la sortie d'un wagon à coffre (verrouillé : son propriétaire seulement). */

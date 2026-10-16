@@ -43,6 +43,7 @@ import java.util.Map;
  * 1.15.0 (LeKiwi06) : recette du verrou de véhicule de KS_VerrouVehicule (voir onEnable).
  * 1.16.0 (LeKiwi06) : recette de la locomotive de KS_Trains (voir onEnable).
  * 1.17.0 (LeKiwi06) : recette du wagon contrôleur de KS_Trains (voir onEnable et onPreparerControleur).
+ * 1.18.0 (LeKiwi06) : recette du wagon jukebox de KS_Trains (voir onEnable).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -203,6 +204,10 @@ public final class KSCrafts extends JavaPlugin implements Listener {
 
         // 1.16.0 (LeKiwi06) : locomotive (KS_Trains) : 3 wagonnets à four sur une même ligne.
         if (actif("KS_Trains")) {
+            // 1.18.0 (LeKiwi06) : wagon jukebox (KS_Trains 1.3.0), sans forme : un wagonnet + un jukebox.
+            shapeless("wagon_jukebox", fr.kalium.trains.KSTrains.creerJukebox(),
+                    List.of(new RecipeChoice.MaterialChoice(Material.MINECART),
+                            new RecipeChoice.MaterialChoice(Material.JUKEBOX)));
             ShapedRecipe locomotive = new ShapedRecipe(key("locomotive"), fr.kalium.trains.KSTrains.creerLocomotive());
             locomotive.shape("FFF");
             locomotive.setIngredient('F', Material.FURNACE_MINECART);

@@ -118,3 +118,14 @@ déployé, non testé en jeu.**
 **Déployé sur Event le 16/10/2026 à 20:46 (LeKiwi06 : « oui envoie sur event » ; envoi groupé : KS_Trains 1.2.0, KS_VerrouVehicule 1.1.0 ; jars en place (KS_Trains 1.1.0, KS_VerrouVehicule 1.0.0) vérifiés identiques aux références avant l'envoi, rangés dans `_removed-ks_trains-1.1.0/` et `_removed-ks_verrouvehicule-1.0.0/` ; jars du serveur vérifiés identiques à ceux compilés ; Event n'avait toujours pas redémarré depuis 20:00 : aucune version précédente n'y a tourné), actif après redémarrage d'Event. Kixster reste en KS_VerrouVehicule 1.0.0 et n'a pas KS_Trains. Statut : non testé en jeu.**
 
 **Actif sur Event depuis son redémarrage du 16/10/2026 à 20:50 (journal lu, heures du journal en UTC : 18:50) : KS_Trains 1.2.0, KS_Crafts 1.17.0 (« 81 crafts ajoutés » : les 78 d'avant + verrou, locomotive et wagon contrôleur), KS_VerrouVehicule 1.1.0 et KS_LaisseBateau 1.0.0 chargés et activés sans erreur ni avertissement ; KS_Trains activé après KS_Claim (ordre voulu pour la pose de la locomotive) ; `config.yml` et `lang.yml` créés. Statut : non testé en jeu.**
+
+## 1.1.1 - décor des wagons de KS_Trains accepté (16/10/2026, LeKiwi06)
+
+KS_Trains 1.3.0 pose un modèle 3D de bloc (décor pour les joueurs Java) comme passager des wagons à coffre d'un train.
+La 1.0.0 refuse tout passager qui n'est pas un joueur sur un véhicule verrouillé et protégé (animaux et monstres) : le
+décor d'un coffre verrouillé ne se serait pas posé.
+
+- Un modèle d'affichage (Display) peut monter dans un véhicule verrouillé ; animaux et monstres restent refusés.
+
+**À déployer avec KS_Trains 1.3.0.** Compilé le 16/10/2026 (`sortie/KS_VerrouVehicule-1.1.1.jar`). **Statut : non
+déployé, non testé en jeu.**

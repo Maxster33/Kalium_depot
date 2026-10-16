@@ -17,6 +17,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * 1.2.0 (étape 3 du cahier, règles 8 et 9) : wagons à entonnoir et réglages des wagons à coffre d'un train.
  *
@@ -99,19 +103,44 @@ final class Entonnoirs implements Listener {
         }
     }
 
+    /**
+     * 1.3.0 (LeKiwi06 : « le minecart hopper ne transmet pas bien le charbon dans les 3 minecarts de la locomotive ») :
+     * le carburant va d'abord aux fours, le moins rempli d'abord (avant : le plus proche, jusqu'à ce que sa case soit
+     * pleine) ; la locomotive compte comme un ensemble : si l'entonnoir atteint un de ses fours, il les alimente tous.
+     * Puis un objet va au coffre ou à l'entonnoir le plus proche devant lui.
+     */
     private void donner(Train train, int rang, Inventory entonnoir) {
+        List<PoweredMinecart> fours = new ArrayList<>();
+        for (int j = rang - 1; j >= Math.max(0, rang - PORTEE); j--) {
+            if (train.wagons.get(j) instanceof PoweredMinecart four && !fours.contains(four)) {
+                fours.add(four);
+                if (plugin.estLoco(four)) {
+                    // Toute la locomotive : les fours de locomotive attelés de part et d'autre.
+                    for (int k = j - 1; k >= 0 && plugin.estLoco(train.wagons.get(k)); k--) {
+                        if (!fours.contains(train.wagons.get(k))) {
+                            fours.add((PoweredMinecart) train.wagons.get(k));
+                        }
+                    }
+                    for (int k = j + 1; k < rang && plugin.estLoco(train.wagons.get(k)); k++) {
+                        if (!fours.contains(train.wagons.get(k))) {
+                            fours.add((PoweredMinecart) train.wagons.get(k));
+                        }
+                    }
+                }
+            }
+        }
+        fours.sort(Comparator.comparingDouble(foyers::charge));
+        for (PoweredMinecart four : fours) {
+            if (alimenter(four, entonnoir)) {
+                return;
+            }
+        }
         for (int j = rang - 1; j >= Math.max(0, rang - PORTEE); j--) {
             Minecart wagon = train.wagons.get(j);
-            if (wagon instanceof PoweredMinecart four) {
-                if (alimenter(four, entonnoir)) {
-                    return;
-                }
-            } else {
-                Inventory cible = wagon instanceof StorageMinecart coffre && entree(coffre) ? coffre.getInventory()
-                        : wagon instanceof HopperMinecart autre ? autre.getInventory() : null;
-                if (cible != null && deplacerUn(entonnoir, cible)) {
-                    return;
-                }
+            Inventory cible = wagon instanceof StorageMinecart coffre && entree(coffre) ? coffre.getInventory()
+                    : wagon instanceof HopperMinecart autre ? autre.getInventory() : null;
+            if (cible != null && deplacerUn(entonnoir, cible)) {
+                return;
             }
         }
     }
