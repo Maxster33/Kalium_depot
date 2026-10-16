@@ -23,6 +23,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
+- KS_VerrouVehicule — LeKiwi06 — depuis le 2026-10-16 20:05 — déploiement sur Event (tests)
 - KS_LaisseBateau — LeKiwi06 — depuis le 2026-10-14 20:32 — compilé, en attente du déploiement sur Kixster (passé en « requis parfois » le 2026-10-16)
 - KS_Crafts — LeKiwi06 — depuis le 2026-10-16 18:59 — recette de la locomotive (KS_Trains)
 
