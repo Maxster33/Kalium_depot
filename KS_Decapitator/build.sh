@@ -4,7 +4,7 @@
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.2.0
+VERSION=1.3.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -24,6 +24,7 @@ rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"
 java -jar "$(win "$TOOLS/ecj.jar")" -21 -proc:none -nowarn -encoding UTF-8 \
   -cp "$CP" -d "$(win "$OUT")" src/main/java
 cp src/main/resources/tetes.txt "$OUT/tetes.txt"
+cp src/main/resources/config.yml "$OUT/config.yml"
 sed "s/\${project.version}/$VERSION/" src/main/resources/plugin.yml > "$OUT/plugin.yml"
 jar cf "$DEST/KS_Decapitator-$VERSION.jar" -C "$OUT" .
 echo "OK -> $DEST/KS_Decapitator-$VERSION.jar"

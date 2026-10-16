@@ -25,6 +25,7 @@ import java.util.UUID;
  * qu'elle a été dans l'inventaire du joueur, quelle que soit sa provenance (mob tué, échange, coffre, don) : ramassée
  * au sol, ou vue dans son inventaire (contrôle toutes les 5 secondes, à la connexion, à la déconnexion et à
  * l'ouverture de /tetes). Données : plugins/KS_Decapitator/collection.yml.
+ * 1.3.0 : les têtes de joueurs aussi (id « joueur:<uuid> », voir TetesDeJoueurs), quand elles sont actives.
  */
 final class Collection implements Listener {
 
@@ -57,6 +58,9 @@ final class Collection implements Listener {
 
     private void noter(Player joueur, ItemStack objet) {
         String id = KSDecapitator.idTete(objet);
+        if (id == null && KSDecapitator.tetesDeJoueurs() != null) {
+            id = TetesDeJoueurs.idTete(objet);
+        }
         if (id != null && obtenues.computeIfAbsent(joueur.getUniqueId(), u -> new LinkedHashSet<>()).add(id)) {
             aSauver = true;
         }

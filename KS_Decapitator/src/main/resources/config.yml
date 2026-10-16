@@ -1,0 +1,4 @@
+# KS_Decapitator
+# Têtes de joueurs (1.3.0) : chaque joueur a un mob secret ; ce mob, renommé avec son pseudo puis tué par un joueur,
+# lâche sa tête. À mettre à true sur Kixster SMP seulement (redémarrage nécessaire).
+tetes-de-joueurs: false

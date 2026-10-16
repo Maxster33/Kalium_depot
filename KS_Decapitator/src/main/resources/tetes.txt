@@ -1,7 +1,7 @@
 # KS_Decapitator : une ligne par tête : clé ; nom affiché ; empreinte de la texture (http://textures.minecraft.net/texture/<empreinte>).
 # Clé : <créature>[.<variante>][.<état>...][.baby], calculée sur le mob tué (voir KSDecapitator.cle).
 # Textures : MoreMobHeads de JoelGodOfwar (licence MIT), elles-mêmes issues de minecraft-heads.com.
-# Ajouter une tête (ex. shulker rouge : shulker.red) : ajouter sa ligne ici, puis recompiler.
+# Ajouter une tête : ajouter sa ligne ici (clé du mob, voir KSDecapitator.cle), puis recompiler.
 allay;Tête d'allay;cb225bb461d61102ca38e8f772639ca08a359652379cce4ae8edcc50ce53b9e7
 bat;Tête de chauve-souris;a7365536f978323b52c5de45d8f28e1646815d59078f527a732839a388beb49c
 blaze;Tête de blaze;dee23dc7a10c6a87ef937454c0e94ed42c23aa641a91ed8470a3042d05c52c52
@@ -334,3 +334,25 @@ zombie_villager.shepherd;Tête de zombie-villageois berger;c05856a667aff40267fcd
 zombie_villager.toolsmith;Tête de zombie-villageois forgeron d'outils;80e11b7082c43a5318eb035c0a8d176e35a674094eec1be3cef7adf6bf330440
 zombie_villager.weaponsmith;Tête de zombie-villageois forgeron d'armes;542f65ac1f97cf184f752fff35babb80c522476ad7be40095dd4951f4a1356a4
 zombie_villager.baby;Tête de bébé zombie-villageois;52b341798ff12723f0d9142596afe5a85754b302d5c5591fb401d0cfe70f2d11
+# Cube de soufre (1.3.0) : texture prise directement sur minecraft-heads.com (« Sulfur Cube », catégorie Monsters), pas dans MoreMobHeads.
+# Pas de tête de bébé sur le site : le bébé reprend la texture de l'adulte.
+sulfur_cube;Tête de cube de soufre;ca9570cd1dc43c1e83f36cc4995665513dc2405dad241d2114249e8da976fc3d
+sulfur_cube.baby;Tête de bébé cube de soufre;ca9570cd1dc43c1e83f36cc4995665513dc2405dad241d2114249e8da976fc3d
+# Shulkers colorés et bébé noyé (1.3.0) : pris directement sur minecraft-heads.com (têtes « Shulker (<couleur>) », style à spirale, et « Baby Drowned »).
+shulker.white;Tête de shulker blanc;4cd83b70a776a1d5cd123a5b4fd7db328958685071e6e537e74d6591976cdb
+shulker.orange;Tête de shulker orange;f5711d954bd56236d1a9f99be880c5d38990df6bef72e73f745b04995dbf6
+shulker.magenta;Tête de shulker magenta;69fe291676c7b3f96f3cdf63c47b53fb45d73bd6fe2ce22de10749eb1426a
+shulker.light_blue;Tête de shulker bleu clair;c21cdec2cf4ebeef35d58b184b832598bc890a0ae5c2d54ee9be586d0
+shulker.yellow;Tête de shulker jaune;8cbf5586836b7b342932e1d23efc2490cf59c69accf1e05e9ed576caed8b7877
+shulker.lime;Tête de shulker vert clair;17144957c2c5bbfe447f4b2d36a246ea1b023da4cbd1aa2dbbb15e94981248
+shulker.pink;Tête de shulker rose;3f847c12d57fe6555e8f9b47e562ecf1683fb6c35f92ce2ced2ae68de628750
+shulker.gray;Tête de shulker gris;a798432fbeb2bc2d757b1d3c3b3558e6990392dd091ea4ef381b2e019c9462
+shulker.light_gray;Tête de shulker gris clair;bfa17d41ea183bee53d546c7bec4ccf6a54d4f508fde6ebf3e5d388d4cbeacb9
+shulker.cyan;Tête de shulker cyan;26f173d4e3e8bd6f9be0bf9b745bd1cc7a29ff836ed2d486c5b99292c85cc
+shulker.purple;Tête de shulker violet;1e73832e272f8844c476846bc424a3432fb698c58e6ef2a9871c7d29aeea7
+shulker.blue;Tête de shulker bleu;9430966d5cebbd787147699a29743751b3ce4bb814e2db564fe92142d119cd1
+shulker.brown;Tête de shulker marron;c96d7fb87447ffc054fb109b84d6225d41029b1e6710c7de57f661aefa6f
+shulker.green;Tête de shulker vert;331abe2bb2b9141f1018eb1539d2cfec13d9231b53a46caf8dc21aa2705049
+shulker.red;Tête de shulker rouge;59994040433af0f015be4d6968c3d55e044c98dac2c4c6a6ea0efac7a6ddb
+shulker.black;Tête de shulker noir;c5455aaadb2317b5f29e98981aa57f5795705069d8f415c0d68a92a791413b3a
+drowned.baby;Tête de bébé noyé;4b6595a6e01fcf9620038f3aa829e3ca83e8f82834f4f9d66c5df23187456554

@@ -78,6 +78,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * - Têtes de joueur à texture (table tetes.txt dans le jar), nom « Tête de ... » blanc non italique, marquées (id).
  *   Posées puis cassées (outil, explosion, piston...), elles redonnent exactement le même objet : toute tête du plugin
  *   qui apparaît au sol sans marqueur est reconstruite (reconnue au profil de la tête, propre à chaque id).
+ * - 1.3.0 : un shulker se teint au colorant (TeintureShulker), pour que ses têtes colorées soient obtenables.
+ * - 1.3.0 : têtes de joueurs (TetesDeJoueurs, Kixster SMP) : un mob secret par joueur, renommé à son pseudo puis tué.
  * - /tetes : menu de toutes les têtes. 1.2.0 : ouvert à tous, il montre à chaque joueur les têtes qu'il a déjà
  *   obtenues (une tête compte dès qu'elle a été dans son inventaire) ; les opérateurs les voient toutes et en
  *   prennent une d'un clic, pour les vérifier en jeu.
@@ -101,6 +103,8 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
     private static NamespacedKey marqueur;
     /** 1.2.0 : têtes déjà obtenues par chaque joueur. */
     private static Collection collection;
+    /** 1.3.0 : têtes de joueurs, null si le réglage tetes-de-joueurs est à false. */
+    private static TetesDeJoueurs tetesDeJoueurs;
 
     @Override
     public void onEnable() {
@@ -118,6 +122,14 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new MenuTetes(), this);
         // 1.1.0 : tête de wither squelette sale, endommagée, désactivée (réparée par les crafts de KS_Crafts).
         getServer().getPluginManager().registerEvents(new Defauts(this), this);
+        // 1.3.0 : shulkers teints au colorant (sinon leurs têtes colorées sont impossibles à obtenir en survie).
+        getServer().getPluginManager().registerEvents(new TeintureShulker(), this);
+        // 1.3.0 : têtes de joueurs (mob secret renommé au pseudo), Kixster SMP seulement (config.yml).
+        saveDefaultConfig();
+        if (getConfig().getBoolean("tetes-de-joueurs", false)) {
+            tetesDeJoueurs = new TetesDeJoueurs(this);
+            getServer().getPluginManager().registerEvents(tetesDeJoueurs, this);
+        }
         getCommand("tetes").setExecutor(this);
         getLogger().info(PAR_ID.size() + " têtes chargées.");
     }
@@ -131,6 +143,10 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
 
     static Collection collection() {
         return collection;
+    }
+
+    static TetesDeJoueurs tetesDeJoueurs() {
+        return tetesDeJoueurs;
     }
 
     // ------------------------------------------------------------------ table des têtes
@@ -253,6 +269,11 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
         return List.copyOf(PAR_ID.keySet());
     }
 
+    /** Créatures qui ont au moins une tête (noms du jeu, ex. sheep), dans l'ordre de la table. */
+    static List<String> creatures() {
+        return PAR_CLE.keySet().stream().map(cle -> cle.split("\\.")[0]).distinct().toList();
+    }
+
     /** Toutes les têtes d'une créature (variantes, états et bébés compris), ex. pour une recette. */
     public static List<ItemStack> tetesDe(EntityType type) {
         String base = type.getKey().getKey();
@@ -269,8 +290,8 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
 
     /**
      * Clé technique du mob : &lt;créature&gt;[.&lt;variante&gt;][.&lt;état&gt;...][.baby], avec les noms du jeu
-     * (ex. sheep.red.baby, wolf.ashen.angry). Une clé absente de tetes.txt ne donne pas de tête (ex. shulker coloré,
-     * bébé noyé, lapin tueur : textures pas encore trouvées ou mob absent de la survie).
+     * (ex. sheep.red.baby, wolf.ashen.angry). Une clé absente de tetes.txt ne donne pas de tête (ex.
+     * lapin tueur : mob absent de la survie).
      */
     static String cle(LivingEntity mob) {
         StringBuilder cle = new StringBuilder(mob.getType().getKey().getKey());

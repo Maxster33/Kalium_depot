@@ -23,6 +23,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
+- KS_Decapitator — LeKiwi06 — depuis le 2026-10-16 23:19 — 1.3.0 (têtes manquantes, teinture des shulkers, têtes de joueurs) : déploiement sur Event (tests)
 - KS_VerrouVehicule — LeKiwi06 — depuis le 2026-10-16 20:05 — déploiement sur Event (tests) ; petite retouche pour KS_Trains étape 3 (wagon verrouillé dans un train non ancré)
 - KS_LaisseBateau — LeKiwi06 — depuis le 2026-10-14 20:32 — compilé, en attente du déploiement sur Kixster (passé en « requis parfois » le 2026-10-16)
 - KS_Crafts — LeKiwi06 — depuis le 2026-10-16 18:59 — recette de la locomotive (KS_Trains)

@@ -38,9 +38,9 @@ les têtes de tous les mobs ; mettre à jour les crafts de KS_Crafts qui ont bes
 Limites / à fournir par LeKiwi06 ou Maxster33 (valeur « Value » ou empreinte sur minecraft-heads.com, une ligne à
 ajouter dans `tetes.txt`) :
 - **Shulker** : seule la tête du shulker sans couleur existe ; les 16 shulkers colorés ne donnent rien pour l'instant
-  (clés `shulker.white` ... `shulker.black`).
+  (clés `shulker.white` ... `shulker.black` ; ajoutés en 1.3.0).
 - **Cube de soufre** (`sulfur_cube`, bébé `sulfur_cube.baby`) et **bébé noyé** (`drowned.baby`) : pas de texture,
-  rien pour l'instant.
+  rien pour l'instant (ajoutés en 1.3.0).
 - Cheval : une tête par robe (7), pas par marquage ; villageois : textures de la plaine pour tous les biomes.
 - Les bébés viennent de MoreMobHeads (ajoutés dans sa version 1.0.45) : vérifier en jeu qu'ils correspondent bien aux
   nouvelles textures des bébés.
@@ -100,3 +100,85 @@ Limites :
 - Empilé sur la 1.1.0, jamais testée en jeu, à la demande de LeKiwi06.
 
 **Déployé sur Kixster le 11/10/2026 à 07:45 (LeKiwi06, envoi groupé : KS_Teleport 1.1.0, KS_Decapitator 1.2.0, KS_RewardsGUI 1.5.0, KS_Economy 1.6.0, KS_Crafts 1.12.0, KS_Jetons 2.0.2, KS_Meule 1.0.0 ; accord de LeKiwi06 : « oui déploie tout sur kixster » ; 1.1.0 dans `_removed-ks_decapitator-1.1.0/` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.1.0). Statut : non testé en jeu.**
+
+## 1.3.0 - têtes manquantes, shulkers teints au colorant, têtes de joueurs, barrières dans /tetes (16/10/2026, LeKiwi06)
+
+Demandes de LeKiwi06 : « il manque la tete de sulfur cube dans le plugin de tete », puis « est-ce qu'il manque
+d'autres tetes ? » et « met des bloc barrier a la place des vitres grises dans le menu /tetes , c'est trop peux
+visible comme c'est là », enfin « comment obtient ton les tete de shulker colorés ? ».
+
+- **19 têtes ajoutées** dans `tetes.txt` (**351** au total), toutes celles qui restaient à fournir depuis la 1.0.0 :
+  - « Tête de cube de soufre » (`sulfur_cube`) et « Tête de bébé cube de soufre » (`sulfur_cube.baby`) ;
+  - les **16 shulkers colorés** (`shulker.white` ... `shulker.black`, « Tête de shulker rouge »..., mêmes noms de
+    couleur que les moutons) ; le shulker sans couleur garde sa tête ;
+  - « Tête de bébé noyé » (`drowned.baby`).
+  Même chute que les autres (1 %) ; visibles dans `/tetes` ; KS_KaliumGive et KS_Crafts les voient par `ids()` sans
+  changement de leur côté. Aucun changement du calcul des clés (elles étaient déjà calculées, sans tête associée).
+- **Textures** : MoreMobHeads ne les a toujours pas (dernière version du 23/09/2026). Prises sur minecraft-heads.com
+  par son API publique (le site lui-même bloque les robots). Choix de Claude, à valider en jeu :
+  - cube de soufre : parmi les 3 têtes « Sulfur Cube », la plus proche de la texture du jeu
+    (`entity/sulfur_cube/sulfur_cube_outer.png` du client 26.3 : coque jaune pâle à cercles, yeux bruns, petite
+    bouche) ;
+  - shulkers : le site a deux styles par couleur ; pris celui à spirale sur le couvercle (proche du jeu), qui existe
+    pour 15 couleurs ; pour le blanc, seule la version unie existe ;
+  - bébé noyé : la tête « Baby Drowned » (série des nouvelles textures de bébés).
+  Source notée dans `LICENCE_TEXTURES.txt`.
+- **`/tetes`** : une tête jamais obtenue est un **bloc de barrière** à son nom (au lieu d'une vitre grise), avec
+  toujours « Pas encore obtenue ».
+- **Teinture des shulkers** (choix de LeKiwi06 : « Teinture au colorant », entre retirer ces têtes, les rendre
+  obtenables ou les garder) : un clic droit avec un colorant sur un shulker le teint, comme sur Bedrock. Raison : sur
+  Java, un shulker n'a de couleur que par commande, ou en se dupliquant depuis un shulker déjà coloré (vérifié dans le
+  code du jeu 26.3 : aucune interaction de teinture) ; les shulkers des cités de l'End n'en ont pas, et les 16 têtes
+  colorées étaient donc impossibles à obtenir. Un colorant consommé (pas en créatif), son du colorant ; rien si le
+  shulker a déjà cette couleur ; un clic annulé par un autre plugin (claim) ne teint pas. Un shulker teint se duplique
+  ensuite dans sa couleur (règle du jeu). Classe `TeintureShulker`.
+- **Têtes de joueurs** (Kixster SMP seulement ; demande de LeKiwi06 : « chaque joueur va avoir un mob du jeu choisis
+  au hasard , si un joueur renomme ce mob avec le nom du joueur , il drop sa tête , ça ne fonctionne qu'avec les
+  pseudo sur serveur kixster smp , et personne ne doit savoir qui a quel mob ») :
+  - chaque joueur reçoit en secret un **type de mob** tiré au hasard parmi les créatures de `tetes.txt` (n'importe
+    quel mouton compte, quelle que soit sa couleur ou son âge) ;
+  - un mob de ce type, **renommé avec son pseudo** (majuscules indifférentes) puis **tué par un joueur**, lâche la
+    **tête de ce joueur** (tête de joueur du jeu, avec son skin), **sans limite** (réponses de LeKiwi06 du 16/10) ;
+  - seuls comptent les pseudos de joueurs déjà venus sur le serveur ;
+  - tirage à la connexion (ou au premier mob renommé pour un joueur pas revenu depuis) ; vrai hasard, pas de formule
+    (le dépôt est public) ; aucune commande, aucun message, rien dans le journal du serveur ;
+  - skin noté à chaque connexion, pour que la tête ait la bonne texture quand le joueur est hors ligne ;
+  - réglage `tetes-de-joueurs` dans le nouveau `config.yml` (`false` par défaut) : **à mettre à `true` sur Kixster**
+    au déploiement ; Event reste à `false` (sauf pour un test). Données : `plugins/KS_Decapitator/tetes_de_joueurs.yml`.
+  Choix de Claude, signalés : il faut que le mob soit tué par un joueur (comme les têtes de mobs ; une mort dans la
+  lave ne donne rien) ; les mobs de spawner comptent ; tous les types sont tirables (Wither, warden et grand gardien
+  compris) ; un joueur peut aussi trouver sa propre tête. Limites : qui a accès aux fichiers du serveur peut lire le
+  tirage ; un joueur qui change de pseudo garde son mob, mais seul son nouveau pseudo marche ; joueur Bedrock : son
+  pseudo commence par le préfixe de Floodgate, il faut l'écrire tel quel.
+- **Pages « Joueurs » dans `/tetes`** (demande de LeKiwi06 : « ajoute une page supplémentaire au menu /tetes quand tu
+  débloque une première tete de joueurs avec nether star pour les tetes manquante , il faut l'update a chaque nouveau
+  joueurs sur le serveur ») :
+  - dès sa **première tête de joueur obtenue**, un joueur a des pages de plus, après celles des mobs : **tous les
+    joueurs déjà venus sur le serveur**, par ordre alphabétique, 45 par page, titre « Joueurs 3/120 - page 9/10 » ;
+  - la liste est relue à chaque ouverture : un **nouveau joueur** y apparaît dès sa première connexion ;
+  - tête obtenue : la tête du joueur (son skin) avec « Obtenue » ; manquante : une **étoile du Nether** « Tête de
+    <pseudo> » avec « Pas encore obtenue » ;
+  - « obtenue » comme pour les têtes de mobs : dès qu'elle passe dans l'inventaire (collection.yml, id
+    `joueur:<uuid>`) ; reconnue au profil de la tête, donc toute tête de ce joueur compte, d'où qu'elle vienne ;
+  - opérateurs : ces pages toujours visibles, clic = la tête du joueur dans l'inventaire ;
+  - seulement là où les têtes de joueurs sont actives (`tetes-de-joueurs: true`, Kixster).
+  Limite : un joueur se voit lui-même dans la liste (sa tête est obtenable comme les autres).
+
+Vérification faite (16/10/2026) : tous les mobs vivants de l'API 26.2 et du client 26.3 (tables de butin
+`entities/`) ont leur tête, sauf ceux exclus par le cahier (joueur, Ender Dragon, géant, illusionniste) et les
+entités qui ne sont pas des mobs (support d'armure, mannequin). Toutes les variantes du jeu 26.3 (chat, loup, vache,
+cochon, poule, grenouille, nautile zombie) sont couvertes.
+Sans tête, le jeu ayant pourtant une texture à part (liste faite le 16/10/2026, réponse de LeKiwi06 : « Rien de
+plus ») : loup apprivoisé (9 + bébés), golem de fer fissuré (3), ghast qui tire, renard endormi, villageois et
+zombie-villageois par biome ; cheval par marquage et poisson tropical par motif (exclus par le cahier).
+
+Limites :
+- **Bébé cube de soufre** : le site n'a pas de tête de bébé (le jeu a pourtant une texture `_small` à part) ; il
+  reprend la texture de l'adulte, avec son propre nom (choix de Claude, signalé).
+- Pas de tête de bébé (le jeu n'en fait pas naître, l'API les accepte pourtant) : chameau momifié, perroquet, piglin
+  brute, cheval-squelette, cheval-zombie, marchand ambulant, nautile zombie ; grenouille (son petit est le têtard).
+  Un bébé forcé par commande ne donne rien.
+- Bedrock : une barrière en inventaire s'affiche bien sur Bedrock (objet du jeu).
+- Empilé sur la 1.2.0 (Kixster) ; Event est encore en 1.1.0, la 1.3.0 contient aussi les changements de la 1.2.0.
+
+**Non déployé.**
