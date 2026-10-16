@@ -8,8 +8,15 @@ perte-par-wagon: 0.1
 # Vitesse gagnee et perdue a chaque tick au demarrage et au freinage (bloc par tick).
 acceleration: 0.02
 freinage: 0.05
-# 1.1.0 : vitesse d'un niveau (1 a 8) du wagon controleur et du menu (bloc par tick ; 0,25 = 5 blocs par seconde).
+# 1.1.0 : vitesse d'un niveau (1 a 4) du wagon controleur et du menu (bloc par tick ; 0,25 = 5 blocs par seconde).
 # Plafonnee par vitesse-max.
 palier: 0.25
 # 1.1.0 : vitesse maximale en marche arriere (bloc par tick ; 0,05 = 1 bloc par seconde).
 marche-arriere-max: 0.05
+# 1.1.0 : carburant brule par bloc parcouru selon le niveau (niveau 2 = croisiere = 1 charbon pour 80 blocs).
+# Marche arriere et freinage jusqu'a l'arret : comme le niveau 1.
+consommation:
+  niveau-1: 0.75
+  niveau-2: 1.0
+  niveau-3: 1.25
+  niveau-4: 1.5

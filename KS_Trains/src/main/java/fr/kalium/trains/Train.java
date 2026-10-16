@@ -27,7 +27,7 @@ final class Train {
     final LinkedList<Vector> chemin = new LinkedList<>();
 
     /**
-     * 1.1.0 : niveau de vitesse voulu : 0 arrêt, 1 à 8 en avant (5 blocs/s par niveau, plafonné par la vitesse
+     * 1.1.0 : niveau de vitesse voulu : 0 arrêt, 1 à 4 en avant (5 blocs/s par niveau, plafonné par la vitesse
      * maximale du train), -1 marche arrière (1 bloc/s). Changé par le wagon contrôleur ou le menu ; gardé quand le
      * conducteur descend.
      */

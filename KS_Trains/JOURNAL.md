@@ -90,16 +90,25 @@ accélérations fluides entre ces vitesses stables ». Ses réponses : plafond d
 le dépassent pas ; `max_minecart_speed` reste à 40), un appui = un niveau sans répétition, le bouton « Mettre en
 marche » du menu lance le niveau 1. La 1.1.0 n'ayant été déployée nulle part, elle est modifiée sans nouvelle version.
 
+Puis (même jour, toujours avant déploiement), LeKiwi06 : « la vitesse de croisière est la vitesse 2, en vitesse 1 on
+consomme légèrement moins de carburant, mais au niveau 3 et 4 c'est respectivement +25 % ou +50 % de consommation de
+carburant pour une même distance ». Ses réponses : niveau 1 à -25 %, **4 niveaux seulement** (les niveaux 5 à 8 ne
+dépassaient pas le plafond de 20 blocs/s), consommation selon le **niveau choisi** (pas la vitesse réelle), bouton
+« Mettre en marche » toujours au niveau 1.
+
 - **Objet** : wagonnet vanilla brillant, « Wagon contrôleur », 4 lignes de description. Recette dans KS_Crafts 1.17.0.
   Clic droit sur un rail : un wagonnet marqué (comme un wagonnet du jeu). Cassé (dételé), il redonne un wagon
   contrôleur. Un distributeur ne le pose pas.
 - **Attelage** : refusé s'il y aurait 2 wagons contrôleurs dans le train, ou si le contrôleur serait à 5 wagons ou
   plus du four de locomotive le plus proche (écart de rang de 4 au plus). Un train sans locomotive n'a pas d'écart à
   respecter.
-- **Niveaux de vitesse** : 0 arrêt ; 1 à 8 en avant, **5 blocs/s par niveau** (`palier` 0,25 bloc/tick), plafonnés par
-  la vitesse maximale du train (`vitesse-max` 1 bloc/tick = 20 blocs/s, moins 0,1 par wagon en trop) ; -1 **marche
-  arrière** à 1 bloc/s (`marche-arriere-max`). Entre deux niveaux, le train accélère ou freine en douceur
-  (`acceleration` 0,02 et `freinage` 0,05 bloc/tick par tick).
+- **Niveaux de vitesse** : 0 arrêt ; **1 à 4** en avant, **5 blocs/s par niveau** (`palier` 0,25 bloc/tick : 5, 10,
+  15, 20 blocs/s), plafonnés par la vitesse maximale du train (`vitesse-max` 1 bloc/tick = 20 blocs/s, moins 0,1 par
+  wagon en trop) ; -1 **marche arrière** à 1 bloc/s (`marche-arriere-max`). Entre deux niveaux, le train accélère ou
+  freine en douceur (`acceleration` 0,02 et `freinage` 0,05 bloc/tick par tick).
+- **Consommation selon le niveau choisi** : le **niveau 2 est la vitesse de croisière** (1 charbon = 80 blocs) ; par
+  bloc parcouru, chaque four brûle x0,75 au niveau 1 (1 charbon ≈ 107 blocs), x1,25 au niveau 3 (64 blocs), x1,5 au
+  niveau 4 (≈ 53 blocs). Réglable : `consommation.niveau-1` à `niveau-4`.
 - **Conduite** : un joueur monte dans le contrôleur (clic droit). **Un appui sur avancer** : niveau +1 ; **un appui sur
   reculer** : niveau -1 ; **à l'arrêt, reculer passe en marche arrière** (le train repart vers l'arrière) ; depuis la
   marche arrière, avancer revient à l'arrêt. Tenir la touche ne répète pas. Au-dessus de la barre d'objets du
@@ -112,12 +121,14 @@ marche » du menu lance le niveau 1. La 1.1.0 n'ayant été déployée nulle par
 - **Menu du train** : aussi par accroupi + clic droit sur le wagon contrôleur ; le contrôleur y apparaît (comparateur)
   avec son conducteur ; la fiche du bas donne le niveau et les vitesses en blocs/s. « Mettre en marche » : niveau 1
   (5 blocs/s, vers l'avant) ; « Arrêter le train » : niveau 0. Refusé pendant qu'un joueur conduit (message).
-- `config.yml` : nouvelles clés `palier` (0,25) et `marche-arriere-max` (0,05) ; valeurs par défaut aussi dans le code
+- `config.yml` : nouvelles clés `palier` (0,25), `marche-arriere-max` (0,05) et `consommation.niveau-1` à `niveau-4` (0,75 / 1 / 1,25 / 1,5) ; valeurs par défaut aussi dans le code
   (non ajoutées au `config.yml` d'un serveur qui en a déjà un).
 
 Choix de Claude, signalés :
 
 - La marche arrière demande aussi de la traction (carburant) ; sans traction, le train s'arrête et repasse au niveau 0.
+- Marche arrière, et freinage jusqu'à l'arrêt (niveau 0 demandé, train encore en mouvement) : consommation du
+  niveau 1.
 - Un train qui se reforme (chunk rechargé, redémarrage) est au niveau 0.
 
 Écrit sans serveur de test (touches reçues à bord d'un wagonnet sur Java et Bedrock à vérifier). Compilé le 16/10/2026

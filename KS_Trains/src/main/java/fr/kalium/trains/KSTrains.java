@@ -76,8 +76,9 @@ import java.util.UUID;
  * ses wagons sont chargés, arrêté.
  *
  * 1.1.0 (étape 2) : wagon contrôleur (recette dans KS_Crafts 1.17.0), un par train, à moins de 5 wagons de la
- * locomotive. Niveaux de vitesse (demande de LeKiwi06) : 0 arrêt, 1 à 8 en avant (5 blocs/s chacun, plafonnés par la
- * vitesse maximale du train, 20 blocs/s), -1 marche arrière (1 bloc/s). À bord, un appui sur avancer monte d'un niveau,
+ * locomotive. Niveaux de vitesse (demande de LeKiwi06) : 0 arrêt, 1 à 4 en avant (5 blocs/s chacun, plafonnés par la
+ * vitesse maximale du train, 20 blocs/s), -1 marche arrière (1 bloc/s). Le niveau 2 est la vitesse de croisière :
+ * consommation de carburant par bloc parcouru x0,75 au niveau 1, x1 au niveau 2, x1,25 au niveau 3, x1,5 au niveau 4. À bord, un appui sur avancer monte d'un niveau,
  * un appui sur reculer descend d'un niveau (à l'arrêt : marche arrière) ; le train passe d'un niveau à l'autre en
  * accélérant ou freinant en douceur ; le conducteur descend, le train garde son niveau. En marche arrière, le dernier
  * wagon mène et les autres suivent son trajet.
@@ -86,8 +87,8 @@ public final class KSTrains extends JavaPlugin implements Listener {
 
     private static final double PORTEE_MENU = 24;
 
-    /** 1.1.0 : niveaux de vitesse en avant (1 à 8). */
-    private static final int NIVEAUX = 8;
+    /** 1.1.0 : niveaux de vitesse en avant (1 à 4 ; 4 = 20 blocs/s, la vitesse maximale). */
+    private static final int NIVEAUX = 4;
 
     private static KSTrains instance;
 
@@ -795,11 +796,25 @@ public final class KSTrains extends JavaPlugin implements Listener {
         } else {
             double voulue = train.niveau * reglage("palier", 0.25);
             pilote.sendActionBar(voulue > max
-                    ? t("pilote.plafond", "<green>Niveau <n>/8 <gray>: plafonné à <v> blocs/s <dark_gray>— actuel <a>",
+                    ? t("pilote.plafond", "<green>Niveau <n>/4 <gray>: plafonné à <v> blocs/s <dark_gray>— actuel <a>",
                     "n", train.niveau, "v", bs(max), "a", actuelle)
-                    : t("pilote.niveau", "<green>Niveau <n>/8 <gray>: <v> blocs/s <dark_gray>— actuel <a>",
+                    : t("pilote.niveau", "<green>Niveau <n>/4 <gray>: <v> blocs/s <dark_gray>— actuel <a>",
                     "n", train.niveau, "v", bs(voulue), "a", actuelle));
         }
+    }
+
+    /**
+     * 1.1.0 : carburant brûlé par bloc parcouru selon le niveau choisi (demande de LeKiwi06 : croisière au niveau 2 ;
+     * niveau 1 -25 %, niveau 3 +25 %, niveau 4 +50 %). Marche arrière, et freinage jusqu'à l'arrêt (niveau 0) : comme
+     * le niveau 1 (choix de Claude).
+     */
+    private double consommation(int niveau) {
+        return switch (niveau) {
+            case 2 -> reglage("consommation.niveau-2", 1.0);
+            case 3 -> reglage("consommation.niveau-3", 1.25);
+            case 4 -> reglage("consommation.niveau-4", 1.5);
+            default -> reglage("consommation.niveau-1", 0.75);
+        };
     }
 
     /** Vitesse en blocs par seconde, sans décimale inutile. */
@@ -853,7 +868,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
             if (parcouru > 0) {
                 for (Minecart wagon : train.wagons) {
                     if (wagon instanceof PoweredMinecart four && foyers.alimente(four)) {
-                        foyers.consommer(four, parcouru);
+                        foyers.consommer(four, parcouru * consommation(train.niveau));
                     }
                 }
             }
@@ -1027,7 +1042,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
         double max = vitesseMax(train);
         menu.poser(menu.bas(3), Contenant.objet(Material.COMPASS, t("menu.info", "<white>Traction : <n> / <t> wagons",
                 "n", n, "t", traction), List.of(
-                train.niveau > 0 ? t("menu.info-niveau", "<gray>Niveau : <n>/8", "n", train.niveau)
+                train.niveau > 0 ? t("menu.info-niveau", "<gray>Niveau : <n>/4", "n", train.niveau)
                         : train.niveau < 0 ? t("menu.info-niveau-recul", "<gray>Niveau : marche arrière")
                         : t("menu.info-niveau-arret", "<gray>Niveau : arrêt"),
                 t("menu.info-max", "<gray>Vitesse max : <v> blocs/s", "v", bs(max)),
