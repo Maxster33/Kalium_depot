@@ -450,7 +450,7 @@ Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
 
-**Ajout (16/10/2026, 23:10) : KS_Trains 1.3.4 compilé, non déployé.** Son de la locomotive (sifflet au démarrage, souffle de vapeur rythmé selon la vitesse) et compteur kilométrique avec le carburant brûlé dans le menu du train (demandes de LeKiwi06).
+**Ajout (16/10/2026, 23:04) : KS_Trains 1.3.4 compilé, non déployé.** Son de la locomotive (sifflet au démarrage, souffle de vapeur rythmé selon la vitesse) et compteur kilométrique avec le carburant brûlé dans le menu du train (demandes de LeKiwi06).
 
 **Ajout (16/10/2026, 23:00) : KS_Trains 1.3.3 compilé, non déployé.** Demandes et défaut signalés par LeKiwi06 : -10 % de vitesse par percussion (pas sous le niveau 1), wagonnets avec contenu projetés au lieu d'être brisés, message pour les wagons à TNT (déjà refusés), jukebox qui passait au morceau suivant après un rechargement (corrigé : il rejoue son disque).
 
