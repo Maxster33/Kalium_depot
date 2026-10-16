@@ -26,15 +26,16 @@ final class Train {
     /** Trajet : premier point côté avant du train, dernier point côté arrière. */
     final LinkedList<Vector> chemin = new LinkedList<>();
 
-    boolean marche;
+    /**
+     * 1.1.0 : niveau de vitesse voulu : 0 arrêt, 1 à 8 en avant (5 blocs/s par niveau, plafonné par la vitesse
+     * maximale du train), -1 marche arrière (1 bloc/s). Changé par le wagon contrôleur ou le menu ; gardé quand le
+     * conducteur descend.
+     */
+    int niveau;
     /** Vitesse du train (bloc par tick, toujours positive ; le sens est dans {@link #sens}). */
     double vitesse;
     /** 1.1.0 : sens de la marche (1 avant, -1 arrière), gardé à l'arrêt : il dit quel wagon mène. */
     int sens = 1;
-    /** 1.1.0 : vitesse voulue par le conducteur du wagon contrôleur (négative en marche arrière). */
-    double consigne;
-    /** 1.1.0 : conduit depuis le wagon contrôleur au tick précédent. */
-    boolean pilote;
     /** Position du wagon qui mène à l'arrêt (il n'en bouge pas). */
     Location arret;
     /** Dernière position du wagon qui mène sur un rail (s'il déraille, il y revient). */

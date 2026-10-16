@@ -96,7 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-- **KS_Trains 1.1.0 + KS_Crafts 1.17.0** (LeKiwi06, 16/10/2026) : étape 2, wagon contrôleur (accélérer, freiner, marche arrière à 1 bloc/s) et sa recette ; **compilés, non déployés, non testés** (empilés sur la 1.0.0 en test sur Event, à la demande de LeKiwi06). Détail : `KS_Trains/JOURNAL.md`.
+- **KS_Trains 1.1.0 + KS_Crafts 1.17.0** (LeKiwi06, 16/10/2026) : étape 2, wagon contrôleur (niveaux de vitesse 1 à 8 de 5 blocs/s plafonnés à 20 blocs/s, marche arrière à 1 bloc/s, le train garde son niveau quand le conducteur descend) et sa recette ; **compilés, non déployés, non testés** (empilés sur la 1.0.0 en test sur Event, à la demande de LeKiwi06). Détail : `KS_Trains/JOURNAL.md`.
 - **KS_Trains 1.0.0 (nouveau) + KS_Crafts 1.16.0** (LeKiwi06, 16/10/2026) : trains, étape 1 sur 3 ; **sur Event depuis le 16/10 à 20:00 pour les tests de LeKiwi06**, pas sur Kixster ; nouvelle physique des wagonnets pas encore activée (0,2 bloc/tick). Détail : `KS_Trains/JOURNAL.md`.
 - **KS_LaisseBateau 1.0.0 (nouveau)** (LeKiwi06, 14/10/2026) : laisse de 3 blocs entre deux bateaux ; **sur Event depuis le 16/10 à 20:00 pour les tests**, prévu pour Kixster (pas encore envoyé). Détail : `KS_LaisseBateau/JOURNAL.md`.
 - **KS_VerrouVehicule 1.0.0** (LeKiwi06, 14/10/2026) : sur Kixster depuis le 14/10 à 18:03 (avec KS_Crafts 1.15.0) et sur Event depuis le 16/10 à 20:00 (avec KS_Crafts 1.16.0). Détail : `KS_VerrouVehicule/JOURNAL.md`.

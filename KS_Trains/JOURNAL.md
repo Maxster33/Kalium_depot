@@ -77,11 +77,18 @@ sans test en jeu.
 
 **Déployé sur Event le 16/10/2026 à 20:00 (LeKiwi06 : « envoie tout sur event je vais faire les tests là-bas » ; envoi groupé : KS_VerrouVehicule 1.0.0, KS_LaisseBateau 1.0.0, KS_Trains 1.0.0, KS_Crafts 1.16.0 ; KS_Crafts 1.14.1 en place vérifié identique à la référence avant l'envoi, dans `_removed-ks_crafts-1.14.1/` ; jars du serveur vérifiés identiques à ceux compilés après l'envoi), actif après redémarrage d'Event. Nouvelle physique des wagonnets pas encore activée sur Event (trains limités à 0,2 bloc/tick). Kixster n'est pas touché. Statut : non testé en jeu.**
 
-## 1.1.0 - étape 2 : wagon contrôleur (16/10/2026, LeKiwi06)
+## 1.1.0 - étape 2 : wagon contrôleur, niveaux de vitesse (16/10/2026, LeKiwi06)
 
 LeKiwi06 : « envoie tout sur event je vais faire les tests là-bas, et continue l'étape suivante ». Règle 11 du cahier :
 wagon contrôleur pour accélérer, freiner et faire marche arrière (1 bloc/s au plus), un par train, à moins de 5
 wagons de la locomotive. Empilé sur la 1.0.0 non testée, à sa demande.
+
+Revu avant tout déploiement (16/10/2026), demande de LeKiwi06 : « il faut que le train aille en marche arrière si on
+recule alors qu'il est arrêté, et il faut que le train garde sa vitesse si on descend alors qu'il n'est pas arrêté,
+rajoute également un système de vitesse de 1 à 8 : chaque niveau de vitesse est égal à 5 blocs par seconde, avec des
+accélérations fluides entre ces vitesses stables ». Ses réponses : plafond de 20 blocs/s gardé (les niveaux 5 à 8 ne
+le dépassent pas ; `max_minecart_speed` reste à 40), un appui = un niveau sans répétition, le bouton « Mettre en
+marche » du menu lance le niveau 1. La 1.1.0 n'ayant été déployée nulle part, elle est modifiée sans nouvelle version.
 
 - **Objet** : wagonnet vanilla brillant, « Wagon contrôleur », 4 lignes de description. Recette dans KS_Crafts 1.17.0.
   Clic droit sur un rail : un wagonnet marqué (comme un wagonnet du jeu). Cassé (dételé), il redonne un wagon
@@ -89,28 +96,29 @@ wagons de la locomotive. Empilé sur la 1.0.0 non testée, à sa demande.
 - **Attelage** : refusé s'il y aurait 2 wagons contrôleurs dans le train, ou si le contrôleur serait à 5 wagons ou
   plus du four de locomotive le plus proche (écart de rang de 4 au plus). Un train sans locomotive n'a pas d'écart à
   respecter.
-- **Conduite** : un joueur monte dans le contrôleur (clic droit). Touche **avancer** : la vitesse voulue monte de
-  0,05 bloc/tick par seconde (`pas-controleur` 0,0025 par tick) jusqu'à la vitesse maximale du train ; touche
-  **reculer** : elle descend deux fois plus vite (freinage), puis, à l'arrêt, **marche arrière** jusqu'à 0,05
-  bloc/tick (1 bloc/s, `marche-arriere-max`). Touches relâchées : la vitesse voulue est gardée. Au-dessus de la barre
-  d'objets du conducteur : sens, vitesse, vitesse voulue et maximale (toutes les demi-secondes).
+- **Niveaux de vitesse** : 0 arrêt ; 1 à 8 en avant, **5 blocs/s par niveau** (`palier` 0,25 bloc/tick), plafonnés par
+  la vitesse maximale du train (`vitesse-max` 1 bloc/tick = 20 blocs/s, moins 0,1 par wagon en trop) ; -1 **marche
+  arrière** à 1 bloc/s (`marche-arriere-max`). Entre deux niveaux, le train accélère ou freine en douceur
+  (`acceleration` 0,02 et `freinage` 0,05 bloc/tick par tick).
+- **Conduite** : un joueur monte dans le contrôleur (clic droit). **Un appui sur avancer** : niveau +1 ; **un appui sur
+  reculer** : niveau -1 ; **à l'arrêt, reculer passe en marche arrière** (le train repart vers l'arrière) ; depuis la
+  marche arrière, avancer revient à l'arrêt. Tenir la touche ne répète pas. Au-dessus de la barre d'objets du
+  conducteur : niveau, vitesse voulue et actuelle en blocs/s (« plafonné à … » si la traction ne suffit pas), à chaque
+  appui et toutes les demi-secondes.
+- **Conducteur qui descend** : le train **garde son niveau** et continue (arrêt par le menu, le bout des rails, un
+  obstacle ou le carburant).
 - **Marche arrière** : le train freine jusqu'à l'arrêt, puis le **dernier wagon mène** : il est poussé le long des
-  rails et les autres wagons suivent son trajet, comme en marche avant. Bout des rails, obstacle, carburant : mêmes
-  arrêts qu'en marche avant.
-- **Conducteur qui descend** : le train freine jusqu'à l'arrêt. Pendant qu'il conduit, le bouton marche / arrêt du
-  menu est refusé (message).
+  rails et les autres wagons suivent son trajet, comme en marche avant. Mêmes arrêts qu'en marche avant.
 - **Menu du train** : aussi par accroupi + clic droit sur le wagon contrôleur ; le contrôleur y apparaît (comparateur)
-  avec son conducteur ; la fiche du bas dit « Marche arrière » quand c'est le cas.
-- Avec le bouton « Mettre en marche » après une marche arrière, le train freine puis repart vers l'avant.
-- `config.yml` : nouvelles clés `pas-controleur` (0,0025) et `marche-arriere-max` (0,05) ; valeurs par défaut aussi
-  dans le code (non ajoutées au `config.yml` d'un serveur qui en a déjà un).
+  avec son conducteur ; la fiche du bas donne le niveau et les vitesses en blocs/s. « Mettre en marche » : niveau 1
+  (5 blocs/s, vers l'avant) ; « Arrêter le train » : niveau 0. Refusé pendant qu'un joueur conduit (message).
+- `config.yml` : nouvelles clés `palier` (0,25) et `marche-arriere-max` (0,05) ; valeurs par défaut aussi dans le code
+  (non ajoutées au `config.yml` d'un serveur qui en a déjà un).
 
 Choix de Claude, signalés :
 
-- « Freiner » : la touche reculer freine deux fois plus vite qu'elle n'accélère ; le freinage réel du train reste
-  limité par `freinage` (0,05 bloc/tick par tick).
-- Conducteur descendu : le train s'arrête (un train sans conducteur ne roule qu'avec le bouton marche du menu).
-- La marche arrière demande aussi de la traction (carburant).
+- La marche arrière demande aussi de la traction (carburant) ; sans traction, le train s'arrête et repasse au niveau 0.
+- Un train qui se reforme (chunk rechargé, redémarrage) est au niveau 0.
 
 Écrit sans serveur de test (touches reçues à bord d'un wagonnet sur Java et Bedrock à vérifier). Compilé le 16/10/2026
 (`sortie/KS_Trains-1.1.0.jar`). **À déployer avec KS_Crafts 1.17.0. Statut : non déployé, non testé en jeu.**

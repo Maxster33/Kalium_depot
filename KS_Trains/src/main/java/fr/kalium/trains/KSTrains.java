@@ -34,6 +34,7 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityRemoveEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInputEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -75,13 +76,18 @@ import java.util.UUID;
  * ses wagons sont chargés, arrêté.
  *
  * 1.1.0 (étape 2) : wagon contrôleur (recette dans KS_Crafts 1.17.0), un par train, à moins de 5 wagons de la
- * locomotive. Le joueur à bord conduit : avancer accélère, reculer freine puis passe en marche arrière (1 bloc/s au
- * plus) ; touches relâchées, la vitesse est gardée ; il descend, le train s'arrête. En marche arrière, le dernier wagon
- * mène et les autres suivent son trajet.
+ * locomotive. Niveaux de vitesse (demande de LeKiwi06) : 0 arrêt, 1 à 8 en avant (5 blocs/s chacun, plafonnés par la
+ * vitesse maximale du train, 20 blocs/s), -1 marche arrière (1 bloc/s). À bord, un appui sur avancer monte d'un niveau,
+ * un appui sur reculer descend d'un niveau (à l'arrêt : marche arrière) ; le train passe d'un niveau à l'autre en
+ * accélérant ou freinant en douceur ; le conducteur descend, le train garde son niveau. En marche arrière, le dernier
+ * wagon mène et les autres suivent son trajet.
  */
 public final class KSTrains extends JavaPlugin implements Listener {
 
     private static final double PORTEE_MENU = 24;
+
+    /** 1.1.0 : niveaux de vitesse en avant (1 à 8). */
+    private static final int NIVEAUX = 8;
 
     private static KSTrains instance;
 
@@ -198,8 +204,8 @@ public final class KSTrains extends JavaPlugin implements Listener {
         for (Component ligne : List.of(
                 p.t("controleur.ligne-1", "<gray>À atteler à moins de 5 wagons"),
                 p.t("controleur.ligne-2", "<gray>de la locomotive (un par train)"),
-                p.t("controleur.ligne-3", "<gray>À bord : avancer accélère,"),
-                p.t("controleur.ligne-4", "<gray>reculer freine puis recule"))) {
+                p.t("controleur.ligne-3", "<gray>À bord : avancer / reculer"),
+                p.t("controleur.ligne-4", "<gray>change le niveau de vitesse"))) {
             lignes.add(ligne.decoration(TextDecoration.ITALIC, false));
         }
         meta.lore(lignes);
@@ -718,6 +724,34 @@ public final class KSTrains extends JavaPlugin implements Listener {
         return Math.max(0, vitesse);
     }
 
+    /** 1.1.0 : touches tenues au dernier envoi, par joueur (pour reconnaître un nouvel appui). */
+    private final Map<UUID, Touches> touches = new HashMap<>();
+
+    private record Touches(boolean avancer, boolean reculer) {
+    }
+
+    /**
+     * 1.1.0 : à bord du wagon contrôleur, un appui sur avancer monte d'un niveau, un appui sur reculer descend d'un
+     * niveau ; à l'arrêt, reculer passe en marche arrière. Tenir la touche ne répète pas (choix de LeKiwi06).
+     */
+    @EventHandler
+    public void onTouches(PlayerInputEvent event) {
+        Player joueur = event.getPlayer();
+        Input nouvelles = event.getInput();
+        Touches avant = touches.put(joueur.getUniqueId(), new Touches(nouvelles.isForward(), nouvelles.isBackward()));
+        boolean avancer = nouvelles.isForward() && (avant == null || !avant.avancer());
+        boolean reculer = nouvelles.isBackward() && (avant == null || !avant.reculer());
+        if (avancer == reculer || joueur.getVehicle() == null || !estControleur(joueur.getVehicle())) {
+            return;
+        }
+        Train train = trainDe(joueur.getVehicle());
+        if (train == null || !train.complet()) {
+            return;
+        }
+        train.niveau = avancer ? Math.min(NIVEAUX, train.niveau + 1) : Math.max(-1, train.niveau - 1);
+        tableau(joueur, train, vitesseMax(train));
+    }
+
     /** 1.1.0 : conducteur du train, assis dans son wagon contrôleur, ou null. */
     private Player pilote(Train train) {
         for (Minecart wagon : train.wagons) {
@@ -730,52 +764,48 @@ public final class KSTrains extends JavaPlugin implements Listener {
     }
 
     /**
-     * Vitesse voulue (négative : marche arrière). Conduite depuis le wagon contrôleur (1.1.0) : touche avancer, la
-     * consigne monte ; touche reculer, elle descend (deux fois plus vite pour freiner), jusqu'à la marche arrière ;
-     * touches relâchées, elle est gardée. Le conducteur descend : le train s'arrête. Sinon : marche / arrêt du menu.
+     * Vitesse voulue (négative : marche arrière), selon le niveau (1.1.0) : niveau x `palier` (5 blocs/s) en avant,
+     * plafonné par la vitesse maximale du train ; `marche-arriere-max` (1 bloc/s) en arrière. Sans traction, le train
+     * s'arrête.
      */
     private double cible(Train train, double max) {
+        if (train.niveau != 0 && max <= 0) {
+            arreter(train, t("arret.carburant", "<yellow>Le train s'arrête : plus assez de carburant"));
+        }
         Player pilote = pilote(train);
-        if (pilote == null) {
-            if (train.pilote) {
-                train.pilote = false;
-                train.consigne = 0;
-                train.marche = false;
-            }
-            if (train.marche && max <= 0) {
-                arreter(train, t("arret.carburant", "<yellow>Le train s'arrête : plus assez de carburant"));
-            }
-            return train.marche ? max : 0;
+        if (pilote != null && tick % 10 == 0) {
+            tableau(pilote, train, max);
         }
-        if (!train.pilote) {
-            train.pilote = true;
-            train.marche = false;
-            train.consigne = train.vitesse * train.sens;
+        if (train.niveau > 0) {
+            return Math.min(train.niveau * reglage("palier", 0.25), max);
         }
-        Input touches = pilote.getCurrentInput();
-        double pas = reglage("pas-controleur", 0.0025);
-        if (touches.isForward() && !touches.isBackward()) {
-            train.consigne += train.consigne < 0 ? 2 * pas : pas;
-        } else if (touches.isBackward() && !touches.isForward()) {
-            train.consigne -= train.consigne > 0 ? 2 * pas : pas;
-        }
-        double recul = reglage("marche-arriere-max", 0.05);
-        train.consigne = max <= 0 ? 0 : Math.max(-recul, Math.min(max, train.consigne));
-        if (tick % 10 == 0) {
-            double v = train.vitesse;
-            pilote.sendActionBar(train.vitesse <= 0 && train.consigne == 0
-                    ? t("pilote.arret", "<gray>Arrêt <dark_gray>— avancer : accélère, reculer : marche arrière")
-                    : train.sens > 0
-                    ? t("pilote.avant", "<green>Avant : <v> bloc/tick <gray>(voulu <c>, max <m>)", "v", f2(v),
-                    "c", f2(train.consigne), "m", f2(max))
-                    : t("pilote.arriere", "<yellow>Marche arrière : <v> bloc/tick <gray>(max <m>)", "v", f2(v),
-                    "m", f2(recul)));
-        }
-        return train.consigne;
+        return train.niveau < 0 ? -reglage("marche-arriere-max", 0.05) : 0;
     }
 
-    private static String f2(double v) {
-        return String.format("%.2f", v);
+    /** 1.1.0 : niveau, vitesse voulue et vitesse actuelle (blocs/s), au-dessus de la barre d'objets du conducteur. */
+    private void tableau(Player pilote, Train train, double max) {
+        String actuelle = bs(train.vitesse);
+        if (train.niveau == 0) {
+            pilote.sendActionBar(train.vitesse > 0
+                    ? t("pilote.freine", "<gray>Arrêt demandé <dark_gray>— actuel <a> blocs/s", "a", actuelle)
+                    : t("pilote.arret", "<gray>Arrêt <dark_gray>— avancer : niveau 1, reculer : marche arrière"));
+        } else if (train.niveau < 0) {
+            pilote.sendActionBar(t("pilote.arriere", "<yellow>Marche arrière : <v> bloc/s <dark_gray>— actuel <a>",
+                    "v", bs(reglage("marche-arriere-max", 0.05)), "a", actuelle));
+        } else {
+            double voulue = train.niveau * reglage("palier", 0.25);
+            pilote.sendActionBar(voulue > max
+                    ? t("pilote.plafond", "<green>Niveau <n>/8 <gray>: plafonné à <v> blocs/s <dark_gray>— actuel <a>",
+                    "n", train.niveau, "v", bs(max), "a", actuelle)
+                    : t("pilote.niveau", "<green>Niveau <n>/8 <gray>: <v> blocs/s <dark_gray>— actuel <a>",
+                    "n", train.niveau, "v", bs(voulue), "a", actuelle));
+        }
+    }
+
+    /** Vitesse en blocs par seconde, sans décimale inutile. */
+    private static String bs(double blocsParTick) {
+        double v = blocsParTick * 20;
+        return Math.abs(v - Math.round(v)) < 0.05 ? String.valueOf(Math.round(v)) : String.format("%.1f", v);
     }
 
     /**
@@ -886,10 +916,9 @@ public final class KSTrains extends JavaPlugin implements Listener {
     }
 
     private void arreter(Train train, Component raison) {
-        boolean roulait = train.marche || train.vitesse > 0 || train.consigne != 0;
-        train.marche = false;
+        boolean roulait = train.niveau != 0 || train.vitesse > 0;
+        train.niveau = 0;
         train.vitesse = 0;
-        train.consigne = 0;
         train.bloque = 0;
         if (roulait) {
             annoncer(train, raison);
@@ -998,17 +1027,19 @@ public final class KSTrains extends JavaPlugin implements Listener {
         double max = vitesseMax(train);
         menu.poser(menu.bas(3), Contenant.objet(Material.COMPASS, t("menu.info", "<white>Traction : <n> / <t> wagons",
                 "n", n, "t", traction), List.of(
-                t("menu.info-max", "<gray>Vitesse max : <v> bloc/tick", "v", String.format("%.1f", max)),
+                train.niveau > 0 ? t("menu.info-niveau", "<gray>Niveau : <n>/8", "n", train.niveau)
+                        : train.niveau < 0 ? t("menu.info-niveau-recul", "<gray>Niveau : marche arrière")
+                        : t("menu.info-niveau-arret", "<gray>Niveau : arrêt"),
+                t("menu.info-max", "<gray>Vitesse max : <v> blocs/s", "v", bs(max)),
                 train.sens > 0 || train.vitesse <= 0
-                        ? t("menu.info-vitesse", "<gray>Vitesse : <v> bloc/tick", "v", String.format("%.2f", train.vitesse))
-                        : t("menu.info-recul", "<gray>Marche arrière : <v> bloc/tick", "v",
-                        String.format("%.2f", train.vitesse)),
+                        ? t("menu.info-vitesse", "<gray>Vitesse : <v> blocs/s", "v", bs(train.vitesse))
+                        : t("menu.info-recul", "<gray>Marche arrière : <v> blocs/s", "v", bs(train.vitesse)),
                 t("menu.info-regle", "<gray>Fours alimentés : 5 (locomotive)"),
                 t("menu.info-regle-2", "<gray>ou 10 wagons chacun"))), null);
-        menu.poser(menu.bas(4), train.marche
+        menu.poser(menu.bas(4), train.niveau != 0
                 ? Contenant.objet(Material.RED_CONCRETE, t("menu.arret", "<red>Arrêter le train"), List.of())
                 : Contenant.objet(Material.LIME_CONCRETE, t("menu.marche", "<green>Mettre en marche"),
-                List.of(t("menu.marche-ligne", "<gray>Il roule vers l'avant"))), j -> basculer(j, id, p));
+                List.of(t("menu.marche-ligne", "<gray>Niveau 1 (5 blocs/s), vers l'avant"))), j -> basculer(j, id, p));
         menu.poser(menu.bas(5), Contenant.objet(Material.BARRIER, t("menu.fermer", "<red>Fermer"), List.of()),
                 Contenant::fermer);
         menu.ouvrir(joueur);
@@ -1083,14 +1114,14 @@ public final class KSTrains extends JavaPlugin implements Listener {
         }
         if (pilote(train) != null) {
             Contenant.message(joueur, t("menu.pilote", "<red>Ce train est conduit depuis son wagon contrôleur"), true);
-        } else if (train.marche) {
-            train.marche = false;
+        } else if (train.niveau != 0) {
+            train.niveau = 0;
             Contenant.message(joueur, t("menu.arrete", "<yellow>Le train freine"), false);
         } else if (vitesseMax(train) <= 0) {
             Contenant.message(joueur, t("menu.pas-de-traction",
                     "<red>Pas assez de carburant ou de fours pour ce train"), true);
         } else {
-            train.marche = true;
+            train.niveau = 1;
             Contenant.message(joueur, t("menu.demarre", "<green>Le train démarre"), false);
         }
         menu(joueur, id, page);
