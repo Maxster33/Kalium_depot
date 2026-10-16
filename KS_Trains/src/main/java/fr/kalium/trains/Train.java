@@ -2,6 +2,7 @@ package fr.kalium.trains;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Minecart;
 import org.bukkit.util.Vector;
 
@@ -47,6 +48,8 @@ final class Train {
     final Set<Long> chunks = new HashSet<>();
     /** 1.3.4 : tick du dernier souffle de vapeur de la locomotive. */
     long dernierSouffle;
+    /** 1.3.5 : dernier bloc de rail du wagon qui mène (pour compter les rails propulseurs éteints franchis). */
+    Block dernierRail;
 
     Train(UUID id, List<Minecart> wagons) {
         this.id = id;

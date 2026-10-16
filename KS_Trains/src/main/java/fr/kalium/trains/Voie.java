@@ -1,9 +1,11 @@
 package fr.kalium.trains;
 
+import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Rail;
+import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
@@ -27,6 +29,18 @@ final class Voie {
         }
         Block dessous = bloc.getRelative(BlockFace.DOWN);
         return Tag.RAILS.isTagged(dessous.getType()) ? dessous : null;
+    }
+
+    /** 1.3.5 : rail propulseur allumé. */
+    static boolean propulseurAllume(Block rail) {
+        return rail != null && rail.getBlockData() instanceof RedstoneRail propulseur
+                && rail.getType() == Material.POWERED_RAIL && propulseur.isPowered();
+    }
+
+    /** 1.3.5 : rail propulseur éteint. */
+    static boolean propulseurEteint(Block rail) {
+        return rail != null && rail.getBlockData() instanceof RedstoneRail propulseur
+                && rail.getType() == Material.POWERED_RAIL && !propulseur.isPowered();
     }
 
     static boolean virage(Block rail) {

@@ -376,3 +376,25 @@ Choix de Claude, signalés : sons dans la catégorie « Créatures neutres / Aut
 dans les deux sens de marche ; carburant des autres fours du train non compté (« carburant de la locomotive »).
 
 Compilé le 16/10/2026 (`sortie/KS_Trains-1.3.4.jar`). **Statut : non déployé, non testé en jeu.**
+
+## 1.3.5 - rails propulseurs (16/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « il faut qu'un train sur un rail propulseur allumé ne consomme pas de carburant, et que s'il
+passe sur un rail propulseur éteint il diminue de 1 bloc/s en vitesse (donc si le rail propulseur fait 20 blocs de
+long, même un train lancé pleine vitesse sera arrêté) ; pour redémarrer sur un rail propulseur, il faut alimenter le
+rail, sinon la locomotive refuse de passer en vitesse 1 ».
+
+- **Rail propulseur allumé** sous le wagon qui mène : les fours ne consomment rien (le compteur kilométrique continue).
+- **Rail propulseur éteint** : chaque rail éteint franchi par le wagon qui mène fait perdre **1 bloc/s**
+  (`propulseur.freinage` 0,05 bloc/tick), et le train ne réaccélère pas tant qu'il est dessus : 20 rails éteints
+  arrêtent un train lancé à 20 blocs/s. Arrivé à 0 : « Le train s'arrête : rail propulseur éteint », niveau 0.
+- **Repartir** : tant qu'un wagon du train est sur un rail propulseur éteint, le contrôleur refuse de passer du niveau 0
+  au niveau 1 (ou en marche arrière) et le bouton « Mettre en marche » du menu aussi : « Rail propulseur éteint :
+  alimente-le pour repartir ». Rail alimenté : le train repart normalement.
+- `config.yml` : nouvelle clé `propulseur.freinage` (0,05) ; valeur par défaut aussi dans le code.
+
+Choix de Claude, signalés : c'est le rail sous le wagon qui mène qui compte pour la consommation et le freinage ; pour
+repartir, n'importe quel wagon du train sur un rail éteint suffit à refuser ; le freinage du jeu sur un rail éteint
+s'ajoute (le wagon qui mène y roule un peu moins vite).
+
+Compilé le 16/10/2026 (`sortie/KS_Trains-1.3.5.jar`). **Statut : non déployé, non testé en jeu.**

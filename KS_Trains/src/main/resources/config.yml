@@ -36,3 +36,7 @@ virage:
 # 1.3.3 : vitesse perdue par le train a chaque percussion (0,10 = -10 %), sans descendre sous le niveau 1 (palier).
 percussion:
   ralentissement: 0.10
+# 1.3.5 : vitesse perdue a chaque rail propulseur eteint franchi (0,05 bloc/tick = 1 bloc/s ; 20 rails arretent un
+# train a 20 blocs/s). Sur un rail propulseur allume, le train ne consomme pas de carburant.
+propulseur:
+  freinage: 0.05

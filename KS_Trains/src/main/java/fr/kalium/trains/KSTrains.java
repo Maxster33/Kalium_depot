@@ -1097,6 +1097,19 @@ public final class KSTrains extends JavaPlugin implements Listener {
         return rail != null && Voie.virageDevant(rail, train.direction(), (int) Math.min(128, Math.ceil(distance)));
     }
 
+    /**
+     * 1.3.5 (LeKiwi06 : « pour redémarrer sur un rail propulseur, il faut alimenter le rail, sinon la locomotive refuse
+     * de passer en vitesse 1 ») : vrai si un wagon du train est sur un rail propulseur éteint.
+     */
+    private boolean surPropulseurEteint(Train train) {
+        for (Minecart wagon : train.wagons) {
+            if (Voie.propulseurEteint(Voie.rail(wagon))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** 1.3.4 : ajoute une quantité à un compteur enregistré dans un wagon de locomotive. */
     private static void ajouter(Entity wagon, NamespacedKey cle, double quantite) {
         Double avant = wagon.getPersistentDataContainer().get(cle, PersistentDataType.DOUBLE);
@@ -1192,7 +1205,14 @@ public final class KSTrains extends JavaPlugin implements Listener {
         if (train == null || !train.complet()) {
             return;
         }
-        train.niveau = avancer ? Math.min(NIVEAUX, train.niveau + 1) : Math.max(-1, train.niveau - 1);
+        int nouveau = avancer ? Math.min(NIVEAUX, train.niveau + 1) : Math.max(-1, train.niveau - 1);
+        if (train.niveau == 0 && nouveau != 0 && train.vitesse <= 0 && surPropulseurEteint(train)) {
+            // 1.3.5 : pour repartir d'un rail propulseur éteint, il faut l'alimenter.
+            Contenant.message(joueur, t("propulseur.repartir",
+                    "<red>Rail propulseur éteint : alimente-le pour repartir"), true);
+            return;
+        }
+        train.niveau = nouveau;
         tableau(joueur, train, vitesseMax(train));
     }
 
@@ -1308,9 +1328,27 @@ public final class KSTrains extends JavaPlugin implements Listener {
             } else if (surRail(meneur)) {
                 train.surRail = meneur.getLocation();
             }
+            // 1.3.5 (LeKiwi06 : « un train sur un rail propulseur allumé ne consomme pas de carburant ; s'il passe sur un
+            // rail propulseur éteint, il diminue de 1 bloc/s en vitesse ») : rail sous le wagon qui mène.
+            Block railMeneur = Voie.rail(meneur);
+            boolean allume = Voie.propulseurAllume(railMeneur);
+            boolean eteint = Voie.propulseurEteint(railMeneur);
+            if (eteint && train.vitesse > 0 && !railMeneur.equals(train.dernierRail)) {
+                // Chaque rail éteint franchi : -1 bloc/s (20 rails arrêtent un train lancé à 20 blocs/s).
+                train.vitesse = Math.max(0, train.vitesse - reglage("propulseur.freinage", 0.05));
+                if (train.vitesse <= 0) {
+                    arreter(train, t("arret.propulseur", "<yellow>Le train s'arrête : rail propulseur éteint"));
+                    voulue = 0;
+                }
+            }
+            train.dernierRail = railMeneur;
+            if (eteint) {
+                // Pas de réaccélération sur un rail éteint.
+                voulue = Math.min(voulue, train.vitesse);
+            }
             if (parcouru > 0) {
                 for (Minecart wagon : train.wagons) {
-                    if (wagon instanceof PoweredMinecart four && foyers.alimente(four)) {
+                    if (wagon instanceof PoweredMinecart four && foyers.alimente(four) && !allume) {
                         double blocs = parcouru * consommation(train.niveau);
                         foyers.consommer(four, blocs);
                         if (estLoco(four)) {
@@ -1764,6 +1802,9 @@ public final class KSTrains extends JavaPlugin implements Listener {
         } else if (train.niveau != 0) {
             train.niveau = 0;
             Contenant.message(joueur, t("menu.arrete", "<yellow>Le train freine"), false);
+        } else if (train.vitesse <= 0 && surPropulseurEteint(train)) {
+            Contenant.message(joueur, t("propulseur.repartir",
+                    "<red>Rail propulseur éteint : alimente-le pour repartir"), true);
         } else if (vitesseMax(train) <= 0) {
             Contenant.message(joueur, t("menu.pas-de-traction",
                     "<red>Pas assez de carburant ou de fours pour ce train"), true);
