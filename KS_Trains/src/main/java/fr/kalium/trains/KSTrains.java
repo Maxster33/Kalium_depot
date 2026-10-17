@@ -1380,7 +1380,10 @@ public final class KSTrains extends JavaPlugin implements Listener {
      * plus en plus rapide avec la vitesse (toutes les 12 ticks au pas, toutes les 3 ticks à 20 blocs/s). Le son sort du
      * premier four de locomotive du train (trains sans locomotive : rien). 1.4.3 (LeKiwi06 : « le son ne s'entend pas
      * d'assez loin ») : portée réglable, en blocs (`son.portee-sifflet` 128, `son.portee-souffle` 64 ; avant 40 et 16) ;
-     * le jeu fait porter un son à 16 blocs x son volume, au-delà de 1 il ne joue pas plus fort.
+     * le jeu fait porter un son à 16 blocs x son volume, au-delà de 1 il ne joue pas plus fort. 1.4.5 (LeKiwi06 : « le
+     * bruit de train est trop fort maintenant, il faudrait le remettre au volume où il était précédemment, mais le rendre
+     * audible de très loin ») : volume et portée séparés (voir {@link #entendre}) : de près, volume d'avant (sifflet 1,
+     * souffle 0,5 ; `son.volume-sifflet`, `son.volume-souffle`), qui baisse jusqu'à 0 à la portée.
      */
     private void vapeur(Train train) {
         Minecart locomotive = null;
@@ -1394,21 +1397,44 @@ public final class KSTrains extends JavaPlugin implements Listener {
             return;
         }
         Location lieu = locomotive.getLocation();
-        float sifflet = (float) Math.max(1, reglage("son.portee-sifflet", 128) / 16);
-        float souffle = (float) Math.max(1, reglage("son.portee-souffle", 64) / 16);
         if (train.dernierSouffle == 0 || tick - train.dernierSouffle > 40) {
             // Démarrage (ou reprise après un arrêt) : sifflet.
-            locomotive.getWorld().playSound(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, SoundCategory.NEUTRAL, sifflet, 0.84f);
-            locomotive.getWorld().playSound(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, SoundCategory.NEUTRAL, sifflet, 1.06f);
+            double volume = reglage("son.volume-sifflet", 1.0);
+            double portee = reglage("son.portee-sifflet", 128);
+            entendre(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, volume, portee, 0.84f);
+            entendre(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, volume, portee, 1.06f);
             train.dernierSouffle = tick;
             return;
         }
         double force = Math.min(1, train.vitesse / Math.max(0.01, reglage("vitesse-max", 1.0)));
         long intervalle = Math.round(12 - 9 * force);
         if (tick - train.dernierSouffle >= intervalle) {
-            locomotive.getWorld().playSound(lieu, Sound.BLOCK_FIRE_EXTINGUISH, SoundCategory.NEUTRAL, souffle,
-                    (tick / intervalle) % 2 == 0 ? 0.65f : 0.8f);
+            entendre(lieu, Sound.BLOCK_FIRE_EXTINGUISH, reglage("son.volume-souffle", 0.5),
+                    reglage("son.portee-souffle", 64), (tick / intervalle) % 2 == 0 ? 0.65f : 0.8f);
             train.dernierSouffle = tick;
+        }
+    }
+
+    /**
+     * 1.4.5 : son du train joué pour chaque joueur à moins de {@code portee} blocs, à {@code volume} de près, baissant
+     * jusqu'à 0 à la portée. Le jeu ne sait pas faire porter loin un son qui n'est pas au volume maximal (sa portée est
+     * 16 blocs x volume, et il atténue en ligne droite jusqu'à elle) : le son part à 4 blocs au plus du joueur, dans la
+     * direction du train, avec le volume qui donne à son oreille celui voulu.
+     */
+    private void entendre(Location lieu, Sound son, double volume, double portee, float hauteur) {
+        for (Player joueur : lieu.getWorld().getPlayers()) {
+            Location oreille = joueur.getEyeLocation();
+            double distance = oreille.distance(lieu);
+            if (distance >= portee) {
+                continue;
+            }
+            double voulu = volume * (1 - distance / portee);
+            double ecart = Math.min(distance, 4);
+            Location source = distance > 4
+                    ? oreille.clone().add(lieu.toVector().subtract(oreille.toVector()).multiply(ecart / distance))
+                    : lieu;
+            joueur.playSound(source, son, SoundCategory.NEUTRAL, (float) Math.min(1, voulu / (1 - ecart / 16)),
+                    hauteur);
         }
     }
 

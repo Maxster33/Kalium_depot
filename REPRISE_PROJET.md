@@ -452,6 +452,8 @@ Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
 
+**Ajout (18/10/2026, 00:20) : KS_Trains 1.4.5 compilé, non déployé.** Sons du train au volume d'avant la 1.4.3 de près (souffle 0,5, sifflet 1) mais entendus de loin (64 et 128 blocs) : joués pour chaque joueur, depuis quelques blocs de lui dans la direction du train.
+
 **Ajout (18/10/2026, 00:18) : KS_Trains 1.4.4 envoyé sur Event (tests), à redémarrer.** Jar en place (1.4.3) vérifié identique à `jars-deployes/` avant l'envoi, rangé dans `_removed-ks_trains-1.4.3/` ; jar du serveur vérifié identique à celui compilé.
 
 **Ajout (17/10/2026, 23:57) : KS_Trains 1.4.4 compilé, non déployé.** Corrige la 1.4.3 sur Event : erreur à chaque tick dans la console (`Quaternionf.dot` absent de JOML 1.10.9 du serveur), modèles agrandis jamais orientés, et suite des tâches coupée (collisions, entonnoirs, chunks, autres trains) ; train arrêté : chaque wagon retenu à sa place d'arrêt (entassement en pente après une marche arrière en montée).

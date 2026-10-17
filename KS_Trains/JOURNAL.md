@@ -94,3 +94,18 @@ produit le même souci qu'il y avait avant en marche avant » (en reculant en mo
 Compilé le 17/10/2026 (`sortie/KS_Trains-1.4.4.jar`), `config.yml` inchangé. **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 18/10/2026 à 00:18 (LeKiwi06 : « oui envoie sur event ») : jar en place (1.4.3) vérifié identique à la référence avant l'envoi, rangé dans `_removed-ks_trains-1.4.3/` ; jar du serveur vérifié identique à celui compilé ; `config.yml` inchangé. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
+
+## 1.4.5 - sons du train : volume d'avant, portée lointaine (18/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « le bruit de train est trop fort maintenant, il faudrait le remettre au volume où il était
+précédemment, mais le rendre audible de très loin ».
+
+- **Cause** : le jeu fait porter un son à 16 blocs x son volume et ne joue pas plus fort au-delà de 1 ; pour porter à
+  64 blocs, le souffle de vapeur de la 1.4.3 était donc joué au volume maximal (avant : 0,5).
+- **Correction** : son joué pour chaque joueur à portée : à 4 blocs au plus de lui, dans la direction du train (on
+  entend toujours d'où il vient), avec le volume qui donne à son oreille : volume de près x (1 - distance / portée).
+  De près : souffle 0,5 et sifflet 1 comme avant la 1.4.3 ; jusqu'à 0 à la portée (souffle 64 blocs, sifflet 128).
+- `config.yml` : nouvelles clés `son.volume-sifflet` (1,0) et `son.volume-souffle` (0,5).
+- Klaxon (cornes et sifflet par défaut) inchangé.
+
+Compilé le 18/10/2026 (`sortie/KS_Trains-1.4.5.jar`). **Statut : non déployé, non testé en jeu.**
