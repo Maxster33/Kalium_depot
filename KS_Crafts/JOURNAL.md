@@ -405,3 +405,5 @@ minecart contrôleur » (KS_Trains 1.4.3 : klaxon par défaut en bloc musical, u
 non testé en jeu.**
 
 **Déployé sur Event le 17/10/2026 à 10:20 (LeKiwi06 : « oui envoie sur event ») : envoi groupé KS_Trains 1.4.3 (+ `config.yml`) et KS_Crafts 1.19.0 ; jar en place (1.18.0) vérifié identique à la référence avant l'envoi, rangé dans `_removed-ks_crafts-1.18.0/` ; jar du serveur vérifié identique à celui compilé. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
+
+**Actif sur Event depuis son redémarrage du 17/10/2026 à 23:42 (journal lu, heures en UTC : 21:42) : KS_Crafts 1.19.0 activé sans erreur ni avertissement, « 82 crafts ajoutés » (même nombre : la recette du contrôleur est modifiée, pas ajoutée). Statut : non testé en jeu.**

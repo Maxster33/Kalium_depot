@@ -68,3 +68,5 @@ au carré, M3, sous charge à 0,5, et surcharge à 30 % ». La formule D n'a jam
 Compilé le 17/10/2026 (`sortie/KS_Trains-1.4.3.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 17/10/2026 à 10:20 (LeKiwi06 : « oui envoie sur event ») : envoi groupé KS_Trains 1.4.3 (+ `config.yml`) et KS_Crafts 1.19.0 ; jar en place (1.4.1) vérifié identique à la référence avant l'envoi, rangé dans `_removed-ks_trains-1.4.1/` ; jar du serveur vérifié identique à celui compilé. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
+
+**Actif sur Event depuis son redémarrage du 17/10/2026 à 23:42 (journal lu, heures en UTC : 21:42) : KS_Trains 1.4.3 activé sans erreur ni avertissement (après KS_Claim et KLM_Contacts), démarrage en 13 s. Statut : non testé en jeu.**
