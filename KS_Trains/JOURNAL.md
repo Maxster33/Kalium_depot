@@ -1,3 +1,3 @@
 
 
-**Déployé sur Event le 17/10/2026 à 03:52 (LeKiwi06 : « oui envoie sur event » ; envoi groupé : KS_Trains 1.4.0, KLM_Contacts 1.3.0 ; jars en place (KS_Trains 1.3.8, KLM_Contacts 1.2.0) vérifiés identiques aux références, rangés dans `_removed-ks_trains-1.3.8/` et `_removed-klm_contacts-1.2.0/` ; `config.yml` de KS_Trains (identique à celui de la 1.3.8) copié dans `_removed-ks_trains-1.3.8/` puis remplacé par celui de la 1.4.0 ; `config.yml` de KLM_Contacts non touché ; jars et `config.yml` du serveur vérifiés identiques après l'envoi ; supprimable par l'humain : `_removed-ks_trains-1.2.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+**Actif sur Event depuis son redémarrage du 17/10/2026 à 03:57 (journal lu, heures en UTC : 01:57) : KLM_Contacts 1.3.0 puis KS_Trains 1.4.0 activés sans erreur ni avertissement (KLM_Contacts avant KS_Trains, comme voulu pour le partage entre amis), démarrage en 12 s. Statut : non testé en jeu.**
