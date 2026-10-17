@@ -1377,7 +1377,9 @@ public final class KSTrains extends JavaPlugin implements Listener {
      * 1.3.4 (LeKiwi06 : « mettre un son reconnaissable pour la locomotive » ; réponse : tchou-tchou à vapeur) : quand
      * le train démarre, coup de sifflet (deux notes de flûte du jeu) ; pendant qu'il roule, souffle de vapeur rythmé, de
      * plus en plus rapide avec la vitesse (toutes les 12 ticks au pas, toutes les 3 ticks à 20 blocs/s). Le son sort du
-     * premier four de locomotive du train (trains sans locomotive : rien).
+     * premier four de locomotive du train (trains sans locomotive : rien). 1.4.3 (LeKiwi06 : « le son ne s'entend pas
+     * d'assez loin ») : portée réglable, en blocs (`son.portee-sifflet` 128, `son.portee-souffle` 64 ; avant 40 et 16) ;
+     * le jeu fait porter un son à 16 blocs x son volume, au-delà de 1 il ne joue pas plus fort.
      */
     private void vapeur(Train train) {
         Minecart locomotive = null;
@@ -1391,17 +1393,19 @@ public final class KSTrains extends JavaPlugin implements Listener {
             return;
         }
         Location lieu = locomotive.getLocation();
+        float sifflet = (float) Math.max(1, reglage("son.portee-sifflet", 128) / 16);
+        float souffle = (float) Math.max(1, reglage("son.portee-souffle", 64) / 16);
         if (train.dernierSouffle == 0 || tick - train.dernierSouffle > 40) {
             // Démarrage (ou reprise après un arrêt) : sifflet.
-            locomotive.getWorld().playSound(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, SoundCategory.NEUTRAL, 2.5f, 0.84f);
-            locomotive.getWorld().playSound(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, SoundCategory.NEUTRAL, 2.5f, 1.06f);
+            locomotive.getWorld().playSound(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, SoundCategory.NEUTRAL, sifflet, 0.84f);
+            locomotive.getWorld().playSound(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, SoundCategory.NEUTRAL, sifflet, 1.06f);
             train.dernierSouffle = tick;
             return;
         }
         double force = Math.min(1, train.vitesse / Math.max(0.01, reglage("vitesse-max", 1.0)));
         long intervalle = Math.round(12 - 9 * force);
         if (tick - train.dernierSouffle >= intervalle) {
-            locomotive.getWorld().playSound(lieu, Sound.BLOCK_FIRE_EXTINGUISH, SoundCategory.NEUTRAL, 0.5f,
+            locomotive.getWorld().playSound(lieu, Sound.BLOCK_FIRE_EXTINGUISH, SoundCategory.NEUTRAL, souffle,
                     (tick / intervalle) % 2 == 0 ? 0.65f : 0.8f);
             train.dernierSouffle = tick;
         }

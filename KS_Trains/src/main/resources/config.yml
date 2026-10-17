@@ -55,3 +55,7 @@ wagons-max: 64
 charge:
   plancher: 0.5
   taux: 0.30
+# 1.4.3 : portee des sons de la locomotive (blocs) : sifflet au demarrage, souffle de vapeur en roulant.
+son:
+  portee-sifflet: 128
+  portee-souffle: 64

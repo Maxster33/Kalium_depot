@@ -48,7 +48,11 @@ au carré, M3, sous charge à 0,5, et surcharge à 30 % ». La formule D n'a jam
 - La réaction en chaîne quand un four se vide avant les autres (traction en baisse, les autres consomment plus) est
   gardée (LeKiwi06 : « ça force à installer des minecart hopper »).
 - Compris dans l'autonomie affichée au conducteur et dans le carburant brûlé du compteur.
-- `config.yml` : nouvelles clés `charge.plancher` (0,5), `charge.taux` (0,30) et `vitesse-min` (0,15) ; clé `perte-par-wagon` retirée ;
+- **Portée des sons** (LeKiwi06 : « le son ne s'entend pas d'assez loin ») : sifflet 128 blocs (avant 40), souffle de
+  vapeur 64 blocs (avant 16, choix de Claude). Le jeu fait porter un son à 16 blocs x son volume ; au-delà de 1 le
+  volume ne monte plus, mais le souffle était à 0,5 : il est maintenant deux fois plus fort de près.
+- `config.yml` : nouvelles clés `charge.plancher` (0,5), `charge.taux` (0,30), `vitesse-min` (0,15),
+  `son.portee-sifflet` (128) et `son.portee-souffle` (64) ; clé `perte-par-wagon` retirée ;
   valeurs par défaut aussi dans le code.
 
 Compilé le 17/10/2026 (`sortie/KS_Trains-1.4.3.jar`). **Statut : non déployé, non testé en jeu.**
