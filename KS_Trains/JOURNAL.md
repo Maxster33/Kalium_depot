@@ -51,6 +51,10 @@ au carré, M3, sous charge à 0,5, et surcharge à 30 % ». La formule D n'a jam
 - **Portée des sons** (LeKiwi06 : « le son ne s'entend pas d'assez loin ») : sifflet 128 blocs (avant 40), souffle de
   vapeur 64 blocs (avant 16, choix de Claude). Le jeu fait porter un son à 16 blocs x son volume ; au-delà de 1 le
   volume ne monte plus, mais le souffle était à 0,5 : il est maintenant deux fois plus fort de près.
+- **Messages lisibles** (LeKiwi06 : « quand un texte vient remplacer celui qui indique la vitesse de la locomotive, il
+  faut le laisser afficher 3 secondes avant de remettre l'ancien ») : après chaque message de KS_Trains au-dessus de la
+  barre d'objets (refus, annonces, klaxon, boussole...), le tableau du conducteur attend 3 secondes avant de revenir
+  (avant : remplacé dans la demi-seconde). Les messages d'autres plugins (KS_Claim...) ne sont pas concernés.
 - `config.yml` : nouvelles clés `charge.plancher` (0,5), `charge.taux` (0,30), `vitesse-min` (0,15),
   `son.portee-sifflet` (128) et `son.portee-souffle` (64) ; clé `perte-par-wagon` retirée ;
   valeurs par défaut aussi dans le code.

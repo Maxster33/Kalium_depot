@@ -129,7 +129,7 @@ final class Klaxons implements Listener {
         MusicInstrument instrument = corne != null && corne.getItemMeta() instanceof MusicInstrumentMeta meta
                 ? meta.getInstrument() : null;
         if (!corne(corne) || instrument == null) {
-            Contenant.message(conducteur, plugin.t("klaxon.aucun",
+            plugin.message(conducteur, plugin.t("klaxon.aucun",
                     "<red>Aucune corne choisie (menu du train, page du contrôleur)"), true);
             return;
         }

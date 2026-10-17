@@ -1,6 +1,5 @@
 package fr.kalium.trains;
 
-import fr.kalium.menu.api.Contenant;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -80,7 +79,7 @@ final class Boussoles {
         }
         noter(controleur);
         joueur.playSound(joueur.getLocation(), Sound.ITEM_LODESTONE_COMPASS_LOCK, 1f, 1f);
-        Contenant.message(joueur, plugin.t("boussole.ok", "<green>Boussole liée au train"), false);
+        plugin.message(joueur, plugin.t("boussole.ok", "<green>Boussole liée au train"), false);
     }
 
     /** Retient la position d'un contrôleur chargé. */
