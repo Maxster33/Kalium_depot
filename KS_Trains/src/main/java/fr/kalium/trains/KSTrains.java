@@ -1071,14 +1071,14 @@ public final class KSTrains extends JavaPlugin implements Listener {
         double carre = Math.max(dx * dx + dz * dz, 0.1);
         // 1.4.1 (LeKiwi06 : « le train ne repousse pas correctement, j'aimerais qu'il envoie très haut comme le
         // dragon ») : le dragon pousse à chaque tick tant qu'on est sous ses ailes (la montée de 0,2 s'additionne) ;
-        // le train ne pousse qu'une fois : montée de `percussion.hauteur` (1,5 bloc/tick, une douzaine de blocs) à
-        // pleine vitesse, 0,4 au pas ; poussée horizontale du dragon plafonnée à `percussion.horizontal` (3 blocs/tick).
+        // le train ne pousse qu'une fois : montée de `percussion.hauteur` (3 blocs/tick : 40 blocs de haut, demandé par
+        // LeKiwi06) à pleine vitesse, 0,4 au pas ; poussée horizontale du dragon plafonnée à `percussion.horizontal` (3 blocs/tick).
         Vector horizontal = new Vector(dx / carre * 4 * force, 0, dz / carre * 4 * force);
         double plafond = reglage("percussion.horizontal", 3.0);
         if (horizontal.length() > plafond) {
             horizontal.normalize().multiply(plafond);
         }
-        double haut = 0.4 + (reglage("percussion.hauteur", 1.5) - 0.4) * force;
+        double haut = 0.4 + (reglage("percussion.hauteur", 3.0) - 0.4) * force;
         Vector actuelle = vivant.getVelocity();
         vivant.setVelocity(new Vector(actuelle.getX() + horizontal.getX(), Math.max(actuelle.getY(), 0) + haut,
                 actuelle.getZ() + horizontal.getZ()));

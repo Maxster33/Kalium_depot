@@ -10,7 +10,8 @@ le dragon ».
 - **Cause** : le dragon pousse une entité **à chaque tick** tant qu'elle est sous ses ailes (lu dans le code du jeu :
   0,2 vers le haut à chaque fois, qui s'additionnent) ; le train ne la pousse qu'une fois (une fois par demi-seconde au
   plus) : il ne restait que 0,2 vers le haut, presque rien.
-- **Correction** : montée de **1,5 bloc/tick** à pleine vitesse (environ une douzaine de blocs de haut ;
+- **Correction** : montée de **3 blocs/tick** à pleine vitesse, soit **40 blocs de haut** (LeKiwi06 : « mets plutôt 40
+  blocs de haut à pleine vitesse » ; calculé avec la physique du jeu : gravité 0,08 et freinage de l'air 2 % par tick ;
   `percussion.hauteur`), **0,4** au pas, en proportion entre les deux ; la vitesse verticale de l'entité n'est plus
   ajoutée si elle tombait. Poussée horizontale du dragon gardée, plafonnée à **3 blocs/tick** (`percussion.horizontal`)
   pour une entité collée au wagon (avant : jusqu'à 13 blocs/tick).
