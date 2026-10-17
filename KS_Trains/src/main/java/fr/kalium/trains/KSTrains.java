@@ -1545,7 +1545,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
         if (plusPetite == Double.MAX_VALUE) {
             return t("pilote.sans-carburant", "<red> — sans carburant");
         }
-        long blocs = Math.round(plusPetite / consommation(Math.max(1, train.niveau)));
+        long blocs = Math.round(plusPetite / (consommation(Math.max(1, train.niveau)) * surcharge(train)));
         return t("pilote.autonomie", "<dark_gray> — autonomie <gray><b> blocs", "b", blocs);
     }
 
@@ -1554,6 +1554,27 @@ public final class KSTrains extends JavaPlugin implements Listener {
      * niveau 1 -25 %, niveau 3 +25 %, niveau 4 +50 %). Marche arrière, et freinage jusqu'à l'arrêt (niveau 0) : comme
      * le niveau 1 (choix de Claude).
      */
+    /**
+     * 1.4.3 (LeKiwi06 : « à partir de 8 wagons, chaque nouveau wagon ajouté fait consommer davantage tous les fours du
+     * train » ; formule choisie sur tableau comparatif : charge partagée, 10 %) : chaque four consomme
+     * 1 + 10 % x (wagons - 7) / fours alimentés : la surcharge est répartie entre les fours (un four de plus allège la
+     * peine de tous). Ex. locomotive seule, 15 wagons : x1,27 ; 64 wagons et 8 fours : x1,71.
+     */
+    private double surcharge(Train train) {
+        int seuil = getConfig().getInt("surcharge.seuil", 7);
+        int enTrop = train.wagons.size() - seuil;
+        if (enTrop <= 0) {
+            return 1;
+        }
+        int fours = 0;
+        for (Minecart wagon : train.wagons) {
+            if (wagon instanceof PoweredMinecart four && foyers.alimente(four)) {
+                fours++;
+            }
+        }
+        return 1 + reglage("surcharge.taux", 0.10) * enTrop / Math.max(1, fours);
+    }
+
     private double consommation(int niveau) {
         return switch (niveau) {
             case 2 -> reglage("consommation.niveau-2", 1.0);
@@ -1639,10 +1660,11 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 // Pas de réaccélération sur un rail éteint.
                 voulue = Math.min(voulue, train.vitesse);
             }
+            double surcharge = parcouru > 0 ? surcharge(train) : 1;
             if (parcouru > 0) {
                 for (Minecart wagon : train.wagons) {
                     if (wagon instanceof PoweredMinecart four && foyers.alimente(four) && !allume) {
-                        double blocs = parcouru * consommation(train.niveau);
+                        double blocs = parcouru * consommation(train.niveau) * surcharge;
                         foyers.consommer(four, blocs);
                         if (estLoco(four)) {
                             ajouter(four, cleBrule, blocs);

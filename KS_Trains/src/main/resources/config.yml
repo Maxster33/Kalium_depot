@@ -49,3 +49,8 @@ propulseur:
   freinage: 0.05
 # 1.4.0 : nombre maximal de wagons par train.
 wagons-max: 64
+# 1.4.3 : surcharge. Au-dela de `seuil` wagons, chaque four consomme 1 + taux x (wagons - seuil) / fours alimentes
+# (locomotive seule a 15 wagons : x1,27 ; 64 wagons et 8 fours : x1,71).
+surcharge:
+  seuil: 7
+  taux: 0.10
