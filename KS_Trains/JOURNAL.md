@@ -424,3 +424,17 @@ son bloc correctement ».
 
 Compilé le 17/10/2026 (`sortie/KS_Trains-1.3.7.jar`). **Statut : non déployé, non testé en jeu.**
 
+## 1.3.8 - modèle agrandi plus petit, fours tournés vers l'avant (17/10/2026, LeKiwi06)
+
+Signalement de LeKiwi06 (tests sur Event) : « les blocs dépassent légèrement du minecart, et les fours ne regardent pas
+dans le bon sens ».
+
+- **Taille** : `decor.taille` 1,0 → **0,875** bloc (le chargement du jeu fait 0,75) ; le bas du bloc reste à la même
+  hauteur. **À changer aussi dans le `config.yml` d'Event**, qui a 1,0.
+- **Fours** : la face avant d'un four regarde vers l'**avant du train** (côté tête : vers le wagon de devant ; la tête,
+  dans le sens de son 2e wagon vers elle), arrondie au point cardinal le plus proche ; mise à jour chaque tick quand le
+  train roule, chaque seconde à l'arrêt. Avant : le modèle prenait l'orientation du wagonnet du jeu, qui est décalée.
+  Coffres, entonnoirs et jukebox : inchangés.
+
+Compilé le 17/10/2026 (`sortie/KS_Trains-1.3.8.jar`). **Statut : non déployé, non testé en jeu.**
+

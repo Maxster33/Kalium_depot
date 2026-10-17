@@ -5,7 +5,9 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Lightable;
 import org.bukkit.block.data.Rail;
 import org.bukkit.entity.BlockDisplay;
@@ -16,6 +18,7 @@ import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Transformation;
+import org.bukkit.util.Vector;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -53,11 +56,14 @@ final class Decor {
     }
 
     /** Bloc du chargement d'un wagon de train, ou null (wagonnet simple, contrôleur : on y monte). */
-    private BlockData chargement(Minecart wagon, boolean alimente) {
+    private BlockData chargement(Minecart wagon, boolean alimente, Vector avant) {
         if (wagon instanceof PoweredMinecart) {
             BlockData four = Material.FURNACE.createBlockData();
             if (four instanceof Lightable allume) {
                 allume.setLit(alimente);
+            }
+            if (four instanceof Directional tourne && avant != null) {
+                tourne.setFacing(face(avant));
             }
             return four;
         }
@@ -73,9 +79,25 @@ final class Decor {
         return null;
     }
 
-    /** Chaque seconde, wagon d'un train : le modèle est là, à jour (four allumé), tourné comme le wagon. */
-    void entretenir(Minecart wagon, boolean alimente) {
-        BlockData bloc = chargement(wagon, alimente);
+    /**
+     * 1.3.8 (LeKiwi06 : « les fours ne regardent pas dans le bon sens ») : la face avant d'un four regarde vers l'avant
+     * du train (côté tête), arrondi au point cardinal le plus proche ; l'orientation du wagonnet du jeu, décalée, n'est
+     * plus utilisée pour les fours.
+     */
+    private static BlockFace face(Vector avant) {
+        if (Math.abs(avant.getX()) >= Math.abs(avant.getZ())) {
+            return avant.getX() >= 0 ? BlockFace.EAST : BlockFace.WEST;
+        }
+        return avant.getZ() >= 0 ? BlockFace.SOUTH : BlockFace.NORTH;
+    }
+
+    /**
+     * Chaque seconde, wagon d'un train : le modèle est là, à jour (four allumé, tourné vers l'avant du train).
+     *
+     * @param avant direction de l'avant du train à ce wagon (vers le wagon de devant), ou null
+     */
+    void entretenir(Minecart wagon, boolean alimente, Vector avant) {
+        BlockData bloc = chargement(wagon, alimente, avant);
         BlockDisplay modele = decor(wagon);
         if (bloc == null) {
             retirer(wagon);
@@ -98,12 +120,19 @@ final class Decor {
         orienter(wagon, modele);
     }
 
-    /** 1.3.7 : chaque tick, wagon d'un train qui roule : le modèle suit la pente. */
-    void orienter(Minecart wagon) {
+    /** 1.3.7 : chaque tick, wagon d'un train qui roule : le modèle suit la pente (1.3.8 : et le four, l'avant). */
+    void orienter(Minecart wagon, Vector avant) {
         BlockDisplay modele = decor(wagon);
-        if (modele != null) {
-            orienter(wagon, modele);
+        if (modele == null) {
+            return;
         }
+        if (wagon instanceof PoweredMinecart && avant != null && modele.getBlock() instanceof Directional four
+                && four.getFacing() != face(avant)) {
+            BlockData tourne = modele.getBlock().clone();
+            ((Directional) tourne).setFacing(face(avant));
+            modele.setBlock(tourne);
+        }
+        orienter(wagon, modele);
     }
 
     /**
@@ -113,7 +142,7 @@ final class Decor {
      * remis une fois par seconde, toujours droit). Changement adouci sur 2 ticks.
      */
     private void orienter(Minecart wagon, BlockDisplay modele) {
-        float taille = (float) plugin.getConfig().getDouble("decor.taille", 1.0);
+        float taille = (float) plugin.getConfig().getDouble("decor.taille", 0.875);
         float hauteur = (float) plugin.getConfig().getDouble("decor.hauteur", -0.1);
         Quaternionf pente = new Quaternionf();
         Block rail = Voie.rail(wagon);
@@ -137,8 +166,9 @@ final class Decor {
             modele.setInterpolationDuration(2);
             modele.setTransformation(voulue);
         }
-        // En pente, les axes du monde (la pente est calculée dessus) ; sinon tourné comme le wagon.
-        float cap = penche ? 0 : wagon.getLocation().getYaw();
+        // En pente, les axes du monde (la pente est calculée dessus) ; four : axes du monde aussi (sa face est donnée
+        // par son bloc) ; sinon tourné comme le wagon.
+        float cap = penche || wagon instanceof PoweredMinecart ? 0 : wagon.getLocation().getYaw();
         if (Math.abs(modele.getLocation().getYaw() - cap) > 1f) {
             modele.setRotation(cap, 0);
         }

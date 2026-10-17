@@ -23,9 +23,10 @@ consommation:
   niveau-3: 1.25
   niveau-4: 1.5
 # 1.3.0 : chargement des wagons affiche plus gros pour les joueurs Java (four, coffre, entonnoir, jukebox).
-# taille : cote du bloc (le chargement du jeu fait 0,75) ; hauteur : decalage vertical du bloc dans le wagon.
+# taille : cote du bloc (le chargement du jeu fait 0,75 ; 1.3.8 : 0,875, a 1,0 il depassait du wagonnet) ;
+# hauteur : decalage vertical du bloc dans le wagon.
 decor:
-  taille: 1.0
+  taille: 0.875
   hauteur: -0.1
 # 1.3.0 : wagon jukebox. Volume de la musique (4 = entendue a 64 blocs, comme un jukebox).
 jukebox:

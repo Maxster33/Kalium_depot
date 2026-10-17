@@ -96,7 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-- **KS_Trains 1.3.7** (LeKiwi06, 17/10/2026) : 1.3.7 (modèle agrandi qui penche avec le wagon sur les pentes) + 1.3.6 (panne de carburant : freinage normal au lieu d'un arrêt net) + 1.3.5 (rails propulseurs : pas de carburant sur un rail allumé, -1 bloc/s par rail éteint, départ refusé sur un rail éteint) + 1.3.4 (sifflet et tchou-tchou de la locomotive, compteur kilométrique et carburant brûlé dans le menu) + 1.3.1 (wagons incassables, décor, accélération ~100 blocs / freinage ~50) + 1.3.2 (percussions, -25 % dans les virages) + 1.3.3 (-10 % par percussion sans passer sous le niveau 1, wagonnets avec contenu projetés au lieu d'être brisés, message pour les wagons à TNT, jukebox qui rejoue son disque au rechargement) ; **compilé, non déployé** (Event en 1.3.0 ; son `config.yml` a encore `acceleration` 0,02 et `freinage` 0,05 : à changer avec l'envoi).
+- **KS_Trains 1.3.8** (LeKiwi06, 17/10/2026) : 1.3.8 (modèle agrandi à 0,875 bloc, fours tournés vers l'avant du train ; `decor.taille` d'Event à passer de 1,0 à 0,875) + 1.3.7 (modèle agrandi qui penche avec le wagon sur les pentes) + 1.3.6 (panne de carburant : freinage normal au lieu d'un arrêt net) + 1.3.5 (rails propulseurs : pas de carburant sur un rail allumé, -1 bloc/s par rail éteint, départ refusé sur un rail éteint) + 1.3.4 (sifflet et tchou-tchou de la locomotive, compteur kilométrique et carburant brûlé dans le menu) + 1.3.1 (wagons incassables, décor, accélération ~100 blocs / freinage ~50) + 1.3.2 (percussions, -25 % dans les virages) + 1.3.3 (-10 % par percussion sans passer sous le niveau 1, wagonnets avec contenu projetés au lieu d'être brisés, message pour les wagons à TNT, jukebox qui rejoue son disque au rechargement) ; **compilé, non déployé** (Event en 1.3.0 ; son `config.yml` a encore `acceleration` 0,02 et `freinage` 0,05 : à changer avec l'envoi).
 - **KS_Trains 1.3.0 + KS_Crafts 1.18.0 + KS_VerrouVehicule 1.1.1** (LeKiwi06, 16/10/2026) : **sur Event depuis le 16/10 à 22:18 pour les tests** ; pas sur Kixster (KS_VerrouVehicule 1.0.0, KS_Crafts 1.15.0 y restent). Détail : `KS_Trains/JOURNAL.md`.
 - **KS_LaisseBateau 1.0.0 (nouveau)** (LeKiwi06, 14/10/2026) : laisse de 3 blocs entre deux bateaux ; **sur Event depuis le 16/10 à 20:00 pour les tests**, prévu pour Kixster (pas encore envoyé). Détail : `KS_LaisseBateau/JOURNAL.md`.
 - **KS_VerrouVehicule 1.0.0** (LeKiwi06, 14/10/2026) : sur Kixster depuis le 14/10 à 18:03 (avec KS_Crafts 1.15.0) et sur Event depuis le 16/10 à 20:00 (avec KS_Crafts 1.16.0). Détail : `KS_VerrouVehicule/JOURNAL.md`.
@@ -449,6 +449,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (17/10/2026, 02:34) : KS_Trains 1.3.8 compilé, non déployé.** Modèle agrandi ramené à 0,875 bloc (il dépassait du wagonnet), face avant des fours tournée vers l'avant du train (signalé par LeKiwi06).
 
 **Ajout (17/10/2026, 01:49) : KS_Trains 1.3.7 compilé, non déployé.** Le modèle agrandi (Java) restait droit sur les pentes (capture de LeKiwi06) : il penche maintenant de 45° avec le wagon, mis à jour chaque tick quand le train roule.
 

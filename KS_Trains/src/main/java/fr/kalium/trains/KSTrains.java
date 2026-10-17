@@ -1110,6 +1110,18 @@ public final class KSTrains extends JavaPlugin implements Listener {
         return false;
     }
 
+    /** 1.3.8 : direction de l'avant du train à ce wagon (vers le wagon de devant ; la tête : depuis le 2e wagon). */
+    private static Vector versLAvant(Train train, Minecart wagon) {
+        int rang = train.rang(wagon);
+        if (train.wagons.size() < 2 || rang < 0) {
+            return null;
+        }
+        Minecart devant = rang > 0 ? train.wagons.get(rang - 1) : wagon;
+        Minecart derriere = rang > 0 ? wagon : train.wagons.get(1);
+        Vector avant = devant.getLocation().toVector().subtract(derriere.getLocation().toVector()).setY(0);
+        return avant.lengthSquared() < 1e-6 ? null : avant;
+    }
+
     /** 1.3.4 : ajoute une quantité à un compteur enregistré dans un wagon de locomotive. */
     private static void ajouter(Entity wagon, NamespacedKey cle, double quantite) {
         Double avant = wagon.getPersistentDataContainer().get(cle, PersistentDataType.DOUBLE);
@@ -1409,7 +1421,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
             if (train.vitesse > 0) {
                 // 1.3.7 : modèles agrandis qui suivent les pentes.
                 for (Minecart wagon : train.wagons) {
-                    decor.orienter(wagon);
+                    decor.orienter(wagon, versLAvant(train, wagon));
                 }
             }
             if (train.vitesse > 0 && trains.containsKey(train.id)) {
@@ -1483,7 +1495,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 if (wagon instanceof PoweredMinecart four) {
                     foyers.allumer(four, alimente);
                 }
-                decor.entretenir(wagon, alimente);
+                decor.entretenir(wagon, alimente, versLAvant(train, wagon));
                 if (estControleur(wagon)) {
                     boussoles.noter(wagon);
                 }
