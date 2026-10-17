@@ -1211,15 +1211,18 @@ public final class KSTrains extends JavaPlugin implements Listener {
         return false;
     }
 
-    /** 1.3.8 : direction de l'avant du train à ce wagon (vers le wagon de devant ; la tête : depuis le 2e wagon). */
+    /**
+     * 1.3.8 : direction de l'avant du train à ce wagon. 1.4.2 : axe du wagon de derrière au wagon de devant (le wagon
+     * lui-même aux deux bouts), pente comprise, pour orienter et pencher son modèle.
+     */
     private static Vector versLAvant(Train train, Minecart wagon) {
         int rang = train.rang(wagon);
         if (train.wagons.size() < 2 || rang < 0) {
             return null;
         }
         Minecart devant = rang > 0 ? train.wagons.get(rang - 1) : wagon;
-        Minecart derriere = rang > 0 ? wagon : train.wagons.get(1);
-        Vector avant = devant.getLocation().toVector().subtract(derriere.getLocation().toVector()).setY(0);
+        Minecart derriere = rang < train.wagons.size() - 1 ? train.wagons.get(rang + 1) : wagon;
+        Vector avant = devant.getLocation().toVector().subtract(derriere.getLocation().toVector());
         return avant.lengthSquared() < 1e-6 ? null : avant;
     }
 
