@@ -1445,7 +1445,12 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 continue;
             }
             Vector ecart = cible.clone().subtract(wagon.getLocation().toVector());
-            if (ecart.lengthSquared() > 2.25) {
+            // 1.3.9 (LeKiwi06, capture : « mon train s'est arrêté en pente, et du coup il s'est entassé ») : sur une
+            // pente, le jeu pousse chaque wagonnet vers le bas (0,0078 bloc/tick à chaque tick, lu dans le code du jeu
+            // 26.3, NewMinecartBehavior.calculateSlopeSpeed ; sans lien avec la gravité). Train arrêté : chaque wagon est
+            // remis à sa place dès qu'il s'en écarte de plus de 0,05 bloc (avant : seulement poussé vers elle, il glissait).
+            boolean arrete = train.vitesse <= 0;
+            if (ecart.lengthSquared() > 2.25 || (arrete && ecart.lengthSquared() > 0.0025)) {
                 Location place = cible.toLocation(monde);
                 Vector sens = precedente.clone().subtract(cible);
                 if (sens.lengthSquared() > 1e-6) {
@@ -1455,7 +1460,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 wagon.teleport(place, TeleportFlag.EntityState.RETAIN_PASSENGERS);
                 wagon.setVelocity(new Vector());
             } else {
-                wagon.setVelocity(ecart);
+                wagon.setVelocity(arrete ? new Vector() : ecart);
             }
             precedente = cible;
         }
