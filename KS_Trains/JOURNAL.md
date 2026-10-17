@@ -92,3 +92,5 @@ produit le même souci qu'il y avait avant en marche avant » (en reculant en mo
   découlait (trajet refait sur des wagons entassés).
 
 Compilé le 17/10/2026 (`sortie/KS_Trains-1.4.4.jar`), `config.yml` inchangé. **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 18/10/2026 à 00:18 (LeKiwi06 : « oui envoie sur event ») : jar en place (1.4.3) vérifié identique à la référence avant l'envoi, rangé dans `_removed-ks_trains-1.4.3/` ; jar du serveur vérifié identique à celui compilé ; `config.yml` inchangé. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
