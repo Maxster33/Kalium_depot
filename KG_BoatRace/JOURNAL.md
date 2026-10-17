@@ -280,4 +280,6 @@ ramené en arrière ; plus de « moved wrongly » dans le journal pendant les co
 retour au point de contrôle, arrivée normaux ; pas de bateau vide qui reste sur la piste.
 
 **Déploiement** : empilé sur la 1.6.1 non testée (le correctif de la 1.6.1 n'a pas suffi, celui-ci le complète),
-à la demande de LeKiwi06. **Statut : compilé, non déployé, non testé en jeu.**
+à la demande de LeKiwi06. **Déployé sur Kal-Games le 17/10/2026 à 03:00 (LeKiwi06, serveur allumé : actif après
+redémarrage ; 1.6.1 dans `_removed-kg_boatrace-1.6.1/` ; supprimables par l'humain : `_removed-kg_boatrace-1.3.0/`,
+`1.4.0/`, `1.4.1/`, `1.4.2/`, `1.5.0/`). Statut : non testé en jeu.**
