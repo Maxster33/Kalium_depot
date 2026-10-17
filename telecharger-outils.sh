@@ -53,4 +53,12 @@ get "$O/cumulus/cumulus/1.1.2/cumulus-1.1.2.jar" "$L/cumulus-1.1.2.jar"
 get "https://cdn.modrinth.com/data/ayRaM8J7/versions/cLNipSgw/VaultUnlocked-2.20.2.jar" "$L/VaultUnlocked-2.20.2.jar"
 # SimpleClaimSystem 1.13.1 (API : KS_Claim et KS_BiomeChanger ; le meme jar est installe sur Event)
 get "https://cdn.modrinth.com/data/80Ke0mYG/versions/DRqwNblx/SimpleClaimSystem-1.13.1.jar" "$L/SimpleClaimSystem-1.13.1.jar"
+# Serveur Paper 26.3 build 159 (celui de Kal-Games) : classes internes du serveur pour KG_BoatRace (GhostBoats).
+# Paperclip telecharge le jeu chez Mojang et produit serveur/versions/26.3/paper-26.3.jar + serveur/libraries/.
+S="$DIR/outils-build/serveur"
+mkdir -p "$S"
+get "https://fill-data.papermc.io/v1/objects/2224a0b2b6b096ff4c429ad926e97977213e4f633e90cb3a49b5eeb82f94bab0/paper-26.3-159.jar" "$S/paper-26.3-159.jar"
+if [ ! -f "$S/versions/26.3/paper-26.3.jar" ]; then
+  (cd "$S" && java -Dpaperclip.patchonly=true -jar paper-26.3-159.jar > /dev/null) && echo "produit      : paper-26.3.jar (serveur)"
+fi
 echo "Outils prets dans $DIR/outils-build"

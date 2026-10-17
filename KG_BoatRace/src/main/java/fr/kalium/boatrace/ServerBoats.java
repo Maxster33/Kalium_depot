@@ -113,15 +113,18 @@ final class ServerBoats implements Runnable {
     }
 
     /** Installe le joueur dans un bateau calcule par le serveur, a l'arret, a cet endroit. */
-    void mount(Player player, Location where, EntityType type) {
+    void mount(Player player, Location where, EntityType type, boolean ghost) {
         release(player.getUniqueId());
         Location at = where.clone();
         at.setPitch(0);
-        Entity hull;
-        try {
-            hull = world.spawnEntity(at, type);
-        } catch (IllegalArgumentException e) {
-            hull = world.spawnEntity(at, EntityType.OAK_BOAT);
+        // 1.6.2 : coque non solide cote serveur avec l'anti-collision (GhostBoats), sinon les bateaux Java la heurtent.
+        Entity hull = ghost ? GhostBoats.spawn(world, at, type, plugin.getLogger()) : null;
+        if (hull == null) {
+            try {
+                hull = world.spawnEntity(at, type);
+            } catch (IllegalArgumentException e) {
+                hull = world.spawnEntity(at, EntityType.OAK_BOAT);
+            }
         }
         hull.setPersistent(false);
         hull.setGravity(false); // immobile entre deux positions donnees par le calcul

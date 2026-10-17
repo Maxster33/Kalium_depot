@@ -243,3 +243,41 @@ tête et le pseudo restent lisibles à cette hauteur (sinon ajuster le réglage)
 (essai) », désactivé par défaut) ; déployer la 1.6.1 met donc aussi la 1.6.0 en service. **Déployé sur Kal-Games le 16/10/2026 à 23:09 (LeKiwi06,
 actif depuis le redémarrage de 23:12 fait par LeKiwi06, journal sans erreur ; 1.5.1 dans `_removed-kg_boatrace-1.5.1/` ; supprimables par l'humain :
 `_removed-kg_boatrace-1.3.0/`, `1.4.0/`, `1.4.1/`, `1.4.2/`). Statut : non testé en jeu.**
+
+## 1.6.2 - anti-collision : bateaux de course non solides côté serveur (17/10/2026, LeKiwi06)
+
+**Retour de LeKiwi06 (17/10/2026)** sur la 1.6.1 : « apparemment ça n'a pas réglé le souci ».
+
+**Cause trouvée** (journaux de Kal-Games du 10 au 17/10/2026 et `boatrace.jsonl` de KG_ScoreBoards, copies hors
+dépôt) : ce n'est pas la tête. En bateau, le serveur rejoue chaque déplacement envoyé par le jeu du joueur, avec les
+collisions entre entités. Pour le serveur, un bateau est toujours solide pour un autre bateau (lu dans le code de
+Paper 26.3 : `AbstractBoat.canBeCollidedWith` renvoie toujours vrai, aucun réglage ni API ne le change), et le pilote
+d'un bateau aussi (`isPushable`). Quand un coureur entre dans le bateau caché d'un adversaire, le serveur le ramène en
+arrière (« moved wrongly » dans le journal). Chiffres : 101 retours en arrière pendant la course à 4 du 17/10 vers
+minuit (93 pour les 3 joueurs Bedrock, 8 pour le joueur Java), **aucun en 277 minutes de courses solo** depuis le
+10/10. Les joueurs Java sont donc touchés aussi. Cacher les bateaux aux joueurs (1.3.0, 1.4.0) ne pouvait pas suffire.
+
+**Changements** (seulement quand l'anti-collision est actif, course à plusieurs) :
+- `GhostBoats` : chaque bateau de course est une sous-classe du bateau du jeu (bateau, radeau, bateau ou radeau à
+  coffre) qui n'est ni solide ni poussable. Le serveur l'ignore dans les collisions entre entités ; les blocs comptent
+  toujours (murs, hors-piste inchangés). Les joueurs voient un bateau normal (même type d'entité, rien à changer pour
+  Geyser). Aussi pour la coque du bateau calculé par le serveur (1.6.0, réglage désactivé).
+- `CollisionShield` : les pilotes sont rendus non solides pendant la course (`Player#setCollidable(false)`), valeur
+  d'avant rendue à l'arrivée, à l'abandon ou à la fin.
+- La tête Bedrock reste à la hauteur de la 1.6.1 (réglage « Bedrock : hauteur des têtes (cm) »).
+
+**Code interne du serveur** : `GhostBoats` utilise les classes de Paper 26.3 (noms du jeu en clair depuis la 26.x).
+Compilation contre `outils-build/serveur/versions/26.3/paper-26.3.jar`, produit par `telecharger-outils.sh` à partir du
+Paper 26.3 build 159 public (identique octet pour octet à celui de Kal-Games). **À chaque mise à jour de Paper** :
+recompiler et vérifier ; si ces classes ont changé, la course utilise des bateaux normaux et le journal du serveur
+affiche une fois « Bateaux non solides indisponibles (version de Paper ?) ».
+
+**Vérifié hors jeu** : compilation ; code de Paper relu (contrôle des déplacements de véhicule, collisions entre
+entités, création de l'objet Bukkit d'une entité). **Non vérifié en jeu.**
+
+**À vérifier en jeu (au moins 2 joueurs, Bedrock et Java si possible)** : on traverse les adversaires sans être
+ramené en arrière ; plus de « moved wrongly » dans le journal pendant les courses à plusieurs ; départ, chute et
+retour au point de contrôle, arrivée normaux ; pas de bateau vide qui reste sur la piste.
+
+**Déploiement** : empilé sur la 1.6.1 non testée (le correctif de la 1.6.1 n'a pas suffi, celui-ci le complète),
+à la demande de LeKiwi06. **Statut : compilé, non déployé, non testé en jeu.**

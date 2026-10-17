@@ -84,6 +84,8 @@ final class CollisionShield {
     private final Map<UUID, Copy> copies = new HashMap<>();
     /** Bateau actuel de chaque coureur (un nouveau bateau est cree apres une chute). */
     private final Map<UUID, Entity> boats = new HashMap<>();
+    /** 1.6.2 : coureurs rendus non solides (valeur d'avant, rendue a la fin de leur protection). */
+    private final Map<UUID, Boolean> collidable = new HashMap<>();
     /** 1.6.0 : bateau d'un coureur (son vehicule, ou la coque de son bateau calcule par le serveur). */
     private final java.util.function.Function<Player, Entity> boatOf;
     /** 1.6.1 : hauteur des pieds du porte-armure (copie Bedrock) au-dessus du fond du bateau, en blocs (voir en-tete). */
@@ -109,6 +111,9 @@ final class CollisionShield {
         for (Player player : racers) {
             active.add(player.getUniqueId());
             copies.put(player.getUniqueId(), spawnCopy(player));
+            // 1.6.2 : pilote non solide cote serveur, sinon les bateaux des autres le heurtent (voir GhostBoats).
+            collidable.put(player.getUniqueId(), player.isCollidable());
+            player.setCollidable(false);
         }
         for (UUID viewer : active) {
             for (UUID other : active) {
@@ -271,6 +276,11 @@ final class CollisionShield {
     void release(UUID id) {
         if (!active.remove(id)) {
             return;
+        }
+        Boolean wasCollidable = collidable.remove(id);
+        Player released = Bukkit.getPlayer(id);
+        if (wasCollidable != null && released != null) {
+            released.setCollidable(wasCollidable);
         }
         for (UUID other : new ArrayList<>(active)) {
             revealTo(other, id); // les autres le revoient

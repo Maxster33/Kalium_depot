@@ -52,6 +52,8 @@ import java.util.UUID;
  *
  * 1.6.1 : anti-collision Bedrock, la tete des adversaires est placee au-dessus de leur bateau (reglage
  * « bedrock-copy-height ») : les joueurs Bedrock la heurtaient encore.
+ *
+ * 1.6.2 : la vraie cause etait le serveur : bateaux de course et pilotes non solides cote serveur (GhostBoats).
  */
 public final class BoatRaceInstance extends GameInstance {
 
@@ -112,6 +114,8 @@ public final class BoatRaceInstance extends GameInstance {
     private CollisionShield shield;
     /** 1.6.0 : bateaux calcules par le serveur pour les joueurs Bedrock (null si le reglage est desactive). */
     private ServerBoats serverBoats;
+    /** 1.6.2 : bateaux de course non solides cote serveur (GhostBoats), avec l'anti-collision a plusieurs. */
+    private boolean ghostBoats;
     private Set<org.bukkit.Material> trackBlocks = Set.of();
     /** 1.3.0 : meilleur tour de la course en cours (tableau lateral). */
     private String bestLapName;
@@ -275,6 +279,8 @@ public final class BoatRaceInstance extends GameInstance {
                     minigame().getInt("bedrock-seat-height", 19) / 100.0);
             serverBoats.start();
         }
+        // 1.6.2 : meme condition que l'anti-collision ci-dessous (bateaux non solides cote serveur, GhostBoats).
+        ghostBoats = minigame().getBool("anti-collision", true) && racers.size() > 1;
         for (UUID uuid : participants) {
             Player player = Bukkit.getPlayer(uuid);
             if (player == null) {
@@ -412,14 +418,17 @@ public final class BoatRaceInstance extends GameInstance {
             type = EntityType.OAK_BOAT;
         }
         if (serverBoats != null && CollisionShield.bedrock(player.getUniqueId())) {
-            serverBoats.mount(player, where, type);
+            serverBoats.mount(player, where, type, ghostBoats);
             return;
         }
-        Entity boat;
-        try {
-            boat = world.spawnEntity(where, type);
-        } catch (IllegalArgumentException e) {
-            boat = world.spawnEntity(where, EntityType.OAK_BOAT);
+        Entity boat = ghostBoats ? GhostBoats.spawn(world, where, type,
+                org.bukkit.plugin.java.JavaPlugin.getPlugin(KGBoatRace.class).getLogger()) : null;
+        if (boat == null) {
+            try {
+                boat = world.spawnEntity(where, type);
+            } catch (IllegalArgumentException e) {
+                boat = world.spawnEntity(where, EntityType.OAK_BOAT);
+            }
         }
         boat.setPersistent(false);
         boat.addPassenger(player);
