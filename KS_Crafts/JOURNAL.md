@@ -391,3 +391,15 @@ testé en jeu.**
 **Déployé sur Event le 16/10/2026 à 22:18 (LeKiwi06 : « j'ai arrêté event, envoie tout » ; Event arrêté proprement à 22:17:12, vérifié dans son journal ; envoi groupé : KS_Trains 1.3.0, KS_Crafts 1.18.0, KS_VerrouVehicule 1.1.1 ; jars en place (KS_Trains 1.2.0, KS_Crafts 1.17.0, KS_VerrouVehicule 1.1.0) vérifiés identiques aux références avant l'envoi, rangés dans `_removed-ks_trains-1.2.0/`, `_removed-ks_crafts-1.17.0/`, `_removed-ks_verrouvehicule-1.1.0/` ; jars du serveur vérifiés identiques à ceux compilés), actif après redémarrage d'Event. Statut : non testé en jeu.**
 
 **Actif sur Event depuis son redémarrage du 16/10/2026 à 22:20 (journal lu, heures du journal en UTC : 20:20) : KS_Trains 1.3.0, KS_Crafts 1.18.0 (« 82 crafts ajoutés » : + le wagon jukebox) et KS_VerrouVehicule 1.1.1 activés sans erreur ni avertissement. **Nouvelle physique des wagonnets active** : plus de refus du pack au démarrage, et le `level.dat` réécrit par le serveur à 22:20:16 garde `minecart_improvements` dans `enabled_features` et dans les packs activés. Reste à faire par LeKiwi06 : `/gamerule max_minecart_speed 40`. Statut : non testé en jeu.**
+
+## 1.19.0 - bloc musical dans la recette du wagon contrôleur (17/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « par cohérence je pense qu'il faut remplacer le copper bulb par un note block dans le craft du
+minecart contrôleur » (KS_Trains 1.4.3 : klaxon par défaut en bloc musical, un sifflet de train).
+
+- Wagon contrôleur : un wagonnet au centre et, en forme de casque, un **comparateur**, un **capteur sculk calibré**, une
+  **lampe à redstone**, un **bloc musical** (avant : une ampoule de cuivre) et un **levier**, dans n'importe quel
+  ordre, chacun une fois.
+
+**À déployer avec KS_Trains 1.4.3.** Compilé le 17/10/2026 (`sortie/KS_Crafts-1.19.0.jar`). **Statut : non déployé,
+non testé en jeu.**

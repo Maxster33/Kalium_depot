@@ -257,7 +257,8 @@ public final class KSTrains extends JavaPlugin implements Listener {
 
     /**
      * 1.1.0 : un wagon contrôleur (wagonnet brillant ; recette dans KS_Crafts : wagonnet au centre et, en forme de
-     * casque, comparateur, capteur sculk calibré, lampe à redstone, ampoule de cuivre, levier). Nécessite que le plugin
+     * casque, comparateur, capteur sculk calibré, lampe à redstone, ampoule de cuivre, levier ; KS_Crafts 1.19.0 : bloc
+     * musical au lieu de l'ampoule). Nécessite que le plugin
      * soit activé.
      */
     public static ItemStack creerControleur() {
@@ -2039,7 +2040,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
         for (Minecart wagon : train.wagons) {
             if (estControleur(wagon)) {
                 menu.poser(menu.bas(7), Contenant.objet(Material.GOAT_HORN, t("menu.klaxon", "<white>Klaxon"),
-                        List.of(t("menu.klaxon-ligne", "<gray>La corne choisie du contrôleur"))), j -> {
+                        List.of(t("menu.klaxon-sifflet", "<gray>Corne choisie, sinon sifflet du train"))), j -> {
                     Train actuel = trainDuMenu(j, id);
                     if (actuel != null && actuel.wagons.contains(wagon)) {
                         klaxons.sonner(j, wagon);

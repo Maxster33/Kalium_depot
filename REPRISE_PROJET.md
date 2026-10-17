@@ -96,7 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-- **KS_Trains 1.4.3** (LeKiwi06, 17/10/2026) : 1.4.2 (modèle agrandi orienté sur l'axe du train) + 1.4.3 (consommation selon la charge wagons / traction, plancher 0,5, surcharge 30 % ; vitesse x (traction / wagons)², départ refusé sous 3 blocs/s, sons portés à 128 et 64 blocs, messages gardés 3 s avant le retour du tableau du conducteur) ; **compilé, non déployé** (Event en 1.4.1).
+- **KS_Trains 1.4.3** (LeKiwi06, 17/10/2026) : 1.4.2 (modèle agrandi orienté sur l'axe du train) + 1.4.3 (consommation selon la charge wagons / traction, plancher 0,5, surcharge 30 % ; vitesse x (traction / wagons)², départ refusé sous 3 blocs/s, sons portés à 128 et 64 blocs, messages gardés 3 s avant le retour du tableau du conducteur, klaxon par défaut en sifflet de bloc musical) ; **KS_Crafts 1.19.0** (bloc musical au lieu de l'ampoule de cuivre dans la recette du contrôleur), à déployer avec ; **compilé, non déployé** (Event en 1.4.1).
 - **KS_Trains 1.4.1 + KLM_Contacts 1.3.0** (LeKiwi06, 17/10/2026) : KS_Trains 1.4.1 (projection à 40 blocs) sur Event depuis le 17/10 à 04:17, KLM_Contacts 1.3.0 **depuis le 17/10 à 03:52 pour les tests** ; pas sur Kixster ; KLM_Contacts 1.2.0 sur les autres serveurs. Détail : `KS_Trains/JOURNAL.md`.
 - **KS_Crafts 1.18.0 + KS_VerrouVehicule 1.1.1** (LeKiwi06, 16/10/2026) : **sur Event depuis le 16/10 à 22:18 pour les tests** ; pas sur Kixster (KS_VerrouVehicule 1.0.0, KS_Crafts 1.15.0 y restent). Détail : `KS_Trains/JOURNAL.md`.
 - **KS_LaisseBateau 1.0.0 (nouveau)** (LeKiwi06, 14/10/2026) : laisse de 3 blocs entre deux bateaux ; **sur Event depuis le 16/10 à 20:00 pour les tests**, prévu pour Kixster (pas encore envoyé). Détail : `KS_LaisseBateau/JOURNAL.md`.
@@ -451,6 +451,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (17/10/2026, 05:58) : KS_Trains 1.4.3 complété et KS_Crafts 1.19.0 compilés, non déployés.** Départ refusé sous 3 blocs/s ; un train plafonné paie le niveau qu'il atteint ; portée des sons (sifflet 128 blocs, souffle 64) ; messages gardés 3 s avant le retour du tableau du conducteur ; klaxon par défaut (sifflet en bloc musical) ; recette du contrôleur : bloc musical au lieu de l'ampoule de cuivre (KS_Crafts 1.19.0).
 
 **Ajout (17/10/2026, 04:37) : KS_Trains 1.4.3 compilé, non déployé.** Surcharge des longs trains (formule choisie par LeKiwi06 sur tableau comparatif : charge partagée, 10 % par wagon au-delà de 7, divisé par le nombre de fours alimentés).
 

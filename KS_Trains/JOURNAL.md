@@ -55,8 +55,14 @@ au carré, M3, sous charge à 0,5, et surcharge à 30 % ». La formule D n'a jam
   faut le laisser afficher 3 secondes avant de remettre l'ancien ») : après chaque message de KS_Trains au-dessus de la
   barre d'objets (refus, annonces, klaxon, boussole...), le tableau du conducteur attend 3 secondes avant de revenir
   (avant : remplacé dans la demi-seconde). Les messages d'autres plugins (KS_Claim...) ne sont pas concernés.
+- **Klaxon par défaut** (LeKiwi06 : « un klaxon par défaut en note block qui ressemble à un sifflet de train ») : sans
+  corne de chèvre choisie, la touche de saut (ou le bouton Klaxon du menu) joue un sifflet : accord de 3 notes de
+  flûte graves (fa dièse mineur, choix de Claude), rejoué 6 fois en 1,2 seconde ; entendu à 256 blocs comme une corne.
+  Remplace le message « Aucune corne choisie ». Bouton Klaxon : nouvelle ligne « Corne choisie, sinon sifflet du
+  train » (clé `menu.klaxon-sifflet`). Recette du contrôleur : bloc musical au lieu de l'ampoule de cuivre
+  (KS_Crafts 1.19.0, à déployer avec).
 - `config.yml` : nouvelles clés `charge.plancher` (0,5), `charge.taux` (0,30), `vitesse-min` (0,15),
-  `son.portee-sifflet` (128) et `son.portee-souffle` (64) ; clé `perte-par-wagon` retirée ;
+  `son.portee-sifflet` (128), `son.portee-souffle` (64) et `son.portee-klaxon` (256) ; clé `perte-par-wagon` retirée ;
   valeurs par défaut aussi dans le code.
 
 Compilé le 17/10/2026 (`sortie/KS_Trains-1.4.3.jar`). **Statut : non déployé, non testé en jeu.**

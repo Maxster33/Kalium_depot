@@ -59,3 +59,5 @@ charge:
 son:
   portee-sifflet: 128
   portee-souffle: 64
+  # Klaxon par defaut du controleur (sifflet en bloc musical, sans corne de chevre choisie) ; 256 = comme une corne.
+  portee-klaxon: 256

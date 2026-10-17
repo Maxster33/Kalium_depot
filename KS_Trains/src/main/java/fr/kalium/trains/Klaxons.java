@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.MusicInstrument;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -118,7 +119,15 @@ final class Klaxons implements Listener {
 
     // ------------------------------------------------------------------ klaxon
 
-    /** Touche de saut à bord : la corne choisie sonne (sinon message). */
+    /**
+     * 1.4.3 (LeKiwi06 : « mettre un klaxon par défaut en note block qui ressemble à un sifflet de train ») : accord de
+     * 3 notes de flûte graves (fa dièse mineur), rejoué 6 fois en 1,2 seconde pour un coup de sifflet tenu.
+     */
+    private static final float[] ACCORD = {0.5f, 0.595f, 0.749f};
+    private static final int COUPS = 6;
+    private static final int ECART = 4;
+
+    /** Touche de saut à bord : la corne choisie sonne (sans corne : sifflet du train). */
     void sonner(Player conducteur, Entity controleur) {
         long tick = Bukkit.getCurrentTick();
         Long fin = attente.get(controleur.getUniqueId());
@@ -129,13 +138,29 @@ final class Klaxons implements Listener {
         MusicInstrument instrument = corne != null && corne.getItemMeta() instanceof MusicInstrumentMeta meta
                 ? meta.getInstrument() : null;
         if (!corne(corne) || instrument == null) {
-            plugin.message(conducteur, plugin.t("klaxon.aucun",
-                    "<red>Aucune corne choisie (menu du train, page du contrôleur)"), true);
+            siffler(controleur);
+            attente.put(controleur.getUniqueId(), tick + COUPS * ECART + 6);
             return;
         }
         controleur.getWorld().playSound(controleur, instrument.getSound(), SoundCategory.RECORDS,
                 instrument.getRange() / 16f, 1f);
         attente.put(controleur.getUniqueId(), tick + (long) Math.ceil(instrument.getDuration() * 20));
+    }
+
+    /** 1.4.3 : sifflet par défaut, entendu d'aussi loin qu'une corne de chèvre (`son.portee-klaxon`, 256 blocs). */
+    private void siffler(Entity controleur) {
+        float volume = (float) Math.max(1, plugin.getConfig().getDouble("son.portee-klaxon", 256) / 16);
+        for (int i = 0; i < COUPS; i++) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (!controleur.isValid()) {
+                    return;
+                }
+                for (float note : ACCORD) {
+                    controleur.getWorld().playSound(controleur, Sound.BLOCK_NOTE_BLOCK_FLUTE, SoundCategory.RECORDS,
+                            volume, note);
+                }
+            }, (long) i * ECART);
+        }
     }
 
     // ------------------------------------------------------------------ contenant

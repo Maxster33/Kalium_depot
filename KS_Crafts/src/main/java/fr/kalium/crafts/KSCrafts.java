@@ -215,7 +215,9 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             // 1.17.0 (LeKiwi06) : wagon contrôleur (KS_Trains 1.1.0) : un wagonnet au centre et, en forme de casque
             // (rangée du haut et côtés de celle du wagonnet), un comparateur, un capteur sculk calibré, une lampe à
             // redstone, une ampoule de cuivre (toutes) et un levier, dans n'importe quel ordre, chacun une fois
-            // (vérifié dans onPreparerControleur).
+            // (vérifié dans onPreparerControleur). 1.19.0 (LeKiwi06 : « par cohérence, remplacer le copper bulb par un
+            // note block », le klaxon par défaut du contrôleur étant un sifflet en bloc musical) : bloc musical au lieu
+            // de l'ampoule de cuivre.
             ShapedRecipe controleur = new ShapedRecipe(key("wagon_controleur"),
                     fr.kalium.trains.KSTrains.creerControleur());
             controleur.shape("AAA", "AWA");
@@ -482,16 +484,10 @@ public final class KSCrafts extends JavaPlugin implements Listener {
         ingredients.put(cle, choix);
     }
 
-    /** 1.17.0 : les 5 pièces du wagon contrôleur (toutes les ampoules de cuivre comptent pour une). */
+    /** 1.17.0 : les 5 pièces du wagon contrôleur. 1.19.0 : bloc musical au lieu de l'ampoule de cuivre. */
     private static List<Material> piecesControleur() {
-        List<Material> pieces = new ArrayList<>(List.of(Material.COMPARATOR, Material.CALIBRATED_SCULK_SENSOR,
-                Material.REDSTONE_LAMP, Material.LEVER));
-        for (Material m : Material.values()) {
-            if (!m.isLegacy() && m.isItem() && m.name().endsWith("COPPER_BULB")) {
-                pieces.add(m);
-            }
-        }
-        return pieces;
+        return List.of(Material.COMPARATOR, Material.CALIBRATED_SCULK_SENSOR, Material.REDSTONE_LAMP,
+                Material.NOTE_BLOCK, Material.LEVER);
     }
 
     /** 1.17.0 : wagon contrôleur seulement si chacune des 5 pièces est là une fois (pas 5 comparateurs). */
@@ -505,8 +501,7 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             if (objet == null || objet.isEmpty() || objet.getType() == Material.MINECART) {
                 continue;
             }
-            String piece = objet.getType().name().endsWith("COPPER_BULB") ? "COPPER_BULB" : objet.getType().name();
-            if (!vues.add(piece)) {
+            if (!vues.add(objet.getType().name())) {
                 event.getInventory().setResult(null);
                 return;
             }
