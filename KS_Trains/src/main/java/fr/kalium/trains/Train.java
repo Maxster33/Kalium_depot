@@ -41,6 +41,8 @@ final class Train {
     Location arret;
     /** Dernière position du wagon qui mène sur un rail (s'il déraille, il y revient). */
     Location surRail;
+    /** 1.4.4 : place de chaque wagon au moment où le train s'est arrêté (il y est maintenu tant qu'il est arrêté). */
+    final java.util.Map<java.util.UUID, Location> places = new java.util.HashMap<>();
     /** Tick depuis lequel le train est arrêté (chunks gardés chargés encore une minute). */
     long arreteDepuis;
     /** Ticks passés sans avancer alors qu'il devrait rouler (bloqué contre un obstacle). */

@@ -452,6 +452,8 @@ Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
 
+**Ajout (17/10/2026, 23:57) : KS_Trains 1.4.4 compilé, non déployé.** Corrige la 1.4.3 sur Event : erreur à chaque tick dans la console (`Quaternionf.dot` absent de JOML 1.10.9 du serveur), modèles agrandis jamais orientés, et suite des tâches coupée (collisions, entonnoirs, chunks, autres trains) ; train arrêté : chaque wagon retenu à sa place d'arrêt (entassement en pente après une marche arrière en montée).
+
 **Ajout (17/10/2026, 10:20) : KS_Trains 1.4.3 et KS_Crafts 1.19.0 envoyés sur Event (tests) ; actifs depuis le redémarrage du 17/10 à 23:42 (journal lu : aucune erreur), non testés en jeu.** Jars en place (KS_Trains 1.4.1, KS_Crafts 1.18.0) vérifiés identiques à `jars-deployes/` avant l'envoi et rangés dans `_removed-ks_trains-1.4.1/` (avec l'ancien `config.yml`, identique à celui par défaut de la 1.4.1) et `_removed-ks_crafts-1.18.0/` ; jars et `config.yml` du serveur vérifiés identiques après l'envoi.
 
 **Ajout (17/10/2026, 05:58) : KS_Trains 1.4.3 complété et KS_Crafts 1.19.0 compilés, non déployés.** Départ refusé sous 3 blocs/s ; un train plafonné paie le niveau qu'il atteint ; portée des sons (sifflet 128 blocs, souffle 64) ; messages gardés 3 s avant le retour du tableau du conducteur ; klaxon par défaut (sifflet en bloc musical) ; recette du contrôleur : bloc musical au lieu de l'ampoule de cuivre (KS_Crafts 1.19.0).

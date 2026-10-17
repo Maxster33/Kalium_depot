@@ -1750,6 +1750,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
             train.avancer(ici, train.wagons.size() * espacement + 3);
             if (train.vitesse > 0) {
                 train.arret = null;
+                train.places.clear();
                 train.arreteDepuis = tick;
                 meneur.setVelocity(train.direction().multiply(train.vitesse));
             } else {
@@ -1796,6 +1797,21 @@ public final class KSTrains extends JavaPlugin implements Listener {
         for (int k = 1; k < train.wagons.size(); k++) {
             Minecart wagon = train.suiveur(k);
             Vector cible = train.point(devant, k * espacement);
+            boolean arrete = train.vitesse <= 0;
+            if (arrete) {
+                // 1.4.4 (LeKiwi06 : « l'arrêt en pente en marche arrière produit le même souci qu'il y avait avant en
+                // marche avant », wagons entassés et blocs qui bougent, en reculant en montée) : train arrêté, chaque
+                // wagon est maintenu à la place qu'il avait au moment de l'arrêt, sans dépendre du trajet (en marche
+                // arrière, juste après le changement de sens, le trajet est refait sur la position des wagons et peut
+                // être trop court ou tassé : des wagons n'étaient plus retenus ou étaient remis au mauvais endroit).
+                Location place = train.places.computeIfAbsent(wagon.getUniqueId(), u -> wagon.getLocation());
+                if (wagon.getLocation().distanceSquared(place) > 0.0025) {
+                    wagon.teleport(place, TeleportFlag.EntityState.RETAIN_PASSENGERS);
+                }
+                wagon.setVelocity(new Vector());
+                precedente = place.toVector();
+                continue;
+            }
             if (cible == null && !prolonge) {
                 // 1.4.0 (démêlage) : trajet trop court (wagons tassés ou trop écartés) : prolongé le long des rails.
                 prolonge = true;
@@ -1811,8 +1827,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
             // pente, le jeu pousse chaque wagonnet vers le bas (0,0078 bloc/tick à chaque tick, lu dans le code du jeu
             // 26.3, NewMinecartBehavior.calculateSlopeSpeed ; sans lien avec la gravité). Train arrêté : chaque wagon est
             // remis à sa place dès qu'il s'en écarte de plus de 0,05 bloc (avant : seulement poussé vers elle, il glissait).
-            boolean arrete = train.vitesse <= 0;
-            if (ecart.lengthSquared() > 2.25 || (arrete && ecart.lengthSquared() > 0.0025)) {
+            if (ecart.lengthSquared() > 2.25) {
                 Location place = cible.toLocation(monde);
                 Vector sens = precedente.clone().subtract(cible);
                 if (sens.lengthSquared() > 1e-6) {
@@ -1822,7 +1837,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 wagon.teleport(place, TeleportFlag.EntityState.RETAIN_PASSENGERS);
                 wagon.setVelocity(new Vector());
             } else {
-                wagon.setVelocity(arrete ? new Vector() : ecart);
+                wagon.setVelocity(ecart);
             }
             precedente = cible;
         }

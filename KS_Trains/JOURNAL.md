@@ -70,3 +70,25 @@ Compilé le 17/10/2026 (`sortie/KS_Trains-1.4.3.jar`). **Statut : non déployé,
 **Déployé sur Event le 17/10/2026 à 10:20 (LeKiwi06 : « oui envoie sur event ») : envoi groupé KS_Trains 1.4.3 (+ `config.yml`) et KS_Crafts 1.19.0 ; jar en place (1.4.1) vérifié identique à la référence avant l'envoi, rangé dans `_removed-ks_trains-1.4.1/` ; jar du serveur vérifié identique à celui compilé. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
 
 **Actif sur Event depuis son redémarrage du 17/10/2026 à 23:42 (journal lu, heures en UTC : 21:42) : KS_Trains 1.4.3 activé sans erreur ni avertissement (après KS_Claim et KLM_Contacts), démarrage en 13 s. Statut : non testé en jeu.**
+
+## 1.4.4 - console qui spamme, modèles de four, train arrêté en pente après une marche arrière (17/10/2026, LeKiwi06)
+
+Signalements de LeKiwi06 sur Event (1.4.3) : « pourquoi la console de Event spamme autant ? », « les modèles de four sont
+très buggués aussi » (capture : blocs à leur taille et orientation par défaut), « l'arrêt en pente en marche arrière
+produit le même souci qu'il y avait avant en marche avant » (en reculant en montée : wagons entassés, blocs qui bougent),
+« quand j'ai lancé le train après ce bug, il s'est retourné et a démarré dans l'autre sens en se dépliant du tassage ».
+
+- **Cause de la console** (défaut de la 1.4.2) : `Quaternionf.dot(Quaternionf)` existe dans JOML 1.10.8 (bibliothèque
+  de compilation) mais plus dans JOML 1.10.9 (celle du serveur Paper 26.3) : `NoSuchMethodError` à chaque tick
+  (4 155 erreurs en 12 minutes, journal de 5,8 Mo). Les modèles agrandis n'étaient donc jamais orientés ni réduits.
+  L'erreur coupait aussi la suite des tâches : chaque seconde, fours allumés, boussole et chunks gardés chargés après le
+  premier wagon ; à chaque tick d'un train qui roule, collisions et wagons entonnoirs, et tous les trains suivants
+  (plus déplacés ni retenus en pente). **Correction** : produit scalaire calculé dans le plugin. Tous les autres appels
+  à JOML vérifiés présents dans la 1.10.9 du serveur.
+- **Train arrêté** : chaque wagon est maintenant retenu à la place qu'il avait au moment de l'arrêt (remis en place dès
+  qu'il s'en écarte de plus de 0,05 bloc), sans dépendre du trajet. En marche arrière, juste après le changement de
+  sens, le trajet est refait sur la position des wagons et peut être trop court : des wagons n'étaient plus retenus.
+  Cause exacte de l'entassement non prouvée (l'erreur ci-dessus a pu y contribuer) ; le retournement au redémarrage en
+  découlait (trajet refait sur des wagons entassés).
+
+Compilé le 17/10/2026 (`sortie/KS_Trains-1.4.4.jar`), `config.yml` inchangé. **Statut : non déployé, non testé en jeu.**

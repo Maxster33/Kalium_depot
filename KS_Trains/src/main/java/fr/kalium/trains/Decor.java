@@ -140,7 +140,11 @@ final class Decor {
         Vector3f demi = rotation.transform(new Vector3f(taille / 2, taille / 2, taille / 2), new Vector3f());
         Vector3f decalage = new Vector3f(-demi.x, hauteur + taille / 2 - demi.y, -demi.z);
         Transformation actuelle = modele.getTransformation();
-        if (Math.abs(actuelle.getLeftRotation().dot(rotation)) > Math.cos(Math.toRadians(0.25))
+        // 1.4.4 : produit scalaire calculé ici : Quaternionf.dot(Quaternionf) de JOML 1.10.8 (compilation) n'existe plus
+        // dans JOML 1.10.9 (serveur Paper 26.3) : erreur à chaque tick dans la console, modèles jamais orientés.
+        Quaternionf avant = actuelle.getLeftRotation();
+        float dot = avant.x * rotation.x + avant.y * rotation.y + avant.z * rotation.z + avant.w * rotation.w;
+        if (Math.abs(dot) > Math.cos(Math.toRadians(0.25))
                 && Math.abs(actuelle.getScale().x - taille) < 1e-4
                 && actuelle.getTranslation().distance(decalage) < 1e-3) {
             return;
