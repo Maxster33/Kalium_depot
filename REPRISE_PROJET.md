@@ -96,6 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Trains 1.4.1** (LeKiwi06, 17/10/2026) : percussion qui projette très haut (1,5 bloc/tick à pleine vitesse) ; **compilé, non déployé** (Event en 1.4.0).
 - **KS_Trains 1.4.0 + KLM_Contacts 1.3.0** (LeKiwi06, 17/10/2026) : **sur Event depuis le 17/10 à 03:52 pour les tests** ; pas sur Kixster ; KLM_Contacts 1.2.0 sur les autres serveurs. Détail : `KS_Trains/JOURNAL.md`.
 - **KS_Crafts 1.18.0 + KS_VerrouVehicule 1.1.1** (LeKiwi06, 16/10/2026) : **sur Event depuis le 16/10 à 22:18 pour les tests** ; pas sur Kixster (KS_VerrouVehicule 1.0.0, KS_Crafts 1.15.0 y restent). Détail : `KS_Trains/JOURNAL.md`.
 - **KS_LaisseBateau 1.0.0 (nouveau)** (LeKiwi06, 14/10/2026) : laisse de 3 blocs entre deux bateaux ; **sur Event depuis le 16/10 à 20:00 pour les tests**, prévu pour Kixster (pas encore envoyé). Détail : `KS_LaisseBateau/JOURNAL.md`.
@@ -450,6 +451,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (17/10/2026, 04:13) : KS_Trains 1.4.1 compilé, non déployé.** Percussion : les entités sont envoyées très haut comme par le dragon (signalé par LeKiwi06 : elles ne l'étaient presque pas).
 
 **Ajout (17/10/2026, 04:00) : journal d'Event lu après le redémarrage de 03:57 : KLM_Contacts 1.3.0 et KS_Trains 1.4.0 activés sans erreur.** Tests de LeKiwi06 à venir (partage entre amis, menu à bord, départ en gare).
 

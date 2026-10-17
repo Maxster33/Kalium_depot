@@ -1057,7 +1057,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
 
     /**
      * Poussée du dragon (lue dans le code du jeu 26.3, EnderDragon.knockBack) : 4 x écart / distance² à l'horizontale,
-     * 0,2 vers le haut, depuis le centre du wagon ; multipliée par vitesse / vitesse maximale (1 à 20 blocs/s).
+     * depuis le centre du wagon ; multipliée par vitesse / vitesse maximale (1 à 20 blocs/s). 1.4.1 : montée renforcée.
      */
     private boolean projeter(Train train, Minecart wagon, Entity vivant) {
         Long avant = projetees.get(vivant.getUniqueId());
@@ -1069,7 +1069,19 @@ public final class KSTrains extends JavaPlugin implements Listener {
         double dx = vivant.getX() - wagon.getX();
         double dz = vivant.getZ() - wagon.getZ();
         double carre = Math.max(dx * dx + dz * dz, 0.1);
-        vivant.setVelocity(vivant.getVelocity().add(new Vector(dx / carre * 4 * force, 0.2, dz / carre * 4 * force)));
+        // 1.4.1 (LeKiwi06 : « le train ne repousse pas correctement, j'aimerais qu'il envoie très haut comme le
+        // dragon ») : le dragon pousse à chaque tick tant qu'on est sous ses ailes (la montée de 0,2 s'additionne) ;
+        // le train ne pousse qu'une fois : montée de `percussion.hauteur` (1,5 bloc/tick, une douzaine de blocs) à
+        // pleine vitesse, 0,4 au pas ; poussée horizontale du dragon plafonnée à `percussion.horizontal` (3 blocs/tick).
+        Vector horizontal = new Vector(dx / carre * 4 * force, 0, dz / carre * 4 * force);
+        double plafond = reglage("percussion.horizontal", 3.0);
+        if (horizontal.length() > plafond) {
+            horizontal.normalize().multiply(plafond);
+        }
+        double haut = 0.4 + (reglage("percussion.hauteur", 1.5) - 0.4) * force;
+        Vector actuelle = vivant.getVelocity();
+        vivant.setVelocity(new Vector(actuelle.getX() + horizontal.getX(), Math.max(actuelle.getY(), 0) + haut,
+                actuelle.getZ() + horizontal.getZ()));
         return true;
     }
 
