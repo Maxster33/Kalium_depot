@@ -18,20 +18,30 @@ Signalement de LeKiwi06 (vidéo sur Event) : « le bloc bouge dans tous les sens
 
 Compilé le 17/10/2026 (`sortie/KS_Trains-1.4.2.jar`). **Statut : non déployé, non testé en jeu.**
 
-## 1.4.3 - surcharge : les fours consomment plus avec les longs trains (17/10/2026, LeKiwi06)
+## 1.4.3 - consommation et vitesse selon la charge du train (17/10/2026, LeKiwi06)
 
 Demande de LeKiwi06 : « à partir de 8 wagons (5 en plus de la locomotive), chaque nouveau wagon ajouté fait consommer
 davantage tous les fours du train, mais je ne sais pas comment formuler mathématiquement cette augmentation pour pas
-qu'elle soit inutile ou trop punitive ». Claude a comparé 4 formules sur des trains types (linéaire 3 % et 5 %, racine,
-charge partagée) ; choix de LeKiwi06 : « D, avec 10 % ».
+qu'elle soit inutile ou trop punitive ». Premier choix sur tableau comparatif : « D, avec 10 % » (charge partagée au-delà
+de 7 wagons). Puis : « rendre le nombre de fours plus significatif », « si le train est moins chargé [...] les fours
+consomment moins », « le train passe systématiquement de ne bouge pas à maximum de vitesse, il faudrait rendre ça plus
+progressif » et « plus il y a de wagons, plus il faut de fours ». Choix final sur tableaux comparatifs : « proportionnel
+au carré, M3, sous charge à 0,5, et surcharge à 30 % ». La formule D n'a jamais été déployée.
 
-- **Formule** : chaque four alimenté consomme **1 + 10 % x (wagons - 7) / fours alimentés** fois plus (en plus du
-  coefficient du niveau). La surcharge est partagée entre les fours : en ajouter un allège la peine de tous.
-- Exemples (niveau 2, charbon brûlé par tout le train sur 1 000 blocs, juste assez de fours) : 8 wagons (3 fours)
-  x1,03 = 39 ; 15 wagons (3) x1,27 = 48 (avant 38) ; 25 wagons (4) x1,45 = 72 (avant 50) ; 45 wagons (6) x1,63 = 122
-  (avant 75) ; 64 wagons (8) x1,71 = 171 (avant 100).
+- **Charge** = wagons / traction (traction : 15 pour la locomotive alimentée, +10 par autre four alimenté).
+- **Consommation de chaque four alimenté** (en plus du coefficient du niveau) : charge <= 1 : **racine(charge)**, au
+  moins **0,5** ; charge > 1 : **racine(charge) x (1 + 30 % x wagons en trop / fours alimentés)**.
+- **Vitesse maximale** : 1 bloc/tick x **(traction / wagons)²** quand le train a plus de wagons que sa traction (avant :
+  -0,1 bloc/tick par wagon en trop, le train passait de l'arrêt à la pleine vitesse en ajoutant un four).
+- Le nombre de fours le plus économe à pleine vitesse est toujours celui juste nécessaire (3 jusqu'à 15 wagons, puis un
+  de plus tous les 10 wagons) : plus il y a de wagons, plus il faut de fours (vérifié par simulation de 1 à 64 wagons).
+- Exemples (niveau 2, charbon brûlé par tout le train sur 1 000 blocs) : 8 wagons et 3 fours x0,73 = 27 (avant 38) ;
+  15 wagons et 3 fours x1,00 = 38 ; 20 wagons et 3 fours x1,73 = 65 à 56 % de la vitesse, avec 4 fours x0,89 = 45 à
+  pleine vitesse ; 45 wagons et 6 fours = 75 ; 64 wagons et 8 fours = 99 ; 64 wagons et 5 fours x3,71 = 232 à 30 % de
+  la vitesse ; 10 wagons et 6 fours x0,50 = 38.
 - Compris dans l'autonomie affichée au conducteur et dans le carburant brûlé du compteur.
-- `config.yml` : nouvelles clés `surcharge.seuil` (7) et `surcharge.taux` (0,10) ; valeurs par défaut aussi dans le code.
+- `config.yml` : nouvelles clés `charge.plancher` (0,5) et `charge.taux` (0,30) ; clé `perte-par-wagon` retirée ;
+  valeurs par défaut aussi dans le code.
 
 Compilé le 17/10/2026 (`sortie/KS_Trains-1.4.3.jar`). **Statut : non déployé, non testé en jeu.**
 

@@ -1419,9 +1419,11 @@ public final class KSTrains extends JavaPlugin implements Listener {
         if (traction == 0) {
             return 0;
         }
-        double vitesse = reglage("vitesse-max", 1.0)
-                - reglage("perte-par-wagon", 0.1) * Math.max(0, train.wagons.size() - traction);
-        return Math.max(0, vitesse);
+        // 1.4.3 (LeKiwi06, sur tableau comparatif : « proportionnel au carré ») : vitesse maximale x (traction /
+        // wagons)² quand le train a plus de wagons que sa traction (avant : -0,1 bloc/tick par wagon en trop, qui
+        // faisait passer d'un coup de l'arrêt à la pleine vitesse en ajoutant un seul four).
+        double part = Math.min(1, (double) traction / train.wagons.size());
+        return reglage("vitesse-max", 1.0) * part * part;
     }
 
     /** 1.1.0 : touches tenues au dernier envoi, par joueur (pour reconnaître un nouvel appui). */
@@ -1556,15 +1558,22 @@ public final class KSTrains extends JavaPlugin implements Listener {
      */
     /**
      * 1.4.3 (LeKiwi06 : « à partir de 8 wagons, chaque nouveau wagon ajouté fait consommer davantage tous les fours du
-     * train » ; formule choisie sur tableau comparatif : charge partagée, 10 %) : chaque four consomme
-     * 1 + 10 % x (wagons - 7) / fours alimentés : la surcharge est répartie entre les fours (un four de plus allège la
-     * peine de tous). Ex. locomotive seule, 15 wagons : x1,27 ; 64 wagons et 8 fours : x1,71.
+     * train », puis « rendre le nombre de fours plus significatif » et « si le train est moins chargé, les fours
+     * consomment moins » ; modèle choisi sur tableau comparatif : M3 « charge de traction », sous-charge 0,5,
+     * surcharge 30 %). Charge = wagons / traction. Charge <= 1 : chaque four consomme racine(charge), au moins 0,5
+     * (`charge.plancher`) ; charge > 1 : racine(charge) x (1 + 30 % x wagons en trop / fours alimentés)
+     * (`charge.taux`). Le nombre de fours le plus économe à pleine vitesse est toujours celui juste nécessaire
+     * (3 jusqu'à 15 wagons, puis un de plus tous les 10 wagons).
      */
     private double surcharge(Train train) {
-        int seuil = getConfig().getInt("surcharge.seuil", 7);
-        int enTrop = train.wagons.size() - seuil;
-        if (enTrop <= 0) {
+        int traction = traction(train);
+        if (traction <= 0) {
             return 1;
+        }
+        int wagons = train.wagons.size();
+        double charge = (double) wagons / traction;
+        if (charge <= 1) {
+            return Math.max(reglage("charge.plancher", 0.5), Math.sqrt(charge));
         }
         int fours = 0;
         for (Minecart wagon : train.wagons) {
@@ -1572,7 +1581,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 fours++;
             }
         }
-        return 1 + reglage("surcharge.taux", 0.10) * enTrop / Math.max(1, fours);
+        return Math.sqrt(charge) * (1 + reglage("charge.taux", 0.30) * (wagons - traction) / Math.max(1, fours));
     }
 
     private double consommation(int niveau) {

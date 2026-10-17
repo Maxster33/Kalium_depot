@@ -96,7 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-- **KS_Trains 1.4.3** (LeKiwi06, 17/10/2026) : 1.4.2 (modèle agrandi orienté sur l'axe du train) + 1.4.3 (surcharge : chaque four consomme 1 + 10 % x (wagons - 7) / fours alimentés) ; **compilé, non déployé** (Event en 1.4.1).
+- **KS_Trains 1.4.3** (LeKiwi06, 17/10/2026) : 1.4.2 (modèle agrandi orienté sur l'axe du train) + 1.4.3 (consommation selon la charge wagons / traction, plancher 0,5, surcharge 30 % ; vitesse x (traction / wagons)²) ; **compilé, non déployé** (Event en 1.4.1).
 - **KS_Trains 1.4.1 + KLM_Contacts 1.3.0** (LeKiwi06, 17/10/2026) : KS_Trains 1.4.1 (projection à 40 blocs) sur Event depuis le 17/10 à 04:17, KLM_Contacts 1.3.0 **depuis le 17/10 à 03:52 pour les tests** ; pas sur Kixster ; KLM_Contacts 1.2.0 sur les autres serveurs. Détail : `KS_Trains/JOURNAL.md`.
 - **KS_Crafts 1.18.0 + KS_VerrouVehicule 1.1.1** (LeKiwi06, 16/10/2026) : **sur Event depuis le 16/10 à 22:18 pour les tests** ; pas sur Kixster (KS_VerrouVehicule 1.0.0, KS_Crafts 1.15.0 y restent). Détail : `KS_Trains/JOURNAL.md`.
 - **KS_LaisseBateau 1.0.0 (nouveau)** (LeKiwi06, 14/10/2026) : laisse de 3 blocs entre deux bateaux ; **sur Event depuis le 16/10 à 20:00 pour les tests**, prévu pour Kixster (pas encore envoyé). Détail : `KS_LaisseBateau/JOURNAL.md`.
@@ -453,6 +453,8 @@ Détail : `geyser-bedrock/README.md` (Historique).
 ### 2026-10-02 — LeKiwi06
 
 **Ajout (17/10/2026, 04:37) : KS_Trains 1.4.3 compilé, non déployé.** Surcharge des longs trains (formule choisie par LeKiwi06 sur tableau comparatif : charge partagée, 10 % par wagon au-delà de 7, divisé par le nombre de fours alimentés).
+
+**Ajout (17/10/2026, 05:31) : KS_Trains 1.4.3 refait, compilé, non déployé.** La formule de surcharge ci-dessus est remplacée (choix de LeKiwi06 sur tableaux comparatifs : « proportionnel au carré, M3, sous charge à 0,5, et surcharge à 30 % ») : chaque four consomme selon la charge du train (wagons / traction), 0,5 au moins quand il est peu chargé, +30 % par wagon en trop partagé entre les fours ; la vitesse maximale baisse progressivement (traction / wagons au carré) au lieu de passer de l'arrêt à la pleine vitesse.
 
 **Ajout (17/10/2026, 04:27) : KS_Trains 1.4.2 compilé, non déployé.** Le modèle agrandi bougeait dans tous les sens en pente (vidéo de LeKiwi06) : il est maintenant orienté sur l'axe du train (wagons voisins) au lieu du bloc de rail sous lui.
 
