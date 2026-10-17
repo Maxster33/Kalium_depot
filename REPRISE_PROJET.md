@@ -96,7 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-- **KS_Trains 1.3.9** (LeKiwi06, 17/10/2026) : train arrêté en pente, les wagons sont tenus à leur place (ils glissaient et s'entassaient) ; **compilé, non déployé** (Event en 1.3.8).
+- **KS_Trains 1.4.0 + KLM_Contacts 1.3.0** (LeKiwi06, 17/10/2026) : propriétaire du train et ses amis (contenants protégés, autres = passagers), 64 wagons, un seul train chargé par joueur (le dernier lancé, tant qu'il roule), boutons niveau / klaxon dans le menu, départ en gare, autonomie, nom du train, démêlage, `decor.actif` ; contient la 1.3.9 ; **compilés, non déployés** (Event en KS_Trains 1.3.8, KLM_Contacts 1.2.0). Détail : `KS_Trains/JOURNAL.md`.
 - **KS_Trains 1.3.8** (LeKiwi06, 17/10/2026) : **sur Event depuis le 17/10 à 02:41 pour les tests** (contient les 1.3.1 à 1.3.7 : wagons incassables, décor, accélération progressive, percussions, virages, rails propulseurs, son, compteur, jukebox, panne de carburant, pentes, fours tournés) ; pas sur Kixster. Détail : `KS_Trains/JOURNAL.md`.
 - **KS_Crafts 1.18.0 + KS_VerrouVehicule 1.1.1** (LeKiwi06, 16/10/2026) : **sur Event depuis le 16/10 à 22:18 pour les tests** ; pas sur Kixster (KS_VerrouVehicule 1.0.0, KS_Crafts 1.15.0 y restent). Détail : `KS_Trains/JOURNAL.md`.
 - **KS_LaisseBateau 1.0.0 (nouveau)** (LeKiwi06, 14/10/2026) : laisse de 3 blocs entre deux bateaux ; **sur Event depuis le 16/10 à 20:00 pour les tests**, prévu pour Kixster (pas encore envoyé). Détail : `KS_LaisseBateau/JOURNAL.md`.
@@ -451,6 +451,8 @@ LeKiwi06.**)*
 Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
+
+**Ajout (17/10/2026, 03:47) : KS_Trains 1.4.0 et KLM_Contacts 1.3.0 compilés, non déployés.** Les 8 propositions de Claude acceptées par LeKiwi06 : propriétaire et amis, 64 wagons, un train chargé par joueur, menu de secours Bedrock, départ en gare, autonomie, nom du train, démêlage, décor désactivable. KLM_Contacts expose la liste d'amis aux autres plugins.
 
 **Ajout (17/10/2026, 03:00) : KS_Trains 1.3.9 compilé, non déployé.** Train arrêté en pente : les wagons glissaient et s'entassaient (capture de LeKiwi06) ; ils sont maintenant tenus à leur place.
 

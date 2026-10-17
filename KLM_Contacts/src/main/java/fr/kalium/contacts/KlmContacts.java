@@ -49,9 +49,32 @@ public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Li
     private String monServeur;
     /** 1.2.0 : instant d'arrivée de chaque joueur sur ce serveur. */
     private final Map<java.util.UUID, Long> arrivees = new java.util.HashMap<>();
+    /** 1.3.0 : amis des joueurs connectés (API Amis), demandés à l'arrivée puis chaque minute. */
+    private final Map<java.util.UUID, java.util.Set<java.util.UUID>> amis = new java.util.HashMap<>();
+    private static KlmContacts instance;
+
+    /** 1.3.0 : le plugin activé, ou null. */
+    public static KlmContacts instance() {
+        return instance;
+    }
+
+    /** 1.3.0 : vrai si {@code autre} est dans la liste d'amis (en mémoire) de {@code joueur}, connecté ici. */
+    public boolean ami(java.util.UUID joueur, java.util.UUID autre) {
+        java.util.Set<java.util.UUID> liste = amis.get(joueur);
+        return liste != null && liste.contains(autre);
+    }
+
+    private void retenirAmis(Player joueur) {
+        relais.amis(joueur, liste -> {
+            if (liste != null && joueur.isOnline()) {
+                amis.put(joueur.getUniqueId(), liste);
+            }
+        });
+    }
 
     @Override
     public void onEnable() {
+        instance = this;
         saveDefaultConfig();
         lang = new Lang(this);
         relais = new Relais(this);
@@ -108,6 +131,9 @@ public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Li
             }
         });
         getServer().getPluginManager().registerEvents(this, this);
+        // 1.3.0 : listes d'amis en mémoire (joueurs déjà connectés au rechargement, puis chaque minute).
+        getServer().getScheduler().runTaskTimer(this, () -> getServer().getOnlinePlayers().forEach(this::retenirAmis),
+                20L, 1200L);
         lang.saveIfNeeded();
         if (getConfig().getString("relay-token", "").isBlank()) {
             getLogger().warning("relay-token est vide dans config.yml : les contacts sont indisponibles tant qu'il n'est pas "
@@ -121,6 +147,12 @@ public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Li
     public void onJoin(org.bukkit.event.player.PlayerJoinEvent event) {
         Player joueur = event.getPlayer();
         arrivees.put(joueur.getUniqueId(), System.currentTimeMillis());
+        // 1.3.0 : sa liste d'amis, 3 s après son arrivée.
+        getServer().getScheduler().runTaskLater(this, () -> {
+            if (joueur.isOnline()) {
+                retenirAmis(joueur);
+            }
+        }, 60L);
         if (monServeur == null && !getConfig().getString("relay-token", "").isBlank()) {
             // Nom de ce serveur pour le proxy : demandé une fois, quand un joueur est là (2 s après son arrivée).
             getServer().getScheduler().runTaskLater(this, () -> {
@@ -138,6 +170,7 @@ public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Li
     @org.bukkit.event.EventHandler
     public void onQuit(org.bukkit.event.player.PlayerQuitEvent event) {
         arrivees.remove(event.getPlayer().getUniqueId());
+        amis.remove(event.getPlayer().getUniqueId());
     }
 
     private fr.kalium.contacts.api.JeuDeGroupe jeu(String id) {

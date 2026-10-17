@@ -206,6 +206,28 @@ final class Relais {
         });
     }
 
+    /** 1.3.0 : identifiants des amis du joueur, demandés en arrière-plan (null si le relais est indisponible). */
+    void amis(Player joueur, Consumer<java.util.Set<UUID>> suite) {
+        appelerEnSilence(joueur, "list", Map.of(), reponse -> {
+            if (reponse == null || !reponse.ok()) {
+                suite.accept(null);
+                return;
+            }
+            java.util.Set<UUID> amis = new java.util.HashSet<>();
+            for (String ligne : reponse.lignes()) {
+                String[] c = ligne.split("\t", -1);
+                if (c.length > 1 && c[0].equals("F")) {
+                    try {
+                        amis.add(UUID.fromString(c[1]));
+                    } catch (IllegalArgumentException e) {
+                        // ligne incomplète : ignorée
+                    }
+                }
+            }
+            suite.accept(amis);
+        });
+    }
+
     /** Liste complète du joueur (amis et leur serveur, demandes, bloqués, réglages), ou null si indisponible. */
     void lister(Player joueur, Consumer<Liste> suite) {
         appeler(joueur, "list", Map.of(), reponse -> {

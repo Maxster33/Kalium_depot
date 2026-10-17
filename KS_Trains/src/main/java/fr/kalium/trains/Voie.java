@@ -66,6 +66,48 @@ final class Voie {
         };
     }
 
+    /** 1.4.0 : position d'un wagonnet posé sur ce rail (centre du bloc ; à mi-hauteur sur une pente). */
+    static Vector centre(Block rail) {
+        boolean pente = rail.getBlockData() instanceof Rail donnees && donnees.getShape().name().startsWith("ASCENDING");
+        return rail.getLocation().toVector().add(new Vector(0.5, pente ? 0.5625 : 0.0625, 0.5));
+    }
+
+    /**
+     * 1.4.0 (démêlage) : centres des {@code blocs} rails suivants, en partant de {@code depart} dans la direction
+     * {@code sens} (le rail de départ non compris) ; s'arrête au bout des rails.
+     */
+    static java.util.List<Vector> suivre(Block depart, Vector sens, int blocs) {
+        java.util.List<Vector> points = new java.util.ArrayList<>();
+        Block ici = depart;
+        int[] arrivee = null;
+        for (int pas = 0; pas < blocs && ici != null; pas++) {
+            if (!(ici.getBlockData() instanceof Rail donnees)) {
+                break;
+            }
+            int[][] sorties = sorties(donnees.getShape());
+            int[] sortie;
+            if (arrivee == null) {
+                double a = sorties[0][0] * sens.getX() + sorties[0][2] * sens.getZ();
+                double b = sorties[1][0] * sens.getX() + sorties[1][2] * sens.getZ();
+                sortie = a >= b ? sorties[0] : sorties[1];
+            } else {
+                boolean premiere = sorties[0][0] == -arrivee[0] && sorties[0][2] == -arrivee[2];
+                sortie = premiere ? sorties[1] : sorties[0];
+            }
+            Block suivant = ici.getRelative(sortie[0], sortie[1], sortie[2]);
+            if (!Tag.RAILS.isTagged(suivant.getType())) {
+                suivant = suivant.getRelative(BlockFace.DOWN);
+                if (!Tag.RAILS.isTagged(suivant.getType())) {
+                    break;
+                }
+            }
+            points.add(centre(suivant));
+            arrivee = sortie;
+            ici = suivant;
+        }
+        return points;
+    }
+
     /**
      * Vrai si un rail courbe se trouve sur les {@code blocs} prochains rails devant {@code depart}, en partant dans la
      * direction {@code sens} (direction de la marche).

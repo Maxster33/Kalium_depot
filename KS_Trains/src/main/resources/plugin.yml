@@ -5,4 +5,4 @@ api-version: '26.2'
 description: Trains de wagonnets - locomotive, attelage a la chaine, wagons qui se suivent, carburant, menu du train.
 authors: [KaLium]
 depend: [KLM_Menu]
-softdepend: [KS_Claim, KS_VerrouVehicule]
+softdepend: [KS_Claim, KS_VerrouVehicule, KLM_Contacts]

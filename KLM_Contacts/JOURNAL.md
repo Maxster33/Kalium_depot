@@ -89,3 +89,16 @@ Empilé sur la 1.1.0 non testée : accord explicite.
 - Le plugin demande une fois au proxy le nom Velocity de son serveur (au premier joueur connecté).
 
 **À déployer avec KaliumRelay 1.8.0** ; les jeux suivent avec KalGames 1.25.0, KG_Bingo 1.10.0 et KG_BuildBattle 0.5.0. **Déployé sur les 6 serveurs Paper le 09/10/2026 à 06:50 (LeKiwi06 ; 1.1.0 dans `_removed-klm_contacts-1.1.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.3.0 - amis lisibles par les autres plugins (17/10/2026, LeKiwi06)
+
+Pour KS_Trains 1.4.0 (LeKiwi06 : un train se partage avec les amis de son propriétaire, « Amis (KLM_Contacts) »).
+
+- La liste d'amis de chaque joueur connecté est gardée en mémoire : demandée au proxy 3 s après son arrivée, puis chaque
+  minute (en arrière-plan, sans message au joueur si le relais est indisponible), oubliée à son départ. Un ami ajouté
+  ou retiré compte au plus tard une minute après.
+- Nouvelle classe `fr.kalium.contacts.api.Amis` : `sontAmis(joueur, autre)` (joueur connecté sur ce serveur).
+- Rien ne change pour les joueurs ; une demande « list » de plus au proxy par joueur et par minute.
+
+Compilé le 17/10/2026 (`sortie/KLM_Contacts-1.3.0.jar`). **À déployer avec KS_Trains 1.4.0 (Event d'abord).** Les autres
+serveurs peuvent garder la 1.2.0 (rien d'autre ne change). **Statut : non déployé, non testé en jeu.**

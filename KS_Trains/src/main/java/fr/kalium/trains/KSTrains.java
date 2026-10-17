@@ -100,6 +100,12 @@ import java.util.UUID;
  * train ; deux trains qui se heurtent : celui qui roule s'arrête), wagons plus écartés (1,4 bloc) et arrêtés net quand on
  * les dételle, carburant des entonnoirs mieux réparti (Entonnoirs), chargement agrandi pour Java et fumée de la
  * locomotive (Decor), klaxons du wagon contrôleur (Klaxons), wagon jukebox (Jukebox), boussole du train (Boussoles).
+ *
+ * 1.4.0 (propositions de Claude acceptées par LeKiwi06 le 17/10/2026) : propriétaire du train (celui qui pose la
+ * locomotive) et ses amis de KLM_Contacts ont seuls accès au train (les autres montent comme passagers), 64 wagons au
+ * plus, un seul train chargé par joueur (le dernier lancé, tant qu'il roule, zone la plus petite possible), boutons
+ * niveau / klaxon dans le menu, départ automatique quand le rail propulseur est alimenté, autonomie affichée au
+ * conducteur, nom du train (étiquette), démêlage d'un trajet tassé, réglage `decor.actif`.
  */
 public final class KSTrains extends JavaPlugin implements Listener {
 
@@ -126,6 +132,13 @@ public final class KSTrains extends JavaPlugin implements Listener {
     private Klaxons klaxons;
     private Jukebox jukebox;
     private Boussoles boussoles;
+    /** 1.4.0 : propriétaire du train (dans ses fours de locomotive), son pseudo, et nom du train. */
+    private NamespacedKey cleProprio;
+    private NamespacedKey cleProprioNom;
+    private NamespacedKey cleNomTrain;
+    private boolean contacts;
+    /** 1.4.0 : dernier train mis en route par chaque propriétaire (le seul dont les chunks restent chargés). */
+    private final Map<UUID, UUID> dernierLance = new HashMap<>();
     /** 1.3.4 : compteur kilométrique (blocs) et carburant brûlé (blocs de réserve) d'un four de locomotive. */
     private NamespacedKey cleCompteur;
     private NamespacedKey cleBrule;
@@ -162,6 +175,10 @@ public final class KSTrains extends JavaPlugin implements Listener {
         cleControleur = new NamespacedKey(this, "controleur");
         cleJukeboxObjet = new NamespacedKey(this, "jukebox-objet");
         cleCompteur = new NamespacedKey(this, "compteur");
+        cleProprio = new NamespacedKey(this, "proprietaire");
+        cleProprioNom = new NamespacedKey(this, "proprietaire-nom");
+        cleNomTrain = new NamespacedKey(this, "nom");
+        contacts = getServer().getPluginManager().isPluginEnabled("KLM_Contacts");
         cleBrule = new NamespacedKey(this, "brule");
         cleJukebox = new NamespacedKey(this, "jukebox");
         lang = new Lang(this);
@@ -573,7 +590,10 @@ public final class KSTrains extends JavaPlugin implements Listener {
             wagons.add(rail.getWorld().spawn(place, PoweredMinecart.class,
                     w -> w.getPersistentDataContainer().set(cleLoco, PersistentDataType.BYTE, (byte) 1)));
         }
-        former(wagons);
+        Train nouveau = former(wagons);
+        if (nouveau != null) {
+            reclamer(nouveau, joueur);
+        }
         if (joueur.getGameMode() != GameMode.CREATIVE) {
             objet.setAmount(objet.getAmount() - 1);
         }
@@ -617,11 +637,30 @@ public final class KSTrains extends JavaPlugin implements Listener {
             }
             return;
         }
+        Train train = trainDe(wagon);
+        // 1.4.0 : les autres joueurs ne font que monter dans les wagonnets simples (voyageurs).
+        boolean voyageur = wagon instanceof RideableMinecart && !estControleur(wagon) && !estJukebox(wagon)
+                && !joueur.isSneaking() && objet.getType() != Material.SHEARS;
+        if (train != null && !voyageur && !acces(joueur, train)) {
+            event.setCancelled(true);
+            if (main) {
+                refuser(joueur, train);
+            }
+            return;
+        }
         if (objet.getType() == Material.COMPASS && estControleur(wagon)) {
             // 1.3.0 : boussole du train.
             event.setCancelled(true);
             if (main) {
-                boussoles.lier(joueur, wagon, objet);
+                boussoles.lier(joueur, wagon, objet, train == null ? null : nomTrain(train));
+            }
+            return;
+        }
+        if (objet.getType() == Material.NAME_TAG && train != null && estLoco(wagon)) {
+            // 1.4.0 : nom du train.
+            event.setCancelled(true);
+            if (main) {
+                nommer(joueur, train, objet);
             }
             return;
         }
@@ -633,7 +672,6 @@ public final class KSTrains extends JavaPlugin implements Listener {
             }
             return;
         }
-        Train train = trainDe(wagon);
         if (train == null) {
             return;
         }
@@ -746,6 +784,17 @@ public final class KSTrains extends JavaPlugin implements Listener {
         List<Minecart> reference = aLocomotive(la) ? la : aLocomotive(lb) ? lb : la.size() >= lb.size() ? la : lb;
         if (reference.size() > 1 && rangDans(resultat, reference.get(0)) > rangDans(resultat, reference.get(1))) {
             Collections.reverse(resultat);
+        }
+        // 1.4.0 : on n'attelle qu'à un train auquel on a accès, et 64 wagons au plus.
+        for (Train morceau : new Train[]{ta, tb}) {
+            if (morceau != null && refuser(joueur, morceau)) {
+                return;
+            }
+        }
+        int maximum = getConfig().getInt("wagons-max", 64);
+        if (resultat.size() > maximum) {
+            Contenant.message(joueur, t("atteler.trop", "<red>Un train a <n> wagons au plus", "n", maximum), true);
+            return;
         }
         Component refus = refusControleur(resultat);
         if (refus != null) {
@@ -902,6 +951,46 @@ public final class KSTrains extends JavaPlugin implements Listener {
     public void onMonter(VehicleEnterEvent event) {
         if (estJukebox(event.getVehicle()) && !decor.estDecor(event.getEntered())) {
             event.setCancelled(true);
+        } else if (estControleur(event.getVehicle()) && event.getEntered() instanceof Player joueur
+                && refuser(joueur, trainDe(event.getVehicle()))) {
+            // 1.4.0 : seuls le propriétaire et ses amis conduisent.
+            event.setCancelled(true);
+        }
+    }
+
+    /** 1.4.0 : coffres et entonnoirs d'un train : ouverts par le propriétaire et ses amis seulement. */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onOuvrirWagon(org.bukkit.event.inventory.InventoryOpenEvent event) {
+        if (event.getInventory().getHolder(false) instanceof Minecart wagon && event.getPlayer() instanceof Player joueur
+                && refuser(joueur, trainDe(wagon))) {
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * 1.4.0 (« il faut protéger tous les contenants du train ») : un entonnoir posé au sol ou un wagonnet à entonnoir
+     * hors du train ne vide pas un wagon de train (les entonnoirs du train, eux, passent par Entonnoirs).
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onViderWagon(org.bukkit.event.inventory.InventoryMoveItemEvent event) {
+        if (event.getSource().getHolder(false) instanceof Minecart wagon && trainDe(wagon) != null) {
+            event.setCancelled(true);
+        }
+    }
+
+    /** 1.4.0 (conduite sur Bedrock) : à bord du wagon contrôleur, clic droit main vide : menu du train. */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onClicABord(PlayerInteractEvent event) {
+        Player joueur = event.getPlayer();
+        if (event.getHand() != EquipmentSlot.HAND || joueur.getVehicle() == null
+                || !estControleur(joueur.getVehicle()) || !joueur.getInventory().getItemInMainHand().isEmpty()
+                || (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)) {
+            return;
+        }
+        Train train = trainDe(joueur.getVehicle());
+        if (train != null) {
+            event.setCancelled(true);
+            menu(joueur, train.id, 0);
         }
     }
 
@@ -1122,6 +1211,142 @@ public final class KSTrains extends JavaPlugin implements Listener {
         return avant.lengthSquared() < 1e-6 ? null : avant;
     }
 
+    // ------------------------------------------------------------------ 1.4.0 : propriétaire, accès, nom
+
+    /** Propriétaire du train (premier four de locomotive qui en a un), ou null. */
+    private UUID proprietaire(Train train) {
+        for (Minecart wagon : train.wagons) {
+            String texte = wagon.getPersistentDataContainer().get(cleProprio, PersistentDataType.STRING);
+            if (texte != null && estLoco(wagon)) {
+                try {
+                    return UUID.fromString(texte);
+                } catch (IllegalArgumentException ignore) {
+                    // illisible : on continue
+                }
+            }
+        }
+        return null;
+    }
+
+    private String nomProprietaire(Train train) {
+        for (Minecart wagon : train.wagons) {
+            String nom = wagon.getPersistentDataContainer().get(cleProprioNom, PersistentDataType.STRING);
+            if (nom != null && estLoco(wagon)) {
+                return nom;
+            }
+        }
+        return "?";
+    }
+
+    /** Le joueur devient propriétaire : enregistré dans chaque four de locomotive du train. */
+    private void reclamer(Train train, Player joueur) {
+        for (Minecart wagon : train.wagons) {
+            if (estLoco(wagon)) {
+                wagon.getPersistentDataContainer().set(cleProprio, PersistentDataType.STRING, joueur.getUniqueId().toString());
+                wagon.getPersistentDataContainer().set(cleProprioNom, PersistentDataType.STRING, joueur.getName());
+            }
+        }
+    }
+
+    /**
+     * Le joueur a-t-il accès au train ? Propriétaire, ses amis de KLM_Contacts, opérateurs ; train sans propriétaire
+     * (posé avant la 1.4.0, ou sans locomotive) : libre jusqu'à ce que quelqu'un ouvre son menu.
+     */
+    private boolean acces(Player joueur, Train train) {
+        if (train == null || joueur.isOp()) {
+            return true;
+        }
+        UUID proprio = proprietaire(train);
+        if (proprio == null || proprio.equals(joueur.getUniqueId())) {
+            return true;
+        }
+        if (contacts) {
+            try {
+                return AmisContacts.amis(joueur.getUniqueId(), proprio);
+            } catch (LinkageError e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /** Refus d'accès : message (« Ce train appartient à … »). Vrai si l'accès est refusé. */
+    private boolean refuser(Player joueur, Train train) {
+        if (acces(joueur, train)) {
+            return false;
+        }
+        Contenant.message(joueur, t("acces.refuse", "<red>Ce train appartient à <p>", "p", nomProprietaire(train)), true);
+        return true;
+    }
+
+    /** Nom du train (étiquette posée sur sa locomotive), ou null. */
+    private Component nomTrain(Train train) {
+        for (Minecart wagon : train.wagons) {
+            String nom = wagon.getPersistentDataContainer().get(cleNomTrain, PersistentDataType.STRING);
+            if (nom != null && estLoco(wagon)) {
+                return Component.text(nom);
+            }
+        }
+        return null;
+    }
+
+    /** Étiquette renommée sur un four de la locomotive : nom du train, affiché au-dessus de sa tête. */
+    private void nommer(Player joueur, Train train, ItemStack etiquette) {
+        net.kyori.adventure.text.Component nom = etiquette.getItemMeta() == null ? null
+                : etiquette.getItemMeta().displayName();
+        if (nom == null) {
+            Contenant.message(joueur, t("nom.vide", "<red>Renomme d'abord l'étiquette (enclume)"), true);
+            return;
+        }
+        String texte = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(nom);
+        boolean premier = true;
+        for (Minecart wagon : train.wagons) {
+            if (estLoco(wagon)) {
+                wagon.getPersistentDataContainer().set(cleNomTrain, PersistentDataType.STRING, texte);
+                wagon.customName(premier ? Component.text(texte) : null);
+                wagon.setCustomNameVisible(premier);
+                premier = false;
+            }
+        }
+        if (joueur.getGameMode() != GameMode.CREATIVE) {
+            etiquette.setAmount(etiquette.getAmount() - 1);
+        }
+        Contenant.message(joueur, t("nom.ok", "<green>Train nommé : <n>", "n", texte), false);
+    }
+
+    /**
+     * 1.4.0 (démêlage) : prolonge le trajet du train au-delà de son dernier point, en suivant les rails dans la direction
+     * qui s'éloigne du wagon qui mène (celle des derniers points, sinon l'inverse de la dernière marche).
+     */
+    private void prolonger(Train train, double longueur) {
+        if (train.chemin.size() < 1) {
+            return;
+        }
+        boolean avant = train.sens > 0;
+        Vector fin = avant ? train.chemin.getLast() : train.chemin.getFirst();
+        Vector precedent = train.chemin.size() > 1
+                ? (avant ? train.chemin.get(train.chemin.size() - 2) : train.chemin.get(1)) : fin;
+        Vector sens = fin.clone().subtract(precedent).setY(0);
+        if (sens.lengthSquared() < 0.09) {
+            Vector marche = train.dernierSens != null ? train.dernierSens : train.direction();
+            sens = marche.clone().multiply(-1).setY(0);
+        }
+        if (sens.lengthSquared() < 1e-6) {
+            return;
+        }
+        Block rail = train.monde().getBlockAt(fin.getBlockX(), fin.getBlockY(), fin.getBlockZ());
+        if (!Tag.RAILS.isTagged(rail.getType())) {
+            rail = rail.getRelative(BlockFace.DOWN);
+        }
+        for (Vector point : Voie.suivre(rail, sens, (int) Math.ceil(longueur))) {
+            if (avant) {
+                train.chemin.addLast(point);
+            } else {
+                train.chemin.addFirst(point);
+            }
+        }
+    }
+
     /** 1.3.4 : ajoute une quantité à un compteur enregistré dans un wagon de locomotive. */
     private static void ajouter(Entity wagon, NamespacedKey cle, double quantite) {
         Double avant = wagon.getPersistentDataContainer().get(cle, PersistentDataType.DOUBLE);
@@ -1217,7 +1442,12 @@ public final class KSTrains extends JavaPlugin implements Listener {
         if (train == null || !train.complet()) {
             return;
         }
-        int nouveau = avancer ? Math.min(NIVEAUX, train.niveau + 1) : Math.max(-1, train.niveau - 1);
+        changerNiveau(joueur, train, avancer ? 1 : -1);
+    }
+
+    /** Niveau +1 ou -1 (contrôleur, ou boutons du menu en 1.4.0). */
+    private void changerNiveau(Player joueur, Train train, int pas) {
+        int nouveau = pas > 0 ? Math.min(NIVEAUX, train.niveau + 1) : Math.max(-1, train.niveau - 1);
         if (train.niveau == 0 && nouveau != 0 && train.vitesse <= 0 && surPropulseurEteint(train)) {
             // 1.3.5 : pour repartir d'un rail propulseur éteint, il faut l'alimenter.
             Contenant.message(joueur, t("propulseur.repartir",
@@ -1225,6 +1455,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
             return;
         }
         train.niveau = nouveau;
+        train.reprise = 0;
         tableau(joueur, train, vitesseMax(train));
     }
 
@@ -1266,21 +1497,41 @@ public final class KSTrains extends JavaPlugin implements Listener {
     /** 1.1.0 : niveau, vitesse voulue et vitesse actuelle (blocs/s), au-dessus de la barre d'objets du conducteur. */
     private void tableau(Player pilote, Train train, double max) {
         String actuelle = bs(train.vitesse);
+        Component autonomie = autonomie(train);
         if (train.niveau == 0) {
-            pilote.sendActionBar(train.vitesse > 0
+            pilote.sendActionBar((train.vitesse > 0
                     ? t("pilote.freine", "<gray>Arrêt demandé <dark_gray>— actuel <a> blocs/s", "a", actuelle)
-                    : t("pilote.arret", "<gray>Arrêt <dark_gray>— avancer : niveau 1, reculer : marche arrière"));
+                    : t("pilote.arret", "<gray>Arrêt <dark_gray>— avancer : niveau 1, reculer : marche arrière"))
+                    .append(autonomie));
         } else if (train.niveau < 0) {
             pilote.sendActionBar(t("pilote.arriere", "<yellow>Marche arrière : <v> bloc/s <dark_gray>— actuel <a>",
-                    "v", bs(reglage("marche-arriere-max", 0.05)), "a", actuelle));
+                    "v", bs(reglage("marche-arriere-max", 0.05)), "a", actuelle).append(autonomie));
         } else {
             double voulue = train.niveau * reglage("palier", 0.25);
-            pilote.sendActionBar(voulue > max
+            pilote.sendActionBar((voulue > max
                     ? t("pilote.plafond", "<green>Niveau <n>/4 <gray>: plafonné à <v> blocs/s <dark_gray>— actuel <a>",
                     "n", train.niveau, "v", bs(max), "a", actuelle)
                     : t("pilote.niveau", "<green>Niveau <n>/4 <gray>: <v> blocs/s <dark_gray>— actuel <a>",
-                    "n", train.niveau, "v", bs(voulue), "a", actuelle));
+                    "n", train.niveau, "v", bs(voulue), "a", actuelle)).append(autonomie));
         }
+    }
+
+    /**
+     * 1.4.0 : autonomie au niveau actuel (blocs) : celle du four alimenté le moins rempli (carburant de sa case compris),
+     * puisque chaque four alimenté brûle la même distance.
+     */
+    private Component autonomie(Train train) {
+        double plusPetite = Double.MAX_VALUE;
+        for (Minecart wagon : train.wagons) {
+            if (wagon instanceof PoweredMinecart four && foyers.alimente(four)) {
+                plusPetite = Math.min(plusPetite, foyers.charge(four));
+            }
+        }
+        if (plusPetite == Double.MAX_VALUE) {
+            return t("pilote.sans-carburant", "<red> — sans carburant");
+        }
+        long blocs = Math.round(plusPetite / consommation(Math.max(1, train.niveau)));
+        return t("pilote.autonomie", "<dark_gray> — autonomie <gray><b> blocs", "b", blocs);
     }
 
     /**
@@ -1315,6 +1566,13 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 continue;
             }
             double max = vitesseMax(train);
+            if (train.reprise != 0 && train.niveau == 0 && train.vitesse <= 0 && max > 0 && !surPropulseurEteint(train)) {
+                // 1.4.0 (départ en gare) : rail propulseur alimenté sous un train qu'il avait arrêté : il repart.
+                train.niveau = train.reprise;
+                train.reprise = 0;
+                annoncer(train, t("arret.repart", "<green>Le train repart"));
+            }
+            boolean roulait = train.vitesse > 0;
             double voulue = cible(train, max) * train.sens;
             if (voulue < 0) {
                 // Changer de sens : freiner jusqu'à l'arrêt, puis l'autre bout du train mène.
@@ -1354,7 +1612,10 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 // Chaque rail éteint franchi : -1 bloc/s (20 rails arrêtent un train lancé à 20 blocs/s).
                 train.vitesse = Math.max(0, train.vitesse - reglage("propulseur.freinage", 0.05));
                 if (train.vitesse <= 0) {
+                    int avantArret = train.niveau;
                     arreter(train, t("arret.propulseur", "<yellow>Le train s'arrête : rail propulseur éteint"));
+                    // 1.4.0 : il repartira seul à ce niveau quand le rail sera alimenté (départ en gare).
+                    train.reprise = avantArret;
                     voulue = 0;
                 }
             }
@@ -1418,6 +1679,16 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 deplacement = new Vector();
             }
             placer(train, ici.clone().add(deplacement), espacement);
+            if (!roulait && train.vitesse > 0) {
+                // 1.4.0 : le dernier train mis en route par son propriétaire garde ses chunks chargés.
+                UUID proprio = proprietaire(train);
+                if (proprio != null) {
+                    dernierLance.put(proprio, train.id);
+                }
+            }
+            if (train.vitesse > 0) {
+                train.dernierSens = train.direction();
+            }
             if (train.vitesse > 0) {
                 // 1.3.7 : modèles agrandis qui suivent les pentes.
                 for (Minecart wagon : train.wagons) {
@@ -1435,11 +1706,18 @@ public final class KSTrains extends JavaPlugin implements Listener {
 
     /** Place chaque wagon derrière celui qui mène, sur son trajet : poussé vers sa place, ou replacé s'il en est loin. */
     private void placer(Train train, Vector devant, double espacement) {
+        boolean prolonge = false;
         World monde = train.monde();
         Vector precedente = devant;
         for (int k = 1; k < train.wagons.size(); k++) {
             Minecart wagon = train.suiveur(k);
             Vector cible = train.point(devant, k * espacement);
+            if (cible == null && !prolonge) {
+                // 1.4.0 (démêlage) : trajet trop court (wagons tassés ou trop écartés) : prolongé le long des rails.
+                prolonge = true;
+                prolonger(train, (train.wagons.size() - k) * espacement + 2);
+                cible = train.point(devant, k * espacement);
+            }
             if (cible == null) {
                 wagon.setVelocity(new Vector());
                 continue;
@@ -1468,6 +1746,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
 
     private void arreter(Train train, Component raison) {
         boolean roulait = train.niveau != 0 || train.vitesse > 0;
+        train.reprise = 0;
         train.niveau = 0;
         train.vitesse = 0;
         train.bloque = 0;
@@ -1478,6 +1757,10 @@ public final class KSTrains extends JavaPlugin implements Listener {
 
     /** Message aux joueurs proches de la tête ou à bord. */
     private void annoncer(Train train, Component texte) {
+        Component nom = nomTrain(train);
+        if (nom != null) {
+            texte = t("annonce.nom", "<white><nom> : ", "nom", nom).append(texte);
+        }
         Location tete = train.tete().getLocation();
         for (Player joueur : train.monde().getPlayers()) {
             if (joueur.getLocation().distanceSquared(tete) < 32 * 32
@@ -1506,11 +1789,16 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 }
             }
             Set<Long> voulus = new HashSet<>();
-            if (train.vitesse > 0 || tick - train.arreteDepuis < 1200) {
+            // 1.4.0 (LeKiwi06 : « les joueurs ne peuvent avoir qu'un train qui charge simultanément, et il faut que la
+            // zone chargée soit la plus petite possible ») : seulement le dernier train lancé par son propriétaire, tant
+            // qu'il roule : les chunks de ses wagons et celui où sera le wagon qui mène dans une seconde. Train sans
+            // propriétaire : rien.
+            UUID proprio = proprietaire(train);
+            if (train.vitesse > 0 && proprio != null && train.id.equals(dernierLance.get(proprio))) {
                 for (Minecart wagon : train.wagons) {
                     voulus.add(chunk(wagon.getLocation()));
                 }
-                Location devant = train.tete().getLocation().add(train.direction().multiply(16));
+                Location devant = train.meneur().getLocation().add(train.direction().multiply(train.vitesse * 20 + 1));
                 voulus.add(chunk(devant));
             }
             World monde = train.monde();
@@ -1582,6 +1870,16 @@ public final class KSTrains extends JavaPlugin implements Listener {
             Contenant.fermer(joueur);
             return null;
         }
+        if (refuser(joueur, train)) {
+            Contenant.fermer(joueur);
+            return null;
+        }
+        if (proprietaire(train) == null && aLocomotive(train.wagons)) {
+            // 1.4.0 (choix de LeKiwi06) : train posé avant la 1.4.0 : le premier qui ouvre son menu en devient
+            // propriétaire.
+            reclamer(train, joueur);
+            Contenant.message(joueur, t("acces.reclame", "<green>Ce train est maintenant à toi"), false);
+        }
         return train;
     }
 
@@ -1593,7 +1891,9 @@ public final class KSTrains extends JavaPlugin implements Listener {
         int n = train.wagons.size();
         int pages = (n + Contenant.PAR_PAGE - 1) / Contenant.PAR_PAGE;
         int p = Math.max(0, Math.min(page, pages - 1));
-        Contenant menu = Contenant.pour(joueur, t("menu.titre", "Train de <n> wagons", "n", n), new Marque(id));
+        Component nom = nomTrain(train);
+        Contenant menu = Contenant.pour(joueur, nom == null ? t("menu.titre", "Train de <n> wagons", "n", n)
+                : t("menu.titre-nom", "<nom> — <n> wagons", "nom", nom, "n", n), new Marque(id));
         for (int k = 0; k < Contenant.PAR_PAGE; k++) {
             int rang = p * Contenant.PAR_PAGE + k;
             if (rang >= n) {
@@ -1621,6 +1921,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 train.sens > 0 || train.vitesse <= 0
                         ? t("menu.info-vitesse", "<gray>Vitesse : <v> blocs/s", "v", bs(train.vitesse))
                         : t("menu.info-recul", "<gray>Marche arrière : <v> blocs/s", "v", bs(train.vitesse)),
+                t("menu.info-proprio", "<gray>Propriétaire : <p> (et ses amis)", "p", nomProprietaire(train)),
                 t("menu.info-regle", "<gray>Fours alimentés : 5 (locomotive)"),
                 t("menu.info-regle-2", "<gray>ou 10 wagons chacun"))), null);
         // 1.3.4 (LeKiwi06 : « un compteur kilométrique dans l'interface de la locomotive pour voir la distance
@@ -1645,6 +1946,23 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 ? Contenant.objet(Material.RED_CONCRETE, t("menu.arret", "<red>Arrêter le train"), List.of())
                 : Contenant.objet(Material.LIME_CONCRETE, t("menu.marche", "<green>Mettre en marche"),
                 List.of(t("menu.marche-ligne", "<gray>Niveau 1 (5 blocs/s), vers l'avant"))), j -> basculer(j, id, p));
+        // 1.4.0 (secours pour Bedrock) : niveau - / +, klaxon.
+        menu.poser(menu.bas(1), Contenant.objet(Material.RED_DYE, t("menu.niveau-moins", "<white>Niveau -"),
+                List.of(t("menu.niveau-moins-ligne", "<gray>À l'arrêt : marche arrière"))), j -> boutonNiveau(j, id, p, -1));
+        menu.poser(menu.bas(6), Contenant.objet(Material.LIME_DYE, t("menu.niveau-plus", "<white>Niveau +"),
+                List.of(t("menu.niveau-plus-ligne", "<gray>5 blocs/s par niveau"))), j -> boutonNiveau(j, id, p, 1));
+        for (Minecart wagon : train.wagons) {
+            if (estControleur(wagon)) {
+                menu.poser(menu.bas(7), Contenant.objet(Material.GOAT_HORN, t("menu.klaxon", "<white>Klaxon"),
+                        List.of(t("menu.klaxon-ligne", "<gray>La corne choisie du contrôleur"))), j -> {
+                    Train actuel = trainDuMenu(j, id);
+                    if (actuel != null && actuel.wagons.contains(wagon)) {
+                        klaxons.sonner(j, wagon);
+                    }
+                });
+                break;
+            }
+        }
         menu.poser(menu.bas(5), Contenant.objet(Material.BARRIER, t("menu.fermer", "<red>Fermer"), List.of()),
                 Contenant::fermer);
         menu.ouvrir(joueur);
@@ -1820,12 +2138,29 @@ public final class KSTrains extends JavaPlugin implements Listener {
         pageWagon(joueur, id, rang, page);
     }
 
+    /** 1.4.0 : boutons niveau du menu (refusés si un autre joueur conduit depuis le contrôleur). */
+    private void boutonNiveau(Player joueur, UUID id, int page, int pas) {
+        Train train = trainDuMenu(joueur, id);
+        if (train == null) {
+            return;
+        }
+        Player pilote = pilote(train);
+        if (pilote != null && !pilote.equals(joueur)) {
+            Contenant.message(joueur, t("menu.pilote", "<red>Ce train est conduit depuis son wagon contrôleur"), true);
+        } else {
+            changerNiveau(joueur, train, pas);
+        }
+        menu(joueur, id, page);
+    }
+
     private void basculer(Player joueur, UUID id, int page) {
         Train train = trainDuMenu(joueur, id);
         if (train == null) {
             return;
         }
-        if (pilote(train) != null) {
+        train.reprise = 0;
+        Player conducteur = pilote(train);
+        if (conducteur != null && !conducteur.equals(joueur)) {
             Contenant.message(joueur, t("menu.pilote", "<red>Ce train est conduit depuis son wagon contrôleur"), true);
         } else if (train.niveau != 0) {
             train.niveau = 0;

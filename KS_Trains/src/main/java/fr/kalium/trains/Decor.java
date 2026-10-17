@@ -97,6 +97,11 @@ final class Decor {
      * @param avant direction de l'avant du train à ce wagon (vers le wagon de devant), ou null
      */
     void entretenir(Minecart wagon, boolean alimente, Vector avant) {
+        // 1.4.0 : `decor.actif` à false : pas de modèle agrandi (serveur allégé).
+        if (!plugin.getConfig().getBoolean("decor.actif", true)) {
+            retirer(wagon);
+            return;
+        }
         BlockData bloc = chargement(wagon, alimente, avant);
         BlockDisplay modele = decor(wagon);
         if (bloc == null) {

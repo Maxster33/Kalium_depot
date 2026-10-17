@@ -50,6 +50,10 @@ final class Train {
     long dernierSouffle;
     /** 1.3.5 : dernier bloc de rail du wagon qui mène (pour compter les rails propulseurs éteints franchis). */
     Block dernierRail;
+    /** 1.4.0 : niveau à reprendre quand le rail propulseur qui a arrêté le train est alimenté (0 : aucun). */
+    int reprise;
+    /** 1.4.0 : dernière direction de marche (démêlage d'un trajet tassé). */
+    Vector dernierSens;
 
     Train(UUID id, List<Minecart> wagons) {
         this.id = id;

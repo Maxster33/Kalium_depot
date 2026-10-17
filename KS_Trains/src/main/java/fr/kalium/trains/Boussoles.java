@@ -60,12 +60,14 @@ final class Boussoles {
     }
 
     /** Clic droit avec une boussole sur un wagon contrôleur : une boussole de la pile devient la boussole du train. */
-    void lier(Player joueur, Entity controleur, ItemStack pile) {
+    void lier(Player joueur, Entity controleur, ItemStack pile, net.kyori.adventure.text.Component nomTrain) {
         ItemStack boussole = new ItemStack(Material.COMPASS);
         CompassMeta meta = (CompassMeta) boussole.getItemMeta();
         meta.setLodestoneTracked(false);
         meta.setLodestone(controleur.getLocation());
-        meta.displayName(plugin.t("boussole.nom", "<white>Boussole du train").decoration(TextDecoration.ITALIC, false));
+        meta.displayName((nomTrain == null ? plugin.t("boussole.nom", "<white>Boussole du train")
+                : plugin.t("boussole.nom-train", "<white>Boussole : <n>", "n", nomTrain))
+                .decoration(TextDecoration.ITALIC, false));
         meta.lore(List.of(plugin.t("boussole.ligne", "<gray>Pointe vers le wagon contrôleur")
                 .decoration(TextDecoration.ITALIC, false)));
         meta.getPersistentDataContainer().set(cleLien, PersistentDataType.STRING, controleur.getUniqueId().toString());
