@@ -1423,7 +1423,19 @@ public final class KSTrains extends JavaPlugin implements Listener {
         // wagons)² quand le train a plus de wagons que sa traction (avant : -0,1 bloc/tick par wagon en trop, qui
         // faisait passer d'un coup de l'arrêt à la pleine vitesse en ajoutant un seul four).
         double part = Math.min(1, (double) traction / train.wagons.size());
-        return reglage("vitesse-max", 1.0) * part * part;
+        double vitesse = reglage("vitesse-max", 1.0) * part * part;
+        // 1.4.3 (LeKiwi06 : « il faut qu'il refuse d'avancer s'il ne peut pas aller à au moins 3 blocs par seconde ») :
+        // en dessous, pas de traction (départ refusé, ou freinage jusqu'à l'arrêt).
+        return vitesse < reglage("vitesse-min", 0.15) ? 0 : vitesse;
+    }
+
+    /**
+     * 1.4.3 (accord de LeKiwi06) : niveau payé en carburant : le niveau choisi, ou celui de la vitesse que le train peut
+     * vraiment atteindre s'il est plafonné (plafonné à 6 blocs/s au niveau 4 : payé au niveau 2). Au moins le niveau 1.
+     */
+    private int niveauAtteint(Train train, double max) {
+        int possible = (int) Math.ceil(max / reglage("palier", 0.25) - 1e-6);
+        return Math.max(1, Math.min(Math.max(1, train.niveau), possible));
     }
 
     /** 1.1.0 : touches tenues au dernier envoi, par joueur (pour reconnaître un nouvel appui). */
@@ -1547,7 +1559,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
         if (plusPetite == Double.MAX_VALUE) {
             return t("pilote.sans-carburant", "<red> — sans carburant");
         }
-        long blocs = Math.round(plusPetite / (consommation(Math.max(1, train.niveau)) * surcharge(train)));
+        long blocs = Math.round(plusPetite / (consommation(niveauAtteint(train, vitesseMax(train))) * surcharge(train)));
         return t("pilote.autonomie", "<dark_gray> — autonomie <gray><b> blocs", "b", blocs);
     }
 
@@ -1670,10 +1682,11 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 voulue = Math.min(voulue, train.vitesse);
             }
             double surcharge = parcouru > 0 ? surcharge(train) : 1;
+            double parBloc = consommation(train.niveau > 0 ? niveauAtteint(train, max) : train.niveau);
             if (parcouru > 0) {
                 for (Minecart wagon : train.wagons) {
                     if (wagon instanceof PoweredMinecart four && foyers.alimente(four) && !allume) {
-                        double blocs = parcouru * consommation(train.niveau) * surcharge;
+                        double blocs = parcouru * parBloc * surcharge;
                         foyers.consommer(four, blocs);
                         if (estLoco(four)) {
                             ajouter(four, cleBrule, blocs);

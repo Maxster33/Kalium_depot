@@ -39,8 +39,16 @@ au carré, M3, sous charge à 0,5, et surcharge à 30 % ». La formule D n'a jam
   15 wagons et 3 fours x1,00 = 38 ; 20 wagons et 3 fours x1,73 = 65 à 56 % de la vitesse, avec 4 fours x0,89 = 45 à
   pleine vitesse ; 45 wagons et 6 fours = 75 ; 64 wagons et 8 fours = 99 ; 64 wagons et 5 fours x3,71 = 232 à 30 % de
   la vitesse ; 10 wagons et 6 fours x0,50 = 38.
+- **Vitesse minimale** (LeKiwi06 : « il faut qu'il refuse d'avancer s'il ne peut pas aller à au moins 3 blocs par
+  seconde ») : en dessous, départ refusé (« Pas assez de carburant ou de fours pour ce train »), ou freinage jusqu'à
+  l'arrêt s'il roulait (un four qui se vide). Soit au plus 2,58 wagons par point de traction : locomotive seule
+  jusqu'à 38 wagons, 4 fours jusqu'à 64.
+- **Niveau payé** (proposé par Claude, accord de LeKiwi06) : un train plafonné paie le coefficient du niveau qu'il peut
+  vraiment atteindre, plus celui choisi (plafonné à 6 blocs/s au niveau 4 : payé au niveau 2, x1 au lieu de x1,5).
+- La réaction en chaîne quand un four se vide avant les autres (traction en baisse, les autres consomment plus) est
+  gardée (LeKiwi06 : « ça force à installer des minecart hopper »).
 - Compris dans l'autonomie affichée au conducteur et dans le carburant brûlé du compteur.
-- `config.yml` : nouvelles clés `charge.plancher` (0,5) et `charge.taux` (0,30) ; clé `perte-par-wagon` retirée ;
+- `config.yml` : nouvelles clés `charge.plancher` (0,5), `charge.taux` (0,30) et `vitesse-min` (0,15) ; clé `perte-par-wagon` retirée ;
   valeurs par défaut aussi dans le code.
 
 Compilé le 17/10/2026 (`sortie/KS_Trains-1.4.3.jar`). **Statut : non déployé, non testé en jeu.**

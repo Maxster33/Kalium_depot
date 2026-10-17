@@ -4,6 +4,8 @@ espacement: 1.4
 # Vitesse maximale d'un train dont la traction suffit (bloc par tick ; 1 = 20 blocs par seconde).
 # Avec l'ancienne physique du jeu, un wagonnet a four ne depasse pas 0,2 bloc par tick.
 vitesse-max: 1.0
+# 1.4.3 : vitesse maximale en dessous de laquelle le train refuse d'avancer (bloc par tick ; 0,15 = 3 blocs/s).
+vitesse-min: 0.15
 # Vitesse gagnee et perdue a chaque tick au demarrage et au freinage (bloc par tick). 1.3.1 : 0,005 (100 blocs pour
 # aller de l'arret a 1 bloc/tick) et 0,01 (50 blocs pour s'arreter) ; multipliees par traction / wagons en surcharge.
 acceleration: 0.005
