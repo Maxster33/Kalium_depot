@@ -110,6 +110,9 @@ import java.util.UUID;
 public final class KSTrains extends JavaPlugin implements Listener {
 
     private static final double PORTEE_MENU = 24;
+    /** 1.4.8 : longueur maximale du nom d'un wagon. */
+    private static final int NOM_WAGON_MAX = 32;
+    private NamespacedKey cleNomWagon;
 
     /** 1.1.0 : niveaux de vitesse en avant (1 à 4 ; 4 = 20 blocs/s, la vitesse maximale). */
     private static final int NIVEAUX = 4;
@@ -126,6 +129,8 @@ public final class KSTrains extends JavaPlugin implements Listener {
     private NamespacedKey cleControleur;
     private final NamespacedKey cleVerrou = NamespacedKey.fromString("ks_verrouvehicule:proprietaire");
     private Lang lang;
+    /** 1.4.8 : fenêtres de saisie (nom d'un wagon). */
+    private fr.kalium.menu.api.Gui gui;
     private Foyers foyers;
     private Entonnoirs entonnoirs;
     private Decor decor;
@@ -182,6 +187,8 @@ public final class KSTrains extends JavaPlugin implements Listener {
         cleBrule = new NamespacedKey(this, "brule");
         cleJukebox = new NamespacedKey(this, "jukebox");
         lang = new Lang(this);
+        gui = new fr.kalium.menu.api.Gui(this, lang);
+        cleNomWagon = new NamespacedKey(this, "nom-wagon");
         foyers = new Foyers(this);
         entonnoirs = new Entonnoirs(this, foyers);
         decor = new Decor(this);
@@ -2156,10 +2163,19 @@ public final class KSTrains extends JavaPlugin implements Listener {
             lignes.add(passager instanceof Player p ? t("wagon.passager", "<gray>Passager : <p>", "p", p.getName())
                     : t("wagon.sans-passager", "<gray>Aucun passager"));
         }
+        // 1.4.8 (LeKiwi06 : « qu'on puisse renommer, leur donner des noms dans cette interface ») : le nom du wagon en
+        // titre, son type et son numéro en première ligne.
+        String perso = nomWagon(wagon);
+        if (perso != null) {
+            lignes.add(0, Component.text(net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+                    .plainText().serialize(nom), net.kyori.adventure.text.format.NamedTextColor.GRAY));
+            nom = t("wagon.nomme", "<white><nom>", "nom", perso);
+        }
         if (cliquable) {
-            lignes.add(wagon instanceof StorageMinecart || estJukebox(wagon) || estControleur(wagon)
-                    ? t("wagon.clic-reglages", "<gray>Clic : réglages, dételer")
-                    : t("wagon.clic", "<gray>Clic : sa page (dételer)"));
+            lignes.add(contenu(wagon) ? t("wagon.clic-contenu", "<gray>Clic : contenu, nom, dételer")
+                    : estJukebox(wagon) || estControleur(wagon)
+                    ? t("wagon.clic-reglages-nom", "<gray>Clic : réglages, nom, dételer")
+                    : t("wagon.clic-nom", "<gray>Clic : nom, dételer"));
         }
         return Contenant.objet(materiau, nom, lignes);
     }
@@ -2237,7 +2253,90 @@ public final class KSTrains extends JavaPlugin implements Listener {
         });
         menu.poser(caseDeteler + 1, Contenant.objet(Material.OAK_DOOR, t("page.retour", "<white>Retour"), List.of()),
                 j -> menu(j, id, page));
+        if (contenu(wagon)) {
+            // 1.4.8 (LeKiwi06 : « qu'on puisse accéder à leurs inventaires aussi ») : coffre, entonnoir, four (carburant).
+            menu.poser(6, Contenant.objet(Material.CHEST, t("page.contenu", "<white>Ouvrir le contenu"),
+                    List.of(wagon instanceof PoweredMinecart ? t("page.contenu-four", "<gray>Case du carburant")
+                            : t("page.contenu-ligne", "<gray>Comme un clic droit dessus"))),
+                    j -> ouvrirContenu(j, id, rang));
+        }
+        String perso = nomWagon(wagon);
+        menu.poser(7, Contenant.objet(Material.NAME_TAG, t("page.renommer", "<white>Renommer"),
+                List.of(perso == null ? t("page.renommer-aucun", "<gray>Sans nom")
+                        : t("page.renommer-actuel", "<gray>Nom : <nom>", "nom", perso))),
+                j -> renommer(j, id, rang, page));
         menu.ouvrir(joueur);
+    }
+
+    /** 1.4.8 : wagon dont le contenu s'ouvre depuis sa page (coffre, entonnoir, four). */
+    private static boolean contenu(Minecart wagon) {
+        return wagon instanceof StorageMinecart || wagon instanceof HopperMinecart || wagon instanceof PoweredMinecart;
+    }
+
+    /** 1.4.8 : nom donné au wagon dans le menu du train, ou null. */
+    private String nomWagon(Entity wagon) {
+        String nom = wagon.getPersistentDataContainer().get(cleNomWagon, PersistentDataType.STRING);
+        return nom == null || nom.isBlank() ? null : nom;
+    }
+
+    /**
+     * 1.4.8 : ouvre le contenu d'un wagon depuis sa page. Wagon verrouillé (KS_VerrouVehicule) : son propriétaire
+     * seulement, comme un clic droit.
+     */
+    private void ouvrirContenu(Player joueur, UUID id, int rang) {
+        Train train = trainDuMenu(joueur, id);
+        if (train == null || rang >= train.wagons.size()) {
+            return;
+        }
+        Minecart wagon = train.wagons.get(rang);
+        if (!maitreDuVerrou(joueur, wagon)) {
+            message(joueur, t("page.contenu-verrou", "<red>Seul le propriétaire du verrou ouvre ce wagon"), true);
+            return;
+        }
+        if (wagon instanceof PoweredMinecart four) {
+            Contenant.apres(() -> foyers.ouvrir(joueur, four));
+        } else if (wagon instanceof org.bukkit.inventory.InventoryHolder contenant) {
+            Contenant.apres(() -> joueur.openInventory(contenant.getInventory()));
+        }
+    }
+
+    /** 1.4.8 : fenêtre de saisie du nom d'un wagon (vide : sans nom), puis retour à sa page. */
+    private void renommer(Player joueur, UUID id, int rang, int page) {
+        Train train = trainDuMenu(joueur, id);
+        if (train == null || rang >= train.wagons.size()) {
+            return;
+        }
+        Minecart wagon = train.wagons.get(rang);
+        String actuel = nomWagon(wagon);
+        fr.kalium.menu.api.Gui.Click retour = j -> pageWagon(j, id, rang, page);
+        io.papermc.paper.registry.data.dialog.ActionButton valider = gui.form(
+                t("nom-wagon.valider", "<green>Valider"), null, (j, vue) -> {
+                    Train actuelTrain = trainDuMenu(j, id);
+                    if (actuelTrain == null || !actuelTrain.wagons.contains(wagon)) {
+                        return;
+                    }
+                    String texte = vue.getText("nom") == null ? "" : vue.getText("nom").trim();
+                    if (texte.length() > NOM_WAGON_MAX) {
+                        texte = texte.substring(0, NOM_WAGON_MAX);
+                    }
+                    if (texte.isEmpty()) {
+                        wagon.getPersistentDataContainer().remove(cleNomWagon);
+                        message(j, t("nom-wagon.retire", "<yellow>Wagon sans nom"), false);
+                    } else {
+                        wagon.getPersistentDataContainer().set(cleNomWagon, PersistentDataType.STRING, texte);
+                        message(j, t("nom-wagon.ok", "<green>Wagon nommé : <nom>", "nom", texte), false);
+                    }
+                    pageWagon(j, id, rang, page);
+                });
+        Contenant.saisie(joueur, () -> {
+            gui.open(joueur, t("nom-wagon.titre", "<gold>Nom du wagon <n>", "n", rang + 1),
+                    List.of(t("nom-wagon.aide", "<gray>Vide : le wagon n'a plus de nom.")),
+                    List.of(gui.text("nom", t("nom-wagon.champ", "Nom du wagon"), actuel == null ? "" : actuel,
+                            NOM_WAGON_MAX)),
+                    List.of(valider, gui.button(t("nom-wagon.retour", "<gray>Retour"), null, retour)),
+                    gui.close(), 1);
+            lang.saveIfNeeded();
+        });
     }
 
     /** 1.3.0 : mode du wagon jukebox choisi dans sa page. */

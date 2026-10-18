@@ -151,4 +151,29 @@ Compilé le 18/10/2026 (`sortie/KS_Trains-1.4.7.jar`). **Statut : non déployé,
 
 **Déployé sur Event le 18/10/2026 à 08:20 (LeKiwi06 : « oui envoie sur event ») : à la place de la 1.4.6 (pas encore redémarrée) ; jar en place vérifié identique à la référence, rangé dans `_removed-ks_trains-1.4.6/` ; jar du serveur vérifié identique à celui compilé ; `config.yml` inchangé. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
 
-**Actif sur Event depuis son redémarrage du 18/10/2026 à 08:30 (journal lu à 08:32, heures en UTC : 06:30) : KS_Trains 1.4.7 activé sans erreur ni avertissement. Aucun joueur connecté à la lecture : journal à relire après un essai de train (l'erreur de la 1.4.3 n'apparaissait qu'avec un train chargé). Statut : non testé en jeu.**
+**Actif sur Event depuis son redémarrage du 18/10/2026 à 08:30 (journal lu à 08:32, heures en UTC : 06:30) : KS_Trains 1.4.7 activé sans erreur ni avertissement. Aucun joueur connecté à la lecture ; relu à 09:07 après 35 minutes de jeu de LeKiwi06 avec un train : aucune erreur (plus de spam). Statut : en test.**
+
+## 1.4.8 - corne prise en compte, wagons renommés et ouverts depuis le menu (18/10/2026, LeKiwi06)
+
+Retour de LeKiwi06 sur Event (1.4.7) : « quand on met une corne elle n'est plus prise en compte, ça garde le klaxon de
+base (il fait bien tchou-tchou en deux coups, c'est bon) » ; demande : « quand on clique dans l'interface du minecart
+contrôleur on voit tous les minecarts du train : j'aimerais qu'on puisse les renommer, leur donner des noms dans cette
+interface, et qu'on puisse accéder à leurs inventaires aussi ».
+
+- **Corne** : le klaxon jouait la corne de la case choisie (la première par défaut) ; une corne posée dans une autre
+  case sans cliquer sa vitre laissait le sifflet (avant la 1.4.3 : message « Aucune corne choisie »). Maintenant, si
+  la case choisie est vide, la première corne posée sonne, et sa vitre est verte. L'instrument est lu dans le
+  composant du jeu de la corne (sinon dans ses métadonnées). Journal d'Event : aucune erreur.
+- **Nom d'un wagon** : bouton « Renommer » (étiquette) dans la page de chaque wagon : fenêtre de saisie (32 caractères
+  au plus ; vide : plus de nom). Le nom est enregistré dans le wagon ; dans le menu du train, il remplace le titre du
+  wagon, son numéro et son type passent en première ligne. Seulement dans le menu (pas au-dessus du wagon, choix de
+  Claude ; le nom du train reste celui de l'étiquette sur la locomotive).
+- **Contenu d'un wagon** : bouton « Ouvrir le contenu » (coffre) dans la page des wagons à coffre, entonnoir et four
+  (case du carburant) : comme un clic droit dessus, depuis le menu. Wagon verrouillé (KS_VerrouVehicule) : son
+  propriétaire seulement. Contrôleur : ses klaxons (déjà dans sa page) ; jukebox : ses disques sont dans le coffre
+  devant lui.
+- Ligne du clic dans le menu du train : « contenu, nom, dételer », « réglages, nom, dételer » ou « nom, dételer »
+  (nouvelles clés de `lang.yml`).
+- Appels à KLM_Menu vérifiés présents dans KLM_Menu 2.11.0 (celui d'Event). `config.yml` inchangé.
+
+Compilé le 18/10/2026 (`sortie/KS_Trains-1.4.8.jar`). **Statut : non déployé, non testé en jeu.**

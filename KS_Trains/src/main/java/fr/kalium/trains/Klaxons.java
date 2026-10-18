@@ -100,6 +100,36 @@ final class Klaxons implements Listener {
                 ItemStack.serializeItemsAsBytes(cornes));
     }
 
+    /**
+     * 1.4.8 (LeKiwi06 : « quand on met une corne elle n'est plus prise en compte, ça garde le klaxon de base ») : la
+     * corne choisie ; si sa case est vide (corne posée dans une autre case sans cliquer sa vitre, ou retirée), la
+     * première corne posée ; -1 sans aucune corne (sifflet du train).
+     */
+    int choisie(Entity controleur, ItemStack[] cornes) {
+        int choix = choix(controleur);
+        if (corne(cornes[choix])) {
+            return choix;
+        }
+        for (int i = 0; i < CASES; i++) {
+            if (corne(cornes[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /** 1.4.8 : instrument d'une corne, lu dans son composant du jeu (sinon dans ses métadonnées), ou null. */
+    private static MusicInstrument instrument(ItemStack corne) {
+        if (!corne(corne)) {
+            return null;
+        }
+        MusicInstrument instrument = corne.getData(io.papermc.paper.datacomponent.DataComponentTypes.INSTRUMENT);
+        if (instrument == null && corne.getItemMeta() instanceof MusicInstrumentMeta meta) {
+            instrument = meta.getInstrument();
+        }
+        return instrument;
+    }
+
     int choix(Entity controleur) {
         Integer choix = controleur.getPersistentDataContainer().get(cleChoix, PersistentDataType.INTEGER);
         return choix == null ? 0 : Math.max(0, Math.min(CASES - 1, choix));
@@ -134,10 +164,10 @@ final class Klaxons implements Listener {
         if (fin != null && tick < fin) {
             return;
         }
-        ItemStack corne = cornes(controleur)[choix(controleur)];
-        MusicInstrument instrument = corne != null && corne.getItemMeta() instanceof MusicInstrumentMeta meta
-                ? meta.getInstrument() : null;
-        if (!corne(corne) || instrument == null) {
+        int choisie = choisie(controleur, cornes(controleur));
+        ItemStack corne = choisie < 0 ? null : cornes(controleur)[choisie];
+        MusicInstrument instrument = instrument(corne);
+        if (instrument == null) {
             siffler(controleur);
             attente.put(controleur.getUniqueId(), tick + TEMPS[TEMPS.length - 1] + 10);
             return;
@@ -185,7 +215,7 @@ final class Klaxons implements Listener {
                 inventaire.setItem(i, cornes[i] == null || cornes[i].isEmpty() ? null : cornes[i]);
             }
             ouverts.put(controleur.getUniqueId(), inventaire);
-            dessiner(inventaire, choix(controleur));
+            dessiner(inventaire, choisie(controleur, cornes(controleur)));
         }
         joueur.openInventory(inventaire);
     }
@@ -278,7 +308,7 @@ final class Klaxons implements Listener {
             Entity controleur = controleur(boite);
             if (controleur != null && boite.inventaire != null) {
                 enregistrer(controleur, boite.inventaire);
-                dessiner(boite.inventaire, choix(controleur));
+                dessiner(boite.inventaire, choisie(controleur, cornes(controleur)));
             }
         });
     }

@@ -455,7 +455,9 @@ Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
 
-**Ajout (18/10/2026, 08:20) : KS_Trains 1.4.7 envoyé sur Event (tests) ; actif depuis le redémarrage du 18/10 à 08:30 (journal lu : aucune erreur au démarrage ; aucun joueur connecté, à relire après un essai de train), non testé en jeu.** Remplace la 1.4.6 (envoyée à 07:31, en attente de redémarrage) : jar en place vérifié identique à `jars-deployes/`, rangé dans `_removed-ks_trains-1.4.6/` ; jar du serveur vérifié identique à celui compilé, `config.yml` du serveur identique à celui du dépôt.
+**Ajout (18/10/2026, 09:18) : KS_Trains 1.4.8 compilé, non déployé.** Corne posée prise en compte même sans cliquer sa vitre ; dans le menu du train, page de chaque wagon : « Renommer » (nom affiché dans le menu) et « Ouvrir le contenu » (coffre, entonnoir, four ; verrou respecté).
+
+**Ajout (18/10/2026, 08:20) : KS_Trains 1.4.7 envoyé sur Event (tests) ; actif depuis le redémarrage du 18/10 à 08:30 (journal lu : aucune erreur au démarrage, ni après 35 minutes de jeu avec un train à 09:07), non testé en jeu.** Remplace la 1.4.6 (envoyée à 07:31, en attente de redémarrage) : jar en place vérifié identique à `jars-deployes/`, rangé dans `_removed-ks_trains-1.4.6/` ; jar du serveur vérifié identique à celui compilé, `config.yml` du serveur identique à celui du dépôt.
 
 **Ajout (18/10/2026, 07:43) : KS_Trains 1.4.7 compilé, non déployé.** Modèles agrandis retirés (fours, coffres, entonnoirs), sauf celui du wagon jukebox. Sifflet et klaxon en catégorie de son « jukebox / blocs musicaux », seul le souffle de vapeur en « créatures amicales ».
 
