@@ -109,3 +109,22 @@ précédemment, mais le rendre audible de très loin ».
 - Klaxon (cornes et sifflet par défaut) inchangé.
 
 Compilé le 18/10/2026 (`sortie/KS_Trains-1.4.5.jar`). **Statut : non déployé, non testé en jeu.**
+
+## 1.4.6 - klaxon entendu de loin, sifflet en deux coups (18/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « on n'entend pas le klaxon d'assez loin, le but c'est de prévenir d'un danger comme le train
+propulse en l'air, faut qu'on puisse l'entendre ; et ton klaxon par défaut est bien, mais il manque un temps de pause
+pour vraiment avoir le tchou-tchou et pas tchouuuuu ».
+
+- **Cause de la portée** : le klaxon était un son attaché au wagon contrôleur ; le jeu d'un joueur l'ignore quand ce
+  wagon est trop loin pour lui être affiché, quelle que soit la portée du son.
+- **Correction** : joué pour chaque joueur comme les sons de la 1.4.5 (depuis quelques blocs de lui, dans la direction
+  du train) : **plein volume jusqu'à 128 blocs** (`son.plein-klaxon`), puis baissant jusqu'à 0 à 256 blocs
+  (`son.portee-klaxon`). Cornes de chèvre et sifflet par défaut. Catégorie de son « créatures amicales » comme les
+  autres sons du train (avant : « jukebox / blocs musicaux » ; choix de Claude : un avertissement ne doit pas
+  disparaître avec la musique coupée).
+- **Sifflet par défaut** : deux coups courts (accord joué 3 fois en 0,3 seconde chacun) séparés d'une pause, 0,45
+  seconde entre leurs débuts (avant : un seul coup tenu de 1,2 seconde).
+- `config.yml` : nouvelle clé `son.plein-klaxon` (128).
+
+Compilé le 18/10/2026 (`sortie/KS_Trains-1.4.6.jar`). **Statut : non déployé, non testé en jeu.**

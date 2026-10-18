@@ -64,3 +64,5 @@ son:
   volume-souffle: 0.5
   # Klaxon par defaut du controleur (sifflet en bloc musical, sans corne de chevre choisie) ; 256 = comme une corne.
   portee-klaxon: 256
+  # 1.4.6 : le klaxon reste a plein volume jusqu'a cette distance (blocs), puis baisse jusqu'a portee-klaxon.
+  plein-klaxon: 128

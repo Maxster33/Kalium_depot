@@ -6,7 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.MusicInstrument;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -121,11 +120,12 @@ final class Klaxons implements Listener {
 
     /**
      * 1.4.3 (LeKiwi06 : « mettre un klaxon par défaut en note block qui ressemble à un sifflet de train ») : accord de
-     * 3 notes de flûte graves (fa dièse mineur), rejoué 6 fois en 1,2 seconde pour un coup de sifflet tenu.
+     * 3 notes de flûte graves (fa dièse mineur), rejoué 6 fois en 1,2 seconde pour un coup de sifflet tenu. 1.4.6
+     * (LeKiwi06 : « il manque un temps de pause pour vraiment avoir le tchou-tchou et pas tchouuuuu ») : deux coups
+     * courts (3 fois en 0,3 seconde chacun) séparés d'une pause (0,45 seconde entre leurs débuts).
      */
     private static final float[] ACCORD = {0.5f, 0.595f, 0.749f};
-    private static final int COUPS = 6;
-    private static final int ECART = 4;
+    private static final int[] TEMPS = {0, 3, 6, 15, 18, 21};
 
     /** Touche de saut à bord : la corne choisie sonne (sans corne : sifflet du train). */
     void sonner(Player conducteur, Entity controleur) {
@@ -139,28 +139,37 @@ final class Klaxons implements Listener {
                 ? meta.getInstrument() : null;
         if (!corne(corne) || instrument == null) {
             siffler(controleur);
-            attente.put(controleur.getUniqueId(), tick + COUPS * ECART + 6);
+            attente.put(controleur.getUniqueId(), tick + TEMPS[TEMPS.length - 1] + 10);
             return;
         }
-        controleur.getWorld().playSound(controleur, instrument.getSound(), SoundCategory.RECORDS,
-                instrument.getRange() / 16f, 1f);
+        sonner(controleur.getLocation(), instrument.getSound(), 1f);
         attente.put(controleur.getUniqueId(), tick + (long) Math.ceil(instrument.getDuration() * 20));
     }
 
-    /** 1.4.3 : sifflet par défaut, entendu d'aussi loin qu'une corne de chèvre (`son.portee-klaxon`, 256 blocs). */
+    /** 1.4.3 : sifflet par défaut. */
     private void siffler(Entity controleur) {
-        float volume = (float) Math.max(1, plugin.getConfig().getDouble("son.portee-klaxon", 256) / 16);
-        for (int i = 0; i < COUPS; i++) {
+        for (int temps : TEMPS) {
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if (!controleur.isValid()) {
                     return;
                 }
                 for (float note : ACCORD) {
-                    controleur.getWorld().playSound(controleur, Sound.BLOCK_NOTE_BLOCK_FLUTE, SoundCategory.RECORDS,
-                            volume, note);
+                    sonner(controleur.getLocation(), Sound.BLOCK_NOTE_BLOCK_FLUTE, note);
                 }
-            }, (long) i * ECART);
+            }, temps);
         }
+    }
+
+    /**
+     * 1.4.6 (LeKiwi06 : « on n'entend pas le klaxon d'assez loin, le but c'est de prévenir d'un danger ») : avant, son
+     * attaché au wagon contrôleur, que le jeu d'un joueur ignore quand ce wagon est trop loin pour lui être affiché.
+     * Maintenant joué pour chaque joueur (voir KSTrains.entendre) : plein volume jusqu'à `son.plein-klaxon` (128 blocs),
+     * puis baissant jusqu'à `son.portee-klaxon` (256). Catégorie « créatures amicales » comme les autres sons du train
+     * (avant : « jukebox / blocs musicaux », comme une corne du jeu).
+     */
+    private void sonner(org.bukkit.Location lieu, Sound son, float hauteur) {
+        plugin.entendre(lieu, son, 1.0, plugin.getConfig().getDouble("son.plein-klaxon", 128),
+                plugin.getConfig().getDouble("son.portee-klaxon", 256), hauteur);
     }
 
     // ------------------------------------------------------------------ contenant

@@ -6,7 +6,7 @@
 
     <groupId>fr.kalium</groupId>
     <artifactId>KS_Trains</artifactId>
-    <version>1.4.5</version>
+    <version>1.4.6</version>
     <packaging>jar</packaging>
     <name>KS_Trains</name>
 

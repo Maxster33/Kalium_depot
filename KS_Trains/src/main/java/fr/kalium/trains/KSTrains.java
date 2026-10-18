@@ -1422,13 +1422,18 @@ public final class KSTrains extends JavaPlugin implements Listener {
      * direction du train, avec le volume qui donne à son oreille celui voulu.
      */
     private void entendre(Location lieu, Sound son, double volume, double portee, float hauteur) {
+        entendre(lieu, son, volume, 0, portee, hauteur);
+    }
+
+    /** 1.4.6 : même chose, à plein volume jusqu'à {@code plein} blocs, puis baissant jusqu'à 0 à la portée (klaxon). */
+    void entendre(Location lieu, Sound son, double volume, double plein, double portee, float hauteur) {
         for (Player joueur : lieu.getWorld().getPlayers()) {
             Location oreille = joueur.getEyeLocation();
             double distance = oreille.distance(lieu);
             if (distance >= portee) {
                 continue;
             }
-            double voulu = volume * (1 - distance / portee);
+            double voulu = volume * Math.min(1, (portee - distance) / Math.max(1e-6, portee - plein));
             double ecart = Math.min(distance, 4);
             Location source = distance > 4
                     ? oreille.clone().add(lieu.toVector().subtract(oreille.toVector()).multiply(ecart / distance))
