@@ -214,3 +214,4 @@ réponse ; le staff est prévenu dans le tchat seulement à l'envoi (pas de rapp
 Contient la 1.2.2 (jamais déployée). Compilé le 18/10/2026 (`sortie/KS_Didacticiel-1.3.0.jar`). **Statut : non déployé,
 non testé en jeu.** À envoyer avec son `didacticiel.yml`.
 
+**Déployé sur Event le 18/10/2026 à 17:16 (LeKiwi06 : « Oui, envoie KS_Didacticiel 1.3.0 et son didacticiel.yml sur Event » ; jar en place (1.2.1) vérifié de la même taille que `jars-deployes/`, rangé avec l'ancien `didacticiel.yml` dans `_removed-ks_didacticiel-1.2.1/` ; nouveau jar et nouveau fichier de la même taille que ceux du dépôt), actif après redémarrage d'Event. Contient la 1.2.2. Kixster pas encore. Statut : non testé en jeu.**
