@@ -19,6 +19,10 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KLM_Contacts — LeKiwi06 — depuis le 2026-10-17 03:42 — 1.3.0 : liste d'amis des joueurs connectés lisible par les autres plugins (KS_Trains : partage du train)
 - KS_Trains — LeKiwi06 — depuis le 2026-10-16 18:59 — nouveau plugin : trains de wagonnets, étape 1 (locomotive, attelage, déplacement, carburant, menu)
 
+- KS_Jetons — LeKiwi06 — depuis le 2026-10-18 08:40 — 2.1.0 : inventaire spécial en un seul coffre (cases par badge, par jeton, emplacements de localisation), alias /jeton et /badge
+- KS_Teleport — LeKiwi06 — depuis le 2026-10-18 08:40 — 1.4.0 : emplacements de localisation tenus par les jetons de l'inventaire spécial (délai de 24 h), alias /bed
+- KS_Claim — LeKiwi06 — depuis le 2026-10-18 08:40 — 1.5.0 : /claim et /claims (à la place de ceux de SimpleClaimSystem)
+- KS_Economy — LeKiwi06 — depuis le 2026-10-18 08:40 — 1.10.0 : /magasins, /shop, /market ; bouton des rachats de la semaine dans le catalogue
 - KS_Didacticiel — LeKiwi06 — depuis le 2026-10-18 07:55 — nouveau plugin : didacticiel des changements de Kixster dans « Informations »
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 
