@@ -148,3 +148,5 @@ d'essentiel ».
 - `config.yml` inchangé.
 
 Compilé le 18/10/2026 (`sortie/KS_Trains-1.4.7.jar`). **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 18/10/2026 à 08:20 (LeKiwi06 : « oui envoie sur event ») : à la place de la 1.4.6 (pas encore redémarrée) ; jar en place vérifié identique à la référence, rangé dans `_removed-ks_trains-1.4.6/` ; jar du serveur vérifié identique à celui compilé ; `config.yml` inchangé. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
