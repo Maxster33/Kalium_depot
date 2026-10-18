@@ -1,0 +1,384 @@
+# Didacticiel de Kixster (KS_Didacticiel) : contenu du bouton « Didacticiel » du comparateur « Informations ».
+#
+# Mise à jour : modifier ce fichier dans le dépôt (KS_Didacticiel/src/main/resources/didacticiel.yml), l'envoyer
+# tel quel dans plugins/KS_Didacticiel/ sur Kixster (jamais dans l'éditeur de WinSCP : les accents y sont abîmés),
+# puis taper /didacticiel recharger. Ni recompilation ni redémarrage.
+#
+# Structure : themes > <id du thème> > nom, icone, resume, nouveautes > <id de la nouveauté> > nom, icone, texte,
+# commande (facultatif), nouveau.
+# - Les ids (sans point ni espace) servent à retenir ce que chaque joueur a lu : ne pas les changer sans raison.
+# - icone : nom d'un objet du jeu (EMERALD, OAK_BOAT...). Inconnu : un livre, et un avertissement dans la console.
+# - texte : une seule ligne ici ; le plugin le coupe tout seul en lignes d'environ 35 caractères.
+# - nouveau : toujours ENTRE GUILLEMETS. La nouveauté porte « Nouveau » pour chaque joueur qui n'a pas encore ouvert
+#   son thème depuis que cette valeur a changé. Mettre la date du jour sur une nouveauté ajoutée ou modifiée ;
+#   laisser l'ancienne valeur pour une simple correction de texte ; "" = jamais « Nouveau ».
+# - 45 thèmes au plus, 45 nouveautés au plus par thème.
+
+titre: "Didacticiel de Kixster"
+
+themes:
+
+  monde:
+    nom: "Le monde"
+    icone: GRASS_BLOCK
+    resume: "Un monde tout neuf en 26.3."
+    nouveautes:
+      reliefs:
+        nom: "Nouveaux reliefs"
+        icone: MOSS_BLOCK
+        texte: "Montagnes de Tectonic et 11 biomes de Terralith (falaises, volcans, taïga...). Les villages et les structures vanilla sont bien là."
+        nouveau: "2026-10-18"
+      carte:
+        nom: "Une carte de 40 000 blocs"
+        icone: FILLED_MAP
+        texte: "Le monde va de -20 000 à +20 000 en X et en Z. Il est déjà entièrement généré."
+        nouveau: "2026-10-18"
+      dimensions:
+        nom: "Nether et End fermés"
+        icone: OBSIDIAN
+        texte: "Les portails du Nether et de l'End ne mènent nulle part pour l'instant."
+        nouveau: "2026-10-18"
+      arrivee:
+        nom: "Arrivée et réapparition"
+        icone: RED_BED
+        texte: "Un nouveau joueur, ou un joueur mort sans lit, apparaît au point d'apparition du monde, au spawn."
+        nouveau: "2026-10-18"
+      sommeil:
+        nom: "Passer la nuit"
+        icone: WHITE_BED
+        texte: "Il suffit que 25 % des joueurs connectés dorment pour passer la nuit."
+        nouveau: "2026-10-18"
+
+  butin:
+    nom: "Le butin"
+    icone: RAW_GOLD
+    resume: "Ce que donnent les blocs, les mobs et les coffres."
+    nouveautes:
+      minerais:
+        nom: "Minerais"
+        icone: IRON_ORE
+        texte: "Le fer et l'or donnent 2 minerais bruts (plus avec Fortune). Les autres minerais ont 1 % de chance de donner 2 blocs de minerai (pas avec Toucher de soie)."
+        nouveau: "2026-10-18"
+      emeraude:
+        nom: "Émeraude de deepslate"
+        icone: DEEPSLATE_EMERALD_ORE
+        texte: "Chaque minerai d'émeraude de deepslate miné donne aussi une potion de chance."
+        nouveau: "2026-10-18"
+      feuilles:
+        nom: "Feuilles"
+        icone: OAK_LEAVES
+        texte: "Toutes les feuilles donnent des pommes : 1 % sont dorées, 0,01 % enchantées. Chêne noir, chêne pâle et acacia donnent deux fois plus de pousses."
+        nouveau: "2026-10-18"
+      fermes:
+        nom: "Fermes à mobs"
+        icone: IRON_NUGGET
+        texte: "Le golem de fer donne des pépites, les piglins zombifiés deux fois moins, les sorcières cinq fois moins. La chair putréfiée devient souvent un os."
+        nouveau: "2026-10-18"
+      potions:
+        nom: "Potions"
+        icone: POTION
+        texte: "Une vingtaine de mobs tués par un joueur lâchent des potions (ghast, blaze, gardien, chauve-souris...). La verrue du Nether ne se brasse plus : les potions viennent du butin et des récompenses."
+        nouveau: "2026-10-18"
+      rares:
+        nom: "Butin rare"
+        icone: ECHO_SHARD
+        texte: "Endermite, Warden, grand gardien (Estomac du gardien) et chauve-souris (éclat d'écho) ont un butin en plus. Le wither squelette ne donne plus son crâne."
+        nouveau: "2026-10-18"
+      coffres:
+        nom: "Coffres de structures"
+        icone: CHEST
+        texte: "Butin revu dans la cité antique, les bastions, les forteresses, les cités de l'End, les manoirs et les coffres-forts : totems, équipement enchanté..."
+        nouveau: "2026-10-18"
+      peche:
+        nom: "Pêche"
+        icone: FISHING_ROD
+        texte: "Plus de livres enchantés à la pêche : un autre trésor à la place."
+        nouveau: "2026-10-18"
+
+  crafts:
+    nom: "Crafts et objets"
+    icone: CRAFTING_TABLE
+    resume: "Nouvelles recettes et nouveaux objets."
+    nouveautes:
+      pratiques:
+        nom: "Crafts pratiques"
+        icone: RED_SAND
+        texte: "Sable rouge, sable à partir du grès, blocs bruts de fer, d'or et de cuivre, calcite, obsidienne pleureuse, deepslate renforcée, coraux, froglights, lumière, cadre invisible."
+        nouveau: "2026-10-18"
+      livre:
+        nom: "Livre de recettes"
+        icone: KNOWLEDGE_BOOK
+        texte: "Chaque recette du serveur apparaît dans ton livre de recettes dès que tu obtiens un de ses ingrédients."
+        nouveau: "2026-10-18"
+      shulker:
+        nom: "Boîte de shulker"
+        icone: SHULKER_BOX
+        texte: "Elle se fabrique avec un coffre de l'Ender entre les deux carapaces, au lieu d'un coffre."
+        nouveau: "2026-10-18"
+      armure:
+        nom: "Armure fondue"
+        icone: IRON_CHESTPLATE
+        texte: "Un casque, un plastron, des jambières ou des bottes en fer, or, cuivre ou cotte de mailles fondus au four donnent 1 lingot."
+        nouveau: "2026-10-18"
+      spawners:
+        nom: "Spawners"
+        icone: SPAWNER
+        texte: "Les spawners naturels donnent des Fragments de Spawner. 7 fragments, un Cœur de Spawner et une tête de mob font un spawner de ce mob, qui se récupère quand on le casse."
+        nouveau: "2026-10-18"
+      biome:
+        nom: "Changeur de Biome"
+        icone: END_CRYSTAL
+        texte: "Change le biome autour de toi (32 blocs) dans le monde normal, hors des zones protégées et des claims des autres."
+        nouveau: "2026-10-18"
+      bedrock:
+        nom: "Bedrock Breaker"
+        icone: BLAZE_ROD
+        texte: "Clic droit sur un bloc de bedrock : il disparaît. Usage unique."
+        nouveau: "2026-10-18"
+      cle:
+        nom: "Clé de l'End"
+        icone: OMINOUS_TRIAL_KEY
+        texte: "Ton coffre de l'Ender a 6 rangées : chaque Clé de l'End débloque une case des 3 rangées du bas."
+        nouveau: "2026-10-18"
+      tetes:
+        nom: "Têtes de mobs"
+        icone: ZOMBIE_HEAD
+        texte: "Un mob tué par un joueur a 1 % de chance de donner sa tête (332 têtes). /tetes montre celles que tu as déjà eues."
+        commande: "/tetes"
+        nouveau: "2026-10-18"
+      wither:
+        nom: "Tête de wither squelette"
+        icone: WITHER_SKELETON_SKULL
+        texte: "Elle tombe sale, endommagée et désactivée : répare-la par trois crafts pour pouvoir invoquer le Wither."
+        nouveau: "2026-10-18"
+      elixirs:
+        nom: "Élixirs"
+        icone: HONEY_BOTTLE
+        texte: "8 potions longues autour d'un ingrédient rare donnent un élixir de 10 à 60 minutes (vision nocturne, force, vitesse, chance...)."
+        nouveau: "2026-10-18"
+
+  enclume:
+    nom: "Enclume, meule, expérience"
+    icone: ANVIL
+    resume: "Réparer, stocker son expérience, purifier."
+    nouveautes:
+      sans-limite:
+        nom: "Plus de « Trop cher ! »"
+        icone: ANVIL
+        texte: "L'enclume répare et fusionne sans limite de prix. Au-delà de 50 niveaux, le coût est réduit de moitié."
+        nouveau: "2026-10-18"
+      cout:
+        nom: "Coût de réparation"
+        icone: IRON_SWORD
+        texte: "La description de chaque équipement indique combien de niveaux coûte sa réparation complète."
+        nouveau: "2026-10-18"
+      fioles:
+        nom: "Fioles d'expérience"
+        icone: EXPERIENCE_BOTTLE
+        texte: "Accroupi + clic droit sur une enclume, fiole vide en main : choisis combien de niveaux stocker. Lance la fiole pour les récupérer."
+        nouveau: "2026-10-18"
+      meule:
+        nom: "Retirer une malédiction"
+        icone: GRINDSTONE
+        texte: "Accroupi, main vide, clic droit sur une meule, puis choisis un objet maudit. Chaque malédiction coûte 1 Cristal de purification (coffres de récompense)."
+        nouveau: "2026-10-18"
+
+  economie:
+    nom: "Économie"
+    icone: EMERALD
+    resume: "L'émeraude devient la monnaie."
+    nouveautes:
+      score:
+        nom: "Ton score"
+        icone: EMERALD
+        texte: "1 émeraude = 1 point. Dépose et retire tes émeraudes dans /economie. Ton solde s'affiche dans la liste Tab ; masqué, il perd 1 % par jour."
+        commande: "/economie"
+        nouveau: "2026-10-18"
+      blocs:
+        nom: "Blocs compressés"
+        icone: EMERALD_BLOCK
+        texte: "Retire de grosses sommes en blocs d'émeraude compressés (tiers 1 à 6), qu'on ne peut ni poser ni décrafter."
+        nouveau: "2026-10-18"
+      magasin:
+        nom: "Ton magasin"
+        icone: OAK_SIGN
+        texte: "Dans la zone du spawn, crée ton magasin dans un de tes claims (450 points), puis agrandis-le jusqu'à 20 boutiques. Une boutique = un panneau posé sur un coffre. Les autres achètent même à distance."
+        commande: "/magasin"
+        nouveau: "2026-10-18"
+      rachats:
+        nom: "Rachats de la semaine"
+        icone: HOPPER
+        texte: "Chaque lundi, 10 objets que le serveur t'achète en points. Après 2 500 points gagnés ainsi, un quota par objet et par jour s'applique."
+        commande: "/rachat"
+        nouveau: "2026-10-18"
+      echange:
+        nom: "Échanges"
+        icone: PLAYER_HEAD
+        texte: "Propose un échange à un joueur à 5 blocs au plus ; il répond avec /accepter. Objets et points sur un même panneau, validé par les deux."
+        commande: "/echange <joueur>"
+        nouveau: "2026-10-18"
+      marchand:
+        nom: "Marchand ambulant"
+        icone: WANDERING_TRADER_SPAWN_EGG
+        texte: "Les villageois n'ont plus d'échanges. Le marchand ambulant, lui, rachète 10 lots en points, en stock limité."
+        nouveau: "2026-10-18"
+
+  claims:
+    nom: "Claims"
+    icone: GOLDEN_SHOVEL
+    resume: "Protéger son terrain."
+    nouveautes:
+      creer:
+        nom: "Créer un claim"
+        icone: GRASS_BLOCK
+        texte: "/ksclaim protège le chunk où tu te trouves, sur toute la hauteur. Les 10 premiers sont gratuits, puis le prix monte (237 points pour le 11e). 100 au plus."
+        commande: "/ksclaim"
+        nouveau: "2026-10-18"
+      gerer:
+        nom: "Gérer tes claims"
+        icone: WRITABLE_BOOK
+        texte: "Nom, description, réglages des membres et des visiteurs, expulser un joueur."
+        commande: "/ksclaims"
+        nouveau: "2026-10-18"
+      membres:
+        nom: "Membres et groupes"
+        icone: PLAYER_HEAD
+        texte: "Jusqu'à 5 membres par claim. Un groupe applique les mêmes membres et réglages à plusieurs claims."
+        nouveau: "2026-10-18"
+      vente:
+        nom: "Vendre un claim"
+        icone: GOLD_INGOT
+        texte: "Mets-le en vente ; l'acheteur se tient dedans et fait /ksclaim. Supprimer un claim rembourse le dernier prix payé."
+        nouveau: "2026-10-18"
+      gratuits:
+        nom: "Claims gratuits en plus"
+        icone: GOLDEN_SHOVEL
+        texte: "Un jeton de claim, utilisé depuis /ksclaims, donne un claim gratuit de plus sans faire monter les prix. Le claim de ta maison au spawn ne compte pas non plus."
+        nouveau: "2026-10-18"
+
+  deplacements:
+    nom: "Se déplacer"
+    icone: COMPASS
+    resume: "Maison, téléportations, vol, jetons."
+    nouveautes:
+      maison:
+        nom: "Ta maison au spawn"
+        icone: LODESTONE
+        texte: "/maison create dans un de tes claims de la zone du spawn (500 points) : /spawn t'y ramène. Pour la déplacer : /setspawn, une boussole liée à une magnétite en main."
+        commande: "/maison create"
+        nouveau: "2026-10-18"
+      home:
+        nom: "Téléportations"
+        icone: ENDER_PEARL
+        texte: "Vers ton lit, ta maison ou tes emplacements. Une gratuite par heure, puis un jeton ou 20 points. Reste 5 secondes sans bouger."
+        commande: "/home"
+        nouveau: "2026-10-18"
+      localisation:
+        nom: "Jeton de localisation"
+        icone: COMPASS
+        texte: "Une boussole liée à une magnétite entourée de 8 blocs de cuivre ciré. Clic droit : la magnétite devient une destination de /home (il faut un badge de localisation)."
+        nouveau: "2026-10-18"
+      fly:
+        nom: "Voler chez soi"
+        icone: FEATHER
+        texte: "Vole dans tes claims : un jeton donne 10 minutes, un badge une réserve qui se recharge chaque heure. Hors de tes claims, le vol s'arrête."
+        commande: "/fly"
+        nouveau: "2026-10-18"
+      jetons:
+        nom: "Jetons et badges"
+        icone: NETHERITE_INGOT
+        texte: "Ton inventaire spécial : 5 sortes de jetons (fly, mort, téléportation, localisation, claim) et 4 badges à niveaux. Deux badges identiques fusionnent à l'enclume."
+        commande: "/jetons"
+        nouveau: "2026-10-18"
+
+  recompenses:
+    nom: "Mort et récompenses"
+    icone: ENDER_CHEST
+    resume: "Rien ne se perd, tout s'ouvre."
+    nouveautes:
+      coffre-mort:
+        nom: "Coffre de mort"
+        icone: CHEST
+        texte: "À ta mort, tes objets vont dans un coffre que toi seul peux ouvrir pendant 1 heure, avec la moitié de ton expérience en fiole."
+        nouveau: "2026-10-18"
+      claim-autre:
+        nom: "Mort chez un autre"
+        icone: IRON_DOOR
+        texte: "Si tu meurs dans le claim d'un autre joueur, tes objets t'attendent directement dans /rewards."
+        nouveau: "2026-10-18"
+      coffres:
+        nom: "Tes coffres de mort"
+        icone: RECOVERY_COMPASS
+        texte: "Leur position et le temps restant. Un jeton ou un badge de la mort les récupère à distance."
+        commande: "/coffres"
+        nouveau: "2026-10-18"
+      rewards:
+        nom: "Récompenses"
+        icone: ENDER_CHEST
+        texte: "Les gains des mini-jeux et de Kanvas arrivent ici, en coffres « Non ouvert » avec leur valeur moyenne. Clic droit, coffre en main, pour l'ouvrir."
+        commande: "/rewards"
+        nouveau: "2026-10-18"
+      fusion:
+        nom: "Fusion de coffres"
+        icone: ANVIL
+        texte: "Clic droit sur une enclume, coffre de récompense en main : fusionne deux coffres en un plus gros, contre des points d'expérience."
+        nouveau: "2026-10-18"
+
+  vehicules:
+    nom: "Véhicules"
+    icone: OAK_BOAT
+    resume: "Des bateaux en musique, des véhicules protégés."
+    nouveautes:
+      jukebox:
+        nom: "Bateau à jukebox"
+        icone: JUKEBOX
+        texte: "Bateau + jukebox. Accroupi + clic droit (à bord : touche de saut) pour choisir un disque de ton inventaire ; la musique suit le bateau."
+        nouveau: "2026-10-18"
+      jukebox-coffre:
+        nom: "Bateau à coffre et jukebox"
+        icone: OAK_CHEST_BOAT
+        texte: "Bateau à coffre + jukebox. Il lit en boucle les disques de son coffre ; clic droit : lecture ou pause. Tire-le derrière toi avec une laisse."
+        nouveau: "2026-10-18"
+      verrou:
+        nom: "Verrou de véhicule"
+        icone: TRIPWIRE_HOOK
+        texte: "Crochet + 4 lingots de fer. Clic droit sur un bateau ou wagonnet à coffre, un âne, une mule ou un lama : tant qu'il n'est pas vide, personne d'autre ne l'ouvre, ne le casse ni ne le déplace."
+        nouveau: "2026-10-18"
+      partout:
+        nom: "Bateaux et wagonnets"
+        icone: MINECART
+        texte: "Ils se posent partout, même dans les zones protégées et les claims. Ceux sans coffre se cassent partout."
+        nouveau: "2026-10-18"
+
+  interface:
+    nom: "Menus et fair-play"
+    icone: NETHER_STAR
+    resume: "Menus, tableau et règles du jeu."
+    nouveautes:
+      menu:
+        nom: "Le menu du serveur"
+        icone: NETHER_STAR
+        texte: "Économie, claims, téléportations, jetons, récompenses... /menu on donne l'étoile du Nether qui l'ouvre."
+        commande: "/kixster"
+        nouveau: "2026-10-18"
+      tableau:
+        nom: "Tableau"
+        icone: OAK_HANGING_SIGN
+        texte: "Affiche sur le côté de l'écran ton score, ton exploration du jour, tes claims, tes coordonnées et ton biome."
+        commande: "/tableau"
+        nouveau: "2026-10-18"
+      exploration:
+        nom: "Exploration du jour"
+        icone: SPYGLASS
+        texte: "10 par jour : coffres de structures, spawners naturels, blocs suspects, gardien ancien. L'Élixir de Fortune lève la limite."
+        nouveau: "2026-10-18"
+      fair-play:
+        nom: "Fair-play"
+        icone: ENDER_EYE
+        texte: "Anti-xray actif ; les mini-cartes n'ont ni radar d'entités ni vue des grottes."
+        nouveau: "2026-10-18"
+      reseau:
+        nom: "Le réseau"
+        icone: BELL
+        texte: "/global pour le tchat entre serveurs, /amis et /mp pour tes amis, et le chat vocal (Simple Voice Chat)."
+        nouveau: "2026-10-18"

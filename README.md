@@ -31,6 +31,7 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 | `KS_Trains/` | Trains de wagonnets : locomotive (3 fours), attelage à la chaîne, wagons qui suivent la tête sur ses rails, carburant par four, menu du train ; recette dans KS_Crafts, dépend de KLM_Menu | kixster |
 | `KS_LaisseBateau/` | Laisse courte entre deux bateaux : un bateau tiré par un autre bateau reste à 3 blocs (au lieu de 6 à 12) | kixster |
 | `KS_VerrouVehicule/` | Verrou de véhicule : contenant d'un bateau ou wagonnet à coffre, d'un wagonnet à entonnoir ou d'un âne / mule / lama à coffre protégé tant qu'il n'est pas vide (ni ouvert, ni cassé, ni déplacé, ni vidé par entonnoir) ; recette dans KS_Crafts, dépend de KLM_Menu | kixster |
+| `KS_Didacticiel/` | Didacticiel des changements de Kixster dans le comparateur « Informations » (`/didacticiel`) : menu en coffre, un thème puis une nouveauté par objet, marque « Nouveau » par joueur ; contenu dans `didacticiel.yml`, à tenir à jour (`/didacticiel recharger`) ; dépend de KLM_Menu | kixster |
 | `KS_Villageois/` | Villageois et marchands ambulants sans échanges (sauf étiquette `ks_pnj`) | event |
 | `KS_Crafts/` | Crafts du serveur Event (sable rouge, blocs bruts, calcite, froglights, recette du Bedrock Breaker, Clé de l'End, bloc de verrue...) | event |
 | `KS_BedrockBreaker/` | Bedrock Breaker : objet à usage unique qui retire un bloc de bedrock (protections WorldGuard respectées) | event |

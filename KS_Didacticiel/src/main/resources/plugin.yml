@@ -1,0 +1,15 @@
+name: KS_Didacticiel
+version: '${project.version}'
+main: fr.kalium.didacticiel.KSDidacticiel
+api-version: '26.2'
+description: Didacticiel des changements de Kixster, dans le comparateur Informations (contenu dans didacticiel.yml).
+authors: [KaLium]
+depend: [KLM_Menu]
+commands:
+  didacticiel:
+    description: Ouvre le didacticiel de Kixster ; /didacticiel recharger relit didacticiel.yml (staff).
+    usage: /didacticiel [recharger]
+permissions:
+  ksdidacticiel.admin:
+    description: Recharger le contenu du didacticiel (/didacticiel recharger).
+    default: op
