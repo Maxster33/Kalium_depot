@@ -1915,7 +1915,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
                 if (wagon instanceof PoweredMinecart four) {
                     foyers.allumer(four, alimente);
                 }
-                decor.entretenir(wagon, alimente, versLAvant(train, wagon));
+                decor.entretenir(wagon, versLAvant(train, wagon));
                 if (estControleur(wagon)) {
                     boussoles.noter(wagon);
                 }

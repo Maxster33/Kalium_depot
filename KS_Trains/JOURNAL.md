@@ -130,3 +130,17 @@ pour vraiment avoir le tchou-tchou et pas tchouuuuu ».
 Compilé le 18/10/2026 (`sortie/KS_Trains-1.4.6.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 18/10/2026 à 07:31 (LeKiwi06 : « oui envoie sur event ») : 1.4.6 (avec 1.4.4 et 1.4.5) à la place de la 1.4.4 ; jar en place vérifié identique à la référence et `config.yml` du serveur identique à celui de la 1.4.3, rangés dans `_removed-ks_trains-1.4.4/` ; jar et `config.yml` du serveur vérifiés identiques à ceux du dépôt. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
+
+## 1.4.7 - modèles agrandis retirés, sauf celui du wagon jukebox (18/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « retire tous les modèles, sauf celui du jukebox, ils sont un peu buggués et n'apportent rien
+d'essentiel ».
+
+- Plus de modèle agrandi sur les fours, coffres et entonnoirs : on voit les wagonnets du jeu. Ceux déjà posés sont
+  retirés à la seconde suivante (ils ne sont de toute façon pas enregistrés avec le monde).
+- Le wagon jukebox garde son modèle (sans lui, c'est un wagonnet simple) ; `decor.actif`, `decor.taille` et
+  `decor.hauteur` ne concernent plus que lui.
+- Fumée du four du milieu de la locomotive inchangée.
+- `config.yml` inchangé.
+
+Compilé le 18/10/2026 (`sortie/KS_Trains-1.4.7.jar`). **Statut : non déployé, non testé en jeu.**

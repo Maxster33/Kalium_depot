@@ -5,13 +5,9 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Lightable;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
-import org.bukkit.entity.minecart.HopperMinecart;
-import org.bukkit.entity.minecart.PoweredMinecart;
-import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
@@ -23,7 +19,7 @@ import org.joml.Vector3f;
  * grossit pas un wagonnet : réponse « grandis-le un peu pour les Java », et « le four central de la locomotive émet des
  * particules de feu de camp pour rendre ça plus impressionnant »).
  *
- * Décor des wagons d'un train : le chargement (four, coffre, entonnoir, jukebox) est affiché plus gros par un modèle 3D
+ * Décor des wagons d'un train (1.4.7 : wagon jukebox seulement) : le chargement est affiché plus gros par un modèle 3D
  * de bloc posé dans le wagonnet (passager). Seuls les joueurs Java le voient ; les joueurs Bedrock voient les wagonnets
  * du jeu (choix de LeKiwi06). Le modèle n'est pas enregistré avec le monde : il est remis chaque seconde tant que le
  * wagon est dans un train, retiré sinon. Le four du milieu de la locomotive fume (feu de camp) quand il est alimenté.
@@ -51,39 +47,27 @@ final class Decor {
         return null;
     }
 
-    /** Bloc du chargement d'un wagon de train, ou null (wagonnet simple, contrôleur : on y monte). */
-    private BlockData chargement(Minecart wagon, boolean alimente) {
-        if (wagon instanceof PoweredMinecart) {
-            BlockData four = Material.FURNACE.createBlockData();
-            if (four instanceof Lightable allume) {
-                allume.setLit(alimente);
-            }
-            return four;
-        }
-        if (wagon instanceof StorageMinecart) {
-            return Material.CHEST.createBlockData();
-        }
-        if (wagon instanceof HopperMinecart) {
-            return Material.HOPPER.createBlockData();
-        }
-        if (plugin.estJukebox(wagon)) {
-            return Material.JUKEBOX.createBlockData();
-        }
-        return null;
+    /**
+     * Bloc du chargement d'un wagon de train, ou null. 1.4.7 (LeKiwi06 : « retire tous les modèles, sauf celui du
+     * jukebox, ils sont un peu buggués et n'apportent rien d'essentiel ») : seulement le wagon jukebox (un wagonnet
+     * simple sans lui) ; les modèles déjà posés sur les fours, coffres et entonnoirs sont retirés à la seconde suivante.
+     */
+    private BlockData chargement(Minecart wagon) {
+        return plugin.estJukebox(wagon) ? Material.JUKEBOX.createBlockData() : null;
     }
 
     /**
-     * Chaque seconde, wagon d'un train : le modèle est là, à jour (four allumé), orienté le long du train.
+     * Chaque seconde, wagon d'un train : le modèle est là (wagon jukebox) ou retiré, orienté le long du train.
      *
      * @param axe direction du train à ce wagon, vers l'avant (du wagon de derrière au wagon de devant), ou null
      */
-    void entretenir(Minecart wagon, boolean alimente, Vector axe) {
+    void entretenir(Minecart wagon, Vector axe) {
         // 1.4.0 : `decor.actif` à false : pas de modèle agrandi (serveur allégé).
         if (!plugin.getConfig().getBoolean("decor.actif", true)) {
             retirer(wagon);
             return;
         }
-        BlockData bloc = chargement(wagon, alimente);
+        BlockData bloc = chargement(wagon);
         BlockDisplay modele = decor(wagon);
         if (bloc == null) {
             retirer(wagon);
