@@ -149,3 +149,4 @@ pratiques (élixirs, minecart contrôleur, locomotive, spawner, etc) ».
 Compilé le 18/10/2026 (`sortie/KS_Didacticiel-1.2.1.jar`). **Statut : non déployé, non testé en jeu** (empilé sur la
 1.2.0, pas encore testée, demande de LeKiwi06). À envoyer avec son `didacticiel.yml`.
 
+**Déployé sur Event le 18/10/2026 à 15:57 (LeKiwi06 : « Oui, envoie KS_Didacticiel 1.2.1 et son didacticiel.yml sur Event » ; jar en place (1.2.0) vérifié de la même taille que `jars-deployes/`, rangé avec l'ancien `didacticiel.yml` dans `_removed-ks_didacticiel-1.2.0/` ; nouveau jar et nouveau fichier de la même taille que ceux du dépôt), actif après redémarrage d'Event. Kixster pas encore. Statut : non testé en jeu.**
