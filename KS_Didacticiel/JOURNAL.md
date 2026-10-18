@@ -161,5 +161,8 @@ faits dans une autre session).
 - « Laisse courte » : le bateau remorqué suit comme une remorque et prend les virages derrière le tracteur
   (KS_LaisseBateau 1.0.1 et 1.0.2).
 - Ces trois nouveautés ont `nouveau: "2026-10-18d"`. Jar inchangé (1.2.1) : envoyer seulement `didacticiel.yml`, puis
-  `/didacticiel recharger` (ou au prochain redémarrage). **Non envoyé.**
+  `/didacticiel recharger` (ou au prochain redémarrage).
+- « Mods et astuces interdits » : + « toute freecam autre que Legacy Freecam » (LeKiwi06 : « Seule Legacy Freecam est autorisée »), `nouveau: "2026-10-18d"`.
+
+**Envoyé sur Event le 18/10/2026 à 16:34** (`didacticiel.yml` seul, même taille que celui du dépôt ; l'ancien, celui du 15:57, dans `_removed-ks_didacticiel-contenu-2026-10-18/` ; jar 1.2.1 inchangé, déjà actif d'après le `lang.yml` du serveur réécrit à 16:30). À relire par `/didacticiel recharger`. Kixster pas encore. Statut : non testé en jeu.
 

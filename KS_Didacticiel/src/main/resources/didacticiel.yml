@@ -526,8 +526,8 @@ themes:
       mods-interdits:
         nom: "Mods et astuces interdits"
         icone: BARRIER
-        texte: "Interdits : x-ray (mods, packs de textures), Litematica en mode « easy place » ou « printer », macros et clics automatiques, mini-cartes qui contournent le radar ou la vue des grottes. Le staff surveille."
-        nouveau: "2026-10-18c"
+        texte: "Interdits : x-ray (mods, packs de textures), Litematica en mode « easy place » ou « printer », macros et clics automatiques, mini-cartes qui contournent le radar ou la vue des grottes, toute freecam autre que Legacy Freecam. Le staff surveille."
+        nouveau: "2026-10-18d"
       reseau:
         nom: "Le réseau"
         icone: BELL
