@@ -126,3 +126,4 @@ joueurs ne marchent que si `tetes-de-joueurs: true` dans le config.yml de KS_Dec
 **À envoyer avec son `didacticiel.yml`** (le jar ne remplace pas celui du serveur). Compilé le 18/10/2026
 (`sortie/KS_Didacticiel-1.2.0.jar`). **Statut : non déployé, non testé en jeu.**
 
+**Déployé sur Event le 18/10/2026 à 09:07 (LeKiwi06 : « Oui, envoie KS_Didacticiel 1.2.0 et son didacticiel.yml sur Event » ; jar en place (1.1.0) vérifié de la même taille que `jars-deployes/`, rangé avec l'ancien `didacticiel.yml` dans `_removed-ks_didacticiel-1.1.0/` ; nouveau jar et nouveau fichier de la même taille que ceux du dépôt), actif après redémarrage d'Event (le jar ; le fichier seul serait relu par /didacticiel recharger, mais il demande la 1.2.0 pour recettes et requiert). Kixster pas encore. Statut : non testé en jeu.**
