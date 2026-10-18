@@ -71,13 +71,18 @@ comment décrire le problème, peux-tu regarder toi-même ? ».
 - **Cause** (lue dans le code, Claude ne voit pas le jeu) : le bateau remorqué prenait la vitesse du tracteur, plus un
   rappel élastique au-delà de 3 blocs ; dans un virage il glissait de côté, parallèlement au tracteur, au lieu de suivre
   sa trace ; quand le tracteur ralentissait, il continuait sur son élan.
-- **Correction** : remorque à timon rigide. À chaque tick, le bateau remorqué est placé sur la droite qui le relie à
-  l'arrière du tracteur (l'attelage, à 0,7 bloc derrière son centre, là où il sera à la fin du tick), à `longueur`
-  blocs de centre à centre quand ils sont alignés ; son avant pointe vers l'attelage. Il coupe les virages par
-  l'intérieur comme une remorque, s'arrête avec le tracteur et recule avec lui. Le frein du jeu sur l'eau (x0,9, appliqué
+- Capture de LeKiwi06 (1.0.1 ; A tire B qui tire C) : « le bateau B semble être tracté à la perpendiculaire du A, et
+  le bateau C suit le bateau B de façon rigide, comme si la laisse était solide » : B gardait la vitesse de A, donc
+  restait à côté de lui après un virage.
+- **Correction** : laisse tendue : à chaque tick, le bateau remorqué est placé sur la droite qui le relie à l'arrière
+  du tracteur (l'attelage, à 0,7 bloc derrière son centre, là où il sera à la fin du tick), à `longueur` blocs de
+  centre à centre quand ils sont alignés ; son avant pointe vers l'attelage. Il suit la trace et coupe les virages par
+  l'intérieur comme une remorque. Laisse détendue (le tracteur ralentit, recule ou se rapproche) : ni poussé ni tourné,
+  seulement freiné (x0,7 par tick) pour ne pas venir cogner le tracteur. Le frein du jeu sur l'eau (x0,9, appliqué
   avant le déplacement, lu dans `AbstractBoat.tick`) est compensé.
-- Simulation (tracteur à 8 blocs/s, virage de 6 blocs de rayon puis arrêt) : 3,00 blocs en ligne droite, 2,94 dans le
-  virage avec le cap de la remorque 29° derrière celui du tracteur, arrêt sans glisser jusqu'à lui.
+- Simulation de la capture (A, B, C ; B parti de travers ; A à 8 blocs/s, virage à 90° en 2 s, puis arrêt) : B passe
+  derrière A en moins de 1,5 seconde ; 3,00 blocs entre chaque bateau en ligne droite, 2,98 dans le virage (B 17°
+  derrière A, C 17° derrière B) ; à l'arrêt, B glisse jusqu'à 1,9 bloc de A (centre à centre) sans le toucher.
 - `config.yml` : clé `raideur` retirée (elle ne sert plus) ; `longueur` inchangée.
 
 Compilé le 18/10/2026 (`sortie/KS_LaisseBateau-1.0.2.jar`). **Statut : non déployé, non testé en jeu.**

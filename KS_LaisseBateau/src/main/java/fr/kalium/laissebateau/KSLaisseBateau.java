@@ -34,9 +34,10 @@ import java.util.UUID;
  * 1.0.2 (LeKiwi06 : « le bateau tracté ne suit pas correctement le bateau tracteur », sans pouvoir décrire le défaut) :
  * le bateau remorqué prenait la vitesse du tracteur, plus un rappel élastique au-delà de la longueur : dans un virage il
  * glissait de côté, parallèlement au tracteur, au lieu de suivre sa trace ; au ralentissement il continuait sur son
- * élan (« boulet »). Maintenant, une remorque à timon rigide : il est placé à chaque tick sur la droite qui le relie à
- * l'arrière du tracteur (l'attelage), à `longueur` blocs de centre à centre quand ils sont alignés ; il coupe donc les
- * virages par l'intérieur comme une remorque, et recule si le tracteur recule. `raideur` ne sert plus.
+ * élan (« boulet »). Maintenant, laisse tendue : il est placé à chaque tick sur la droite qui le relie à l'arrière du
+ * tracteur (l'attelage), à `longueur` blocs de centre à centre quand ils sont alignés, l'avant vers l'attelage ; il
+ * suit donc la trace et coupe les virages par l'intérieur comme une remorque. Laisse détendue (capture de LeKiwi06 :
+ * « comme si la laisse était solide ») : ni poussé ni tourné, seulement freiné. `raideur` ne sert plus.
  */
 public final class KSLaisseBateau extends JavaPlugin {
 
@@ -46,6 +47,8 @@ public final class KSLaisseBateau extends JavaPlugin {
     private static final double ATTELAGE = 0.7;
     /** 1.0.2 : frein du jeu sur un bateau dans l'eau, appliqué avant son déplacement (AbstractBoat.floatBoat). */
     private static final double FREIN_EAU = 0.9;
+    /** 1.0.2 : frein ajouté au bateau remorqué quand la laisse est détendue (par tick ; 0,4 bloc/tick : 0,7 bloc). */
+    private static final double FREIN_DETENDUE = 0.7;
 
     /** Bateaux tenus en laisse par un bateau, relevés chaque seconde. */
     private final List<Boat> remorques = new ArrayList<>();
@@ -108,10 +111,17 @@ public final class KSLaisseBateau extends JavaPlugin {
             if (distance < 0.3) {
                 continue;
             }
-            orienter(bateau, la, dx, dz);
-            // Place voulue : sur la droite attelage-bateau, à la longueur du timon de l'attelage.
+            // Place voulue : sur la droite attelage-bateau, à la longueur de la laisse depuis l'attelage.
             double timon = Math.max(0.5, longueur - ATTELAGE);
             double ecart = distance - timon;
+            if (ecart <= 0) {
+                // Laisse détendue (le tracteur ralentit, recule ou se rapproche) : une laisse ne pousse pas ; le
+                // bateau remorqué garde son cap et son élan, freiné pour ne pas venir cogner le tracteur.
+                Vector elan = bateau.getVelocity();
+                bateau.setVelocity(new Vector(elan.getX() * FREIN_DETENDUE, elan.getY(), elan.getZ() * FREIN_DETENDUE));
+                continue;
+            }
+            orienter(bateau, la, dx, dz);
             double vx = dx / distance * ecart;
             double vz = dz / distance * ecart;
             // Le jeu freine le bateau (x0,9 sur l'eau) avant de le déplacer : compensé.
