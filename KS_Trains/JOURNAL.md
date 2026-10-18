@@ -128,3 +128,5 @@ pour vraiment avoir le tchou-tchou et pas tchouuuuu ».
 - `config.yml` : nouvelle clé `son.plein-klaxon` (128).
 
 Compilé le 18/10/2026 (`sortie/KS_Trains-1.4.6.jar`). **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 18/10/2026 à 07:31 (LeKiwi06 : « oui envoie sur event ») : 1.4.6 (avec 1.4.4 et 1.4.5) à la place de la 1.4.4 ; jar en place vérifié identique à la référence et `config.yml` du serveur identique à celui de la 1.4.3, rangés dans `_removed-ks_trains-1.4.4/` ; jar et `config.yml` du serveur vérifiés identiques à ceux du dépôt. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
