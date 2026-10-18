@@ -1401,15 +1401,17 @@ public final class KSTrains extends JavaPlugin implements Listener {
             // Démarrage (ou reprise après un arrêt) : sifflet.
             double volume = reglage("son.volume-sifflet", 1.0);
             double portee = reglage("son.portee-sifflet", 128);
-            entendre(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, volume, portee, 0.84f);
-            entendre(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, volume, portee, 1.06f);
+            // 1.4.7 (LeKiwi06 : « seul le son du train doit être dans créatures amicales : sifflet, cornes, etc. doivent
+            // être joués dans jukebox et blocs musicaux ») : sifflet en « jukebox / blocs musicaux ».
+            entendre(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, SoundCategory.RECORDS, volume, 0, portee, 0.84f);
+            entendre(lieu, Sound.BLOCK_NOTE_BLOCK_FLUTE, SoundCategory.RECORDS, volume, 0, portee, 1.06f);
             train.dernierSouffle = tick;
             return;
         }
         double force = Math.min(1, train.vitesse / Math.max(0.01, reglage("vitesse-max", 1.0)));
         long intervalle = Math.round(12 - 9 * force);
         if (tick - train.dernierSouffle >= intervalle) {
-            entendre(lieu, Sound.BLOCK_FIRE_EXTINGUISH, reglage("son.volume-souffle", 0.5),
+            entendre(lieu, Sound.BLOCK_FIRE_EXTINGUISH, SoundCategory.NEUTRAL, reglage("son.volume-souffle", 0.5), 0,
                     reglage("son.portee-souffle", 64), (tick / intervalle) % 2 == 0 ? 0.65f : 0.8f);
             train.dernierSouffle = tick;
         }
@@ -1419,14 +1421,12 @@ public final class KSTrains extends JavaPlugin implements Listener {
      * 1.4.5 : son du train joué pour chaque joueur à moins de {@code portee} blocs, à {@code volume} de près, baissant
      * jusqu'à 0 à la portée. Le jeu ne sait pas faire porter loin un son qui n'est pas au volume maximal (sa portée est
      * 16 blocs x volume, et il atténue en ligne droite jusqu'à elle) : le son part à 4 blocs au plus du joueur, dans la
-     * direction du train, avec le volume qui donne à son oreille celui voulu.
+     * direction du train, avec le volume qui donne à son oreille celui voulu. 1.4.6 : plein volume jusqu'à
+     * {@code plein} blocs (klaxon ; 0 sinon). 1.4.7 : catégorie de son choisie par l'appelant (souffle de vapeur :
+     * créatures amicales ; sifflet et klaxon : jukebox / blocs musicaux).
      */
-    private void entendre(Location lieu, Sound son, double volume, double portee, float hauteur) {
-        entendre(lieu, son, volume, 0, portee, hauteur);
-    }
-
-    /** 1.4.6 : même chose, à plein volume jusqu'à {@code plein} blocs, puis baissant jusqu'à 0 à la portée (klaxon). */
-    void entendre(Location lieu, Sound son, double volume, double plein, double portee, float hauteur) {
+    void entendre(Location lieu, Sound son, SoundCategory categorie, double volume, double plein, double portee,
+            float hauteur) {
         for (Player joueur : lieu.getWorld().getPlayers()) {
             Location oreille = joueur.getEyeLocation();
             double distance = oreille.distance(lieu);
@@ -1438,7 +1438,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
             Location source = distance > 4
                     ? oreille.clone().add(lieu.toVector().subtract(oreille.toVector()).multiply(ecart / distance))
                     : lieu;
-            joueur.playSound(source, son, SoundCategory.NEUTRAL, (float) Math.min(1, voulu / (1 - ecart / 16)),
+            joueur.playSound(source, son, categorie, (float) Math.min(1, voulu / (1 - ecart / 16)),
                     hauteur);
         }
     }

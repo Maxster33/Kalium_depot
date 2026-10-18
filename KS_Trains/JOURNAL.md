@@ -141,6 +141,10 @@ d'essentiel ».
 - Le wagon jukebox garde son modèle (sans lui, c'est un wagonnet simple) ; `decor.actif`, `decor.taille` et
   `decor.hauteur` ne concernent plus que lui.
 - Fumée du four du milieu de la locomotive inchangée.
+- **Catégories de son** (LeKiwi06 : « seul le son du train doit être dans créatures amicales : sifflet, cornes, etc.
+  doivent être joués dans jukebox et blocs musicaux ») : souffle de vapeur en « créatures amicales » ; sifflet de départ,
+  klaxon (cornes de chèvre et sifflet par défaut) en « jukebox / blocs musicaux » (la musique du wagon jukebox y était
+  déjà). En 1.4.6, tout était en « créatures amicales ».
 - `config.yml` inchangé.
 
 Compilé le 18/10/2026 (`sortie/KS_Trains-1.4.7.jar`). **Statut : non déployé, non testé en jeu.**

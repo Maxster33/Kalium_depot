@@ -453,7 +453,7 @@ Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
 
-**Ajout (18/10/2026, 07:43) : KS_Trains 1.4.7 compilé, non déployé.** Modèles agrandis retirés (fours, coffres, entonnoirs), sauf celui du wagon jukebox.
+**Ajout (18/10/2026, 07:43) : KS_Trains 1.4.7 compilé, non déployé.** Modèles agrandis retirés (fours, coffres, entonnoirs), sauf celui du wagon jukebox. Sifflet et klaxon en catégorie de son « jukebox / blocs musicaux », seul le souffle de vapeur en « créatures amicales ».
 
 **Ajout (18/10/2026, 07:31) : KS_Trains 1.4.6 envoyé sur Event (tests), à redémarrer.** Remplace la 1.4.4 (envoyée à 00:18, en attente de redémarrage) : jar en place vérifié identique à `jars-deployes/` et `config.yml` du serveur identique à celui envoyé avec la 1.4.3, rangés dans `_removed-ks_trains-1.4.4/` ; jar et `config.yml` du serveur vérifiés identiques après l'envoi.
 

@@ -164,11 +164,11 @@ final class Klaxons implements Listener {
      * 1.4.6 (LeKiwi06 : « on n'entend pas le klaxon d'assez loin, le but c'est de prévenir d'un danger ») : avant, son
      * attaché au wagon contrôleur, que le jeu d'un joueur ignore quand ce wagon est trop loin pour lui être affiché.
      * Maintenant joué pour chaque joueur (voir KSTrains.entendre) : plein volume jusqu'à `son.plein-klaxon` (128 blocs),
-     * puis baissant jusqu'à `son.portee-klaxon` (256). Catégorie « créatures amicales » comme les autres sons du train
-     * (avant : « jukebox / blocs musicaux », comme une corne du jeu).
+     * puis baissant jusqu'à `son.portee-klaxon` (256). Catégorie « jukebox / blocs musicaux », comme une corne du jeu
+     * (1.4.7, LeKiwi06 ; en 1.4.6 « créatures amicales »).
      */
     private void sonner(org.bukkit.Location lieu, Sound son, float hauteur) {
-        plugin.entendre(lieu, son, 1.0, plugin.getConfig().getDouble("son.plein-klaxon", 128),
+        plugin.entendre(lieu, son, org.bukkit.SoundCategory.RECORDS, 1.0, plugin.getConfig().getDouble("son.plein-klaxon", 128),
                 plugin.getConfig().getDouble("son.portee-klaxon", 256), hauteur);
     }
 
