@@ -45,3 +45,16 @@ testé en jeu.**
 **Déployé sur Event le 16/10/2026 à 20:00 (LeKiwi06 : « envoie tout sur event je vais faire les tests là-bas » ; envoi groupé : KS_VerrouVehicule 1.0.0, KS_LaisseBateau 1.0.0, KS_Trains 1.0.0, KS_Crafts 1.16.0 ; KS_Crafts 1.14.1 en place vérifié identique à la référence avant l'envoi, dans `_removed-ks_crafts-1.14.1/` ; jars du serveur vérifiés identiques à ceux compilés après l'envoi), actif après redémarrage d'Event. Prévu pour Kixster : testé d'abord sur Event à la demande de LeKiwi06 ; Kixster n'est pas touché. Statut : non testé en jeu.**
 
 **Actif sur Event depuis son redémarrage du 16/10/2026 à 20:50 (journal lu, heures du journal en UTC : 18:50) : KS_Trains 1.2.0, KS_Crafts 1.17.0 (« 81 crafts ajoutés » : les 78 d'avant + verrou, locomotive et wagon contrôleur), KS_VerrouVehicule 1.1.0 et KS_LaisseBateau 1.0.0 chargés et activés sans erreur ni avertissement ; KS_Trains activé après KS_Claim (ordre voulu pour la pose de la locomotive) ; `config.yml` et `lang.yml` créés. Statut : non testé en jeu.**
+
+## 1.0.1 - le bateau remorqué suit comme une remorque (18/10/2026, LeKiwi06)
+
+Retour de LeKiwi06 sur Event : « elles font la bonne distance, mais le bateau de derrière ne change jamais
+d'orientation ; d'habitude ça ressemble davantage à une remorque qui nous suit et pas à un boulet qu'on traîne ».
+
+- **Cause** : le jeu ne tourne un bateau que s'il est conduit (lu dans le code du jeu 26.3 : `AbstractBoat.controlBoat`
+  seul change le cap) ; le plugin ne faisait que le tirer.
+- **Correction** : à chaque tick, l'avant du bateau remorqué est tourné vers le bateau qui le tracte, comme une
+  remorque vers son attelage (aussi quand la laisse est détendue ; pas quand les deux bateaux se touchent presque).
+- Bateau remorqué conduit par un joueur : toujours calculé par son jeu, inchangé.
+
+Compilé le 18/10/2026 (`sortie/KS_LaisseBateau-1.0.1.jar`). **Statut : non déployé, non testé en jeu.**

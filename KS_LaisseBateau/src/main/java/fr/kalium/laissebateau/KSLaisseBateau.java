@@ -26,6 +26,10 @@ import java.util.UUID;
  * prend la vitesse du bateau qui tracte, plus un rappel proportionnel à l'écart. En deçà, le jeu fait comme d'habitude.
  * La corde s'affiche entre les deux bateaux : elle paraît donc plus courte. Laisse tenue par un joueur ou une barrière :
  * inchangée.
+ *
+ * 1.0.1 (LeKiwi06 : « le bateau de derrière ne change jamais d'orientation ; d'habitude ça ressemble davantage à une
+ * remorque qui nous suit et pas à un boulet qu'on traîne ») : le bateau remorqué est tourné à chaque tick vers celui
+ * qui le tracte, comme une remorque vers son attelage (le jeu ne tourne un bateau que s'il est conduit).
  */
 public final class KSLaisseBateau extends JavaPlugin {
 
@@ -77,6 +81,7 @@ public final class KSLaisseBateau extends JavaPlugin {
             double dx = ici.getX() - la.getX();
             double dz = ici.getZ() - la.getZ();
             double distance = Math.sqrt(dx * dx + dz * dz);
+            orienter(bateau, la, dx, dz, distance);
             if (distance <= longueur) {
                 continue;
             }
@@ -97,5 +102,20 @@ public final class KSLaisseBateau extends JavaPlugin {
             bateau.setVelocity(new Vector(vx, bateau.getVelocity().getY(), vz));
         }
         precedentes = positions;
+    }
+
+    /**
+     * 1.0.1 : avant du bateau remorqué vers le bateau qui le tracte (un bateau avance vers (-sin cap, cos cap)). Pas
+     * de changement collés l'un à l'autre (direction instable), ni pour moins d'un demi-degré (pas de renvoi inutile).
+     */
+    private static void orienter(Boat bateau, Location la, double dx, double dz, double distance) {
+        if (distance < 0.5) {
+            return;
+        }
+        float cap = (float) Math.toDegrees(Math.atan2(-dx, dz));
+        float ecart = Math.abs(((cap - la.getYaw()) % 360 + 540) % 360 - 180);
+        if (ecart > 0.5f) {
+            bateau.setRotation(cap, la.getPitch());
+        }
     }
 }
