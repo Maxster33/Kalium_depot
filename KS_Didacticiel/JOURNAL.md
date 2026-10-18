@@ -166,3 +166,20 @@ faits dans une autre session).
 
 **Envoyé sur Event le 18/10/2026 à 16:34** (`didacticiel.yml` seul, même taille que celui du dépôt ; l'ancien, celui du 15:57, dans `_removed-ks_didacticiel-contenu-2026-10-18/` ; jar 1.2.1 inchangé, déjà actif d'après le `lang.yml` du serveur réécrit à 16:30). À relire par `/didacticiel recharger`. Kixster pas encore. Statut : non testé en jeu.
 
+## 1.2.2 - pièces du wagon contrôleur et variantes enfin montrées (18/10/2026, LeKiwi06)
+
+Signalé par LeKiwi06 sur Event (1.2.1) : « le minecart contrôleur affiche toujours 5 comparateurs ».
+
+- **Cause** (lue dans le serveur 26.3, `CraftRecipe.toBukkit`) : une recette relue par `recipeIterator()` ne rend plus
+  ses ingrédients en `MaterialChoice` mais en `ItemTypeChoice`. La 1.2.1 ne reconnaissait que `MaterialChoice` : elle
+  montrait le premier objet partout, sans la ligne « Ou une de ses n variantes » (défaut aussi de la 1.2.0, pour toutes
+  les recettes à ingrédient au choix).
+- **Correction** : les objets d'un choix sont lus pour `ItemTypeChoice` (clé de chaque type d'objet), `MaterialChoice`
+  et `ExactChoice`. Le wagon contrôleur montre ses 5 pièces, une par case ; les ingrédients au choix (cuivres ciré,
+  grès, bateaux...) portent de nouveau « Ou une de ses n variantes ».
+- Méthodes vérifiées présentes dans l'API du serveur 26.3 (`ItemTypeChoice.itemTypes`, `RegistryKeySet.values`,
+  `TypedKey.key`).
+
+Compilé le 18/10/2026 (`sortie/KS_Didacticiel-1.2.2.jar`). **Statut : non déployé, non testé en jeu.** Jar seul
+(`didacticiel.yml` inchangé).
+

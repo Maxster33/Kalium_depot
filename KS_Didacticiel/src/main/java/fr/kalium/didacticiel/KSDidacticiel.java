@@ -457,9 +457,9 @@ public final class KSDidacticiel extends JavaPlugin {
                         continue;
                     }
                     int rang = vues.merge(lettre, 1, Integer::sum) - 1;
-                    if (ch instanceof RecipeChoice.MaterialChoice m && occurrences.get(lettre) > 1
-                            && m.getChoices().size() == occurrences.get(lettre)) {
-                        menu.poser(GRILLE[l * 3 + c], new ItemStack(m.getChoices().get(rang)), null);
+                    List<ItemStack> objets = objets(ch);
+                    if (occurrences.get(lettre) > 1 && objets.size() == occurrences.get(lettre)) {
+                        menu.poser(GRILLE[l * 3 + c], objets.get(rang), null);
                     } else {
                         menu.poser(GRILLE[l * 3 + c], ingredient(ch), null);
                     }
@@ -498,14 +498,12 @@ public final class KSDidacticiel extends JavaPlugin {
 
     /** Un ingrédient : l'objet de la recette ; s'il y en a plusieurs au choix, le premier, avec « Au choix ». */
     private ItemStack ingredient(RecipeChoice choix) {
-        ItemStack objet;
-        try {
-            objet = choix.getItemStack().clone();
-        } catch (RuntimeException e) {
+        List<ItemStack> objets = objets(choix);
+        if (objets.isEmpty()) {
             return null;
         }
-        int variantes = choix instanceof RecipeChoice.MaterialChoice m ? m.getChoices().size()
-                : choix instanceof RecipeChoice.ExactChoice x ? x.getChoices().size() : 1;
+        ItemStack objet = objets.get(0);
+        int variantes = objets.size();
         if (variantes > 1) {
             ItemMeta meta = objet.getItemMeta();
             if (meta != null) {
@@ -517,6 +515,35 @@ public final class KSDidacticiel extends JavaPlugin {
             }
         }
         return objet;
+    }
+
+    /**
+     * 1.2.2 : les objets acceptés par un choix de recette, dans l'ordre. Une recette relue sur un serveur 26.3 ne rend
+     * plus ses objets en MaterialChoice mais en ItemTypeChoice (lu dans CraftRecipe.toBukkit) : sans ce cas, seul le
+     * premier objet était montré (wagon contrôleur : 5 comparateurs).
+     */
+    private static List<ItemStack> objets(RecipeChoice choix) {
+        List<ItemStack> objets = new ArrayList<>();
+        if (choix instanceof RecipeChoice.ItemTypeChoice types) {
+            for (io.papermc.paper.registry.TypedKey<org.bukkit.inventory.ItemType> cle : types.itemTypes().values()) {
+                Material materiau = Material.matchMaterial(cle.key().asString());
+                if (materiau != null && materiau.isItem()) {
+                    objets.add(new ItemStack(materiau));
+                }
+            }
+        } else if (choix instanceof RecipeChoice.MaterialChoice materiaux) {
+            materiaux.getChoices().forEach(m -> objets.add(new ItemStack(m)));
+        } else if (choix instanceof RecipeChoice.ExactChoice exacts) {
+            exacts.getChoices().forEach(o -> objets.add(o.clone()));
+        }
+        if (objets.isEmpty()) {
+            try {
+                objets.add(choix.getItemStack().clone());
+            } catch (RuntimeException e) {
+                // choix vide : rien à montrer
+            }
+        }
+        return objets;
     }
 
     /** Une nouveauté non lue (ou un thème qui en contient) brille dans le menu. */
