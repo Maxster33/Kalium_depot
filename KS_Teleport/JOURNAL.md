@@ -149,3 +149,30 @@ pour 500 points » à 15:48:02, sans erreur ; puis `/magasin create` (aucun maga
 **Déployé sur Kixster le 13/10/2026 à 16:30 (LeKiwi06, envoi groupé : KS_Economy 1.9.0, KS_Teleport 1.3.0, KS_Claim 1.4.0 ; accord de LeKiwi06 : « Kixster seulement » ; jars en place vérifiés identiques à `jars-deployes/` avant l'envoi, jars envoyés vérifiés identiques à ceux compilés après l'envoi ; 1.2.0 dans `_removed-ks_teleport-1.2.0/` ; supprimables par l'humain : `_removed-ks_teleport-1.0.0/`, `1.0.1/` ; `config.yml` du serveur non modifié), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.2.0). Statut : non testé en jeu.**
 
 **Journal de Kixster lu après le redémarrage du 13/10/2026 à 16:36 (demande de LeKiwi06) : KS_Economy 1.9.0, KS_Teleport 1.3.0 et KS_Claim 1.4.0 chargés et activés sans erreur ni avertissement (KS_Teleport avant KS_Claim), 49 plugins, démarrage en 15 s. Aucun joueur ne s'était encore connecté : aucune commande (`/magasin`, `/setspawn`, `/ksclaims`) n'a tourné, reste à tester en jeu.**
+
+## 1.4.0 - emplacements dans l'inventaire spécial, délai de 24 h, /bed (18/10/2026, LeKiwi06)
+
+Demandes de LeKiwi06 : « /bed (alias de /home bed) » ; l'inventaire spécial en un seul coffre avec des cases de
+localisation (KS_Jetons 2.1.0), un jeton posé = une destination, 24 h d'attente pour une case vidée.
+
+- **/bed** : comme /home bed.
+- **Emplacements** = les cases de localisation de l'inventaire spécial (KS_Jetons 2.1.0) : un jeton de localisation
+  posé dans la case N est l'emplacement N. Plus d'enregistrement par clic droit : un clic droit avec le jeton en main
+  ouvre l'inventaire spécial, avec un message. Plus de « Libérer l'emplacement » dans /home (le jeton n'était pas
+  rendu) : on reprend le jeton dans sa case (il est rendu, la case attend 24 h).
+- **Vérification** au moment de poser (demandée par KS_Jetons) : jeton lié à une magnétite, magnétite toujours là,
+  pas déjà dans une autre case du joueur.
+- **/home** : liste des emplacements tirée des cases (libre, en attente avec le temps restant, inactif si le badge est
+  trop bas), texte « pour ajouter ou libérer un emplacement... » et bouton « Mes localisations » (ouvre l'inventaire
+  spécial ; choix de Claude, signalé).
+- **Magnétites indestructibles** : celles des jetons posés dans les cases de tous les joueurs (et toujours les points de
+  /spawn), recalculées à chaque changement.
+- **Reprise** au premier démarrage : chaque emplacement enregistré avant (teleport.yml) devient un jeton de localisation
+  de la même magnétite, posé dans la même case ; case déjà prise : jeton rendu au joueur. teleport.yml n'écrit plus
+  d'emplacements ensuite (garder l'ancien fichier au déploiement). Les délais de 15 minutes en cours sont oubliés.
+- `emplacement-libere-minutes` n'est plus lue (le délai est `localisation-delai-heures` de KS_Jetons).
+
+Limites : écrit sans serveur de test. Empilé sur la 1.3.0, jamais testée en jeu (demande de LeKiwi06).
+
+**À déployer avec KS_Jetons 2.1.0.** Compilé le 18/10/2026 (`sortie/KS_Teleport-1.4.0.jar`). **Statut : non déployé,
+non testé en jeu.**

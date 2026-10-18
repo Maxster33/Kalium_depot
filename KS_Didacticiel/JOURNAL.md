@@ -61,3 +61,21 @@ recompiler que si le code change (le fichier du jar ne sert qu'au premier démar
 Compilé le 18/10/2026 (`sortie/KS_Didacticiel-1.0.0.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 18/10/2026 à 08:01 (LeKiwi06 : « Envoie d'abord KS_Didacticiel 1.0.0 sur Event pour que je teste le menu, Kixster ensuite » ; nouveau ; KLM_Menu 2.11.0 en place ; jar du serveur vérifié de la même taille que celui compilé), actif après redémarrage d'Event. Kixster pas encore. Statut : non testé en jeu.**
+
+## 1.1.0 - /help, contenu mis à jour (18/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « /help et /didacticiel (ouvre le didacticiel) ».
+
+- **/help** ouvre le didacticiel, comme /didacticiel (et `/help recharger` pour le staff). Techniquement nécessaire,
+  signalé : /help existe déjà (aide du serveur), un alias de plugin.yml perdrait contre elle ; le nom est repris dans la
+  table des commandes au démarrage puis au premier tick. L'aide d'origine reste sous `bukkit:help` et `minecraft:help`.
+- **Contenu** (`didacticiel.yml`, 60 nouveautés) : /claim et /claims, catalogue des magasins (/magasins, /shop,
+  /market, lingot des rachats), /bed, jetons de localisation posés dans l'inventaire spécial (24 h), inventaire
+  spécial en un coffre (/jeton, /badge), ce didacticiel (/help) ; ces 7 nouveautés ont `nouveau: "2026-10-18b"` et
+  redeviennent « Nouveau » pour qui les avait lues.
+- Sur un serveur où la 1.0.0 a déjà créé `plugins/KS_Didacticiel/didacticiel.yml`, **envoyer le nouveau fichier** puis
+  `/didacticiel recharger` (le jar ne le remplace pas).
+
+Limites : écrit sans serveur de test. Empilé sur la 1.0.0, pas encore testée en jeu (demande de LeKiwi06).
+
+Compilé le 18/10/2026 (`sortie/KS_Didacticiel-1.1.0.jar`). **Statut : non déployé, non testé en jeu.**

@@ -100,3 +100,54 @@ KS_Teleport).
   s'empile donc pas avec un ancien de la même magnétite.
 
 **Déployé sur Kixster le 11/10/2026 à 07:45 (LeKiwi06, envoi groupé : KS_Teleport 1.1.0, KS_Decapitator 1.2.0, KS_RewardsGUI 1.5.0, KS_Economy 1.6.0, KS_Crafts 1.12.0, KS_Jetons 2.0.2, KS_Meule 1.0.0 ; accord de LeKiwi06 : « oui déploie tout sur kixster » ; 2.0.1 dans `_removed-ks_jetons-2.0.1/` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 2.0.1). Statut : non testé en jeu.**
+
+## 2.1.0 - inventaire spécial en un seul coffre, cases de localisation, /jeton et /badge (18/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « /jeton et /badge (possibilité de l'écrire au singulier), j'aimerais aussi que cette interface
+soit une seule interface de coffre, avec des slots dédiés pour les jetons de localisation si la personne a un badge de
+localisation etc ». Maquette montrée avant le code ; ses réponses : un jeton posé dans une case de localisation = une
+destination (« mais j'aimerais que chaque slot ait un cooldown de 24 h si on enlève un jeton, 15 minutes c'était bien
+trop court ») ; une case par type de jeton.
+
+- **Commandes** : /jetons, /badges, /jeton, /badge (alias) et le bouton « Inventaire spécial » du menu.
+- **Un coffre de 4 rangées** (remplace la fenêtre et ses deux contenants d'entonnoir) :
+  - rangée 1 : étiquette « Tes badges », puis une case par badge (fly, mort, téléportation, localisation) ; un badge y
+    est porté ; poser un autre badge du même type échange les deux ;
+  - rangée 2 : étiquette « Tes jetons », puis une case par jeton (fly, mort, téléportation, claim), **sans limite de
+    nombre** (la case montre 64 au plus et « Tu en as n ») : plus de jetons « en attente de place » ;
+  - rangée 3 : étiquette « Tes localisations », puis les cases de localisation (5 : la valeur du badge au niveau
+    maximal, 8 au plus) : une case ouverte par niveau du badge de localisation porté ; bloquée (barrière, niveau
+    demandé), en attente (horloge, temps restant) ou libre ;
+  - rangée 4 : barre d'actions : « Comment ça marche », « Acheter : Jeton de téléportation » (si en vente), « Fermer ».
+- **Gestes** (tous les clics qui touchent le coffre sont annulés puis faits par le plugin au tick suivant, pour que rien
+  ne parte dans une mauvaise case ; les clics dans son propre inventaire restent libres) : Maj + clic sur un jeton ou un
+  badge de son inventaire = il va dans sa case ; clic avec un objet sur sa case = le poser (clic droit : un jeton) ;
+  clic sur une case = reprendre son contenu sur le curseur (clic droit : la moitié des jetons ; Maj : dans
+  l'inventaire). Refus : message dans le tchat, au plus toutes les 2 secondes.
+- **Cases de localisation** : un jeton de localisation par case. Posé : sa magnétite est une destination de /home
+  (KS_Teleport 1.4.0 vérifie : jeton lié, magnétite toujours là, pas déjà dans une autre case). Repris : le jeton est
+  rendu et la case n'en reprend un que **24 h** plus tard (`localisation-delai-heures`, nouvelle clé, 24 par défaut
+  dans le code). Badge retiré ou plus bas : les jetons des cases en trop restent posés, mais ces destinations ne
+  servent plus (comme avant).
+- **API** inchangée pour les autres plugins (nombre, consommer, ajouter, prix, niveauBadge, valeurBadge, creer...) ;
+  `nombre(LOCALISATION)` = jetons posés ; `consommer` et `ajouter` ne s'appliquent pas au jeton de localisation.
+  Nouvelles : `localisations`, `toutesLocalisations`, `attenteLocalisation`, `delaiLocalisationMs`,
+  `validateurLocalisation`, `ecouterLocalisations`, `poserLocalisation`, `rendre`, `ouvrirSpecial`. KS_Fly,
+  KS_CoffreMort, KS_AntiCheat et KS_KaliumGive recompilés contre elle sans erreur (pas à redéployer).
+- **Données** : `jetons.yml` passe au format 2 (`version: 2`, par joueur : niveaux des badges, nombres de jetons,
+  jetons de localisation posés, cases en attente, objets à rendre). **Reprise automatique** du fichier de la 2.0 au
+  premier démarrage (ancien fichier gardé : `jetons-2.0.yml`) : badges dans leur case, jetons dans leur case (jetons
+  « en attente » compris) ; sont rendus au joueur (connexion ou ouverture du coffre) : les jetons de localisation non
+  utilisés qui étaient rangés dans « Mes jetons », un deuxième badge du même type.
+- Jeton de localisation : nouvelle dernière ligne « À poser dans tes localisations : /jetons » (les anciens gardent la
+  leur).
+
+Choix de Claude, signalés :
+- pas de confirmation pour poser ou reprendre un jeton de localisation (le message du tchat dit le délai de 24 h) ;
+- l'achat de jetons de téléportation reste une petite fenêtre de saisie, ouverte depuis la barre du coffre.
+
+Limites : écrit sans serveur de test ; Bedrock (clics, Maj + clic tactile) à vérifier. Empilé sur la 2.0.2, jamais
+testée en jeu (demande de LeKiwi06).
+
+**À déployer avec KS_Teleport 1.4.0** (cases de localisation = emplacements). Compilé le 18/10/2026
+(`sortie/KS_Jetons-2.1.0.jar`). **Statut : non déployé, non testé en jeu.**

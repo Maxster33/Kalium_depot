@@ -644,6 +644,10 @@ final class MenuMagasin implements Listener, TabExecutor {
         c.poser(c.bas(4), Menus.objet(Material.CHEST, t("catalogue.mon-magasin", "<white>Mon magasin"),
                 t("catalogue.mon-magasin-info", "<gray>Tes boutiques, ta fiche, tes points à récupérer")),
                 this::ouvrir);
+        // 1.10.0 (LeKiwi06, 18/10/2026) : le lingot d'or des rachats de la semaine, comme dans le menu Économie.
+        c.poser(c.bas(6), Menus.objet(Material.GOLD_INGOT, t("catalogue.bouton-rachats", "<gold>Rachats de la semaine"),
+                t("catalogue.rachats-info", "<gray>10 objets rachetés par le serveur, tirés chaque lundi")),
+                j -> plugin.rachats().ouvrir(j));
         menus.sortie(c, plugin.menuEconomie()::ouvrir);
         c.ouvrir(joueur);
         lang.saveIfNeeded();

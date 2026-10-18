@@ -11,7 +11,8 @@
 # - texte : une seule ligne ici ; le plugin le coupe tout seul en lignes d'environ 35 caractères.
 # - nouveau : toujours ENTRE GUILLEMETS. La nouveauté porte « Nouveau » pour chaque joueur qui n'a pas encore ouvert
 #   son thème depuis que cette valeur a changé. Mettre la date du jour sur une nouveauté ajoutée ou modifiée ;
-#   laisser l'ancienne valeur pour une simple correction de texte ; "" = jamais « Nouveau ».
+#   laisser l'ancienne valeur pour une simple correction de texte ; "" = jamais « Nouveau ». Un deuxième changement le
+#   même jour : ajouter une lettre ("2026-10-18b").
 # - 45 thèmes au plus, 45 nouveautés au plus par thème.
 
 titre: "Didacticiel de Kixster"
@@ -205,6 +206,12 @@ themes:
         texte: "Dans la zone du spawn, crée ton magasin dans un de tes claims (450 points), puis agrandis-le jusqu'à 20 boutiques. Une boutique = un panneau posé sur un coffre. Les autres achètent même à distance."
         commande: "/magasin"
         nouveau: "2026-10-18"
+      catalogue:
+        nom: "Catalogue des magasins"
+        icone: OAK_HANGING_SIGN
+        texte: "Tous les magasins des autres joueurs, classés par ventes, avec recherche et favoris. Le lingot d'or en bas ouvre les rachats de la semaine."
+        commande: "/magasins (ou /shop, /market)"
+        nouveau: "2026-10-18b"
       rachats:
         nom: "Rachats de la semaine"
         icone: HOPPER
@@ -231,15 +238,15 @@ themes:
       creer:
         nom: "Créer un claim"
         icone: GRASS_BLOCK
-        texte: "/ksclaim protège le chunk où tu te trouves, sur toute la hauteur. Les 10 premiers sont gratuits, puis le prix monte (237 points pour le 11e). 100 au plus."
-        commande: "/ksclaim"
-        nouveau: "2026-10-18"
+        texte: "/claim protège le chunk où tu te trouves, sur toute la hauteur. Les 10 premiers sont gratuits, puis le prix monte (237 points pour le 11e). 100 au plus."
+        commande: "/claim"
+        nouveau: "2026-10-18b"
       gerer:
         nom: "Gérer tes claims"
         icone: WRITABLE_BOOK
         texte: "Nom, description, réglages des membres et des visiteurs, expulser un joueur."
-        commande: "/ksclaims"
-        nouveau: "2026-10-18"
+        commande: "/claims"
+        nouveau: "2026-10-18b"
       membres:
         nom: "Membres et groupes"
         icone: PLAYER_HEAD
@@ -248,12 +255,12 @@ themes:
       vente:
         nom: "Vendre un claim"
         icone: GOLD_INGOT
-        texte: "Mets-le en vente ; l'acheteur se tient dedans et fait /ksclaim. Supprimer un claim rembourse le dernier prix payé."
+        texte: "Mets-le en vente ; l'acheteur se tient dedans et fait /claim. Supprimer un claim rembourse le dernier prix payé."
         nouveau: "2026-10-18"
       gratuits:
         nom: "Claims gratuits en plus"
         icone: GOLDEN_SHOVEL
-        texte: "Un jeton de claim, utilisé depuis /ksclaims, donne un claim gratuit de plus sans faire monter les prix. Le claim de ta maison au spawn ne compte pas non plus."
+        texte: "Un jeton de claim, utilisé depuis /claims, donne un claim gratuit de plus sans faire monter les prix. Le claim de ta maison au spawn ne compte pas non plus."
         nouveau: "2026-10-18"
 
   deplacements:
@@ -270,14 +277,14 @@ themes:
       home:
         nom: "Téléportations"
         icone: ENDER_PEARL
-        texte: "Vers ton lit, ta maison ou tes emplacements. Une gratuite par heure, puis un jeton ou 20 points. Reste 5 secondes sans bouger."
+        texte: "Vers ton lit (/bed), ta maison ou tes emplacements. Une gratuite par heure, puis un jeton ou 20 points. Reste 5 secondes sans bouger."
         commande: "/home"
-        nouveau: "2026-10-18"
+        nouveau: "2026-10-18b"
       localisation:
         nom: "Jeton de localisation"
         icone: COMPASS
-        texte: "Une boussole liée à une magnétite entourée de 8 blocs de cuivre ciré. Clic droit : la magnétite devient une destination de /home (il faut un badge de localisation)."
-        nouveau: "2026-10-18"
+        texte: "Une boussole liée à une magnétite entourée de 8 blocs de cuivre ciré. Pose-le dans une case de tes localisations (/jetons) : la magnétite devient une destination de /home. Repris, il t'est rendu et la case attend 24 h. Le badge de localisation donne les cases."
+        nouveau: "2026-10-18b"
       fly:
         nom: "Voler chez soi"
         icone: FEATHER
@@ -287,9 +294,9 @@ themes:
       jetons:
         nom: "Jetons et badges"
         icone: NETHERITE_INGOT
-        texte: "Ton inventaire spécial : 5 sortes de jetons (fly, mort, téléportation, localisation, claim) et 4 badges à niveaux. Deux badges identiques fusionnent à l'enclume."
-        commande: "/jetons"
-        nouveau: "2026-10-18"
+        texte: "Un seul coffre : une case par badge, une case par jeton (autant que tu veux) et tes cases de localisation. Maj + clic sur un jeton ou un badge de ton inventaire pour le ranger. Deux badges identiques fusionnent à l'enclume."
+        commande: "/jetons (ou /jeton, /badges, /badge)"
+        nouveau: "2026-10-18b"
 
   recompenses:
     nom: "Mort et récompenses"
@@ -361,6 +368,12 @@ themes:
         texte: "Économie, claims, téléportations, jetons, récompenses... /menu on donne l'étoile du Nether qui l'ouvre."
         commande: "/kixster"
         nouveau: "2026-10-18"
+      didacticiel:
+        nom: "Ce didacticiel"
+        icone: BOOK
+        texte: "Il explique tout ce qui change sur Kixster. Ouvre-le à tout moment, ou depuis « Informations » (/infos)."
+        commande: "/help ou /didacticiel"
+        nouveau: "2026-10-18b"
       tableau:
         nom: "Tableau"
         icone: OAK_HANGING_SIGN

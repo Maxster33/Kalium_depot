@@ -22,3 +22,7 @@ badges:
 # Fusion de 2 badges du meme niveau a l'enclume : niveaux d'experience demandes pour obtenir le niveau 2, 3, 4...
 # (au-dela de la liste : + 20 par niveau).
 fusion-niveaux: [30, 50, 70, 90, 110, 130]
+
+# 2.1.0 : une case de localisation videe (jeton retire) reprend un jeton apres ce nombre d'heures
+# (LeKiwi06, 18/10/2026 : 24 h).
+localisation-delai-heures: 24

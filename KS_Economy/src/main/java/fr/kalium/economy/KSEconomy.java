@@ -137,6 +137,15 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(menuMagasin, this);
         getCommand("magasin").setExecutor(menuMagasin);
         getCommand("magasin").setTabCompleter(menuMagasin);
+        // 1.10.0 (LeKiwi06, 18/10/2026) : /magasins, /shop, /market : le catalogue des magasins.
+        getCommand("magasins").setExecutor((sender, command, label, args) -> {
+            if (sender instanceof Player joueur) {
+                menuMagasin.catalogue(joueur, 0);
+            } else {
+                sender.sendMessage("Commande réservée aux joueurs.");
+            }
+            return true;
+        });
         if (!getServer().getPluginManager().isPluginEnabled("WorldGuard")
                 || !getServer().getPluginManager().isPluginEnabled("SimpleClaimSystem")) {
             getLogger().warning("WorldGuard ou SimpleClaimSystem absent : aucun magasin ne peut être créé.");

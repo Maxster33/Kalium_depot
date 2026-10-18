@@ -16,6 +16,9 @@ commands:
   maison:
     description: Ta maison du spawn (dans un de tes claims de la zone du spawn).
     usage: /maison [create]
+  bed:
+    description: Te teleporte a ton lit (comme /home bed).
+    usage: /bed
   setspawn:
     description: Place le point de /spawn de ta maison au-dessus de la magnetite de la boussole tenue en main (boussole utilisee).
     usage: /setspawn

@@ -24,6 +24,10 @@ commands:
   magasin:
     description: Ton magasin (creer, agrandir, position).
     usage: /magasin [create | agrandir | position | signalements]
+  magasins:
+    description: Catalogue des magasins des autres joueurs (et les rachats de la semaine).
+    aliases: [shop, market]
+    usage: /magasins
 permissions:
   kseconomy.staff:
     description: Recevoir et traiter les signalements de boutiques et de magasins (/magasin signalements).

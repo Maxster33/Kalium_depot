@@ -703,3 +703,18 @@ magasin tier 4 avec 20 slots de boutique ; on ne peut créer qu'une boutique par
 **Déployé sur Kixster le 13/10/2026 à 16:30 (LeKiwi06, envoi groupé : KS_Economy 1.9.0, KS_Teleport 1.3.0, KS_Claim 1.4.0 ; accord de LeKiwi06 : « Kixster seulement » ; jars en place vérifiés identiques à `jars-deployes/` avant l'envoi, jars envoyés vérifiés identiques à ceux compilés après l'envoi ; 1.8.2 dans `_removed-ks_economy-1.8.2/` ; supprimables par l'humain : `_removed-ks_economy-1.3.0/`, `1.4.0/`, `1.4.1/`, `1.5.0/`, `1.5.2/`, `1.6.0/`, `1.7.0/`, `1.8.0/`, 8 dossiers ; `config.yml` du serveur non modifié (pas de section `magasins`)), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.8.2). Statut : non testé en jeu.**
 
 **Journal de Kixster lu après le redémarrage du 13/10/2026 à 16:36 (demande de LeKiwi06) : KS_Economy 1.9.0, KS_Teleport 1.3.0 et KS_Claim 1.4.0 chargés et activés sans erreur ni avertissement (KS_Teleport avant KS_Claim), 49 plugins, démarrage en 15 s. Aucun joueur ne s'était encore connecté : aucune commande (`/magasin`, `/setspawn`, `/ksclaims`) n'a tourné, reste à tester en jeu.**
+
+## 1.10.0 - /magasins, /shop, /market ; rachats de la semaine dans le catalogue (18/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « /shop et /market (alias de /magasins, afficher également le lingot d'or signifiant "rachats de
+la semaine" à ce menu en bas du coffre) ». Sa réponse : il s'agit du catalogue des magasins.
+
+- **/magasins** (nouvelle commande, alias **/shop** et **/market**) : ouvre le catalogue des magasins (le coffre
+  « Magasins » du menu Économie). `/magasin` (son magasin) ne change pas.
+- **Catalogue** : lingot d'or « Rachats de la semaine » en bas du coffre (colonne 7), qui ouvre /rachat, comme le
+  bouton du menu Économie.
+- Nouveaux textes : `catalogue.bouton-rachats`, `catalogue.rachats-info`.
+
+Limites : écrit sans serveur de test. Empilé sur la 1.9.0, jamais testée en jeu (demande de LeKiwi06).
+
+Compilé le 18/10/2026 (`sortie/KS_Economy-1.10.0.jar`). **Statut : non déployé, non testé en jeu.**

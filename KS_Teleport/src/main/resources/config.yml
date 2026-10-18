@@ -6,8 +6,8 @@ delai-minutes: 60
 # Secondes a rester sans bouger avant de partir (un degat annule) ; 0 : depart immediat.
 attente-secondes: 5
 
-# Minutes pendant lesquelles un emplacement libere ne peut pas resservir.
-emplacement-libere-minutes: 15
+# 1.4.0 : le delai d'un emplacement libere (24 h) est dans KS_Jetons (localisation-delai-heures) ;
+# l'ancienne cle emplacement-libere-minutes n'est plus lue.
 
 # Maison du spawn (/maison create) : prix en points, region WorldGuard ou elle doit se trouver.
 # 1.3.0 : /setspawn (boussole liee a une magnetite en main) deplace le point de /spawn, dans la meme region.

@@ -73,6 +73,8 @@ public final class KSClaim extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new Vehicules(), this);
         getCommand("ksclaim").setExecutor(this);
         getCommand("ksclaims").setExecutor(this);
+        prendreNomsCourts();
+        getServer().getScheduler().runTask(this, this::prendreNomsCourts);
         if (getServer().getPluginManager().isPluginEnabled("KS_Menu")) {
             fr.kalium.ksmenu.KSMenu.ajouterBouton(this, "claims", lang.c("bouton.nom", "<aqua><bold>Claims"),
                     lang.c("bouton.description", "<gray>Tes claims, leurs membres et leurs réglages"), 20, menus::ouvrir);
@@ -111,6 +113,22 @@ public final class KSClaim extends JavaPlugin {
 
     Gui gui() {
         return gui;
+    }
+
+    /**
+     * 1.5.0 (LeKiwi06, 18/10/2026 : « /claim et /claims, plus obligé d'écrire ks devant ») : SimpleClaimSystem a déjà
+     * /claim et /claims, et un alias de plugin.yml perd contre une commande existante. Le nom court est donc repris dans
+     * la table des commandes, au démarrage puis une fois le serveur prêt ; ceux de SimpleClaimSystem restent sous
+     * simpleclaimsystem:claim et simpleclaimsystem:claims.
+     */
+    private void prendreNomsCourts() {
+        try {
+            java.util.Map<String, Command> table = getServer().getCommandMap().getKnownCommands();
+            table.put("claim", getCommand("ksclaim"));
+            table.put("claims", getCommand("ksclaims"));
+        } catch (RuntimeException e) {
+            getLogger().warning("/claim et /claims non repris (" + e.getMessage() + ") : /ksclaim et /ksclaims marchent.");
+        }
     }
 
     @Override

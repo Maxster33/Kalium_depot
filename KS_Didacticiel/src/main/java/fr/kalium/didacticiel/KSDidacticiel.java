@@ -100,7 +100,22 @@ public final class KSDidacticiel extends JavaPlugin {
                 ouvrirThemes(joueur, retour);
             }
         }, this, ServicePriority.Normal);
+        prendreHelp();
+        getServer().getScheduler().runTask(this, this::prendreHelp);
         lang.saveIfNeeded();
+    }
+
+    /**
+     * 1.1.0 (LeKiwi06, 18/10/2026 : « /help et /didacticiel (ouvre le didacticiel) ») : /help existe déjà (aide du
+     * serveur), et un alias de plugin.yml perd contre une commande existante. Le nom est donc repris dans la table des
+     * commandes, au démarrage puis une fois le serveur prêt ; l'aide d'origine reste sous bukkit:help et minecraft:help.
+     */
+    private void prendreHelp() {
+        try {
+            getServer().getCommandMap().getKnownCommands().put("help", getCommand("didacticiel"));
+        } catch (RuntimeException e) {
+            getLogger().warning("/help non repris (" + e.getMessage() + ") : /didacticiel marche.");
+        }
     }
 
     @Override

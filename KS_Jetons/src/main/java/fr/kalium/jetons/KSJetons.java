@@ -1,5 +1,7 @@
 package fr.kalium.jetons;
 
+import fr.kalium.menu.api.BedrockColors;
+import fr.kalium.menu.api.Contenant;
 import fr.kalium.menu.api.Gui;
 import fr.kalium.menu.api.Lang;
 import io.papermc.paper.registry.data.dialog.ActionButton;
@@ -23,15 +25,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.view.AnvilView;
 import org.bukkit.persistence.PersistentDataType;
@@ -41,29 +43,34 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 /**
  * KS_Jetons (cahier des charges : catégorie 7 « Déplacements, jetons, coffres de mort », LeKiwi06, 03/10/2026 ; ajouts
- * « jetons et badges » du 08/10/2026) : serveur Event.
+ * « jetons et badges » du 08/10/2026) : serveurs de survie.
  *
  * - Jetons : de fly, de la mort, de téléportation, de localisation (apparence : lingot de fer, de netherite, d'or, de
  *   cuivre) et de claim ; livres de connaissances inutilisables, empilables par 64.
  * - Badges (2.0.0) : « versions améliorées des jetons », de fly, de la mort, de téléportation, de localisation
  *   (apparence : bloc du lingot du jeton) ; un niveau ; « ils s'améliorent en fusionnant 2 badges du même niveau dans
  *   une enclume » (coût en niveaux : 30, 50, puis + 20 par niveau, réglable).
- * - **Inventaire spécial** (2.0.0 : « l'interface des hopper », un contenant pour les jetons, un pour les badges,
- *   « cases excédentes » bloquées par une barrière) : bouton « Inventaire spécial » du menu et /jetons. Un badge est
- *   porté quand il est rangé dans le contenant des badges ; jamais 2 badges du même type.
+ * - **Inventaire spécial** (2.1.0, LeKiwi06, 18/10/2026 : « une seule interface de coffre, avec des slots dédiés pour
+ *   les jetons de localisation si la personne a un badge de localisation etc ») : /jetons, /badges, /jeton, /badge et
+ *   le bouton du menu. Un coffre de 4 rangées : une case par badge (porté tant qu'il y est), une case par jeton (sans
+ *   limite de nombre), les cases de localisation (autant que le niveau du badge de localisation : un jeton posé dans une
+ *   case = une destination de /home ; retiré, la case attend 24 h avant d'en reprendre un), une barre d'actions.
  * - Les autres plugins (KS_Teleport, KS_CoffreMort, KS_Fly, KS_Claim) lisent l'inventaire spécial : nombre(),
- *   consommer(), ajouter(), prix(), niveauBadge(), valeurBadge(). Les délais des badges sont tenus par ces plugins, par
- *   joueur (et non par badge).
+ *   consommer(), ajouter(), prix(), niveauBadge(), valeurBadge(), localisations(). Les délais des badges sont tenus par
+ *   ces plugins, par joueur (et non par badge).
  */
 public final class KSJetons extends JavaPlugin implements Listener {
 
@@ -159,11 +166,30 @@ public final class KSJetons extends JavaPlugin implements Listener {
         }
     }
 
-    /** Contenant de l'inventaire spécial (interface d'entonnoir) : jetons ou badges d'un joueur. */
-    private record Sac(UUID joueur, boolean badges) implements InventoryHolder {
+    /** 2.1.0 : l'inventaire spécial ouvert (un coffre, dessiné à partir de la fiche du joueur à chaque changement). */
+    private record Special(UUID joueur) implements InventoryHolder {
         @Override
         public Inventory getInventory() {
             return null;
+        }
+    }
+
+    /** 2.1.0 : ce que l'inventaire spécial d'un joueur contient. */
+    private static final class Fiche {
+        /** Badges portés : type -> niveau. */
+        final EnumMap<Badge, Integer> badges = new EnumMap<>(Badge.class);
+        /** Jetons (sauf localisation) : type -> nombre, sans limite. */
+        final EnumMap<Type, Long> jetons = new EnumMap<>(Type.class);
+        /** Cases de localisation (0, 1...) -> jeton posé (un seul ; il porte sa magnétite, voir KS_Teleport). */
+        final TreeMap<Integer, ItemStack> localisations = new TreeMap<>();
+        /** Case de localisation -> date à laquelle son jeton a été retiré. */
+        final Map<Integer, Long> liberees = new HashMap<>();
+        /** Objets à rendre au joueur (reprise de la 2.0) : à sa connexion ou à l'ouverture de l'inventaire spécial. */
+        final List<ItemStack> aRendre = new ArrayList<>();
+
+        boolean vide() {
+            return badges.isEmpty() && jetons.isEmpty() && localisations.isEmpty() && liberees.isEmpty()
+                    && aRendre.isEmpty();
         }
     }
 
@@ -178,22 +204,36 @@ public final class KSJetons extends JavaPlugin implements Listener {
     private static final List<Integer> FUSION_DEFAUT = List.of(30, 50, 70, 90, 110, 130);
     private static final int PAS_FUSION = 20;
 
+    /** 2.1.0 : le coffre de l'inventaire spécial : 3 rangées (badges, jetons, localisations) et la barre d'actions. */
+    private static final int TAILLE = 36;
+    private static final int LIGNE_BADGES = 0;
+    private static final int LIGNE_JETONS = 9;
+    private static final int LIGNE_LOCALISATIONS = 18;
+    private static final int CASE_AIDE = 30;
+    private static final int CASE_ACHAT = 31;
+    private static final int CASE_FERMER = 32;
+    /** Cases de localisation au plus (une rangée, après son étiquette). */
+    private static final int LOCALISATIONS_MAX = 8;
+    /** Les jetons qui ont leur case, dans l'ordre (le jeton de localisation a sa propre rangée). */
+    private static final List<Type> JETONS_RANGES = Arrays.stream(Type.values())
+            .filter(t -> t != Type.LOCALISATION).toList();
+
     private static KSJetons instance;
     private static NamespacedKey marqueur;
     private static NamespacedKey cleBadge;
     private static NamespacedKey cleNiveau;
-    private static NamespacedKey cleVerrou;
 
     private Lang lang;
     private Gui gui;
     private File fichier;
-    private final Map<UUID, Inventory> sacsJetons = new HashMap<>();
-    private final Map<UUID, Inventory> sacsBadges = new HashMap<>();
-    /** Jetons qui n'ont pas trouvé de place dans le contenant des jetons : ils comptent et y descendent dès que possible. */
-    private final Map<UUID, EnumMap<Type, Long>> attente = new HashMap<>();
+    private final Map<UUID, Fiche> fiches = new HashMap<>();
     private boolean aSauver;
     /** Dernier message de refus envoyé à chaque joueur (millisecondes). */
     private final Map<UUID, Long> refus = new HashMap<>();
+    /** 2.1.0 : KS_Teleport vérifie un jeton de localisation posé (magnétite) ; null = accepté. */
+    private BiFunction<Player, ItemStack, Component> validateur;
+    /** 2.1.0 : prévenus quand les jetons de localisation d'un joueur changent (KS_Teleport : magnétites protégées). */
+    private final List<Consumer<UUID>> ecouteurs = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -202,7 +242,6 @@ public final class KSJetons extends JavaPlugin implements Listener {
         marqueur = new NamespacedKey(this, "jeton");
         cleBadge = new NamespacedKey(this, "badge");
         cleNiveau = new NamespacedKey(this, "niveau");
-        cleVerrou = new NamespacedKey(this, "verrou");
         lang = new Lang(this);
         gui = new Gui(this, lang);
         fichier = new File(getDataFolder(), "jetons.yml");
@@ -220,7 +259,7 @@ public final class KSJetons extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         for (Player joueur : Bukkit.getOnlinePlayers()) {
-            if (joueur.getOpenInventory().getTopInventory().getHolder() instanceof Sac) {
+            if (joueur.getOpenInventory().getTopInventory().getHolder() instanceof Special) {
                 joueur.closeInventory();
             }
         }
@@ -238,9 +277,9 @@ public final class KSJetons extends JavaPlugin implements Listener {
         ItemStack item = new ItemStack(Material.KNOWLEDGE_BOOK);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(texte(type.nom, NamedTextColor.AQUA));
-        // 2.0.2 (LeKiwi06) : le jeton de localisation ne sert pas depuis l'inventaire spécial, il s'utilise en main.
+        // 2.1.0 : le jeton de localisation se pose dans une case de localisation de l'inventaire spécial.
         meta.lore(List.of(texte(type.effet, NamedTextColor.GRAY), texte(type == Type.LOCALISATION
-                ? "Clic droit, jeton en main, pour l'utiliser" : "À ranger dans tes jetons : /jetons", NamedTextColor.DARK_GRAY)));
+                ? "À poser dans tes localisations : /jetons" : "À ranger dans tes jetons : /jetons", NamedTextColor.DARK_GRAY)));
         meta.setItemModel(NamespacedKey.minecraft(type.modele));
         meta.setEnchantmentGlintOverride(true);
         meta.setMaxStackSize(64);
@@ -346,74 +385,44 @@ public final class KSJetons extends JavaPlugin implements Listener {
         return niveau < 1 ? 0 : liste.get(Math.min(niveau, liste.size()) - 1);
     }
 
-    private static ItemStack verrou() {
-        ItemStack item = new ItemStack(Material.BARRIER);
-        ItemMeta meta = item.getItemMeta();
-        meta.displayName(texte("Case bloquée", NamedTextColor.RED));
-        meta.getPersistentDataContainer().set(cleVerrou, PersistentDataType.BYTE, (byte) 1);
-        item.setItemMeta(meta);
-        return item;
-    }
-
-    private static boolean estVerrou(ItemStack item) {
-        return item != null && !item.isEmpty() && item.hasItemMeta()
-                && item.getItemMeta().getPersistentDataContainer().has(cleVerrou, PersistentDataType.BYTE);
-    }
-
     // ------------------------------------------------------------------ API (autres plugins)
 
-    /** Jetons de ce type dans l'inventaire spécial du joueur. */
-    public static long nombre(UUID joueur, Type type) {
-        EnumMap<Type, Long> m = instance.attente.get(joueur);
-        long n = m == null ? 0 : m.getOrDefault(type, 0L);
-        for (ItemStack item : instance.sac(joueur, false).getContents()) {
-            if (type(item) == type) {
-                n += item.getAmount();
-            }
-        }
-        return n;
+    private static Fiche fiche(UUID joueur) {
+        return instance.fiches.computeIfAbsent(joueur, u -> new Fiche());
     }
 
-    /** Retire n jetons de l'inventaire spécial ; faux (rien n'est retiré) s'il n'en a pas assez. */
+    /** Jetons de ce type dans l'inventaire spécial du joueur (localisation : jetons posés dans ses cases). */
+    public static long nombre(UUID joueur, Type type) {
+        Fiche f = instance.fiches.get(joueur);
+        if (f == null) {
+            return 0;
+        }
+        return type == Type.LOCALISATION ? f.localisations.size() : f.jetons.getOrDefault(type, 0L);
+    }
+
+    /** Retire n jetons de l'inventaire spécial ; faux (rien n'est retiré) s'il n'en a pas assez. Pas la localisation. */
     public static boolean consommer(UUID joueur, Type type, long n) {
-        if (n < 0 || nombre(joueur, type) < n) {
+        if (type == Type.LOCALISATION || n < 0 || nombre(joueur, type) < n) {
             return false;
         }
-        long reste = n;
-        EnumMap<Type, Long> m = instance.attente.get(joueur);
-        if (m != null) {
-            long pris = Math.min(m.getOrDefault(type, 0L), reste);
-            m.merge(type, -pris, Long::sum);
-            reste -= pris;
+        Fiche f = fiche(joueur);
+        long reste = f.jetons.getOrDefault(type, 0L) - n;
+        if (reste > 0) {
+            f.jetons.put(type, reste);
+        } else {
+            f.jetons.remove(type);
         }
-        Inventory sac = instance.sac(joueur, false);
-        for (int i = 0; i < sac.getSize() && reste > 0; i++) {
-            ItemStack item = sac.getItem(i);
-            if (type(item) != type) {
-                continue;
-            }
-            int pris = (int) Math.min(item.getAmount(), reste);
-            if (pris == item.getAmount()) {
-                sac.setItem(i, null);
-            } else {
-                item.setAmount(item.getAmount() - pris);
-                sac.setItem(i, item);
-            }
-            reste -= pris;
-        }
-        instance.remplir(joueur);
-        instance.sauverBientot();
+        instance.changement(joueur, false);
         return true;
     }
 
-    /** Ajoute n jetons à l'inventaire spécial (contenant plein : ils attendent une place, et comptent déjà). */
+    /** Ajoute n jetons à l'inventaire spécial. Pas la localisation (chaque jeton porte sa magnétite : voir rendre). */
     public static void ajouter(UUID joueur, Type type, long n) {
-        if (n <= 0) {
+        if (n <= 0 || type == Type.LOCALISATION) {
             return;
         }
-        instance.attente.computeIfAbsent(joueur, u -> new EnumMap<>(Type.class)).merge(type, n, Long::sum);
-        instance.remplir(joueur);
-        instance.sauverBientot();
+        fiche(joueur).jetons.merge(type, n, Long::sum);
+        instance.changement(joueur, false);
     }
 
     /** Prix d'un jeton en points (config.yml) ; 0 : pas en vente (toujours 0 pour un jeton qui ne s'achète pas). */
@@ -423,12 +432,9 @@ public final class KSJetons extends JavaPlugin implements Listener {
 
     /** Niveau du badge de ce type porté par le joueur (rangé dans son inventaire spécial) ; 0 : aucun. */
     public static int niveauBadge(UUID joueur, Badge badge) {
-        for (ItemStack item : instance.sac(joueur, true).getContents()) {
-            if (badge(item) == badge) {
-                return Math.min(niveau(item), niveauMax(badge));
-            }
-        }
-        return 0;
+        Fiche f = instance.fiches.get(joueur);
+        Integer n = f == null ? null : f.badges.get(badge);
+        return n == null ? 0 : Math.min(n, niveauMax(badge));
     }
 
     /** Valeur du badge porté par le joueur ; 0 s'il n'en porte pas. */
@@ -436,193 +442,131 @@ public final class KSJetons extends JavaPlugin implements Listener {
         return valeurBadge(badge, niveauBadge(joueur, badge));
     }
 
-    // ------------------------------------------------------------------ contenants
-
-    /** Cases utilisables d'un contenant ; les suivantes sont bloquées. */
-    private static int cases(boolean badges) {
-        return badges ? Math.min(5, Badge.values().length) : 5;
+    /** 2.1.0 : jetons de localisation posés dans les cases du joueur : case (0, 1...) -> jeton (copie). */
+    public static Map<Integer, ItemStack> localisations(UUID joueur) {
+        Map<Integer, ItemStack> r = new TreeMap<>();
+        Fiche f = instance.fiches.get(joueur);
+        if (f != null) {
+            f.localisations.forEach((k, jeton) -> r.put(k, jeton.clone()));
+        }
+        return r;
     }
 
-    private Inventory sac(UUID joueur, boolean badges) {
-        return (badges ? sacsBadges : sacsJetons).computeIfAbsent(joueur, u -> {
-            Inventory inv = Bukkit.createInventory(new Sac(u, badges), InventoryType.HOPPER, badges
-                    ? lang.c("special.titre-badges", "Tes badges") : lang.c("special.titre-jetons", "Tes jetons"));
-            for (int i = cases(badges); i < inv.getSize(); i++) {
-                inv.setItem(i, verrou());
+    /** 2.1.0 : les jetons de localisation posés de tous les joueurs (en ligne ou non). */
+    public static Map<UUID, Map<Integer, ItemStack>> toutesLocalisations() {
+        Map<UUID, Map<Integer, ItemStack>> r = new HashMap<>();
+        instance.fiches.forEach((u, f) -> {
+            if (!f.localisations.isEmpty()) {
+                r.put(u, localisations(u));
             }
-            return inv;
         });
+        return r;
     }
 
-    /** Les jetons en attente descendent dans le contenant tant qu'il y a de la place. */
-    private void remplir(UUID joueur) {
-        EnumMap<Type, Long> m = attente.get(joueur);
-        if (m == null) {
-            return;
-        }
-        Inventory sac = sac(joueur, false);
-        for (Type type : Type.values()) {
-            long n = m.getOrDefault(type, 0L);
-            while (n > 0) {
-                ItemStack pile = creer(type);
-                int q = (int) Math.min(pile.getMaxStackSize(), n);
-                pile.setAmount(q);
-                int refuses = 0;
-                for (ItemStack reste : sac.addItem(pile).values()) {
-                    refuses += reste.getAmount();
-                }
-                n -= q - refuses;
-                if (refuses > 0) {
-                    break;
-                }
-            }
-            if (n > 0) {
-                m.put(type, n);
-            } else {
-                m.remove(type);
-            }
-        }
-        if (m.isEmpty()) {
-            attente.remove(joueur);
-        }
+    /** 2.1.0 : temps (millisecondes) avant qu'une case de localisation vidée reprenne un jeton ; 0 : tout de suite. */
+    public static long attenteLocalisation(UUID joueur, int caseLocalisation) {
+        Fiche f = instance.fiches.get(joueur);
+        Long date = f == null ? null : f.liberees.get(caseLocalisation);
+        return date == null ? 0 : Math.max(0, date + instance.delaiLocalisation() - System.currentTimeMillis());
+    }
+
+    /** 2.1.0 : délai d'une case de localisation après le retrait de son jeton (config.yml, 24 h par défaut). */
+    public static long delaiLocalisationMs() {
+        return instance.delaiLocalisation();
+    }
+
+    /** 2.1.0 (KS_Teleport) : vérifie un jeton de localisation que le joueur pose ; renvoie le refus, ou null. */
+    public static void validateurLocalisation(BiFunction<Player, ItemStack, Component> verification) {
+        instance.validateur = verification;
+    }
+
+    /** 2.1.0 (KS_Teleport) : appelé avec le joueur dont les jetons de localisation viennent de changer. */
+    public static void ecouterLocalisations(Consumer<UUID> ecouteur) {
+        instance.ecouteurs.add(ecouteur);
     }
 
     /**
-     * L'objet peut-il entrer dans le contenant ? Jetons : tout jeton. Badges : un badge dont le type n'est pas déjà
-     * dans une autre case (caseVisee : case où il est posé, -1 si inconnue).
+     * 2.1.0 : pose un jeton de localisation dans une case, sans vérification (reprise des emplacements de KS_Teleport
+     * 1.3.0 et avant). Faux si la case est prise ou hors des cases.
      */
-    private boolean accepte(Sac sac, Inventory inv, ItemStack item, int caseVisee) {
-        if (!sac.badges()) {
-            return type(item) != null;
-        }
-        Badge badge = badge(item);
-        if (badge == null) {
+    public static boolean poserLocalisation(UUID joueur, int caseLocalisation, ItemStack jeton) {
+        Fiche f = fiche(joueur);
+        if (caseLocalisation < 0 || caseLocalisation >= LOCALISATIONS_MAX || f.localisations.containsKey(caseLocalisation)
+                || type(jeton) != Type.LOCALISATION) {
             return false;
         }
-        for (int i = 0; i < inv.getSize(); i++) {
-            if (i != caseVisee && badge(inv.getItem(i)) == badge) {
-                return false;
-            }
-        }
+        ItemStack un = jeton.clone();
+        un.setAmount(1);
+        f.localisations.put(caseLocalisation, un);
+        instance.changement(joueur, true);
         return true;
     }
 
-    /** Message dans le tchat (la barre d'action est cachée par le contenant), au plus un toutes les 2 secondes. */
-    private void refuser(Player joueur, Sac sac, ItemStack item) {
-        long maintenant = System.currentTimeMillis();
-        Long dernier = refus.put(joueur.getUniqueId(), maintenant);
-        if (dernier != null && maintenant - dernier < 2000) {
+    /** 2.1.0 : un objet à rendre au joueur, tout de suite s'il est connecté, sinon à sa prochaine connexion. */
+    public static void rendre(UUID joueur, ItemStack objet) {
+        if (objet == null || objet.isEmpty()) {
             return;
         }
-        joueur.sendMessage(!sac.badges() ? t("special.refus-jeton", "<red>Seuls les jetons vont ici.")
-                : badge(item) == null ? t("special.refus-badge", "<red>Seuls les badges vont ici.")
-                : t("special.refus-double", "<red>Tu portes déjà un badge de ce type."));
-        lang.saveIfNeeded();
+        fiche(joueur).aRendre.add(objet.clone());
+        Player p = Bukkit.getPlayer(joueur);
+        if (p != null) {
+            instance.donnerARendre(p);
+        }
+        instance.sauverBientot();
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onClicSac(InventoryClickEvent event) {
-        Inventory haut = event.getView().getTopInventory();
-        if (!(haut.getHolder() instanceof Sac sac) || !(event.getWhoClicked() instanceof Player joueur)) {
-            return;
-        }
-        int brut = event.getRawSlot();
-        boolean dansSac = brut >= 0 && brut < haut.getSize();
-        if (dansSac && estVerrou(event.getCurrentItem())) {
-            event.setCancelled(true);
-            return;
-        }
-        // Objet qui entrerait dans le contenant : curseur, touche de la barre, main secondaire, ou Maj + clic en bas.
-        ItemStack entrant = null;
-        if (dansSac) {
-            if (event.getClick() == ClickType.NUMBER_KEY) {
-                entrant = joueur.getInventory().getItem(event.getHotbarButton());
-            } else if (event.getClick() == ClickType.SWAP_OFFHAND) {
-                entrant = joueur.getInventory().getItemInOffHand();
-            } else {
-                entrant = event.getCursor();
-            }
-        } else if (event.isShiftClick()) {
-            entrant = event.getCurrentItem();
-        }
-        if (entrant != null && !entrant.isEmpty() && !accepte(sac, haut, entrant, dansSac ? brut : -1)) {
-            event.setCancelled(true);
-            refuser(joueur, sac, entrant);
-            return;
-        }
+    /** 2.1.0 : ouvre l'inventaire spécial (KS_Teleport : clic droit avec un jeton de localisation, /home). */
+    public static void ouvrirSpecial(Player joueur) {
+        instance.ouvrir(joueur);
+    }
+
+    private long delaiLocalisation() {
+        return Math.max(0, getConfig().getLong("localisation-delai-heures", 24)) * 3_600_000L;
+    }
+
+    /** Après un changement : enregistrer, redessiner le coffre ouvert du joueur, prévenir KS_Teleport. */
+    private void changement(UUID joueur, boolean localisations) {
         sauverBientot();
-    }
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onGlisserSac(InventoryDragEvent event) {
-        Inventory haut = event.getView().getTopInventory();
-        if (!(haut.getHolder() instanceof Sac sac) || !(event.getWhoClicked() instanceof Player joueur)) {
-            return;
+        Player p = Bukkit.getPlayer(joueur);
+        if (p != null && p.getOpenInventory().getTopInventory().getHolder() instanceof Special s
+                && s.joueur().equals(joueur)) {
+            dessiner(p.getOpenInventory().getTopInventory(), joueur);
         }
-        for (int brut : event.getRawSlots()) {
-            if (brut < haut.getSize() && !accepte(sac, haut, event.getOldCursor(), -1)) {
-                event.setCancelled(true);
-                refuser(joueur, sac, event.getOldCursor());
-                return;
-            }
-        }
-        sauverBientot();
-    }
-
-    /** Fermeture : ce qui n'a rien à faire dans le contenant est rendu au joueur (filet de sécurité), puis on enregistre. */
-    @EventHandler
-    public void onFermerSac(InventoryCloseEvent event) {
-        Inventory inv = event.getInventory();
-        if (!(inv.getHolder() instanceof Sac sac) || !(event.getPlayer() instanceof Player joueur)) {
-            return;
-        }
-        EnumSet<Badge> portes = EnumSet.noneOf(Badge.class);
-        for (int i = 0; i < inv.getSize(); i++) {
-            ItemStack item = inv.getItem(i);
-            if (i >= cases(sac.badges())) {
-                if (!estVerrou(item)) {
-                    rendre(joueur, item);
-                    inv.setItem(i, verrou());
-                }
-                continue;
-            }
-            if (item == null || item.isEmpty()) {
-                continue;
-            }
-            Badge badge = badge(item);
-            if (sac.badges() ? badge == null || !portes.add(badge) : type(item) == null) {
-                rendre(joueur, item);
-                inv.setItem(i, null);
-            } else if (sac.badges()) {
-                // Description remise à jour (valeurs du config.yml).
-                inv.setItem(i, creerBadge(badge, niveau(item)));
-            }
-        }
-        if (!sac.badges()) {
-            remplir(sac.joueur());
-        }
-        sauverBientot();
-    }
-
-    private static void rendre(Player joueur, ItemStack item) {
-        if (item == null || item.isEmpty() || estVerrou(item)) {
-            return;
-        }
-        for (ItemStack tombe : joueur.getInventory().addItem(item).values()) {
-            joueur.getWorld().dropItemNaturally(joueur.getLocation(), tombe);
+        if (localisations) {
+            ecouteurs.forEach(e -> e.accept(joueur));
         }
     }
 
-    // ------------------------------------------------------------------ menu
+    // ------------------------------------------------------------------ le coffre
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player joueur) {
-            ouvrir(joueur);
-        } else {
-            sender.sendMessage("Commande réservée aux joueurs.");
+    /** Cases de localisation du coffre : la valeur du badge de localisation au niveau maximal (8 au plus). */
+    private static int casesLocalisation() {
+        return Math.min(LOCALISATIONS_MAX, valeurBadge(Badge.LOCALISATION, niveauMax(Badge.LOCALISATION)));
+    }
+
+    /** Plus petit niveau du badge de localisation qui ouvre la case k (0, 1...). */
+    private static int niveauPour(int k) {
+        for (int n = 1; n <= niveauMax(Badge.LOCALISATION); n++) {
+            if (valeurBadge(Badge.LOCALISATION, n) > k) {
+                return n;
+            }
         }
-        return true;
+        return niveauMax(Badge.LOCALISATION);
+    }
+
+    private static Badge badgeDeCase(int place) {
+        int i = place - LIGNE_BADGES - 1;
+        return place > LIGNE_BADGES && place < LIGNE_BADGES + 9 && i < Badge.values().length ? Badge.values()[i] : null;
+    }
+
+    private static Type jetonDeCase(int place) {
+        int i = place - LIGNE_JETONS - 1;
+        return place > LIGNE_JETONS && place < LIGNE_JETONS + 9 && i < JETONS_RANGES.size() ? JETONS_RANGES.get(i) : null;
+    }
+
+    private static int localisationDeCase(int place) {
+        int k = place - LIGNE_LOCALISATIONS - 1;
+        return place > LIGNE_LOCALISATIONS && place < LIGNE_LOCALISATIONS + 9 && k < casesLocalisation() ? k : -1;
     }
 
     private Component t(String cle, String defaut, Object... paires) {
@@ -633,43 +577,401 @@ public final class KSJetons extends JavaPlugin implements Listener {
         return t("special.titre", "<aqua><bold>Inventaire spécial");
     }
 
-    /** Inventaire spécial : ce que le joueur a, et l'accès aux deux contenants. */
-    public void ouvrir(Player joueur) {
-        UUID id = joueur.getUniqueId();
-        remplir(id);
-        List<Component> corps = new ArrayList<>();
-        corps.add(t("special.aide", "<gray>Les jetons et les badges rangés ici servent directement. Un badge est porté "
-                + "tant qu'il est rangé dans tes badges, un seul par type."));
-        for (Type type : Type.values()) {
-            EnumMap<Type, Long> m = attente.get(id);
-            long enAttente = m == null ? 0 : m.getOrDefault(type, 0L);
-            corps.add(t("special.ligne-jeton", "<aqua><nom></aqua> <gray>: <white><n></white><attente>", "nom", type.nom,
-                    "n", nombre(id, type), "attente", enAttente > 0 ? " (dont " + enAttente + " en attente de place)" : ""));
+    private ItemStack fixe(Material materiau, Component nom, Component... lignes) {
+        return Contenant.objet(materiau, nom, List.of(lignes));
+    }
+
+    private static String chrono(long ms) {
+        long s = Math.max(0, (ms + 999) / 1000);
+        return s >= 3600 ? s / 3600 + " h " + (s % 3600) / 60 + " min" : s / 60 + " min " + s % 60 + " s";
+    }
+
+    private static boolean economie() {
+        return Bukkit.getPluginManager().isPluginEnabled("KS_Economy");
+    }
+
+    /** Remplit le coffre d'après la fiche : rien de ce qu'il montre n'est un vrai objet (les clics sont gérés ici). */
+    private void dessiner(Inventory inv, UUID joueur) {
+        Fiche f = fiche(joueur);
+        for (int i = 0; i < TAILLE; i++) {
+            inv.setItem(i, Contenant.decor());
         }
-        for (Badge badge : Badge.values()) {
-            int niveau = niveauBadge(id, badge);
-            corps.add(niveau == 0
-                    ? t("special.ligne-badge-aucun", "<gold><nom></gold> <gray>: aucun", "nom", badge.nom)
-                    : t("special.ligne-badge", "<gold><nom></gold> <gray>: <white>niveau <niveau></white> (<effet>)",
-                    "nom", badge.nom, "niveau", niveau, "effet", badge.effet(valeurBadge(badge, niveau))));
+        inv.setItem(LIGNE_BADGES, fixe(Material.ORANGE_STAINED_GLASS_PANE, t("coffre.ligne-badges", "<gold>Tes badges"),
+                t("coffre.ligne-badges-1", "<gray>Un badge par type, porté tant"),
+                t("coffre.ligne-badges-2", "<gray>qu'il est rangé ici.")));
+        Badge[] badges = Badge.values();
+        for (int b = 0; b < badges.length && b < 8; b++) {
+            Integer n = f.badges.get(badges[b]);
+            inv.setItem(LIGNE_BADGES + 1 + b, n != null ? creerBadge(badges[b], n)
+                    : fixe(Material.LIGHT_GRAY_STAINED_GLASS_PANE, t("coffre.badge-vide", "<gray><nom> : aucun", "nom",
+                    badges[b].nom), t("coffre.badge-poser", "<dark_gray>Pose un badge de ce type ici")));
         }
-        List<ActionButton> boutons = new ArrayList<>();
-        boutons.add(gui.button(t("special.bouton-jetons", "<aqua>Mes jetons"),
-                t("special.info-jetons", "<gray>Contenant : seuls les jetons y entrent"),
-                p -> p.openInventory(sac(p.getUniqueId(), false))));
-        boutons.add(gui.button(t("special.bouton-badges", "<gold>Mes badges"),
-                t("special.info-badges", "<gray>Contenant : un badge de chaque type"),
-                p -> p.openInventory(sac(p.getUniqueId(), true))));
-        for (Type type : Type.values()) {
-            long prix = prix(type);
-            if (prix > 0 && Bukkit.getPluginManager().isPluginEnabled("KS_Economy")) {
-                boutons.add(gui.button(t("special.bouton-acheter", "<green>Acheter : <nom>", "nom", type.nom),
-                        t("special.info-acheter", "<gray><prix> par jeton", "prix", points(prix)),
-                        p -> quantite(p, type)));
+        inv.setItem(LIGNE_JETONS, fixe(Material.LIGHT_BLUE_STAINED_GLASS_PANE, t("coffre.ligne-jetons", "<aqua>Tes jetons"),
+                t("coffre.ligne-jetons-1", "<gray>Une case par type de jeton,"),
+                t("coffre.ligne-jetons-2", "<gray>autant de jetons que tu veux.")));
+        for (int j = 0; j < JETONS_RANGES.size() && j < 8; j++) {
+            Type type = JETONS_RANGES.get(j);
+            long n = f.jetons.getOrDefault(type, 0L);
+            if (n > 0) {
+                ItemStack pile = creer(type);
+                pile.setAmount((int) Math.min(64, n));
+                ItemMeta meta = pile.getItemMeta();
+                List<Component> lore = new ArrayList<>(meta.lore());
+                lore.add(t("coffre.jeton-nombre", "<white>Tu en as <n>", "n", n).decoration(TextDecoration.ITALIC, false));
+                meta.lore(lore);
+                pile.setItemMeta(meta);
+                inv.setItem(LIGNE_JETONS + 1 + j, pile);
+            } else {
+                inv.setItem(LIGNE_JETONS + 1 + j, fixe(Material.LIGHT_GRAY_STAINED_GLASS_PANE, t("coffre.jeton-vide",
+                        "<gray><nom> : aucun", "nom", type.nom), t("coffre.jeton-poser", "<dark_gray>Pose des jetons ici")));
             }
         }
-        gui.open(joueur, titre(), corps, List.of(), boutons, gui.close(), 1);
+        inv.setItem(LIGNE_LOCALISATIONS, fixe(Material.LIME_STAINED_GLASS_PANE, t("coffre.ligne-localisations",
+                        "<green>Tes localisations"),
+                t("coffre.ligne-localisations-1", "<gray>Un jeton de localisation par"),
+                t("coffre.ligne-localisations-2", "<gray>case : sa magnétite devient une"),
+                t("coffre.ligne-localisations-3", "<gray>destination de /home."),
+                t("coffre.ligne-localisations-4", "<gray>Retiré, la case attend <heures> h.", "heures",
+                        delaiLocalisation() / 3_600_000L)));
+        int actives = valeurBadge(joueur, Badge.LOCALISATION);
+        for (int k = 0; k < casesLocalisation(); k++) {
+            ItemStack jeton = f.localisations.get(k);
+            ItemStack vue;
+            if (jeton != null) {
+                vue = jeton.clone();
+                ItemMeta meta = vue.getItemMeta();
+                List<Component> lore = new ArrayList<>(meta.lore() == null ? List.of() : meta.lore());
+                lore.add((k < actives
+                        ? t("coffre.loc-active", "<green>Case <n> : destination de /home", "n", k + 1)
+                        : t("coffre.loc-inactive", "<red>Case <n> : badge trop bas", "n", k + 1))
+                        .decoration(TextDecoration.ITALIC, false));
+                meta.lore(lore);
+                vue.setItemMeta(meta);
+            } else if (k >= actives) {
+                vue = fixe(Material.BARRIER, t("coffre.loc-bloquee", "<red>Case <n> : bloquée", "n", k + 1),
+                        t("coffre.loc-niveau", "<gray>Badge de localisation niveau <niveau>", "niveau", niveauPour(k)));
+            } else {
+                long attente = attenteLocalisation(joueur, k);
+                vue = attente > 0
+                        ? fixe(Material.CLOCK, t("coffre.loc-attente", "<yellow>Case <n> : dans <temps>", "n", k + 1,
+                        "temps", chrono(attente)), t("coffre.loc-attente-info", "<gray>Elle reprendra un jeton ensuite."))
+                        : fixe(Material.LIGHT_GRAY_STAINED_GLASS_PANE, t("coffre.loc-libre", "<gray>Case <n> : libre",
+                        "n", k + 1), t("coffre.loc-poser", "<dark_gray>Pose un jeton de localisation ici"));
+            }
+            inv.setItem(LIGNE_LOCALISATIONS + 1 + k, vue);
+        }
+        inv.setItem(CASE_AIDE, fixe(Material.BOOK, t("coffre.aide", "<gold>Comment ça marche"),
+                t("coffre.aide-1", "<gray>Clic sur un objet de ton inventaire"),
+                t("coffre.aide-2", "<gray>avec Maj : il va dans sa case."),
+                t("coffre.aide-3", "<gray>Clic sur une case : tu reprends"),
+                t("coffre.aide-4", "<gray>ce qu'elle contient."),
+                t("coffre.aide-5", "<gray>Clic droit : la moitié des jetons.")));
+        long prix = prix(Type.TP);
+        if (prix > 0 && economie()) {
+            inv.setItem(CASE_ACHAT, fixe(Material.EMERALD, t("coffre.acheter", "<green>Acheter : <nom>", "nom", Type.TP.nom),
+                    t("coffre.acheter-prix", "<gray><prix> par jeton", "prix", points(prix))));
+        }
+        inv.setItem(CASE_FERMER, fixe(Material.BARRIER, t("coffre.fermer", "<red>Fermer")));
+    }
+
+    /** Inventaire spécial : un coffre de 4 rangées (badges, jetons, localisations, barre d'actions). */
+    public void ouvrir(Player joueur) {
+        donnerARendre(joueur);
+        Inventory inv = Bukkit.createInventory(new Special(joueur.getUniqueId()), TAILLE, titre());
+        dessiner(inv, joueur.getUniqueId());
+        joueur.openInventory(inv);
         lang.saveIfNeeded();
+    }
+
+    /**
+     * Tous les clics qui touchent le coffre sont annulés puis faits ici, au tick suivant (le jeu ne déplacerait pas les
+     * objets dans la bonne case) : clic (droit) sur une case, Maj + clic sur un objet de son inventaire. Les clics dans
+     * son propre inventaire restent libres.
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onClicSpecial(InventoryClickEvent event) {
+        if (!(event.getView().getTopInventory().getHolder() instanceof Special special)
+                || !(event.getWhoClicked() instanceof Player joueur)) {
+            return;
+        }
+        int brut = event.getRawSlot();
+        boolean haut = brut >= 0 && brut < TAILLE;
+        ClickType clic = event.getClick();
+        boolean bas = event.getClickedInventory() instanceof PlayerInventory;
+        if (!haut && !(bas && event.isShiftClick()) && clic != ClickType.DOUBLE_CLICK) {
+            return;
+        }
+        event.setCancelled(true);
+        if (!joueur.getUniqueId().equals(special.joueur()) || (clic != ClickType.LEFT && clic != ClickType.RIGHT
+                && clic != ClickType.SHIFT_LEFT && clic != ClickType.SHIFT_RIGHT)) {
+            return;
+        }
+        int caseBas = event.getSlot();
+        getServer().getScheduler().runTask(this, () -> {
+            if (!joueur.isOnline() || !(joueur.getOpenInventory().getTopInventory().getHolder() instanceof Special)) {
+                return;
+            }
+            boolean localisations = haut ? clicCase(joueur, brut, clic) : ranger(joueur, caseBas);
+            changement(joueur.getUniqueId(), localisations);
+            joueur.updateInventory();
+            lang.saveIfNeeded();
+        });
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onGlisserSpecial(InventoryDragEvent event) {
+        if (event.getView().getTopInventory().getHolder() instanceof Special
+                && event.getRawSlots().stream().anyMatch(brut -> brut < TAILLE)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onConnexion(PlayerJoinEvent event) {
+        Player joueur = event.getPlayer();
+        getServer().getScheduler().runTaskLater(this, () -> {
+            if (joueur.isOnline()) {
+                donnerARendre(joueur);
+            }
+        }, 20L);
+    }
+
+    /** Clic sur une case du coffre ; vrai si les jetons de localisation ont changé. */
+    private boolean clicCase(Player joueur, int place, ClickType clic) {
+        UUID id = joueur.getUniqueId();
+        Fiche f = fiche(id);
+        if (place == CASE_FERMER) {
+            joueur.closeInventory();
+            return false;
+        }
+        if (place == CASE_ACHAT && prix(Type.TP) > 0 && economie()) {
+            joueur.closeInventory();
+            // Un joueur Bedrock n'affiche pas une fenêtre de saisie pendant qu'un coffre se referme.
+            getServer().getScheduler().runTaskLater(this, () -> {
+                if (joueur.isOnline()) {
+                    quantite(joueur, Type.TP);
+                }
+            }, BedrockColors.isBedrock(joueur) ? 5L : 1L);
+            return false;
+        }
+        ItemStack curseur = joueur.getItemOnCursor();
+        boolean vide = curseur == null || curseur.isEmpty();
+        boolean maj = clic.isShiftClick();
+        Badge badge = badgeDeCase(place);
+        Type type = jetonDeCase(place);
+        int k = localisationDeCase(place);
+        if (badge != null) {
+            Integer niveau = f.badges.get(badge);
+            if (vide || maj) {
+                if (niveau != null) {
+                    f.badges.remove(badge);
+                    reprendre(joueur, creerBadge(badge, niveau), maj || !vide);
+                }
+                return false;
+            }
+            if (badge(curseur) != badge) {
+                refuser(joueur, badge(curseur) == null ? t("coffre.refus-badge", "<red>Seul un <nom> va dans cette case.",
+                        "nom", badge.nom) : t("coffre.refus-autre-badge", "<red>Ce badge va dans sa propre case."));
+                return false;
+            }
+            f.badges.put(badge, niveau(curseur));
+            // Échange : le badge déjà porté passe sur le curseur.
+            joueur.setItemOnCursor(niveau == null ? null : creerBadge(badge, niveau));
+            return false;
+        }
+        if (type != null) {
+            long n = f.jetons.getOrDefault(type, 0L);
+            if (vide || maj) {
+                if (n > 0) {
+                    int pris = (int) Math.min(64, n);
+                    if (clic == ClickType.RIGHT) {
+                        pris = (pris + 1) / 2;
+                    }
+                    ItemStack pile = creer(type);
+                    pile.setAmount(pris);
+                    if (n - pris > 0) {
+                        f.jetons.put(type, n - pris);
+                    } else {
+                        f.jetons.remove(type);
+                    }
+                    reprendre(joueur, pile, maj || !vide);
+                }
+                return false;
+            }
+            if (type(curseur) != type) {
+                refuser(joueur, t("coffre.refus-jeton", "<red>Seuls les <nom>s vont dans cette case.", "nom", type.nom));
+                return false;
+            }
+            int pose = clic == ClickType.RIGHT ? 1 : curseur.getAmount();
+            f.jetons.merge(type, (long) pose, Long::sum);
+            curseur.setAmount(curseur.getAmount() - pose);
+            joueur.setItemOnCursor(curseur.getAmount() > 0 ? curseur : null);
+            return false;
+        }
+        if (k < 0) {
+            return false;
+        }
+        ItemStack jeton = f.localisations.get(k);
+        if (jeton != null) {
+            if (!vide && !maj) {
+                refuser(joueur, t("coffre.refus-occupee", "<red>Cette case a déjà un jeton : reprends-le d'abord."));
+                return false;
+            }
+            f.localisations.remove(k);
+            f.liberees.put(k, System.currentTimeMillis());
+            reprendre(joueur, jeton, maj || !vide);
+            getLogger().info(joueur.getName() + " retire son jeton de localisation de la case " + (k + 1) + ".");
+            joueur.sendMessage(t("coffre.loc-retire", "<yellow>Case <n> libérée : elle reprendra un jeton dans <heures> h.",
+                    "n", k + 1, "heures", delaiLocalisation() / 3_600_000L));
+            return true;
+        }
+        if (vide || maj) {
+            return false;
+        }
+        Component refusPose = refusLocalisation(joueur, curseur, k);
+        if (refusPose != null) {
+            refuser(joueur, refusPose);
+            return false;
+        }
+        poserDepuis(joueur, curseur, k);
+        curseur.setAmount(curseur.getAmount() - 1);
+        joueur.setItemOnCursor(curseur.getAmount() > 0 ? curseur : null);
+        return true;
+    }
+
+    /** Maj + clic sur un objet de son inventaire : il va dans sa case ; vrai si les jetons de localisation ont changé. */
+    private boolean ranger(Player joueur, int caseBas) {
+        PlayerInventory inventaire = joueur.getInventory();
+        ItemStack objet = inventaire.getItem(caseBas);
+        if (objet == null || objet.isEmpty()) {
+            return false;
+        }
+        Fiche f = fiche(joueur.getUniqueId());
+        Badge badge = badge(objet);
+        Type type = type(objet);
+        if (badge != null) {
+            if (f.badges.containsKey(badge)) {
+                refuser(joueur, t("coffre.refus-double", "<red>Tu portes déjà un <nom> : reprends-le d'abord.", "nom",
+                        badge.nom));
+                return false;
+            }
+            f.badges.put(badge, niveau(objet));
+            objet.setAmount(objet.getAmount() - 1);
+            inventaire.setItem(caseBas, objet.getAmount() > 0 ? objet : null);
+            return false;
+        }
+        if (type == Type.LOCALISATION) {
+            Component premierRefus = null;
+            for (int k = 0; k < casesLocalisation(); k++) {
+                if (f.localisations.containsKey(k)) {
+                    continue;
+                }
+                Component refusPose = refusLocalisation(joueur, objet, k);
+                if (refusPose == null) {
+                    poserDepuis(joueur, objet, k);
+                    objet.setAmount(objet.getAmount() - 1);
+                    inventaire.setItem(caseBas, objet.getAmount() > 0 ? objet : null);
+                    return true;
+                }
+                if (premierRefus == null) {
+                    premierRefus = refusPose;
+                }
+            }
+            refuser(joueur, premierRefus != null ? premierRefus
+                    : t("coffre.refus-plein", "<red>Toutes tes cases de localisation sont prises."));
+            return false;
+        }
+        if (type != null) {
+            f.jetons.merge(type, (long) objet.getAmount(), Long::sum);
+            inventaire.setItem(caseBas, null);
+            return false;
+        }
+        refuser(joueur, t("coffre.refus-objet", "<red>Seuls les jetons et les badges vont dans l'inventaire spécial."));
+        return false;
+    }
+
+    /** Pourquoi ce jeton ne peut pas aller dans la case k, ou null s'il le peut. */
+    private Component refusLocalisation(Player joueur, ItemStack objet, int k) {
+        UUID id = joueur.getUniqueId();
+        if (type(objet) != Type.LOCALISATION) {
+            return t("coffre.refus-localisation", "<red>Seuls les jetons de localisation vont dans cette case.");
+        }
+        if (k >= valeurBadge(id, Badge.LOCALISATION)) {
+            return t("coffre.refus-niveau", "<red>Case bloquée : il faut un badge de localisation de niveau <niveau>.",
+                    "niveau", niveauPour(k));
+        }
+        long attente = attenteLocalisation(id, k);
+        if (attente > 0) {
+            return t("coffre.refus-attente", "<red>Cette case reprendra un jeton dans <temps>.", "temps", chrono(attente));
+        }
+        return validateur == null ? null : validateur.apply(joueur, objet);
+    }
+
+    private void poserDepuis(Player joueur, ItemStack objet, int k) {
+        Fiche f = fiche(joueur.getUniqueId());
+        ItemStack un = objet.clone();
+        un.setAmount(1);
+        f.localisations.put(k, un);
+        f.liberees.remove(k);
+        getLogger().info(joueur.getName() + " pose un jeton de localisation dans la case " + (k + 1) + ".");
+        joueur.sendMessage(t("coffre.loc-pose", "<green>Jeton posé dans la case <n> : sa magnétite est une destination "
+                + "de /home.", "n", k + 1));
+    }
+
+    /** Ce qu'on reprend d'une case : sur le curseur (vide), ou dans l'inventaire (Maj, ou curseur occupé). */
+    private static void reprendre(Player joueur, ItemStack objet, boolean versInventaire) {
+        if (versInventaire) {
+            donner(joueur, objet);
+        } else {
+            joueur.setItemOnCursor(objet);
+        }
+    }
+
+    /** Message dans le tchat (la barre d'action est cachée par le coffre), au plus un toutes les 2 secondes. */
+    private void refuser(Player joueur, Component message) {
+        long maintenant = System.currentTimeMillis();
+        Long dernier = refus.put(joueur.getUniqueId(), maintenant);
+        if (dernier != null && maintenant - dernier < 2000) {
+            return;
+        }
+        joueur.sendMessage(message);
+        joueur.playSound(joueur.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.6f, 0.8f);
+    }
+
+    private static void donner(Player joueur, ItemStack item) {
+        if (item == null || item.isEmpty()) {
+            return;
+        }
+        for (ItemStack tombe : joueur.getInventory().addItem(item).values()) {
+            joueur.getWorld().dropItemNaturally(joueur.getLocation(), tombe);
+        }
+    }
+
+    /** Objets en attente pour ce joueur (reprise de la 2.0) : dans son inventaire, au sol s'il est plein. */
+    private void donnerARendre(Player joueur) {
+        Fiche f = fiches.get(joueur.getUniqueId());
+        if (f == null || f.aRendre.isEmpty()) {
+            return;
+        }
+        int n = f.aRendre.size();
+        f.aRendre.forEach(objet -> donner(joueur, objet));
+        f.aRendre.clear();
+        joueur.sendMessage(t("special.rendus", "<yellow><n> objet(s) de ton inventaire spécial t'ont été rendus (ils "
+                + "n'avaient plus de case).", "n", n));
+        sauverBientot();
+        lang.saveIfNeeded();
+    }
+
+    // ------------------------------------------------------------------ commande et achat
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof Player joueur) {
+            ouvrir(joueur);
+        } else {
+            sender.sendMessage("Commande réservée aux joueurs.");
+        }
+        return true;
     }
 
     private void quantite(Player joueur, Type type) {
@@ -697,7 +999,7 @@ public final class KSJetons extends JavaPlugin implements Listener {
 
     private void acheter(Player joueur, Type type, long n) {
         long prix = prix(type);
-        if (prix <= 0 || !Bukkit.getPluginManager().isPluginEnabled("KS_Economy")) {
+        if (prix <= 0 || !economie()) {
             ouvrir(joueur);
             return;
         }
@@ -858,97 +1160,174 @@ public final class KSJetons extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------ enregistrement
 
+    private static String b64(ItemStack item) {
+        return Base64.getEncoder().encodeToString(item.serializeAsBytes());
+    }
+
+    private ItemStack objetDe(String texte, String ou) {
+        try {
+            return ItemStack.deserializeBytes(Base64.getDecoder().decode(texte == null ? "" : texte));
+        } catch (RuntimeException e) {
+            getLogger().warning("Objet illisible dans jetons.yml : " + ou);
+            return null;
+        }
+    }
+
     private void charger() {
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(fichier);
-        ConfigurationSection anciens = yaml.getConfigurationSection("stocks");
-        if (anciens != null) {
-            // 1.0.0 : nombres de jetons. Ils passent en attente et descendent dans le contenant du joueur. Le jeton
-            // d'emplacement n'existe plus. Le fichier de la 1.0.0 est gardé à côté.
+        if (yaml.getInt("version", 1) < 2 && (yaml.contains("stocks") || yaml.contains("sacs") || yaml.contains("attente"))) {
+            reprendreAnciens(yaml);
+            return;
+        }
+        ConfigurationSection joueurs = yaml.getConfigurationSection("joueurs");
+        if (joueurs == null) {
+            return;
+        }
+        for (String cle : joueurs.getKeys(false)) {
+            ConfigurationSection s = joueurs.getConfigurationSection(cle);
+            UUID id;
             try {
-                File copie = new File(getDataFolder(), "jetons-1.0.0.yml");
-                if (!copie.exists()) {
-                    Files.copy(fichier.toPath(), copie.toPath());
-                }
-            } catch (IOException e) {
-                getLogger().warning("Copie de jetons.yml (1.0.0) impossible : " + e.getMessage());
+                id = UUID.fromString(cle);
+            } catch (IllegalArgumentException e) {
+                getLogger().warning("Inventaire spécial ignoré : " + cle);
+                continue;
             }
-            lireNombres(anciens, true);
+            if (s == null) {
+                continue;
+            }
+            Fiche f = new Fiche();
+            ConfigurationSection badges = s.getConfigurationSection("badges");
+            if (badges != null) {
+                for (String b : badges.getKeys(false)) {
+                    Badge badge = Badge.parId(b);
+                    if (badge != null && badges.getInt(b) > 0) {
+                        f.badges.put(badge, badges.getInt(b));
+                    }
+                }
+            }
+            ConfigurationSection jetons = s.getConfigurationSection("jetons");
+            if (jetons != null) {
+                for (String j : jetons.getKeys(false)) {
+                    Type type = Type.parId(j);
+                    if (type != null && type != Type.LOCALISATION && jetons.getLong(j) > 0) {
+                        f.jetons.put(type, jetons.getLong(j));
+                    }
+                }
+            }
+            ConfigurationSection localisations = s.getConfigurationSection("localisations");
+            if (localisations != null) {
+                for (String k : localisations.getKeys(false)) {
+                    ItemStack jeton = objetDe(localisations.getString(k), cle + ".localisations." + k);
+                    try {
+                        if (jeton != null && type(jeton) == Type.LOCALISATION) {
+                            f.localisations.put(Integer.parseInt(k), jeton);
+                        }
+                    } catch (NumberFormatException e) {
+                        if (jeton != null) {
+                            f.aRendre.add(jeton);
+                        }
+                    }
+                }
+            }
+            ConfigurationSection liberees = s.getConfigurationSection("liberees");
+            if (liberees != null) {
+                for (String k : liberees.getKeys(false)) {
+                    try {
+                        f.liberees.put(Integer.parseInt(k), liberees.getLong(k));
+                    } catch (NumberFormatException ignore) {
+                        // case illisible : oubliée
+                    }
+                }
+            }
+            for (String texte : s.getStringList("a-rendre")) {
+                ItemStack objet = objetDe(texte, cle + ".a-rendre");
+                if (objet != null) {
+                    f.aRendre.add(objet);
+                }
+            }
+            fiches.put(id, f);
         }
-        ConfigurationSection enAttente = yaml.getConfigurationSection("attente");
-        if (enAttente != null) {
-            lireNombres(enAttente, false);
+    }
+
+    /**
+     * 2.1.0 : reprise du jetons.yml de la 2.0 (deux contenants d'entonnoir par joueur, jetons en attente) et de la 1.0.0
+     * (nombres) : les badges vont dans leur case (un deuxième du même type est rendu au joueur), les jetons dans leur
+     * case, les jetons de localisation non utilisés sont rendus au joueur. L'ancien fichier est gardé (jetons-2.0.yml).
+     */
+    private void reprendreAnciens(YamlConfiguration yaml) {
+        try {
+            File copie = new File(getDataFolder(), yaml.contains("stocks") ? "jetons-1.0.0.yml" : "jetons-2.0.yml");
+            if (!copie.exists()) {
+                Files.copy(fichier.toPath(), copie.toPath());
+            }
+        } catch (IOException e) {
+            getLogger().warning("Copie de l'ancien jetons.yml impossible : " + e.getMessage());
         }
+        for (String section : List.of("stocks", "attente")) {
+            ConfigurationSection nombres = yaml.getConfigurationSection(section);
+            if (nombres == null) {
+                continue;
+            }
+            for (String cle : nombres.getKeys(false)) {
+                ConfigurationSection js = nombres.getConfigurationSection(cle);
+                try {
+                    UUID id = UUID.fromString(cle);
+                    if (js == null) {
+                        continue;
+                    }
+                    for (String t : js.getKeys(false)) {
+                        Type type = Type.parId(t);
+                        if (type != null && type != Type.LOCALISATION && js.getLong(t) > 0) {
+                            fiche(id).jetons.merge(type, js.getLong(t), Long::sum);
+                        } else if (js.getLong(t) > 0) {
+                            getLogger().warning("Jetons non repris (type supprimé) : " + js.getLong(t) + " x " + t
+                                    + " de " + cle + " (gardés dans l'ancien fichier).");
+                        }
+                    }
+                } catch (IllegalArgumentException e) {
+                    getLogger().warning("Jetons ignorés : " + cle);
+                }
+            }
+        }
+        int rendus = 0;
         ConfigurationSection sacs = yaml.getConfigurationSection("sacs");
         if (sacs != null) {
             for (String cle : sacs.getKeys(false)) {
+                UUID id;
                 try {
-                    UUID joueur = UUID.fromString(cle);
-                    lireSac(sacs.getConfigurationSection(cle + ".jetons"), sac(joueur, false), false);
-                    lireSac(sacs.getConfigurationSection(cle + ".badges"), sac(joueur, true), true);
+                    id = UUID.fromString(cle);
                 } catch (IllegalArgumentException e) {
-                    getLogger().warning("Inventaire spécial ignoré : " + cle + " (" + e.getMessage() + ")");
-                }
-            }
-        }
-        for (UUID joueur : new ArrayList<>(attente.keySet())) {
-            remplir(joueur);
-        }
-        if (anciens != null) {
-            sauver();
-        }
-    }
-
-    private void lireNombres(ConfigurationSection section, boolean ancien) {
-        for (String cle : section.getKeys(false)) {
-            ConfigurationSection js = section.getConfigurationSection(cle);
-            if (js == null) {
-                continue;
-            }
-            try {
-                UUID joueur = UUID.fromString(cle);
-                for (String id : js.getKeys(false)) {
-                    Type type = Type.parId(id);
-                    long n = js.getLong(id);
-                    if (type != null && n > 0) {
-                        attente.computeIfAbsent(joueur, u -> new EnumMap<>(Type.class)).merge(type, n, Long::sum);
-                    } else if (type == null && ancien) {
-                        getLogger().warning("Jetons de la 1.0.0 non repris (type supprimé) : " + n + " x " + id
-                                + " de " + cle + " (gardés dans jetons-1.0.0.yml).");
-                    }
-                }
-            } catch (IllegalArgumentException e) {
-                getLogger().warning("Jetons ignorés : " + cle);
-            }
-        }
-    }
-
-    private void lireSac(ConfigurationSection section, Inventory inv, boolean badges) {
-        if (section == null) {
-            return;
-        }
-        for (String cle : section.getKeys(false)) {
-            try {
-                int i = Integer.parseInt(cle);
-                if (i < 0 || i >= cases(badges)) {
+                    getLogger().warning("Inventaire spécial ignoré : " + cle);
                     continue;
                 }
-                ItemStack item = ItemStack.deserializeBytes(Base64.getDecoder().decode(section.getString(cle, "")));
-                if (badges ? badge(item) != null : type(item) != null) {
-                    inv.setItem(i, item);
+                Fiche f = fiche(id);
+                for (String partie : List.of("jetons", "badges")) {
+                    ConfigurationSection sac = sacs.getConfigurationSection(cle + "." + partie);
+                    if (sac == null) {
+                        continue;
+                    }
+                    for (String place : sac.getKeys(false)) {
+                        ItemStack objet = objetDe(sac.getString(place), cle + "." + partie + "." + place);
+                        if (objet == null) {
+                            continue;
+                        }
+                        Badge badge = badge(objet);
+                        Type type = type(objet);
+                        if (badge != null && !f.badges.containsKey(badge)) {
+                            f.badges.put(badge, niveau(objet));
+                        } else if (type != null && type != Type.LOCALISATION) {
+                            f.jetons.merge(type, (long) objet.getAmount(), Long::sum);
+                        } else {
+                            f.aRendre.add(objet);
+                            rendus++;
+                        }
+                    }
                 }
-            } catch (RuntimeException e) {
-                getLogger().warning("Objet illisible dans jetons.yml : " + section.getCurrentPath() + "." + cle);
             }
         }
-    }
-
-    private void ecrireSac(YamlConfiguration yaml, String chemin, Inventory inv, boolean badges) {
-        for (int i = 0; i < cases(badges); i++) {
-            ItemStack item = inv.getItem(i);
-            if (item != null && !item.isEmpty() && !estVerrou(item)) {
-                yaml.set(chemin + "." + i, Base64.getEncoder().encodeToString(item.serializeAsBytes()));
-            }
-        }
+        getLogger().info("jetons.yml repris en 2.1.0 : " + fiches.size() + " joueur(s), " + rendus
+                + " objet(s) à rendre à leur joueur (jetons de localisation, badges en double).");
+        sauver();
     }
 
     /** Enregistre au tick suivant (une seule fois, même après plusieurs changements). */
@@ -969,13 +1348,29 @@ public final class KSJetons extends JavaPlugin implements Listener {
 
     private void sauver() {
         YamlConfiguration yaml = new YamlConfiguration();
-        sacsJetons.forEach((u, inv) -> ecrireSac(yaml, "sacs." + u + ".jetons", inv, false));
-        sacsBadges.forEach((u, inv) -> ecrireSac(yaml, "sacs." + u + ".badges", inv, true));
-        attente.forEach((u, m) -> m.forEach((t, n) -> {
-            if (n > 0) {
-                yaml.set("attente." + u + "." + t.id, n);
+        yaml.set("version", 2);
+        long limite = System.currentTimeMillis() - delaiLocalisation();
+        fiches.forEach((u, f) -> {
+            if (f.vide()) {
+                return;
             }
-        }));
+            String chemin = "joueurs." + u + ".";
+            f.badges.forEach((b, n) -> yaml.set(chemin + "badges." + b.id, n));
+            f.jetons.forEach((t, n) -> {
+                if (n > 0) {
+                    yaml.set(chemin + "jetons." + t.id, n);
+                }
+            });
+            f.localisations.forEach((k, jeton) -> yaml.set(chemin + "localisations." + k, b64(jeton)));
+            f.liberees.forEach((k, date) -> {
+                if (date > limite) {
+                    yaml.set(chemin + "liberees." + k, date);
+                }
+            });
+            if (!f.aRendre.isEmpty()) {
+                yaml.set(chemin + "a-rendre", f.aRendre.stream().map(KSJetons::b64).toList());
+            }
+        });
         try {
             getDataFolder().mkdirs();
             yaml.save(fichier);

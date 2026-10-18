@@ -79,6 +79,10 @@ import java.util.UUID;
  *   et le point de /spawn passe au-dessus de cette magnétite (dans un de ses claims de la zone du spawn), qui devient
  *   indestructible. /maison position n'existe plus. Le claim qui porte la maison ne compte plus dans les claims du
  *   joueur (KS_Claim 1.4.0, qui lit maisonDansSonClaim).
+ * - 1.4.0 (LeKiwi06, 18/10/2026) : les emplacements sont les cases de localisation de l'inventaire spécial de
+ *   KS_Jetons 2.1.0 : un jeton de localisation posé dans une case = une destination ; retiré, il est rendu et la case
+ *   attend 24 h (KS_Jetons). Les emplacements enregistrés avant sont repris en jetons posés dans les mêmes cases.
+ *   /bed = /home bed.
  */
 public final class KSTeleport extends JavaPlugin implements Listener {
 
@@ -96,10 +100,6 @@ public final class KSTeleport extends JavaPlugin implements Listener {
         Location maison;
         /** 1.3.0 : magnétite du point de /spawn placé par /setspawn (null : point de /maison create). */
         Pos magnetiteMaison;
-        /** Emplacement (0, 1, 2...) -> magnétite enregistrée. */
-        final TreeMap<Integer, Pos> emplacements = new TreeMap<>();
-        /** Emplacement -> date à laquelle il a été libéré. */
-        final Map<Integer, Long> liberes = new HashMap<>();
     }
 
     /** Ce qui paie une téléportation. */
@@ -123,7 +123,9 @@ public final class KSTeleport extends JavaPlugin implements Listener {
     private NamespacedKey cleY;
     private NamespacedKey cleZ;
     private final Map<UUID, Fiche> fiches = new HashMap<>();
-    /** Magnétites enregistrées -> joueurs qui les ont dans un emplacement. */
+    /** 1.4.0 : emplacements lus dans un teleport.yml de la 1.3.0 ou avant, à reprendre dans KS_Jetons au démarrage. */
+    private final Map<UUID, TreeMap<Integer, Pos>> anciensEmplacements = new HashMap<>();
+    /** Magnétites des jetons de localisation posés (KS_Jetons) -> joueurs qui les ont dans une case. */
     private final Map<Pos, Set<UUID>> magnetites = new HashMap<>();
     /** 1.3.0 : magnétites des points de /spawn (/setspawn) -> joueurs dont c'est le point. */
     private final Map<Pos, Set<UUID>> magnetitesMaison = new HashMap<>();
@@ -152,6 +154,12 @@ public final class KSTeleport extends JavaPlugin implements Listener {
         getCommand("spawn").setExecutor(this);
         getCommand("maison").setExecutor(this);
         getCommand("setspawn").setExecutor(this);
+        getCommand("bed").setExecutor(this);
+        // 1.4.0 : les emplacements sont les cases de localisation de l'inventaire spécial (KS_Jetons 2.1.0).
+        KSJetons.validateurLocalisation(this::refusJeton);
+        KSJetons.ecouterLocalisations(joueur -> reconstruireMagnetites());
+        reprendreEmplacements();
+        reconstruireMagnetites();
         if (getServer().getPluginManager().isPluginEnabled("KS_Menu")) {
             fr.kalium.ksmenu.KSMenu.ajouterBouton(this, "teleport", lang.c("bouton.nom", "<green><bold>Téléportations"),
                     lang.c("bouton.description", "<gray>Ton lit, ta maison du spawn, tes emplacements"), 41, this::ouvrir);
@@ -181,14 +189,13 @@ public final class KSTeleport extends JavaPlugin implements Listener {
     public static Map<String, Location> destinations(UUID joueur) {
         Map<String, Location> r = new java.util.LinkedHashMap<>();
         Fiche fiche = instance.fiches.get(joueur);
-        if (fiche == null) {
-            return r;
-        }
-        if (fiche.maison != null && fiche.maison.isWorldLoaded()) {
+        if (fiche != null && fiche.maison != null && fiche.maison.isWorldLoaded()) {
             r.put("Maison du spawn", fiche.maison.clone());
         }
-        fiche.emplacements.forEach((numero, pos) -> {
-            World monde = Bukkit.getWorld(pos.monde());
+        // 1.4.0 : jetons de localisation posés dans les cases de l'inventaire spécial.
+        KSJetons.localisations(joueur).forEach((numero, jeton) -> {
+            Pos pos = instance.magnetite(jeton);
+            World monde = pos == null ? null : Bukkit.getWorld(pos.monde());
             if (monde != null) {
                 r.put("Emplacement " + (numero + 1), new Location(monde, pos.x() + 0.5, pos.y() + 1, pos.z() + 0.5));
             }
@@ -212,10 +219,6 @@ public final class KSTeleport extends JavaPlugin implements Listener {
 
     private long attenteDepart() {
         return Math.max(0, getConfig().getLong("attente-secondes", 5));
-    }
-
-    private long attenteEmplacement() {
-        return Math.max(0, getConfig().getLong("emplacement-libere-minutes", 15)) * 60_000L;
     }
 
     private long prixMaison() {
@@ -551,7 +554,7 @@ public final class KSTeleport extends JavaPlugin implements Listener {
 
     private void versEmplacement(Player joueur, int numero) {
         UUID id = joueur.getUniqueId();
-        Pos pos = fiche(id).emplacements.get(numero);
+        Pos pos = magnetite(KSJetons.localisations(id).get(numero));
         if (pos == null || numero >= KSJetons.valeurBadge(id, KSJetons.Badge.LOCALISATION)) {
             ouvrir(joueur);
             return;
@@ -574,6 +577,8 @@ public final class KSTeleport extends JavaPlugin implements Listener {
             case "spawn" -> versSpawn(joueur);
             case "maison" -> maison(joueur, args.length == 0 ? "" : args[0].toLowerCase());
             case "setspawn" -> placerSpawn(joueur);
+            // 1.4.0 (LeKiwi06, 18/10/2026) : /bed = /home bed.
+            case "bed" -> versLit(joueur);
             default -> {
                 if (args.length > 0 && args[0].equalsIgnoreCase("bed")) {
                     versLit(joueur);
@@ -603,21 +608,23 @@ public final class KSTeleport extends JavaPlugin implements Listener {
         List<ActionButton> boutons = new ArrayList<>();
         boutons.add(gui.button(t("menu.lit", "<white>Mon lit"), null, this::versLit));
         boutons.add(gui.button(t("menu.spawn", "<white>Ma maison du spawn"), null, this::versSpawn));
+        // 1.4.0 : les emplacements sont les cases de localisation de l'inventaire spécial (KS_Jetons 2.1.0).
         int emplacements = KSJetons.valeurBadge(id, KSJetons.Badge.LOCALISATION);
-        if (emplacements == 0 && fiche.emplacements.isEmpty()) {
+        Map<Integer, ItemStack> poses = KSJetons.localisations(id);
+        if (emplacements == 0 && poses.isEmpty()) {
             corps.add(t("menu.sans-badge", "<gray>Emplacements : aucun. Un badge de localisation en donne, pour y "
                     + "enregistrer des jetons de localisation."));
         }
-        for (int i = 0; i < Math.max(emplacements, fiche.emplacements.isEmpty() ? 0
-                : fiche.emplacements.lastKey() + 1); i++) {
-            Pos pos = fiche.emplacements.get(i);
+        int fin = Math.max(emplacements, poses.isEmpty() ? 0 : ((TreeMap<Integer, ItemStack>) poses).lastKey() + 1);
+        for (int i = 0; i < fin; i++) {
+            Pos pos = magnetite(poses.get(i));
             int numero = i;
             if (pos == null) {
-                long attente = fiche.liberes.getOrDefault(i, 0L) + attenteEmplacement() - System.currentTimeMillis();
+                long attente = KSJetons.attenteLocalisation(id, i);
                 if (i < emplacements) {
                     corps.add(attente > 0
-                            ? t("menu.emplacement-attente", "<white><n>. <gray>libéré, réutilisable dans <temps>", "n",
-                            i + 1, "temps", chrono(attente))
+                            ? t("menu.emplacement-attente-24h", "<white><n>. <gray>libre, reprend un jeton dans <temps>",
+                            "n", i + 1, "temps", chrono(attente))
                             : t("menu.emplacement-libre", "<white><n>. <gray>libre", "n", i + 1));
                 }
                 continue;
@@ -631,11 +638,13 @@ public final class KSTeleport extends JavaPlugin implements Listener {
                 boutons.add(gui.button(t("menu.aller", "<white>Emplacement <n>", "n", i + 1), null,
                         p -> versEmplacement(p, numero)));
             }
-            boutons.add(gui.button(t("menu.liberer", "<red>Libérer l'emplacement <n>", "n", i + 1), null,
-                    p -> gui.confirm(p, titre(), t("menu.liberer-confirmer", "<white>Libérer l'emplacement <n> ? Le "
-                                    + "jeton de localisation n'est pas rendu, et l'emplacement ne pourra resservir que "
-                                    + "dans <minutes> minutes.", "n", numero + 1, "minutes",
-                            attenteEmplacement() / 60_000L), q -> liberer(q, numero), this::ouvrir)));
+        }
+        if (emplacements > 0 || !poses.isEmpty()) {
+            corps.add(t("menu.localisations-info", "<gray>Pour ajouter ou libérer un emplacement, pose ou reprends son "
+                    + "jeton de localisation dans tes localisations (/jetons) ; une case vidée attend <heures> h.",
+                    "heures", KSJetons.delaiLocalisationMs() / 3_600_000L));
+            boutons.add(gui.button(t("menu.bouton-localisations", "<aqua>Mes localisations"), null,
+                    KSJetons::ouvrirSpecial));
         }
         gui.open(joueur, titre(), corps, List.of(), boutons, gui.close(), 2);
         lang.saveIfNeeded();
@@ -805,102 +814,82 @@ public final class KSTeleport extends JavaPlugin implements Listener {
         event.getInventory().setResult(resultat);
     }
 
-    /** Clic droit avec un jeton de localisation lié : proposer de l'enregistrer dans un emplacement libre. */
+    /**
+     * 1.4.0 : clic droit avec un jeton de localisation : il ne s'utilise plus en main, il se pose dans une case de
+     * localisation de l'inventaire spécial (KS_Jetons 2.1.0), qui s'ouvre.
+     */
     @EventHandler(priority = EventPriority.NORMAL)
     public void onJeton(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND
-                || (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)) {
-            return;
-        }
-        Pos pos = magnetite(event.getItem());
-        if (pos == null) {
+                || (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK)
+                || KSJetons.type(event.getItem()) != KSJetons.Type.LOCALISATION) {
             return;
         }
         event.setCancelled(true);
         Player joueur = event.getPlayer();
-        if (refusEnregistrement(joueur, pos)) {
-            lang.saveIfNeeded();
-            return;
-        }
-        gui.confirm(joueur, titre(), t("jeton.confirmer", "<white>Enregistrer cette magnétite (<gold><monde></gold> <x> "
-                        + "<y> <z>) dans un emplacement libre ? <gray>Le jeton est utilisé.", "monde",
-                nomMonde(pos.monde()), "x", pos.x(), "y", pos.y(), "z", pos.z()), p -> enregistrer(p, pos), null);
+        joueur.sendMessage(t("jeton.poser", "<gray>Pose ce jeton dans une case de <white>tes localisations</white> : sa "
+                + "magnétite deviendra une destination de /home."));
+        KSJetons.ouvrirSpecial(joueur);
         lang.saveIfNeeded();
     }
 
-    /** Premier emplacement utilisable (donné par le badge, vide, plus en attente après avoir été libéré), ou -1. */
-    private int emplacementLibre(UUID joueur) {
-        Fiche fiche = fiche(joueur);
-        long maintenant = System.currentTimeMillis();
-        for (int i = 0; i < KSJetons.valeurBadge(joueur, KSJetons.Badge.LOCALISATION); i++) {
-            if (!fiche.emplacements.containsKey(i)
-                    && fiche.liberes.getOrDefault(i, 0L) + attenteEmplacement() <= maintenant) {
-                return i;
-            }
+    /**
+     * 1.4.0 : vérification de KS_Jetons quand un joueur pose un jeton de localisation dans une case : jeton lié,
+     * magnétite toujours là, pas déjà dans une autre de ses cases. Renvoie le refus, ou null.
+     */
+    private Component refusJeton(Player joueur, ItemStack objet) {
+        Pos pos = magnetite(objet);
+        if (pos == null) {
+            return t("jeton.non-lie", "<red>Ce jeton n'est lié à aucune magnétite.");
         }
-        return -1;
-    }
-
-    /** Envoie la raison du refus et renvoie vrai si le jeton ne peut pas être enregistré maintenant. */
-    private boolean refusEnregistrement(Player joueur, Pos pos) {
-        UUID id = joueur.getUniqueId();
         World monde = Bukkit.getWorld(pos.monde());
         if (monde == null || monde.getBlockAt(pos.x(), pos.y(), pos.z()).getType() != Material.LODESTONE) {
-            joueur.sendMessage(t("jeton.cassee", "<red>La magnétite de ce jeton a été cassée : il ne peut plus servir."));
-            return true;
+            return t("jeton.cassee", "<red>La magnétite de ce jeton a été cassée : il ne peut plus servir.");
         }
-        if (fiche(id).emplacements.containsValue(pos)) {
-            joueur.sendMessage(t("jeton.deja", "<red>Cette magnétite est déjà dans un de tes emplacements."));
-            return true;
+        for (ItemStack pose : KSJetons.localisations(joueur.getUniqueId()).values()) {
+            if (pos.equals(magnetite(pose))) {
+                return t("jeton.deja", "<red>Cette magnétite est déjà dans un de tes emplacements.");
+            }
         }
-        if (KSJetons.valeurBadge(id, KSJetons.Badge.LOCALISATION) == 0) {
-            joueur.sendMessage(t("jeton.sans-badge", "<red>Il te faut un badge de localisation (rangé dans tes badges) "
-                    + "pour avoir des emplacements."));
-            return true;
-        }
-        if (emplacementLibre(id) < 0) {
-            joueur.sendMessage(t("jeton.plein", "<red>Aucun emplacement libre pour le moment. <gray>/home"));
-            return true;
-        }
-        return false;
+        return null;
     }
 
-    private void enregistrer(Player joueur, Pos pos) {
-        UUID id = joueur.getUniqueId();
-        ItemStack main = joueur.getInventory().getItemInMainHand();
-        if (!pos.equals(magnetite(main)) || refusEnregistrement(joueur, pos)) {
-            lang.saveIfNeeded();
+    /** 1.4.0 : magnétites protégées = celles des jetons posés dans les cases de localisation de tous les joueurs. */
+    private void reconstruireMagnetites() {
+        magnetites.clear();
+        KSJetons.toutesLocalisations().forEach((joueur, cases) -> cases.values().forEach(jeton -> {
+            Pos pos = magnetite(jeton);
+            if (pos != null) {
+                magnetites.computeIfAbsent(pos, p -> new HashSet<>()).add(joueur);
+            }
+        }));
+    }
+
+    /**
+     * 1.4.0 : les emplacements de la 1.3.0 et avant (jeton utilisé, magnétite retenue ici) deviennent des jetons posés
+     * dans les mêmes cases de l'inventaire spécial ; une case déjà prise : le jeton est rendu au joueur.
+     */
+    private void reprendreEmplacements() {
+        if (anciensEmplacements.isEmpty()) {
             return;
         }
-        int numero = emplacementLibre(id);
-        main.setAmount(main.getAmount() - 1);
-        joueur.getInventory().setItemInMainHand(main.getAmount() > 0 ? main : null);
-        Fiche fiche = fiche(id);
-        fiche.emplacements.put(numero, pos);
-        fiche.liberes.remove(numero);
-        magnetites.computeIfAbsent(pos, p -> new HashSet<>()).add(id);
-        sauver();
-        joueur.sendMessage(t("jeton.enregistre", "<green>Magnétite enregistrée dans l'emplacement <n>. <gray>/home pour "
-                + "t'y téléporter.", "n", numero + 1));
-        lang.saveIfNeeded();
-    }
-
-    private void liberer(Player joueur, int numero) {
-        UUID id = joueur.getUniqueId();
-        Fiche fiche = fiche(id);
-        Pos pos = fiche.emplacements.remove(numero);
-        if (pos != null) {
-            fiche.liberes.put(numero, System.currentTimeMillis());
-            Set<UUID> joueurs = magnetites.get(pos);
-            if (joueurs != null) {
-                joueurs.remove(id);
-                if (joueurs.isEmpty()) {
-                    magnetites.remove(pos);
+        int poses = 0;
+        int rendus = 0;
+        for (Map.Entry<UUID, TreeMap<Integer, Pos>> e : anciensEmplacements.entrySet()) {
+            for (Map.Entry<Integer, Pos> emplacement : e.getValue().entrySet()) {
+                ItemStack jeton = jeton(emplacement.getValue());
+                if (KSJetons.poserLocalisation(e.getKey(), emplacement.getKey(), jeton)) {
+                    poses++;
+                } else {
+                    KSJetons.rendre(e.getKey(), jeton);
+                    rendus++;
                 }
             }
-            sauver();
         }
-        ouvrir(joueur);
+        anciensEmplacements.clear();
+        sauver();
+        getLogger().info("Emplacements repris dans l'inventaire spécial : " + poses + " jeton(s) posé(s), " + rendus
+                + " rendu(s) à leur joueur.");
     }
 
     // ------------------------------------------------------------------ magnétites indestructibles
@@ -992,19 +981,13 @@ public final class KSTeleport extends JavaPlugin implements Listener {
                             magnetite.getInt("y"), magnetite.getInt("z"));
                     magnetitesMaison.computeIfAbsent(fiche.magnetiteMaison, p -> new HashSet<>()).add(id);
                 }
+                // 1.3.0 et avant : emplacements retenus ici, repris en jetons posés dans KS_Jetons (reprendreEmplacements).
                 ConfigurationSection emplacements = s.getConfigurationSection("emplacements");
                 if (emplacements != null) {
                     for (String numero : emplacements.getKeys(false)) {
                         Pos pos = new Pos(emplacements.getString(numero + ".monde", ""), emplacements.getInt(numero + ".x"),
                                 emplacements.getInt(numero + ".y"), emplacements.getInt(numero + ".z"));
-                        fiche.emplacements.put(Integer.parseInt(numero), pos);
-                        magnetites.computeIfAbsent(pos, p -> new HashSet<>()).add(id);
-                    }
-                }
-                ConfigurationSection liberes = s.getConfigurationSection("liberes");
-                if (liberes != null) {
-                    for (String numero : liberes.getKeys(false)) {
-                        fiche.liberes.put(Integer.parseInt(numero), liberes.getLong(numero));
+                        anciensEmplacements.computeIfAbsent(id, u -> new TreeMap<>()).put(Integer.parseInt(numero), pos);
                     }
                 }
                 fiches.put(id, fiche);
@@ -1016,7 +999,6 @@ public final class KSTeleport extends JavaPlugin implements Listener {
 
     private void sauver() {
         long limite = System.currentTimeMillis() - delai();
-        long limiteEmplacement = System.currentTimeMillis() - attenteEmplacement();
         YamlConfiguration yaml = new YamlConfiguration();
         fiches.forEach((joueur, fiche) -> {
             String chemin = "joueurs." + joueur + ".";
@@ -1034,17 +1016,6 @@ public final class KSTeleport extends JavaPlugin implements Listener {
                 yaml.set(chemin + "maison-magnetite.y", fiche.magnetiteMaison.y());
                 yaml.set(chemin + "maison-magnetite.z", fiche.magnetiteMaison.z());
             }
-            fiche.emplacements.forEach((numero, pos) -> {
-                yaml.set(chemin + "emplacements." + numero + ".monde", pos.monde());
-                yaml.set(chemin + "emplacements." + numero + ".x", pos.x());
-                yaml.set(chemin + "emplacements." + numero + ".y", pos.y());
-                yaml.set(chemin + "emplacements." + numero + ".z", pos.z());
-            });
-            fiche.liberes.forEach((numero, date) -> {
-                if (date > limiteEmplacement) {
-                    yaml.set(chemin + "liberes." + numero, date);
-                }
-            });
         });
         try {
             getDataFolder().mkdirs();
