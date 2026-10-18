@@ -156,41 +156,59 @@ themes:
         nom: "Boîte de shulker"
         icone: SHULKER_BOX
         texte: "Elle se fabrique avec un coffre de l'Ender entre les deux carapaces, au lieu d'un coffre."
+        recettes:
+          - "ks_crafts:shulker_box"
         nouveau: "2026-10-18"
       armure:
         nom: "Armure fondue"
         icone: IRON_CHESTPLATE
         texte: "Un casque, un plastron, des jambières ou des bottes en fer, or, cuivre ou cotte de mailles fondus au four donnent 1 lingot."
+        recettes:
+          - "ks_crafts:*_armure"
         nouveau: "2026-10-18"
       spawners:
         nom: "Spawners"
         icone: SPAWNER
         texte: "Les spawners naturels donnent des Fragments de Spawner. 7 fragments, un Cœur de Spawner et une tête de mob font un spawner de ce mob, qui se récupère quand on le casse."
+        recettes:
+          - "ks_crafts:spawner_*"
         nouveau: "2026-10-18"
       biome:
         nom: "Changeur de Biome"
         icone: END_CRYSTAL
         texte: "Change le biome autour de toi (32 blocs) dans le monde normal, hors des zones protégées et des claims des autres."
+        recettes:
+          - "ks_crafts:changeur_biome"
         nouveau: "2026-10-18"
       bedrock:
         nom: "Bedrock Breaker"
         icone: BLAZE_ROD
         texte: "Clic droit sur un bloc de bedrock : il disparaît. Usage unique."
+        recettes:
+          - "ks_crafts:bedrock_breaker"
         nouveau: "2026-10-18"
       cle:
         nom: "Clé de l'End"
         icone: OMINOUS_TRIAL_KEY
         texte: "Ton coffre de l'Ender a 6 rangées : chaque Clé de l'End débloque une case des 3 rangées du bas."
+        recettes:
+          - "ks_crafts:cle_de_l_end"
         nouveau: "2026-10-18"
       wither:
         nom: "Tête de wither squelette"
         icone: WITHER_SKELETON_SKULL
         texte: "Elle tombe sale, endommagée et désactivée : répare-la par trois crafts pour pouvoir invoquer le Wither."
+        recettes:
+          - "ks_crafts:tete_wither_*"
+          - "ks_crafts:bloc_charbon_de_bois"
+          - "ks_crafts:charbon_de_bois_du_bloc"
         nouveau: "2026-10-18"
       elixirs:
         nom: "Élixirs"
         icone: HONEY_BOTTLE
         texte: "8 potions longues autour d'un ingrédient rare donnent un élixir de 10 à 60 minutes (vision nocturne, force, vitesse, chance...)."
+        recettes:
+          - "ks_elixir:*"
         nouveau: "2026-10-18"
 
   enclume:
@@ -319,6 +337,8 @@ themes:
         nom: "Jeton de localisation"
         icone: COMPASS
         texte: "Une boussole liée à une magnétite entourée de 8 blocs de cuivre ciré. Pose-le dans une case de tes localisations (/jetons) : la magnétite devient une destination de /home. Repris, il t'est rendu et la case attend 24 h. Le badge de localisation donne les cases."
+        recettes:
+          - "ks_teleport:jeton_localisation"
         nouveau: "2026-10-18b"
       fly:
         nom: "Voler chez soi"
@@ -375,11 +395,15 @@ themes:
         nom: "Bateau à jukebox"
         icone: JUKEBOX
         texte: "Bateau + jukebox. Accroupi + clic droit (à bord : touche de saut) pour choisir un disque de ton inventaire ; la musique suit le bateau."
+        recettes:
+          - "ks_crafts:bateau_jukebox_*"
         nouveau: "2026-10-18"
       jukebox-coffre:
         nom: "Bateau à coffre et jukebox"
         icone: OAK_CHEST_BOAT
         texte: "Bateau à coffre + jukebox. Il lit en boucle les disques de son coffre ; clic droit : lecture ou pause. Tire-le derrière toi avec une laisse."
+        recettes:
+          - "ks_crafts:bateau_coffre_jukebox_*"
         nouveau: "2026-10-18"
       laisse:
         nom: "Laisse courte"
@@ -391,6 +415,8 @@ themes:
         nom: "Verrou de véhicule"
         icone: TRIPWIRE_HOOK
         texte: "Crochet + 4 lingots de fer. Clic droit sur un bateau ou wagonnet à coffre, un âne, une mule ou un lama : tant qu'il n'est pas vide, personne d'autre ne l'ouvre, ne le casse ni ne le déplace."
+        recettes:
+          - "ks_crafts:verrou_vehicule"
         nouveau: "2026-10-18"
       partout:
         nom: "Bateaux et wagonnets"
@@ -402,6 +428,8 @@ themes:
         icone: FURNACE_MINECART
         texte: "3 wagonnets à four en ligne à l'établi. Pose-la sur 4 rails droits, dans le sens de ton regard : elle tracte 15 wagons, et 10 de plus par wagonnet à four ajouté."
         requiert: "KS_Trains"
+        recettes:
+          - "ks_crafts:locomotive"
         nouveau: "2026-10-18c"
       attelage:
         nom: "Train : atteler"
@@ -420,6 +448,8 @@ themes:
         icone: REDSTONE_LAMP
         texte: "Un wagonnet entouré, en casque, d'un comparateur, d'un capteur sculk calibré, d'une lampe à redstone, d'un bloc musical et d'un levier. Monte dedans : avancer = vitesse +1 (4 niveaux), reculer = vitesse -1 puis marche arrière, saut = klaxon. Un seul par train, à moins de 5 wagons de la locomotive."
         requiert: "KS_Trains"
+        recettes:
+          - "ks_crafts:wagon_controleur"
         nouveau: "2026-10-18c"
       carburant:
         nom: "Train : carburant"
@@ -444,6 +474,8 @@ themes:
         icone: JUKEBOX
         texte: "Wagonnet + jukebox. Il joue les disques du wagon à coffre juste devant lui : lecture, aléatoire ou pause."
         requiert: "KS_Trains"
+        recettes:
+          - "ks_crafts:wagon_jukebox"
         nouveau: "2026-10-18c"
       voyageurs:
         nom: "Train : voyageurs"

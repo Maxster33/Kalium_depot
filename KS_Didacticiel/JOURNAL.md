@@ -127,3 +127,25 @@ joueurs ne marchent que si `tetes-de-joueurs: true` dans le config.yml de KS_Dec
 (`sortie/KS_Didacticiel-1.2.0.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 18/10/2026 à 09:07 (LeKiwi06 : « Oui, envoie KS_Didacticiel 1.2.0 et son didacticiel.yml sur Event » ; jar en place (1.1.0) vérifié de la même taille que `jars-deployes/`, rangé avec l'ancien `didacticiel.yml` dans `_removed-ks_didacticiel-1.1.0/` ; nouveau jar et nouveau fichier de la même taille que ceux du dépôt), actif après redémarrage d'Event (le jar ; le fichier seul serait relu par /didacticiel recharger, mais il demande la 1.2.0 pour recettes et requiert). Kixster pas encore. Statut : non testé en jeu.**
+
+## 1.2.1 - recettes de tous les objets fabriqués (18/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « il faut que tous les items ayant un craft possèdent la même interface que celle pour les crafts
+pratiques (élixirs, minecart contrôleur, locomotive, spawner, etc) ».
+
+- **Contenu** (`didacticiel.yml`) : 16 nouveautés s'ouvrent sur leurs recettes : crafts pratiques, boîte de shulker,
+  armure fondue (6 recettes de four et de haut fourneau), spawners (11), Changeur de Biome, Bedrock Breaker, Clé de
+  l'End, tête de wither squelette (5 réparations et le bloc de charbon de bois, dans les deux sens), élixirs (11, de
+  KS_Elixir), jeton de localisation (KS_Teleport), bateau à jukebox et bateau à coffre et jukebox (un par bois),
+  verrou de véhicule, locomotive, wagon contrôleur, wagon jukebox. Valeurs `nouveau` inchangées (pas de « Nouveau »).
+- **Code**, techniquement nécessaire :
+  - `*` accepté n'importe où dans une clé (`ks_crafts:*_armure`) ; avant : seulement à la fin ;
+  - une lettre de la grille répétée autant de fois que son choix a d'objets montre un objet différent par case : le
+    wagon contrôleur affiche ses 5 pièces (comparateur, capteur sculk calibré, lampe à redstone, bloc musical, levier)
+    au lieu de 5 comparateurs « ou une de ses 5 variantes ».
+- Limite : le jeton de localisation, la tête de wither réparée et les objets dont le résultat est calculé au moment du
+  craft montrent le résultat déclaré par la recette (jeton sans magnétite, crâne de wither squelette).
+
+Compilé le 18/10/2026 (`sortie/KS_Didacticiel-1.2.1.jar`). **Statut : non déployé, non testé en jeu** (empilé sur la
+1.2.0, pas encore testée, demande de LeKiwi06). À envoyer avec son `didacticiel.yml`.
+

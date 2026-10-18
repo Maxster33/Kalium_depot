@@ -393,10 +393,18 @@ public final class KSDidacticiel extends JavaPlugin {
         Map<String, Recipe> r = new LinkedHashMap<>();
         for (String motif : n.recettes()) {
             String m = motif.trim().toLowerCase(Locale.ROOT);
-            if (m.endsWith("*")) {
-                String debut = m.substring(0, m.length() - 1);
+            if (m.contains("*")) {
+                // 1.2.1 : « * » n'importe où (« ks_crafts:*_armure ») : n'importe quelle suite de caractères.
+                StringBuilder motifRegex = new StringBuilder();
+                for (String partie : m.split("\\*", -1)) {
+                    if (motifRegex.length() > 0) {
+                        motifRegex.append(".*");
+                    }
+                    motifRegex.append(java.util.regex.Pattern.quote(partie));
+                }
+                java.util.regex.Pattern p = java.util.regex.Pattern.compile(motifRegex.toString());
                 toutes.forEach((cle, recette) -> {
-                    if (cle.startsWith(debut)) {
+                    if (p.matcher(cle).matches()) {
                         r.putIfAbsent(cle, recette);
                     }
                 });
@@ -432,10 +440,27 @@ public final class KSDidacticiel extends JavaPlugin {
         if (recette instanceof ShapedRecipe forme) {
             String[] rangs = forme.getShape();
             Map<Character, RecipeChoice> choix = forme.getChoiceMap();
+            // 1.2.1 : une lettre répétée autant de fois que son choix a d'objets (wagon contrôleur : 5 cases, 5 pièces
+            // différentes, chacune une fois) montre un objet différent dans chaque case.
+            Map<Character, Integer> occurrences = new java.util.HashMap<>();
+            for (String rang : rangs) {
+                for (char lettre : rang.toCharArray()) {
+                    occurrences.merge(lettre, 1, Integer::sum);
+                }
+            }
+            Map<Character, Integer> vues = new java.util.HashMap<>();
             for (int l = 0; l < rangs.length && l < 3; l++) {
                 for (int c = 0; c < rangs[l].length() && c < 3; c++) {
-                    RecipeChoice ch = choix.get(rangs[l].charAt(c));
-                    if (ch != null) {
+                    char lettre = rangs[l].charAt(c);
+                    RecipeChoice ch = choix.get(lettre);
+                    if (ch == null) {
+                        continue;
+                    }
+                    int rang = vues.merge(lettre, 1, Integer::sum) - 1;
+                    if (ch instanceof RecipeChoice.MaterialChoice m && occurrences.get(lettre) > 1
+                            && m.getChoices().size() == occurrences.get(lettre)) {
+                        menu.poser(GRILLE[l * 3 + c], new ItemStack(m.getChoices().get(rang)), null);
+                    } else {
                         menu.poser(GRILLE[l * 3 + c], ingredient(ch), null);
                     }
                 }
