@@ -1,6 +1,7 @@
 package fr.kalium.didacticiel;
 
 import fr.kalium.menu.api.Contenant;
+import fr.kalium.menu.api.Gui;
 import fr.kalium.menu.api.Lang;
 import fr.kalium.menu.api.MenuSection;
 import net.kyori.adventure.text.Component;
@@ -69,6 +70,8 @@ public final class KSDidacticiel extends JavaPlugin {
     private static final int[] GRILLE = {10, 11, 12, 19, 20, 21, 28, 29, 30};
 
     private Lang lang;
+    /** 1.3.0 : « Poser une question » et l'outil du staff qui y répond. */
+    private Questions questions;
     private String titre = "Didacticiel";
     private List<Theme> themes = List.of();
     private File fichierVus;
@@ -120,6 +123,13 @@ public final class KSDidacticiel extends JavaPlugin {
                 ouvrirThemes(joueur, retour);
             }
         }, this, ServicePriority.Normal);
+        // 1.3.0 : questions des joueurs, et l'outil du staff dans la rubrique « Modération » de /menu.
+        questions = new Questions(this, lang, new Gui(this, lang));
+        getServer().getPluginManager().registerEvents(questions, this);
+        getServer().getServicesManager().register(MenuSection.class, MenuSection.moderation(this, "questions-didacticiel",
+                Questions.PERMISSION_STAFF, 60, lang.c("staff.section", "<gold>Questions du didacticiel"),
+                lang.c("staff.section-info", "<gray>Les questions des joueurs ; y répondre en jeu."),
+                (p, retour) -> questions.ouvrirStaff(p, false, 0, retour)), this, ServicePriority.Normal);
         prendreHelp();
         getServer().getScheduler().runTask(this, this::prendreHelp);
         lang.saveIfNeeded();
@@ -320,6 +330,9 @@ public final class KSDidacticiel extends JavaPlugin {
                 lang.c("aide.3", "<gray>souris sur chaque objet pour"),
                 lang.c("aide.4", "<gray>lire son explication."),
                 lang.c("aide.5", "<green>Nouveau<gray> : pas encore lu."))), null);
+        // 1.3.0 (LeKiwi06) : « Poser une question » ; le staff répond en jeu et modifie le didacticiel si besoin.
+        menu.poser(menu.bas(4), questions.bouton(),
+                p -> Contenant.saisie(p, () -> questions.poser(p, q -> ouvrirThemes(q, retour))));
         if (retour != null) {
             menu.poser(menu.bas(5), Contenant.objet(Material.OAK_DOOR, lang.c("retour", "<yellow>Retour"),
                     List.of(lang.c("retour-informations", "<gray>Vers « Informations »"))),

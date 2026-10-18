@@ -96,6 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Didacticiel 1.3.0** (LeKiwi06, 18/10/2026) : bouton « Poser une question », outil « Questions du didacticiel » (Modération, `ksdidacticiel.staff`), réponse dans le tchat du joueur ; contient la 1.2.2 ; **compilé, non déployé, non testé en jeu** (Event en 1.2.1) ; à envoyer avec son `didacticiel.yml`.
 - **KS_Didacticiel 1.2.2** (LeKiwi06, 18/10/2026) : recettes : ingrédients au choix lus aussi en `ItemTypeChoice` (serveur 26.3) ; le wagon contrôleur montre ses 5 pièces, les variantes sont signalées ; **compilé, non déployé, non testé en jeu** (Event en 1.2.1) ; jar seul.
 - **KS_Didacticiel 1.2.1** (LeKiwi06, 18/10/2026) : recettes de tous les objets fabriqués (16 nouveautés cliquables : élixirs, spawners, trains, bateaux, verrou...), `*` n'importe où dans une clé, pièces du wagon contrôleur montrées une par case ; **sur Event depuis le 18/10 à 15:57 (à redémarrer), pas encore sur Kixster**, non testé en jeu. Détail : `KS_Didacticiel/JOURNAL.md`.
 - **KS_Didacticiel 1.2.0** (LeKiwi06, 18/10/2026) : recettes cliquables (« Crafts pratiques »), `requiert` (nouveautés montrées selon les plugins du serveur : trains, laisse courte, têtes de joueurs), thème « Commandes », contenu revu (butin évasif, têtes dans le butin, fair-play) ; 11 thèmes, 101 nouveautés ; **sur Event depuis le 18/10 à 09:07 (à redémarrer), pas encore sur Kixster**, non testé en jeu. Détail : `KS_Didacticiel/JOURNAL.md`.

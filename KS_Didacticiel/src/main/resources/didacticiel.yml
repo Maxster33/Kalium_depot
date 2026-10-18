@@ -504,9 +504,9 @@ themes:
       didacticiel:
         nom: "Ce didacticiel"
         icone: BOOK
-        texte: "Il explique tout ce qui change sur Kixster. Ouvre-le à tout moment, ou depuis « Informations » (/infos)."
+        texte: "Il explique tout ce qui change sur Kixster. Ouvre-le à tout moment, ou depuis « Informations » (/infos). Une question ? « Poser une question », en bas de l'écran des thèmes : le staff te répond en jeu et complète le didacticiel si besoin."
         commande: "/help ou /didacticiel"
-        nouveau: "2026-10-18b"
+        nouveau: "2026-10-18e"
       tableau:
         nom: "Tableau"
         icone: OAK_HANGING_SIGN

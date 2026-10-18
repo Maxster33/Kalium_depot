@@ -183,3 +183,32 @@ Signalé par LeKiwi06 sur Event (1.2.1) : « le minecart contrôleur affiche tou
 Compilé le 18/10/2026 (`sortie/KS_Didacticiel-1.2.2.jar`). **Statut : non déployé, non testé en jeu.** Jar seul
 (`didacticiel.yml` inchangé).
 
+## 1.3.0 - « Poser une question », réponses du staff (18/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « ajoute une touche "poser une question" dans le didacticiel, précise que le staff répondra aux
+questions posées et modifiera le didacticiel si besoin ». Ses choix : outil staff dans « Modération » et réponse en jeu ;
+pas de limite de questions.
+
+- **Bouton « Poser une question »** (livre et plume, au centre de la barre de l'écran des thèmes) : « Une question sur
+  Kixster ? Le staff y répondra en jeu et modifiera le didacticiel si besoin. » Clic : fenêtre de saisie (256
+  caractères), « Envoyer » ou « Retour » ; après l'envoi : « Question envoyée. Le staff te répondra en jeu (dans le
+  tchat, ou à ta prochaine connexion) et modifiera le didacticiel si besoin. », puis retour au didacticiel.
+- La question est enregistrée (`plugins/KS_Didacticiel/questions.yml`, numérotée), écrite dans la console et annoncée
+  dans le tchat au staff connecté (« [Didacticiel] pseudo pose une question : ... »).
+- **Outil « Questions du didacticiel »** (rubrique « Modération » de /menu ; permission `ksdidacticiel.staff`, nouvelle,
+  opérateurs par défaut) : coffre des questions en attente (les plus anciennes d'abord : n°, pseudo, date, question) ;
+  clic : fenêtre de réponse (la question, un rappel « si la réponse manque au didacticiel, pense à le mettre à jour »,
+  champ de 256 caractères). Horloge : questions répondues (réponse, qui, quand, lue ou pas encore). Pages de 45.
+- **Réponse** : dans le tchat du joueur (« [Didacticiel] X a répondu à ta question : », la question, la réponse) s'il
+  est connecté, sinon 2 secondes après sa prochaine connexion. Deux membres du staff ne peuvent pas répondre à la même
+  question (le second est prévenu).
+- Textes saisis insérés tels quels (sans mise en forme : un joueur ne peut pas glisser de lien ou de couleur dans les
+  messages du staff).
+- `didacticiel.yml` : « Ce didacticiel » cite le bouton (`nouveau: "2026-10-18e"`).
+
+Choix de Claude, signalés : pas de commande en plus (l'outil passe par /menu) ; pas de suppression ni de classement sans
+réponse ; le staff est prévenu dans le tchat seulement à l'envoi (pas de rappel à la connexion).
+
+Contient la 1.2.2 (jamais déployée). Compilé le 18/10/2026 (`sortie/KS_Didacticiel-1.3.0.jar`). **Statut : non déployé,
+non testé en jeu.** À envoyer avec son `didacticiel.yml`.
+

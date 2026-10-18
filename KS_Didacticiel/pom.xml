@@ -6,7 +6,7 @@
 
     <groupId>fr.kalium</groupId>
     <artifactId>KS_Didacticiel</artifactId>
-    <version>1.2.2</version>
+    <version>1.3.0</version>
     <packaging>jar</packaging>
     <name>KS_Didacticiel</name>
 

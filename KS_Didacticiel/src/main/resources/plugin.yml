@@ -13,3 +13,6 @@ permissions:
   ksdidacticiel.admin:
     description: Recharger le contenu du didacticiel (/didacticiel recharger).
     default: op
+  ksdidacticiel.staff:
+    description: Voir les questions des joueurs et y repondre (rubrique Moderation de /menu), etre prevenu d'une question.
+    default: op
