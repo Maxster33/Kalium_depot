@@ -81,3 +81,48 @@ Limites : écrit sans serveur de test. Empilé sur la 1.0.0, pas encore testée 
 Compilé le 18/10/2026 (`sortie/KS_Didacticiel-1.1.0.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 18/10/2026 à 08:44 (LeKiwi06 : « Envoie les cinq plugins sur Event pour que je teste, Kixster ensuite » ; envoi groupé : KS_Jetons 2.1.0, KS_Teleport 1.4.0, KS_Claim 1.5.0, KS_Economy 1.10.0, KS_Didacticiel 1.1.0 ; jars en place vérifiés de la même taille que `jars-deployes/` avant l'envoi, nouveaux jars de la même taille que ceux compilés ; ancien jar dans `_removed-ks_didacticiel-1.0.0/`), actif après redémarrage d'Event. Kixster pas encore. Statut : non testé en jeu.** `didacticiel.yml` du serveur remplacé par celui de la 1.1.0 (ancien dans le même dossier).
+
+## 1.2.0 - recettes cliquables, nouveautés selon les plugins, thème « Commandes », contenu revu (18/10/2026, LeKiwi06)
+
+Retours de LeKiwi06 sur la 1.1.0 : « être plus évasif sur certains sujets, comme butin rare ou coffre de structure [...]
+c'est aux joueurs de découvrir » ; « les têtes de mobs doivent être dans butin » ; « pouvoir cliquer sur crafts
+pratiques pour afficher via un menu avec système de pages les crafts en question » ; « dans véhicules parler des trains,
+du fonctionnement de chaque type de wagonnets » ; « parler du drop de tête de joueurs en renommant les mobs » ; « dans
+fair-play : préciser que le easy place mode de Litematica est interdit, etc » ; « dans monde, inutile de préciser qu'un
+joueur sans spawn point arrive au spawn [...] c'est le comportement de base » ; « une catégorie commande [...] une
+version liste qu'on puisse consulter, avec une courte description de ce qu'elle fait ».
+
+- **Recettes cliquables** (code) : une nouveauté peut porter `recettes` (clés de recettes du serveur, ou un début suivi
+  de `*`). Sa description finit par « Clic : voir les recettes (n) » ; le clic ouvre un coffre, **une recette par
+  page** : grille d'établi 3 x 3 (ou l'entrée du four), poste (établi, four, haut fourneau), résultat ; un ingrédient au
+  choix porte « Ou une de ses n variantes » ; flèches de page, « Recette n sur total », « Retour » vers le thème.
+  « Crafts pratiques » : les 22 recettes de confort de KS_Crafts.
+- **Nouveautés selon les plugins** (code) : `requiert` sur un thème ou une nouveauté (`"KS_Trains"`, ou
+  `"KS_Decapitator 1.3.0"` pour une version minimale) : sans ce plugin activé (ou dans une version plus ancienne), rien
+  n'est montré ni compté. Un thème sans nouveauté montrée disparaît. Permet d'écrire maintenant ce qui n'est que sur
+  Event (trains, laisse courte, têtes de joueurs) : ce sera montré sur Kixster quand le plugin y arrivera.
+- **Contenu** (`didacticiel.yml`, 11 thèmes, 101 nouveautés) :
+  - « Le butin » : textes évasifs (minerais, émeraude, feuilles, fermes, potions, butin rare, coffres de structures,
+    pêche) ; **Têtes de mobs** déplacée ici ; **Têtes de joueurs** (« mob secret », sans dire lequel) et **Shulkers de
+    couleur** (KS_Decapitator 1.3.0).
+  - « Le monde » : « Arrivée et réapparition » retirée.
+  - « Crafts et objets » : « Crafts pratiques » cliquable.
+  - « Véhicules » : laisse courte (KS_LaisseBateau) et 10 nouveautés sur les trains (KS_Trains) : locomotive,
+    attelage, menu, wagon contrôleur, carburant, wagons à entonnoir, à coffre, jukebox, voyageurs, boussole et nom.
+  - « Menus et fair-play » : **Mods et astuces interdits** (x-ray, Litematica en « easy place » ou « printer »,
+    macros et clics automatiques, mini-cartes qui contournent le radar ou la vue des grottes) ; « Exploration du jour »
+    plus évasive.
+  - **« Commandes »** (nouveau thème) : 28 commandes, chacune avec une phrase.
+  - Les nouveautés ajoutées, déplacées ou changées ont `nouveau: "2026-10-18c"` ; les textes seulement rendus évasifs
+    gardent leur valeur (pas de « Nouveau »).
+- Choix de Claude, signalés : « Ou une de ses n variantes » pour un ingrédient au choix (la première variante est
+  montrée) ; freecam non citée dans les interdits (règle à confirmer par LeKiwi06) ; descriptions des commandes
+  /groupe et /bloquer tirées des journaux de KLM_Contacts.
+- Textes du code : nouvelles clés `nouveaute.recettes`, `recettes.*`, `retour-theme`.
+
+Limites : écrit sans serveur de test. Empilé sur la 1.1.0, pas encore testée en jeu (demande de LeKiwi06). Les têtes de
+joueurs ne marchent que si `tetes-de-joueurs: true` dans le config.yml de KS_Decapitator (false sur Event).
+
+**À envoyer avec son `didacticiel.yml`** (le jar ne remplace pas celui du serveur). Compilé le 18/10/2026
+(`sortie/KS_Didacticiel-1.2.0.jar`). **Statut : non déployé, non testé en jeu.**
+

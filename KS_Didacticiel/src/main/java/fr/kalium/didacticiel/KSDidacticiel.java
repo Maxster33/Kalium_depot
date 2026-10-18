@@ -5,13 +5,20 @@ import fr.kalium.menu.api.Lang;
 import fr.kalium.menu.api.MenuSection;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.BlastingRecipe;
+import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
@@ -20,7 +27,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -35,6 +46,11 @@ import java.util.function.Consumer;
  * « Nouveau » (choix de LeKiwi06 : « jusqu'à ce que la personne l'ait ouvert pour la première fois ») : une nouveauté
  * dont la valeur « nouveau » n'a pas encore été vue par ce joueur porte la marque (et son thème aussi) ; ouvrir le thème
  * enregistre la valeur vue (vus.yml). Changer la valeur « nouveau » d'une nouveauté la remet en « Nouveau » pour tous.
+ *
+ * 1.2.0 (LeKiwi06, 18/10/2026) : une nouveauté peut porter des recettes (« recettes » : clés de recettes du serveur,
+ * « ks_crafts:red_sand », ou un début suivi de « * ») : un clic montre ces recettes, une par page ; un thème ou une
+ * nouveauté peut demander un plugin (« requiert : KS_Trains », ou « KS_Decapitator 1.3.0 » pour une version minimale) :
+ * sans lui, il n'est pas montré.
  */
 public final class KSDidacticiel extends JavaPlugin {
 
@@ -42,11 +58,15 @@ public final class KSDidacticiel extends JavaPlugin {
     private static final int MAX = Contenant.PAR_PAGE;
     private static final Object MARQUE_THEMES = "ks_didacticiel:themes";
 
-    record Nouveaute(String id, String nom, Material icone, String texte, String commande, String nouveau) {
+    record Nouveaute(String id, String nom, Material icone, String texte, String commande, String nouveau,
+                     List<String> recettes, String requiert) {
     }
 
-    record Theme(String id, String nom, Material icone, String resume, List<Nouveaute> nouveautes) {
+    record Theme(String id, String nom, Material icone, String resume, List<Nouveaute> nouveautes, String requiert) {
     }
+
+    /** 1.2.0 : cases de la grille d'établi dans le menu des recettes (3 x 3, colonnes 1 à 3, rangées 1 à 3). */
+    private static final int[] GRILLE = {10, 11, 12, 19, 20, 21, 28, 29, 30};
 
     private Lang lang;
     private String titre = "Didacticiel";
@@ -153,7 +173,8 @@ public final class KSDidacticiel extends JavaPlugin {
                         }
                         nouveautes.add(new Nouveaute(nid, n.getString("nom", nid),
                                 icone(n.getString("icone"), id + "." + nid, avertissements), n.getString("texte", ""),
-                                n.getString("commande", ""), n.getString("nouveau", "")));
+                                n.getString("commande", ""), n.getString("nouveau", ""),
+                                List.copyOf(n.getStringList("recettes")), n.getString("requiert", "")));
                     }
                 }
                 if (nouveautes.size() > MAX) {
@@ -162,7 +183,7 @@ public final class KSDidacticiel extends JavaPlugin {
                     nouveautes = nouveautes.subList(0, MAX);
                 }
                 lus.add(new Theme(id, t.getString("nom", id), icone(t.getString("icone"), id, avertissements),
-                        t.getString("resume", ""), List.copyOf(nouveautes)));
+                        t.getString("resume", ""), List.copyOf(nouveautes), t.getString("requiert", "")));
             }
         }
         if (lus.size() > MAX) {
@@ -189,6 +210,51 @@ public final class KSDidacticiel extends JavaPlugin {
         return materiau;
     }
 
+    // ------------------------------------------------------------------ plugins demandés (1.2.0)
+
+    /** « requiert » : vide = toujours ; « Plugin » = activé ; « Plugin 1.3.0 » = activé, en 1.3.0 ou plus. */
+    private boolean requis(String exigence) {
+        if (exigence == null || exigence.isBlank()) {
+            return true;
+        }
+        String[] parties = exigence.trim().split("\\s+");
+        Plugin plugin = getServer().getPluginManager().getPlugin(parties[0]);
+        if (plugin == null || !plugin.isEnabled()) {
+            return false;
+        }
+        return parties.length < 2 || comparer(plugin.getPluginMeta().getVersion(), parties[1]) >= 0;
+    }
+
+    private static int comparer(String a, String b) {
+        String[] x = a.split("[.-]");
+        String[] y = b.split("[.-]");
+        for (int i = 0; i < Math.max(x.length, y.length); i++) {
+            int d = Integer.compare(nombre(x, i), nombre(y, i));
+            if (d != 0) {
+                return d;
+            }
+        }
+        return 0;
+    }
+
+    private static int nombre(String[] parties, int i) {
+        try {
+            return i < parties.length ? Integer.parseInt(parties[i]) : 0;
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /** Nouveautés montrées sur ce serveur (celles dont le plugin demandé est là). */
+    private List<Nouveaute> visibles(Theme theme) {
+        return theme.nouveautes().stream().filter(n -> requis(n.requiert())).toList();
+    }
+
+    /** Thèmes montrés : plugin demandé présent et au moins une nouveauté montrée. */
+    private List<Theme> themesVisibles() {
+        return themes.stream().filter(t -> requis(t.requiert()) && !visibles(t).isEmpty()).toList();
+    }
+
     // ------------------------------------------------------------------ « Nouveau » (vus.yml)
 
     private boolean nonLue(Player joueur, Theme theme, Nouveaute nouveaute) {
@@ -197,13 +263,13 @@ public final class KSDidacticiel extends JavaPlugin {
     }
 
     private int nonLues(Player joueur, Theme theme) {
-        return (int) theme.nouveautes().stream().filter(n -> nonLue(joueur, theme, n)).count();
+        return (int) visibles(theme).stream().filter(n -> nonLue(joueur, theme, n)).count();
     }
 
     /** Le joueur a ouvert ce thème : toutes ses nouveautés sont vues, dans leur état actuel. */
     private void marquerLues(Player joueur, Theme theme) {
         boolean change = false;
-        for (Nouveaute n : theme.nouveautes()) {
+        for (Nouveaute n : visibles(theme)) {
             if (nonLue(joueur, theme, n)) {
                 vus.set(joueur.getUniqueId() + "." + theme.id() + "." + n.id(), n.nouveau());
                 change = true;
@@ -228,6 +294,7 @@ public final class KSDidacticiel extends JavaPlugin {
 
     /** Écran 1 : un objet par thème. {@code retour} : vers « Informations » (null si ouvert par /didacticiel). */
     private void ouvrirThemes(Player joueur, Consumer<Player> retour) {
+        List<Theme> themes = themesVisibles();
         int rangees = Math.max(1, (themes.size() + 8) / 9) + 1;
         Contenant menu = Contenant.pour(joueur, rangees, Component.text(titre, NamedTextColor.DARK_GRAY), MARQUE_THEMES);
         if (themes.isEmpty()) {
@@ -238,7 +305,7 @@ public final class KSDidacticiel extends JavaPlugin {
             Theme theme = themes.get(i);
             int nouvelles = nonLues(joueur, theme);
             List<Component> lignes = new ArrayList<>(Contenant.lignes(theme.resume(), NamedTextColor.GRAY));
-            lignes.add(lang.c("theme.compte", "<gray><n> nouveauté(s)", "n", theme.nouveautes().size()));
+            lignes.add(lang.c("theme.compte", "<gray><n> nouveauté(s)", "n", visibles(theme).size()));
             if (nouvelles > 0) {
                 lignes.add(lang.c("theme.nouveau", "<green><bold>Nouveau : <n> à découvrir", "n", nouvelles));
             }
@@ -272,11 +339,14 @@ public final class KSDidacticiel extends JavaPlugin {
             ouvrirThemes(joueur, retour);
             return;
         }
-        int rangees = Math.max(1, (theme.nouveautes().size() + 8) / 9) + 1;
+        List<Nouveaute> nouveautes = visibles(theme);
+        int rangees = Math.max(1, (nouveautes.size() + 8) / 9) + 1;
         Contenant menu = Contenant.pour(joueur, rangees, Component.text(theme.nom(), NamedTextColor.DARK_GRAY),
                 "ks_didacticiel:theme:" + theme.id());
-        for (int i = 0; i < theme.nouveautes().size(); i++) {
-            Nouveaute n = theme.nouveautes().get(i);
+        Map<String, Recipe> toutes = nouveautes.stream().anyMatch(n -> !n.recettes().isEmpty()) ? recettesDuServeur()
+                : Map.of();
+        for (int i = 0; i < nouveautes.size(); i++) {
+            Nouveaute n = nouveautes.get(i);
             boolean nouvelle = nonLue(joueur, theme, n);
             List<Component> lignes = new ArrayList<>();
             if (nouvelle) {
@@ -286,8 +356,14 @@ public final class KSDidacticiel extends JavaPlugin {
             if (!n.commande().isBlank()) {
                 lignes.add(lang.c("nouveaute.commande", "<yellow>Commande : <commande>", "commande", n.commande()));
             }
+            // 1.2.0 : une nouveauté qui porte des recettes s'ouvre sur elles.
+            int nombreRecettes = recettes(n, toutes).size();
+            if (nombreRecettes > 0) {
+                lignes.add(lang.c("nouveaute.recettes", "<yellow>Clic : voir les recettes (<n>)", "n", nombreRecettes));
+            }
             ItemStack objet = Contenant.objet(n.icone(), Component.text(n.nom(), NamedTextColor.GOLD), lignes);
-            menu.poser(i, briller(objet, nouvelle), null);
+            menu.poser(i, briller(objet, nouvelle), nombreRecettes == 0 ? null
+                    : p -> ouvrirRecettes(p, theme.id(), n.id(), 0, retour));
         }
         menu.barre();
         menu.poser(menu.bas(5), Contenant.objet(Material.OAK_DOOR, lang.c("retour", "<yellow>Retour"),
@@ -295,6 +371,127 @@ public final class KSDidacticiel extends JavaPlugin {
         menu.ouvrir(joueur);
         marquerLues(joueur, theme);
         lang.saveIfNeeded();
+    }
+
+    // ------------------------------------------------------------------ recettes (1.2.0)
+
+    /** Recettes du serveur qui ont une clé, par clé (« ks_crafts:red_sand »). */
+    private Map<String, Recipe> recettesDuServeur() {
+        Map<String, Recipe> toutes = new LinkedHashMap<>();
+        Iterator<Recipe> it = getServer().recipeIterator();
+        while (it.hasNext()) {
+            Recipe recette = it.next();
+            if (recette instanceof Keyed cle) {
+                toutes.put(cle.getKey().toString(), recette);
+            }
+        }
+        return toutes;
+    }
+
+    /** Recettes d'une nouveauté, dans l'ordre de sa liste (« ks_crafts:coral_* » : toutes celles qui commencent ainsi). */
+    private static List<Recipe> recettes(Nouveaute n, Map<String, Recipe> toutes) {
+        Map<String, Recipe> r = new LinkedHashMap<>();
+        for (String motif : n.recettes()) {
+            String m = motif.trim().toLowerCase(Locale.ROOT);
+            if (m.endsWith("*")) {
+                String debut = m.substring(0, m.length() - 1);
+                toutes.forEach((cle, recette) -> {
+                    if (cle.startsWith(debut)) {
+                        r.putIfAbsent(cle, recette);
+                    }
+                });
+            } else if (toutes.containsKey(m)) {
+                r.putIfAbsent(m, toutes.get(m));
+            }
+        }
+        return List.copyOf(r.values());
+    }
+
+    /** Une recette par page : la grille d'établi (ou l'entrée du four), puis le résultat ; pages et retour en bas. */
+    private void ouvrirRecettes(Player joueur, String idTheme, String idNouveaute, int page, Consumer<Player> retour) {
+        Theme theme = themes.stream().filter(t -> t.id().equals(idTheme)).findFirst().orElse(null);
+        Nouveaute n = theme == null ? null
+                : theme.nouveautes().stream().filter(x -> x.id().equals(idNouveaute)).findFirst().orElse(null);
+        List<Recipe> liste = n == null ? List.of() : recettes(n, recettesDuServeur());
+        if (liste.isEmpty()) {
+            ouvrirThemes(joueur, retour);
+            return;
+        }
+        int p = Math.max(0, Math.min(page, liste.size() - 1));
+        Recipe recette = liste.get(p);
+        Contenant menu = Contenant.pour(joueur, 6, Component.text(n.nom(), NamedTextColor.DARK_GRAY),
+                "ks_didacticiel:recettes:" + idTheme + ":" + idNouveaute);
+        for (int i = 0; i < 45; i++) {
+            menu.poser(i, Contenant.decor(), null);
+        }
+        for (int place : GRILLE) {
+            menu.poser(place, null, null);
+        }
+        Material poste = Material.CRAFTING_TABLE;
+        Component texte = lang.c("recettes.etabli", "<gray>À l'établi");
+        if (recette instanceof ShapedRecipe forme) {
+            String[] rangs = forme.getShape();
+            Map<Character, RecipeChoice> choix = forme.getChoiceMap();
+            for (int l = 0; l < rangs.length && l < 3; l++) {
+                for (int c = 0; c < rangs[l].length() && c < 3; c++) {
+                    RecipeChoice ch = choix.get(rangs[l].charAt(c));
+                    if (ch != null) {
+                        menu.poser(GRILLE[l * 3 + c], ingredient(ch), null);
+                    }
+                }
+            }
+        } else if (recette instanceof ShapelessRecipe sansForme) {
+            List<RecipeChoice> choix = sansForme.getChoiceList();
+            for (int i = 0; i < choix.size() && i < 9; i++) {
+                menu.poser(GRILLE[i], ingredient(choix.get(i)), null);
+            }
+            texte = lang.c("recettes.sans-forme", "<gray>À l'établi, dans n'importe quel ordre");
+        } else if (recette instanceof CookingRecipe<?> cuisson) {
+            menu.poser(GRILLE[4], ingredient(cuisson.getInputChoice()), null);
+            poste = recette instanceof BlastingRecipe ? Material.BLAST_FURNACE : Material.FURNACE;
+            texte = recette instanceof BlastingRecipe ? lang.c("recettes.haut-fourneau", "<gray>Au haut fourneau")
+                    : lang.c("recettes.four", "<gray>Au four");
+        }
+        menu.poser(23, Contenant.objet(poste, texte, List.of()), null);
+        menu.poser(25, recette.getResult().clone(), null);
+        menu.barre();
+        if (p > 0) {
+            menu.poser(menu.bas(0), Contenant.objet(Material.ARROW, lang.c("recettes.precedente", "<yellow>Recette "
+                    + "précédente"), List.of()), j -> ouvrirRecettes(j, idTheme, idNouveaute, p - 1, retour));
+        }
+        if (p < liste.size() - 1) {
+            menu.poser(menu.bas(8), Contenant.objet(Material.ARROW, lang.c("recettes.suivante", "<yellow>Recette "
+                    + "suivante"), List.of()), j -> ouvrirRecettes(j, idTheme, idNouveaute, p + 1, retour));
+        }
+        menu.poser(menu.bas(4), Contenant.objet(Material.PAPER, lang.c("recettes.page", "<gray>Recette <n> sur <total>",
+                "n", p + 1, "total", liste.size()), List.of()), null);
+        menu.poser(menu.bas(5), Contenant.objet(Material.OAK_DOOR, lang.c("retour", "<yellow>Retour"),
+                List.of(lang.c("retour-theme", "<gray>Vers le thème"))), j -> ouvrirTheme(j, idTheme, retour));
+        menu.ouvrir(joueur);
+        lang.saveIfNeeded();
+    }
+
+    /** Un ingrédient : l'objet de la recette ; s'il y en a plusieurs au choix, le premier, avec « Au choix ». */
+    private ItemStack ingredient(RecipeChoice choix) {
+        ItemStack objet;
+        try {
+            objet = choix.getItemStack().clone();
+        } catch (RuntimeException e) {
+            return null;
+        }
+        int variantes = choix instanceof RecipeChoice.MaterialChoice m ? m.getChoices().size()
+                : choix instanceof RecipeChoice.ExactChoice x ? x.getChoices().size() : 1;
+        if (variantes > 1) {
+            ItemMeta meta = objet.getItemMeta();
+            if (meta != null) {
+                List<Component> lore = new ArrayList<>(meta.lore() == null ? List.of() : meta.lore());
+                lore.add(lang.c("recettes.variantes", "<gray>Ou une de ses <n> variantes", "n", variantes)
+                        .decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false));
+                meta.lore(lore);
+                objet.setItemMeta(meta);
+            }
+        }
+        return objet;
     }
 
     /** Une nouveauté non lue (ou un thème qui en contient) brille dans le menu. */

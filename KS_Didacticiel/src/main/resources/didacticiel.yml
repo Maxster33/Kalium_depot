@@ -4,11 +4,17 @@
 # tel quel dans plugins/KS_Didacticiel/ sur Kixster (jamais dans l'éditeur de WinSCP : les accents y sont abîmés),
 # puis taper /didacticiel recharger. Ni recompilation ni redémarrage.
 #
-# Structure : themes > <id du thème> > nom, icone, resume, nouveautes > <id de la nouveauté> > nom, icone, texte,
-# commande (facultatif), nouveau.
+# Structure : themes > <id du thème> > nom, icone, resume, requiert (facultatif), nouveautes > <id de la nouveauté> >
+# nom, icone, texte, commande (facultatif), recettes (facultatif), requiert (facultatif), nouveau.
 # - Les ids (sans point ni espace) servent à retenir ce que chaque joueur a lu : ne pas les changer sans raison.
 # - icone : nom d'un objet du jeu (EMERALD, OAK_BOAT...). Inconnu : un livre, et un avertissement dans la console.
 # - texte : une seule ligne ici ; le plugin le coupe tout seul en lignes d'environ 35 caractères.
+# - Ton (LeKiwi06, 18/10/2026) : rester évasif sur ce qui est à découvrir (butin, coffres...) : dire qu'il y a du
+#   changement, pas le détail.
+# - recettes : liste de clés de recettes du serveur ("ks_crafts:red_sand") ; une clé finie par * prend toutes celles
+#   qui commencent ainsi. La nouveauté devient cliquable et montre ces recettes, une par page.
+# - requiert : un plugin ("KS_Trains") ou un plugin et sa version minimale ("KS_Decapitator 1.3.0") : sans lui, le
+#   thème ou la nouveauté n'est pas montré (utile pour préparer une nouveauté avant son plugin).
 # - nouveau : toujours ENTRE GUILLEMETS. La nouveauté porte « Nouveau » pour chaque joueur qui n'a pas encore ouvert
 #   son thème depuis que cette valeur a changé. Mettre la date du jour sur une nouveauté ajoutée ou modifiée ;
 #   laisser l'ancienne valeur pour une simple correction de texte ; "" = jamais « Nouveau ». Un deuxième changement le
@@ -39,11 +45,6 @@ themes:
         icone: OBSIDIAN
         texte: "Les portails du Nether et de l'End ne mènent nulle part pour l'instant."
         nouveau: "2026-10-18"
-      arrivee:
-        nom: "Arrivée et réapparition"
-        icone: RED_BED
-        texte: "Un nouveau joueur, ou un joueur mort sans lit, apparaît au point d'apparition du monde, au spawn."
-        nouveau: "2026-10-18"
       sommeil:
         nom: "Passer la nuit"
         icone: WHITE_BED
@@ -53,48 +54,66 @@ themes:
   butin:
     nom: "Le butin"
     icone: RAW_GOLD
-    resume: "Ce que donnent les blocs, les mobs et les coffres."
+    resume: "Blocs, mobs et coffres ne donnent plus tout à fait la même chose."
     nouveautes:
       minerais:
         nom: "Minerais"
         icone: IRON_ORE
-        texte: "Le fer et l'or donnent 2 minerais bruts (plus avec Fortune). Les autres minerais ont 1 % de chance de donner 2 blocs de minerai (pas avec Toucher de soie)."
+        texte: "Le fer et l'or sont plus généreux, et les autres minerais réservent parfois une surprise."
         nouveau: "2026-10-18"
       emeraude:
         nom: "Émeraude de deepslate"
         icone: DEEPSLATE_EMERALD_ORE
-        texte: "Chaque minerai d'émeraude de deepslate miné donne aussi une potion de chance."
+        texte: "Le plus rare des minerais cache quelque chose en plus."
         nouveau: "2026-10-18"
       feuilles:
         nom: "Feuilles"
         icone: OAK_LEAVES
-        texte: "Toutes les feuilles donnent des pommes : 1 % sont dorées, 0,01 % enchantées. Chêne noir, chêne pâle et acacia donnent deux fois plus de pousses."
+        texte: "Toutes les feuilles peuvent donner des pommes, et certaines bien plus précieuses. Quelques arbres sont aussi plus généreux en pousses."
         nouveau: "2026-10-18"
       fermes:
         nom: "Fermes à mobs"
         icone: IRON_NUGGET
-        texte: "Le golem de fer donne des pépites, les piglins zombifiés deux fois moins, les sorcières cinq fois moins. La chair putréfiée devient souvent un os."
+        texte: "Les fermes automatiques rapportent moins qu'avant : la chasse à la main est mieux récompensée."
         nouveau: "2026-10-18"
       potions:
         nom: "Potions"
         icone: POTION
-        texte: "Une vingtaine de mobs tués par un joueur lâchent des potions (ghast, blaze, gardien, chauve-souris...). La verrue du Nether ne se brasse plus : les potions viennent du butin et des récompenses."
+        texte: "La verrue du Nether ne se brasse plus : les potions se trouvent sur les mobs et dans les récompenses. À toi de découvrir qui lâche quoi."
         nouveau: "2026-10-18"
       rares:
         nom: "Butin rare"
         icone: ECHO_SHARD
-        texte: "Endermite, Warden, grand gardien (Estomac du gardien) et chauve-souris (éclat d'écho) ont un butin en plus. Le wither squelette ne donne plus son crâne."
+        texte: "Certains mobs cachent un butin inattendu. Le crâne de wither squelette, lui, ne tombe plus tel quel."
         nouveau: "2026-10-18"
       coffres:
         nom: "Coffres de structures"
         icone: CHEST
-        texte: "Butin revu dans la cité antique, les bastions, les forteresses, les cités de l'End, les manoirs et les coffres-forts : totems, équipement enchanté..."
+        texte: "Le butin des coffres de structures a été revu : de belles trouvailles attendent les explorateurs."
         nouveau: "2026-10-18"
       peche:
         nom: "Pêche"
         icone: FISHING_ROD
-        texte: "Plus de livres enchantés à la pêche : un autre trésor à la place."
+        texte: "Plus de livres enchantés à la pêche : d'autres trésors à la place."
         nouveau: "2026-10-18"
+      tetes:
+        nom: "Têtes de mobs"
+        icone: ZOMBIE_HEAD
+        texte: "Un mob tué par un joueur a une petite chance de donner sa tête. /tetes montre ta collection."
+        commande: "/tetes"
+        nouveau: "2026-10-18c"
+      tetes-joueurs:
+        nom: "Têtes de joueurs"
+        icone: PLAYER_HEAD
+        texte: "Chaque joueur a son mob secret : renomme ce mob avec son pseudo, tue-le, et tu obtiens la tête du joueur. À toi de deviner quel mob !"
+        requiert: "KS_Decapitator 1.3.0"
+        nouveau: "2026-10-18c"
+      shulkers:
+        nom: "Shulkers de couleur"
+        icone: SHULKER_SHELL
+        texte: "Clic droit avec un colorant sur un shulker : il prend cette couleur."
+        requiert: "KS_Decapitator 1.3.0"
+        nouveau: "2026-10-18c"
 
   crafts:
     nom: "Crafts et objets"
@@ -104,8 +123,30 @@ themes:
       pratiques:
         nom: "Crafts pratiques"
         icone: RED_SAND
-        texte: "Sable rouge, sable à partir du grès, blocs bruts de fer, d'or et de cuivre, calcite, obsidienne pleureuse, deepslate renforcée, coraux, froglights, lumière, cadre invisible."
-        nouveau: "2026-10-18"
+        texte: "Sable rouge, sable à partir du grès, blocs bruts, calcite, obsidienne pleureuse, deepslate renforcée, graines, coraux, lumière, cadre invisible, froglights."
+        recettes:
+          - "ks_crafts:red_sand"
+          - "ks_crafts:sand_from_sandstone"
+          - "ks_crafts:red_sand_from_red_sandstone"
+          - "ks_crafts:raw_iron_block"
+          - "ks_crafts:raw_gold_block"
+          - "ks_crafts:raw_copper_block"
+          - "ks_crafts:calcite"
+          - "ks_crafts:crying_obsidian"
+          - "ks_crafts:reinforced_deepslate"
+          - "ks_crafts:pitcher_pod"
+          - "ks_crafts:torchflower_seeds"
+          - "ks_crafts:tube_coral_block"
+          - "ks_crafts:brain_coral_block"
+          - "ks_crafts:bubble_coral_block"
+          - "ks_crafts:fire_coral_block"
+          - "ks_crafts:horn_coral_block"
+          - "ks_crafts:light_15"
+          - "ks_crafts:invisible_item_frame"
+          - "ks_crafts:verdant_froglight"
+          - "ks_crafts:ochre_froglight"
+          - "ks_crafts:pearlescent_froglight"
+        nouveau: "2026-10-18c"
       livre:
         nom: "Livre de recettes"
         icone: KNOWLEDGE_BOOK
@@ -140,12 +181,6 @@ themes:
         nom: "Clé de l'End"
         icone: OMINOUS_TRIAL_KEY
         texte: "Ton coffre de l'Ender a 6 rangées : chaque Clé de l'End débloque une case des 3 rangées du bas."
-        nouveau: "2026-10-18"
-      tetes:
-        nom: "Têtes de mobs"
-        icone: ZOMBIE_HEAD
-        texte: "Un mob tué par un joueur a 1 % de chance de donner sa tête (332 têtes). /tetes montre celles que tu as déjà eues."
-        commande: "/tetes"
         nouveau: "2026-10-18"
       wither:
         nom: "Tête de wither squelette"
@@ -334,7 +369,7 @@ themes:
   vehicules:
     nom: "Véhicules"
     icone: OAK_BOAT
-    resume: "Des bateaux en musique, des véhicules protégés."
+    resume: "Bateaux en musique, trains, véhicules protégés."
     nouveautes:
       jukebox:
         nom: "Bateau à jukebox"
@@ -346,6 +381,12 @@ themes:
         icone: OAK_CHEST_BOAT
         texte: "Bateau à coffre + jukebox. Il lit en boucle les disques de son coffre ; clic droit : lecture ou pause. Tire-le derrière toi avec une laisse."
         nouveau: "2026-10-18"
+      laisse:
+        nom: "Laisse courte"
+        icone: LEAD
+        texte: "Un bateau tiré par un autre bateau reste à 3 blocs derrière lui, au lieu de flotter loin."
+        requiert: "KS_LaisseBateau"
+        nouveau: "2026-10-18c"
       verrou:
         nom: "Verrou de véhicule"
         icone: TRIPWIRE_HOOK
@@ -356,6 +397,66 @@ themes:
         icone: MINECART
         texte: "Ils se posent partout, même dans les zones protégées et les claims. Ceux sans coffre se cassent partout."
         nouveau: "2026-10-18"
+      locomotive:
+        nom: "Train : la locomotive"
+        icone: FURNACE_MINECART
+        texte: "3 wagonnets à four en ligne à l'établi. Pose-la sur 4 rails droits, dans le sens de ton regard : elle tracte 15 wagons, et 10 de plus par wagonnet à four ajouté."
+        requiert: "KS_Trains"
+        nouveau: "2026-10-18c"
+      attelage:
+        nom: "Train : atteler"
+        icone: IRON_CHAIN
+        texte: "Chaîne en main, clic droit sur un wagon puis sur un autre, à l'arrêt sur les rails : ils s'attellent. Cisailles : dételer. 64 wagons au plus."
+        requiert: "KS_Trains"
+        nouveau: "2026-10-18c"
+      menu-train:
+        nom: "Train : le menu"
+        icone: COMPARATOR
+        texte: "Accroupi + clic droit sur un four de la locomotive ou sur le wagon contrôleur : la liste des wagons, marche / arrêt, vitesse, dételage, réglages des coffres."
+        requiert: "KS_Trains"
+        nouveau: "2026-10-18c"
+      controleur:
+        nom: "Train : wagon contrôleur"
+        icone: REDSTONE_LAMP
+        texte: "Un wagonnet entouré, en casque, d'un comparateur, d'un capteur sculk calibré, d'une lampe à redstone, d'un bloc musical et d'un levier. Monte dedans : avancer = vitesse +1 (4 niveaux), reculer = vitesse -1 puis marche arrière, saut = klaxon. Un seul par train, à moins de 5 wagons de la locomotive."
+        requiert: "KS_Trains"
+        nouveau: "2026-10-18c"
+      carburant:
+        nom: "Train : carburant"
+        icone: COAL
+        texte: "Clic droit sur un four : sa case de carburant (tout combustible). Il brûle selon la distance, la vitesse et la charge : plus le train est long, plus il lui faut de fours."
+        requiert: "KS_Trains"
+        nouveau: "2026-10-18c"
+      wagon-entonnoir:
+        nom: "Train : wagon à entonnoir"
+        icone: HOPPER_MINECART
+        texte: "Il passe les objets des 3 wagons derrière lui vers les 3 wagons devant lui, et remplit les fours de carburant."
+        requiert: "KS_Trains"
+        nouveau: "2026-10-18c"
+      wagon-coffre:
+        nom: "Train : wagon à coffre"
+        icone: CHEST_MINECART
+        texte: "Dans le menu du train, choisis si les entonnoirs du train peuvent y déposer ou y prendre des objets."
+        requiert: "KS_Trains"
+        nouveau: "2026-10-18c"
+      wagon-jukebox:
+        nom: "Train : wagon jukebox"
+        icone: JUKEBOX
+        texte: "Wagonnet + jukebox. Il joue les disques du wagon à coffre juste devant lui : lecture, aléatoire ou pause."
+        requiert: "KS_Trains"
+        nouveau: "2026-10-18c"
+      voyageurs:
+        nom: "Train : voyageurs"
+        icone: MINECART
+        texte: "Les autres joueurs peuvent monter dans les wagonnets simples de ton train. Tes amis (/amis) ont tous les droits dessus."
+        requiert: "KS_Trains"
+        nouveau: "2026-10-18c"
+      boussole-train:
+        nom: "Train : le retrouver"
+        icone: COMPASS
+        texte: "Clic droit sur le wagon contrôleur avec une boussole : elle suit le train. Une étiquette renommée sur un four de la locomotive lui donne un nom."
+        requiert: "KS_Trains"
+        nouveau: "2026-10-18c"
 
   interface:
     nom: "Menus et fair-play"
@@ -383,15 +484,166 @@ themes:
       exploration:
         nom: "Exploration du jour"
         icone: SPYGLASS
-        texte: "10 par jour : coffres de structures, spawners naturels, blocs suspects, gardien ancien. L'Élixir de Fortune lève la limite."
+        texte: "Coffres de structures, spawners naturels, blocs suspects : 10 découvertes par jour. Un certain élixir lève la limite."
         nouveau: "2026-10-18"
       fair-play:
         nom: "Fair-play"
         icone: ENDER_EYE
         texte: "Anti-xray actif ; les mini-cartes n'ont ni radar d'entités ni vue des grottes."
         nouveau: "2026-10-18"
+      mods-interdits:
+        nom: "Mods et astuces interdits"
+        icone: BARRIER
+        texte: "Interdits : x-ray (mods, packs de textures), Litematica en mode « easy place » ou « printer », macros et clics automatiques, mini-cartes qui contournent le radar ou la vue des grottes. Le staff surveille."
+        nouveau: "2026-10-18c"
       reseau:
         nom: "Le réseau"
         icone: BELL
         texte: "/global pour le tchat entre serveurs, /amis et /mp pour tes amis, et le chat vocal (Simple Voice Chat)."
         nouveau: "2026-10-18"
+
+  commandes:
+    nom: "Commandes"
+    icone: COMMAND_BLOCK
+    resume: "Toutes les commandes de Kixster, avec ce qu'elles font."
+    nouveautes:
+      kixster:
+        nom: "/kixster"
+        icone: NETHER_STAR
+        texte: "Ouvre le menu du serveur. /menu on | off donne ou retire les objets de menu de ta barre."
+        nouveau: "2026-10-18c"
+      infos:
+        nom: "/infos"
+        icone: COMPARATOR
+        texte: "Ouvre « Informations » : didacticiel, récompenses, contacts."
+        nouveau: "2026-10-18c"
+      help:
+        nom: "/help, /didacticiel"
+        icone: BOOK
+        texte: "Ouvre ce didacticiel."
+        nouveau: "2026-10-18c"
+      serveurs:
+        nom: "/serveurs"
+        icone: COMPASS
+        texte: "Change de serveur KaLium."
+        nouveau: "2026-10-18c"
+      economie:
+        nom: "/economie (/eco)"
+        icone: EMERALD
+        texte: "Ton score : déposer et retirer tes émeraudes, masquer ton solde."
+        nouveau: "2026-10-18c"
+      echange:
+        nom: "/echange <joueur>"
+        icone: PLAYER_HEAD
+        texte: "Propose un échange d'objets et de points à un joueur proche."
+        nouveau: "2026-10-18c"
+      accepter:
+        nom: "/accepter"
+        icone: LIME_DYE
+        texte: "Accepte une demande d'échange."
+        nouveau: "2026-10-18c"
+      magasin:
+        nom: "/magasin"
+        icone: OAK_SIGN
+        texte: "Ton magasin : le créer, l'agrandir, gérer tes boutiques."
+        nouveau: "2026-10-18c"
+      magasins:
+        nom: "/magasins (/shop, /market)"
+        icone: OAK_HANGING_SIGN
+        texte: "Le catalogue des magasins des autres joueurs."
+        nouveau: "2026-10-18c"
+      rachat:
+        nom: "/rachat"
+        icone: HOPPER
+        texte: "Les rachats de la semaine : vends des objets au serveur."
+        nouveau: "2026-10-18c"
+      claim:
+        nom: "/claim"
+        icone: GOLDEN_SHOVEL
+        texte: "Claime le chunk où tu te trouves, ou achète le claim en vente."
+        nouveau: "2026-10-18c"
+      claims:
+        nom: "/claims"
+        icone: WRITABLE_BOOK
+        texte: "Gère tes claims : membres, réglages, groupes, vente."
+        nouveau: "2026-10-18c"
+      home:
+        nom: "/home"
+        icone: ENDER_PEARL
+        texte: "Tes téléportations : lit, maison du spawn, emplacements."
+        nouveau: "2026-10-18c"
+      bed:
+        nom: "/bed"
+        icone: RED_BED
+        texte: "Téléportation à ton lit."
+        nouveau: "2026-10-18c"
+      spawn:
+        nom: "/spawn"
+        icone: LODESTONE
+        texte: "Téléportation à ta maison du spawn."
+        nouveau: "2026-10-18c"
+      maison:
+        nom: "/maison create"
+        icone: OAK_DOOR
+        texte: "Déclare ta maison au spawn, dans un de tes claims de la zone du spawn."
+        nouveau: "2026-10-18c"
+      setspawn:
+        nom: "/setspawn"
+        icone: COMPASS
+        texte: "Place ton /spawn au-dessus d'une magnétite (boussole liée en main)."
+        nouveau: "2026-10-18c"
+      jetons:
+        nom: "/jetons (/jeton, /badges, /badge)"
+        icone: NETHERITE_INGOT
+        texte: "Ton inventaire spécial : badges, jetons, localisations."
+        nouveau: "2026-10-18c"
+      fly:
+        nom: "/fly"
+        icone: FEATHER
+        texte: "Ton temps de vol, tes jetons et ton badge de fly."
+        nouveau: "2026-10-18c"
+      coffres:
+        nom: "/coffres"
+        icone: CHEST
+        texte: "Tes coffres de mort : position, temps restant, récupération."
+        nouveau: "2026-10-18c"
+      rewards:
+        nom: "/rewards (/reward)"
+        icone: ENDER_CHEST
+        texte: "Tes récompenses en attente."
+        nouveau: "2026-10-18c"
+      tetes:
+        nom: "/tetes"
+        icone: ZOMBIE_HEAD
+        texte: "Les têtes que tu as déjà obtenues."
+        nouveau: "2026-10-18c"
+      tableau:
+        nom: "/tableau"
+        icone: OAK_HANGING_SIGN
+        texte: "Affiche ou masque le tableau sur le côté de l'écran."
+        nouveau: "2026-10-18c"
+      global:
+        nom: "/global"
+        icone: BELL
+        texte: "/global send <message> : écris à tous les serveurs ; /global true | false : affiche ou masque ce tchat."
+        nouveau: "2026-10-18c"
+      amis:
+        nom: "/amis"
+        icone: PLAYER_HEAD
+        texte: "Tes amis : ajouter, accepter, retirer, rejoindre."
+        nouveau: "2026-10-18c"
+      mp:
+        nom: "/mp <joueur> <message>, /r"
+        icone: PAPER
+        texte: "Envoie un message privé ; /r répond au dernier."
+        nouveau: "2026-10-18c"
+      bloquer:
+        nom: "/bloquer, /debloquer <joueur>"
+        icone: BARRIER
+        texte: "Bloque ou débloque les messages et demandes d'un joueur."
+        nouveau: "2026-10-18c"
+      groupe:
+        nom: "/groupe"
+        icone: TOTEM_OF_UNDYING
+        texte: "Ton groupe de jeu, pour aller en partie ensemble."
+        nouveau: "2026-10-18c"
