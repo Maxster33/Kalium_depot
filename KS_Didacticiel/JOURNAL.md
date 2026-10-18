@@ -59,3 +59,5 @@ commiter, l'envoyer dans `plugins/KS_Didacticiel/` sur Kixster, puis `/didactici
 recompiler que si le code change (le fichier du jar ne sert qu'au premier démarrage).
 
 Compilé le 18/10/2026 (`sortie/KS_Didacticiel-1.0.0.jar`). **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 18/10/2026 à 08:01 (LeKiwi06 : « Envoie d'abord KS_Didacticiel 1.0.0 sur Event pour que je teste le menu, Kixster ensuite » ; nouveau ; KLM_Menu 2.11.0 en place ; jar du serveur vérifié de la même taille que celui compilé), actif après redémarrage d'Event. Kixster pas encore. Statut : non testé en jeu.**
