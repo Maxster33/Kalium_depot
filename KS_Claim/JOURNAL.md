@@ -163,3 +163,5 @@ Limites : écrit sans serveur de test (complétion et exécution de /claim à v�
 1.4.0, jamais testée en jeu (demande de LeKiwi06).
 
 Compilé le 18/10/2026 (`sortie/KS_Claim-1.5.0.jar`). **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 18/10/2026 à 08:44 (LeKiwi06 : « Envoie les cinq plugins sur Event pour que je teste, Kixster ensuite » ; envoi groupé : KS_Jetons 2.1.0, KS_Teleport 1.4.0, KS_Claim 1.5.0, KS_Economy 1.10.0, KS_Didacticiel 1.1.0 ; jars en place vérifiés de la même taille que `jars-deployes/` avant l'envoi, nouveaux jars de la même taille que ceux compilés ; ancien jar dans `_removed-ks_claim-1.3.0/`), actif après redémarrage d'Event. Kixster pas encore. Statut : non testé en jeu.** Event reçoit aussi la 1.4.0 (claim de la maison du spawn).

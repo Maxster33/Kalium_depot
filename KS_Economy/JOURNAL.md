@@ -718,3 +718,5 @@ la semaine" à ce menu en bas du coffre) ». Sa réponse : il s'agit du catalogu
 Limites : écrit sans serveur de test. Empilé sur la 1.9.0, jamais testée en jeu (demande de LeKiwi06).
 
 Compilé le 18/10/2026 (`sortie/KS_Economy-1.10.0.jar`). **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 18/10/2026 à 08:44 (LeKiwi06 : « Envoie les cinq plugins sur Event pour que je teste, Kixster ensuite » ; envoi groupé : KS_Jetons 2.1.0, KS_Teleport 1.4.0, KS_Claim 1.5.0, KS_Economy 1.10.0, KS_Didacticiel 1.1.0 ; jars en place vérifiés de la même taille que `jars-deployes/` avant l'envoi, nouveaux jars de la même taille que ceux compilés ; ancien jar dans `_removed-ks_economy-1.8.2/`), actif après redémarrage d'Event. Kixster pas encore. Statut : non testé en jeu.** Event reçoit aussi la 1.9.0 (magasin à 450 points, tiers).
