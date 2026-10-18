@@ -150,3 +150,5 @@ d'essentiel ».
 Compilé le 18/10/2026 (`sortie/KS_Trains-1.4.7.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 18/10/2026 à 08:20 (LeKiwi06 : « oui envoie sur event ») : à la place de la 1.4.6 (pas encore redémarrée) ; jar en place vérifié identique à la référence, rangé dans `_removed-ks_trains-1.4.6/` ; jar du serveur vérifié identique à celui compilé ; `config.yml` inchangé. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
+
+**Actif sur Event depuis son redémarrage du 18/10/2026 à 08:30 (journal lu à 08:32, heures en UTC : 06:30) : KS_Trains 1.4.7 activé sans erreur ni avertissement. Aucun joueur connecté à la lecture : journal à relire après un essai de train (l'erreur de la 1.4.3 n'apparaissait qu'avec un train chargé). Statut : non testé en jeu.**
