@@ -19,6 +19,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KLM_Contacts — LeKiwi06 — depuis le 2026-10-17 03:42 — 1.3.0 : liste d'amis des joueurs connectés lisible par les autres plugins (KS_Trains : partage du train)
 - KS_Trains — LeKiwi06 — depuis le 2026-10-16 18:59 — nouveau plugin : trains de wagonnets, étape 1 (locomotive, attelage, déplacement, carburant, menu)
 
+- KS_Didacticiel — LeKiwi06 — depuis le 2026-10-18 07:55 — nouveau plugin : didacticiel des changements de Kixster dans « Informations »
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
 
 
