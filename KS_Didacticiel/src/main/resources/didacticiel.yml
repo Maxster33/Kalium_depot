@@ -163,8 +163,6 @@ themes:
         nom: "Armure fondue"
         icone: IRON_CHESTPLATE
         texte: "Un casque, un plastron, des jambières ou des bottes en fer, or, cuivre ou cotte de mailles fondus au four donnent 1 lingot."
-        recettes:
-          - "ks_crafts:*_armure"
         nouveau: "2026-10-18"
       spawners:
         nom: "Spawners"

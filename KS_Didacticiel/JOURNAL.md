@@ -209,6 +209,8 @@ pas de limite de questions.
 Choix de Claude, signalés : pas de commande en plus (l'outil passe par /menu) ; pas de suppression ni de classement sans
 réponse ; le staff est prévenu dans le tchat seulement à l'envoi (pas de rappel à la connexion).
 
+- Retour de LeKiwi06 : « les équipements au four n'ont pas besoin de montrer leur craft, tout est déjà expliqué dans le titre du sujet » : « Armure fondue » n'a plus de recettes (15 nouveautés cliquables).
+
 Contient la 1.2.2 (jamais déployée). Compilé le 18/10/2026 (`sortie/KS_Didacticiel-1.3.0.jar`). **Statut : non déployé,
 non testé en jeu.** À envoyer avec son `didacticiel.yml`.
 
