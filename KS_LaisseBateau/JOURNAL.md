@@ -58,3 +58,5 @@ d'orientation ; d'habitude ça ressemble davantage à une remorque qui nous suit
 - Bateau remorqué conduit par un joueur : toujours calculé par son jeu, inchangé.
 
 Compilé le 18/10/2026 (`sortie/KS_LaisseBateau-1.0.1.jar`). **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Event le 18/10/2026 à 10:33 (LeKiwi06 : corriger la laisse « avant de l'envoyer sur Event » ; envoi groupé KS_Trains 1.4.8 et KS_LaisseBateau 1.0.1) : jar en place (1.0.0) vérifié identique à la référence, rangé dans `_removed-ks_laissebateau-1.0.0/` ; jar du serveur vérifié identique à celui compilé. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
