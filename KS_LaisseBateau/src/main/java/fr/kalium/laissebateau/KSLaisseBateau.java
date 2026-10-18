@@ -30,11 +30,22 @@ import java.util.UUID;
  * 1.0.1 (LeKiwi06 : « le bateau de derrière ne change jamais d'orientation ; d'habitude ça ressemble davantage à une
  * remorque qui nous suit et pas à un boulet qu'on traîne ») : le bateau remorqué est tourné à chaque tick vers celui
  * qui le tracte, comme une remorque vers son attelage (le jeu ne tourne un bateau que s'il est conduit).
+ *
+ * 1.0.2 (LeKiwi06 : « le bateau tracté ne suit pas correctement le bateau tracteur », sans pouvoir décrire le défaut) :
+ * le bateau remorqué prenait la vitesse du tracteur, plus un rappel élastique au-delà de la longueur : dans un virage il
+ * glissait de côté, parallèlement au tracteur, au lieu de suivre sa trace ; au ralentissement il continuait sur son
+ * élan (« boulet »). Maintenant, une remorque à timon rigide : il est placé à chaque tick sur la droite qui le relie à
+ * l'arrière du tracteur (l'attelage), à `longueur` blocs de centre à centre quand ils sont alignés ; il coupe donc les
+ * virages par l'intérieur comme une remorque, et recule si le tracteur recule. `raideur` ne sert plus.
  */
 public final class KSLaisseBateau extends JavaPlugin {
 
     /** Vitesse horizontale maximale donnée au bateau remorqué (blocs par tick), contre les sauts de position. */
     private static final double VITESSE_MAX = 1.5;
+    /** 1.0.2 : distance du centre du tracteur à son attelage (son arrière ; un bateau mesure 1,375 bloc). */
+    private static final double ATTELAGE = 0.7;
+    /** 1.0.2 : frein du jeu sur un bateau dans l'eau, appliqué avant son déplacement (AbstractBoat.floatBoat). */
+    private static final double FREIN_EAU = 0.9;
 
     /** Bateaux tenus en laisse par un bateau, relevés chaque seconde. */
     private final List<Boat> remorques = new ArrayList<>();
@@ -62,7 +73,6 @@ public final class KSLaisseBateau extends JavaPlugin {
 
     private void tirer() {
         double longueur = getConfig().getDouble("longueur", 3.0);
-        double raideur = Math.max(0, Math.min(1, getConfig().getDouble("raideur", 0.3)));
         Map<UUID, Location> positions = new HashMap<>();
         for (Boat bateau : remorques) {
             if (!bateau.isValid() || !bateau.isLeashed() || !(bateau.getLeashHolder() instanceof Boat tracteur)
@@ -78,22 +88,35 @@ public final class KSLaisseBateau extends JavaPlugin {
                 continue;
             }
             Location la = bateau.getLocation();
-            double dx = ici.getX() - la.getX();
-            double dz = ici.getZ() - la.getZ();
+            // Attelage : l'arrière du tracteur (un bateau avance vers (-sin cap, cos cap)).
+            double cap = Math.toRadians(ici.getYaw());
+            double hx = ici.getX() + Math.sin(cap) * ATTELAGE;
+            double hz = ici.getZ() - Math.cos(cap) * ATTELAGE;
+            if (avant != null && avant.getWorld().equals(ici.getWorld())) {
+                // Où sera l'attelage à la fin de ce tick : le tracteur continue son mouvement du tick d'avant.
+                double mx = ici.getX() - avant.getX();
+                double mz = ici.getZ() - avant.getZ();
+                double m = Math.sqrt(mx * mx + mz * mz);
+                if (m <= VITESSE_MAX) {
+                    hx += mx;
+                    hz += mz;
+                }
+            }
+            double dx = hx - la.getX();
+            double dz = hz - la.getZ();
             double distance = Math.sqrt(dx * dx + dz * dz);
-            orienter(bateau, la, dx, dz, distance);
-            if (distance <= longueur) {
+            if (distance < 0.3) {
                 continue;
             }
-            double vx = 0;
-            double vz = 0;
-            if (avant != null && avant.getWorld().equals(ici.getWorld())) {
-                vx = ici.getX() - avant.getX();
-                vz = ici.getZ() - avant.getZ();
-            }
-            double rappel = (distance - longueur) * raideur / distance;
-            vx += dx * rappel;
-            vz += dz * rappel;
+            orienter(bateau, la, dx, dz);
+            // Place voulue : sur la droite attelage-bateau, à la longueur du timon de l'attelage.
+            double timon = Math.max(0.5, longueur - ATTELAGE);
+            double ecart = distance - timon;
+            double vx = dx / distance * ecart;
+            double vz = dz / distance * ecart;
+            // Le jeu freine le bateau (x0,9 sur l'eau) avant de le déplacer : compensé.
+            vx /= FREIN_EAU;
+            vz /= FREIN_EAU;
             double vitesse = Math.sqrt(vx * vx + vz * vz);
             if (vitesse > VITESSE_MAX) {
                 vx *= VITESSE_MAX / vitesse;
@@ -105,13 +128,10 @@ public final class KSLaisseBateau extends JavaPlugin {
     }
 
     /**
-     * 1.0.1 : avant du bateau remorqué vers le bateau qui le tracte (un bateau avance vers (-sin cap, cos cap)). Pas
-     * de changement collés l'un à l'autre (direction instable), ni pour moins d'un demi-degré (pas de renvoi inutile).
+     * 1.0.1 : avant du bateau remorqué vers le bateau qui le tracte (un bateau avance vers (-sin cap, cos cap)) ; 1.0.2 :
+     * vers son attelage. Pas de changement pour moins d'un demi-degré (pas de renvoi inutile).
      */
-    private static void orienter(Boat bateau, Location la, double dx, double dz, double distance) {
-        if (distance < 0.5) {
-            return;
-        }
+    private static void orienter(Boat bateau, Location la, double dx, double dz) {
         float cap = (float) Math.toDegrees(Math.atan2(-dx, dz));
         float ecart = Math.abs(((cap - la.getYaw()) % 360 + 540) % 360 - 180);
         if (ecart > 0.5f) {

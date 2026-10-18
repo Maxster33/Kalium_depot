@@ -455,6 +455,8 @@ Détail : `geyser-bedrock/README.md` (Historique).
 
 ### 2026-10-02 — LeKiwi06
 
+**Ajout (18/10/2026, 15:51) : KS_LaisseBateau 1.0.2 compilé, non déployé.** Le bateau remorqué suivait mal (vitesse du tracteur recopiée : glisse de côté dans les virages, élan au ralentissement) : remorque à timon rigide accrochée à l'arrière du tracteur.
+
 **Ajout (18/10/2026, 10:33) : KS_Trains 1.4.8 et KS_LaisseBateau 1.0.1 envoyés sur Event (tests) ; actifs depuis le redémarrage du 18/10 à 13:34 (journal lu : aucune erreur), non testés en jeu.** Jars en place (KS_Trains 1.4.7, KS_LaisseBateau 1.0.0) vérifiés identiques à `jars-deployes/` avant l'envoi, rangés dans `_removed-ks_trains-1.4.7/` et `_removed-ks_laissebateau-1.0.0/` ; jars du serveur vérifiés identiques à ceux compilés.
 
 **Ajout (18/10/2026, 10:32) : KS_LaisseBateau 1.0.1 compilé, non déployé.** Le bateau remorqué est tourné vers celui qui le tracte (remorque) au lieu de garder son orientation.

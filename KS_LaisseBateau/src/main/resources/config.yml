@@ -1,4 +1,3 @@
-# Longueur de la laisse entre deux bateaux, de centre a centre, en blocs (un bateau mesure environ 1,4 bloc).
+# Longueur de la laisse entre deux bateaux, de centre a centre quand ils sont alignes, en blocs (un bateau mesure
+# environ 1,4 bloc). 1.0.2 : le bateau remorque y est tenu comme une remorque (timon rigide) ; la cle raideur ne sert plus.
 longueur: 3.0
-# Force du rappel : part de l'ecart rattrapee a chaque tick (entre 0 et 1).
-raideur: 0.3

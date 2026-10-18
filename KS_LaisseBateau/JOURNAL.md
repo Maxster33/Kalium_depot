@@ -62,3 +62,22 @@ Compilé le 18/10/2026 (`sortie/KS_LaisseBateau-1.0.1.jar`). **Statut : non dép
 **Déployé sur Event le 18/10/2026 à 10:33 (LeKiwi06 : corriger la laisse « avant de l'envoyer sur Event » ; envoi groupé KS_Trains 1.4.8 et KS_LaisseBateau 1.0.1) : jar en place (1.0.0) vérifié identique à la référence, rangé dans `_removed-ks_laissebateau-1.0.0/` ; jar du serveur vérifié identique à celui compilé. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
 
 **Actif sur Event depuis son redémarrage du 18/10/2026 à 13:34 (journal lu à 14:16, heures en UTC : 11:34) : KS_LaisseBateau 1.0.1 activé sans erreur ni avertissement ; aucune erreur jusqu'à la lecture (LeKiwi06 connecté depuis 13:47). Statut : non testé en jeu.**
+
+## 1.0.2 - remorque à timon rigide (18/10/2026, LeKiwi06)
+
+Retour de LeKiwi06 sur Event : « le bateau tracté ne suit pas correctement le bateau tracteur, mais je ne sais pas
+comment décrire le problème, peux-tu regarder toi-même ? ».
+
+- **Cause** (lue dans le code, Claude ne voit pas le jeu) : le bateau remorqué prenait la vitesse du tracteur, plus un
+  rappel élastique au-delà de 3 blocs ; dans un virage il glissait de côté, parallèlement au tracteur, au lieu de suivre
+  sa trace ; quand le tracteur ralentissait, il continuait sur son élan.
+- **Correction** : remorque à timon rigide. À chaque tick, le bateau remorqué est placé sur la droite qui le relie à
+  l'arrière du tracteur (l'attelage, à 0,7 bloc derrière son centre, là où il sera à la fin du tick), à `longueur`
+  blocs de centre à centre quand ils sont alignés ; son avant pointe vers l'attelage. Il coupe les virages par
+  l'intérieur comme une remorque, s'arrête avec le tracteur et recule avec lui. Le frein du jeu sur l'eau (x0,9, appliqué
+  avant le déplacement, lu dans `AbstractBoat.tick`) est compensé.
+- Simulation (tracteur à 8 blocs/s, virage de 6 blocs de rayon puis arrêt) : 3,00 blocs en ligne droite, 2,94 dans le
+  virage avec le cap de la remorque 29° derrière celui du tracteur, arrêt sans glisser jusqu'à lui.
+- `config.yml` : clé `raideur` retirée (elle ne sert plus) ; `longueur` inchangée.
+
+Compilé le 18/10/2026 (`sortie/KS_LaisseBateau-1.0.2.jar`). **Statut : non déployé, non testé en jeu.**
