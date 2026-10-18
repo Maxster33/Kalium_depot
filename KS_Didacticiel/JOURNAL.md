@@ -150,3 +150,16 @@ Compilé le 18/10/2026 (`sortie/KS_Didacticiel-1.2.1.jar`). **Statut : non dépl
 1.2.0, pas encore testée, demande de LeKiwi06). À envoyer avec son `didacticiel.yml`.
 
 **Déployé sur Event le 18/10/2026 à 15:57 (LeKiwi06 : « Oui, envoie KS_Didacticiel 1.2.1 et son didacticiel.yml sur Event » ; jar en place (1.2.0) vérifié de la même taille que `jars-deployes/`, rangé avec l'ancien `didacticiel.yml` dans `_removed-ks_didacticiel-1.2.0/` ; nouveau jar et nouveau fichier de la même taille que ceux du dépôt), actif après redémarrage d'Event. Kixster pas encore. Statut : non testé en jeu.**
+
+## Contenu du 18/10/2026 (après la 1.2.1, sans changement de code)
+
+Demande de LeKiwi06 : « oui ajoute les modifications au didacticiel » (KS_Trains 1.4.8, KS_LaisseBateau 1.0.1 et 1.0.2,
+faits dans une autre session).
+
+- « Train : le menu » : chaque wagon peut y être renommé et son contenu ouvert depuis le menu (KS_Trains 1.4.8).
+- « Train : wagon contrôleur » : le klaxon est un sifflet, ou une corne de chèvre posée dans le contrôleur.
+- « Laisse courte » : le bateau remorqué suit comme une remorque et prend les virages derrière le tracteur
+  (KS_LaisseBateau 1.0.1 et 1.0.2).
+- Ces trois nouveautés ont `nouveau: "2026-10-18d"`. Jar inchangé (1.2.1) : envoyer seulement `didacticiel.yml`, puis
+  `/didacticiel recharger` (ou au prochain redémarrage). **Non envoyé.**
+

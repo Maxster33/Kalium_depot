@@ -408,9 +408,9 @@ themes:
       laisse:
         nom: "Laisse courte"
         icone: LEAD
-        texte: "Un bateau tiré par un autre bateau reste à 3 blocs derrière lui, au lieu de flotter loin."
+        texte: "Un bateau tiré en laisse par un autre bateau le suit à 3 blocs, comme une remorque : il prend les virages derrière lui."
         requiert: "KS_LaisseBateau"
-        nouveau: "2026-10-18c"
+        nouveau: "2026-10-18d"
       verrou:
         nom: "Verrou de véhicule"
         icone: TRIPWIRE_HOOK
@@ -440,17 +440,17 @@ themes:
       menu-train:
         nom: "Train : le menu"
         icone: COMPARATOR
-        texte: "Accroupi + clic droit sur un four de la locomotive ou sur le wagon contrôleur : la liste des wagons, marche / arrêt, vitesse, dételage, réglages des coffres."
+        texte: "Accroupi + clic droit sur un four de la locomotive ou sur le wagon contrôleur : la liste des wagons, marche / arrêt, vitesse, dételage, réglages des coffres. Chaque wagon peut y être renommé, et son contenu ouvert depuis le menu."
         requiert: "KS_Trains"
-        nouveau: "2026-10-18c"
+        nouveau: "2026-10-18d"
       controleur:
         nom: "Train : wagon contrôleur"
         icone: REDSTONE_LAMP
-        texte: "Un wagonnet entouré, en casque, d'un comparateur, d'un capteur sculk calibré, d'une lampe à redstone, d'un bloc musical et d'un levier. Monte dedans : avancer = vitesse +1 (4 niveaux), reculer = vitesse -1 puis marche arrière, saut = klaxon. Un seul par train, à moins de 5 wagons de la locomotive."
+        texte: "Un wagonnet entouré, en casque, d'un comparateur, d'un capteur sculk calibré, d'une lampe à redstone, d'un bloc musical et d'un levier. Monte dedans : avancer = vitesse +1 (4 niveaux), reculer = vitesse -1 puis marche arrière, saut = klaxon (un sifflet, ou une corne de chèvre posée dans le contrôleur). Un seul par train, à moins de 5 wagons de la locomotive."
         requiert: "KS_Trains"
         recettes:
           - "ks_crafts:wagon_controleur"
-        nouveau: "2026-10-18c"
+        nouveau: "2026-10-18d"
       carburant:
         nom: "Train : carburant"
         icone: COAL
