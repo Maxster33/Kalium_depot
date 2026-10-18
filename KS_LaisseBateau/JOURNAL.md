@@ -60,3 +60,5 @@ d'orientation ; d'habitude ça ressemble davantage à une remorque qui nous suit
 Compilé le 18/10/2026 (`sortie/KS_LaisseBateau-1.0.1.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 18/10/2026 à 10:33 (LeKiwi06 : corriger la laisse « avant de l'envoyer sur Event » ; envoi groupé KS_Trains 1.4.8 et KS_LaisseBateau 1.0.1) : jar en place (1.0.0) vérifié identique à la référence, rangé dans `_removed-ks_laissebateau-1.0.0/` ; jar du serveur vérifié identique à celui compilé. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
+
+**Actif sur Event depuis son redémarrage du 18/10/2026 à 13:34 (journal lu à 14:16, heures en UTC : 11:34) : KS_LaisseBateau 1.0.1 activé sans erreur ni avertissement ; aucune erreur jusqu'à la lecture (LeKiwi06 connecté depuis 13:47). Statut : non testé en jeu.**
