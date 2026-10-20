@@ -238,4 +238,4 @@ jauges soient enregistrées même sur un échap ».
 - Inchangé : 2 créations par heure, `/bingo create` et `/bingo join`, objet « Rejouer » au retour du serveur Bingo (la
   fin de partie se passe sur Serveur Jeux : à revoir avec KG_BingoGame).
 
-**À déployer avec KalGames 1.26.0 et KG_Menu 1.2.0 (déjà sur Kal-Games).** **Compilé, non déployé, non testé en jeu.**
+**À déployer avec KalGames 1.26.0 et KG_Menu 1.2.0 (déjà sur Kal-Games).** **Déployé sur Kal-Games le 21/10/2026 à 01:29 (LeKiwi06, avec KG_BuildBattle 0.6.0 ; 1.10.0 dans `_removed-kg_bingo-1.10.0/`), actif après redémarrage. Statut : non testé en jeu.**

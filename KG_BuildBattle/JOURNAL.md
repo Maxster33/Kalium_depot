@@ -101,4 +101,4 @@ inchangée » (menus de Kal-Games en coffre, parties publiques masquées, Échap
 - Inchangé : objet « Rejouer » au retour de Kanvas (la fin de partie se passe sur Kanvas : à revoir avec
   KV_BuildBattle).
 
-**À déployer avec KalGames 1.26.0 et KG_Menu 1.2.0 (déjà sur Kal-Games).** **Compilé, non déployé, non testé en jeu.**
+**À déployer avec KalGames 1.26.0 et KG_Menu 1.2.0 (déjà sur Kal-Games).** **Déployé sur Kal-Games le 21/10/2026 à 01:29 (LeKiwi06, avec KG_Bingo 1.11.0 ; 0.5.0 dans `_removed-kg_buildbattle-0.5.0/`), actif après redémarrage. Statut : non testé en jeu.**
