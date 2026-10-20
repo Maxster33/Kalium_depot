@@ -1015,4 +1015,4 @@ quand l'ancienne partie se ferme). Le bouton « Classements » de l'ancien écra
 restent dans « Informations > Classements »).
 
 **À déployer avec KG_Menu 1.2.0 (obligatoire).** Nouvelles clés `menus`, `relance` : valeurs par défaut dans le code.
-**Compilé, non déployé, non testé en jeu.**
+**Déployé sur Kal-Games le 20/10/2026 à 12:57 (LeKiwi06 ; ancien jar dans `_removed-…`), actif après redémarrage. Statut : non testé en jeu.**

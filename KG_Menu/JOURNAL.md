@@ -71,4 +71,4 @@ l'interface, paramètre, affichage », « quand on ouvre l'interface on voit "cr
 
 **À déployer avec KalGames 1.26.0.** Nouvelles clés `affichage`, `icones` : valeurs par défaut dans le code.
 
-**Compilé, non déployé, non testé en jeu.**
+**Déployé sur Kal-Games le 20/10/2026 à 12:57 (LeKiwi06 ; ancien jar dans `_removed-…`), actif après redémarrage. Statut : non testé en jeu.**
