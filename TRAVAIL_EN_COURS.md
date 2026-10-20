@@ -16,21 +16,16 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KLM_Contacts — LeKiwi06 — depuis le 2026-10-17 03:42 — 1.3.0 : liste d'amis des joueurs connectés lisible par les autres plugins (KS_Trains : partage du train)
-- KS_Trains — LeKiwi06 — depuis le 2026-10-16 18:59 — nouveau plugin : trains de wagonnets, étape 1 (locomotive, attelage, déplacement, carburant, menu)
+- KG_Bingo — LeKiwi06 — depuis le 2026-10-20 13:30 — menus en coffre (réglages avec jauges, liste des parties dans l'accueil de KG_Menu), Échap = page précédente
+- KG_BuildBattle — LeKiwi06 — depuis le 2026-10-20 13:30 — menus en coffre, parties dans l'accueil de KG_Menu, Échap = page précédente
 
-- KS_Jetons — LeKiwi06 — depuis le 2026-10-18 08:40 — 2.1.0 : inventaire spécial en un seul coffre (cases par badge, par jeton, emplacements de localisation), alias /jeton et /badge
-- KS_Teleport — LeKiwi06 — depuis le 2026-10-18 08:40 — 1.4.0 : emplacements de localisation tenus par les jetons de l'inventaire spécial (délai de 24 h), alias /bed
-- KS_Claim — LeKiwi06 — depuis le 2026-10-18 08:40 — 1.5.0 : /claim et /claims (à la place de ceux de SimpleClaimSystem)
-- KS_Economy — LeKiwi06 — depuis le 2026-10-18 08:40 — 1.10.0 : /magasins, /shop, /market ; bouton des rachats de la semaine dans le catalogue
-- KS_Didacticiel — LeKiwi06 — depuis le 2026-10-18 07:55 — nouveau plugin : didacticiel des changements de Kixster dans « Informations »
-- KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
-- KalGames — LeKiwi06 — depuis le 2026-10-20 12:03 — menus en coffre (réglage coffres / fenêtres), accueil Créer / Rejoindre / Parties en cours, parties publiques masquées, relance en salle d'attente après 15 s
-- KG_Menu — LeKiwi06 — depuis le 2026-10-20 12:03 — Paramètres › Affichage (coffres / fenêtres, affichages masquables), nouvel accueil de Kal-Games en coffre
 
 
 ## Requis parfois
 
+- KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut) (passé en « requis parfois » le 2026-10-20 13:30 : compilation de KG_Bingo / KG_BuildBattle, petites retouches)
+- KalGames — LeKiwi06 — depuis le 2026-10-20 12:03 — menus en coffre (réglage coffres / fenêtres), accueil Créer / Rejoindre / Parties en cours, parties publiques masquées, relance en salle d'attente après 15 s (passé en « requis parfois » le 2026-10-20 13:30 : compilation de KG_Bingo / KG_BuildBattle, petites retouches)
+- KG_Menu — LeKiwi06 — depuis le 2026-10-20 12:03 — Paramètres › Affichage (coffres / fenêtres, affichages masquables), nouvel accueil de Kal-Games en coffre (passé en « requis parfois » le 2026-10-20 13:30 : compilation de KG_Bingo / KG_BuildBattle, petites retouches)
 - KS_Decapitator — LeKiwi06 — depuis le 2026-10-16 23:19 — 1.3.0 (têtes manquantes, teinture des shulkers, têtes de joueurs) : déploiement sur Event (tests)
 - KS_VerrouVehicule — LeKiwi06 — depuis le 2026-10-16 20:05 — déploiement sur Event (tests) ; petite retouche pour KS_Trains étape 3 (wagon verrouillé dans un train non ancré)
 - KS_LaisseBateau — LeKiwi06 — depuis le 2026-10-14 20:32 — compilé, en attente du déploiement sur Kixster (passé en « requis parfois » le 2026-10-16)
