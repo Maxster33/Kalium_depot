@@ -21,6 +21,9 @@ public final class ItemService {
     public static final String CHECKPOINT = "checkpoint";
     /** 1.24.0 : objet « Rejouer » donne quelques secondes au hub apres un match (voir ReplayService). */
     public static final String REPLAY = "replay";
+    /** 1.26.0 : « Quitter la partie » et « Passer spectateur », dans la barre d'objets de la salle d'attente. */
+    public static final String LEAVE = "leave";
+    public static final String SPECTATE = "spectate";
 
     private final KalGames plugin;
     private final NamespacedKey key;
@@ -48,7 +51,30 @@ public final class ItemService {
                 "<gold><bold>Menu de la partie", new String[]{"<gray>Clic droit : équipes, file,", "<gray>quitter la partie."});
     }
 
+    /** 1.26.0 : objets de la salle d'attente d'une partie privée (spectate : seulement entre deux manches). */
+    public void giveStandsItems(org.bukkit.entity.Player player, boolean spectate) {
+        player.getInventory().setItem(slot("items.leave.slot", 6), build(LEAVE, "items.leave", Material.RED_BED, "item.leave",
+                "<red><bold>Quitter la partie", new String[]{"<gray>Clic droit : retour au hub."}));
+        if (spectate) {
+            player.getInventory().setItem(slot("items.spectate.slot", 2), build(SPECTATE, "items.spectate", Material.ENDER_EYE,
+                    "item.spectate", "<aqua><bold>Passer spectateur", new String[]{"<gray>Clic droit : regarder la",
+                            "<gray>prochaine manche sans la jouer."}));
+        }
+    }
+
+    /** 1.26.0 : début d'une manche : les objets de la salle d'attente sont retirés. */
+    public void removeStandsItems(org.bukkit.entity.Player player) {
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int i = 0; i < contents.length; i++) {
+            String kind = kind(contents[i]);
+            if (LEAVE.equals(kind) || SPECTATE.equals(kind)) {
+                player.getInventory().setItem(i, null);
+            }
+        }
+    }
+
     public ItemStack checkpointItem() {
+
         return build(CHECKPOINT, "items.checkpoint", Material.LIME_DYE, "item.checkpoint",
                 "<green><bold>Dernier point de contrôle", new String[]{"<gray>Clic droit pour y retourner."});
     }

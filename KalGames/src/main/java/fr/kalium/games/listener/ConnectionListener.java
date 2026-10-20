@@ -53,6 +53,7 @@ public final class ConnectionListener implements Listener {
         plugin.instances().leave(player, true);
         plugin.instances().leaveSpectator(player, true);
         plugin.menus().forget(player.getUniqueId());
+        plugin.coffres().forget(player.getUniqueId());
         plugin.replay().forget(player.getUniqueId());
     }
 

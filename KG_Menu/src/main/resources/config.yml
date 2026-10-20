@@ -14,3 +14,13 @@ hub-item:
 gui:
   # Largeur des boutons des menus (100 a 400).
   button-width: 240
+
+# 1.2.0 : menus en coffres ou en fenetres, au choix de chaque joueur (Parametres > Affichage) ; valeur pour un joueur
+# qui n'a encore rien choisi. Les choix des joueurs sont dans affichage.yml.
+affichage:
+  coffres-par-defaut: true
+
+# 1.2.0 : icone (objet du jeu) des jeux qui ne fournissent pas la leur, dans « Creer une partie ».
+icones:
+  kg_bingo: FILLED_MAP
+  kg_buildbattle: BRICKS

@@ -38,7 +38,24 @@ items:
     slot: 0
     material: LIME_DYE
 
+# 1.26.0 : menus des joueurs (accueil de KG_Menu : Creer une partie / Rejoindre une partie / Parties en cours).
+menus:
+  # Parties publiques proposees dans les menus (false : masquees, pas assez de joueurs ; decision du 20/10/2026).
+  parties-publiques: false
+  # Icone de chaque type de jeu dans les menus en coffre (objet du jeu). Sans cle : icone par defaut du type.
+  # icones:
+  #   BOAT_RACE: OAK_BOAT
+
+# 1.26.0 : fin d'une manche d'une partie privee : tout le monde reste dans la salle d'attente (objet "Quitter la
+# partie", "Passer spectateur" ; les spectateurs y entrent aussi) et la partie relance apres ce delai avec ceux qui
+# sont restes. false = ancien fonctionnement (retour au hub et objet "Rejouer").
+relance:
+  active: true
+  secondes: 15
+
 # 1.24.0 : objet "Rejouer" donne au hub a la fin d'un match (joueurs et spectateurs) : relance une partie avec les
+
+
 # memes reglages (partie privee : le premier qui clique la recree) ou remet dans la file (partie publique).
 replay:
   enabled: true

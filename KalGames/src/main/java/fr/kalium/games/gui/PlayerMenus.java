@@ -51,12 +51,22 @@ public final class PlayerMenus {
 
     /** Menu de la partie ou spectateur si le joueur est dans un mini-jeu de KalGames (true), sinon rien (false). */
     public boolean openCurrent(Player player) {
+        // 1.26.0 : en coffre si le joueur l'a choisi (KG_Menu, « Paramètres › Affichage »).
+        boolean coffre = plugin.enCoffre(player);
         if (plugin.instances().of(player) != null) {
-            openGameMenu(player);
+            if (coffre) {
+                plugin.coffres().partie(player);
+            } else {
+                openGameMenu(player);
+            }
             return true;
         }
         if (plugin.instances().spectatorOf(player) != null) {
-            openSpectatorMenu(player);
+            if (coffre) {
+                plugin.coffres().spectateur(player);
+            } else {
+                openSpectatorMenu(player);
+            }
             return true;
         }
         return false;
@@ -109,6 +119,101 @@ public final class PlayerMenus {
                     (p, back) -> openMinigame(p, minigame), manager.playersIn(minigame.id())));
         }
         return entries;
+    }
+
+    // ------------------------------------------------------------------ 1.26.0 : accueil de KG_Menu 1.2.0
+
+    /**
+     * Parties publiques proposées dans les menus ? Non par défaut (LeKiwi06, 20/10/2026 : « masquer pour le moment les
+     * parties publiques des mini-jeux, on a pas assez de joueurs pour ça »).
+     */
+    public boolean publicShown() {
+        return plugin.getConfig().getBoolean("menus.parties-publiques", false);
+    }
+
+    /** « Créer une partie » : les mini-jeux jouables (les modérateurs voient aussi ceux sans arène complète). */
+    public List<fr.kalium.kgmenu.api.MenuProvider.Jeu> jeux(Player player) {
+        List<fr.kalium.kgmenu.api.MenuProvider.Jeu> jeux = new ArrayList<>();
+        boolean admin = plugin.isAdmin(player);
+        InstanceManager manager = plugin.instances();
+        for (Minigame minigame : plugin.repository().minigames()) {
+            if (!minigame.playable() || !minigame.privateEnabled()) {
+                continue;
+            }
+            List<Arena> arenas = manager.usableArenas(minigame);
+            if (arenas.isEmpty() && !admin) {
+                continue;
+            }
+            List<Component> lignes = new ArrayList<>();
+            if (!minigame.description().isBlank()) {
+                lignes.add(plugin.lang().parse("<gray>" + minigame.description()));
+            }
+            int[] range = minigame.type().playerRange(minigame, arenas);
+            if (range != null) {
+                lignes.add(range[0] == range[1]
+                        ? t("menu.player-range-one", "<gray>Joueurs : <white><n>", "n", range[0])
+                        : t("menu.player-range", "<gray>Joueurs : <white><min> à <max>", "min", range[0], "max", range[1]));
+            }
+            if (arenas.isEmpty()) {
+                lignes.add(t("menu.games-unusable", "<red>Aucune arène complète (visible des modérateurs uniquement)."));
+            }
+            jeux.add(new fr.kalium.kgmenu.api.MenuProvider.Jeu(minigame.id(), name(minigame), plugin.coffres().icone(minigame),
+                    lignes, manager.playersIn(minigame.id()), (p, back) -> create(p, minigame, back)));
+        }
+        return jeux;
+    }
+
+    /** Réglages d'une nouvelle partie de ce mini-jeu, en coffre ou en fenêtre. */
+    public void create(Player player, Minigame minigame, java.util.function.Consumer<Player> back) {
+        if (plugin.enCoffre(player)) {
+            plugin.coffres().creer(player, minigame, back);
+        } else {
+            openCreatePrivate(player, minigame, back);
+        }
+    }
+
+    /** « Rejoindre une partie » et « Parties en cours » : les parties privées listées (et publiques si affichées). */
+    public List<fr.kalium.kgmenu.api.MenuProvider.Partie> parties(Player player) {
+        List<fr.kalium.kgmenu.api.MenuProvider.Partie> parties = new ArrayList<>();
+        boolean publiques = publicShown();
+        for (GameInstance game : plugin.instances().all()) {
+            if (game.closing() || (game.isPublic() ? !publiques || game.members().isEmpty() : !game.listed())) {
+                continue;
+            }
+            Minigame minigame = game.minigame();
+            boolean spectate = minigame.getBool("allow-spectate", true);
+            String host = game.isPublic() ? "Partie publique" : game.host() == null ? "?" : nameOf(game.host());
+            parties.add(new fr.kalium.kgmenu.api.MenuProvider.Partie(game.id(), name(minigame), plugin.coffres().icone(minigame),
+                    host, game.members().size(), game.capacite(), game.matchInProgress(),
+                    p -> game.isPublic() ? plugin.instances().joinPublic(p, minigame) : plugin.instances().joinPrivate(p, game.code()),
+                    spectate ? p -> plugin.instances().joinSpectator(p, game) : null));
+        }
+        return parties;
+    }
+
+    /** « Recréer ma dernière partie » : même jeu, même arène, mêmes réglages. */
+    public fr.kalium.kgmenu.api.MenuProvider.Derniere derniere(Player player) {
+        fr.kalium.games.game.Reglages.Derniere derniere = plugin.reglages().derniere(player.getUniqueId());
+        if (derniere == null) {
+            return null;
+        }
+        Minigame minigame = plugin.repository().minigame(derniere.jeu());
+        if (minigame == null || !minigame.playable() || !minigame.privateEnabled()
+                || plugin.instances().usableArenas(minigame).isEmpty()) {
+            return null;
+        }
+        return new fr.kalium.kgmenu.api.MenuProvider.Derniere(name(minigame), plugin.coffres().icone(minigame), derniere.quand(),
+                p -> plugin.coffres().creerPartie(p, minigame, derniere.choix().arene(), new HashMap<>(derniere.choix().options())));
+    }
+
+    /** « Entrer un code » : null si ce code n'est pas une partie de KalGames. */
+    public Component code(Player player, String code) {
+        GameInstance game = plugin.instances().byCode(code.toUpperCase(java.util.Locale.ROOT));
+        if (game == null) {
+            return null;
+        }
+        Component error = plugin.instances().joinPrivate(player, game.code());
+        return error == null ? Component.empty() : error;
     }
 
     // ------------------------------------------------------------------ mini-jeu choisi
@@ -279,7 +384,14 @@ public final class PlayerMenus {
     // ------------------------------------------------------------------ partie privee : creation
 
     public void openCreatePrivate(Player player, Minigame minigame) {
+        openCreatePrivate(player, minigame, p -> plugin.kgMenu().openCreate(p));
+    }
+
+    /** 1.26.0 : back = bouton « Retour » ; les champs reprennent les derniers réglages du joueur pour ce jeu. */
+    public void openCreatePrivate(Player player, Minigame minigame, java.util.function.Consumer<Player> back) {
         List<Arena> arenas = plugin.instances().usableArenas(minigame);
+        fr.kalium.games.game.Reglages.Choix remembered = plugin.reglages().choix(player.getUniqueId(), minigame.id());
+        Map<String, Object> last = remembered == null ? Map.of() : remembered.options();
         if (arenas.isEmpty()) {
             plugin.tell(player, "game.no-arena", "<red>Aucune arène complète n'est disponible pour ce mini-jeu.");
             return;
@@ -292,7 +404,8 @@ public final class PlayerMenus {
                 ids.add(arena.id());
                 labels.add(plugin.lang().parse(arena.display()));
             }
-            inputs.add(gui.choice("arena", t("menu.create-arena", "Arène"), ids, labels, ids.get(0)));
+            String selected = remembered != null && ids.contains(remembered.arene()) ? remembered.arene() : ids.get(0);
+            inputs.add(gui.choice("arena", t("menu.create-arena", "Arène"), ids, labels, selected));
         }
         MinigameType type = minigame.type();
         if (type.createForm() != null) {
@@ -300,20 +413,23 @@ public final class PlayerMenus {
             inputs.addAll(type.createForm().inputs(minigame, arenas, gui));
         } else {
             int max = minigame.getInt("max-players", 8);
-            if (max > 1) {
-                inputs.add(gui.number("maxPlayers", t("menu.create-max", "Joueurs maximum"), 1, max, Math.min(max, 4), 1));
+            if (max > 1 && type != MinigameType.RUSH) { // Rush : la taille vient des équipes de l'arène
+                int initial = last.get("maxPlayers") instanceof Number n ? n.intValue() : Math.min(max, 4);
+                inputs.add(gui.number("maxPlayers", t("menu.create-max", "Joueurs maximum"), 1, max, Math.max(1, Math.min(max, initial)), 1));
             }
             // 1.17.0 : options declarees par le type (ex. nombre de tours de KG_BoatRace).
             for (MinigameType.CreateOption option : type.createOptions()) {
-                int def = Math.max(option.min(), Math.min(option.max(), minigame.getInt(option.defaultSetting(), option.fallback())));
+                int def = last.get(option.key()) instanceof Number n ? n.intValue() : minigame.getInt(option.defaultSetting(), option.fallback());
+                def = Math.max(option.min(), Math.min(option.max(), def));
                 inputs.add(gui.number(option.key(), plugin.lang().parse(option.label()), option.min(), option.max(), def, 1));
             }
             // 1.20.0 : cases a cocher declarees par le type (ex. mode entrainement de KG_Parkour).
             for (MinigameType.CreateToggle toggle : type.createToggles()) {
-                inputs.add(gui.toggle(toggle.key(), plugin.lang().parse(toggle.label()), false));
+                inputs.add(gui.toggle(toggle.key(), plugin.lang().parse(toggle.label()), last.get(toggle.key()) instanceof Boolean b && b));
             }
         }
-        inputs.add(gui.toggle("listed", t("menu.create-listed", "Afficher la partie dans la liste des parties ouvertes"), true));
+        inputs.add(gui.toggle("listed", t("menu.create-listed", "Afficher la partie dans la liste des parties ouvertes"),
+                !(last.get("listed") instanceof Boolean b) || b));
 
         List<ActionButton> buttons = new ArrayList<>();
         buttons.add(gui.form(t("menu.create-confirm", "<green>Créer la partie"), null, (p, view) -> {
@@ -334,16 +450,14 @@ public final class PlayerMenus {
             }
             Boolean listed = view.getBoolean("listed");
             options.put("listed", listed != null && listed);
-            InstanceManager.Result result = plugin.instances().createPrivate(p, minigame, arenaId, options);
-            if (!result.ok()) {
-                p.sendMessage(plugin.prefix().append(result.error()));
-                return;
+            // 1.26.0 : création commune aux coffres (réglages retenus, code dans le tchat).
+            Component error = plugin.coffres().creerPartie(p, minigame, arenaId, options);
+            if (error != null) {
+                p.sendMessage(plugin.prefix().append(error));
             }
-            p.sendMessage(plugin.prefix().append(t("menu.create-done",
-                    "<green>Partie créée. Code : <white><bold><code></bold></white> <gray>(à partager avec vos amis).",
-                    "code", result.instance().code())));
         }));
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, p -> openMinigame(p, minigame)));
+        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, back::accept));
+
         gui.open(player, t("menu.create-title", "<green>Nouvelle partie privée"),
                 List.of(t("menu.create-body", "<gray>Réglez la partie puis créez-la.")), inputs, buttons, gui.close(), 1);
     }
@@ -415,6 +529,40 @@ public final class PlayerMenus {
                 inputs, buttons, gui.close(), 1);
     }
 
+    /** 1.26.0 : l'hôte nomme un autre hôte ou exclut un joueur (fenêtres). */
+    private void openHostPlayers(Player player) {
+        GameInstance game = plugin.instances().of(player);
+        if (game == null || !game.isHost(player.getUniqueId())) {
+            openGameMenu(player);
+            return;
+        }
+        List<ActionButton> buttons = new ArrayList<>();
+        for (UUID member : game.members()) {
+            if (member.equals(player.getUniqueId())) {
+                continue;
+            }
+            String name = nameOf(member);
+            buttons.add(gui.button(t("host.give-button", "<yellow>Nommer hôte : <white><player>", "player", name), null, p -> {
+                Component error = plugin.instances().giveHost(p, member);
+                if (error != null) {
+                    p.sendMessage(plugin.prefix().append(error));
+                }
+                openGameMenu(p);
+            }));
+            buttons.add(gui.button(t("host.kick-button", "<red>Exclure : <white><player>", "player", name), null, p ->
+                    gui.confirm(p, t("host.kick-title", "<red><bold>Exclure un joueur"),
+                            t("host.kick-confirm", "<gray>Renvoyer <white><player></white> au hub ?", "player", name), q -> {
+                                Component error = plugin.instances().kick(q, member);
+                                if (error != null) {
+                                    q.sendMessage(plugin.prefix().append(error));
+                                }
+                                openGameMenu(q);
+                            }, this::openHostPlayers)));
+        }
+        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openGameMenu));
+        gui.open(player, t("host.players-title", "<white><bold>Joueurs de la partie"), List.of(), List.of(), buttons, gui.close(), 1);
+    }
+
     /** Menu d'un spectateur : arreter de regarder / retour au lobby. */
     public void openSpectatorMenu(Player player) {
         GameInstance game = plugin.instances().spectatorOf(player);
@@ -426,7 +574,19 @@ public final class PlayerMenus {
         body.add(t("spectate.body-title", "<gray>Vous regardez : <white><name>", "name", name(game.minigame())));
         body.add(t("spectate.body-info", "<gray>Mode spectateur : vol libre. Tapez /hub à tout moment pour arrêter de regarder."));
         List<ActionButton> buttons = new ArrayList<>();
+        if (!game.isPublic()) {
+            // 1.26.0 : entrer dans la partie (salle d'attente, prochaine manche).
+            buttons.add(gui.button(t("coffre.spectateur-jouer", "<green>Rejoindre la partie"),
+                    t("coffre.spectateur-jouer-tip", "<gray>Vous jouerez la prochaine manche."), p -> {
+                        GameInstance watched = plugin.instances().spectatorOf(p);
+                        Component error = watched == null ? null : plugin.instances().spectatorToPlayer(p, watched);
+                        if (error != null) {
+                            p.sendMessage(plugin.prefix().append(error));
+                        }
+                    }));
+        }
         buttons.add(gui.button(t("spectate.stop", "<red>Arrêter de regarder"),
+
                 t("spectate.stop-tip", "<gray>Retour au hub de Kal-Games."), p -> plugin.instances().leaveSpectator(p, false)));
         buttons.add(gui.button(t("game.lobby", "<#09add3>Retour au lobby"), null, plugin::connectLobby));
         gui.open(player, t("spectate.menu-title", "<gold><bold>Mode spectateur"), body, List.of(), buttons, null, 1);
@@ -459,6 +619,23 @@ public final class PlayerMenus {
         if (!game.ready()) {
             body.add(t("game.body-preparing", "<yellow>Préparation de l'arène…"));
         }
+        // 1.26.0 : relance en salle d'attente et résumé de la manche.
+        if (game.relance() > 0) {
+            body.add(t("coffre.relance", "<green>Nouvelle partie dans <white><s></white> s", "s", game.relance()));
+        } else if (game.relanceEnAttente()) {
+            body.add(t("coffre.relance-attente", "<yellow>Relance en attente (joueurs ou réglages)"));
+        }
+        if (!game.resume().isEmpty() && !game.matchInProgress()) {
+            body.add(t("coffre.resume", "<gold>Résumé de la manche"));
+            int rang = 1;
+            for (GameInstance.Resultat r : game.resume()) {
+                if (rang > 10) {
+                    break;
+                }
+                body.add(t("coffre.resume-ligne", "<gray><rang>. <white><joueur></white> <dark_gray>: <gold>+<points> pts",
+                        "rang", rang++, "joueur", r.nom(), "points", fr.kalium.scoreboards.data.StatsService.formatPoints(r.points())));
+            }
+        }
         // 1.20.0 : informations et boutons fournis par le jeu lui-meme (ex. entrainement du Parcours, KG_Parkour).
         body.addAll(game.menuInfo(player));
         for (GameInstance.MenuAction action : game.menuActions(player)) {
@@ -469,8 +646,40 @@ public final class PlayerMenus {
             }));
         }
 
+        boolean betweenRounds = !game.isPublic() && game.phase() == GameInstance.Phase.WAITING;
+        if (betweenRounds && game.minigame().getBool("allow-spectate", true)) {
+            buttons.add(gui.button(t("coffre.passer-spectateur", "<aqua>Passer spectateur"),
+                    t("coffre.passer-spectateur-tip", "<gray>Regarder la prochaine manche sans la jouer."), p -> {
+                        Component error = plugin.instances().playerToSpectator(p);
+                        if (error != null) {
+                            p.sendMessage(plugin.prefix().append(error));
+                        }
+                    }));
+        }
+        if (betweenRounds && game.isHost(uuid)) {
+            buttons.add(gui.button(t("coffre.changer-reglages", "<white>Changer les réglages"),
+                    t("coffre.changer-reglages-tip", "<gray>Le compte à rebours s'arrête pendant que vous réglez la partie."), p -> {
+                        GameInstance current = plugin.instances().of(p);
+                        if (current != null) {
+                            plugin.coffres().modifier(p, current);
+                        }
+                    }));
+            if (game.relanceEnAttente()) {
+                buttons.add(gui.button(t("coffre.reprendre", "<green>Reprendre le compte à rebours"), null, p -> {
+                    GameInstance current = plugin.instances().of(p);
+                    if (current != null && current.isHost(p.getUniqueId())) {
+                        current.lancerCompteARebours();
+                    }
+                }));
+            }
+            if (game.members().size() > 1) {
+                buttons.add(gui.button(t("host.players", "<white>Joueurs de la partie"),
+                        t("host.players-tip", "<gray>Nommer un autre hôte, ou exclure un joueur."), this::openHostPlayers));
+            }
+        }
         if (!game.isPublic() && game.isHost(uuid) && game.phase() == GameInstance.Phase.WAITING) {
-            buttons.add(gui.button(t("game.start", "<green><bold>Lancer la partie"), null, p -> {
+            buttons.add(gui.button(game.relance() > 0 ? t("coffre.lancer-maintenant", "<green><bold>Lancer maintenant")
+                    : t("game.start", "<green><bold>Lancer la partie"), null, p -> {
                 GameInstance current = plugin.instances().of(p);
                 if (current != null) {
                     Component error = current.requestStart(p);

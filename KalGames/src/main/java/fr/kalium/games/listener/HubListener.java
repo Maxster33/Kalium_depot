@@ -105,6 +105,14 @@ public final class HubListener implements Listener {
                     }
                 }
                 case ItemService.REPLAY -> plugin.replay().use(player); // 1.24.0
+                case ItemService.LEAVE -> plugin.hub().sendToHub(player); // 1.26.0
+                case ItemService.SPECTATE -> { // 1.26.0
+                    net.kyori.adventure.text.Component error = plugin.instances().playerToSpectator(player);
+                    if (error != null) {
+                        player.sendMessage(plugin.prefix().append(error));
+                    }
+                }
+
                 default -> {
                 }
             }

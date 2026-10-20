@@ -947,3 +947,58 @@ Empilé sur la 1.24.0 non testée : accord explicite.
 - Avec un KLM_Contacts sans cette fonction (avant la 1.2.0) : un avertissement au démarrage, rien d'autre ne change.
 
 **À déployer après KLM_Contacts 1.2.0 et KaliumRelay 1.8.0.** **Déployé sur Kal-Games le 09/10/2026 à 06:50 (LeKiwi06 ; 1.24.0 dans `_removed-kalgames-1.24.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.26.0 - menus en coffre, accueil Créer / Rejoindre / Parties en cours, relance en salle d'attente (20/10/2026, LeKiwi06)
+
+**Demandes de LeKiwi06 (20/10/2026)**, sur maquette validée : « faire une alternative avec des interfaces coffres pour
+tout », « masquer pour le moment les parties publiques des mini-jeux, on a pas assez de joueurs pour ça », « montrer
+toutes les parties avec le titre du jeu et l'hôte », « au lieu d'un totem pour relancer dans le lobby, laisse nous dans
+la salle d'attente du jeu avec un bouton quitter la partie, et un timer de 15 secondes qui relance pour les joueurs qui
+n'ont pas quitté la partie » ; « il faut que les spec qui ont regardé la partie soient mis dans la salle d'attente entre
+2 parties pour rejoindre la game avant la relance, avec un bouton "passer spectateur" ». Ajouts proposés et acceptés :
+dernière partie, réglages retenus, hôte qui pilote la salle, objets de barre, résumé de la manche, messages en barre
+d'action. Empilé sur la 1.25.0 non testée en jeu : accord explicite (« les joueurs les utilisent depuis un moment, et
+aucun bug n'est à dénombrer »).
+
+**Étape 1 : menus**
+- KG_Menu 1.2.0 affiche l'accueil ; KalGames lui fournit ses jeux (`jeux`), ses parties (`parties` : privées listées,
+  tous jeux confondus, nom du jeu + hôte + joueurs / places, en attente ou en jeu), la dernière partie du joueur
+  (`derniere`) et les codes (`code`).
+- **Parties publiques masquées** : `menus.parties-publiques: false` (par défaut). Le moteur public reste en place.
+- **Réglages d'une nouvelle partie en coffre** (`MenusCoffre`) : une case par réglage, valeur dans le nom (arène : clic
+  gauche suivante / droit précédente ; nombres : clic gauche +1, droit -1, avec Maj par 5 ; cases : clic = oui/non ;
+  « Visible dans la liste »), « Créer la partie » au centre de la barre, « Retour » à côté. Le PvP Kit, le Cache-cache,
+  les Piliers et le Pong fournissent leur propre formulaire : il s'ouvre encore en fenêtre depuis le coffre (étape 5).
+  Rush : plus de « Joueurs maximum » (la taille vient des équipes de l'arène) ; l'arène se choisit dans les réglages.
+- **Menu de la partie, menu du spectateur, choix de l'équipe du Rush en coffre** ; les fenêtres restent pour les joueurs
+  qui ont choisi « fenêtres » (même organisation).
+- **Réglages retenus** (`reglages.yml`, par joueur et par jeu) : la création reprend les derniers choix (coffre et
+  fenêtre) ; **« Recréer ma dernière partie »** sur l'accueil (même jeu, même arène, mêmes réglages).
+- Messages des menus en coffre au-dessus de la barre d'objets ; le code de la partie créée reste dans le tchat.
+- Icône de chaque jeu : `menus.icones.<TYPE>` (sinon : bateau, bottes, épée, lit, citrouille, bloc d'or, boule de
+  slime...).
+
+**Étape 2 : fin de partie (parties privées)**
+- Plus de retour au hub ni d'objet « Rejouer » : **tout le monde reste dans la salle d'attente**, barre en haut de
+  l'écran « Nouvelle partie dans 15 s », puis la partie **relance avec ceux qui sont restés** (`relance.active`,
+  `relance.secondes`). Pas assez de joueurs à 0 s : le compte à rebours s'arrête et reprend dès qu'un joueur rejoint la
+  partie (l'hôte peut aussi « Reprendre le compte à rebours » ou « Lancer maintenant »).
+- **Spectateurs** de la manche : mis dans la salle d'attente à la fin (s'il reste de la place) ; « Passer spectateur »
+  (menu, ou œil de l'Ender dans la barre) pour seulement regarder la suivante ; un spectateur peut « Rejoindre la
+  partie » depuis son menu.
+- **Objets de la barre** dans la salle d'attente : « Quitter la partie » (lit rouge, case 6) et, entre deux manches,
+  « Passer spectateur » (case 2) ; retirés au début de la manche.
+- **L'hôte pilote** : « Changer les réglages » (le compte à rebours s'arrête ; « Créer la partie » prépare une nouvelle
+  partie avec ces réglages, arène comprise, et y fait passer tout le monde), nommer un autre hôte (clic gauche sur une
+  tête), exclure un joueur (Maj + clic droit ; en fenêtre : avec confirmation).
+- **Résumé de la manche** (points gagnés par chacun, lus dans KG_ScoreBoards au début et à la fin de la manche) dans le
+  menu de la partie, qui s'ouvre tout seul à la fin de la manche.
+- Parties publiques (si on les réaffiche) : fonctionnement inchangé (retour au hub + « Rejouer »). KG_BuildBattle garde
+  « Rejouer » (étape 6).
+
+**Limites** : un spectateur de l'ancienne partie n'est pas emmené quand l'hôte change les réglages (il revient au hub
+quand l'ancienne partie se ferme). Le bouton « Classements » de l'ancien écran d'un jeu a disparu (les classements
+restent dans « Informations > Classements »).
+
+**À déployer avec KG_Menu 1.2.0 (obligatoire).** Nouvelles clés `menus`, `relance` : valeurs par défaut dans le code.
+**Compilé, non déployé, non testé en jeu.**

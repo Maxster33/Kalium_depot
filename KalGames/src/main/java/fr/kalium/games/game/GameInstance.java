@@ -84,6 +84,25 @@ public abstract class GameInstance {
     private int emptySeconds;
     private boolean closing;
 
+    // 1.26.0 - relance en salle d'attente (demande de LeKiwi06, 20/10/2026 : « au lieu d'un totem pour relancer dans le
+    // lobby, laisse nous dans la salle d'attente du jeu avec un bouton quitter la partie, et un timer de 15 secondes qui
+    // relance pour les joueurs qui n'ont pas quitté la partie »). Parties privées seulement.
+    /** Secondes avant la relance automatique (0 = pas de compte à rebours). */
+    private int relance;
+    /** Compte à rebours arrêté (pas assez de joueurs, ou l'hôte change les réglages) : reprend dès que possible. */
+    private boolean relanceEnAttente;
+    /** L'hôte change les réglages : pas de reprise automatique tant qu'il n'a pas fini. */
+    private boolean relanceSuspendue;
+    private net.kyori.adventure.bossbar.BossBar barreRelance;
+    /** Points de chaque participant au début de la manche (résumé de la manche). */
+    private final Map<UUID, Double> pointsAvant = new HashMap<>();
+    /** Résumé de la dernière manche : joueurs et points gagnés, du meilleur au moins bon. */
+    private List<Resultat> resume = List.of();
+
+    /** 1.26.0 : un joueur et ses points gagnés pendant la dernière manche. */
+    public record Resultat(UUID uuid, String nom, double points) {
+    }
+
     protected GameInstance(KalGames plugin, String id, Minigame minigame, Arena arena, Template template,
                            boolean publicGame, Map<String, Object> options, int slot) {
         this.plugin = plugin;
@@ -266,6 +285,19 @@ public abstract class GameInstance {
 
     private void prepareRanking() {
         matchId = java.util.UUID.randomUUID().toString();
+        // 1.26.0 : points de chacun au début de la manche (résumé de la manche) ; plus de compte à rebours.
+        relance = 0;
+        relanceEnAttente = false;
+        relanceSuspendue = false;
+        cacherBarre();
+        pointsAvant.clear();
+        for (UUID uuid : participants) {
+            pointsAvant.put(uuid, pointsDe(uuid));
+            Player participant = Bukkit.getPlayer(uuid);
+            if (participant != null) {
+                plugin.items().removeStandsItems(participant);
+            }
+        }
         boolean ranked = ranked();
         for (UUID uuid : participants) {
             Player player = Bukkit.getPlayer(uuid);
@@ -277,6 +309,169 @@ public abstract class GameInstance {
                         "<gray>Mode opérateur : vos points et temps <white>ne comptent pas</white> pour le classement.")));
                 continue;
             }
+        }
+    }
+
+    /** 1.26.0 : copie des réglages de la partie (« Changer les réglages » de l'hôte). */
+    public Map<String, Object> optionsCopie() {
+        return new HashMap<>(options);
+    }
+
+    /** 1.26.0 : nombre de joueurs maximum d'un match (menus : « Joueurs : 3/6 »). */
+
+    public int capacite() {
+        return maxParticipants();
+    }
+
+    // ------------------------------------------------------------------ 1.26.0 : relance en salle d'attente
+
+    private boolean relanceActive() {
+        return !publicGame && plugin.getConfig().getBoolean("relance.active", true);
+    }
+
+    private int secondesRelance() {
+        return Math.max(5, plugin.getConfig().getInt("relance.secondes", 15));
+    }
+
+    /** Secondes avant la relance automatique, 0 si aucun compte à rebours (menus). */
+    public int relance() {
+        return phase == Phase.WAITING ? relance : 0;
+    }
+
+    /** La relance attend des joueurs (ou la fin des réglages de l'hôte). */
+    public boolean relanceEnAttente() {
+        return phase == Phase.WAITING && relanceEnAttente;
+    }
+
+    /** Résumé de la dernière manche (vide avant la première). */
+    public List<Resultat> resume() {
+        return resume;
+    }
+
+    /** Démarre (ou reprend) le compte à rebours de la relance. */
+    public void lancerCompteARebours() {
+        if (!relanceActive() || closing) {
+            return;
+        }
+        relanceEnAttente = false;
+        relanceSuspendue = false;
+        relance = secondesRelance();
+        afficherBarre();
+    }
+
+    /** L'hôte change les réglages : le compte à rebours s'arrête jusqu'à ce qu'il ait fini. */
+    public void suspendreRelance() {
+        if (!relanceActive() || phase != Phase.WAITING || (relance <= 0 && !relanceEnAttente)) {
+            return;
+        }
+        relance = 0;
+        relanceEnAttente = true;
+        relanceSuspendue = true;
+        cacherBarre();
+        broadcast(t("relance.suspendue", "<yellow>L'hôte change les réglages : la relance attend."));
+    }
+
+    /** L'hôte a renoncé à changer les réglages : le compte à rebours reprend. */
+    public void reprendreRelance() {
+        if (relanceSuspendue && phase == Phase.WAITING) {
+            lancerCompteARebours();
+        }
+    }
+
+    private void afficherBarre() {
+        if (relance <= 0) {
+            cacherBarre();
+            return;
+        }
+        Component titre = t("relance.barre", "<green>Nouvelle partie dans <white><s></white> s <dark_gray>- <gray>Quitter : objet rouge de la barre",
+                "s", relance);
+        float progression = Math.max(0f, Math.min(1f, relance / (float) secondesRelance()));
+        if (barreRelance == null) {
+            barreRelance = net.kyori.adventure.bossbar.BossBar.bossBar(titre, progression,
+                    net.kyori.adventure.bossbar.BossBar.Color.GREEN, net.kyori.adventure.bossbar.BossBar.Overlay.PROGRESS);
+        } else {
+            barreRelance.name(titre);
+            barreRelance.progress(progression);
+        }
+        for (Player player : onlineMembers()) {
+            player.showBossBar(barreRelance);
+        }
+        for (Player player : onlineSpectators()) {
+            player.showBossBar(barreRelance);
+        }
+    }
+
+    private void cacherBarre() {
+        if (barreRelance == null) {
+            return;
+        }
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.hideBossBar(barreRelance);
+        }
+    }
+
+    /** Une seconde de la salle d'attente : compte à rebours, puis relance avec les joueurs restés. */
+    private void secondeRelance() {
+        if (relance <= 0) {
+            return;
+        }
+        relance--;
+        if (relance > 0) {
+            afficherBarre();
+            return;
+        }
+        cacherBarre();
+        Component erreur = members.isEmpty() ? t("relance.vide", "<red>Personne dans la partie.") : validatePrivateStart();
+        if (erreur != null) {
+            relanceEnAttente = true;
+            broadcast(t("relance.attente", "<yellow>Pas assez de joueurs pour relancer : la partie reprendra dès qu'un joueur la rejoindra.")
+                    .append(Component.newline()).append(erreur));
+            return;
+        }
+        relanceEnAttente = false;
+        participants.clear();
+        participants.addAll(members);
+        prepareRanking();
+        beginMatch();
+    }
+
+    /**
+     * Fin d'une manche d'une partie privée : tout le monde reste dans la salle d'attente ; les spectateurs y entrent aussi
+     * (« Passer spectateur » pour seulement regarder la suivante) ; résumé de la manche ; compte à rebours de la relance.
+     */
+    private void apresManche() {
+        List<Resultat> resultats = new ArrayList<>();
+        for (Map.Entry<UUID, Double> avant : pointsAvant.entrySet()) {
+            double maintenant = pointsDe(avant.getKey());
+            String nom = Bukkit.getOfflinePlayer(avant.getKey()).getName();
+            resultats.add(new Resultat(avant.getKey(), nom == null ? "?" : nom, Math.max(0, maintenant - avant.getValue())));
+        }
+        resultats.sort((a, b) -> Double.compare(b.points(), a.points()));
+        resume = List.copyOf(resultats);
+        pointsAvant.clear();
+        for (Player spectateur : onlineSpectators()) {
+            Component refus = plugin.instances().spectatorToPlayer(spectateur, this);
+            if (refus != null) {
+                spectateur.sendMessage(plugin.prefix().append(refus));
+            }
+        }
+        lancerCompteARebours();
+        // Le menu de la partie s'ouvre : résumé, « Quitter la partie », « Passer spectateur »...
+        for (Player player : onlineMembers()) {
+            plugin.later(10L, () -> {
+                if (player.isOnline() && plugin.instances().of(player) == this && phase == Phase.WAITING) {
+                    plugin.menus().openCurrent(player);
+                }
+            });
+        }
+    }
+
+    private double pointsDe(UUID uuid) {
+        try {
+            fr.kalium.scoreboards.data.StatsService.Row row = plugin.stats().playerRow(minigame.id(), uuid);
+            return row == null ? 0 : row.points();
+        } catch (RuntimeException | LinkageError e) {
+            return 0;
         }
     }
 
@@ -418,6 +613,13 @@ public abstract class GameInstance {
         } else {
             player.sendMessage(plugin.prefix().append(t("join.preparing", "<gray>Préparation de l'arène…")));
         }
+        // 1.26.0 : relance arrêtée faute de joueurs : elle reprend dès qu'il y en a assez.
+        if (relanceEnAttente && !relanceSuspendue && phase == Phase.WAITING && validatePrivateStart() == null) {
+            lancerCompteARebours();
+            broadcast(t("relance.reprise", "<green>Assez de joueurs : nouvelle partie dans <white><s></white> s.", "s", relance));
+        } else if (relance > 0 && barreRelance != null) {
+            player.showBossBar(barreRelance);
+        }
         return null;
     }
 
@@ -425,6 +627,10 @@ public abstract class GameInstance {
     public void release(UUID uuid, boolean disconnected) {
         if (!members.remove(uuid)) {
             return;
+        }
+        Player leaving = Bukkit.getPlayer(uuid);
+        if (leaving != null && barreRelance != null) {
+            leaving.hideBossBar(barreRelance); // 1.26.0
         }
         boolean wasParticipant = participants.contains(uuid);
         queue.remove(uuid);
@@ -448,6 +654,11 @@ public abstract class GameInstance {
         plugin.hub().applyStandsState(player);
         player.teleport(stands());
         onArrived(player);
+        if (!publicGame) {
+            // 1.26.0 : « Quitter la partie » et, entre deux manches, « Passer spectateur » dans la barre d'objets.
+            plugin.items().giveStandsItems(player, phase == Phase.WAITING && minigame.getBool("allow-spectate", true));
+        }
+
     }
 
     // ------------------------------------------------------------------ crochets des moteurs
@@ -686,6 +897,9 @@ public abstract class GameInstance {
         if (phase == Phase.VOTE || phase == Phase.COUNTDOWN || phase == Phase.RUNNING || phase == Phase.ENDING) {
             matchSecond();
         }
+        if (phase == Phase.WAITING && relanceActive()) {
+            secondeRelance(); // 1.26.0
+        }
         for (Player player : onlineMembers()) {
             Component status = statusFor(player);
             if (status != null) {
@@ -759,6 +973,15 @@ public abstract class GameInstance {
                     queue.add(uuid);
                 }
             }
+        }
+        if (relanceActive()) {
+            // 1.26.0 : partie privée : on reste dans la salle d'attente, relance après relance.secondes (15 s).
+            plugin.later(1L, () -> {
+                if (!closing && phase == Phase.WAITING) {
+                    apresManche();
+                }
+            });
+            return;
         }
         if (plugin.getConfig().getBoolean("instances.close-after-match", true)) {
             // Fin de partie : les joueurs sont renvoyes au hub ; l'arene, remise en etat, est gardee de cote pour la
@@ -854,6 +1077,7 @@ public abstract class GameInstance {
         }
         closing = true;
         phase = Phase.CLOSED;
+        cacherBarre(); // 1.26.0
         onClose();
         clearEntities();
     }

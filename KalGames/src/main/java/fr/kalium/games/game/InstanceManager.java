@@ -469,7 +469,94 @@ public final class InstanceManager {
         return null;
     }
 
+    // ------------------------------------------------------------------ 1.26.0 : salle d'attente entre deux manches
+
+    /** Un spectateur de la partie entre dans sa salle d'attente (fin de manche) ; null si c'est fait, sinon le refus. */
+    public Component spectatorToPlayer(Player player, GameInstance instance) {
+        UUID uuid = player.getUniqueId();
+        if (spectating.get(uuid) != instance || instance.closing()) {
+            return plugin.t("join.closed", "<red>Cette partie est terminée.");
+        }
+        detachSpectator(uuid, instance);
+        Component refusal = enter(player, instance);
+        if (refusal != null) {
+            // Partie pleine... : il continue de regarder.
+            spectating.put(uuid, instance);
+            instance.addSpectator(uuid);
+            return refusal;
+        }
+        player.sendMessage(plugin.prefix().append(plugin.t("relance.spectateur-entre",
+                "<green>Vous êtes dans la salle d'attente : vous jouerez la prochaine manche. <gray>(« Passer spectateur » pour seulement regarder)")));
+        return null;
+    }
+
+    /** « Passer spectateur » : quitte la salle d'attente pour regarder la manche suivante sans la jouer. */
+    public Component playerToSpectator(Player player) {
+        UUID uuid = player.getUniqueId();
+        GameInstance instance = byPlayer.get(uuid);
+        if (instance == null || instance.isPublic()) {
+            return plugin.t("spectate.not-in-private", "<red>Vous n'êtes pas dans une partie privée.");
+        }
+        if (!instance.minigame().getBool("allow-spectate", true)) {
+            return plugin.t("spectate.disabled", "<red>Le mode spectateur est désactivé pour ce mini-jeu.");
+        }
+        if (!instance.ready() || (instance.matchInProgress() && instance.isParticipant(uuid))) {
+            return plugin.t("spectate.between-rounds", "<red>Vous pourrez passer spectateur entre deux manches.");
+        }
+        detach(uuid, instance, false);
+        spectating.put(uuid, instance);
+        instance.addSpectator(uuid);
+        plugin.hub().applySpectatorState(player);
+        player.teleport(instance.stands());
+        player.sendMessage(plugin.prefix().append(plugin.t("spectate.passed",
+                "<aqua>Vous regardez la partie. <gray>Pour rejouer : menu de la partie (/kalgames menu) > « Rejoindre la partie ».")));
+        return null;
+    }
+
+    /** L'hôte exclut un joueur de sa partie privée (retour au hub). */
+    public Component kick(Player host, UUID target) {
+        GameInstance instance = byPlayer.get(host.getUniqueId());
+        if (instance == null || instance.isPublic() || !instance.isHost(host.getUniqueId())) {
+            return plugin.t("host.only", "<red>Seul l'hôte de la partie peut faire cela.");
+        }
+        if (target.equals(host.getUniqueId()) || !instance.isMember(target)) {
+            return plugin.t("host.kick-unknown", "<red>Ce joueur n'est pas dans votre partie.");
+        }
+        Player player = Bukkit.getPlayer(target);
+        if (player != null) {
+            plugin.hub().sendToHub(player);
+            player.sendMessage(plugin.prefix().append(plugin.t("host.kicked", "<red>L'hôte vous a retiré de la partie.")));
+        } else {
+            leave(target);
+        }
+        return null;
+    }
+
+    private void leave(UUID uuid) {
+        GameInstance instance = byPlayer.get(uuid);
+        if (instance != null) {
+            detach(uuid, instance, true);
+        }
+    }
+
+    /** L'hôte donne son rôle à un autre joueur de la partie. */
+    public Component giveHost(Player host, UUID target) {
+        GameInstance instance = byPlayer.get(host.getUniqueId());
+        if (instance == null || instance.isPublic() || !instance.isHost(host.getUniqueId())) {
+            return plugin.t("host.only", "<red>Seul l'hôte de la partie peut faire cela.");
+        }
+        Player player = Bukkit.getPlayer(target);
+        if (player == null || !instance.isMember(target) || target.equals(host.getUniqueId())) {
+            return plugin.t("host.kick-unknown", "<red>Ce joueur n'est pas dans votre partie.");
+        }
+        instance.host(target);
+        instance.broadcast(plugin.t("host.given", "<yellow><white><player></white> est maintenant l'hôte de la partie.",
+                "player", player.getName()));
+        return null;
+    }
+
     /** Regarde une partie privee (non listee) avec son code. */
+
     public Component joinSpectatorByCode(Player player, String code) {
         GameInstance instance = byCode(code);
         if (instance == null || instance.isPublic() || instance.closing()) {

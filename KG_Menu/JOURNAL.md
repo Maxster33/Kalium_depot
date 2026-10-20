@@ -44,3 +44,25 @@ rien » ; classements et paramètres vont dans le comparateur « Informations »
 
 **Déploiement** : avec KLM_Menu 2.4.0 (obligatoire), KalGames 1.21.0, KG_ScoreBoards 1.6.0, KG_Bingo 1.6.0,
 KG_BuildBattle 0.2.0. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**
+
+## 1.2.0 - accueil Créer / Rejoindre / Parties en cours, menus en coffres ou en fenêtres (20/10/2026, LeKiwi06)
+
+**Demandes de LeKiwi06 (20/10/2026)**, sur maquette validée : « faire une option pour switch du /dialog au /coffre dans
+l'interface, paramètre, affichage », « quand on ouvre l'interface on voit "créer une partie", "rejoindre une partie",
+"voir les parties en cours" », « montrer toutes les parties avec le titre du jeu et l'hôte ».
+- **Accueil** (étoile, `/kalgames menu`, « Kal-Games » du catalogue) : Créer une partie (choix du jeu, puis ses
+  réglages fournis par le plugin du jeu), Rejoindre une partie (toutes les parties ouvertes, tous jeux confondus : nom
+  du jeu, hôte, joueurs / places, en attente ou en jeu ; « Entrer un code »), Parties en cours (parties lancées, à
+  regarder), « Recréer ma dernière partie », Paramètres.
+- **Paramètres › Affichage** : menus en **coffres** (par défaut, `affichage.coffres-par-defaut`) ou en **fenêtres** ;
+  choix de chaque joueur dans `affichage.yml`. Les deux modes ont la même organisation.
+- API (`MenuProvider`, ajouts avec valeurs par défaut : les plugins compilés avant restent compatibles) : `Jeu`,
+  `Partie`, `Derniere`, `jeux`, `parties`, `derniere`, `code`. Un plugin pas encore adapté (KG_Bingo, KG_BuildBattle)
+  apparaît dans « Créer une partie » avec son ancien menu en fenêtre (icône : `icones.<id>`) ; ses parties ne sont pas
+  encore dans les listes (étape 6).
+- Pour les autres plugins de kal-games : `coffres(joueur)`, `clic(joueur)` (clic gauche / droit / Maj dans un menu en
+  coffre), `message(...)` (barre d'action si un coffre est ouvert, sinon tchat), `openCreate`, `openJoin`,
+  `openDisplay`.
+
+**À déployer avec KalGames 1.26.0.** Nouvelles clés `affichage`, `icones` : valeurs par défaut dans le code.
+**Compilé, non déployé, non testé en jeu.**

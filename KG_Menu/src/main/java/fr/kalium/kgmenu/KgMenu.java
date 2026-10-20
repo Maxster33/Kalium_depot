@@ -50,6 +50,8 @@ import java.util.function.Consumer;
  *   KG_ScoreBoards...) et affiche leurs boutons : accueil (jeux, puis autres boutons) et accueil "Parametres".
  * - Objet du hub (etoile "Mini-jeux", repris de KalGames) : ouvre le menu de la partie en cours si un jeu s'en charge,
  *   sinon l'accueil. Donne par KalGames quand il prepare le hub (giveHubItem), verrouille ici.
+ * - 1.2.0 : accueil Créer une partie / Rejoindre une partie / Parties en cours (parties de tous les jeux, nom du jeu
+ *   et hôte), menus en coffres ou en fenêtres selon « Paramètres › Affichage » de chaque joueur (voir {@link #coffres}).
  * - Apparait dans KLM_Menu : 1.1.0, les reglages des plugins de kal-games sont a plat dans « Informations >
  *   Parametres » (un bouton par jeu) ; chaque bouton de jeu de l'accueil affiche son nombre de joueurs.
  */
@@ -62,6 +64,11 @@ public final class KgMenu extends JavaPlugin implements Listener {
     private NamespacedKey itemKey;
     private final List<MenuProvider> providers = new CopyOnWriteArrayList<>();
     private final Map<UUID, Long> lastOpen = new HashMap<>();
+    /** 1.2.0 : réglages d'affichage des joueurs et accueil Créer / Rejoindre / Parties en cours. */
+    private Affichage affichage;
+    private Accueil accueil;
+    /** 1.2.0 : dernier type de clic de chaque joueur dans un menu en coffre (réglages : clic gauche +, clic droit -). */
+    private final Map<UUID, ClickType> clics = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -69,6 +76,8 @@ public final class KgMenu extends JavaPlugin implements Listener {
         lang = new Lang(this);
         gui = new Gui(this, lang);
         itemKey = new NamespacedKey(this, "hub_item");
+        affichage = new Affichage(this);
+        accueil = new Accueil(this);
         getServer().getPluginManager().registerEvents(this, this);
 
         getServer().getServicesManager().register(MenuSection.class,
@@ -162,6 +171,9 @@ public final class KgMenu extends JavaPlugin implements Listener {
         if (lang != null) {
             lang.saveIfNeeded();
         }
+        if (affichage != null) {
+            affichage.enregistrer();
+        }
     }
 
     Component t(String key, String def, Object... pairs) {
@@ -229,6 +241,92 @@ public final class KgMenu extends JavaPlugin implements Listener {
         return all;
     }
 
+    /** 1.2.0 : fournisseurs actifs (accueil). */
+    List<MenuProvider> providers() {
+        return providers;
+    }
+
+    List<MenuProvider.Entry> extrasFor(Player player) {
+        return collect(player, MenuProvider::extras);
+    }
+
+    Gui gui() {
+        return gui;
+    }
+
+    // ------------------------------------------------------------------ 1.2.0 : affichage (pour tous les plugins de kal-games)
+
+    /**
+     * Ce joueur veut-il les menus de Kal-Games en coffres (true, par défaut) ou en fenêtres (false) ? Réglage
+     * « Paramètres › Affichage » ; à lire par chaque plugin de kal-games avant d'ouvrir un menu.
+     */
+    public boolean coffres(Player player) {
+        return affichage.coffres(player);
+    }
+
+    public void coffres(Player player, boolean value) {
+        affichage.coffres(player, value);
+    }
+
+    /** Dernier clic du joueur dans un menu en coffre (gauche, droit, avec Maj...) : réglages qui montent ou descendent. */
+    public ClickType clic(Player player) {
+        return clics.getOrDefault(player.getUniqueId(), ClickType.LEFT);
+    }
+
+    /**
+     * Message court d'un menu : au-dessus de la barre d'objets si un menu en coffre est ouvert (modèle validé pour la
+     * survie), sinon dans le tchat. refus = son grave.
+     */
+    public void message(Player player, Component text, boolean refus) {
+        if (player.getOpenInventory().getTopInventory().getHolder() instanceof fr.kalium.menu.api.Contenant) {
+            fr.kalium.menu.api.Contenant.message(player, text, refus);
+        } else {
+            player.sendMessage(text);
+        }
+    }
+
+    int largeurBoutons() {
+        return Math.max(100, Math.min(400, getConfig().getInt("gui.button-width", 240)));
+    }
+
+    /** Largeur approximative d'un texte dans la police du jeu (px) : 6 par caractère, moins pour i ! . l t I f k espace. */
+    static int largeur(String texte) {
+        int px = 0;
+        for (char c : texte.toCharArray()) {
+            px += switch (c) {
+                case 'i', '!', '.', ',', ':', ';', '|' -> 2;
+                case 'l', '·' -> 3;
+                case 't', 'I', ' ' -> 4;
+                case 'f', 'k', '(', ')' -> 5;
+                default -> 6;
+            };
+        }
+        return px;
+    }
+
+    /** Écran « Créer une partie » (choix du jeu), pour les plugins qui y renvoient (« Retour » des réglages). */
+    public void openCreate(Player player) {
+        accueil.creer(player, p -> openHome(p, null));
+    }
+
+    /** Écran « Rejoindre une partie ». */
+    public void openJoin(Player player) {
+        accueil.rejoindre(player, p -> openHome(p, null), 0);
+    }
+
+    /** Paramètres › Affichage. */
+    public void openDisplay(Player player, Consumer<Player> back) {
+        accueil.affichage(player, back == null ? p -> openHome(p, null) : back);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onMenuClick(InventoryClickEvent event) {
+        if (event.getWhoClicked() instanceof Player player
+                && event.getView().getTopInventory().getHolder() instanceof fr.kalium.menu.api.Contenant) {
+            clics.put(player.getUniqueId(), event.getClick());
+        }
+    }
+
     private List<MenuProvider.Entry> settingsFor(Player player) {
         return collect(player, MenuProvider::settings);
     }
@@ -269,24 +367,8 @@ public final class KgMenu extends JavaPlugin implements Listener {
      * « Parametres » ici ; classements et parametres sont dans le comparateur « Informations » (KLM_Menu).
      */
     public void openHome(Player player, Consumer<Player> back) {
-        Consumer<Player> here = p -> openHome(p, back);
-        List<ActionButton> buttons = new ArrayList<>();
-        List<MenuProvider.Entry> games = collect(player, MenuProvider::games);
-        for (MenuProvider.Entry entry : games) {
-            buttons.add(button(entry.players() < 0 ? entry
-                    : new MenuProvider.Entry(entry.id(), entry.label().append(t("menu.players", " <dark_gray>| <gray><n> en jeu",
-                            "n", entry.players())), entry.tooltip(), entry.open(), entry.players()), here));
-        }
-        for (MenuProvider.Entry entry : collect(player, MenuProvider::extras)) {
-            buttons.add(button(entry, here));
-        }
-        if (back != null) {
-            buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, back::accept));
-        }
-        List<Component> body = List.of(games.isEmpty()
-                ? t("menu.games-empty", "<gray>Aucun mini-jeu n'est disponible pour le moment.")
-                : t("menu.games-intro", "<gray>Choisissez un mini-jeu."));
-        gui.open(player, t("menu.games-title", "<gold><bold>Mini-jeux Kal-Games"), body, List.of(), buttons, null, 1);
+        // 1.2.0 : Créer une partie / Rejoindre une partie / Parties en cours, en coffre ou en fenêtre (Accueil).
+        accueil.accueil(player, back);
     }
 
     /**
@@ -411,5 +493,6 @@ public final class KgMenu extends JavaPlugin implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         lastOpen.remove(event.getPlayer().getUniqueId());
+        clics.remove(event.getPlayer().getUniqueId());
     }
 }

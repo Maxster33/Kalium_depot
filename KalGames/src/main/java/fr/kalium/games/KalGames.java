@@ -43,6 +43,9 @@ public final class KalGames extends JavaPlugin {
     private Gui gui;
     private PlayerMenus menus;
     private AdminMenus admin;
+    /** 1.26.0 : menus des joueurs en coffre, réglages retenus. */
+    private fr.kalium.games.gui.MenusCoffre coffres;
+    private fr.kalium.games.game.Reglages reglages;
     /** 1.14.0 : les classements (donnees, panneaux, menus) sont dans le plugin KG_ScoreBoards. */
     private fr.kalium.scoreboards.KGScoreBoards ranking;
     private java.util.function.Function<String, fr.kalium.scoreboards.Category> categories;
@@ -77,6 +80,8 @@ public final class KalGames extends JavaPlugin {
         gui = new Gui(this);
         menus = new PlayerMenus(this, gui);
         admin = new AdminMenus(this, gui);
+        coffres = new fr.kalium.games.gui.MenusCoffre(this);
+        reglages = new fr.kalium.games.game.Reglages(this);
         instances = new InstanceManager(this);
         replay = new fr.kalium.games.game.ReplayService(this);
         // 1.25.0 : groupes de jeu de KLM_Contacts (softdepend). Sans lui, ou avec une version sans cette fonction
@@ -161,6 +166,27 @@ public final class KalGames extends JavaPlugin {
             public boolean openCurrent(Player player) {
                 return menus.openCurrent(player);
             }
+
+            // 1.26.0 : accueil Créer une partie / Rejoindre une partie / Parties en cours de KG_Menu 1.2.0.
+            @Override
+            public java.util.List<Jeu> jeux(Player player) {
+                return menus.jeux(player);
+            }
+
+            @Override
+            public java.util.List<Partie> parties(Player player) {
+                return menus.parties(player);
+            }
+
+            @Override
+            public Derniere derniere(Player player) {
+                return menus.derniere(player);
+            }
+
+            @Override
+            public net.kyori.adventure.text.Component code(Player player, String code) {
+                return menus.code(player, code);
+            }
         }, this, org.bukkit.plugin.ServicePriority.Normal);
         // 1.21.0 : /menu on | off (KLM_Menu 2.4.0) refuse pendant une partie, dans les gradins ou en spectateur.
         getServer().getServicesManager().register(fr.kalium.menu.api.PlayerActivity.class, new fr.kalium.menu.api.PlayerActivity() {
@@ -196,6 +222,9 @@ public final class KalGames extends JavaPlugin {
         }
         if (lang != null) {
             lang.saveIfNeeded();
+        }
+        if (reglages != null) {
+            reglages.enregistrer();
         }
         getServer().getMessenger().unregisterOutgoingPluginChannel(this);
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
@@ -292,6 +321,25 @@ public final class KalGames extends JavaPlugin {
 
     public PlayerMenus menus() {
         return menus;
+    }
+
+    /** 1.26.0 : menus des joueurs en coffre. */
+    public fr.kalium.games.gui.MenusCoffre coffres() {
+        return coffres;
+    }
+
+    /** 1.26.0 : réglages retenus et dernière partie de chaque joueur. */
+    public fr.kalium.games.game.Reglages reglages() {
+        return reglages;
+    }
+
+    /** 1.26.0 : ce joueur veut-il les menus en coffres (réglage « Paramètres › Affichage » de KG_Menu) ? */
+    public boolean enCoffre(Player player) {
+        try {
+            return kgMenu().coffres(player);
+        } catch (LinkageError | RuntimeException e) {
+            return false; // KG_Menu plus ancien que la 1.2.0
+        }
     }
 
     public AdminMenus admin() {
