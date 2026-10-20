@@ -16,8 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KG_Bingo — LeKiwi06 — depuis le 2026-10-20 13:30 — menus en coffre (réglages avec jauges, liste des parties dans l'accueil de KG_Menu), Échap = page précédente
-- KG_BuildBattle — LeKiwi06 — depuis le 2026-10-20 13:30 — menus en coffre, parties dans l'accueil de KG_Menu, Échap = page précédente
 
 
 
