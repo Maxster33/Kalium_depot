@@ -96,6 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **Fusion de Kal-Games dans Kanvas** (LeKiwi06, 21/10/2026 ; Kal-Games et Serveur Jeux expirent le 23/10), **compilés, non déployés, non testés en jeu, à déployer ensemble** : KaliumRelay 1.9.0 (proxy : nom Velocity demandé déposé sur le relais, passage direct entre deux noms de la même machine refusé) ; sur Kanvas : **KLM_Espaces 1.0.0 (nouveau : espaces étanches kal-games / kanvas, inventaires, visibilité, tchat séparés)**, KalGames 1.27.0 (limité à ses mondes), KLM_Menu 2.12.0 (interfaces par espace), KLM_Chat 1.1.0, KLM_Contacts 1.4.0, KG_BuildBattle 0.7.0 + KV_BuildBattle 0.5.0 (Build Battle sur le même serveur). `velocity.toml` : `kal-games` vers l'adresse de Kanvas. Plan : [Plan de migration](https://claude.ai/artifact/MyTJxpL8zq1XCy1sTZKdZh) ; détail : `JOURNAL.md` de chaque plugin.
 - **KG_Bingo 1.11.0 + KG_BuildBattle 0.6.0** (LeKiwi06, 20/10/2026), pour Kal-Games (avec KalGames 1.26.0 et KG_Menu 1.2.0, déjà déployés), **déployés ensemble sur Kal-Games le 21/10 à 01:29 (actifs après redémarrage), non testés en jeu** : réglages en coffre (Bingo : jauges, composition de la grille dans une seule fenêtre ; Build Battle : tempo, équipes, thèmes écrits), Échap = Retour, réglages retenus, « Recréer ma dernière partie », parties dans « Rejoindre une partie ». Détail : leurs `JOURNAL.md`.
 
 - **KalGames 1.26.0 + KG_Menu 1.2.0** (LeKiwi06, 20/10/2026), **déployés ensemble sur Kal-Games le 20/10 à 12:57 (actifs après redémarrage), non testés en jeu** : menus en coffres (par défaut) ou en fenêtres au choix du joueur (« Paramètres › Affichage ») ; accueil Créer une partie / Rejoindre une partie (toutes les parties, nom du jeu + hôte) / Parties en cours ; parties publiques masquées ; réglages retenus, « Recréer ma dernière partie » ; fin de manche d'une partie privée : on reste dans la salle d'attente, relance après 15 s avec ceux qui restent, spectateurs ramenés dans la salle (« Passer spectateur »), hôte qui change les réglages / nomme un hôte / exclut, résumé de la manche ; plus d'objet « Rejouer » pour les parties privées. Détail : `KalGames/JOURNAL.md`, `KG_Menu/JOURNAL.md`.
@@ -150,6 +151,7 @@ les objets de menu de la barre, refusé en partie ou si les cases sont prises, s
 
 ## Chantiers en cours
 
+- **Migration des serveurs (21-23/10/2026, LeKiwi06)** : Kal-Games (7001) et Serveur Jeux (7015) expirent. Serveur Jeux copié sur la machine d'Event (`serveur-jeux` pointe vers 51.254.174.133:21088, `event` retiré) ; Kal-Games fusionné dans Kanvas avec KLM_Espaces (deux noms Velocity, même machine, on passe par le lobby). Maxster33 ne travaille plus sur le projet (21/10/2026) : LeKiwi06 seul.
 Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécurité) : `ARCHITECTURE_CIBLE.md`.
 
 - **KG_BoatRace** (cahier des charges : `KG_BoatRace/CAHIER_DES_CHARGES.md`) : étapes 0 (sortie de KalGames), 1

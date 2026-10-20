@@ -77,6 +77,7 @@ public final class KalGames extends JavaPlugin {
         ranking.setAdminCheck(this::isAdmin);
         scores = new ScoreBridge(this);
         hub = new HubService(this);
+        hub.loadHubWorld(); // 1.27.0
         gui = new Gui(this);
         menus = new PlayerMenus(this, gui);
         admin = new AdminMenus(this, gui);

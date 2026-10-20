@@ -1016,3 +1016,19 @@ restent dans « Informations > Classements »).
 
 **À déployer avec KG_Menu 1.2.0 (obligatoire).** Nouvelles clés `menus`, `relance` : valeurs par défaut dans le code.
 **Déployé sur Kal-Games le 20/10/2026 à 12:57 (LeKiwi06 ; ancien jar dans `_removed-…`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.27.0 - Kal-Games dans Kanvas : KalGames limité à ses mondes (21/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (21/10/2026)** : Kal-Games et Serveur Jeux expirent dans 3 jours ; « on va fusionner kal-games et kanvas en utilisant le même principe que pour les mondes simultanés dans serveur jeux » ; « les gens ne pourront pas passer de kanvas à kal-games sans le lobby, tout sera sur le même serveur mais de façon hermétique, on fera même des tchats séparés » ; inventaires séparés ; deux noms Velocity gardés (`kal-games` et `Kanvas`, même adresse). Plan : [Plan de migration](https://claude.ai/artifact/MyTJxpL8zq1XCy1sTZKdZh).
+
+- Le monde du hub (`hub.world`, `Kal-Games`) est chargé au démarrage s'il existe sur le disque : il n'est plus forcément
+  le monde principal du serveur.
+- Arrivée : le hub n'est imposé qu'à un joueur qui arrive dans le hub, le monde des parties ou un monde de
+  `hub.teleport-from-worlds` (défaut dans le code : `buildbattle`). Un joueur de Kanvas garde sa position.
+- Protection du hub (blocs, seaux, cadres, porte-armures, entités) et blocage de `/kit` : seulement dans le hub et le
+  monde des parties (avant : tous les mondes, ce qui aurait bloqué la construction sur les plots).
+- `/hub` et `/kalgames` refusés à un joueur d'un autre espace (métadonnée `klm_espace` de KLM_Espaces différente de
+  `hub.space`, défaut `kal-games`), sauf admins : « Kal-Games se rejoint depuis le lobby. ».
+- Nouvelles clés facultatives (défauts dans le code) : `hub.teleport-from-worlds`, `hub.space`.
+
+**Compilé, non déployé, non testé en jeu.** À déployer avec KLM_Espaces 1.0.0 et KaliumRelay 1.9.0 (fusion de Kal-Games dans Kanvas).

@@ -63,6 +63,64 @@ public final class HubService {
         return world != null && world.equals(hubWorld());
     }
 
+    /**
+     * 1.27.0 - Kal-Games fusionne dans Kanvas (LeKiwi06, 21/10/2026) : le hub et les protections de KalGames ne
+     * concernent plus que ses mondes (hub et monde des parties), plus tout le serveur.
+     */
+    public boolean isKalGamesWorld(World world) {
+        return world != null && (isHubWorld(world) || world == plugin.worlds().world());
+    }
+
+    /**
+     * 1.27.0 - mondes d'ou un joueur qui se connecte est ramene au hub, en plus du hub et du monde des parties
+     * (« hub.teleport-from-worlds », defaut : le monde du Build Battle, qui fait partie de l'espace Kal-Games).
+     */
+    public boolean bringsToHubOnJoin(World world) {
+        if (world == null) {
+            return false;
+        }
+        if (isKalGamesWorld(world)) {
+            return true;
+        }
+        java.util.List<String> extra = plugin.getConfig().isList("hub.teleport-from-worlds")
+                ? plugin.getConfig().getStringList("hub.teleport-from-worlds") : java.util.List.of("buildbattle");
+        for (String name : extra) {
+            if (name.equalsIgnoreCase(world.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 1.27.0 - joueur d'un autre espace du serveur (KLM_Espaces, metadonnee « klm_espace ») : /hub, /kalgames et les
+     * menus de KalGames lui sont refuses (espaces etanches, on passe par le lobby). Sans KLM_Espaces : jamais.
+     */
+    public boolean otherSpace(Player player) {
+        if (!player.hasMetadata("klm_espace")) {
+            return false;
+        }
+        String space = player.getMetadata("klm_espace").get(0).asString();
+        return !space.equalsIgnoreCase(plugin.getConfig().getString("hub.space", "kal-games"));
+    }
+
+    /**
+     * 1.27.0 - le monde du hub n'est plus forcement le monde principal du serveur (Kal-Games dans Kanvas) : charge
+     * au demarrage s'il existe sur le disque.
+     */
+    public void loadHubWorld() {
+        String name = plugin.getConfig().getString("hub.world", "Kal-Games");
+        if (Bukkit.getWorld(name) != null) {
+            return;
+        }
+        if (!new java.io.File(Bukkit.getWorldContainer(), name).isDirectory()) {
+            plugin.getLogger().warning("Monde du hub '" + name + "' introuvable : hub dans le monde principal.");
+            return;
+        }
+        World world = new org.bukkit.WorldCreator(name).createWorld();
+        plugin.getLogger().info("Monde du hub '" + name + "' charge" + (world == null ? " : ECHEC." : "."));
+    }
+
     private GameMode hubMode() {
         try {
             return GameMode.valueOf(plugin.getConfig().getString("hub.gamemode", "ADVENTURE").toUpperCase(Locale.ROOT));

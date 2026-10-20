@@ -95,6 +95,13 @@ local-entries:
     worlds:
       - "kalgames:*"
 
+# 2.12.0 - serveur a plusieurs espaces (KLM_Espaces, ex. Kal-Games et Kanvas sur le meme serveur) : interfaces et
+# objets de menu de chaque plugin rattaches a un espace, caches aux joueurs des autres espaces. Noms de plugins,
+# « * » accepte. Absent (ou serveur sans KLM_Espaces) : tout est visible partout.
+# espaces-interfaces:
+#   kal-games: ["KalGames", "KG_*"]
+#   kanvas: ["KV_*"]
+
 # Textes (format MiniMessage).
 messages:
   menu-title: "<#09add3><bold>KaLium</bold> <dark_gray>- <white>Navigation"

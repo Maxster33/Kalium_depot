@@ -27,6 +27,10 @@ public final class ConnectionListener implements Listener {
         if (!plugin.getConfig().getBoolean("hub.teleport-on-join", true)) {
             return;
         }
+        // 1.27.0 : seulement pour un joueur qui arrive dans l'espace Kal-Games (KLM_Espaces choisit le monde avant).
+        if (!plugin.hub().bringsToHubOnJoin(event.getSpawnLocation().getWorld())) {
+            return;
+        }
         try {
             event.setSpawnLocation(plugin.hub().hubLocation());
         } catch (Exception e) {
@@ -41,7 +45,8 @@ public final class ConnectionListener implements Listener {
             return;
         }
         plugin.later(1L, () -> {
-            if (player.isOnline() && plugin.instances().of(player) == null) {
+            if (player.isOnline() && plugin.instances().of(player) == null
+                    && plugin.hub().bringsToHubOnJoin(player.getWorld())) { // 1.27.0
                 plugin.hub().sendToHub(player);
             }
         });

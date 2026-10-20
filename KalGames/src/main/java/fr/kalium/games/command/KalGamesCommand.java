@@ -27,6 +27,11 @@ public final class KalGamesCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        // 1.27.0 : joueur de l'espace Kanvas (meme serveur) : Kal-Games se rejoint par le lobby.
+        if (sender instanceof Player p && plugin.hub().otherSpace(p) && !plugin.isAdmin(p)) {
+            plugin.tell(p, "cmd.other-space", "<red>Kal-Games se rejoint depuis le lobby.");
+            return true;
+        }
         if (command.getName().equalsIgnoreCase("hub")) {
             if (sender instanceof Player player) {
                 plugin.hub().sendToHub(player);

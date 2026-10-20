@@ -217,11 +217,38 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         }
     }
 
+    /**
+     * 2.12.0 - espaces (KLM_Espaces, demande de LeKiwi06 du 21/10/2026 : Kal-Games et Kanvas sur le meme serveur, « de
+     * facon hermetique ») : les interfaces d'un plugin rattache a un AUTRE espace que celui du joueur (metadonnee
+     * « klm_espace ») lui sont cachees. Rattachement dans config.yml, « espaces-interfaces » (noms de plugins, « * »
+     * accepte). Sans KLM_Espaces, ou plugin rattache a aucun espace : visible partout.
+     */
+    private boolean otherSpace(Player player, org.bukkit.plugin.Plugin owner) {
+        if (!player.hasMetadata("klm_espace")) {
+            return false;
+        }
+        String space = player.getMetadata("klm_espace").get(0).asString();
+        org.bukkit.configuration.ConfigurationSection spaces = getConfig().getConfigurationSection("espaces-interfaces");
+        if (spaces == null) {
+            return false;
+        }
+        String name = owner.getName().toLowerCase(Locale.ROOT);
+        for (String id : spaces.getKeys(false)) {
+            for (String pattern : spaces.getStringList(id)) {
+                String regex = ("\\Q" + pattern.toLowerCase(Locale.ROOT) + "\\E").replace("*", "\\E.*\\Q");
+                if (name.matches(regex)) {
+                    return !id.equalsIgnoreCase(space);
+                }
+            }
+        }
+        return false;
+    }
+
     private List<fr.kalium.menu.api.MenuSection> visibleSections(Player player) {
         List<fr.kalium.menu.api.MenuSection> list = new ArrayList<>();
         for (var section : sections) {
             try {
-                if (section.owner().isEnabled() && section.visibleTo(player)) {
+                if (section.owner().isEnabled() && section.visibleTo(player) && !otherSpace(player, section.owner())) {
                     list.add(section);
                 }
             } catch (RuntimeException e) {
@@ -409,7 +436,7 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
     }
 
     private void openSection(Player player, fr.kalium.menu.api.MenuSection section, java.util.function.Consumer<Player> back) {
-        if (!section.owner().isEnabled() || !section.visibleTo(player)) {
+        if (!section.owner().isEnabled() || !section.visibleTo(player) || otherSpace(player, section.owner())) {
             player.sendMessage(mm.deserialize(msg("destination-disabled")));
             return;
         }
@@ -1249,7 +1276,7 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         List<fr.kalium.menu.api.InterfaceItem> list = new ArrayList<>();
         for (var item : interfaceItems()) {
             try {
-                if (item.available(player)) {
+                if (item.available(player) && !otherSpace(player, item.owner())) {
                     list.add(item);
                 }
             } catch (RuntimeException e) {
@@ -1335,6 +1362,9 @@ public final class KlmMenu extends JavaPlugin implements Listener, PluginMessage
         List<fr.kalium.menu.api.InterfaceItem> toGive = new ArrayList<>();
         java.util.TreeSet<Integer> busy = new java.util.TreeSet<>();
         for (var item : interfaceItems()) {
+            if (otherSpace(player, item.owner())) {
+                continue; // 2.12.0
+            }
             int slot;
             try {
                 slot = item.slot(player);

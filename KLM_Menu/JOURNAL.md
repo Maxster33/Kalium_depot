@@ -311,3 +311,14 @@ boîte à outils pour servir à tous les plugins.
 
 **Déployé le 09/10/2026 à 19:09 sur les 6 serveurs Paper (lobby, Kal-Games, Kanvas, Serveur Jeux, Event, Kixster ; accord de LeKiwi06 : « oui déploie » ; jars en place vérifiés identiques à `jars-deployes/` ; 2.10.0 dans `_removed-klm_menu-2.10.0/`). Actif après redémarrage. Statut : non testé en jeu.**
 
+## 2.12.0 - interfaces par espace (KLM_Espaces) (21/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (21/10/2026)** : Kal-Games et Serveur Jeux expirent dans 3 jours ; « on va fusionner kal-games et kanvas en utilisant le même principe que pour les mondes simultanés dans serveur jeux » ; « les gens ne pourront pas passer de kanvas à kal-games sans le lobby, tout sera sur le même serveur mais de façon hermétique, on fera même des tchats séparés » ; inventaires séparés ; deux noms Velocity gardés (`kal-games` et `Kanvas`, même adresse). Plan : [Plan de migration](https://claude.ai/artifact/MyTJxpL8zq1XCy1sTZKdZh).
+
+- Nouvelle clé facultative `espaces-interfaces` (espace -> noms de plugins, `*` accepté) : sur un serveur à plusieurs
+  espaces, les interfaces (Informations, Paramètres, `/menu`) et les objets de menu d'un plugin rattaché à un autre
+  espace que celui du joueur lui sont cachés. Absente, ou sans KLM_Espaces : rien ne change.
+- Pour Kanvas : `kal-games: ["KalGames", "KG_*"]`, `kanvas: ["KV_*"]`.
+- À déployer seulement sur Kanvas (les autres serveurs n'en ont pas besoin).
+
+**Compilé, non déployé, non testé en jeu.** À déployer avec KLM_Espaces 1.0.0 et KaliumRelay 1.9.0 (fusion de Kal-Games dans Kanvas).

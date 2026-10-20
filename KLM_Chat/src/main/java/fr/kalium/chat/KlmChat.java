@@ -80,6 +80,12 @@ public final class KlmChat extends JavaPlugin implements Listener, PluginMessage
     private final Map<UUID, Boolean> dernierGlobal = new ConcurrentHashMap<>();
     /** Nom de CE serveur dans velocity.toml : config.yml, sinon demande au proxy a l'arrivee d'un joueur. */
     private volatile String nomServeur = "";
+    /**
+     * 1.1.0 - serveur a plusieurs espaces (KLM_Espaces : Kal-Games et Kanvas sur le meme serveur, 21/10/2026) : le meme
+     * message global peut arriver plusieurs fois (une fois par nom Velocity de ce serveur, y compris celui de son
+     * auteur). Messages vus recemment (origine|pseudo|texte -> heure), montres une seule fois.
+     */
+    private final Map<String, Long> recents = new ConcurrentHashMap<>();
     private int longueurMax;
 
     @Override
@@ -205,8 +211,24 @@ public final class KlmChat extends JavaPlugin implements Listener, PluginMessage
         return propre.toString().trim();
     }
 
+    /** 1.1.0 : nom Velocity de l'espace du joueur (KLM_Espaces, metadonnee « klm_serveur »), sinon de ce serveur. */
+    private String serveurDe(Player joueur) {
+        if (joueur.hasMetadata("klm_serveur")) {
+            return joueur.getMetadata("klm_serveur").get(0).asString();
+        }
+        return nomServeur;
+    }
+
+    /** 1.1.0 : vrai si ce message a deja ete montre dans les 5 dernieres secondes (et le note sinon). */
+    private boolean dejaVu(String origine, String pseudo, String message) {
+        long maintenant = System.currentTimeMillis();
+        recents.values().removeIf(heure -> maintenant - heure > 5000L);
+        return recents.putIfAbsent(origine.toLowerCase(Locale.ROOT) + "|" + pseudo + "|" + message, maintenant) != null;
+    }
+
     private void envoyer(Player joueur, String message) {
-        String origine = nomServeur;
+        String origine = serveurDe(joueur);
+        dejaVu(origine, joueur.getName(), message);
         ByteArrayOutputStream contenu = new ByteArrayOutputStream();
         ByteArrayOutputStream paquet = new ByteArrayOutputStream();
         try {
@@ -265,11 +287,9 @@ public final class KlmChat extends JavaPlugin implements Listener, PluginMessage
         for (Audience lecteur : event.viewers()) {
             if (lecteur instanceof Player joueur
                     && Boolean.TRUE.equals(dernierGlobal.put(joueur.getUniqueId(), Boolean.FALSE))) {
-                if (separation == null) {
-                    Serveur ici = serveur(nomServeur);
-                    separation = mm.deserialize(texte("separator-server"),
-                            Placeholder.component("server", Component.text(ici.nom(), ici.couleur())));
-                }
+                Serveur ici = serveur(serveurDe(joueur)); // 1.1.0 : espace du lecteur
+                separation = mm.deserialize(texte("separator-server"),
+                        Placeholder.component("server", Component.text(ici.nom(), ici.couleur())));
                 joueur.sendMessage(separation);
             }
         }
@@ -324,7 +344,7 @@ public final class KlmChat extends JavaPlugin implements Listener, PluginMessage
                 String origine = nettoyer(contenu.readUTF(), 64);
                 String pseudo = nettoyer(contenu.readUTF(), 32);
                 String texte = nettoyer(contenu.readUTF(), 256);
-                if (!pseudo.isEmpty() && !texte.isEmpty()) {
+                if (!pseudo.isEmpty() && !texte.isEmpty() && !dejaVu(origine, pseudo, texte)) {
                     afficher(origine, pseudo, texte);
                 }
             }

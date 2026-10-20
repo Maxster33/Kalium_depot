@@ -88,6 +88,11 @@ final class RelayHttpServer {
         }
     }
 
+    /** 1.9.0 : depot par le proxy lui-meme (cle « arrivee-<uuid> », voir KaliumRelay.onServerPreConnect). */
+    void deposit(String key, String body) {
+        store.put(key, new Entry(body, System.currentTimeMillis()));
+    }
+
     private void sweep() {
         long now = System.currentTimeMillis();
         store.entrySet().removeIf(e -> now - e.getValue().storedAt() > ENTRY_TTL_MILLIS);

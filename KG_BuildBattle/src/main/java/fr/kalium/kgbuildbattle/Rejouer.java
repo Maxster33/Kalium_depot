@@ -50,9 +50,21 @@ final class Rejouer implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent e) {
+        verifier(e.getPlayer());
+    }
+
+    /** 0.7.0 : retour du monde du Build Battle sur le meme serveur (Kal-Games fusionne dans Kanvas). */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onChangeWorld(org.bukkit.event.player.PlayerChangedWorldEvent e) {
+        if (e.getFrom().getName().equalsIgnoreCase(plugin.getConfig().getString("monde-local", "buildbattle"))) {
+            verifier(e.getPlayer());
+        }
+    }
+
+    private void verifier(org.bukkit.entity.Player joueur) {
         String url = plugin.getConfig().getString("relay-url", "");
         if (url == null || url.isBlank()) return;
-        UUID id = e.getPlayer().getUniqueId();
+        UUID id = joueur.getUniqueId();
         HttpRequest requete = HttpRequest.newBuilder()
                 .uri(URI.create(url + "/assignment/buildbattle-rejouer-" + id))
                 .header("X-Kalium-Relay-Token", plugin.getConfig().getString("relay-token", ""))

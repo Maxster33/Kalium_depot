@@ -1,0 +1,38 @@
+# ============================================================
+#  KLM_Espaces - configuration
+#  Plusieurs noms Velocity (velocity.toml) pointent vers CE serveur ; chacun est un « espace » hermetique :
+#  ses mondes, ses inventaires, ses joueurs visibles, son tchat. On passe d'un espace a l'autre par le lobby
+#  (KaliumRelay 1.9.0 refuse le passage direct et indique au serveur le nom demande a chaque connexion).
+# ============================================================
+
+# Relais HTTP (KaliumRelay, sur le proxy) : nom Velocity demande par le joueur (cle « arrivee-<uuid> »).
+relay-url: "http://7018.mystrator.com:46199"
+# Jeton du relais : a renseigner UNIQUEMENT dans le config.yml du serveur, jamais ici (depot public, REGLES.md
+# section 2). Meme valeur que "token" dans relay.properties du proxy.
+relay-token: ""
+
+# Espace d'un joueur dont le nom demande est inconnu (relais injoignable) et qui n'est jamais venu : celui-ci.
+# Sinon, le dernier espace ou il etait.
+espace-par-defaut: kal-games
+
+# Les donnees de joueur deja presentes sur ce serveur avant KLM_Espaces (inventaires de Kanvas) appartiennent a cet
+# espace : elles sont gardees a la premiere arrivee dans cet espace, mises de cote ailleurs.
+espace-des-donnees-existantes: kanvas
+
+espaces:
+  kal-games:
+    # Noms Velocity (velocity.toml) qui menent a cet espace ; le premier est le nom « officiel » de l'espace.
+    serveurs: [kal-games]
+    # Mondes de l'espace : nom ou cle (« kalgames:instances »), « * » accepte.
+    mondes: ["Kal-Games", "kalgames:*", "buildbattle"]
+    # Monde d'arrivee (son point d'apparition) quand la derniere position du joueur n'est pas dans l'espace.
+    arrivee: "Kal-Games"
+  kanvas:
+    serveurs: [Kanvas]
+    mondes: ["Kanvas"]
+    arrivee: "Kanvas"
+
+messages:
+  liste-titre: "<gold>Espaces de ce serveur :"
+  liste-ligne: "<yellow><espace></yellow> <gray>(<count>) :</gray> <white><players>"
+  recharge: "<green>Configuration de KLM_Espaces rechargée."

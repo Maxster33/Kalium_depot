@@ -137,7 +137,16 @@ final class Jeu implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent e) {
-        UUID id = e.getPlayer().getUniqueId();
+        chercherAffectation(e.getPlayer(), false);
+    }
+
+    /**
+     * 0.5.0 - Kal-Games fusionne dans Kanvas (LeKiwi06, 21/10/2026) : KG_BuildBattle, sur le meme serveur, envoie le
+     * joueur dans ce monde au lieu de le connecter a Kanvas ; son affectation est lue a son entree dans le monde.
+     * Sans affectation, il est renvoye au hub (personne n'entre dans l'arene sans partie, sauf les operateurs).
+     */
+    void chercherAffectation(Player joueur, boolean renvoyerSiAucune) {
+        UUID id = joueur.getUniqueId();
         // Lecture sur le relais hors du fil principal ; quelques essais (le dépôt précède l'envoi, mais par sécurité).
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             String affectation = null;
@@ -152,7 +161,17 @@ final class Jeu implements Listener {
                 }
                 affectation = lire(id);
             }
-            if (affectation == null) return; // joueur venu pour les plots : rien à faire
+            if (affectation == null) {
+                if (renvoyerSiAucune) {
+                    Bukkit.getScheduler().runTask(plugin, () -> {
+                        Player p = Bukkit.getPlayer(id);
+                        if (p != null && p.getWorld().equals(plugin.monde()) && !parJoueur.containsKey(id) && !p.isOp()) {
+                            renvoyer(p);
+                        }
+                    });
+                }
+                return; // joueur venu pour les plots : rien à faire
+            }
             String a = affectation;
             Bukkit.getScheduler().runTask(plugin, () -> {
                 Player p = Bukkit.getPlayer(id);
@@ -355,6 +374,12 @@ final class Jeu implements Listener {
 
     /** Renvoie le joueur sur kal-games (canal BungeeCord « Connect »). */
     void renvoyer(Player joueur) {
+        // 0.5.0 : KalGames sur ce serveur (Kal-Games fusionne dans Kanvas) : retour au hub par /hub, sans changer de
+        // serveur (le proxy refuserait de passer d'un espace a l'autre sur la meme machine).
+        if (Bukkit.getPluginManager().isPluginEnabled("KalGames")) {
+            joueur.performCommand("hub");
+            return;
+        }
         ByteArrayOutputStream octets = new ByteArrayOutputStream();
         try (DataOutputStream out = new DataOutputStream(octets)) {
             out.writeUTF("Connect");
@@ -411,7 +436,11 @@ final class Jeu implements Listener {
 
     @EventHandler
     public void onChangeWorld(PlayerChangedWorldEvent e) {
-        if (!e.getPlayer().getWorld().equals(plugin.monde())) sortir(e.getPlayer());
+        if (!e.getPlayer().getWorld().equals(plugin.monde())) {
+            sortir(e.getPlayer());
+        } else if (!parJoueur.containsKey(e.getPlayer().getUniqueId())) {
+            chercherAffectation(e.getPlayer(), true); // 0.5.0 : arrivee depuis le hub, sur le meme serveur
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

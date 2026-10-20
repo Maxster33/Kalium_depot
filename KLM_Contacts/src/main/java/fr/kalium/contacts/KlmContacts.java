@@ -194,10 +194,22 @@ public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Li
         parametres.put("game", jeu);
         parametres.put("ref", reference);
         parametres.put("label", libelle == null ? "" : libelle);
-        if (monServeur != null) {
-            parametres.put("server", monServeur);
+        String serveur = serveurDe(joueur); // 1.4.0
+        if (serveur != null) {
+            parametres.put("server", serveur);
         }
         relais.appelerEnSilence(joueur, "ggame", parametres);
+    }
+
+    /**
+     * 1.4.0 - serveur à plusieurs espaces (KLM_Espaces : Kal-Games et Kanvas sur le même serveur, 21/10/2026) : nom
+     * Velocity de l'espace du joueur (métadonnée « klm_serveur »), sinon celui de ce serveur.
+     */
+    private String serveurDe(Player joueur) {
+        if (joueur.hasMetadata("klm_serveur")) {
+            return joueur.getMetadata("klm_serveur").get(0).asString();
+        }
+        return monServeur;
     }
 
     /** Partie privée où se trouve ce joueur et où il peut inviter : {jeu, référence, nom affiché}, ou null. */
@@ -227,8 +239,9 @@ public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Li
         parametres.put("game", partie[0]);
         parametres.put("ref", partie[1]);
         parametres.put("label", partie[2]);
-        if (monServeur != null) {
-            parametres.put("server", monServeur);
+        String serveur = serveurDe(joueur); // 1.4.0
+        if (serveur != null) {
+            parametres.put("server", serveur);
         }
         relais.appeler(joueur, "ginvitegame", parametres, reponse -> { });
     }

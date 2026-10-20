@@ -140,6 +140,15 @@ final class Parties {
     }
 
     private void connecter(Player joueur) {
+        // 0.7.0 - Kal-Games fusionne dans Kanvas (LeKiwi06, 21/10/2026) : KV_BuildBattle sur ce serveur, le joueur est
+        // envoye dans le monde du Build Battle (« monde-local »), ou KV_BuildBattle lit son affectation.
+        if (Bukkit.getPluginManager().isPluginEnabled("KV_BuildBattle")) {
+            org.bukkit.World monde = Bukkit.getWorld(plugin.getConfig().getString("monde-local", "buildbattle"));
+            if (monde != null) {
+                joueur.teleport(monde.getSpawnLocation().add(0.5, 0, 0.5));
+                return;
+            }
+        }
         ByteArrayOutputStream octets = new ByteArrayOutputStream();
         try (DataOutputStream out = new DataOutputStream(octets)) {
             out.writeUTF("Connect");

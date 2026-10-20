@@ -399,3 +399,16 @@ Empilé sur la 1.7.0 non testée : accord explicite de LeKiwi06.
 **À déployer avec KLM_Contacts 1.2.0** (puis KalGames 1.25.0, KG_Bingo 1.10.0, KG_BuildBattle 0.5.0 sur kal-games).
 **Déployé sur le proxy le 09/10/2026 à 06:50 (LeKiwi06 ; 1.7.0 dans `_removed-kaliumrelay-1.7.0/`), actif après redémarrage du proxy. Statut : non testé en jeu** (logique essayée hors jeu avec un faux proxy : 48 cas
 pour les parties, 64 pour les groupes, 32 pour les amis, tout passe).
+
+## 1.9.0 - serveurs partagés : espace demandé, passage direct refusé (21/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (21/10/2026)** : Kal-Games et Serveur Jeux expirent dans 3 jours ; « on va fusionner kal-games et kanvas en utilisant le même principe que pour les mondes simultanés dans serveur jeux » ; « les gens ne pourront pas passer de kanvas à kal-games sans le lobby, tout sera sur le même serveur mais de façon hermétique, on fera même des tchats séparés » ; inventaires séparés ; deux noms Velocity gardés (`kal-games` et `Kanvas`, même adresse). Plan : [Plan de migration](https://claude.ai/artifact/MyTJxpL8zq1XCy1sTZKdZh).
+
+- À chaque connexion à un serveur, le nom Velocity demandé est déposé sur le relais (clé `arrivee-<uuid>`, 2 minutes,
+  lue une fois) : KLM_Espaces le lit à la pré-connexion pour mettre le joueur dans le bon espace.
+- Passer d'un nom Velocity à un autre qui a la **même adresse** (Kanvas et kal-games après la fusion) est refusé, avec
+  « Pour aller sur <serveur>, passe par le lobby. » (espaces étanches ; sans ce refus, Velocity reconnecterait le
+  joueur au serveur où il est déjà). Concerne aussi « Rejoindre son serveur » et « suivre le chef » de KLM_Contacts.
+- Aucun réglage nouveau.
+
+**Compilé, non déployé, non testé en jeu.** À déployer avec KLM_Espaces 1.0.0 et KaliumRelay 1.9.0 (fusion de Kal-Games dans Kanvas).

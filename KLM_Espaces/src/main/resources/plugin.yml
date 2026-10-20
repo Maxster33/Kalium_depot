@@ -1,0 +1,20 @@
+name: KLM_Espaces
+version: '${project.version}'
+main: fr.kalium.espaces.KlmEspaces
+api-version: '26.2'
+description: Plusieurs serveurs Velocity sur un seul serveur Paper, de facon hermetique (un espace par nom Velocity) - arrivee dans le bon monde, inventaires, visibilite et tchat separes.
+authors: [KaLium]
+# Charge AVANT les plugins des espaces : a la connexion, l'inventaire de l'espace doit etre en place avant qu'ils
+# donnent leurs objets ou rendent un inventaire mis de cote (KV_BuildBattle), et la position choisie avant la leur.
+loadbefore: [KalGames, KG_Menu, KG_Bingo, KG_BuildBattle, KG_ScoreBoards, KV_Plots, KV_Menu, KV_BuildBattle, KV_Rewards, KLM_Chat, KLM_Contacts]
+
+commands:
+  espaces:
+    description: Espaces de ce serveur (operateurs).
+    usage: /<command> [liste | recharger]
+    permission: klmespaces.admin
+
+permissions:
+  klmespaces.admin:
+    description: Voir l'espace de chaque joueur, recharger la configuration.
+    default: op

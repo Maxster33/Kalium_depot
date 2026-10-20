@@ -54,7 +54,8 @@ public final class HubListener implements Listener {
     private boolean protectedHub(Player player) {
         return plugin.getConfig().getBoolean("hub.protect", true)
                 && activeGame(player) == null
-                && !player.hasPermission("kalgames.bypass");
+                && !player.hasPermission("kalgames.bypass")
+                && plugin.hub().isKalGamesWorld(player.getWorld()); // 1.27.0 : pas les plots de Kanvas
     }
 
     // ------------------------------------------------------------------ commandes
@@ -67,7 +68,7 @@ public final class HubListener implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onCommand(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        if (player.hasPermission("kalgames.bypass")) {
+        if (player.hasPermission("kalgames.bypass") || !plugin.hub().isKalGamesWorld(player.getWorld())) {
             return;
         }
         String message = event.getMessage().substring(1);

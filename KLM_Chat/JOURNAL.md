@@ -43,3 +43,16 @@ LibertyBans peut encore écrire avec `/global` tant que la commande n'est pas aj
 LibertyBans ; aucune modération ni historique en dehors de la console.
 
 **Déployé sur les 6 serveurs Paper (lobby, Kal-Games, Kanvas, Kixster, Event, Serveur Jeux) le 03/10/2026 à 22:47 (LeKiwi06), actif après redémarrage de chacun. Statut : non testé en jeu.**
+
+## 1.1.0 - serveur à plusieurs espaces (KLM_Espaces) (21/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (21/10/2026)** : Kal-Games et Serveur Jeux expirent dans 3 jours ; « on va fusionner kal-games et kanvas en utilisant le même principe que pour les mondes simultanés dans serveur jeux » ; « les gens ne pourront pas passer de kanvas à kal-games sans le lobby, tout sera sur le même serveur mais de façon hermétique, on fera même des tchats séparés » ; inventaires séparés ; deux noms Velocity gardés (`kal-games` et `Kanvas`, même adresse). Plan : [Plan de migration](https://claude.ai/artifact/MyTJxpL8zq1XCy1sTZKdZh).
+
+- Le préfixe d'un message global est le nom Velocity de l'espace de l'auteur (métadonnée `klm_serveur` de KLM_Espaces),
+  sinon celui du serveur ; idem pour la ligne de séparation du tchat du serveur.
+- Un même message global reçu plusieurs fois en 5 s (une fois par nom Velocity du serveur, y compris celui de l'auteur)
+  n'est montré qu'une fois. Limite : deux messages identiques du même joueur en moins de 5 s n'en font qu'un.
+- Le tchat du serveur est limité à l'espace par KLM_Espaces lui-même.
+- À déployer sur Kanvas ; inutile ailleurs.
+
+**Compilé, non déployé, non testé en jeu.** À déployer avec KLM_Espaces 1.0.0 et KaliumRelay 1.9.0 (fusion de Kal-Games dans Kanvas).

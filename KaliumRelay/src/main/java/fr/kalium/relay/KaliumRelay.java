@@ -3,6 +3,7 @@ package fr.kalium.relay;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.KickedFromServerEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
+import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
@@ -30,7 +31,7 @@ import java.util.Optional;
  * plugins de Velocity repose entierement sur Guice : son propre Injector garantit que
  * com.google.inject.Inject est toujours present et correctement resolu, donc plus sur.
  */
-@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.8.0",
+@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.9.0",
         description = "Relais HTTP entre KalGames et KalBingo, independant de la presence d'un joueur.",
         authors = {"KaLium"})
 public final class KaliumRelay {
@@ -135,6 +136,42 @@ public final class KaliumRelay {
     /** Joueur Bedrock (Floodgate) : son UUID commence par 00000000-0000-0000. */
     private static boolean isBedrock(com.velocitypowered.api.proxy.Player player) {
         return player.getUniqueId().getMostSignificantBits() == 0L;
+    }
+
+    /**
+     * 1.9.0 - serveurs partages (demande de LeKiwi06, 21/10/2026 : Kal-Games fusionne dans Kanvas, « tout sera sur le
+     * meme serveur, mais de facon hermetique »). Plusieurs noms Velocity (kal-games, Kanvas) pointent vers la meme
+     * machine ; chacun est un « espace » de ce serveur (KLM_Espaces).
+     * - A chaque connexion, le nom demande est depose sur le relais (cle « arrivee-<uuid> », 2 minutes) : le serveur
+     *   le lit a l'arrivee du joueur pour le mettre dans le bon espace.
+     * - Passer d'un nom a un autre de la MEME machine est refuse (espaces etanches : on passe par le lobby). Sans ce
+     *   refus, Velocity reconnecterait le joueur au serveur ou il est deja (doublon de connexion, expulsion).
+     */
+    @Subscribe
+    public void onServerPreConnect(ServerPreConnectEvent event) {
+        Optional<RegisteredServer> cible = event.getResult().getServer();
+        if (cible.isEmpty()) {
+            return;
+        }
+        com.velocitypowered.api.proxy.Player joueur = event.getPlayer();
+        String nom = cible.get().getServerInfo().getName();
+        Optional<com.velocitypowered.api.proxy.ServerConnection> actuel = joueur.getCurrentServer();
+        if (actuel.isPresent()) {
+            var ici = actuel.get().getServerInfo();
+            if (!ici.getName().equalsIgnoreCase(nom)
+                    && ici.getAddress().equals(cible.get().getServerInfo().getAddress())) {
+                event.setResult(ServerPreConnectEvent.ServerResult.denied());
+                joueur.sendMessage(net.kyori.adventure.text.Component.text(
+                        "Pour aller sur " + nom + ", passe par le lobby.",
+                        net.kyori.adventure.text.format.NamedTextColor.RED));
+                logger.info("[KaliumRelay] " + joueur.getUsername() + " : passage de '" + ici.getName() + "' a '"
+                        + nom + "' refuse (meme machine, espaces etanches).");
+                return;
+            }
+        }
+        if (http != null) {
+            http.deposit("arrivee-" + joueur.getUniqueId(), nom);
+        }
     }
 
     @Subscribe

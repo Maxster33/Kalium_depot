@@ -208,3 +208,14 @@ Limites connues :
 - La boîte d'origine (monde `Kanvas`) n'est pas touchée.
 
 **Déployé sur Kanvas le 27/09/2026 (10:40), remplacé par 0.2.0 à 13:55. Statut : non testé en jeu.**
+
+## 0.5.0 - Kal-Games dans Kanvas : arrivée et retour sur le même serveur (21/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (21/10/2026)** : Kal-Games et Serveur Jeux expirent dans 3 jours ; « on va fusionner kal-games et kanvas en utilisant le même principe que pour les mondes simultanés dans serveur jeux » ; « les gens ne pourront pas passer de kanvas à kal-games sans le lobby, tout sera sur le même serveur mais de façon hermétique, on fera même des tchats séparés » ; inventaires séparés ; deux noms Velocity gardés (`kal-games` et `Kanvas`, même adresse). Plan : [Plan de migration](https://claude.ai/artifact/MyTJxpL8zq1XCy1sTZKdZh).
+
+- L'affectation est aussi lue à l'entrée dans le monde du Build Battle (joueur envoyé par KG_BuildBattle 0.7.0 sur le
+  même serveur). Sans affectation, un joueur qui n'est pas opérateur est renvoyé.
+- Renvoi d'un joueur (fin de partie, arènes pleines) : `/hub` si KalGames est sur ce serveur, sinon connexion à
+  `serveur-retour` comme avant.
+
+**Compilé, non déployé, non testé en jeu.** À déployer avec KLM_Espaces 1.0.0 et KaliumRelay 1.9.0 (fusion de Kal-Games dans Kanvas).

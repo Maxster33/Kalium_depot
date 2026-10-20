@@ -24,7 +24,10 @@ Chaque règle est suivie de sa raison (« Pourquoi ») : en cas de situation non
      `git pull` : il peut répondre « accord » lui-même si le créneau ne gêne pas son travail en cours (sinon il
      demande à son humain), note sa réponse avec l'heure et pousse ; pendant un créneau accordé il ne touche pas au
      plugin. Pas de réponse = pas d'accord. Le demandeur retire sa ligne à la fin du créneau.
-   - **De 13 h à 23 h (heure de Paris), 2 plugins réservés au maximum par personne.** Au-delà, il faut l'accord
+   - **Levée le 21/10/2026** (LeKiwi06 : « maxster ne travaille plus sur le projet, je suis maintenant seul en charge de
+     KaLium, plus besoin de limite sur l'aspect dev en coop ») : la limite ci-dessous ne s'applique plus ; les
+     réservations restent tenues à jour.
+     ~~**De 13 h à 23 h (heure de Paris), 2 plugins réservés au maximum par personne.**~~ Au-delà, il faut l'accord
      de l'autre personne, noté dans la réservation (« accord de <pseudo> »). En dehors de ces heures, pas de
      limite. Attention à l'heure utilisée (réservations comprises) : l'horloge d'un espace cloud est souvent en UTC,
      à convertir en heure de Paris ; sous Git Bash (Windows), `TZ=Europe/Paris date` renvoie en réalité l'heure UTC

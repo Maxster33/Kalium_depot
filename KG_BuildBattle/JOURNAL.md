@@ -102,3 +102,16 @@ inchangée » (menus de Kal-Games en coffre, parties publiques masquées, Échap
   KV_BuildBattle).
 
 **À déployer avec KalGames 1.26.0 et KG_Menu 1.2.0 (déjà sur Kal-Games).** **Déployé sur Kal-Games le 21/10/2026 à 01:29 (LeKiwi06, avec KG_Bingo 1.11.0 ; 0.5.0 dans `_removed-kg_buildbattle-0.5.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 0.7.0 - Kal-Games dans Kanvas : envoi dans le monde du Build Battle (21/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (21/10/2026)** : Kal-Games et Serveur Jeux expirent dans 3 jours ; « on va fusionner kal-games et kanvas en utilisant le même principe que pour les mondes simultanés dans serveur jeux » ; « les gens ne pourront pas passer de kanvas à kal-games sans le lobby, tout sera sur le même serveur mais de façon hermétique, on fera même des tchats séparés » ; inventaires séparés ; deux noms Velocity gardés (`kal-games` et `Kanvas`, même adresse). Plan : [Plan de migration](https://claude.ai/artifact/MyTJxpL8zq1XCy1sTZKdZh).
+
+- KV_BuildBattle présent sur le même serveur : le joueur est téléporté au point d'apparition du monde
+  `monde-local` (défaut `buildbattle`) au lieu d'être connecté à Kanvas ; l'affectation est toujours déposée sur le
+  relais avant, et KV_BuildBattle la lit à son entrée dans le monde.
+- « Rejouer » : l'objet est aussi proposé au retour du monde du Build Battle (changement de monde), plus seulement à
+  la connexion.
+- Sans KV_BuildBattle sur le serveur : inchangé (connexion à `serveur`).
+
+**Compilé, non déployé, non testé en jeu.** À déployer avec KLM_Espaces 1.0.0 et KaliumRelay 1.9.0 (fusion de Kal-Games dans Kanvas).
