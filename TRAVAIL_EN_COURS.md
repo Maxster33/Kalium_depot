@@ -25,6 +25,8 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_Economy — LeKiwi06 — depuis le 2026-10-18 08:40 — 1.10.0 : /magasins, /shop, /market ; bouton des rachats de la semaine dans le catalogue
 - KS_Didacticiel — LeKiwi06 — depuis le 2026-10-18 07:55 — nouveau plugin : didacticiel des changements de Kixster dans « Informations »
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut)
+- KalGames — LeKiwi06 — depuis le 2026-10-20 12:03 — menus en coffre (réglage coffres / fenêtres), accueil Créer / Rejoindre / Parties en cours, parties publiques masquées, relance en salle d'attente après 15 s
+- KG_Menu — LeKiwi06 — depuis le 2026-10-20 12:03 — Paramètres › Affichage (coffres / fenêtres, affichages masquables), nouvel accueil de Kal-Games en coffre
 
 
 ## Requis parfois
