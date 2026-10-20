@@ -37,6 +37,11 @@ public final class PlayerMenus {
         return plugin.t(key, def, pairs);
     }
 
+    /** 1.26.0 : bouton « Retour » en bouton de sortie de la fenêtre : Échap ramène aussi à la page précédente. */
+    private ActionButton back(Gui.Click click) {
+        return gui.button(t("menu.back", "<gray>Retour"), null, click);
+    }
+
     private Component name(Minigame minigame) {
         return plugin.lang().parse(minigame.display());
     }
@@ -255,10 +260,9 @@ public final class PlayerMenus {
         }
         buttons.add(gui.button(t("menu.rankings", "<light_purple>Classements"),
                 t("menu.rankings-tip", "<gray>Top 10 général et du mois."), p -> plugin.ranking().openPlayer(p, minigame.id(), false, q -> plugin.menus().openMinigame(q, minigame))));
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openGames));
         List<Component> body = new ArrayList<>();
         body.add(minigame.description().isBlank() ? Component.empty() : plugin.lang().parse("<gray>" + minigame.description()));
-        gui.open(player, name(minigame), body, List.of(), buttons, null, 1);
+        gui.open(player, name(minigame), body, List.of(), buttons, back(this::openGames), 1);
     }
 
     // ------------------------------------------------------------------ Rush (1.11.0)
@@ -287,13 +291,12 @@ public final class PlayerMenus {
         }
         buttons.add(gui.button(t("menu.rankings", "<light_purple>Classements"),
                 t("menu.rankings-tip", "<gray>Top 10 général et du mois."), p -> plugin.ranking().openPlayer(p, minigame.id(), false, q -> plugin.menus().openMinigame(q, minigame))));
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openGames));
         List<Component> body = new ArrayList<>();
         if (!minigame.description().isBlank()) {
             body.add(plugin.lang().parse("<gray>" + minigame.description()));
         }
         body.add(t("rush.choose-arena", "<white>Choisissez une arène :"));
-        gui.open(player, name(minigame), body, List.of(), buttons, null, 1);
+        gui.open(player, name(minigame), body, List.of(), buttons, back(this::openGames), 1);
     }
 
     public void openRushArena(Player player, Minigame minigame, Arena arena) {
@@ -315,10 +318,9 @@ public final class PlayerMenus {
                     t("menu.private-create-tip", "<gray>Vous êtes l'hôte et invitez vos amis avec un code."),
                     p -> openRushCreatePrivate(p, minigame, arena)));
         }
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, p -> openRushArenas(p, minigame)));
         List<Component> body = List.of(t("rush.arena-body", "<gray><n> équipes de <white><size></white> joueur(s) maximum.",
                 "n", fr.kalium.games.model.RushLayout.teamCount(arena), "size", Math.max(1, Math.min(4, minigame.getInt("team-size", 4)))));
-        gui.open(player, plugin.lang().parse(arena.display()), body, List.of(), buttons, null, 1);
+        gui.open(player, plugin.lang().parse(arena.display()), body, List.of(), buttons, back(p -> openRushArenas(p, minigame)), 1);
     }
 
     private void openRushCreatePrivate(Player player, Minigame minigame, Arena arena) {
@@ -338,9 +340,8 @@ public final class PlayerMenus {
                     "<green>Partie créée. Code : <white><bold><code></bold></white> <gray>(à partager avec vos amis).",
                     "code", result.instance().code())));
         }));
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, p -> openRushArena(p, minigame, arena)));
         gui.open(player, t("menu.create-title", "<green>Nouvelle partie privée"),
-                List.of(plugin.lang().parse(arena.display())), inputs, buttons, gui.close(), 1);
+                List.of(plugin.lang().parse(arena.display())), inputs, buttons, back(p -> openRushArena(p, minigame, arena)), 1);
     }
 
     /** Choix de l'equipe dans la salle d'attente (une equipe pleine ne peut plus etre rejointe). */
@@ -377,8 +378,7 @@ public final class PlayerMenus {
                 }
             }));
         }
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openGameMenu));
-        gui.open(player, t("rush.teams-title", "<aqua><bold>Choisissez votre équipe"), body, List.of(), buttons, gui.close(), 1);
+        gui.open(player, t("rush.teams-title", "<aqua><bold>Choisissez votre équipe"), body, List.of(), buttons, back(this::openGameMenu), 1);
     }
 
     // ------------------------------------------------------------------ partie privee : creation
@@ -456,10 +456,9 @@ public final class PlayerMenus {
                 p.sendMessage(plugin.prefix().append(error));
             }
         }));
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, back::accept));
 
         gui.open(player, t("menu.create-title", "<green>Nouvelle partie privée"),
-                List.of(t("menu.create-body", "<gray>Réglez la partie puis créez-la.")), inputs, buttons, gui.close(), 1);
+                List.of(t("menu.create-body", "<gray>Réglez la partie puis créez-la.")), inputs, buttons, back(back::accept), 1);
     }
 
     private void putNumber(Map<String, Object> options, String key, DialogResponseView view) {
@@ -491,11 +490,10 @@ public final class PlayerMenus {
                 }
             }));
         }
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, p -> openMinigame(p, minigame)));
         List<DialogInput> inputs = List.of(gui.text("code", t("menu.join-input", "Code de la partie"), "", 8));
         gui.open(player, t("menu.join-title", "<aqua>Rejoindre une partie privée"),
                 List.of(t("menu.join-body", "<gray>Saisissez le code donné par l'hôte, ou choisissez une partie ouverte.")),
-                inputs, buttons, gui.close(), 1);
+                inputs, buttons, back(p -> openMinigame(p, minigame)), 1);
     }
 
     // ------------------------------------------------------------------ mode spectateur
@@ -522,11 +520,10 @@ public final class PlayerMenus {
                 }
             }));
         }
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, p -> openMinigame(p, minigame)));
         List<DialogInput> inputs = List.of(gui.text("code", t("menu.spectate-input", "Code de la partie"), "", 8));
         gui.open(player, t("menu.spectate-title", "<aqua><bold>Regarder une partie"),
                 List.of(t("menu.spectate-body", "<gray>Vous serez en mode spectateur (vol libre). Tapez /hub pour arrêter de regarder.")),
-                inputs, buttons, gui.close(), 1);
+                inputs, buttons, back(p -> openMinigame(p, minigame)), 1);
     }
 
     /** 1.26.0 : l'hôte nomme un autre hôte ou exclut un joueur (fenêtres). */
@@ -559,8 +556,7 @@ public final class PlayerMenus {
                                 openGameMenu(q);
                             }, this::openHostPlayers)));
         }
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openGameMenu));
-        gui.open(player, t("host.players-title", "<white><bold>Joueurs de la partie"), List.of(), List.of(), buttons, gui.close(), 1);
+        gui.open(player, t("host.players-title", "<white><bold>Joueurs de la partie"), List.of(), List.of(), buttons, back(this::openGameMenu), 1);
     }
 
     /** Menu d'un spectateur : arreter de regarder / retour au lobby. */

@@ -999,7 +999,18 @@ aucun bug n'est à dénombrer »).
 - Parties publiques (si on les réaffiche) : fonctionnement inchangé (retour au hub + « Rejouer »). KG_BuildBattle garde
   « Rejouer » (étape 6).
 
-**Limites** : un spectateur de l'ancienne partie n'est pas emmené quand l'hôte change les réglages (il revient au hub
+**Échap (LeKiwi06, 20/10/2026 : « fermer une interface avec échap ramène sur la page précédente, et que les jauges
+soient enregistrées même sur un échap »)** :
+- Coffres : fermer un coffre soi-même (Échap, touche de l'inventaire) ramène à la page précédente (réglages → choix du
+  jeu, équipes → menu de la partie) ; sur une première page (menu de la partie, spectateur), Échap ferme. Mécanisme
+  commun dans KG_Menu 1.2.0 (`echap`).
+- Fenêtres des joueurs : le bouton « Retour » est devenu le bouton de sortie de la fenêtre ; le jeu le déclenche sur
+  Échap (vérifié dans le code du client 26.3 : `DialogScreen.onClose` → `Dialog.onCancel` = action de sortie).
+- Jauges : « Valider » est le bouton de sortie : Échap enregistre la valeur comme « Valider ».
+- Les menus des modérateurs (Paramètres) ne changent pas.
+
+**Limites** : un spectateur de l'ancienne partie
+ n'est pas emmené quand l'hôte change les réglages (il revient au hub
 quand l'ancienne partie se ferme). Le bouton « Classements » de l'ancien écran d'un jeu a disparu (les classements
 restent dans « Informations > Classements »).
 

@@ -64,5 +64,11 @@ l'interface, paramètre, affichage », « quand on ouvre l'interface on voit "cr
   coffre), `message(...)` (barre d'action si un coffre est ouvert, sinon tchat), `openCreate`, `openJoin`,
   `openDisplay`.
 
+- **Échap ramène à la page précédente** (LeKiwi06, 20/10/2026) : dans les coffres, `echap(joueur, menu, retour)` :
+  fermé par le joueur lui-même (raison `PLAYER`), le menu rouvre la page précédente un tick plus tard ; pas en ouvrant
+  un autre menu, une fenêtre de saisie ou en changeant de monde. Dans les fenêtres de l'accueil, « Retour » est le
+  bouton de sortie (déclenché par Échap).
+
 **À déployer avec KalGames 1.26.0.** Nouvelles clés `affichage`, `icones` : valeurs par défaut dans le code.
+
 **Compilé, non déployé, non testé en jeu.**

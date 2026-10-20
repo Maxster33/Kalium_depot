@@ -186,6 +186,7 @@ final class Accueil {
                 Contenant.lignes(t("accueil.parametres-tip", "<gray>Affichage : menus en coffres ou en fenêtres."))),
                 p -> affichage(p, ici));
         menu.ouvrir(joueur);
+        plugin.echap(joueur, menu, retour);
     }
 
     /** « Retour » (porte) si l'écran a été ouvert depuis un autre menu, sinon « Fermer » (barrière), colonne 5. */
@@ -220,12 +221,10 @@ final class Accueil {
         }
         boutons.add(plugin.gui().button(t("accueil.parametres", "<white>Paramètres"),
                 t("accueil.parametres-tip", "<gray>Affichage : menus en coffres ou en fenêtres."), p -> affichage(p, ici)));
-        if (retour != null) {
-            boutons.add(plugin.gui().button(t("menu.back", "<gray>Retour"), null, retour::accept));
-        }
+        // Échap = « Retour » (bouton de sortie de la fenêtre) quand l'accueil a été ouvert depuis un autre menu.
         plugin.gui().open(joueur, t("menu.games-title", "<gold><bold>Mini-jeux Kal-Games"),
                 List.of(t("accueil.intro", "<gray>Créez une partie et invitez vos amis, ou rejoignez une partie ouverte.")),
-                List.of(), boutons, null, 1);
+                List.of(), boutons, retour == null ? null : plugin.gui().button(t("menu.back", "<gray>Retour"), null, retour::accept), 1);
     }
 
     // ------------------------------------------------------------------ créer : choix du jeu
@@ -245,10 +244,10 @@ final class Accueil {
                         : jeu.nom().append(t("menu.players", " <dark_gray>| <gray><n> en jeu", "n", jeu.joueurs()));
                 boutons.add(plugin.gui().button(nom, tip, p -> jeu.creer().accept(p, ici)));
             }
-            boutons.add(plugin.gui().button(t("menu.back", "<gray>Retour"), null, retour::accept));
             plugin.gui().open(joueur, t("creer.titre", "<green><bold>Créer une partie"),
                     List.of(jeux.isEmpty() ? t("menu.games-empty", "<gray>Aucun mini-jeu n'est disponible pour le moment.")
-                            : t("creer.intro", "<gray>Choisissez le jeu de votre partie.")), List.of(), boutons, null, 1);
+                            : t("creer.intro", "<gray>Choisissez le jeu de votre partie.")), List.of(), boutons,
+                    plugin.gui().button(t("menu.back", "<gray>Retour"), null, retour::accept), 1);
             return;
         }
         Contenant menu = Contenant.pour(joueur, t("creer.titre-coffre", "<dark_gray>Créer : choisir le jeu"), Ecran.CREER);
@@ -280,6 +279,7 @@ final class Accueil {
         pages(menu, page, jeux.size(), p -> creer(p, retour, page - 1), p -> creer(p, retour, page + 1));
         sortie(menu, retour);
         menu.ouvrir(joueur);
+        plugin.echap(joueur, menu, retour);
     }
 
     private void pages(Contenant menu, int page, int total, Consumer<Player> avant, Consumer<Player> apres) {
@@ -333,11 +333,10 @@ final class Accueil {
                         Component.join(JoinConfiguration.newlines(), lignesPartie(partie, false)),
                         p -> Contenant.apres(() -> resultat(p, partie.rejoindre().apply(p)))));
             }
-            boutons.add(plugin.gui().button(t("menu.back", "<gray>Retour"), null, retour::accept));
             plugin.gui().open(joueur, t("rejoindre.titre", "<aqua><bold>Rejoindre une partie"),
                     List.of(parties.isEmpty() ? t("rejoindre.vide", "<gray>Aucune partie ouverte pour l'instant : créez la vôtre !")
                             : t("rejoindre.intro", "<gray>Choisissez une partie, ou entrez le code donné par l'hôte.")),
-                    List.of(), boutons, null, 1);
+                    List.of(), boutons, plugin.gui().button(t("menu.back", "<gray>Retour"), null, retour::accept), 1);
             return;
         }
         Contenant menu = Contenant.pour(joueur, t("rejoindre.titre-coffre", "<dark_gray>Rejoindre une partie"), Ecran.REJOINDRE);
@@ -360,6 +359,7 @@ final class Accueil {
                 p -> code(p, ici));
         sortie(menu, retour);
         menu.ouvrir(joueur);
+        plugin.echap(joueur, menu, retour);
     }
 
     void enCours(Player joueur, Consumer<Player> retour, int page) {
@@ -371,11 +371,10 @@ final class Accueil {
                         Component.join(JoinConfiguration.newlines(), lignesPartie(partie, true)),
                         p -> Contenant.apres(() -> resultat(p, partie.regarder().apply(p)))));
             }
-            boutons.add(plugin.gui().button(t("menu.back", "<gray>Retour"), null, retour::accept));
             plugin.gui().open(joueur, t("en-cours.titre", "<yellow><bold>Parties en cours"),
                     List.of(parties.isEmpty() ? t("en-cours.vide", "<gray>Aucune partie n'est lancée pour l'instant.")
                             : t("en-cours.intro", "<gray>Vous regarderez la partie en spectateur (vol libre).")),
-                    List.of(), boutons, null, 1);
+                    List.of(), boutons, plugin.gui().button(t("menu.back", "<gray>Retour"), null, retour::accept), 1);
             return;
         }
         Contenant menu = Contenant.pour(joueur, t("en-cours.titre-coffre", "<dark_gray>Parties en cours"), Ecran.EN_COURS);
@@ -392,6 +391,7 @@ final class Accueil {
         pages(menu, page, parties.size(), p -> enCours(p, retour, page - 1), p -> enCours(p, retour, page + 1));
         sortie(menu, retour);
         menu.ouvrir(joueur);
+        plugin.echap(joueur, menu, retour);
     }
 
     /** « Entrer un code » : petite fenêtre de saisie ; chaque plugin essaie le code. */
@@ -405,9 +405,8 @@ final class Accueil {
                             if (resultat != null) {
                                 p.sendMessage(resultat);
                             }
-                        }),
-                        plugin.gui().button(t("menu.back", "<gray>Retour"), null, retour::accept)),
-                null, 1));
+                        })),
+                plugin.gui().button(t("menu.back", "<gray>Retour"), null, retour::accept), 1));
     }
 
     /** null si le joueur est entré dans une partie, sinon le motif du refus. */
@@ -451,9 +450,8 @@ final class Accueil {
         if (!coffres) {
             plugin.gui().open(joueur, t("affichage.titre", "<white><bold>Paramètres › Affichage"),
                     List.of(t("affichage.body", "<gray>Réglages qui ne concernent que vous.")), List.of(),
-                    List.of(plugin.gui().button(titreMode, tipMode, basculer::accept),
-                            plugin.gui().button(t("menu.back", "<gray>Retour"), null, retour::accept)),
-                    null, 1);
+                    List.of(plugin.gui().button(titreMode, tipMode, basculer::accept)),
+                    plugin.gui().button(t("menu.back", "<gray>Retour"), null, retour::accept), 1);
             return;
         }
         Contenant menu = Contenant.pour(joueur, 3, t("affichage.titre-coffre", "<dark_gray>Paramètres › Affichage"), Ecran.AFFICHAGE);
@@ -461,5 +459,6 @@ final class Accueil {
         menu.barre();
         sortie(menu, retour);
         menu.ouvrir(joueur);
+        plugin.echap(joueur, menu, retour);
     }
 }

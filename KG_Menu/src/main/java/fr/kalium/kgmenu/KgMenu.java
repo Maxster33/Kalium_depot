@@ -69,6 +69,11 @@ public final class KgMenu extends JavaPlugin implements Listener {
     private Accueil accueil;
     /** 1.2.0 : dernier type de clic de chaque joueur dans un menu en coffre (réglages : clic gauche +, clic droit -). */
     private final Map<UUID, ClickType> clics = new HashMap<>();
+    /** 1.2.0 : page précédente de chaque menu en coffre ouvert (Échap y ramène). */
+    private final Map<UUID, Echap> echaps = new HashMap<>();
+
+    private record Echap(org.bukkit.inventory.Inventory inventaire, Consumer<Player> retour) {
+    }
 
     @Override
     public void onEnable() {
@@ -319,6 +324,39 @@ public final class KgMenu extends JavaPlugin implements Listener {
         accueil.affichage(player, back == null ? p -> openHome(p, null) : back);
     }
 
+    /**
+     * 1.2.0 (LeKiwi06, 20/10/2026 : « fermer une interface avec échap ramène sur la page précédente ») : à appeler
+     * après avoir rempli un menu en coffre ; si le joueur le ferme lui-même (Échap, touche de l'inventaire), retour est
+     * appelé. retour null = Échap ferme le menu (première page).
+     */
+    public void echap(Player player, fr.kalium.menu.api.Contenant menu, Consumer<Player> retour) {
+        if (retour == null) {
+            echaps.remove(player.getUniqueId());
+        } else {
+            echaps.put(player.getUniqueId(), new Echap(menu.getInventory(), retour));
+        }
+    }
+
+    @EventHandler
+    public void onMenuClose(org.bukkit.event.inventory.InventoryCloseEvent event) {
+        if (!(event.getPlayer() instanceof Player player)) {
+            return;
+        }
+        Echap echap = echaps.get(player.getUniqueId());
+        if (echap == null || echap.inventaire() != event.getInventory()) {
+            return; // un autre menu (ou le nouveau, déjà enregistré) : rien à faire
+        }
+        echaps.remove(player.getUniqueId());
+        // Fermé par le joueur seulement : pas en ouvrant un autre menu, une fenêtre de saisie, en changeant de monde...
+        if (event.getReason() == org.bukkit.event.inventory.InventoryCloseEvent.Reason.PLAYER) {
+            getServer().getScheduler().runTask(this, () -> {
+                if (player.isOnline()) {
+                    echap.retour().accept(player);
+                }
+            });
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onMenuClick(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player player
@@ -494,5 +532,7 @@ public final class KgMenu extends JavaPlugin implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         lastOpen.remove(event.getPlayer().getUniqueId());
         clics.remove(event.getPlayer().getUniqueId());
+        echaps.remove(event.getPlayer().getUniqueId());
+
     }
 }

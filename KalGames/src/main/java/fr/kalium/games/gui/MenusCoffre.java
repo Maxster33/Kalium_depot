@@ -254,17 +254,18 @@ public final class MenusCoffre {
         Contenant.saisie(joueur, () -> {
             String champ = "valeur";
             plugin.gui().open(joueur, plugin.lang().parse("<white><bold>" + libelle),
-                    List.of(t("coffre.jauge-body", "<gray>Faites glisser la jauge, puis validez.")),
+                    List.of(t("coffre.jauge-body-echap", "<gray>Faites glisser la jauge. Valider ou Échap : enregistré.")),
                     List.of(plugin.gui().number(champ, plugin.lang().parse(libelle), min, max, valeur, 1)),
-                    List.of(plugin.gui().form(t("coffre.jauge-ok", "<green>Valider"), null, (p, vue) -> {
+                    // « Valider » est le bouton de sortie : Échap enregistre aussi la jauge (LeKiwi06, 20/10/2026).
+                    List.of(),
+                    plugin.gui().form(t("coffre.jauge-ok", "<green>Valider"), null, (p, vue) -> {
                         Brouillon b = brouillons.get(p.getUniqueId());
                         Float choisi = vue.getFloat(champ);
                         if (b != null && choisi != null) {
                             b.options.put(cle, Math.max(min, Math.min(max, Math.round(choisi))));
                         }
                         reglages(p);
-                    })),
-                    plugin.gui().button(t("menu.back", "<gray>Retour"), null, this::reglages), 1);
+                    }), 1);
         });
     }
 
@@ -380,11 +381,14 @@ public final class MenusCoffre {
                 p.closeInventory();
             });
         });
-        menu.poser(menu.bas(5), Contenant.objet(Material.OAK_DOOR, t("coffre.retour", "<white>Retour"), List.of()), p -> {
+        Consumer<Player> retour = p -> {
             brouillons.remove(p.getUniqueId());
             b.retour.accept(p);
-        });
+        };
+        menu.poser(menu.bas(5), Contenant.objet(Material.OAK_DOOR, t("coffre.retour", "<white>Retour"), List.of()), retour);
         menu.ouvrir(joueur);
+        plugin.kgMenu().echap(joueur, menu, retour); // Échap = « Retour »
+
     }
 
     // ------------------------------------------------------------------ menu de la partie
@@ -609,6 +613,7 @@ public final class MenusCoffre {
             Contenant.apres(() -> plugin.hub().sendToHub(p));
         });
         menu.ouvrir(joueur);
+        plugin.kgMenu().echap(joueur, menu, null);
     }
 
     private static Material laine(RushLayout.Team equipe) {
@@ -654,6 +659,7 @@ public final class MenusCoffre {
         menu.barre();
         menu.poser(menu.bas(5), Contenant.objet(Material.OAK_DOOR, t("coffre.retour", "<white>Retour"), List.of()), this::partie);
         menu.ouvrir(joueur);
+        plugin.kgMenu().echap(joueur, menu, this::partie); // Échap = « Retour »
     }
 
     // ------------------------------------------------------------------ spectateur
@@ -698,5 +704,6 @@ public final class MenusCoffre {
         menu.barre();
         menu.poser(menu.bas(5), Contenant.objet(Material.BARRIER, t("coffre.fermer", "<red>Fermer"), List.of()), Contenant::fermer);
         menu.ouvrir(joueur);
+        plugin.kgMenu().echap(joueur, menu, null);
     }
 }
