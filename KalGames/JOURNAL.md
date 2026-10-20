@@ -966,7 +966,10 @@ aucun bug n'est à dénombrer »).
   (`derniere`) et les codes (`code`).
 - **Parties publiques masquées** : `menus.parties-publiques: false` (par défaut). Le moteur public reste en place.
 - **Réglages d'une nouvelle partie en coffre** (`MenusCoffre`) : une case par réglage, valeur dans le nom (arène : clic
-  gauche suivante / droit précédente ; nombres : clic gauche +1, droit -1, avec Maj par 5 ; cases : clic = oui/non ;
+  gauche suivante / droit précédente ; nombres : un clic ouvre une petite fenêtre avec une jauge, « Valider » ou
+  « Retour » ramène au coffre (demande de LeKiwi06 du 20/10 : « ouvrir l'interface de jauge quand on clique sur
+  l'item quand c'est nécessaire, par exemple le nombre de tours au bateau ») ; cases : clic = oui/non ;
+
   « Visible dans la liste »), « Créer la partie » au centre de la barre, « Retour » à côté. Le PvP Kit, le Cache-cache,
   les Piliers et le Pong fournissent leur propre formulaire : il s'ouvre encore en fenêtre depuis le coffre (étape 5).
   Rush : plus de « Joueurs maximum » (la taille vient des équipes de l'arène) ; l'arène se choisit dans les réglages.

@@ -245,12 +245,27 @@ public final class MenusCoffre {
         return b.options.get(cle) instanceof Boolean v ? v : defaut;
     }
 
-    /** Clic gauche +1, clic droit -1, avec Maj : +5 / -5 ; la valeur reste entre min et max. */
-    private int ajuster(Player joueur, int valeur, int min, int max) {
-        ClickType clic = plugin.kgMenu().clic(joueur);
-        int pas = clic.isShiftClick() ? 5 : 1;
-        valeur += clic.isRightClick() ? -pas : pas;
-        return Math.max(min, Math.min(max, valeur));
+    /**
+     * 1.26.0 (LeKiwi06, 20/10/2026 : « ouvrir l'interface de jauge quand on clique sur l'item quand c'est nécessaire,
+     * par exemple le nombre de tours au bateau ») : un réglage chiffré s'ouvre dans une petite fenêtre avec une jauge ;
+     * « Valider » ou « Retour » ramène au coffre des réglages.
+     */
+    private void jauge(Player joueur, String cle, String libelle, int min, int max, int valeur) {
+        Contenant.saisie(joueur, () -> {
+            String champ = "valeur";
+            plugin.gui().open(joueur, plugin.lang().parse("<white><bold>" + libelle),
+                    List.of(t("coffre.jauge-body", "<gray>Faites glisser la jauge, puis validez.")),
+                    List.of(plugin.gui().number(champ, plugin.lang().parse(libelle), min, max, valeur, 1)),
+                    List.of(plugin.gui().form(t("coffre.jauge-ok", "<green>Valider"), null, (p, vue) -> {
+                        Brouillon b = brouillons.get(p.getUniqueId());
+                        Float choisi = vue.getFloat(champ);
+                        if (b != null && choisi != null) {
+                            b.options.put(cle, Math.max(min, Math.min(max, Math.round(choisi))));
+                        }
+                        reglages(p);
+                    })),
+                    plugin.gui().button(t("menu.back", "<gray>Retour"), null, this::reglages), 1);
+        });
     }
 
     private void reglages(Player joueur) {
@@ -301,18 +316,15 @@ public final class MenusCoffre {
                 reglages(p);
             });
         }
-        List<Component> clicNombre = List.of(t("coffre.nombre-clic", "<yellow>Clic gauche : +1, clic droit : -1"),
-                t("coffre.nombre-maj", "<gray>Avec Maj : par 5"));
+        List<Component> clicNombre = List.of(t("coffre.jauge-clic", "<yellow>Clic : régler avec la jauge"));
         int max = jeu.getInt("max-players", 8);
-        if (max > 1) {
+        if (max > 1 && type != MinigameType.RUSH) { // Rush : la taille vient des équipes de l'arène
             int valeur = nombre(b, "maxPlayers", 1, max, Math.min(max, 4));
             b.options.put("maxPlayers", valeur);
             objets.add(Contenant.objet(new ItemStack(Material.PLAYER_HEAD, Math.max(1, Math.min(64, valeur))),
                     t("coffre.joueurs-max", "<white>Joueurs maximum : <aqua><n>", "n", valeur), clicNombre));
-            actions.add(p -> {
-                b.options.put("maxPlayers", ajuster(p, nombre(b, "maxPlayers", 1, max, Math.min(max, 4)), 1, max));
-                reglages(p);
-            });
+            actions.add(p -> jauge(p, "maxPlayers", plugin.lang().raw("menu.create-max", "Joueurs maximum"), 1, max,
+                    nombre(b, "maxPlayers", 1, max, Math.min(max, 4))));
         }
         for (MinigameType.CreateOption option : type.createOptions()) {
             int defaut = Math.max(option.min(), Math.min(option.max(), jeu.getInt(option.defaultSetting(), option.fallback())));
@@ -320,10 +332,9 @@ public final class MenusCoffre {
             b.options.put(option.key(), valeur);
             objets.add(Contenant.objet(new ItemStack(Material.CLOCK, Math.max(1, Math.min(64, valeur))),
                     plugin.lang().parse("<white>" + option.label() + " : <aqua>" + valeur), clicNombre));
-            actions.add(p -> {
-                b.options.put(option.key(), ajuster(p, nombre(b, option.key(), option.min(), option.max(), defaut), option.min(), option.max()));
-                reglages(p);
-            });
+            actions.add(p -> jauge(p, option.key(), option.label(), option.min(), option.max(),
+                    nombre(b, option.key(), option.min(), option.max(), defaut)));
+
         }
         for (MinigameType.CreateToggle bascule : type.createToggles()) {
             boolean valeur = coche(b, bascule.key(), false);
