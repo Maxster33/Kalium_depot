@@ -218,3 +218,24 @@ Empilé sur la 1.9.0 non testée : accord explicite.
 - Partie pleine ou fermée : « Code invalide, partie pleine ou introuvable ».
 
 **À déployer après KLM_Contacts 1.2.0 et KaliumRelay 1.8.0.** **Déployé sur Kal-Games le 09/10/2026 à 06:50 (LeKiwi06 ; 1.9.0 dans `_removed-kg_bingo-1.9.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.11.0 - réglages en coffre avec jauges, parties dans l'accueil de KG_Menu (20/10/2026, LeKiwi06)
+
+**Demandes de LeKiwi06 (20/10/2026)** : « sur certains comme le bingo et le build battle, l'interface semble
+inchangée » ; « ouvrir l'interface de jauge quand on clique sur l'item quand c'est nécessaire, par exemple [...] la
+répartition des items dans le bingo » ; « fermer une interface avec échap ramène sur la page précédente, et que les
+jauges soient enregistrées même sur un échap ».
+- **« Créer une partie » > Bingo** (KG_Menu 1.2.0) : un seul coffre de réglages (`BingoCoffre`) au lieu des deux
+  fenêtres : équipes, joueurs par équipe, durée, bingos à achever (clic : petite fenêtre avec une jauge), mode (clic :
+  mode suivant ; contre la montre seulement à 1 équipe, proposé par défaut en passant à 1 équipe), composition de la
+  grille (clic : une seule fenêtre avec les 4 jauges ; total affiché, en rouge s'il ne fait pas 25). « Créer la
+  partie » au centre, « Retour » à côté ; Échap = Retour ; dans une jauge, Échap = Valider.
+- Joueurs en mode fenêtres : les deux fenêtres d'avant, avec « Retour » en bouton de sortie (Échap).
+- **Réglages retenus** par joueur (`plugins/KG_Bingo/reglages.yml`), en coffre comme en fenêtre ; **« Recréer ma
+  dernière partie »** dans l'accueil.
+- **Parties en salle d'attente dans « Rejoindre une partie »** (tous jeux confondus, hôte, joueurs / places) et
+  « Entrer un code » de KG_Menu.
+- Inchangé : 2 créations par heure, `/bingo create` et `/bingo join`, objet « Rejouer » au retour du serveur Bingo (la
+  fin de partie se passe sur Serveur Jeux : à revoir avec KG_BingoGame).
+
+**À déployer avec KalGames 1.26.0 et KG_Menu 1.2.0 (déjà sur Kal-Games).** **Compilé, non déployé, non testé en jeu.**

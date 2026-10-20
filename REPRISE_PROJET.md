@@ -96,6 +96,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KG_Bingo 1.11.0 + KG_BuildBattle 0.6.0** (LeKiwi06, 20/10/2026), pour Kal-Games (avec KalGames 1.26.0 et KG_Menu 1.2.0, déjà déployés), **compilés, non déployés, non testés en jeu** : réglages en coffre (Bingo : jauges, composition de la grille dans une seule fenêtre ; Build Battle : tempo, équipes, thèmes écrits), Échap = Retour, réglages retenus, « Recréer ma dernière partie », parties dans « Rejoindre une partie ». Détail : leurs `JOURNAL.md`.
+
 - **KalGames 1.26.0 + KG_Menu 1.2.0** (LeKiwi06, 20/10/2026), **déployés ensemble sur Kal-Games le 20/10 à 12:57 (actifs après redémarrage), non testés en jeu** : menus en coffres (par défaut) ou en fenêtres au choix du joueur (« Paramètres › Affichage ») ; accueil Créer une partie / Rejoindre une partie (toutes les parties, nom du jeu + hôte) / Parties en cours ; parties publiques masquées ; réglages retenus, « Recréer ma dernière partie » ; fin de manche d'une partie privée : on reste dans la salle d'attente, relance après 15 s avec ceux qui restent, spectateurs ramenés dans la salle (« Passer spectateur »), hôte qui change les réglages / nomme un hôte / exclut, résumé de la manche ; plus d'objet « Rejouer » pour les parties privées. Détail : `KalGames/JOURNAL.md`, `KG_Menu/JOURNAL.md`.
 
 - **KS_Didacticiel 1.3.0** (LeKiwi06, 18/10/2026) : bouton « Poser une question », outil « Questions du didacticiel » (Modération, `ksdidacticiel.staff`), réponse dans le tchat du joueur ; contient la 1.2.2 ; **sur Event depuis le 18/10 à 17:16 (à redémarrer), pas encore sur Kixster**, non testé en jeu.

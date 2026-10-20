@@ -25,6 +25,8 @@ public final class KGBingo extends JavaPlugin {
     /** 1.6.0 : joueurs en Bingo sur Serveur Jeux (bouton du menu de kal-games). */
     private RelayCounter players;
     private BingoMenus menus;
+    /** 1.11.0 : réglages d'une partie en coffre, réglages retenus. */
+    private BingoCoffre coffre;
     /** 1.10.0 : a appeler pour chaque joueur envoye en partie (lien avec KLM_Contacts), ou null. */
     private java.util.function.BiConsumer<org.bukkit.entity.Player, BingoParty> contactsLink;
 
@@ -84,6 +86,7 @@ public final class KGBingo extends JavaPlugin {
         // 1.10.0 : groupes de jeu de KLM_Contacts (softdepend). Sans lui, ou avec une version sans cette fonction
         // (avant la 1.2.0), rien ne change.
         this.menus = menus;
+        coffre = new BingoCoffre(this, kg);
         Plugin klmContacts = getServer().getPluginManager().getPlugin("KLM_Contacts");
         if (klmContacts != null) {
             try {
@@ -121,6 +124,53 @@ public final class KGBingo extends JavaPlugin {
                         tip, (p, back) -> menus.openBingoMenu(p), players.value()));
             }
 
+            // 1.11.0 : accueil Créer une partie / Rejoindre une partie de KG_Menu 1.2.0.
+            @Override
+            public java.util.List<Jeu> jeux(org.bukkit.entity.Player player) {
+                int max = Math.max(1, getConfig().getInt("bingo.max-team-count", 4))
+                        * Math.max(1, getConfig().getInt("bingo.max-team-size", 4));
+                java.util.List<net.kyori.adventure.text.Component> lignes = java.util.List.of(
+                        menus.t("bingo.hub-entry-tip-2", "<gray>Mini-jeu sur serveur dédié : remplissez votre grille avant les autres équipes."),
+                        menus.t("bingo.hub-entry-players", "<gray>Joueurs : <white>1 à <max>", "max", max));
+                return java.util.List.of(new Jeu(ENTRY_ID, menus.t("bingo.hub-entry", "<gold><bold>Bingo"),
+                        new org.bukkit.inventory.ItemStack(org.bukkit.Material.FILLED_MAP), lignes, players.value(),
+                        (p, back) -> {
+                            if (kg.enCoffre(p)) {
+                                coffre.creer(p, back);
+                            } else {
+                                menus.openBingoCreate(p, back);
+                            }
+                        }));
+            }
+
+            @Override
+            public java.util.List<Partie> parties(org.bukkit.entity.Player player) {
+                java.util.List<Partie> liste = new java.util.ArrayList<>();
+                for (BingoParty party : parties.openParties(Integer.MAX_VALUE)) {
+                    String host = org.bukkit.Bukkit.getOfflinePlayer(party.host()).getName();
+                    liste.add(new Partie(party.gameId(), menus.t("bingo.hub-entry", "<gold><bold>Bingo"),
+                            new org.bukkit.inventory.ItemStack(org.bukkit.Material.FILLED_MAP), host == null ? "?" : host,
+                            party.roster().size(), party.maxPlayers(), false, p -> menus.joinFromMenu(p, party.code()), null));
+                }
+                return liste;
+            }
+
+            @Override
+            public Derniere derniere(org.bukkit.entity.Player player) {
+                long quand = coffre.derniere(player);
+                return quand <= 0 ? null : new Derniere(menus.t("bingo.hub-entry", "<gold><bold>Bingo"),
+                        new org.bukkit.inventory.ItemStack(org.bukkit.Material.FILLED_MAP), quand, coffre::recreer);
+            }
+
+            @Override
+            public net.kyori.adventure.text.Component code(org.bukkit.entity.Player player, String code) {
+                if (parties.byCode(code) == null) {
+                    return null;
+                }
+                net.kyori.adventure.text.Component refus = menus.joinFromMenu(player, code);
+                return refus == null ? net.kyori.adventure.text.Component.empty() : refus;
+            }
+
             @Override
             public java.util.List<Entry> settings(org.bukkit.entity.Player player) {
                 if (!kg.isAdmin(player)) {
@@ -143,7 +193,16 @@ public final class KGBingo extends JavaPlugin {
         return parties;
     }
 
+    BingoMenus menus() {
+        return menus;
+    }
+
+    BingoCoffre coffre() {
+        return coffre;
+    }
+
     BingoResults results() {
+
         return results;
     }
 }

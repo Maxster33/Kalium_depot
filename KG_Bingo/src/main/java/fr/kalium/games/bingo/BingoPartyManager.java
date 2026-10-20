@@ -162,7 +162,13 @@ public final class BingoPartyManager {
                 .collect(Collectors.toList());
     }
 
+    /** 1.11.0 : partie encore en salle d'attente avec ce code, ou null. */
+    public BingoParty byCode(String code) {
+        return code == null ? null : byCode.get(code.trim().toUpperCase());
+    }
+
     /** Rejoint une partie par code. Ne transfere PAS le joueur elle-meme (voir transferToBingo, appele par BingoCommand). */
+
     public BingoParty join(Player player, String code) {
         BingoParty party = byCode.get(code.toUpperCase());
         if (party == null) {

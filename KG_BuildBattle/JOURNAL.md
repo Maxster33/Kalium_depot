@@ -85,3 +85,20 @@ Limite : en file publique, les membres rejoignent la file de la même taille d'�
 dans la même équipe que leur chef (les équipes se forment sur Kanvas).
 
 **À déployer après KLM_Contacts 1.2.0 et KaliumRelay 1.8.0.** **Déployé sur Kal-Games le 09/10/2026 à 06:50 (LeKiwi06 ; 0.4.0 dans `_removed-kg_buildbattle-0.4.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 0.6.0 - réglages en coffre, parties dans l'accueil de KG_Menu (20/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (20/10/2026)** : « sur certains comme le bingo et le build battle, l'interface semble
+inchangée » (menus de Kal-Games en coffre, parties publiques masquées, Échap = page précédente).
+- **« Créer une partie » > Build Battle** (KG_Menu 1.2.0) : coffre de réglages (`Coffre`) : tempo et taille des
+  équipes (clic gauche : suivant, clic droit : précédent), thèmes écrits (oui / non), « Créer la partie » au centre,
+  « Retour » à côté ; Échap = Retour. Joueurs en mode fenêtres : l'ancienne fenêtre de création, « Retour » en bouton
+  de sortie (Échap).
+- **Plus de file publique** dans ce chemin (parties publiques masquées) ; l'ancien menu (files publiques) reste
+  seulement pour les plugins qui l'ouvrent encore.
+- **Réglages retenus** par joueur (`plugins/KG_BuildBattle/reglages.yml`) ; **« Recréer ma dernière partie »**.
+- **Parties privées listées dans « Rejoindre une partie »** et « Entrer un code » de KG_Menu.
+- Inchangé : objet « Rejouer » au retour de Kanvas (la fin de partie se passe sur Kanvas : à revoir avec
+  KV_BuildBattle).
+
+**À déployer avec KalGames 1.26.0 et KG_Menu 1.2.0 (déjà sur Kal-Games).** **Compilé, non déployé, non testé en jeu.**

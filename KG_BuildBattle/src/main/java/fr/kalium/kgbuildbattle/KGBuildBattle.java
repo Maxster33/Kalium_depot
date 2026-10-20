@@ -40,6 +40,8 @@ public final class KGBuildBattle extends JavaPlugin {
         Parties parties = new Parties(this);
         Lang lang = new Lang(this);
         Menus menus = new Menus(parties, lang, new Gui(this, lang));
+        Coffre coffre = new Coffre(this, parties, menus); // 0.6.0 : réglages en coffre
+        menus.coffre(coffre);
         getServer().getScheduler().runTaskTimer(this, parties::verifierFermees, 100L, 100L);
         // 0.4.0 : objet « Rejouer » au retour de Kanvas (objet et délai gérés par KalGames).
         getServer().getPluginManager().registerEvents(new Rejouer(this, parties, menus), this);
@@ -79,6 +81,50 @@ public final class KGBuildBattle extends JavaPlugin {
                 return List.of(new Entry("kg_buildbattle", menus.t("menu.bouton", "<gold><bold>Build Battle"),
                         info, menus::ouvrir, joueurs.value()));
             }
+
+            // 0.6.0 : accueil Créer une partie / Rejoindre une partie de KG_Menu 1.2.0 (pas de file publique : parties
+            // publiques masquées, décision de LeKiwi06 du 20/10/2026).
+            @Override
+            public List<Jeu> jeux(Player joueur) {
+                List<net.kyori.adventure.text.Component> lignes = List.of(
+                        menus.t("menu.bouton-info-2", "<gray>Construis sur un thème avec ton équipe, puis vote."),
+                        menus.t("menu.bouton-joueurs", "<gray>Joueurs : <white>2 à <max>", "max", parties.equipesMax() * 4));
+                return List.of(new Jeu("kg_buildbattle", menus.t("menu.bouton", "<gold><bold>Build Battle"),
+                        new org.bukkit.inventory.ItemStack(org.bukkit.Material.BRICKS), lignes, joueurs.value(),
+                        menus::creerDepuisAccueil));
+            }
+
+            @Override
+            public List<Partie> parties(Player joueur) {
+                List<Partie> liste = new java.util.ArrayList<>();
+                for (fr.kalium.kgbuildbattle.Partie partie : parties.listees(Integer.MAX_VALUE)) {
+                    liste.add(new Partie(partie.id, menus.t("menu.bouton", "<gold><bold>Build Battle"),
+                            new org.bukkit.inventory.ItemStack(org.bukkit.Material.BRICKS), partie.nomHote,
+                            partie.joueurs.size(), partie.places(), false, p -> menus.rejoindreDepuisAccueil(p, partie), null));
+                }
+                return liste;
+            }
+
+            @Override
+            public Derniere derniere(Player joueur) {
+                long quand = coffre.derniere(joueur);
+                return quand <= 0 ? null : new Derniere(menus.t("menu.bouton", "<gold><bold>Build Battle"),
+                        new org.bukkit.inventory.ItemStack(org.bukkit.Material.BRICKS), quand, p -> {
+                            coffre.lancer(p, coffre.depart(p));
+                            return null;
+                        });
+            }
+
+            @Override
+            public net.kyori.adventure.text.Component code(Player joueur, String code) {
+                fr.kalium.kgbuildbattle.Partie partie = parties.parCode(code);
+                if (partie == null) {
+                    return null;
+                }
+                net.kyori.adventure.text.Component refus = menus.rejoindreDepuisAccueil(joueur, partie);
+                return refus == null ? net.kyori.adventure.text.Component.empty() : refus;
+            }
+
         }, this, ServicePriority.Normal);
         lang.saveIfNeeded();
     }

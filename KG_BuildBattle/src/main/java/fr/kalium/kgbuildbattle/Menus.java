@@ -23,10 +23,38 @@ final class Menus {
     private final Lang lang;
     private final Gui gui;
 
+    /** 0.6.0 : réglages en coffre et réglages retenus (voir Coffre). */
+    private Coffre coffre;
+
     Menus(Parties parties, Lang lang, Gui gui) {
         this.parties = parties;
         this.lang = lang;
         this.gui = gui;
+    }
+
+    void coffre(Coffre coffre) {
+        this.coffre = coffre;
+    }
+
+    /** 0.6.0 : « Créer une partie » de KG_Menu : en coffre ou en fenêtre selon le réglage du joueur. */
+    void creerDepuisAccueil(Player joueur, Consumer<Player> retour) {
+        if (coffre.enCoffre(joueur)) {
+            coffre.creer(joueur, retour);
+        } else {
+            creer(joueur, retour, retour);
+        }
+    }
+
+    /** 0.6.0 : « Rejoindre une partie » / « Entrer un code » de KG_Menu : null si c'est fait, sinon le refus. */
+    Component rejoindreDepuisAccueil(Player joueur, Partie partie) {
+        if (!parties.existe(partie.id)) {
+            return t("menu.partie-fermee", "<red>Cette partie a déjà commencé ou n'existe plus.");
+        }
+        if (!parties.rejoindre(joueur, partie)) {
+            return t("menu.complete", "<red>Cette partie est complète.");
+        }
+        parties.envoyerPrive(joueur, partie);
+        return null;
     }
 
     Component t(String cle, String def, Object... paires) {
@@ -44,7 +72,7 @@ final class Menus {
         }
         boutons.add(gui.button(t("menu.creer", "<gold>Créer une partie privée"),
                 t("menu.creer-info", "<gray>Tu choisis le tempo, la taille des équipes et le mode des thèmes."),
-                p -> creer(p, retour)));
+                p -> creer(p, retour, q -> ouvrir(q, retour))));
         boutons.add(gui.button(t("menu.code", "<aqua>Rejoindre avec un code"), null, p -> rejoindreCode(p, retour)));
         for (Partie partie : parties.listees(10)) {
             boutons.add(gui.button(t("menu.partie", "<yellow><hote> <gray>· <taille> · <tempo> · <nb>/<max>",
@@ -60,7 +88,9 @@ final class Menus {
         lang.saveIfNeeded();
     }
 
-    private void creer(Player joueur, Consumer<Player> retour) {
+    /** retourCreation (0.6.0) : bouton « Retour » de cette fenêtre, aussi déclenché par Échap. */
+    private void creer(Player joueur, Consumer<Player> retour, Consumer<Player> retourCreation) {
+        Coffre.Reglages dernier = coffre.depart(joueur); // 0.6.0 : derniers réglages du joueur
         List<String> tempos = new ArrayList<>();
         List<Component> libellesTempos = new ArrayList<>();
         for (Tempo tp : Tempo.values()) {
@@ -73,9 +103,10 @@ final class Menus {
         gui.open(joueur, t("menu.creer", "<gold>Créer une partie privée"),
                 List.of(t("menu.creer-corps", "<gray>Jusqu'à <max> équipes. Tu lanceras la partie depuis la salle "
                         + "d'attente sur Kanvas.", "max", parties.equipesMax())),
-                List.of(gui.choice("tempo", t("menu.tempo", "Tempo"), tempos, libellesTempos, Tempo.NORMAL.name()),
-                        gui.choice("taille", t("menu.taille", "Taille des équipes"), tailles, libellesTailles, "1"),
-                        gui.toggle("ecrits", t("menu.ecrits", "Thèmes écrits par les joueurs"), false)),
+                List.of(gui.choice("tempo", t("menu.tempo", "Tempo"), tempos, libellesTempos, dernier.tempo.name()),
+                        gui.choice("taille", t("menu.taille", "Taille des équipes"), tailles, libellesTailles,
+                                String.valueOf(dernier.taille)),
+                        gui.toggle("ecrits", t("menu.ecrits", "Thèmes écrits par les joueurs"), dernier.ecrits)),
                 List.of(gui.form(t("menu.valider", "<green>Créer et rejoindre"), null, (p, vue) -> {
                     int taille;
                     try {
@@ -83,12 +114,14 @@ final class Menus {
                     } catch (RuntimeException e) {
                         taille = 1;
                     }
-                    Partie partie = parties.creer(p, Tempo.lire(vue.getText("tempo")), taille,
-                            Boolean.TRUE.equals(vue.getBoolean("ecrits")));
-                    p.sendMessage("§aPartie privée créée : code §f" + partie.code + "§a.");
-                    parties.envoyerPrive(p, partie);
+                    Coffre.Reglages choisis = new Coffre.Reglages();
+                    choisis.tempo = Tempo.lire(vue.getText("tempo"));
+                    choisis.taille = Math.max(1, Math.min(4, taille));
+                    choisis.ecrits = Boolean.TRUE.equals(vue.getBoolean("ecrits"));
+                    coffre.lancer(p, choisis);
                 })),
-                gui.button(t("menu.retour", "<gray>Retour"), null, p -> ouvrir(p, retour)), 1);
+                gui.button(t("menu.retour", "<gray>Retour"), null, retourCreation::accept), 1);
+
         lang.saveIfNeeded();
     }
 

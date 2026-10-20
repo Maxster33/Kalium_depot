@@ -62,7 +62,7 @@ final class BingoMenus {
         List<ActionButton> buttons = new ArrayList<>();
         buttons.add(gui.button(t("bingo.create", "<green>Créer une partie Bingo"),
                 t("bingo.create-tip", "<gray>Choisissez le nombre d'équipes et de joueurs par équipe, puis devenez l'hôte."),
-                this::openBingoCreate));
+                p -> openBingoCreate(p, this::openBingoMenu)));
         buttons.add(gui.form(t("bingo.join", "<aqua>Rejoindre avec un code"), null, (p, view) -> {
             String code = view.getText("code");
             bingoJoin(p, code == null ? "" : code);
@@ -80,12 +80,13 @@ final class BingoMenus {
             buttons.add(bingoPartyButton(party));
         }
 
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, kg.menus()::openGames));
         List<DialogInput> inputs = List.of(gui.text("code", t("bingo.join-input", "Code de la partie"), "", 8));
         List<Component> body = new ArrayList<>();
         body.add(t("bingo.body", "<gray>Créez une partie (vous serez l'hôte), rejoignez-en une avec un code, "
                 + "ou cliquez directement sur une partie encore en salle d'attente ci-dessous."));
-        gui.open(player, t("bingo.title", "<gold><bold>Bingo"), body, inputs, buttons, gui.close(), 1);
+        // 1.11.0 : « Retour » en bouton de sortie : Échap ramène aussi à la page précédente.
+        gui.open(player, t("bingo.title", "<gold><bold>Bingo"), body, inputs, buttons,
+                gui.button(t("menu.back", "<gray>Retour"), null, kg.menus()::openGames), 1);
     }
 
     /** Un bouton par partie encore en salle d'attente listee dans openBingoMenu - voir ce menu. */
@@ -125,15 +126,24 @@ final class BingoMenus {
      * curseur : creation en deux ecrans (choix de Maxster33), equipes d'abord, puis le reste selon ce choix.
      */
     public void openBingoCreate(Player player) {
+        openBingoCreate(player, this::openBingoMenu);
+    }
+
+    /**
+     * 1.11.0 : back = « Retour » (bouton de sortie, aussi sur Échap) ; les champs reprennent les derniers réglages du
+     * joueur (les mêmes que le coffre, voir BingoCoffre).
+     */
+    public void openBingoCreate(Player player, java.util.function.Consumer<Player> back) {
         long wait = plugin.parties().creationWaitSeconds(player); // 1.7.0 : 2 parties par heure (Maxster33)
         if (wait > 0) {
             player.sendMessage(BingoPartyManager.creationWaitText(wait));
             return;
         }
+        BingoCoffre.Reglages last = plugin.coffre().depart(player);
         int maxTeamCount = Math.max(1, plugin.getConfig().getInt("bingo.max-team-count", 4));
         int maxTeamSize = Math.max(1, plugin.getConfig().getInt("bingo.max-team-size", 4));
-        int defaultCount = Math.max(1, Math.min(maxTeamCount, plugin.getConfig().getInt("bingo.default-team-count", 2)));
-        int defaultSize = Math.max(1, Math.min(maxTeamSize, plugin.getConfig().getInt("bingo.default-team-size", 4)));
+        int defaultCount = Math.max(1, Math.min(maxTeamCount, last.equipes));
+        int defaultSize = Math.max(1, Math.min(maxTeamSize, last.taille));
 
         List<DialogInput> inputs = new ArrayList<>();
         inputs.add(gui.number("teamCount", t("bingo.create-teams", "Nombre d'équipes"), 1, maxTeamCount, defaultCount, 1));
@@ -145,17 +155,18 @@ final class BingoMenus {
             Float teamSizeValue = view.getFloat("teamSize");
             int teamCount = Math.max(1, Math.min(maxTeamCount, teamCountValue == null ? defaultCount : Math.round(teamCountValue)));
             int teamSize = Math.max(1, Math.min(maxTeamSize, teamSizeValue == null ? defaultSize : Math.round(teamSizeValue)));
-            openBingoCreateRules(p, teamCount, teamSize);
+            openBingoCreateRules(p, teamCount, teamSize, back);
         }));
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openBingoMenu));
         List<Component> body = List.of(t("bingo.create-body-equipes",
                 "<gray>Choisissez les équipes, puis « Suivant » pour régler la partie. Vous serez l'hôte."),
                 t("bingo.create-aide-solo", "<gray>Une seule équipe : le mode contre la montre est proposé par défaut."));
-        gui.open(player, t("bingo.create-title", "<gold><bold>Nouvelle partie Bingo"), body, inputs, buttons, gui.close(), 1);
+        gui.open(player, t("bingo.create-title", "<gold><bold>Nouvelle partie Bingo"), body, inputs, buttons,
+                gui.button(t("menu.back", "<gray>Retour"), null, back::accept), 1);
     }
 
     /** Ecran de creation, etape 2 (1.7.2) : mode, duree, bingos, composition, selon le nombre d'equipes choisi. */
-    private void openBingoCreateRules(Player player, int teamCount, int teamSize) {
+    private void openBingoCreateRules(Player player, int teamCount, int teamSize, java.util.function.Consumer<Player> back) {
+        BingoCoffre.Reglages last = plugin.coffre().depart(player);
         // Duree de partie (demande explicite de l'utilisateur, 23/09/2026) : choisie par l'hote en
         // MINUTES (plus lisible qu'en secondes dans un formulaire), bornee par bingo.min/max-duration-
         // minutes - meme principe que teamCount/teamSize ci-dessus. Pre-remplie AVEC LE MAXIMUM admin
@@ -165,7 +176,7 @@ final class BingoMenus {
         // donc que reduire cette valeur, jamais la depasser (borne haute du champ ci-dessous).
         int minDurationMinutes = Math.max(1, plugin.getConfig().getInt("bingo.min-duration-minutes", 5));
         int maxDurationMinutes = Math.max(minDurationMinutes, plugin.getConfig().getInt("bingo.max-duration-minutes", 60));
-        int defaultDurationMinutes = maxDurationMinutes;
+        int defaultDurationMinutes = Math.max(minDurationMinutes, Math.min(maxDurationMinutes, last.duree));
         boolean solo = teamCount == 1;
 
         List<DialogInput> inputs = new ArrayList<>();
@@ -183,13 +194,15 @@ final class BingoMenus {
             modeIds.add("CHRONO");
             modeLabels.add(t("bingo.mode-chrono-court", "Contre la montre, 1 équipe"));
         }
-        inputs.add(gui.choice("mode", t("bingo.create-mode", "Mode de jeu"), modeIds, modeLabels, solo ? "CHRONO" : "BINGOS"));
+        String lastMode = modeIds.contains(last.mode) ? last.mode : solo ? "CHRONO" : "BINGOS";
+        inputs.add(gui.choice("mode", t("bingo.create-mode", "Mode de jeu"), modeIds, modeLabels, lastMode));
         // 1.7.3 : 10 bingos au plus a une seule equipe (demande de Maxster33, 05/10/2026 ; aussi borne par KG_BingoGame).
-        inputs.add(gui.number("bingos", t("bingo.create-bingos", "Bingos à achever pour gagner"), 3, solo ? 10 : 12, 3, 1));
-        inputs.add(gui.number("easy", t("bingo.create-easy", "Objectifs faciles"), 0, GRID_CELLS, 10, 1));
-        inputs.add(gui.number("medium", t("bingo.create-medium", "Objectifs normaux"), 0, GRID_CELLS, 10, 1));
-        inputs.add(gui.number("hard", t("bingo.create-hard", "Objectifs difficiles"), 0, GRID_CELLS, 5, 1));
-        inputs.add(gui.number("extreme", t("bingo.create-extreme", "Objectifs extrêmes"), 0, GRID_CELLS, 0, 1));
+        inputs.add(gui.number("bingos", t("bingo.create-bingos", "Bingos à achever pour gagner"), 3, solo ? 10 : 12,
+                Math.max(3, Math.min(solo ? 10 : 12, last.bingos)), 1));
+        inputs.add(gui.number("easy", t("bingo.create-easy", "Objectifs faciles"), 0, GRID_CELLS, last.faciles, 1));
+        inputs.add(gui.number("medium", t("bingo.create-medium", "Objectifs normaux"), 0, GRID_CELLS, last.normaux, 1));
+        inputs.add(gui.number("hard", t("bingo.create-hard", "Objectifs difficiles"), 0, GRID_CELLS, last.difficiles, 1));
+        inputs.add(gui.number("extreme", t("bingo.create-extreme", "Objectifs extrêmes"), 0, GRID_CELLS, last.extremes, 1));
 
         List<ActionButton> buttons = new ArrayList<>();
         buttons.add(gui.form(t("bingo.create-confirm", "<green>Créer la partie"), null, (p, view) -> {
@@ -211,17 +224,25 @@ final class BingoMenus {
                 p.sendMessage(kg.prefix().append(t("bingo.create-bad-grid",
                         "<red>La grille doit contenir exactement <cells> objectifs (vous en avez choisi <total>).",
                         "cells", GRID_CELLS, "total", easy + medium + hard + extreme)));
-                openBingoCreateRules(p, teamCount, teamSize);
+                openBingoCreateRules(p, teamCount, teamSize, back);
                 return;
             }
-            String rules = "mode=" + mode + ";bingos=" + bingos + ";easy=" + easy + ";medium=" + medium
-                    + ";hard=" + hard + ";extreme=" + extreme;
-            bingoCreate(p, teamCount, teamSize, durationMinutes, rules,
-                    ("BLACKOUT".equals(mode) ? "blackout" : "CHRONO".equals(mode) ? "contre la montre, " + bingos + " bingos" : bingos + " bingos")
-                            + ", " + easy + " F / " + medium + " N / "
-                            + hard + " D / " + extreme + " X");
+            // 1.11.0 : création commune avec le coffre (réglages retenus, « Recréer ma dernière partie »).
+            BingoCoffre.Reglages settings = new BingoCoffre.Reglages();
+            settings.equipes = teamCount;
+            settings.taille = teamSize;
+            settings.mode = mode;
+            settings.duree = durationMinutes;
+            settings.bingos = bingos;
+            settings.faciles = easy;
+            settings.normaux = medium;
+            settings.difficiles = hard;
+            settings.extremes = extreme;
+            Component error = plugin.coffre().lancer(p, settings);
+            if (error != null) {
+                p.sendMessage(kg.prefix().append(error));
+            }
         }));
-        buttons.add(gui.button(t("menu.back", "<gray>Retour"), null, this::openBingoCreate));
         // 1.6.1 : textes courts dans les champs (ils ne doivent jamais défiler), explications ici.
         List<Component> body = new ArrayList<>();
         body.add(t("bingo.create-body-regles", "<gray><teams> équipe(s) de <size> joueur(s). Réglez la partie puis créez-la.",
@@ -236,7 +257,8 @@ final class BingoMenus {
                     + "+2 min 30 (facile), +4 min (normal), +6 min 30 (difficile), +10 min (extrême) ; il faut achever "
                     + "le nombre de bingos choisi (10 au plus), bonus selon le temps restant (la durée ne compte pas)."));
         }
-        gui.open(player, t("bingo.create-title", "<gold><bold>Nouvelle partie Bingo"), body, inputs, buttons, gui.close(), 1);
+        gui.open(player, t("bingo.create-title", "<gold><bold>Nouvelle partie Bingo"), body, inputs, buttons,
+                gui.button(t("menu.back", "<gray>Retour"), null, p -> openBingoCreate(p, back)), 1);
     }
 
     /** Nombre de cases d'une grille 5x5 (la composition choisie doit y correspondre). */
@@ -246,7 +268,7 @@ final class BingoMenus {
         return value == null ? fallback : Math.round(value);
     }
 
-    private void bingoCreate(Player player, int teamCount, int teamSize, int durationMinutes, String rules, String summary) {
+    void bingoCreate(Player player, int teamCount, int teamSize, int durationMinutes, String rules, String summary) {
         BingoParty party = plugin.parties().create(player, teamCount, teamSize,
                 java.time.Duration.ofMinutes(durationMinutes));
         party.setRules(rules);
@@ -259,7 +281,19 @@ final class BingoMenus {
         plugin.parties().transferToBingo(player);
     }
 
+    /** 1.11.0 : « Rejoindre une partie » / « Entrer un code » de KG_Menu : null si c'est fait, sinon le refus. */
+    Component joinFromMenu(Player player, String code) {
+        BingoParty party = plugin.parties().join(player, code);
+        if (party == null) {
+            return t("bingo.join-invalid", "<red>Code invalide, partie pleine ou introuvable.");
+        }
+        player.sendMessage(kg.prefix().append(t("bingo.joined", "<green>Partie rejointe, transfert en cours…")));
+        plugin.parties().transferToBingo(player);
+        return null;
+    }
+
     private void bingoJoin(Player player, String code) {
+
         if (code.isBlank()) {
             player.sendMessage(kg.prefix().append(t("bingo.join-empty", "<red>Merci d'indiquer un code.")));
             return;
