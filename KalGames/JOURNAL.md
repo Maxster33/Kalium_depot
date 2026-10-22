@@ -1021,8 +1021,10 @@ restent dans « Informations > Classements »).
 
 **Demande de LeKiwi06 (21/10/2026)** : Kal-Games et Serveur Jeux expirent dans 3 jours ; « on va fusionner kal-games et kanvas en utilisant le même principe que pour les mondes simultanés dans serveur jeux » ; « les gens ne pourront pas passer de kanvas à kal-games sans le lobby, tout sera sur le même serveur mais de façon hermétique, on fera même des tchats séparés » ; inventaires séparés ; deux noms Velocity gardés (`kal-games` et `Kanvas`, même adresse). Plan : [Plan de migration](https://claude.ai/artifact/MyTJxpL8zq1XCy1sTZKdZh).
 
-- Le monde du hub (`hub.world`, `Kal-Games`) est chargé au démarrage s'il existe sur le disque : il n'est plus forcément
-  le monde principal du serveur.
+- Le monde du hub (`hub.world`, `Kal-Games`) est chargé au démarrage : il n'est plus forcément le monde principal du
+  serveur. Correction du 22/10/2026 (même version) : plus de test du dossier `<racine>/<nom>` avant le chargement
+  (sous Paper 26.3 un monde est une dimension, `<monde principal>/dimensions/<espace de noms>/<nom>`, le test aurait
+  été faux) ; `WorldCreator(nom).createWorld()` est appelé dès que le monde n'est pas chargé, comme KV_Plots.
 - Arrivée : le hub n'est imposé qu'à un joueur qui arrive dans le hub, le monde des parties ou un monde de
   `hub.teleport-from-worlds` (défaut dans le code : `buildbattle`). Un joueur de Kanvas garde sa position.
 - Protection du hub (blocs, seaux, cadres, porte-armures, entités) et blocage de `/kit` : seulement dans le hub et le

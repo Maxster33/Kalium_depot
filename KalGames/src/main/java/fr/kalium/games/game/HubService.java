@@ -106,15 +106,12 @@ public final class HubService {
 
     /**
      * 1.27.0 - le monde du hub n'est plus forcement le monde principal du serveur (Kal-Games dans Kanvas) : charge
-     * au demarrage s'il existe sur le disque.
+     * au demarrage (comme KV_Plots ; sous Paper 26.3 les mondes sont des dimensions du monde principal, pas des
+     * dossiers a la racine du serveur, d'ou l'absence de test sur le disque).
      */
     public void loadHubWorld() {
         String name = plugin.getConfig().getString("hub.world", "Kal-Games");
         if (Bukkit.getWorld(name) != null) {
-            return;
-        }
-        if (!new java.io.File(Bukkit.getWorldContainer(), name).isDirectory()) {
-            plugin.getLogger().warning("Monde du hub '" + name + "' introuvable : hub dans le monde principal.");
             return;
         }
         World world = new org.bukkit.WorldCreator(name).createWorld();
