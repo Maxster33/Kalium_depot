@@ -88,3 +88,5 @@ comment décrire le problème, peux-tu regarder toi-même ? ».
 Compilé le 18/10/2026 (`sortie/KS_LaisseBateau-1.0.2.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Event le 18/10/2026 à 15:55 (LeKiwi06 : « oui envoie sur event ») : jar en place (1.0.1) vérifié identique à la référence, rangé dans `_removed-ks_laissebateau-1.0.1/` ; jar du serveur vérifié identique à celui compilé ; `config.yml` du serveur gardé (sa clé `raideur` est ignorée). À redémarrer par LeKiwi06. Statut : non testé en jeu.**
+
+**Testé en jeu par LeKiwi06 sur Event (signalé le 22/10/2026 : « j'ai testé tout marche bien »). Event retiré depuis le 21/10 ; pas encore déployé sur Kixster.**
