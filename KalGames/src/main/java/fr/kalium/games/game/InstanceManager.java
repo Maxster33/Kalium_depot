@@ -299,7 +299,85 @@ public final class InstanceManager {
         return new Result(instance, null);
     }
 
+    /**
+     * 1.28.0 - « Changer les réglages » entre deux manches, même arène (bug signalé par LeKiwi06 le 22/10/2026 : « quand
+     * je modifie les règles de la game dans le lobby d'attente du parkour, ça me recrée une partie quand je valide ») :
+     * les jeux lisent leurs réglages à la création de la partie ; la partie est donc reconstruite SUR LA MÊME COPIE de
+     * l'arène avec les nouveaux réglages, et garde son code, son hôte, sa visibilité, ses joueurs et ses spectateurs
+     * (aucun chargement, aucun « Partie créée »). null si c'est fait, sinon le motif du refus.
+     */
+    public Component reconfigure(Player host, GameInstance old, Map<String, Object> options) {
+        if (old.closing() || old.isPublic() || !old.isHost(host.getUniqueId()) || old.phase() != GameInstance.Phase.WAITING) {
+            return plugin.t("host.reconfigure-refused", "<red>Les réglages ne se changent qu'entre deux manches, par l'hôte.");
+        }
+        ArenaPool.Cell cell = cells.get(old.id());
+        MinigameType.GameFactory engine = old.minigame().type().engine();
+        if (cell == null || engine == null) {
+            return plugin.t("game.error-create", "<red>Création impossible (voir la console).");
+        }
+        String id = "g" + (++counter);
+        GameInstance instance;
+        try {
+            instance = engine.create(plugin, id, old.minigame(), old.arena(), old.template(), false, options, cell.slot);
+        } catch (RuntimeException e) {
+            plugin.getLogger().severe("Changement des réglages impossible : " + e);
+            return plugin.t("game.error-create", "<red>Création impossible (voir la console).");
+        }
+        if (instance == null) {
+            return plugin.t("game.no-engine", "<red>Ce mini-jeu n'est pas encore jouable.");
+        }
+        List<UUID> members = new ArrayList<>(old.members());
+        if (old.host() != null && members.remove(old.host())) {
+            members.add(0, old.host()); // l'hôte d'abord : il garde sa place si la partie devient plus petite
+        }
+        List<UUID> watchers = new ArrayList<>(old.spectators());
+        // L'ancienne partie s'efface sans rendre la copie de l'arène (remise en état sur place).
+        for (UUID uuid : members) {
+            byPlayer.remove(uuid, old);
+        }
+        for (UUID uuid : watchers) {
+            spectating.remove(uuid, old);
+        }
+        instances.remove(old.id());
+        cells.remove(old.id());
+        byCode.remove(old.code());
+        old.restoreForReuse();
+        old.shutdown();
+        // La nouvelle prend sa place : même copie, même code, même hôte.
+        instances.put(id, instance);
+        cells.put(id, cell);
+        cell.owner = instance;
+        instance.host(old.host());
+        instance.listed(options.get("listed") instanceof Boolean b ? b : old.listed());
+        instance.code(old.code());
+        byCode.put(old.code(), instance);
+        instance.onPasted();
+        for (UUID uuid : members) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player == null) {
+                continue;
+            }
+            Component refusal = instance.admit(player);
+            if (refusal != null) {
+                // Partie devenue trop petite : retour au hub.
+                player.sendMessage(plugin.prefix().append(refusal));
+                plugin.hub().sendToHub(player);
+                continue;
+            }
+            byPlayer.put(uuid, instance);
+        }
+        for (UUID uuid : watchers) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                spectating.put(uuid, instance);
+                instance.addSpectator(uuid);
+            }
+        }
+        return null;
+    }
+
     /** La partie n'a pas pu etre creee : la copie retourne dans la reserve (ou est supprimee si elle vient d'etre collee). */
+
     private void giveUp(ArenaPool.Cell cell, boolean recycled) {
         cell.owner = null;
         if (recycled) {

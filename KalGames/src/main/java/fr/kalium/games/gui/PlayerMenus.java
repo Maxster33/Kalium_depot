@@ -432,7 +432,9 @@ public final class PlayerMenus {
                 !(last.get("listed") instanceof Boolean b) || b));
 
         List<ActionButton> buttons = new ArrayList<>();
-        buttons.add(gui.form(t("menu.create-confirm", "<green>Créer la partie"), null, (p, view) -> {
+        // 1.28.0 : l'hôte qui change les réglages de sa partie : la même partie est modifiée, pas recréée.
+        buttons.add(gui.form(plugin.coffres().enModification(player) ? t("menu.apply-confirm", "<green>Appliquer les réglages")
+                : t("menu.create-confirm", "<green>Créer la partie"), null, (p, view) -> {
             Map<String, Object> options = new HashMap<>();
             String arenaId = arenas.size() > 1 ? view.getText("arena") : arenas.get(0).id();
             if (minigame.type().createForm() != null) {

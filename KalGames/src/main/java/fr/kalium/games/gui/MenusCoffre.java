@@ -147,8 +147,24 @@ public final class MenusCoffre {
         // 1.26.0 : « Changer les réglages » : la nouvelle partie remplace l'ancienne, tout le monde y passe.
         GameInstance ancienne = remplacements.remove(joueur.getUniqueId());
         if (ancienne != null && (ancienne.closing() || plugin.instances().of(joueur) != ancienne
-                || !ancienne.isHost(joueur.getUniqueId()) || !ancienne.relanceEnAttente())) {
-            ancienne = null;
+                || !ancienne.isHost(joueur.getUniqueId()) || ancienne.phase() != GameInstance.Phase.WAITING)) {
+            // 1.28.0 : la manche a repris (ou l'hôte a changé) pendant le réglage : rien n'est créé à côté.
+            return t("host.reconfigure-refused", "<red>Les réglages ne se changent qu'entre deux manches, par l'hôte.");
+        }
+        if (ancienne != null && (arene == null || arene.equals(ancienne.arena().id()))) {
+            // 1.28.0 : même arène : la partie garde son code, sa salle d'attente et ses joueurs (bug du 22/10/2026).
+            Component refus = plugin.instances().reconfigure(joueur, ancienne, options);
+            if (refus != null) {
+                ancienne.reprendreRelance();
+                return refus;
+            }
+            GameInstance nouvelle = plugin.instances().of(joueur);
+            plugin.reglages().retenir(joueur.getUniqueId(), jeu.id(), ancienne.arena().id(), options);
+            if (nouvelle != null) {
+                nouvelle.broadcast(t("relance.reglages-appliques", "<green>L'hôte a changé les réglages de la partie."));
+                nouvelle.lancerCompteARebours();
+            }
+            return null;
         }
         List<UUID> suivants = new ArrayList<>();
         if (ancienne != null) {
@@ -192,6 +208,7 @@ public final class MenusCoffre {
         }
         partie.suspendreRelance();
         remplacements.put(hote.getUniqueId(), partie);
+        // le coffre et la fenêtre des réglages affichent « Appliquer les réglages » (voir enModification)
         Consumer<Player> retour = p -> {
             remplacements.remove(p.getUniqueId());
             partie.reprendreRelance();
@@ -207,6 +224,11 @@ public final class MenusCoffre {
         brouillon.options.putAll(partie.optionsCopie());
         brouillons.put(hote.getUniqueId(), brouillon);
         reglages(hote);
+    }
+
+    /** 1.28.0 : l'hôte est-il en train de changer les réglages de sa partie (bouton « Appliquer les réglages ») ? */
+    public boolean enModification(Player joueur) {
+        return remplacements.containsKey(joueur.getUniqueId());
     }
 
     /** « Créer une partie » &gt; un jeu : ses réglages (en coffre, ou la fenêtre du jeu s'il fournit son formulaire). */
@@ -364,8 +386,13 @@ public final class MenusCoffre {
         }
 
         menu.barre();
-        menu.poser(menu.bas(4), Contenant.objet(Material.LIME_CONCRETE, t("coffre.creer", "<green><bold>Créer la partie"),
-                Contenant.lignes(t("coffre.creer-tip", "<gray>Vous en êtes l'hôte ; invitez vos amis avec le code."))), p -> {
+        boolean modification = enModification(joueur);
+        menu.poser(menu.bas(4), Contenant.objet(Material.LIME_CONCRETE, modification
+                ? t("coffre.appliquer", "<green><bold>Appliquer les réglages") : t("coffre.creer", "<green><bold>Créer la partie"),
+                Contenant.lignes(modification
+                        ? t("coffre.appliquer-tip", "<gray>Même partie, même code : la relance reprend avec ces réglages.")
+                        : t("coffre.creer-tip", "<gray>Vous en êtes l'hôte ; invitez vos amis avec le code."))), p -> {
+
             Brouillon actuel = brouillons.get(p.getUniqueId());
             if (actuel == null) {
                 return;

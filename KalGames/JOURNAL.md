@@ -1034,3 +1034,24 @@ restent dans « Informations > Classements »).
 - Nouvelles clés facultatives (défauts dans le code) : `hub.teleport-from-worlds`, `hub.space`.
 
 **Compilé, non déployé, non testé en jeu.** À déployer avec KLM_Espaces 1.0.0 et KaliumRelay 1.9.0 (fusion de Kal-Games dans Kanvas).
+
+## 1.28.0 - « Changer les réglages » modifie la partie au lieu d'en recréer une (22/10/2026, LeKiwi06)
+
+**Bug signalé par LeKiwi06 (22/10/2026)** : « quand je modifie les règles de la game dans le lobby d'attente du
+parkour, ça me recrée une partie quand je valide ».
+
+**Cause** : en 1.26.0, « Changer les réglages » (hôte, entre deux manches) créait une nouvelle partie (autre copie de
+l'arène, nouveau code, « Partie créée ») et y faisait passer tout le monde, parce que les jeux lisent leurs réglages
+une seule fois, à la création de la partie.
+
+**Correction** :
+- Même arène : `InstanceManager.reconfigure` reconstruit la partie **sur la même copie de l'arène** avec les nouveaux
+  réglages ; elle garde son code, son hôte, sa visibilité, ses joueurs (hôte en premier) et ses spectateurs. Aucun
+  chargement, aucun message « Partie créée » : « L'hôte a changé les réglages de la partie. », puis la relance de
+  15 s reprend. Un joueur qui n'a plus de place (joueurs maximum réduit) revient au hub avec le motif.
+- Autre arène choisie : comme avant, une partie est préparée sur la nouvelle arène et tout le monde y passe.
+- Si la manche a repris pendant que l'hôte réglait la partie : refus (« Les réglages ne se changent qu'entre deux
+  manches, par l'hôte. ») au lieu de créer une partie à côté.
+- Le bouton s'appelle « Appliquer les réglages » dans ce cas (coffre et fenêtre).
+
+**Compilé, non déployé, non testé en jeu.**
