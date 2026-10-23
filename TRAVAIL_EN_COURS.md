@@ -23,8 +23,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
-- geyser-bedrock (Geyser-Velocity et Floodgate du proxy) — LeKiwi06 — depuis le 2026-10-23 15:45 — mise à jour de Geyser en 2.12.0 (Java 26.3) sur le proxy, sans code ; redémarrage par l'humain
-
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut) (passé en « requis parfois » le 2026-10-20 13:30 : compilation de KG_Bingo / KG_BuildBattle, petites retouches)
 - KalGames — LeKiwi06 — depuis le 2026-10-20 12:03 — menus en coffre (réglage coffres / fenêtres), accueil Créer / Rejoindre / Parties en cours, parties publiques masquées, relance en salle d'attente après 15 s (passé en « requis parfois » le 2026-10-20 13:30 : compilation de KG_Bingo / KG_BuildBattle, petites retouches)
 - KG_Menu — LeKiwi06 — depuis le 2026-10-20 12:03 — Paramètres › Affichage (coffres / fenêtres, affichages masquables), nouvel accueil de Kal-Games en coffre (passé en « requis parfois » le 2026-10-20 13:30 : compilation de KG_Bingo / KG_BuildBattle, petites retouches)

@@ -93,3 +93,7 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   **Points ouverts (relais à LeKiwi06)** : passer Geyser-Velocity en b1251 sur le proxy et retester ; puis remettre
   le réglage de pile (fichier gardé dans `_removed-kalium-objets-1.4.0-pile64/` sur le proxy, et dans le commit
   e428b1e du dépôt).
+- **Geyser 2.12.0 (23/10/2026, LeKiwi06)** : `Geyser-Velocity-2.12.0-b1269.jar` (Java 26.3) à la place de la
+  2.11.3-b1249 (rangée avec une copie du `config.yml` dans `/plugins/_removed-geyser-2.11.3-b1249/`). Correspondances
+  (format 2) et pack 1.4.0 inchangés ; Floodgate 2.2.5 b141 inchangé (déjà la dernière). Envoyé le 23/10/2026 à 15:47 ;
+  actif après redémarrage du proxy. **Non testé.** Le réglage de pile reste à remettre (point ouvert ci-dessus).
