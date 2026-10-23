@@ -51,3 +51,5 @@ feuilles de papier.
 - Durées, distances et dégâts reconnus par le nom du jeu.
 
 **Compilé, non déployé, non testé en jeu.**
+
+**Déployé sur Kixster le 24/10/2026 (accord de LeKiwi06 : « envoie KLM_Statistiques 1.1.1 sur Kixster ») ; 1.1.0 dans `_removed-klm_statistiques-1.1.0/` ; actif après redémarrage, non testé en jeu.**
