@@ -456,3 +456,5 @@ l'affichage du livre de recettes qui trompait.
   dans n'importe quel ordre ».
 
 **Compilé, non déployé, non testé en jeu.** À envoyer sur Kixster avec `didacticiel.yml`.
+
+**Déployé sur Kixster le 24/10/2026 avec `didacticiel.yml` (accord de LeKiwi06) ; 1.20.1 dans `_removed-ks_crafts-1.20.1/`, ancien didacticiel dans `_removed-ks_didacticiel-yml-2026-10-24/` ; actif après redémarrage, non testé en jeu.**
