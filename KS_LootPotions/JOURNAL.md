@@ -70,3 +70,12 @@ en demande 8.
   d'autre n'est modifié tant qu'il ne l'a pas validée.
 
 **Déployé sur Kixster et sur Event le 11/10/2026 à 10:47 (LeKiwi06 ; demandes du 11/10/2026 ; 1.1.3 dans `_removed-ks_lootpotions-1.1.3/` sur les deux serveurs), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.2.1 - gros slime : potion de suintement au lieu d'infestation (24/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « les gros slime dropent des potions d'infestation et non de viscosité, répare ça ». Depuis la
+1.0.0, le gros slime (taille 4 et plus) donnait 10 % de potion d'**infestation** (repris du cahier des charges).
+- Gros slime tué par un joueur : 10 % d'une potion basique de **suintement** (viscosité). Mêmes règles qu'avant.
+- Le reste est inchangé (le vex garde l'infestation).
+
+**Compilé, non déployé. Statut : non testé en jeu.**

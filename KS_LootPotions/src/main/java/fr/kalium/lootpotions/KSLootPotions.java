@@ -115,8 +115,9 @@ public final class KSLootPotions extends JavaPlugin implements Listener {
             case STRIDER -> add(drops, 0.01, PotionType.FIRE_RESISTANCE);
             case RABBIT -> add(drops, 0.01, PotionType.LEAPING);
             case SLIME -> {
+                // 1.2.1 (LeKiwi06) : suintement (viscosité), et non infestation comme depuis la 1.0.0
                 if (((Slime) entity).getSize() >= 4) {
-                    add(drops, 0.10, PotionType.INFESTED);
+                    add(drops, 0.10, PotionType.OOZING);
                 }
             }
             case BREEZE -> add(drops, 0.10, PotionType.WIND_CHARGED);
