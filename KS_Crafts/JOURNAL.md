@@ -421,3 +421,21 @@ Demande de LeKiwi06 : « 9 os donnent 9 blocs d'os, ça évite de passer par l'�
 Remplace la 1.19.0 dans le déploiement groupé vers Kixster.
 
 **Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé, à la place de la 1.15.0 ; contient la 1.19.0) ; 1.15.0 dans `_removed-ks_crafts-1.15.0/` ; actif après redémarrage, non testé en jeu.**
+
+## 1.20.1 - wagon contrôleur : 5 pièces différentes obligatoires (23/10/2026, LeKiwi06)
+
+**Bug signalé par LeKiwi06 (23/10/2026)** : « corrige le craft du minecart contrôleur, on peut le crafter avec 5 fois
+le même item au lieu des 5 items différents, mais sans ordre précis ».
+
+Cause probable (non reproduite, pas de serveur de test) : le contrôle de la 1.17.0 ne s'appliquait que si le jeu rendait
+la recette en `ShapedRecipe` dans `PrepareItemCraftEvent`, et seulement à la préparation du résultat ; un crafter
+(établi automatique) n'y passait jamais.
+
+- La recette est reconnue par sa clé (`ks_crafts:wagon_controleur`), quel que soit son type.
+- Le même contrôle (les 5 pièces, chacune une fois, rien d'autre que le wagonnet) est fait à la préparation du résultat,
+  au moment de prendre le wagon (`CraftItemEvent` annulé, clic simple et Maj + clic) et dans un crafter
+  (`CrafterCraftEvent` annulé).
+
+**Déployé sur Kixster le 23/10/2026 à 19:00 (demande de LeKiwi06 : corriger « avant » le redémarrage) ; 1.20.0 dans
+`_removed-ks_crafts-1.20.0/` ; actif après redémarrage, non testé en jeu.** À tester : 5 fois la même pièce (Java et
+Bedrock) → pas de wagon ; les 5 pièces différentes → wagon.

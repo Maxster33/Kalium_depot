@@ -493,25 +493,58 @@ public final class KSCrafts extends JavaPlugin implements Listener {
                 Material.NOTE_BLOCK, Material.LEVER);
     }
 
-    /** 1.17.0 : wagon contrôleur seulement si chacune des 5 pièces est là une fois (pas 5 comparateurs). */
-    @EventHandler
+    /**
+     * 1.17.0 : wagon contrôleur seulement si chacune des 5 pièces est là une fois (pas 5 comparateurs).
+     * 1.20.1 (LeKiwi06, 23/10/2026 : « on peut le crafter avec 5 fois le même item au lieu des 5 items différents ») :
+     * la recette est reconnue par sa clé quel que soit son type (avant : seulement si le jeu la rendait en ShapedRecipe),
+     * et le contrôle est refait au moment de prendre le wagon (onCrafterControleur) et dans un crafter (onCrafterBloc),
+     * qui ne passait pas par ici.
+     */
+    @EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST)
     public void onPreparerControleur(org.bukkit.event.inventory.PrepareItemCraftEvent event) {
-        if (!(event.getRecipe() instanceof ShapedRecipe recette) || !recette.getKey().equals(key("wagon_controleur"))) {
+        if (estControleur(event.getRecipe()) && !piecesValides(event.getInventory().getMatrix())) {
+            event.getInventory().setResult(null);
+        }
+    }
+
+    /** 1.20.1 : prise du wagon refusée si les 5 pièces ne sont pas toutes différentes (clic, Maj + clic, Bedrock). */
+    @EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onCrafterControleur(org.bukkit.event.inventory.CraftItemEvent event) {
+        if (estControleur(event.getRecipe()) && !piecesValides(event.getInventory().getMatrix())) {
+            event.setCancelled(true);
+            event.getInventory().setResult(null);
+        }
+    }
+
+    /** 1.20.1 : un crafter (établi automatique) ne fabrique pas un wagon contrôleur avec de mauvaises pièces. */
+    @EventHandler(priority = org.bukkit.event.EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onCrafterBloc(org.bukkit.event.block.CrafterCraftEvent event) {
+        if (!estControleur(event.getRecipe())) {
             return;
         }
-        java.util.Set<String> vues = new java.util.HashSet<>();
-        for (ItemStack objet : event.getInventory().getMatrix()) {
+        if (!(event.getBlock().getState() instanceof org.bukkit.block.Crafter crafter)
+                || !piecesValides(crafter.getInventory().getContents())) {
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean estControleur(org.bukkit.inventory.Recipe recette) {
+        return recette instanceof org.bukkit.Keyed k && k.getKey().equals(key("wagon_controleur"));
+    }
+
+    /** Les 5 pièces du contrôleur, chacune une fois, et rien d'autre que le wagonnet. */
+    private static boolean piecesValides(ItemStack[] matrice) {
+        java.util.Set<Material> vues = java.util.EnumSet.noneOf(Material.class);
+        List<Material> pieces = piecesControleur();
+        for (ItemStack objet : matrice) {
             if (objet == null || objet.isEmpty() || objet.getType() == Material.MINECART) {
                 continue;
             }
-            if (!vues.add(objet.getType().name())) {
-                event.getInventory().setResult(null);
-                return;
+            if (!pieces.contains(objet.getType()) || !vues.add(objet.getType())) {
+                return false;
             }
         }
-        if (vues.size() != 5) {
-            event.getInventory().setResult(null);
-        }
+        return vues.size() == pieces.size();
     }
 
     /** 8 objets en anneau autour de l'objet central. */
