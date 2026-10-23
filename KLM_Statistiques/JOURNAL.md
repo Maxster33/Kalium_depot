@@ -35,3 +35,19 @@ test : noms traduits côté Bedrock.
 **Compilé, non déployé, non testé en jeu.** À déployer ensemble : KaliumRelay 1.10.1 (proxy), KLM_Contacts 1.5.1 (tous les serveurs Paper), KS_Parrainage 1.1.0 + KLM_Statistiques 1.1.0 + `didacticiel.yml` (Kixster). Empilé sur les versions du 23/10 (déployées, pas encore testées), à la suite de la même demande.
 
 **Déployé sur Kixster le 23/10/2026 à 18:50 (accord de LeKiwi06) ; 1.0.0 dans `_removed-klm_statistiques-1.0.0/` ; le temps actif est compté à partir de son premier démarrage ; non testé en jeu.**
+
+## 1.1.1 - noms et valeurs des statistiques générales, icônes (23/10/2026, LeKiwi06)
+
+**Signalé par LeKiwi06 (23/10/2026, capture d'écran)** : « l'onglet statistique présente plusieurs problèmes » : le
+temps de jeu s'affichait « stat.minecraft.play_one_minute » avec « 3 576 443 », et la plupart des cases étaient des
+feuilles de papier.
+
+- Cause : le nom des statistiques donné par Bukkit (`Statistic.getKey()`) n'est pas celui du jeu pour une vingtaine
+  d'entre elles (PLAY_ONE_MINUTE = `play_time`, CHEST_OPENED = `open_chest`, DROP_COUNT = `drop`...) : clé de
+  traduction introuvable (nom brut affiché) et temps de jeu non reconnu (affiché en ticks).
+- Table des 77 statistiques générales de Bukkit : nom dans le jeu, relevé dans le fichier de langue du client 26.3
+  (`assets/minecraft/lang/en_us.json`, 78 clés `stat.minecraft.*` ; `sleep_in_straw_bed` n'existe pas dans Bukkit),
+  et une icône pour chacune (plus de papier).
+- Durées, distances et dégâts reconnus par le nom du jeu.
+
+**Compilé, non déployé, non testé en jeu.**

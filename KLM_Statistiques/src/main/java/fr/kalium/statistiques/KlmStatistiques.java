@@ -67,32 +67,93 @@ public final class KlmStatistiques extends JavaPlugin implements org.bukkit.even
             new Onglet("tues", Statistic.KILL_ENTITY, Material.IRON_SWORD, "<red>Créatures tuées"),
             new Onglet("tue-par", Statistic.ENTITY_KILLED_BY, Material.SKELETON_SKULL, "<red>Tué par"));
 
-    /** Icônes des statistiques générales les plus parlantes (les autres : papier). */
-    private static final Map<Statistic, Material> ICONES = Map.ofEntries(
-            Map.entry(Statistic.PLAY_ONE_MINUTE, Material.CLOCK),
-            Map.entry(Statistic.TOTAL_WORLD_TIME, Material.CLOCK),
-            Map.entry(Statistic.DEATHS, Material.SKELETON_SKULL),
-            Map.entry(Statistic.MOB_KILLS, Material.IRON_SWORD),
-            Map.entry(Statistic.PLAYER_KILLS, Material.DIAMOND_SWORD),
-            Map.entry(Statistic.JUMP, Material.RABBIT_FOOT),
-            Map.entry(Statistic.WALK_ONE_CM, Material.LEATHER_BOOTS),
-            Map.entry(Statistic.SPRINT_ONE_CM, Material.GOLDEN_BOOTS),
-            Map.entry(Statistic.SWIM_ONE_CM, Material.TROPICAL_FISH),
-            Map.entry(Statistic.BOAT_ONE_CM, Material.OAK_BOAT),
-            Map.entry(Statistic.MINECART_ONE_CM, Material.MINECART),
-            Map.entry(Statistic.HORSE_ONE_CM, Material.SADDLE),
-            Map.entry(Statistic.AVIATE_ONE_CM, Material.ELYTRA),
-            Map.entry(Statistic.FALL_ONE_CM, Material.FEATHER),
-            Map.entry(Statistic.FISH_CAUGHT, Material.FISHING_ROD),
-            Map.entry(Statistic.SLEEP_IN_BED, Material.RED_BED),
-            Map.entry(Statistic.ANIMALS_BRED, Material.WHEAT),
-            Map.entry(Statistic.TRADED_WITH_VILLAGER, Material.EMERALD),
-            Map.entry(Statistic.CHEST_OPENED, Material.CHEST),
-            Map.entry(Statistic.ENDERCHEST_OPENED, Material.ENDER_CHEST),
-            Map.entry(Statistic.ITEM_ENCHANTED, Material.ENCHANTING_TABLE),
-            Map.entry(Statistic.DAMAGE_DEALT, Material.STONE_SWORD),
-            Map.entry(Statistic.DAMAGE_TAKEN, Material.SHIELD),
-            Map.entry(Statistic.LEAVE_GAME, Material.OAK_DOOR));
+    /**
+     * 1.1.1 - statistiques générales : nom dans le jeu (clé de traduction « stat.minecraft.<nom> », différent du nom de
+     * Bukkit pour une vingtaine d'entre elles, ex. PLAY_ONE_MINUTE = play_time, CHEST_OPENED = open_chest : relevé dans
+     * le fichier de langue du client 26.3) et icône. En 1.1.0, le nom de Bukkit était utilisé : noms non traduits et temps
+     * de jeu affiché en ticks (signalé par LeKiwi06, 23/10/2026). « sleep_in_straw_bed » n'existe pas dans Bukkit.
+     */
+    private record Generale(String nom, Material icone) {
+    }
+
+    private static final Map<Statistic, Generale> GENERALES = Map.ofEntries(
+            Map.entry(Statistic.ANIMALS_BRED, new Generale("animals_bred", Material.WHEAT)),
+            Map.entry(Statistic.AVIATE_ONE_CM, new Generale("aviate_one_cm", Material.ELYTRA)),
+            Map.entry(Statistic.BELL_RING, new Generale("bell_ring", Material.BELL)),
+            Map.entry(Statistic.BOAT_ONE_CM, new Generale("boat_one_cm", Material.OAK_BOAT)),
+            Map.entry(Statistic.ARMOR_CLEANED, new Generale("clean_armor", Material.LEATHER_CHESTPLATE)),
+            Map.entry(Statistic.BANNER_CLEANED, new Generale("clean_banner", Material.WHITE_BANNER)),
+            Map.entry(Statistic.CLEAN_SHULKER_BOX, new Generale("clean_shulker_box", Material.SHULKER_BOX)),
+            Map.entry(Statistic.CLIMB_ONE_CM, new Generale("climb_one_cm", Material.LADDER)),
+            Map.entry(Statistic.CROUCH_ONE_CM, new Generale("crouch_one_cm", Material.LEATHER_LEGGINGS)),
+            Map.entry(Statistic.DAMAGE_ABSORBED, new Generale("damage_absorbed", Material.GOLDEN_APPLE)),
+            Map.entry(Statistic.DAMAGE_BLOCKED_BY_SHIELD, new Generale("damage_blocked_by_shield", Material.SHIELD)),
+            Map.entry(Statistic.DAMAGE_DEALT, new Generale("damage_dealt", Material.IRON_SWORD)),
+            Map.entry(Statistic.DAMAGE_DEALT_ABSORBED, new Generale("damage_dealt_absorbed", Material.GOLDEN_SWORD)),
+            Map.entry(Statistic.DAMAGE_DEALT_RESISTED, new Generale("damage_dealt_resisted", Material.NETHERITE_SWORD)),
+            Map.entry(Statistic.DAMAGE_RESISTED, new Generale("damage_resisted", Material.IRON_CHESTPLATE)),
+            Map.entry(Statistic.DAMAGE_TAKEN, new Generale("damage_taken", Material.REDSTONE)),
+            Map.entry(Statistic.DEATHS, new Generale("deaths", Material.SKELETON_SKULL)),
+            Map.entry(Statistic.DROP_COUNT, new Generale("drop", Material.DROPPER)),
+            Map.entry(Statistic.CAKE_SLICES_EATEN, new Generale("eat_cake_slice", Material.CAKE)),
+            Map.entry(Statistic.ITEM_ENCHANTED, new Generale("enchant_item", Material.ENCHANTING_TABLE)),
+            Map.entry(Statistic.FALL_ONE_CM, new Generale("fall_one_cm", Material.FEATHER)),
+            Map.entry(Statistic.CAULDRON_FILLED, new Generale("fill_cauldron", Material.CAULDRON)),
+            Map.entry(Statistic.FISH_CAUGHT, new Generale("fish_caught", Material.FISHING_ROD)),
+            Map.entry(Statistic.FLY_ONE_CM, new Generale("fly_one_cm", Material.PHANTOM_MEMBRANE)),
+            Map.entry(Statistic.HAPPY_GHAST_ONE_CM, new Generale("happy_ghast_one_cm", Material.GHAST_TEAR)),
+            Map.entry(Statistic.HORSE_ONE_CM, new Generale("horse_one_cm", Material.SADDLE)),
+            Map.entry(Statistic.DISPENSER_INSPECTED, new Generale("inspect_dispenser", Material.DISPENSER)),
+            Map.entry(Statistic.DROPPER_INSPECTED, new Generale("inspect_dropper", Material.DROPPER)),
+            Map.entry(Statistic.HOPPER_INSPECTED, new Generale("inspect_hopper", Material.HOPPER)),
+            Map.entry(Statistic.INTERACT_WITH_ANVIL, new Generale("interact_with_anvil", Material.ANVIL)),
+            Map.entry(Statistic.BEACON_INTERACTION, new Generale("interact_with_beacon", Material.BEACON)),
+            Map.entry(Statistic.INTERACT_WITH_BLAST_FURNACE, new Generale("interact_with_blast_furnace", Material.BLAST_FURNACE)),
+            Map.entry(Statistic.BREWINGSTAND_INTERACTION, new Generale("interact_with_brewingstand", Material.BREWING_STAND)),
+            Map.entry(Statistic.INTERACT_WITH_CAMPFIRE, new Generale("interact_with_campfire", Material.CAMPFIRE)),
+            Map.entry(Statistic.INTERACT_WITH_CARTOGRAPHY_TABLE, new Generale("interact_with_cartography_table", Material.CARTOGRAPHY_TABLE)),
+            Map.entry(Statistic.CRAFTING_TABLE_INTERACTION, new Generale("interact_with_crafting_table", Material.CRAFTING_TABLE)),
+            Map.entry(Statistic.FURNACE_INTERACTION, new Generale("interact_with_furnace", Material.FURNACE)),
+            Map.entry(Statistic.INTERACT_WITH_GRINDSTONE, new Generale("interact_with_grindstone", Material.GRINDSTONE)),
+            Map.entry(Statistic.INTERACT_WITH_LECTERN, new Generale("interact_with_lectern", Material.LECTERN)),
+            Map.entry(Statistic.INTERACT_WITH_LOOM, new Generale("interact_with_loom", Material.LOOM)),
+            Map.entry(Statistic.INTERACT_WITH_SMITHING_TABLE, new Generale("interact_with_smithing_table", Material.SMITHING_TABLE)),
+            Map.entry(Statistic.INTERACT_WITH_SMOKER, new Generale("interact_with_smoker", Material.SMOKER)),
+            Map.entry(Statistic.INTERACT_WITH_STONECUTTER, new Generale("interact_with_stonecutter", Material.STONECUTTER)),
+            Map.entry(Statistic.JUMP, new Generale("jump", Material.RABBIT_FOOT)),
+            Map.entry(Statistic.LEAVE_GAME, new Generale("leave_game", Material.OAK_DOOR)),
+            Map.entry(Statistic.MINECART_ONE_CM, new Generale("minecart_one_cm", Material.MINECART)),
+            Map.entry(Statistic.MOB_KILLS, new Generale("mob_kills", Material.ZOMBIE_HEAD)),
+            Map.entry(Statistic.NAUTILUS_ONE_CM, new Generale("nautilus_one_cm", Material.NAUTILUS_SHELL)),
+            Map.entry(Statistic.OPEN_BARREL, new Generale("open_barrel", Material.BARREL)),
+            Map.entry(Statistic.CHEST_OPENED, new Generale("open_chest", Material.CHEST)),
+            Map.entry(Statistic.ENDERCHEST_OPENED, new Generale("open_enderchest", Material.ENDER_CHEST)),
+            Map.entry(Statistic.SHULKER_BOX_OPENED, new Generale("open_shulker_box", Material.PURPLE_SHULKER_BOX)),
+            Map.entry(Statistic.PIG_ONE_CM, new Generale("pig_one_cm", Material.CARROT_ON_A_STICK)),
+            Map.entry(Statistic.NOTEBLOCK_PLAYED, new Generale("play_noteblock", Material.NOTE_BLOCK)),
+            Map.entry(Statistic.RECORD_PLAYED, new Generale("play_record", Material.JUKEBOX)),
+            Map.entry(Statistic.PLAY_ONE_MINUTE, new Generale("play_time", Material.CLOCK)),
+            Map.entry(Statistic.PLAYER_KILLS, new Generale("player_kills", Material.DIAMOND_SWORD)),
+            Map.entry(Statistic.FLOWER_POTTED, new Generale("pot_flower", Material.FLOWER_POT)),
+            Map.entry(Statistic.RAID_TRIGGER, new Generale("raid_trigger", Material.OMINOUS_BOTTLE)),
+            Map.entry(Statistic.RAID_WIN, new Generale("raid_win", Material.TOTEM_OF_UNDYING)),
+            Map.entry(Statistic.SLEEP_IN_BED, new Generale("sleep_in_bed", Material.RED_BED)),
+            Map.entry(Statistic.SNEAK_TIME, new Generale("sneak_time", Material.CHAINMAIL_LEGGINGS)),
+            Map.entry(Statistic.SPRINT_ONE_CM, new Generale("sprint_one_cm", Material.GOLDEN_BOOTS)),
+            Map.entry(Statistic.STRIDER_ONE_CM, new Generale("strider_one_cm", Material.WARPED_FUNGUS_ON_A_STICK)),
+            Map.entry(Statistic.SWIM_ONE_CM, new Generale("swim_one_cm", Material.TROPICAL_FISH)),
+            Map.entry(Statistic.TALKED_TO_VILLAGER, new Generale("talked_to_villager", Material.WRITABLE_BOOK)),
+            Map.entry(Statistic.TARGET_HIT, new Generale("target_hit", Material.TARGET)),
+            Map.entry(Statistic.TIME_SINCE_DEATH, new Generale("time_since_death", Material.WITHER_ROSE)),
+            Map.entry(Statistic.TIME_SINCE_REST, new Generale("time_since_rest", Material.WHITE_BED)),
+            Map.entry(Statistic.TOTAL_WORLD_TIME, new Generale("total_world_time", Material.SUNFLOWER)),
+            Map.entry(Statistic.TRADED_WITH_VILLAGER, new Generale("traded_with_villager", Material.EMERALD)),
+            Map.entry(Statistic.TRAPPED_CHEST_TRIGGERED, new Generale("trigger_trapped_chest", Material.TRAPPED_CHEST)),
+            Map.entry(Statistic.NOTEBLOCK_TUNED, new Generale("tune_noteblock", Material.AMETHYST_SHARD)),
+            Map.entry(Statistic.CAULDRON_USED, new Generale("use_cauldron", Material.WATER_BUCKET)),
+            Map.entry(Statistic.WALK_ON_WATER_ONE_CM, new Generale("walk_on_water_one_cm", Material.LILY_PAD)),
+            Map.entry(Statistic.WALK_ONE_CM, new Generale("walk_one_cm", Material.LEATHER_BOOTS)),
+            Map.entry(Statistic.WALK_UNDER_WATER_ONE_CM, new Generale("walk_under_water_one_cm", Material.HEART_OF_THE_SEA)));
 
     /** Une case : son icône, son nom, sa valeur affichée, sa valeur brute (tri). */
     private record Ligne(ItemStack icone, Component nom, String valeur, long brut, String tri) {
@@ -374,9 +435,10 @@ public final class KlmStatistiques extends JavaPlugin implements org.bukkit.even
             if (v == 0) {
                 continue;
             }
-            String cle = s.getKey().getKey();
-            lignes.add(new Ligne(new ItemStack(ICONES.getOrDefault(s, Material.PAPER)),
-                    Component.translatable("stat." + s.getKey().getNamespace() + "." + cle), valeur(cle, v), v, cle));
+            Generale g = GENERALES.get(s);
+            String cle = g == null ? s.getKey().getKey() : g.nom();
+            lignes.add(new Ligne(new ItemStack(g == null ? Material.PAPER : g.icone()),
+                    Component.translatable("stat.minecraft." + cle), valeur(cle, v), v, cle));
         }
         return lignes;
     }
