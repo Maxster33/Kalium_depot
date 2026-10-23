@@ -407,3 +407,15 @@ non testé en jeu.**
 **Déployé sur Event le 17/10/2026 à 10:20 (LeKiwi06 : « oui envoie sur event ») : envoi groupé KS_Trains 1.4.3 (+ `config.yml`) et KS_Crafts 1.19.0 ; jar en place (1.18.0) vérifié identique à la référence avant l'envoi, rangé dans `_removed-ks_crafts-1.18.0/` ; jar du serveur vérifié identique à celui compilé. À redémarrer par LeKiwi06. Statut : non testé en jeu.**
 
 **Actif sur Event depuis son redémarrage du 17/10/2026 à 23:42 (journal lu, heures en UTC : 21:42) : KS_Crafts 1.19.0 activé sans erreur ni avertissement, « 82 crafts ajoutés » (même nombre : la recette du contrôleur est modifiée, pas ajoutée). Statut : non testé en jeu.**
+
+## 1.20.0 - 9 os donnent 3 blocs d'os (23/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « 9 os donnent 9 blocs d'os, ça évite de passer par l'étape poudre d'os » ; à la question
+(9 os valent 3 blocs en vanilla), il a choisi **9 os → 3 blocs d'os** (même quantité qu'en passant par la poudre).
+
+- Recette sans forme `ks_crafts:bone_block_from_bones` : 9 os → 3 blocs d'os ; débloquée dans le livre de recettes
+  dès qu'on a un os, comme les autres. Aucun effet sur l'économie (barème : bloc d'os = 9 poudres = 3 os).
+- Didacticiel : nouveauté « Blocs d'os » dans « Crafts et objets » (`requiert: "KS_Crafts 1.20.0"`).
+
+**Compilé, non déployé, non testé en jeu.** Empilé sur la 1.19.0 (testée à travers les trains seulement, sur Event).
+Remplace la 1.19.0 dans le déploiement groupé vers Kixster.

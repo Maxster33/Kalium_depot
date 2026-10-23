@@ -147,6 +147,14 @@ themes:
           - "ks_crafts:ochre_froglight"
           - "ks_crafts:pearlescent_froglight"
         nouveau: "2026-10-18c"
+      blocs-os:
+        nom: "Blocs d'os"
+        icone: BONE_BLOCK
+        texte: "9 os donnent directement 3 blocs d'os, sans passer par la poudre d'os."
+        recettes:
+          - "ks_crafts:bone_block_from_bones"
+        requiert: "KS_Crafts 1.20.0"
+        nouveau: "2026-10-23"
       livre:
         nom: "Livre de recettes"
         icone: KNOWLEDGE_BOOK

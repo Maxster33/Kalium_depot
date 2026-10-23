@@ -44,6 +44,7 @@ import java.util.Map;
  * 1.16.0 (LeKiwi06) : recette de la locomotive de KS_Trains (voir onEnable).
  * 1.17.0 (LeKiwi06) : recette du wagon contrôleur de KS_Trains (voir onEnable et onPreparerControleur).
  * 1.18.0 (LeKiwi06) : recette du wagon jukebox de KS_Trains (voir onEnable).
+ * 1.20.0 (LeKiwi06) : 9 os donnent 3 blocs d'os sans passer par la poudre d'os (voir onEnable).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -106,6 +107,8 @@ public final class KSCrafts extends JavaPlugin implements Listener {
         ring("verdant_froglight", Material.MAGMA_BLOCK, new RecipeChoice.MaterialChoice(Material.GREEN_DYE), new ItemStack(Material.VERDANT_FROGLIGHT, 4));
         ring("ochre_froglight", Material.MAGMA_BLOCK, new RecipeChoice.MaterialChoice(Material.ORANGE_DYE), new ItemStack(Material.OCHRE_FROGLIGHT, 4));
         ring("pearlescent_froglight", Material.MAGMA_BLOCK, new RecipeChoice.MaterialChoice(Material.PURPLE_DYE), new ItemStack(Material.PEARLESCENT_FROGLIGHT, 4));
+        // 1.20.0 (LeKiwi06) : 9 os -> 3 blocs d'os, sans passer par la poudre d'os (même quantité qu'en vanilla).
+        shapeless("bone_block_from_bones", new ItemStack(Material.BONE_BLOCK, 3), repeat(new RecipeChoice.MaterialChoice(Material.BONE), 9));
 
         // Clé de l'End (1.1.0) : objet de KS_EC_Extension (softdepend), sans forme.
         if (getServer().getPluginManager().isPluginEnabled("KS_EC_Extension")) {

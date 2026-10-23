@@ -16,7 +16,7 @@ encore de `config.yml`. Les autres serveurs sont à revérifier juste avant l'en
 | Proxy (déjà posé, rien à envoyer) | Geyser-Velocity 2.11.3-b1249 | **Geyser-Velocity 2.12.0-b1269**, envoyé le 23/10 à 15:47 par la session « Joueur Geyser blocs non modifiables » (ancien jar et copie de son `config.yml` dans `_removed-geyser-2.11.3-b1249/`) ; actif au redémarrage du proxy |
 | Kixster (`Kixster[new]`) | KS_Jetons 2.0.2, KS_Teleport 1.3.0 | KS_Jetons 2.1.0 + KS_Teleport 1.4.0 (ensemble) |
 | | KS_Claim 1.4.0, KS_Economy 1.9.0 | KS_Claim 1.5.0, KS_Economy 1.10.0 |
-| | KS_Crafts 1.15.0, KS_VerrouVehicule 1.0.0 | KS_Crafts 1.19.0, KS_VerrouVehicule 1.1.1 |
+| | KS_Crafts 1.15.0, KS_VerrouVehicule 1.0.0 | KS_Crafts **1.20.0** (contient la 1.19.0 + 9 os → 3 blocs d'os), KS_VerrouVehicule 1.1.1 |
 | | KS_Decapitator 1.2.0 | KS_Decapitator 1.3.0 |
 | | — | KS_Trains 1.4.8, KS_LaisseBateau 1.0.2 (nouveaux sur Kixster) |
 | | — | KS_Didacticiel 1.3.0 + `plugins/KS_Didacticiel/didacticiel.yml` (nouveau sur Kixster) |
@@ -65,7 +65,7 @@ travers les trains, sans doute la recette du wagon contrôleur de KS_Crafts 1.19
 - **KS_Decapitator 1.3.0** : têtes manquantes, shulkers teints, têtes de joueurs, barrières dans `/tetes`.
 - **KS_VerrouVehicule 1.1.1** (wagons décorés de KS_Trains) ; sur Kixster, la 1.0.0 en place n'a jamais été testée
   non plus.
-- **KS_Crafts 1.19.0** en dehors des trains.
+- **KS_Crafts 1.20.0** : la recette 9 os → 3 blocs d'os (ajoutée le 23/10), et le reste de la 1.19.0 en dehors des trains.
 - **KalGames 1.28.0** : « Changer les réglages » modifie la partie sur place (même code, même salle d'attente).
 - **Tout le parrainage** (KaliumRelay 1.10.0, KLM_Contacts 1.5.0, KS_Parrainage, KS_RewardsGUI 1.6.0) et
   **KLM_Statistiques** : tests détaillés dans `2026-10-23-parrainage.md`.
