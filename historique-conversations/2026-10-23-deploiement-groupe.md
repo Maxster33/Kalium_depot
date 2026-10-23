@@ -97,9 +97,8 @@ sans doute été jouées sans souci, mais personne ne l'a noté :
 - **Serveur Jeux** : déménagement du 21/10 (Bingo sur la nouvelle machine, mondes de réserve régénérés), KG_BingoGame
   0.9.0 à 0.12.0 (barème de victoire, réserve de mondes, « Rejouer », contre la montre), KG_BingoObservateur 0.1.0
   (`/observer`), KLM_Contacts 1.0.0 à 1.2.0.
-- **À vérifier** : le `rattrapage.yml` de KG_Rewards posé le 10/10 à 00:23 (5 coffres, dont les 16 récompenses parties
-  vers la boîte d'Event) était « à lancer par LeKiwi06 » (`/kgrewards rattrapage kixster confirmer`) ; rien ne dit
-  qu'il l'a été. Il est maintenant sur Kanvas avec les données de KG_Rewards.
+- Le `rattrapage.yml` de KG_Rewards posé le 10/10 à 00:23 (5 coffres, dont les 16 récompenses parties vers la boîte
+  d'Event) a bien été lancé (confirmé par LeKiwi06 le 23/10/2026).
 
 ## Tests conseillés, dans l'ordre (après redémarrage)
 
