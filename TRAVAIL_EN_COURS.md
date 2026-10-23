@@ -16,7 +16,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_Parrainage (nouveau), KLM_Statistiques (nouveau), KS_RewardsGUI, KaliumRelay, KLM_Contacts, KS_Didacticiel — LeKiwi06 — depuis le 2026-10-23 15:28 — parrainage (whitelist automatique, récompenses selon le temps de jeu du filleul), demande de whitelist à l'entrée de Kixster, Informations › Statistiques
+- KS_Parrainage (nouveau), KLM_Statistiques (nouveau), KS_RewardsGUI, KaliumRelay, KLM_Contacts, KS_Didacticiel, KS_Crafts (ajouté le 2026-10-23 16:20 : 9 os → 3 blocs d'os) — LeKiwi06 — depuis le 2026-10-23 15:28 — parrainage (whitelist automatique, récompenses selon le temps de jeu du filleul), demande de whitelist à l'entrée de Kixster, Informations › Statistiques
 - KLM_Espaces (nouveau), KaliumRelay, KalGames, KLM_Menu, KLM_Chat, KLM_Contacts, KG_BuildBattle, KV_BuildBattle — LeKiwi06 — depuis le 2026-10-21 01:45 — fusion de Kal-Games dans Kanvas (espaces étanches) et Serveur Jeux à la place d'Event (expiration des serveurs)
 
 
