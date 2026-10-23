@@ -12,7 +12,8 @@ encore de `config.yml`. Les autres serveurs sont à revérifier juste avant l'en
 
 | Serveur (session WinSCP) | Remplace | Par |
 |---|---|---|
-| Proxy (`Proxy velocity [new]`) | KaliumRelay 1.9.0 | **KaliumRelay 1.10.0** (+ Geyser 2.12.0 de l'autre session) |
+| Proxy (`Proxy velocity [new]`) | KaliumRelay 1.9.0 | **KaliumRelay 1.10.0** |
+| Proxy (déjà posé, rien à envoyer) | Geyser-Velocity 2.11.3-b1249 | **Geyser-Velocity 2.12.0-b1269**, envoyé le 23/10 à 15:47 par la session « Joueur Geyser blocs non modifiables » (ancien jar et copie de son `config.yml` dans `_removed-geyser-2.11.3-b1249/`) ; actif au redémarrage du proxy |
 | Kixster (`Kixster[new]`) | KS_Jetons 2.0.2, KS_Teleport 1.3.0 | KS_Jetons 2.1.0 + KS_Teleport 1.4.0 (ensemble) |
 | | KS_Claim 1.4.0, KS_Economy 1.9.0 | KS_Claim 1.5.0, KS_Economy 1.10.0 |
 | | KS_Crafts 1.15.0, KS_VerrouVehicule 1.0.0 | KS_Crafts 1.19.0, KS_VerrouVehicule 1.1.1 |
@@ -31,9 +32,10 @@ l'ancien). KLM_Menu n'a pas à bouger : aucune fonction utilisée n'a changé de
 
 ## Ordre
 
-1. Envoyer partout (serveurs en marche : les jars ne sont lus qu'au redémarrage).
+1. Envoyer partout (serveurs en marche : les jars ne sont lus qu'au redémarrage). Sur le proxy, vérifier aussi
+   qu'il n'y a qu'un seul jar de Geyser dans `/plugins/` (la 2.12.0-b1269).
 2. Redémarrages par LeKiwi06 : **proxy d'abord**, puis Kixster, lobby, Serveur Jeux, Kanvas.
-3. Lire les journaux (aucune erreur attendue ; KS_Jetons convertit `jetons.yml` au format 2 et garde l'ancien en
+3. Lire les journaux (proxy : Geyser 2.12.0 démarre et passe son `config.yml` en version 9 ; aucune erreur attendue ; KS_Jetons convertit `jetons.yml` au format 2 et garde l'ancien en
    `jetons-2.0.yml`).
 
 ## Réglages à la main après le premier démarrage de Kixster
@@ -51,6 +53,8 @@ l'ancien). KLM_Menu n'a pas à bouger : aucune fonction utilisée n'a changé de
 travers les trains, sans doute la recette du wagon contrôleur de KS_Crafts 1.19.0, non noté).
 
 **Jamais testé, parmi ce qui part :**
+- **Geyser 2.12.0** (proxy) : connexion d'un joueur Bedrock, blocs de la 26.3 visibles (la raison de la mise à
+  jour), objets custom KaLium (Clé de l'End, jetons, Cristal de purification...).
 - **KS_Jetons 2.1.0 + KS_Teleport 1.4.0** : inventaire spécial en un coffre, cases de localisation (24 h d'attente),
   `/jeton`, `/badge`, `/bed`, et la conversion des données des joueurs (`jetons.yml`). Sur Event depuis le 18/10, aucun
   retour de test.
@@ -102,6 +106,9 @@ sans doute été jouées sans souci, mais personne ne l'a noté :
 
 ## Tests conseillés, dans l'ordre (après redémarrage)
 
+0. Un joueur Bedrock se connecte : il voit les blocs de la 26.3 et les objets custom. Faire réessayer **.Cybonath2**
+   (houe, pelle, hache sans effet sur Kixster, cause non trouvée) : si c'est toujours le cas, passer `debug-mode: true`
+   dans le `config.yml` de Geyser sur le proxy pour voir le motif du refus (piste de la session Geyser).
 1. Arrivée sur Kixster d'un joueur déjà inscrit : rien ne change ; `/didacticiel`, Informations › Statistiques.
 2. `/jeton`, `/badge` : tes jetons et badges sont toujours là après la conversion ; une case de localisation.
 3. `/claim`, `/claims`, `/magasins`.
