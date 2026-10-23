@@ -45,10 +45,13 @@ import java.util.Map;
  * 1.17.0 (LeKiwi06) : recette du wagon contrôleur de KS_Trains (voir onEnable et onPreparerControleur).
  * 1.18.0 (LeKiwi06) : recette du wagon jukebox de KS_Trains (voir onEnable).
  * 1.20.0 (LeKiwi06) : 9 os donnent 3 blocs d'os sans passer par la poudre d'os (voir onEnable).
+ * 1.20.2 (LeKiwi06) : le livre de recettes montre le wagon contrôleur avec ses 5 pièces différentes (voir onEnable).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
     private final List<NamespacedKey> added = new ArrayList<>();
+    /** 1.20.2 : recettes valables mais retirées du livre de recettes (voir le wagon contrôleur). */
+    private final java.util.Set<NamespacedKey> cachees = new java.util.HashSet<>();
 
     /** Ingrédients de la Clé de l'End (craft sans forme, un de chaque). */
     private static final List<Material> CLE_INGREDIENTS = List.of(
@@ -227,6 +230,24 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             controleur.setIngredient('A', new RecipeChoice.MaterialChoice(piecesControleur()));
             controleur.setIngredient('W', Material.MINECART);
             add(controleur);
+            // 1.20.2 (LeKiwi06, 23/10/2026 : « visuellement c'est buggué [...] j'aimerais que le visuel du craft soit
+            // réparé ») : le livre de recettes faisait défiler les 5 pièces dans chaque case de la recette ci-dessus (une
+            // même liste pour les 5 cases), d'où par moments 5 fois la même pièce à l'écran. Cette recette « dans
+            // n'importe quel ordre » reste valable mais n'est plus montrée dans le livre (CACHEES) ; le livre montre à
+            // la place la même recette aux pièces placées (comparateur, capteur, lampe ; bloc musical, wagonnet,
+            // levier), qu'on peut aussi poser ailleurs dans le casque.
+            ShapedRecipe controleurOrdre = new ShapedRecipe(key("wagon_controleur_ordre"),
+                    fr.kalium.trains.KSTrains.creerControleur());
+            controleurOrdre.shape("CSL", "NWR");
+            controleurOrdre.setIngredient('C', Material.COMPARATOR);
+            controleurOrdre.setIngredient('S', Material.CALIBRATED_SCULK_SENSOR);
+            controleurOrdre.setIngredient('L', Material.REDSTONE_LAMP);
+            controleurOrdre.setIngredient('N', Material.NOTE_BLOCK);
+            controleurOrdre.setIngredient('W', Material.MINECART);
+            controleurOrdre.setIngredient('R', Material.LEVER);
+            add(controleurOrdre);
+            ingredients.remove(key("wagon_controleur"));
+            cachees.add(key("wagon_controleur"));
         } else {
             getLogger().warning("KS_Trains absent : crafts de la locomotive et du wagon contrôleur ignorés.");
         }
@@ -414,6 +435,11 @@ public final class KSCrafts extends JavaPlugin implements Listener {
 
     /** Joueur qui a déjà un ingrédient (obtenu avant cette version, ou au démarrage du plugin). */
     private void livreDeRecettes(Player player) {
+        for (NamespacedKey cachee : cachees) {
+            if (player.hasDiscoveredRecipe(cachee)) {
+                player.undiscoverRecipe(cachee);
+            }
+        }
         for (ItemStack item : player.getInventory().getContents()) {
             if (item != null) {
                 debloquer(player, item);

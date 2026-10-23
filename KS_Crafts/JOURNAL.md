@@ -439,3 +439,20 @@ la recette en `ShapedRecipe` dans `PrepareItemCraftEvent`, et seulement à la pr
 **Déployé sur Kixster le 23/10/2026 à 19:00 (demande de LeKiwi06 : corriger « avant » le redémarrage) ; 1.20.0 dans
 `_removed-ks_crafts-1.20.0/` ; actif après redémarrage, non testé en jeu.** À tester : 5 fois la même pièce (Java et
 Bedrock) → pas de wagon ; les 5 pièces différentes → wagon.
+
+## 1.20.2 - livre de recettes : wagon contrôleur montré avec ses 5 pièces différentes (23/10/2026, LeKiwi06)
+
+**Précision de LeKiwi06 (24/10/2026)** sur le bug de la 1.20.1 : « visuellement c'est buggué, je n'ai pas crafté, mais
+j'aimerais que le visuel du craft soit réparé ». Le craft avec 5 fois la même pièce était déjà refusé ; c'est
+l'affichage du livre de recettes qui trompait.
+
+- Cause : la recette « dans n'importe quel ordre » a les mêmes 5 choix dans chacune des 5 cases du casque ; le livre de
+  recettes les fait défiler case par case, donc montre par moments 5 fois la même pièce.
+- Nouvelle recette `ks_crafts:wagon_controleur_ordre`, montrée dans le livre : comparateur, capteur sculk calibré, lampe
+  à redstone en haut ; bloc musical, wagonnet, levier en bas (le miroir gauche-droite marche aussi).
+- `ks_crafts:wagon_controleur` (5 pièces dans n'importe quel ordre, contrôle des 1.17.0 / 1.20.1) reste valable mais
+  n'est plus débloquée dans le livre, et elle en est retirée pour les joueurs qui l'avaient (à leur connexion).
+- Didacticiel : la nouveauté « Train : wagon contrôleur » montre la nouvelle recette et précise « chacun une fois et
+  dans n'importe quel ordre ».
+
+**Compilé, non déployé, non testé en jeu.** À envoyer sur Kixster avec `didacticiel.yml`.

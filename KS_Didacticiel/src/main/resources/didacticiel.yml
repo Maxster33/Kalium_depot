@@ -480,10 +480,10 @@ themes:
       controleur:
         nom: "Train : wagon contrôleur"
         icone: REDSTONE_LAMP
-        texte: "Un wagonnet entouré, en casque, d'un comparateur, d'un capteur sculk calibré, d'une lampe à redstone, d'un bloc musical et d'un levier. Monte dedans : avancer = vitesse +1 (4 niveaux), reculer = vitesse -1 puis marche arrière, saut = klaxon (un sifflet, ou une corne de chèvre posée dans le contrôleur). Un seul par train, à moins de 5 wagons de la locomotive."
+        texte: "Un wagonnet entouré, en casque, d'un comparateur, d'un capteur sculk calibré, d'une lampe à redstone, d'un bloc musical et d'un levier, chacun une fois et dans n'importe quel ordre. Monte dedans : avancer = vitesse +1 (4 niveaux), reculer = vitesse -1 puis marche arrière, saut = klaxon (un sifflet, ou une corne de chèvre posée dans le contrôleur). Un seul par train, à moins de 5 wagons de la locomotive."
         requiert: "KS_Trains"
         recettes:
-          - "ks_crafts:wagon_controleur"
+          - "ks_crafts:wagon_controleur_ordre"
         nouveau: "2026-10-18d"
       carburant:
         nom: "Train : carburant"
