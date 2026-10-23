@@ -62,10 +62,18 @@ final class Contacts {
         this.config = config;
         this.store = new ContactsStore(dataDirectory, logger);
         this.groups = new ContactsGroups(this, plugin, server, logger, config, activeGames);
+        this.parrainage = new Parrainage(this, server, logger, config, dataDirectory);
     }
+
+    /** 1.10.0 : parrainage et liste blanche de Kixster. */
+    private final Parrainage parrainage;
 
     ContactsGroups groups() {
         return groups;
+    }
+
+    Parrainage parrainage() {
+        return parrainage;
     }
 
     void register() {
@@ -172,6 +180,7 @@ final class Contacts {
             player.sendMessage(info("Tu as " + pending + " demande" + (pending > 1 ? "s" : "") + " d'ami en attente : ")
                     .append(Component.text("/amis", NamedTextColor.WHITE).clickEvent(ClickEvent.runCommand("/amis"))));
         }
+        parrainage.arrivee(player); // 1.10.0
     }
 
     @Subscribe
@@ -218,9 +227,12 @@ final class Contacts {
      * Traite une requete POST /contacts/&lt;action&gt; (parametres : lignes « cle=valeur » du corps). Reponse : « ok » ou
      * « ok:&lt;detail&gt; », sinon « err:&lt;code&gt; » ; pour « list », les lignes de donnees suivent.
      * Actions : list, add, accept, deny, cancel, remove, block, unblock, set, join, msg ; groupes de jeu (1.7.0) : voir
-     * ContactsGroups.handle.
+     * ContactsGroups.handle ; parrainage et liste blanche (1.10.0) : voir Parrainage.handle.
      */
     synchronized String handle(String action, Map<String, String> params) {
+        if (Parrainage.gere(action)) {
+            return parrainage.handle(action, params);
+        }
         UUID id;
         try {
             id = UUID.fromString(params.getOrDefault("player", ""));

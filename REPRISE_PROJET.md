@@ -96,6 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **Parrainage, demandes de liste blanche de Kixster, statistiques** (LeKiwi06, 23/10/2026 ; maquette et barème validés le même jour), **compilés, non déployés, non testés en jeu, à déployer ensemble** : KaliumRelay 1.10.0 (proxy : parrainages, demandes, copie de la liste blanche de Kixster, refus à l'entrée de Kixster + ouverture de la demande) ; KLM_Contacts 1.5.0 (tous les serveurs Paper : « Parrainer un joueur », « Mes filleuls », acceptation, fenêtre « Pseudo Discord », Modération › Demandes de whitelist) ; sur Kixster : **KS_Parrainage 1.0.0 (nouveau)** (liste blanche automatique, temps de jeu actif des filleuls, coffres à chaque palier ; `relay-token` à recopier ; `whitelist on`), KS_RewardsGUI 1.6.0 (`deposerCoffre`, `fusion.yml` requis), **KLM_Statistiques 1.0.0 (nouveau)** (Informations › Statistiques, stats vanilla, Java et Bedrock) et `didacticiel.yml` (thème « Parrainage », « Statistiques »). Barème : `sortie/parrainage/bareme-parrainage.xlsx` (hors dépôt). Empilés sur KaliumRelay 1.9.0 et KLM_Contacts 1.4.0, testés en solo seulement. Détail : `JOURNAL.md` de chaque plugin.
 - **Fusion de Kal-Games dans Kanvas** (LeKiwi06, 21/10/2026 ; Kal-Games et Serveur Jeux expirent le 23/10), **déployés ensemble le 22/10/2026 (Kanvas + proxy), non testés en jeu** : KaliumRelay 1.9.0 (proxy : nom Velocity demandé déposé sur le relais, passage direct entre deux noms de la même machine refusé) ; sur Kanvas : **KLM_Espaces 1.0.0 (nouveau : espaces étanches kal-games / kanvas, inventaires, visibilité, tchat séparés)**, KalGames 1.27.0 (limité à ses mondes), KLM_Menu 2.12.0 (interfaces par espace), KLM_Chat 1.1.0, KLM_Contacts 1.4.0, KG_BuildBattle 0.7.0 + KV_BuildBattle 0.5.0 (Build Battle sur le même serveur). `velocity.toml` : `kal-games` vers l'adresse de Kanvas. Plan : [Plan de migration](https://claude.ai/artifact/MyTJxpL8zq1XCy1sTZKdZh) ; détail : `JOURNAL.md` de chaque plugin.
 - **KG_Bingo 1.11.0 + KG_BuildBattle 0.6.0** (LeKiwi06, 20/10/2026), pour Kal-Games (avec KalGames 1.26.0 et KG_Menu 1.2.0, déjà déployés), **déployés ensemble sur Kal-Games le 21/10 à 01:29 (actifs après redémarrage), non testés en jeu** : réglages en coffre (Bingo : jauges, composition de la grille dans une seule fenêtre ; Build Battle : tempo, équipes, thèmes écrits), Échap = Retour, réglages retenus, « Recréer ma dernière partie », parties dans « Rejoindre une partie ». Détail : leurs `JOURNAL.md`.
 
@@ -432,7 +433,24 @@ une recherche, pas une navigation ; autoriser `Textinputhost` (clavier tactile W
 
 # Comptes rendus signés
 
-Format : `### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici ; les précédents vont dans
+Format : `### 2026-10-23 — LeKiwi06
+
+*(Session du 23/10/2026, de 15 h 10 à 16 h. Réservations gardées : KS_Parrainage, KLM_Statistiques, KS_RewardsGUI, KaliumRelay, KLM_Contacts, KS_Didacticiel, jusqu'au déploiement.)*
+
+**Parrainage, liste blanche automatique, demande de liste blanche, statistiques : compilés et poussés, non déployés,
+non testés en jeu.** Demande faite à partir de son message d'annonce. Ses choix : demandes traitées dans un menu admin en
+jeu (bot Discord plus tard) ; filleul choisi parmi ses amis ou par un autre pseudo ; barème proposé en .xlsx puis validé
+(8 paliers de 1 h à 200 h de jeu actif du filleul, 5 à 600 émeraudes de valeur moyenne pour chacun, environ 6 émeraudes
+par heure jouée, AFK non compté, pas de coffre à l'arrivée, pas de limite de filleuls) ; toutes les stats vanilla dans
+« Informations », pour Java et Bedrock (rétroactif : le serveur garde déjà les stats de chaque joueur).
+
+- À déployer ensemble (voir « Versions compilées, non déployées ») : proxy, tous les serveurs Paper (KLM_Contacts),
+  Kixster. Réglages à la main : `relay-token` de KS_Parrainage, `whitelist on` sur Kixster, `fusion.yml` présent.
+- Le proxy ne refuse l'entrée de Kixster qu'une fois que KS_Parrainage lui a envoyé la liste blanche (5 s après le
+  démarrage de Kixster).
+- Détail des tests à faire : `historique-conversations/2026-10-23-parrainage.md`.
+
+### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici ; les précédents vont dans
 `archive_reprise.md`.
 
 ### 2026-10-21 — LeKiwi06

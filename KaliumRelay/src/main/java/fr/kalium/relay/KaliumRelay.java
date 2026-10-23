@@ -31,7 +31,7 @@ import java.util.Optional;
  * plugins de Velocity repose entierement sur Guice : son propre Injector garantit que
  * com.google.inject.Inject est toujours present et correctement resolu, donc plus sur.
  */
-@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.9.0",
+@Plugin(id = "kaliumrelay", name = "KaliumRelay", version = "1.10.0",
         description = "Relais HTTP entre KalGames et KalBingo, independant de la presence d'un joueur.",
         authors = {"KaLium"})
 public final class KaliumRelay {
@@ -43,6 +43,8 @@ public final class KaliumRelay {
     private RelayConfig config;
     /** Registre "joueur en partie" (reconnexion en cours de partie, voir onChooseInitialServer). */
     private final ActiveGameRegistry activeGameRegistry = new ActiveGameRegistry();
+    /** 1.10.0 : contacts (et parrainage), pour le controle de la liste blanche a l'entree de Kixster. */
+    private Contacts contacts;
 
     @Inject
     public KaliumRelay(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
@@ -65,7 +67,7 @@ public final class KaliumRelay {
                     return true;
                 });
         // 1.6.0 : KLM_Contacts (amis, presence, messages prives /mp et /r) - donnees dans plugins/kaliumrelay/contacts/.
-        Contacts contacts = new Contacts(this, server, logger, config, dataDirectory, activeGameRegistry);
+        contacts = new Contacts(this, server, logger, config, dataDirectory, activeGameRegistry);
         contacts.register();
         http.contacts(contacts::handle);
         try {
@@ -168,6 +170,11 @@ public final class KaliumRelay {
                         + nom + "' refuse (meme machine, espaces etanches).");
                 return;
             }
+        }
+        // 1.10.0 : liste blanche de Kixster (parrainage, demande aux admins), voir Parrainage.peutEntrer.
+        if (contacts != null && !contacts.parrainage().peutEntrer(joueur, nom)) {
+            event.setResult(ServerPreConnectEvent.ServerResult.denied());
+            return;
         }
         if (http != null) {
             http.deposit("arrivee-" + joueur.getUniqueId(), nom);

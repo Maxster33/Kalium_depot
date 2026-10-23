@@ -92,6 +92,10 @@ final class Menus {
                     t("liste.ajouter-info", "<gray>Envoie une demande d'ami à un joueur, par son pseudo."), j -> ajouter(j, retour)));
             boutons.add(gui.button(t("liste.demandes", "<yellow>Demandes (<n>)", "n", liste.recues.size()),
                     t("liste.demandes-info", "<gray>Demandes d'ami reçues et envoyées."), j -> demandes(j, retour)));
+            // 1.5.0 : parrainage (liste blanche de Kixster, récompenses selon le temps de jeu du filleul).
+            boutons.add(gui.button(t("liste.parrainer", "<gold>Parrainer un joueur"),
+                    t("liste.parrainer-info", "<gray>Fais venir un ami sur Kixster : vous recevez tous les deux des récompenses."),
+                    j -> plugin.parrainages().ouvrir(j, k -> ouvrir(k, retour, 0))));
             boutons.add(gui.button(t("liste.groupe", "<aqua>Groupe de jeu"),
                     t("liste.groupe-info", "<gray>Inviter des joueurs, se déplacer ensemble, tchat de groupe."),
                     j -> groupe(j, k -> ouvrir(k, retour, 0))));

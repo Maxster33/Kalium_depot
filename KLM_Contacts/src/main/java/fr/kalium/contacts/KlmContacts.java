@@ -45,6 +45,8 @@ public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Li
     private Lang lang;
     private Relais relais;
     private Menus menus;
+    /** 1.5.0 : parrainage et liste blanche de Kixster. */
+    private Parrainages parrainages;
     /** 1.2.0 : nom de CE serveur dans le velocity.toml, demandé une fois au proxy (null tant qu'il n'est pas connu). */
     private String monServeur;
     /** 1.2.0 : instant d'arrivée de chaque joueur sur ce serveur. */
@@ -78,7 +80,9 @@ public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Li
         saveDefaultConfig();
         lang = new Lang(this);
         relais = new Relais(this);
-        menus = new Menus(this, relais, lang, new Gui(this, lang));
+        Gui gui = new Gui(this, lang);
+        menus = new Menus(this, relais, lang, gui);
+        parrainages = new Parrainages(this, relais, lang, gui);
         Component titre = lang.c("section.titre", "<light_purple><bold>Contacts");
         Component description = lang.c("section.description", "<gray>Tes amis, le serveur où ils sont, les demandes d'ami.");
         getServer().getServicesManager().register(MenuSection.class, new MenuSection() {
@@ -117,6 +121,11 @@ public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Li
                 menus.ouvrir(joueur, retour);
             }
         }, this, ServicePriority.Normal);
+        // 1.5.0 : demandes de liste blanche de Kixster et historique des parrainages (rubrique « Modération » de /menu).
+        getServer().getServicesManager().register(MenuSection.class, MenuSection.moderation(this, "demandes-whitelist",
+                "klmcontacts.whitelist", 60, lang.c("section.whitelist", "<aqua><bold>Demandes de whitelist"),
+                lang.c("section.whitelist-description", "<gray>Demandes de liste blanche de Kixster, et les parrainages."),
+                (joueur, retour) -> parrainages.demandes(joueur, retour)), this, ServicePriority.Normal);
         // 1.1.0 (groupe de jeu) : messages du proxy (KaliumRelay 1.7.0) sur le canal kalium:contacts.
         // « follow » : le chef du groupe a changé de serveur ; on répond si le joueur est en partie (il n'est alors pas
         // déplacé d'office). « groupe » : commande /groupe sans rien, ouvrir le menu du groupe.
@@ -128,6 +137,8 @@ public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Li
                 menus.groupe(joueur, null);
             } else if (texte.equals("game")) {
                 entrerEnPartie(joueur); // 1.2.0
+            } else if (texte.equals("whitelist")) {
+                parrainages.refuseKixster(joueur); // 1.5.0 : refusé à l'entrée de Kixster
             }
         });
         getServer().getPluginManager().registerEvents(this, this);
@@ -302,6 +313,14 @@ public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Li
         }
     }
 
+    Menus menus() {
+        return menus;
+    }
+
+    Parrainages parrainages() {
+        return parrainages;
+    }
+
     Component prefixe() {
         return lang.c("prefixe", "<light_purple>Contacts » ");
     }
@@ -327,6 +346,7 @@ public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Li
                     agir(joueur, "block", args[0], null);
                 }
             }
+            case "parrainage" -> parrainages.ouvrir(joueur, null); // 1.5.0
             case "debloquer" -> {
                 if (args.length != 1) {
                     dire(joueur, "usage.debloquer", "<gray>Utilisation : <white>/debloquer pseudo");

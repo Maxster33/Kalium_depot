@@ -51,6 +51,8 @@ import java.util.UUID;
  *   coffre de mort envoyé dans /rewards).
  * - 1.2.0 : une récompense venue d'un autre serveur est remise dans un coffre « Non ouvert » au contenu caché (Coffres) ;
  *   un dépôt local (coffre de mort) est toujours rendu en objets, comme avant.
+ * - 1.6.0 : deposerCoffre(...) : un plugin de ce serveur dépose un coffre « Non ouvert » d'une valeur donnée, tiré avec
+ *   les tables de fusion.yml (KS_Parrainage : coffres du parrain et du filleul à chaque palier).
  */
 public final class KSRewardsGUI extends JavaPlugin implements Listener {
 
@@ -290,6 +292,44 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
             instance.enAttente.computeIfAbsent(joueur, u -> new LinkedHashMap<>()).put("local-" + UUID.randomUUID(), r);
         }
         instance.sauver();
+        return true;
+    }
+
+    /**
+     * 1.6.0 (parrainage, KS_Parrainage) : dépose un coffre de récompense « Non ouvert » d'une valeur moyenne donnée (en
+     * émeraudes), dont le contenu est tiré par ce serveur avec les tables de fusion.yml (comme un coffre fusionné). Il
+     * apparaît dans /rewards comme une récompense venue d'un autre serveur. Fil principal. Faux si rien n'a été déposé
+     * (plugin désactivé, fusion.yml absent ou vide).
+     */
+    public static boolean deposerCoffre(UUID joueur, String nom, String origine, String raison, double valeur) {
+        if (instance == null || !instance.isEnabled() || valeur <= 0 || instance.fusion == null) {
+            return false;
+        }
+        List<Map<String, Object>> contenu = instance.fusion.tables().tirer(valeur);
+        if (contenu.isEmpty()) {
+            return false;
+        }
+        YamlConfiguration yaml = new YamlConfiguration();
+        yaml.set("joueur", joueur.toString());
+        yaml.set("nom", nom);
+        yaml.set("origine", origine);
+        yaml.set("raison", raison);
+        yaml.set("date", System.currentTimeMillis());
+        yaml.set("valeur", valeur);
+        yaml.set("contenu", contenu);
+        Recompense r = Recompense.lire(yaml.saveToString());
+        if (r == null) {
+            return false;
+        }
+        synchronized (instance) {
+            instance.enAttente.computeIfAbsent(joueur, u -> new LinkedHashMap<>()).put("local-" + UUID.randomUUID(), r);
+        }
+        instance.sauver();
+        Player enLigne = Bukkit.getPlayer(joueur);
+        if (enLigne != null) {
+            enLigne.sendMessage(instance.lang.c("arrivee",
+                    "<light_purple>Nouvelle récompense : <raison>. <gray>/rewards pour la récupérer.", "raison", raison));
+        }
         return true;
     }
 

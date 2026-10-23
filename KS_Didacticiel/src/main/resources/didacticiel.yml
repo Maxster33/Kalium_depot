@@ -384,6 +384,34 @@ themes:
         texte: "Clic droit sur une enclume, coffre de récompense en main : fusionne deux coffres en un plus gros, contre des points d'expérience."
         nouveau: "2026-10-18"
 
+  parrainage:
+    nom: "Parrainage"
+    icone: TOTEM_OF_UNDYING
+    resume: "Fais venir tes amis : vous gagnez tous les deux des coffres."
+    requiert: "KS_Parrainage"
+    nouveautes:
+      parrainer:
+        nom: "Parrainer un ami"
+        icone: PLAYER_HEAD
+        texte: "Menu Contacts > « Parrainer un joueur » : choisis un ami jamais venu sur Kixster (ou écris son pseudo). Dès qu'il accepte, il est ajouté à la liste blanche."
+        commande: "/parrainage"
+        nouveau: "2026-10-23"
+      coffres-parrainage:
+        nom: "Des coffres qui grossissent"
+        icone: ENDER_CHEST
+        texte: "Plus ton filleul joue (temps actif, pas l'AFK), plus vos coffres de récompense sont gros : un pour lui, un pour toi, à chaque palier. « Mes filleuls » montre où il en est."
+        nouveau: "2026-10-23"
+      responsable:
+        nom: "Choisis bien qui tu invites"
+        icone: BARRIER
+        texte: "Faire venir à répétition des joueurs qui ne respectent pas les règles peut te valoir une sanction, à toi aussi."
+        nouveau: "2026-10-23"
+      sans-parrain:
+        nom: "Sans parrain"
+        icone: PAPER
+        texte: "Un joueur qui n'est pas sur la liste blanche voit une fenêtre de demande en essayant de rejoindre Kixster : il donne son pseudo Discord, un admin la traite dès que possible."
+        nouveau: "2026-10-23"
+
   vehicules:
     nom: "Véhicules"
     icone: OAK_BOAT
@@ -526,6 +554,13 @@ themes:
         icone: BARRIER
         texte: "Interdits : x-ray (mods, packs de textures), Litematica en mode « easy place » ou « printer », macros et clics automatiques, mini-cartes qui contournent le radar ou la vue des grottes, toute freecam autre que Legacy Freecam. Le staff surveille."
         nouveau: "2026-10-18d"
+      statistiques:
+        nom: "Statistiques"
+        icone: CLOCK
+        texte: "Ton temps de jeu, tes distances, tes blocs minés, tes créatures tuées... comme l'écran Statistiques de Java, aussi pour les joueurs Bedrock. Dans « Informations »."
+        commande: "/statistiques (/stats)"
+        requiert: "KLM_Statistiques"
+        nouveau: "2026-10-23"
       reseau:
         nom: "Le réseau"
         icone: BELL
@@ -677,3 +712,15 @@ themes:
         icone: TOTEM_OF_UNDYING
         texte: "Ton groupe de jeu, pour aller en partie ensemble."
         nouveau: "2026-10-18c"
+      parrainage-cmd:
+        nom: "/parrainage"
+        icone: PLAYER_HEAD
+        texte: "Parrainer un ami sur Kixster, voir tes filleuls, répondre à une proposition."
+        requiert: "KS_Parrainage"
+        nouveau: "2026-10-23"
+      statistiques-cmd:
+        nom: "/statistiques (/stats)"
+        icone: CLOCK
+        texte: "Tes statistiques sur ce serveur."
+        requiert: "KLM_Statistiques"
+        nouveau: "2026-10-23"

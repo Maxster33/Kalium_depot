@@ -1,0 +1,25 @@
+# ============================================================
+#  KS_Parrainage - configuration (serveur Kixster)
+#  Les menus du parrainage sont dans KLM_Contacts ; les donnees (parrainages, demandes) sur le proxy (KaliumRelay 1.10.0).
+# ============================================================
+
+# Relais HTTP du proxy.
+relay-url: "http://7018.mystrator.com:46199"
+# Jeton du relais : a recopier a la main (meme valeur que les autres plugins relies au relais). Jamais dans le depot git.
+relay-token: ""
+
+# Paliers : heures de jeu ACTIF du filleul sur Kixster, et valeur moyenne (emeraudes) du coffre donne au parrain et au
+# filleul. Bareme valide par LeKiwi06 le 23/10/2026 (environ 6 emeraudes par heure jouee par le filleul).
+paliers:
+  - {heures: 1, parrain: 5, filleul: 5}
+  - {heures: 3, parrain: 10, filleul: 10}
+  - {heures: 6, parrain: 20, filleul: 20}
+  - {heures: 12, parrain: 40, filleul: 40}
+  - {heures: 24, parrain: 80, filleul: 80}
+  - {heures: 48, parrain: 150, filleul: 150}
+  - {heures: 100, parrain: 300, filleul: 300}
+  - {heures: 200, parrain: 600, filleul: 600}
+
+# Temps actif : le joueur a tourne la tete, parle, lance une commande, casse, pose ou utilise un bloc dans les N
+# dernieres minutes (le temps AFK ne compte pas : proposition de Claude validee par LeKiwi06 le 23/10/2026).
+inactivite-minutes: 5

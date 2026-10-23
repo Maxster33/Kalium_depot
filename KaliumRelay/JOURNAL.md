@@ -412,3 +412,38 @@ pour les parties, 64 pour les groupes, 32 pour les amis, tout passe).
 - Aucun réglage nouveau.
 
 **Compilé, non déployé, non testé en jeu.** À déployer avec KLM_Espaces 1.0.0 et KaliumRelay 1.9.0 (fusion de Kal-Games dans Kanvas).
+
+## 1.10.0 - parrainage et liste blanche de Kixster (23/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (23/10/2026)**, à partir de son message d'annonce : système de parrainage, récompenses selon
+l'activité de l'invité, liste blanche automatique par parrainage, demande de liste blanche par une interface quand un
+joueur non inscrit essaie de rejoindre Kixster (pseudo Discord, traitée par un admin). Maquette et barème validés le
+même jour (« je valide »).
+
+- Nouvelle classe `Parrainage` (sous le verrou de `Contacts`) : propositions de parrainage, parrainages acceptés (un
+  parrain par filleul, gardés pour toujours : historique des admins), demandes de liste blanche, joueurs « autorisés »
+  (acceptés, pas encore ajoutés à la liste blanche de Kixster), copie de la liste blanche et des opérateurs de Kixster
+  envoyée par KS_Parrainage, copie du temps de jeu des filleuls et des paliers (affichage).
+  Fichiers : `plugins/kaliumrelay/parrainage.txt`, `whitelist-kixster.txt`.
+- Actions `/contacts/` : `plist`, `pparrainer`, `pannuler`, `paccepter`, `prefuser`, `wdemande`, `wliste`, `whisto`,
+  `waccepter`, `wrefuser` (KLM_Contacts 1.5.0) ; `wsync`, `wcheck`, `wapplique`, `pkixster`, `pjeu` (KS_Parrainage).
+- Entrée sur Kixster (`onServerPreConnect`) : un joueur absent de la copie de la liste blanche, non autorisé et non
+  admin est refusé ; son serveur reçoit le message `whitelist` (canal `kalium:contacts`) et KLM_Contacts lui ouvre la
+  demande (ou l'acceptation d'un parrainage reçu). Tant que Kixster n'a jamais envoyé sa liste, ou si sa liste blanche
+  est désactivée, le proxy laisse passer.
+- Conditions : le parrain doit être sur la liste blanche de Kixster ; le filleul doit être déjà venu sur KaLium, ne
+  jamais avoir été sur Kixster ni avoir été parrainé ; 10 propositions en attente au plus par parrain ; un joueur
+  bloqué par le filleul ne lui envoie rien (sans le savoir).
+- Prévenus dans le tchat : le filleul (proposition, cliquable `/parrainage`), le parrain (acceptation, refus), les
+  admins de `relay.properties` (nouvelle demande, et à leur arrivée s'il y en a en attente), le joueur (demande
+  acceptée ou refusée).
+- `relay.properties` : nouvelle clé `parrainage-serveur` (défaut `kixster`, ajoutée d'office au fichier).
+- Corps des requêtes `/contacts/` : 64 Ko au plus (4 Ko avant), pour la liste blanche de Kixster.
+
+Limites : la liste des admins prévenus est celle de `relay.properties` (le proxy ne connaît pas les permissions des
+serveurs) ; un joueur retiré plus tard de la liste blanche de Kixster ne peut plus être parrainé (il a déjà eu un
+parrain, ou il a été sur Kixster) : il passe par une demande aux admins.
+
+**Compilé, non déployé, non testé en jeu.** Empilé sur la 1.9.0 testée en solo seulement (LeKiwi06 a répondu « je valide » au message qui le signalait, le
+23/10/2026). À déployer avec KLM_Contacts 1.5.0 (tous les serveurs Paper) et, sur Kixster, KS_Parrainage 1.0.0 +
+KS_RewardsGUI 1.6.0 (+ KLM_Statistiques 1.0.0 et `didacticiel.yml`).

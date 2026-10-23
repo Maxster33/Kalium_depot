@@ -19,7 +19,7 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 | `KLM_Menu/` | Interface globale : navigation entre serveurs, catalogue des interfaces des plugins, boîte à outils des menus (anciennement KaliumMenu) | chaque serveur Paper |
 | `KLM_Portal/` | Portails : une région WorldGuard reliée à une destination de KLM_Menu (désactivée avec son bouton) | chaque serveur Paper (lobby d'abord) |
 | `KLM_Chat/` | Tchat inter-serveur : `/global send <message>`, `/global true` / `false`, préfixe coloré par serveur, séparations avec le tchat du serveur | chaque serveur Paper |
-| `KLM_Contacts/` | Contacts : amis, serveur où se trouve chaque ami, demandes, blocage, messages privés `/mp` et `/r` (données sur le proxy, dans KaliumRelay) ; groupes de jeu à venir | chaque serveur Paper |
+| `KLM_Contacts/` | Contacts : amis, serveur où se trouve chaque ami, demandes, blocage, messages privés `/mp` et `/r` (données sur le proxy, dans KaliumRelay), groupes de jeu, parrainage et demandes de liste blanche de Kixster | chaque serveur Paper |
 | `KLM_Hub/` | Lobby : barre de boss (texte défilant Discord / Twitch), QR codes en main secondaire pour « Recherche de joueurs » (dépend de KLM_Menu) | lobby |
 | `KaliumRelay/` | Relais HTTP entre serveurs | proxy Velocity |
 | `KLM_DiscordBot/` | Bot Discord (Node.js, hors Minecraft) : classements, stats et graphiques tirés de l'API de KG_ScoreBoards (cahier des charges dans le dossier) | hébergement à choisir |
@@ -32,6 +32,8 @@ Code source des plugins du réseau KaLium (Paper 26.2 / Velocity), maintenu par 
 | `KS_LaisseBateau/` | Laisse courte entre deux bateaux : un bateau tiré par un autre bateau reste à 3 blocs (au lieu de 6 à 12) | kixster |
 | `KS_VerrouVehicule/` | Verrou de véhicule : contenant d'un bateau ou wagonnet à coffre, d'un wagonnet à entonnoir ou d'un âne / mule / lama à coffre protégé tant qu'il n'est pas vide (ni ouvert, ni cassé, ni déplacé, ni vidé par entonnoir) ; recette dans KS_Crafts, dépend de KLM_Menu | kixster |
 | `KS_Didacticiel/` | Didacticiel des changements de Kixster dans le comparateur « Informations » (`/didacticiel`) : menu en coffre, un thème puis une nouveauté par objet, marque « Nouveau » par joueur ; contenu dans `didacticiel.yml`, à tenir à jour (`/didacticiel recharger`) ; dépend de KLM_Menu | kixster |
+| `KS_Parrainage/` | Parrainage sur Kixster : liste blanche des filleuls et des demandes acceptées, temps de jeu actif des filleuls, coffres à chaque palier (données sur le proxy, menus dans KLM_Contacts) | kixster |
+| `KLM_Statistiques/` | Statistiques vanilla du joueur sur ce serveur (écran Statistiques de Java, aussi pour Bedrock), dans « Informations » (`/statistiques`) | kixster (chaque serveur Paper possible) |
 | `KS_Villageois/` | Villageois et marchands ambulants sans échanges (sauf étiquette `ks_pnj`) | event |
 | `KS_Crafts/` | Crafts du serveur Event (sable rouge, blocs bruts, calcite, froglights, recette du Bedrock Breaker, Clé de l'End, bloc de verrue...) | event |
 | `KS_BedrockBreaker/` | Bedrock Breaker : objet à usage unique qui retire un bloc de bedrock (protections WorldGuard respectées) | event |

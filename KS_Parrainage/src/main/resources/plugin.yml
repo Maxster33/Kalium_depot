@@ -1,0 +1,16 @@
+name: KS_Parrainage
+version: '${project.version}'
+main: fr.kalium.parrainage.KSParrainage
+api-version: '26.2'
+description: Parrainage sur Kixster - liste blanche des filleuls et des demandes acceptees, temps de jeu actif des filleuls, coffres a chaque palier (donnees sur le proxy, KaliumRelay).
+authors: [KaLium]
+depend: [KLM_Menu, KS_RewardsGUI]
+commands:
+  ksparrainage:
+    description: Etat du parrainage sur ce serveur (admins).
+    usage: /<command> [recharger]
+    permission: ksparrainage.admin
+permissions:
+  ksparrainage.admin:
+    description: Voir l'etat du parrainage (/ksparrainage).
+    default: op

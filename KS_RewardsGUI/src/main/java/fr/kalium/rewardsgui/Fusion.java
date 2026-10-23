@@ -64,6 +64,11 @@ final class Fusion implements Listener {
         this.tables = new Tables(plugin);
     }
 
+    /** 1.6.0 : tables de fusion.yml, aussi pour les coffres du parrainage (KSRewardsGUI.deposerCoffre). */
+    Tables tables() {
+        return tables;
+    }
+
     /** Ouvre le menu ; le coffre tenu en main est choisi d'office s'il est accepté. */
     void ouvrir(Player joueur, String enMain) {
         if (!tables.disponibles()) {

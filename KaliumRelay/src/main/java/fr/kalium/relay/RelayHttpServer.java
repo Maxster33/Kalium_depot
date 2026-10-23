@@ -253,7 +253,7 @@ final class RelayHttpServer {
     }
 
     /**
-     * 1.6.0 - POST /contacts/&lt;action&gt; (KLM_Contacts) : corps = lignes « cle=valeur » (UTF-8, 4 Ko au plus), reponse
+     * 1.6.0 - POST /contacts/&lt;action&gt; (KLM_Contacts) : corps = lignes « cle=valeur » (UTF-8, 64 Ko au plus depuis la 1.10.0), reponse
      * en texte (« ok », « ok:... » ou « err:... », puis les donnees pour « list »). Voir Contacts.handle.
      */
     private void handleContacts(HttpExchange exchange) {
@@ -273,7 +273,8 @@ final class RelayHttpServer {
                 return;
             }
             Map<String, String> params = new java.util.HashMap<>();
-            for (String ligne : new String(exchange.getRequestBody().readNBytes(4096), StandardCharsets.UTF_8).split("\n")) {
+            // 1.10.0 : 64 Ko au plus (liste blanche de Kixster envoyee par KS_Parrainage, « wsync ») ; 4 Ko avant.
+            for (String ligne : new String(exchange.getRequestBody().readNBytes(65536), StandardCharsets.UTF_8).split("\n")) {
                 int egal = ligne.indexOf('=');
                 if (egal > 0) {
                     params.put(ligne.substring(0, egal).trim(), ligne.substring(egal + 1).trim());

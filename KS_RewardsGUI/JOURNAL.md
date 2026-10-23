@@ -222,3 +222,16 @@ Choix de Claude, signalés :
 **`fusion.yml` remplacé sur Kixster le 11/10/2026 à 09:00 (LeKiwi06 ; accord de LeKiwi06 : « oui déploie tout » ; Cristal de purification dans le pool Légendaire, comme dans les
 `butin.yml` ; ancien fichier dans `_removed-ks_rewardsgui-fusion-2026-10-11/` ; jar inchangé), actif après redémarrage de
 Kixster. Non testé.**
+
+## 1.6.0 - coffres déposés par un plugin de ce serveur (parrainage) (23/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (23/10/2026)** : récompenses du parrainage (coffres pour le parrain et le filleul à chaque
+palier de temps de jeu, barème validé le même jour).
+
+- `KSRewardsGUI.deposerCoffre(joueur, nom, origine, raison, valeur)` : coffre « Non ouvert » d'une valeur moyenne
+  donnée, contenu tiré avec les tables de `fusion.yml` (comme un coffre fusionné) ; il arrive dans /rewards comme une
+  récompense venue d'un autre serveur. Faux si `fusion.yml` manque ou est vide (KS_Parrainage réessaie chaque minute).
+- Rien d'autre ne change.
+
+**Compilé, non déployé, non testé en jeu.** À déployer sur Kixster avec KS_Parrainage 1.0.0 ; `fusion.yml` doit être
+présent dans `plugins/KS_RewardsGUI/` de Kixster.

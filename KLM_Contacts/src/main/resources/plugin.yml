@@ -16,6 +16,11 @@ commands:
     description: Bloque un joueur (plus de demande d'ami ni de message prive de sa part).
     usage: /<command> <pseudo>
     permission: klmcontacts.use
+  parrainage:
+    description: Parrainer un joueur sur Kixster, ou repondre a une proposition de parrainage.
+    usage: /<command>
+    aliases: [parrainer]
+    permission: klmcontacts.use
   debloquer:
     description: Debloque un joueur.
     usage: /<command> <pseudo>
@@ -25,3 +30,6 @@ permissions:
   klmcontacts.use:
     description: Utiliser les contacts (/amis, /bloquer, /debloquer).
     default: true
+  klmcontacts.whitelist:
+    description: Traiter les demandes de liste blanche de Kixster et voir les parrainages (rubrique Moderation de /menu).
+    default: op

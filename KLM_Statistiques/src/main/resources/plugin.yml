@@ -1,0 +1,12 @@
+name: KLM_Statistiques
+version: '${project.version}'
+main: fr.kalium.statistiques.KlmStatistiques
+api-version: '26.2'
+description: Statistiques vanilla du joueur sur ce serveur (ecran Statistiques de Java, aussi pour les joueurs Bedrock), dans le comparateur Informations.
+authors: [KaLium]
+depend: [KLM_Menu]
+commands:
+  statistiques:
+    description: Ouvre tes statistiques sur ce serveur.
+    usage: /<command>
+    aliases: [stats]

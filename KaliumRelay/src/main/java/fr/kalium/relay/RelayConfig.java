@@ -50,6 +50,13 @@ final class RelayConfig {
     /** 1.7.0 (KLM_Contacts) : nombre maximal de joueurs dans un groupe de jeu. */
     private int maxGroup = 8;
 
+    /** 1.10.0 (parrainage) : serveur dont la liste blanche est geree par le parrainage (nom Velocity). */
+    private String parrainageServeur = "kixster";
+
+    String parrainageServeur() {
+        return parrainageServeur;
+    }
+
     int maxGroup() {
         return maxGroup;
     }
@@ -118,6 +125,10 @@ final class RelayConfig {
                 props.setProperty("contacts-no-join", DEFAULT_NO_JOIN);
                 changed = true;
             }
+            if (!props.containsKey("parrainage-serveur")) {
+                props.setProperty("parrainage-serveur", "kixster"); // 1.10.0
+                changed = true;
+            }
             boolean generated = false;
             if (props.getProperty("token", "").isBlank()) {
                 props.setProperty("token", UUID.randomUUID().toString());
@@ -149,6 +160,7 @@ final class RelayConfig {
             } catch (NumberFormatException e) {
                 config.maxGroup = 8;
             }
+            config.parrainageServeur = props.getProperty("parrainage-serveur", "kixster").trim();
             return config;
         } catch (IOException e) {
             logger.error("[KaliumRelay] Impossible de charger/creer relay.properties, valeurs par defaut utilisees.", e);
