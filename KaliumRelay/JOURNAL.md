@@ -449,3 +449,14 @@ parrain, ou il a été sur Kixster) : il passe par une demande aux admins.
 KS_RewardsGUI 1.6.0 (+ KLM_Statistiques 1.0.0 et `didacticiel.yml`).
 
 **Déployé sur le proxy le 23/10/2026 à 16:18 (déploiement groupé, accord de LeKiwi06 : « allez on peut tout déployer ») ; 1.9.0 dans `_removed-kaliumrelay-1.9.0/` ; actif après redémarrage du proxy, non testé en jeu.**
+
+## 1.10.1 - anciens joueurs parrainables, « whitelist » (23/10/2026, LeKiwi06)
+
+**Demandes de LeKiwi06 (23/10/2026, après le déploiement)** : « j'ai voulu parrainer un joueur, ça me dit que Kixster n'a pas encore envoyé la liste blanche (j'aimerais que les joueurs déjà whitelist puissent prendre un parrain, pour qu'on puisse rattraper les récompenses qu'on aurait dû avoir) ; utilise le terme whitelist au lieu de liste blanche d'ailleurs » ; « j'aimerais aussi que les heures AFK sur le serveur ne comptent pas (considérer un joueur comme AFK s'il n'effectue pas d'actions pendant plus de 5 minutes et enlever l'AFK quand une action est effectuée) ». Ses choix : rattrapage sur le temps vanilla (CoreProtect, prévu d'abord, ne tourne pas sur Kixster en 26.3), temps actif aussi dans Statistiques.
+
+- Un joueur déjà whitelisté sur Kixster peut prendre un parrain (avant : seulement un joueur jamais venu) ; il n'est pas remis dans les « autorisés » (déjà sur la whitelist). Toujours un seul parrain par joueur.
+- Pas de parrainage croisé : on ne parraine pas son parrain, ni le parrain de son parrain (`err:cycle`), à la proposition comme à l'acceptation ; ces joueurs n'apparaissent pas dans les amis à parrainer.
+- « whitelist » au lieu de « liste blanche » dans les messages du tchat.
+- `pkixster` envoie aussi la date d'acceptation.
+
+**Compilé, non déployé, non testé en jeu.** À déployer ensemble : KaliumRelay 1.10.1 (proxy), KLM_Contacts 1.5.1 (tous les serveurs Paper), KS_Parrainage 1.1.0 + KLM_Statistiques 1.1.0 + `didacticiel.yml` (Kixster). Empilé sur les versions du 23/10 (déployées, pas encore testées), à la suite de la même demande.

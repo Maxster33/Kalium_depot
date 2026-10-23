@@ -124,7 +124,7 @@ public final class KlmContacts extends JavaPlugin implements org.bukkit.event.Li
         // 1.5.0 : demandes de liste blanche de Kixster et historique des parrainages (rubrique « Modération » de /menu).
         getServer().getServicesManager().register(MenuSection.class, MenuSection.moderation(this, "demandes-whitelist",
                 "klmcontacts.whitelist", 60, lang.c("section.whitelist", "<aqua><bold>Demandes de whitelist"),
-                lang.c("section.whitelist-description", "<gray>Demandes de liste blanche de Kixster, et les parrainages."),
+                lang.c("section.whitelist-description-2", "<gray>Demandes de whitelist de Kixster, et les parrainages."),
                 (joueur, retour) -> parrainages.demandes(joueur, retour)), this, ServicePriority.Normal);
         // 1.1.0 (groupe de jeu) : messages du proxy (KaliumRelay 1.7.0) sur le canal kalium:contacts.
         // « follow » : le chef du groupe a changé de serveur ; on répond si le joueur est en partie (il n'est alors pas

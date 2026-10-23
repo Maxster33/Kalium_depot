@@ -45,6 +45,10 @@ import java.util.UUID;
  * fenêtre de demande, ou l'acceptation d'un parrainage s'il en a reçu un. Tant que Kixster n'a jamais envoyé sa liste,
  * le proxy laisse passer (la liste blanche vanilla de Kixster s'applique seule).
  *
+ * 1.10.1 (LeKiwi06, 23/10/2026) : un joueur déjà whitelisté peut aussi prendre un parrain (rattrapage des récompenses,
+ * temps passé estimé par KS_Parrainage) ; pas de parrainage croisé ; « whitelist » dans les textes (au lieu de « liste
+ * blanche ») ; date d'acceptation envoyée à KS_Parrainage (« pkixster »).
+ *
  * Données : plugins/kaliumrelay/parrainage.txt (lignes à onglets) et whitelist-kixster.txt. Toutes les méthodes sont
  * appelées sous le verrou de {@link Contacts} (comme ContactsStore).
  */
@@ -196,9 +200,26 @@ final class Parrainage {
         return autorises.containsKey(id) || (liste != null && liste.contains(id));
     }
 
-    /** Peut encore etre parraine : jamais venu sur Kixster, jamais parraine. */
+    /**
+     * Peut encore etre parraine : n'a jamais eu de parrain. 1.10.1 (LeKiwi06, 23/10/2026 : « j'aimerais que les joueurs
+     * deja whitelist puissent prendre un parrain, pour qu'on puisse rattraper les recompenses qu'on aurait du avoir ») :
+     * un joueur deja sur Kixster peut aussi etre parraine (avant : seulement un joueur jamais venu).
+     */
     private boolean parrainable(UUID id) {
-        return !surKixster(id) && !acceptes.containsKey(id);
+        return !acceptes.containsKey(id);
+    }
+
+    /** 1.10.1 : pas de parrainage croise (un parrain, ou le parrain de son parrain..., ne devient pas son filleul). */
+    private boolean cycle(UUID parrain, UUID filleul) {
+        UUID p = parrain;
+        for (int i = 0; i < 100 && p != null; i++) {
+            if (p.equals(filleul)) {
+                return true;
+            }
+            Accepte a = acceptes.get(p);
+            p = a == null ? null : a.parrain();
+        }
+        return false;
     }
 
     private static boolean bedrock(UUID id) {
@@ -220,7 +241,7 @@ final class Parrainage {
                 return true;
             }
         }
-        joueur.sendMessage(Contacts.info("Tu n'es pas encore sur la liste blanche de Kixster : fais-toi parrainer par "
+        joueur.sendMessage(Contacts.info("Tu n'es pas encore whitelisté sur Kixster : fais-toi parrainer par "
                 + "un ami, ou envoie une demande aux admins."));
         Optional<ServerConnection> ici = joueur.getCurrentServer();
         if (ici.isEmpty() || !ici.get().sendPluginMessage(canal, "whitelist".getBytes(StandardCharsets.UTF_8))) {
@@ -252,7 +273,7 @@ final class Parrainage {
         }
         if (enAttente > 0) {
             joueur.sendMessage(Contacts.info(enAttente + " demande" + (enAttente > 1 ? "s" : "")
-                    + " de liste blanche en attente : menu > Modération > Demandes de whitelist."));
+                    + " de whitelist en attente : menu > Modération > Demandes de whitelist."));
         }
     }
 
@@ -295,7 +316,8 @@ final class Parrainage {
                 StringBuilder out = new StringBuilder("ok\n");
                 for (Accepte a : acceptes.values()) {
                     out.append("A\t").append(a.filleul()).append('\t').append(nom(a.filleul())).append('\t')
-                            .append(a.parrain()).append('\t').append(nom(a.parrain())).append('\n');
+                            .append(a.parrain()).append('\t').append(nom(a.parrain())).append('\t').append(a.date())
+                            .append('\n');
                 }
                 return out.toString();
             }
@@ -422,7 +444,7 @@ final class Parrainage {
             }
         });
         for (UUID ami : contacts.store.get(moi).friends) {
-            if (parrainable(ami) && !propositions.getOrDefault(ami, Set.of()).contains(moi)) {
+            if (parrainable(ami) && !cycle(moi, ami) && !propositions.getOrDefault(ami, Set.of()).contains(moi)) {
                 String ou = contacts.store.get(ami).invisible ? null : contacts.serverOf(ami);
                 out.append("E\t").append(ami).append('\t').append(nom(ami)).append('\t').append(ou == null ? "" : ou)
                         .append('\n');
@@ -451,6 +473,9 @@ final class Parrainage {
         }
         if (!parrainable(filleul)) {
             return "err:already:" + nom(filleul);
+        }
+        if (cycle(moi, filleul)) {
+            return "err:cycle:" + nom(filleul);
         }
         if (contacts.store.get(filleul).blocked.contains(moi)) {
             // Bloque par ce joueur : la proposition n'arrive pas, et rien ne le lui apprend.
@@ -486,10 +511,21 @@ final class Parrainage {
             sauver();
             return "err:already:" + nom(moi);
         }
+        if (cycle(parrain, moi)) {
+            p.remove(parrain);
+            if (p.isEmpty()) {
+                propositions.remove(moi);
+            }
+            sauver();
+            return "err:cycle:" + nom(parrain);
+        }
+        boolean dejaSurKixster = surKixster(moi);
         // Un seul parrain : les autres propositions tombent.
         propositions.remove(moi);
         acceptes.put(moi, new Accepte(moi, parrain, System.currentTimeMillis()));
-        autorises.put(moi, "parrain:" + parrain);
+        if (!dejaSurKixster) {
+            autorises.put(moi, "parrain:" + parrain);
+        }
         Demande d = demandes.get(moi);
         if (d != null && d.etat.equals("attente")) {
             d.etat = "acceptee";
@@ -497,7 +533,8 @@ final class Parrainage {
         }
         sauver();
         contacts.tell(parrain, Contacts.prefix().append(Component.text(nom(moi), NamedTextColor.WHITE))
-                .append(Component.text(" a accepté ton parrainage : il peut rejoindre Kixster.", NamedTextColor.GREEN)));
+                .append(Component.text(dejaSurKixster ? " a accepté ton parrainage." : " a accepté ton parrainage : il peut "
+                        + "rejoindre Kixster.", NamedTextColor.GREEN)));
         logger.info("[KaliumRelay] Parrainage accepte : " + nom(parrain) + " -> " + nom(moi));
         return "ok:" + nom(parrain);
     }
@@ -519,7 +556,7 @@ final class Parrainage {
         d.date = System.currentTimeMillis();
         demandes.put(moi, d);
         sauver();
-        String texte = nom(moi) + (bedrock(moi) ? " (Bedrock)" : "") + " demande la liste blanche de Kixster (Discord : "
+        String texte = nom(moi) + (bedrock(moi) ? " (Bedrock)" : "") + " demande la whitelist de Kixster (Discord : "
                 + d.discord + ").";
         for (Player admin : server.getAllPlayers()) {
             if (config.isAdmin(admin.getUsername(), admin.getUniqueId())) {
@@ -567,9 +604,9 @@ final class Parrainage {
         }
         sauver();
         contacts.tell(joueur, accepter
-                ? Contacts.prefix().append(Component.text("Ta demande de liste blanche est acceptée : tu peux rejoindre "
+                ? Contacts.prefix().append(Component.text("Ta demande de whitelist est acceptée : tu peux rejoindre "
                 + "Kixster.", NamedTextColor.GREEN))
-                : Contacts.info("Ta demande de liste blanche pour Kixster a été refusée."));
+                : Contacts.info("Ta demande de whitelist pour Kixster a été refusée."));
         logger.info("[KaliumRelay] Demande de liste blanche de " + nom(joueur) + (accepter ? " acceptee" : " refusee")
                 + " par " + nom(admin));
         return "ok:" + nom(joueur);

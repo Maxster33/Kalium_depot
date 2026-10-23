@@ -24,3 +24,12 @@ validée le même jour.
 test : noms traduits côté Bedrock.
 
 **Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé) ; actif après redémarrage, non testé en jeu.**
+
+## 1.1.0 - temps de jeu actif (23/10/2026, LeKiwi06)
+
+**Demandes de LeKiwi06 (23/10/2026, après le déploiement)** : « j'ai voulu parrainer un joueur, ça me dit que Kixster n'a pas encore envoyé la liste blanche (j'aimerais que les joueurs déjà whitelist puissent prendre un parrain, pour qu'on puisse rattraper les récompenses qu'on aurait dû avoir) ; utilise le terme whitelist au lieu de liste blanche d'ailleurs » ; « j'aimerais aussi que les heures AFK sur le serveur ne comptent pas (considérer un joueur comme AFK s'il n'effectue pas d'actions pendant plus de 5 minutes et enlever l'AFK quand une action est effectuée) ». Ses choix : rattrapage sur le temps vanilla (CoreProtect, prévu d'abord, ne tourne pas sur Kixster en 26.3), temps actif aussi dans Statistiques.
+
+- « Temps de jeu actif (sans AFK), depuis le <date> » en tête de l'onglet Général : compté par ce plugin depuis son installation, minute par minute ; AFK après 5 minutes sans action (tourner la tête, parler, commande, casser, poser ou utiliser un bloc), fin de l'AFK à la première action. Le temps vanilla (AFK compris) reste juste après.
+- Données : `plugins/KLM_Statistiques/temps-actif.yml` (date de début, secondes par joueur), sauvé toutes les 5 minutes et à l'arrêt.
+
+**Compilé, non déployé, non testé en jeu.** À déployer ensemble : KaliumRelay 1.10.1 (proxy), KLM_Contacts 1.5.1 (tous les serveurs Paper), KS_Parrainage 1.1.0 + KLM_Statistiques 1.1.0 + `didacticiel.yml` (Kixster). Empilé sur les versions du 23/10 (déployées, pas encore testées), à la suite de la même demande.

@@ -28,11 +28,13 @@ import net.kyori.adventure.text.Component;
  * (KS_Parrainage). Menus en coffre (outil Contenant de KLM_Menu) ; seule la saisie d'un pseudo ou du pseudo Discord est
  * une petite fenêtre.
  *
- * - « Parrainer un joueur » (menu Contacts, /parrainage) : têtes des amis jamais venus sur Kixster, « Autre pseudo »,
+ * - « Parrainer un joueur » (menu Contacts, /parrainage) : têtes des amis sans parrain (1.5.1 : aussi ceux déjà
+ *   whitelistés), « Autre pseudo »,
  *   « Mes filleuls » (temps de jeu, palier, prochain palier), « Propositions reçues ».
  * - Le filleul accepte ou refuse (petit coffre) ; il est alors ajouté à la liste blanche de Kixster à son arrivée.
  * - Refusé à l'entrée de Kixster (message « whitelist » du proxy) : acceptation d'un parrainage reçu, sinon fenêtre de
  *   demande aux admins avec le pseudo Discord.
+ * - 1.5.1 : « whitelist » dans tous les textes (nouvelles clés de lang.yml) ; refus d'un parrainage croisé.
  * - Modération › Demandes de whitelist (permission klmcontacts.whitelist) : accepter / refuser chaque demande, et
  *   l'historique des parrainages (qui a fait venir qui).
  */
@@ -211,8 +213,8 @@ final class Parrainages {
                     l("parrainage.filleuls-info", "<gray>Leur temps de jeu sur Kixster et vos prochains coffres.")),
                     j -> filleuls(j, k -> ouvrir(k, retour, p)));
             List<Component> aide = new ArrayList<>();
-            aide.addAll(l("parrainage.aide-1", "<gray>Fais venir un ami sur Kixster : dès qu'il accepte, il est ajouté à "
-                    + "la liste blanche."));
+            aide.addAll(l("parrainage.aide-1b", "<gray>Fais venir un ami sur Kixster, ou parraine un joueur déjà "
+                    + "whitelisté qui n'a pas de parrain : dès qu'il accepte, il est whitelisté."));
             aide.addAll(l("parrainage.aide-2", "<gray>Plus il joue, plus vos coffres de récompense (à tous les deux) sont "
                     + "gros : /rewards sur Kixster."));
             aide.addAll(l("parrainage.aide-3", "<red>Faire venir des joueurs qui ne respectent pas les règles peut te "
@@ -223,11 +225,11 @@ final class Parrainages {
             menu.poser(menu.bas(3), Contenant.objet(Material.BOOK, t("parrainage.aide", "<yellow>Le parrainage"), aide), null);
             if (!e.disponible) {
                 menu.poser(menu.bas(4), Contenant.objet(Material.BARRIER, t("parrainage.indisponible", "<red>Indisponible"),
-                        l("parrainage.indisponible-info", "<gray>Kixster n'a pas encore envoyé sa liste blanche : "
+                        l("parrainage.indisponible-info-2", "<gray>Kixster n'a pas encore envoyé sa whitelist : "
                                 + "réessaie plus tard.")), null);
             } else if (!e.surKixster) {
                 menu.poser(menu.bas(4), Contenant.objet(Material.BARRIER, t("parrainage.pas-kixster", "<red>Réservé aux joueurs de Kixster"),
-                        l("parrainage.pas-kixster-info", "<gray>Il faut être sur la liste blanche de Kixster pour parrainer.")), null);
+                        l("parrainage.pas-kixster-info-2", "<gray>Il faut être whitelisté sur Kixster pour parrainer.")), null);
             } else {
                 menu.poser(menu.bas(4), Contenant.objet(Material.NAME_TAG, t("parrainage.autre", "<green>Autre pseudo"),
                         l("parrainage.autre-info", "<gray>Parrainer un joueur qui n'est pas dans tes amis (déjà venu sur "
@@ -250,12 +252,12 @@ final class Parrainages {
                         j -> propositions(j, k -> ouvrir(k, retour, p)));
             } else if (!e.surKixster && e.disponible) {
                 menu.poser(menu.bas(6), Contenant.objet(Material.PAPER, t("parrainage.demander", "<aqua>Demander aux admins"),
-                        l("parrainage.demander-info", "<gray>Pas de parrain ? Demande la liste blanche de Kixster avec ton "
+                        l("parrainage.demander-info-2", "<gray>Pas de parrain ? Demande la whitelist de Kixster avec ton "
                                 + "pseudo Discord.")), j -> demander(j, e.demande));
             }
             if (visibles.isEmpty()) {
                 menu.poser(22, Contenant.objet(Material.GRAY_DYE, t("parrainage.vide", "<gray>Aucun ami à parrainer"),
-                        l("parrainage.vide-info", "<gray>Tes amis sont déjà sur Kixster, ou tu n'as pas encore d'ami : "
+                        l("parrainage.vide-info-2", "<gray>Tes amis ont tous déjà un parrain, ou tu n'as pas encore d'ami : "
                                 + "utilise « Autre pseudo ».")), null);
             }
             menu.ouvrir(joueur);
@@ -275,11 +277,12 @@ final class Parrainages {
                 message(joueur, switch (reponse.partie(0)) {
                     case "unknown" -> t("refus.inconnu", "<red>Joueur inconnu : il doit être venu au moins une fois sur KaLium.");
                     case "self" -> t("refus.soi", "<red>C'est toi.");
-                    case "indisponible" -> t("parrainage.indisponible-info", "<gray>Kixster n'a pas encore envoyé sa liste "
-                            + "blanche : réessaie plus tard.");
-                    case "not-allowed" -> t("parrainage.pas-kixster-info", "<gray>Il faut être sur la liste blanche de Kixster pour parrainer.");
-                    case "already" -> t("parrainage.refus-deja", "<red><nom> est déjà sur Kixster ou a déjà un parrain.",
-                            "nom", reponse.partie(1));
+                    case "indisponible" -> t("parrainage.indisponible-info-2", "<gray>Kixster n'a pas encore envoyé sa "
+                            + "whitelist : réessaie plus tard.");
+                    case "not-allowed" -> t("parrainage.pas-kixster-info-2", "<gray>Il faut être whitelisté sur Kixster pour parrainer.");
+                    case "already" -> t("parrainage.refus-deja-2", "<red><nom> a déjà un parrain.", "nom", reponse.partie(1));
+                    case "cycle" -> t("parrainage.refus-cycle", "<red><nom> est ton parrain (ou celui de ton parrain) : il ne "
+                            + "peut pas être ton filleul.", "nom", reponse.partie(1));
                     case "pending" -> t("parrainage.refus-attente", "<yellow>Tu as déjà proposé à <nom>.", "nom", reponse.partie(1));
                     case "too-many" -> t("parrainage.refus-trop", "<red>Trop de propositions en attente : annules-en d'abord.");
                     default -> t("refus.autre", "<red>Action impossible.");
@@ -302,8 +305,8 @@ final class Parrainages {
             proposer(j, pseudo.trim(), k -> ouvrir(k, retour));
         }));
         gui.open(joueur, t("parrainage.saisie-titre", "<gold>Parrainer un joueur"),
-                List.of(t("parrainage.saisie-corps", "<gray>Écris son pseudo exact. Il doit être déjà venu sur KaLium et ne "
-                        + "jamais avoir été sur Kixster.")), champs, boutons,
+                List.of(t("parrainage.saisie-corps-2", "<gray>Écris son pseudo exact. Il doit être déjà venu sur KaLium et ne "
+                        + "pas avoir de parrain.")), champs, boutons,
                 gui.button(t("menu.retour", "<gray>Retour"), null, j -> ouvrir(j, retour)), 1);
         lang.saveIfNeeded();
     }
@@ -418,20 +421,23 @@ final class Parrainages {
             menu.poser(i, Contenant.decor(), null);
         }
         menu.poser(1, Contenant.objet(Material.LIME_CONCRETE, t("repondre.accepter", "<green>Accepter"),
-                l("repondre.accepter-info", "<gray>Tu es ajouté à la liste blanche de Kixster ; vous recevez tous les deux "
-                        + "des coffres quand tu y joues.")), j -> relais.appeler(j, "paccepter",
+                l("repondre.accepter-info-2", "<gray>Tu es whitelisté sur Kixster (si tu ne l'es pas déjà) ; vous recevez "
+                        + "tous les deux des coffres selon ton temps de jeu sur Kixster.")), j -> relais.appeler(j, "paccepter",
                 Map.of("target", parrain.id().toString()), r -> {
                     if (r == null) {
                         return;
                     }
                     if (r.ok()) {
-                        plugin.dire(j, "repondre.accepte", "<green>Parrainage de <white><nom></white> accepté : tu peux rejoindre "
-                                + "Kixster.", "nom", parrain.nom());
+                        plugin.dire(j, "repondre.accepte-2", "<green>Parrainage de <white><nom></white> accepté.", "nom",
+                                parrain.nom());
                         Contenant.fermer(j);
                     } else {
-                        message(j, r.partie(0).equals("already")
-                                ? t("repondre.deja", "<yellow>Tu es déjà sur Kixster ou tu as déjà un parrain.")
-                                : t("repondre.plus-la", "<red>Cette proposition n'existe plus."), true);
+                        message(j, switch (r.partie(0)) {
+                            case "already" -> t("repondre.deja-2", "<yellow>Tu as déjà un parrain.");
+                            case "cycle" -> t("repondre.cycle", "<red><nom> est ton filleul (ou celui d'un de tes filleuls) : il ne "
+                                    + "peut pas être ton parrain.", "nom", parrain.nom());
+                            default -> t("repondre.plus-la", "<red>Cette proposition n'existe plus.");
+                        }, true);
                         Contenant.fermer(j);
                     }
                 }));
@@ -472,7 +478,7 @@ final class Parrainages {
     private void demander(Player joueur, String etatDemande) {
         if (etatDemande.equals("attente")) {
             Contenant.fermer(joueur);
-            plugin.dire(joueur, "demande.deja", "<yellow>Ta demande de liste blanche pour Kixster est en attente : un admin "
+            plugin.dire(joueur, "demande.deja-2", "<yellow>Ta demande de whitelist pour Kixster est en attente : un admin "
                     + "la traitera dès que possible.");
             return;
         }
@@ -493,16 +499,16 @@ final class Parrainages {
                                 + "(tu seras prévenu).");
                     } else {
                         switch (r.partie(0)) {
-                            case "pending" -> plugin.dire(j, "demande.deja", "<yellow>Ta demande de liste blanche pour "
+                            case "pending" -> plugin.dire(j, "demande.deja-2", "<yellow>Ta demande de whitelist pour "
                                     + "Kixster est en attente : un admin la traitera dès que possible.");
-                            case "already" -> plugin.dire(j, "demande.inutile", "<green>Tu es déjà sur la liste blanche de Kixster.");
+                            case "already" -> plugin.dire(j, "demande.inutile-2", "<green>Tu es déjà whitelisté sur Kixster.");
                             default -> plugin.dire(j, "demande.mauvais", "<red>Pseudo Discord invalide (2 à 40 caractères).");
                         }
                     }
                 });
             }));
             List<Component> corps = new ArrayList<>();
-            corps.add(t("demande.corps", "<gray>Tu n'es pas encore sur la liste blanche de Kixster. Demande à un ami de te "
+            corps.add(t("demande.corps-2", "<gray>Tu n'es pas encore whitelisté sur Kixster. Demande à un ami de te "
                     + "parrainer (menu Contacts), ou envoie une demande aux admins."));
             if (etatDemande.equals("refusee")) {
                 corps.add(t("demande.refusee", "<red>Ta dernière demande a été refusée."));
@@ -584,7 +590,7 @@ final class Parrainages {
                     retour.accept(joueur);
                 });
         menu.poser(1, Contenant.objet(Material.LIME_CONCRETE, t("traiter.accepter", "<green>Accepter"),
-                l("traiter.accepter-info", "<gray>Il est ajouté à la liste blanche de Kixster à sa prochaine arrivée.")),
+                l("traiter.accepter-info-2", "<gray>Il est whitelisté sur Kixster à sa prochaine arrivée.")),
                 j -> agir.accept(true));
         menu.poser(4, Contenant.objet(Material.PAPER, t("demandes-wl.nom", "<white><nom>", "nom", d.nom()),
                 List.of(t("demandes-wl.discord", "<gray>Discord : <white><discord>", "discord", d.discord()))), null);

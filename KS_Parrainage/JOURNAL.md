@@ -40,3 +40,14 @@ serveurs Paper) et KS_RewardsGUI 1.6.0 (Kixster).
 **Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé) ; actif après redémarrage ; `relay-token` à recopier ; non testé en jeu.**
 
 **23/10/2026 : premier démarrage à 16:36 sans erreur (jeton vide signalé, comme prévu) ; `relay-token` posé à 16:45 (original dans `_removed-ks_parrainage-config-2026-10-23/`) ; actif après le prochain redémarrage de Kixster.**
+
+## 1.1.0 - rattrapage des joueurs déjà whitelistés, « whitelist » (23/10/2026, LeKiwi06)
+
+**Demandes de LeKiwi06 (23/10/2026, après le déploiement)** : « j'ai voulu parrainer un joueur, ça me dit que Kixster n'a pas encore envoyé la liste blanche (j'aimerais que les joueurs déjà whitelist puissent prendre un parrain, pour qu'on puisse rattraper les récompenses qu'on aurait dû avoir) ; utilise le terme whitelist au lieu de liste blanche d'ailleurs » ; « j'aimerais aussi que les heures AFK sur le serveur ne comptent pas (considérer un joueur comme AFK s'il n'effectue pas d'actions pendant plus de 5 minutes et enlever l'AFK quand une action est effectuée) ». Ses choix : rattrapage sur le temps vanilla (CoreProtect, prévu d'abord, ne tourne pas sur Kixster en 26.3), temps actif aussi dans Statistiques.
+
+- Un filleul qui jouait déjà sur Kixster reçoit une fois son temps de jeu vanilla passé (`PLAY_ONE_MINUTE`, AFK compris : l'activité n'était pas suivie avant), quand ce serveur apprend le parrainage : les coffres des paliers déjà dépassés arrivent d'un coup, pour lui et son parrain. Ensuite seul le temps actif compte. Gardé dans `filleuls.yml` (`rattrapage`, `rattrape`) ; les filleuls d'avant la 1.1.0 sont considérés comme déjà rattrapés.
+- `/ksparrainage recharger` envoie aussi la whitelist au proxy et relit les filleuls (le jeton est pris en compte sans redémarrage) ; `/ksparrainage` montre les heures reprises.
+- « whitelist » dans les textes (message de bienvenue : nouvelle clé `bienvenue-2`).
+- Choix de Claude : CoreProtect, prévu d'abord pour estimer le temps actif passé, ne démarre pas sur Kixster (« Minecraft 26.3 is not supported ») ; LeKiwi06 a choisi le temps vanilla.
+
+**Compilé, non déployé, non testé en jeu.** À déployer ensemble : KaliumRelay 1.10.1 (proxy), KLM_Contacts 1.5.1 (tous les serveurs Paper), KS_Parrainage 1.1.0 + KLM_Statistiques 1.1.0 + `didacticiel.yml` (Kixster). Empilé sur les versions du 23/10 (déployées, pas encore testées), à la suite de la même demande.

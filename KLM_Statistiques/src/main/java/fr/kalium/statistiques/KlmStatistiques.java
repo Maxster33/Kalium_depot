@@ -40,8 +40,13 @@ import net.kyori.adventure.text.format.NamedTextColor;
  *   ordre alphabétique : bouton « Trier ») ; Général commence par le temps de jeu ;
  * - noms des statistiques, objets et créatures : clés de traduction du jeu (le jeu du joueur les affiche dans sa langue ;
  *   Geyser les traduit pour Bedrock).
+ * 1.1.0 (LeKiwi06, 23/10/2026 : « j'aimerais que les heures AFK ne comptent pas (considérer un joueur comme AFK s'il
+ * n'effectue pas d'actions pendant plus de 5 minutes et enlever l'AFK quand une action est effectuée) », puis « aussi
+ * dans Statistiques ») : « Temps de jeu actif » en tête de l'onglet Général, compté par ce plugin depuis son
+ * installation (le temps vanilla, AFK compris, reste affiché juste après). Action : tourner la tête, parler, lancer une
+ * commande, casser, poser ou utiliser un bloc (même règle que KS_Parrainage). Données : temps-actif.yml.
  */
-public final class KlmStatistiques extends JavaPlugin {
+public final class KlmStatistiques extends JavaPlugin implements org.bukkit.event.Listener {
 
     /** Statistiques par page (4 rangées entre les onglets et la barre d'actions). */
     private static final int PAR_PAGE = 36;
@@ -95,9 +100,26 @@ public final class KlmStatistiques extends JavaPlugin {
 
     private Lang lang;
 
+    /** 1.1.0 : AFK après 5 minutes sans action (LeKiwi06). */
+    private static final long AFK_MS = 5 * 60_000L;
+    /** Dernière action de chaque joueur connecté (millisecondes). */
+    private final Map<java.util.UUID, Long> activite = new java.util.HashMap<>();
+    /** Temps de jeu actif de chaque joueur, en secondes. */
+    private final Map<java.util.UUID, Long> actif = new java.util.HashMap<>();
+    private java.io.File fichierActif;
+    /** Date du début du compte (affichée dans le menu). */
+    private String depuis = "";
+    private boolean aSauver;
+
     @Override
     public void onEnable() {
         lang = new Lang(this);
+        chargerActif();
+        getServer().getPluginManager().registerEvents(this, this);
+        getServer().getOnlinePlayers().forEach(p -> activite.put(p.getUniqueId(), System.currentTimeMillis()));
+        // Chaque minute : une minute de plus aux joueurs actifs ; sauvegarde toutes les 5 minutes.
+        getServer().getScheduler().runTaskTimer(this, this::compter, 1200L, 1200L);
+        getServer().getScheduler().runTaskTimer(this, this::sauverActif, 6000L, 6000L);
         Component titre = lang.c("section.titre", "<aqua><bold>Statistiques");
         Component description = lang.c("section.description", "<gray>Tes statistiques sur ce serveur : temps de jeu, "
                 + "distances, blocs minés, créatures...");
@@ -138,6 +160,110 @@ public final class KlmStatistiques extends JavaPlugin {
             }
         }, this, ServicePriority.Normal);
         lang.saveIfNeeded();
+    }
+
+    @Override
+    public void onDisable() {
+        aSauver = true;
+        sauverActif();
+    }
+
+    // ------------------------------------------------------------------ temps de jeu actif (1.1.0)
+
+    private void chargerActif() {
+        fichierActif = new java.io.File(getDataFolder(), "temps-actif.yml");
+        org.bukkit.configuration.file.YamlConfiguration yaml =
+                org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(fichierActif);
+        depuis = yaml.getString("depuis", "");
+        if (depuis.isEmpty()) {
+            depuis = java.time.LocalDate.now(java.time.ZoneId.of("Europe/Paris"))
+                    .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            aSauver = true;
+        }
+        org.bukkit.configuration.ConfigurationSection section = yaml.getConfigurationSection("joueurs");
+        if (section != null) {
+            for (String cle : section.getKeys(false)) {
+                try {
+                    actif.put(java.util.UUID.fromString(cle), section.getLong(cle));
+                } catch (IllegalArgumentException e) {
+                    getLogger().warning("Joueur illisible dans temps-actif.yml : " + cle);
+                }
+            }
+        }
+    }
+
+    private void sauverActif() {
+        if (!aSauver || fichierActif == null) {
+            return;
+        }
+        org.bukkit.configuration.file.YamlConfiguration yaml = new org.bukkit.configuration.file.YamlConfiguration();
+        yaml.set("depuis", depuis);
+        actif.forEach((id, secondes) -> yaml.set("joueurs." + id, secondes));
+        try {
+            yaml.save(fichierActif);
+            aSauver = false;
+        } catch (java.io.IOException e) {
+            getLogger().warning("Écriture de temps-actif.yml impossible : " + e.getMessage());
+        }
+    }
+
+    private void compter() {
+        long maintenant = System.currentTimeMillis();
+        for (Player joueur : getServer().getOnlinePlayers()) {
+            if (maintenant - activite.getOrDefault(joueur.getUniqueId(), 0L) <= AFK_MS) {
+                actif.merge(joueur.getUniqueId(), 60L, Long::sum);
+                aSauver = true;
+            }
+        }
+    }
+
+    private void action(Player joueur) {
+        activite.put(joueur.getUniqueId(), System.currentTimeMillis());
+    }
+
+    @org.bukkit.event.EventHandler
+    public void onJoin(org.bukkit.event.player.PlayerJoinEvent event) {
+        action(event.getPlayer());
+    }
+
+    @org.bukkit.event.EventHandler
+    public void onQuit(org.bukkit.event.player.PlayerQuitEvent event) {
+        activite.remove(event.getPlayer().getUniqueId());
+    }
+
+    /** Tourner la tête (un bassin AFK déplace le joueur sans la faire tourner). */
+    @org.bukkit.event.EventHandler(ignoreCancelled = true)
+    public void onMove(org.bukkit.event.player.PlayerMoveEvent event) {
+        if (event.getFrom().getYaw() != event.getTo().getYaw() || event.getFrom().getPitch() != event.getTo().getPitch()) {
+            action(event.getPlayer());
+        }
+    }
+
+    @org.bukkit.event.EventHandler(ignoreCancelled = true)
+    public void onBreak(org.bukkit.event.block.BlockBreakEvent event) {
+        action(event.getPlayer());
+    }
+
+    @org.bukkit.event.EventHandler(ignoreCancelled = true)
+    public void onPlace(org.bukkit.event.block.BlockPlaceEvent event) {
+        action(event.getPlayer());
+    }
+
+    @org.bukkit.event.EventHandler
+    public void onInteract(org.bukkit.event.player.PlayerInteractEvent event) {
+        action(event.getPlayer());
+    }
+
+    @org.bukkit.event.EventHandler
+    public void onCommandeJoueur(org.bukkit.event.player.PlayerCommandPreprocessEvent event) {
+        action(event.getPlayer());
+    }
+
+    @SuppressWarnings("deprecation")
+    @org.bukkit.event.EventHandler
+    public void onChat(org.bukkit.event.player.AsyncPlayerChatEvent event) {
+        java.util.UUID id = event.getPlayer().getUniqueId();
+        getServer().getScheduler().runTask(this, () -> activite.put(id, System.currentTimeMillis()));
     }
 
     @Override
@@ -226,6 +352,11 @@ public final class KlmStatistiques extends JavaPlugin {
     /** Onglet Général : statistiques sans objet ni créature, non nulles ; le temps de jeu d'abord. */
     private List<Ligne> general(Player joueur) {
         List<Ligne> lignes = new ArrayList<>();
+        // 1.1.0 : temps de jeu actif (sans AFK), compté par ce plugin.
+        long secondesActives = actif.getOrDefault(joueur.getUniqueId(), 0L);
+        lignes.add(new Ligne(new ItemStack(Material.RECOVERY_COMPASS),
+                t("general.actif", "<green>Temps de jeu actif (sans AFK), depuis le <date>", "date", depuis),
+                valeur("play_time", (int) Math.min(Integer.MAX_VALUE, secondesActives * 20L)), Long.MAX_VALUE, "!actif"));
         List<Statistic> ordre = new ArrayList<>();
         ordre.add(Statistic.PLAY_ONE_MINUTE);
         for (Statistic s : Statistic.values()) {

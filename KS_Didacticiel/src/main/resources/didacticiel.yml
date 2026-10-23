@@ -401,14 +401,14 @@ themes:
       parrainer:
         nom: "Parrainer un ami"
         icone: PLAYER_HEAD
-        texte: "Menu Contacts > « Parrainer un joueur » : choisis un ami jamais venu sur Kixster (ou écris son pseudo). Dès qu'il accepte, il est ajouté à la liste blanche."
+        texte: "Menu Contacts > « Parrainer un joueur » : choisis un ami sans parrain (ou écris son pseudo), même s'il joue déjà sur Kixster. Dès qu'il accepte, il est whitelisté."
         commande: "/parrainage"
-        nouveau: "2026-10-23"
+        nouveau: "2026-10-23b"
       coffres-parrainage:
         nom: "Des coffres qui grossissent"
         icone: ENDER_CHEST
-        texte: "Plus ton filleul joue (temps actif, pas l'AFK), plus vos coffres de récompense sont gros : un pour lui, un pour toi, à chaque palier. « Mes filleuls » montre où il en est."
-        nouveau: "2026-10-23"
+        texte: "Plus ton filleul joue (temps actif, pas l'AFK), plus vos coffres de récompense sont gros : un pour lui, un pour toi, à chaque palier. Un filleul qui jouait déjà sur Kixster rattrape d'un coup les paliers de son temps de jeu passé. « Mes filleuls » montre où il en est."
+        nouveau: "2026-10-23b"
       responsable:
         nom: "Choisis bien qui tu invites"
         icone: BARRIER
@@ -417,8 +417,8 @@ themes:
       sans-parrain:
         nom: "Sans parrain"
         icone: PAPER
-        texte: "Un joueur qui n'est pas sur la liste blanche voit une fenêtre de demande en essayant de rejoindre Kixster : il donne son pseudo Discord, un admin la traite dès que possible."
-        nouveau: "2026-10-23"
+        texte: "Un joueur qui n'est pas whitelisté voit une fenêtre de demande en essayant de rejoindre Kixster : il donne son pseudo Discord, un admin la traite dès que possible."
+        nouveau: "2026-10-23b"
 
   vehicules:
     nom: "Véhicules"
@@ -565,10 +565,10 @@ themes:
       statistiques:
         nom: "Statistiques"
         icone: CLOCK
-        texte: "Ton temps de jeu, tes distances, tes blocs minés, tes créatures tuées... comme l'écran Statistiques de Java, aussi pour les joueurs Bedrock. Dans « Informations »."
+        texte: "Ton temps de jeu (et ton temps actif, sans l'AFK), tes distances, tes blocs minés, tes créatures tuées... comme l'écran Statistiques de Java, aussi pour les joueurs Bedrock. Dans « Informations »."
         commande: "/statistiques (/stats)"
         requiert: "KLM_Statistiques"
-        nouveau: "2026-10-23"
+        nouveau: "2026-10-23b"
       reseau:
         nom: "Le réseau"
         icone: BELL

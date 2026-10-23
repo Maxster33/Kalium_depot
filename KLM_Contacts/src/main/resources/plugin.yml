@@ -31,5 +31,5 @@ permissions:
     description: Utiliser les contacts (/amis, /bloquer, /debloquer).
     default: true
   klmcontacts.whitelist:
-    description: Traiter les demandes de liste blanche de Kixster et voir les parrainages (rubrique Moderation de /menu).
+    description: Traiter les demandes de whitelist de Kixster et voir les parrainages (rubrique Moderation de /menu).
     default: op

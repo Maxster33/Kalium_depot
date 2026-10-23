@@ -60,6 +60,10 @@ import io.papermc.paper.event.connection.PlayerConnectionValidateLoginEvent;
  *   /rewards). Un coffre qui n'a pas pu être déposé est réessayé chaque minute.
  * - copie du temps de jeu et des paliers envoyée au proxy chaque minute, pour le menu « Mes filleuls ».
  *
+ * 1.1.0 (LeKiwi06, 23/10/2026) : un joueur déjà whitelisté peut prendre un parrain (KaliumRelay 1.10.1) ; son temps de
+ * jeu vanilla passé est repris une fois (voir rattraper) ; « /ksparrainage recharger » envoie aussi la whitelist ;
+ * « whitelist » dans les textes.
+ *
  * Données : plugins/KS_Parrainage/filleuls.yml.
  */
 public final class KSParrainage extends JavaPlugin implements Listener {
@@ -71,6 +75,10 @@ public final class KSParrainage extends JavaPlugin implements Listener {
         String nomParrain;
         long secondes;
         int palier;
+        /** 1.1.0 : temps de jeu vanilla repris à l'arrivée du parrainage (joueur déjà whitelisté), en secondes. */
+        long rattrapage;
+        /** 1.1.0 : rattrapage déjà calculé (vrai pour les filleuls d'avant la 1.1.0, tous nouveaux sur Kixster). */
+        boolean rattrape = true;
     }
 
     /** Un coffre à déposer (réessayé tant que KS_RewardsGUI le refuse). */
@@ -100,7 +108,7 @@ public final class KSParrainage extends JavaPlugin implements Listener {
         charger();
         getServer().getPluginManager().registerEvents(this, this);
         if (relayUrl().isBlank() || relayToken().isBlank()) {
-            getLogger().warning("relay-url ou relay-token vide dans config.yml : parrainage et liste blanche automatique "
+            getLogger().warning("relay-url ou relay-token vide dans config.yml : parrainage et whitelist automatique "
                     + "inactifs.");
         }
         // Liste blanche envoyée au proxy 5 s après le démarrage, puis toutes les 5 minutes.
@@ -151,6 +159,8 @@ public final class KSParrainage extends JavaPlugin implements Listener {
                     f.nomParrain = section.getString(cle + ".nom-parrain", "?");
                     f.secondes = section.getLong(cle + ".secondes");
                     f.palier = section.getInt(cle + ".palier");
+                    f.rattrapage = section.getLong(cle + ".rattrapage");
+                    f.rattrape = section.getBoolean(cle + ".rattrape", true);
                     filleuls.put(UUID.fromString(cle), f);
                 } catch (IllegalArgumentException e) {
                     getLogger().warning("Filleul illisible dans filleuls.yml : " + cle);
@@ -179,6 +189,8 @@ public final class KSParrainage extends JavaPlugin implements Listener {
             yaml.set(cle + ".nom-parrain", f.nomParrain);
             yaml.set(cle + ".secondes", f.secondes);
             yaml.set(cle + ".palier", f.palier);
+            yaml.set(cle + ".rattrapage", f.rattrapage);
+            yaml.set(cle + ".rattrape", f.rattrape);
         });
         List<Map<String, Object>> liste = new ArrayList<>();
         for (Du d : dus) {
@@ -300,7 +312,7 @@ public final class KSParrainage extends JavaPlugin implements Listener {
                     return;
                 }
                 joueur.sendMessage(f == null
-                        ? lang.c("bienvenue", "<green>Bienvenue sur Kixster ! <gray>Tu es maintenant sur la liste blanche.")
+                        ? lang.c("bienvenue-2", "<green>Bienvenue sur Kixster ! <gray>Tu es maintenant whitelisté.")
                         : lang.c("bienvenue-filleul", "<green>Bienvenue sur Kixster ! <gray>Ton parrain : <white><parrain></white>. "
                         + "Joue pour gagner vos coffres de récompense (/rewards).", "parrain", f.nomParrain));
                 lang.saveIfNeeded();
@@ -378,6 +390,7 @@ public final class KSParrainage extends JavaPlugin implements Listener {
                     Filleul f = filleuls.get(id);
                     if (f == null) {
                         f = new Filleul();
+                        f.rattrape = false;
                         filleuls.put(id, f);
                         change = true;
                     }
@@ -388,10 +401,56 @@ public final class KSParrainage extends JavaPlugin implements Listener {
                     // ligne abimée : ignorée
                 }
             }
+            for (Map.Entry<UUID, Filleul> e : filleuls.entrySet()) {
+                if (!e.getValue().rattrape && e.getValue().parrain != null) {
+                    rattraper(e.getKey(), e.getValue());
+                    change = true;
+                }
+            }
             if (change) {
                 sauver();
             }
         });
+    }
+
+    /**
+     * 1.1.0 (LeKiwi06, 23/10/2026 : « j'aimerais que les joueurs déjà whitelist puissent prendre un parrain, pour qu'on
+     * puisse rattraper les récompenses qu'on aurait dû avoir » ; son choix : le temps vanilla) : un filleul qui a déjà
+     * joué sur Kixster reçoit d'un coup son temps de jeu vanilla passé (écran Statistiques, AFK compris : l'activité
+     * n'était pas suivie avant), donc les coffres des paliers déjà dépassés, pour lui et son parrain. Calculé une seule
+     * fois, quand ce serveur apprend le parrainage ; ensuite seul le temps actif compte. Un joueur jamais venu : 0.
+     */
+    private void rattraper(UUID id, Filleul f) {
+        long secondes = 0;
+        try {
+            secondes = Bukkit.getOfflinePlayer(id).getStatistic(org.bukkit.Statistic.PLAY_ONE_MINUTE) / 20L;
+        } catch (RuntimeException e) {
+            // jamais venu sur ce serveur : aucune statistique
+        }
+        f.rattrape = true;
+        f.rattrapage = Math.max(0, secondes);
+        if (f.rattrapage > 0) {
+            f.secondes += f.rattrapage;
+            getLogger().info("Parrainage : " + f.nom + " (filleul de " + f.nomParrain + ") déjà venu sur Kixster : "
+                    + (f.rattrapage / 3600) + " h " + String.format("%02d", f.rattrapage % 3600 / 60)
+                    + " de jeu repris (temps vanilla).");
+            paliers(id, f);
+        }
+    }
+
+    /** Paliers atteints par ce filleul depuis le dernier compte : un coffre pour lui et un pour son parrain chacun. */
+    private void paliers(UUID id, Filleul f) {
+        while (f.palier < paliers.size() && f.secondes >= paliers.get(f.palier).heures() * 3600) {
+            Palier p = paliers.get(f.palier);
+            String heures = nombre(p.heures());
+            dus.add(new Du(id, f.nom, lang.raw("raison-filleul", "Parrainage : <heures> h de jeu sur Kixster")
+                    .replace("<heures>", heures), p.filleul()));
+            dus.add(new Du(f.parrain, f.nomParrain, lang.raw("raison-parrain", "Parrainage : <filleul> a joué <heures> h")
+                    .replace("<filleul>", f.nom).replace("<heures>", heures), p.parrain()));
+            f.palier++;
+            getLogger().info("Parrainage : " + f.nom + " (filleul de " + f.nomParrain + ") atteint le palier de "
+                    + heures + " h.");
+        }
     }
 
     /** Chaque minute : temps actif des filleuls connectés, paliers atteints, coffres à déposer, copie pour le proxy. */
@@ -407,17 +466,7 @@ public final class KSParrainage extends JavaPlugin implements Listener {
             f.secondes += 60;
             f.nom = joueur.getName();
             change = true;
-            while (f.palier < paliers.size() && f.secondes >= paliers.get(f.palier).heures() * 3600) {
-                Palier p = paliers.get(f.palier);
-                String heures = nombre(p.heures());
-                dus.add(new Du(joueur.getUniqueId(), f.nom, lang.raw("raison-filleul", "Parrainage : <heures> h de jeu sur Kixster")
-                        .replace("<heures>", heures), p.filleul()));
-                dus.add(new Du(f.parrain, f.nomParrain, lang.raw("raison-parrain", "Parrainage : <filleul> a joué <heures> h")
-                        .replace("<filleul>", f.nom).replace("<heures>", heures), p.parrain()));
-                f.palier++;
-                getLogger().info("Parrainage : " + f.nom + " (filleul de " + f.nomParrain + ") atteint le palier de "
-                        + heures + " h.");
-            }
+            paliers(joueur.getUniqueId(), f);
         }
         // Coffres à déposer (réessayés tant que KS_RewardsGUI les refuse, ex. fusion.yml absent).
         int avant = dus.size();
@@ -460,16 +509,20 @@ public final class KSParrainage extends JavaPlugin implements Listener {
         if (args.length == 1 && args[0].equalsIgnoreCase("recharger")) {
             reloadConfig();
             lirePaliers();
-            sender.sendMessage("KS_Parrainage : config.yml relu (" + paliers.size() + " paliers).");
+            // 1.1.0 : jeton du relais pris en compte tout de suite (liste blanche envoyée, filleuls relus).
+            envoyerListe();
+            getServer().getScheduler().runTaskAsynchronously(this, this::relireFilleuls);
+            sender.sendMessage("KS_Parrainage : config.yml relu (" + paliers.size() + " paliers) ; whitelist envoyée au proxy.");
             return true;
         }
         sender.sendMessage("KS_Parrainage : " + filleuls.size() + " filleul(s), " + paliers.size() + " palier(s), "
-                + dus.size() + " coffre(s) en attente de dépôt ; liste blanche " + (Bukkit.hasWhitelist() ? "active" : "inactive")
+                + dus.size() + " coffre(s) en attente de dépôt ; whitelist " + (Bukkit.hasWhitelist() ? "active" : "inactive")
                 + ". /ksparrainage recharger : relire config.yml.");
         for (Map.Entry<UUID, Filleul> e : filleuls.entrySet()) {
             Filleul f = e.getValue();
             sender.sendMessage("- " + f.nom + " (parrain " + f.nomParrain + ") : " + (f.secondes / 3600) + " h "
-                    + String.format("%02d", f.secondes % 3600 / 60) + " actives, " + f.palier + " palier(s)");
+                    + String.format("%02d", f.secondes % 3600 / 60) + (f.rattrapage > 0 ? " (dont " + (f.rattrapage / 3600)
+                    + " h reprises du temps vanilla)" : " actives") + ", " + f.palier + " palier(s)");
         }
         return true;
     }
