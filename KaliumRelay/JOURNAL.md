@@ -460,3 +460,5 @@ KS_RewardsGUI 1.6.0 (+ KLM_Statistiques 1.0.0 et `didacticiel.yml`).
 - `pkixster` envoie aussi la date d'acceptation.
 
 **Compilé, non déployé, non testé en jeu.** À déployer ensemble : KaliumRelay 1.10.1 (proxy), KLM_Contacts 1.5.1 (tous les serveurs Paper), KS_Parrainage 1.1.0 + KLM_Statistiques 1.1.0 + `didacticiel.yml` (Kixster). Empilé sur les versions du 23/10 (déployées, pas encore testées), à la suite de la même demande.
+
+**Déployé sur le proxy le 23/10/2026 à 18:50 (accord de LeKiwi06) ; 1.10.0 dans `_removed-kaliumrelay-1.10.0/` ; actif après redémarrage, non testé en jeu.**

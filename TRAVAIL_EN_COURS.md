@@ -16,7 +16,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KaliumRelay, KLM_Contacts, KS_Parrainage, KLM_Statistiques, KS_Didacticiel, config.yml de Geyser sur le proxy — LeKiwi06 — depuis le 2026-10-23 17:05 — parrainage des joueurs déjà whitelistés (rattrapage estimé sans AFK par CoreProtect), « whitelist » dans les textes, temps de jeu actif dans Statistiques, NetherNet (Geyser)
 - KLM_Espaces (nouveau), KaliumRelay, KalGames, KLM_Menu, KLM_Chat, KLM_Contacts, KG_BuildBattle, KV_BuildBattle — LeKiwi06 — depuis le 2026-10-21 01:45 — fusion de Kal-Games dans Kanvas (espaces étanches) et Serveur Jeux à la place d'Event (expiration des serveurs)
 
 

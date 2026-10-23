@@ -11,6 +11,8 @@
 
 **Compilé, non déployé, non testé en jeu.** À déployer ensemble : KaliumRelay 1.10.1 (proxy), KLM_Contacts 1.5.1 (tous les serveurs Paper), KS_Parrainage 1.1.0 + KLM_Statistiques 1.1.0 + `didacticiel.yml` (Kixster). Empilé sur les versions du 23/10 (déployées, pas encore testées), à la suite de la même demande.
 
+**Déployé le 23/10/2026 vers 18:51 sur Kixster, le lobby, Serveur Jeux et Kanvas (accord de LeKiwi06) ; 1.5.0 dans `_removed-klm_contacts-1.5.0/` ; actif après redémarrage, non testé en jeu.**
+
 ## 1.5.0 - parrainage, demandes de liste blanche de Kixster (23/10/2026, LeKiwi06)
 
 **Demande de LeKiwi06 (23/10/2026)**, à partir de son message d'annonce (« dans le menu contact cliquez sur
