@@ -78,4 +78,4 @@ Demande de LeKiwi06 : « les gros slime dropent des potions d'infestation et non
 - Gros slime tué par un joueur : 10 % d'une potion basique de **suintement** (viscosité). Mêmes règles qu'avant.
 - Le reste est inchangé (le vex garde l'infestation).
 
-**Compilé, non déployé. Statut : non testé en jeu.**
+**Déployé sur Kixster le 24/10/2026 à 01:51 (LeKiwi06 ; 1.2.0 dans `_removed-ks_lootpotions-1.2.0/`), actif après redémarrage de Kixster. Statut : non testé en jeu.**
