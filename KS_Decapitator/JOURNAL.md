@@ -184,3 +184,5 @@ Limites :
 **Déployé sur Event le 16/10/2026 à 23:20 (LeKiwi06, tests ; 1.2.0 dans `_removed-ks_decapitator-1.2.0/`, jar en place vérifié identique à la référence avant l'envoi) avec un `config.yml` à `tetes-de-joueurs: true` le temps du test (à remettre à `false` sur Event ensuite). En attente du redémarrage d'Event. Statut : non testé en jeu. Kixster reste en 1.2.0.**
 
 **Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé, accord de LeKiwi06 : « allez on peut tout déployer ») ; ancien jar dans `_removed-<plugin>-<version>/` ; actif après redémarrage.** `tetes-de-joueurs: true` à mettre dans le `config.yml` créé au démarrage.
+
+**23/10/2026 : 351 têtes chargées au démarrage de 16:36 ; `tetes-de-joueurs: true` posé à 16:45 (original dans `_removed-ks_decapitator-config-2026-10-23/`) ; actif après le prochain redémarrage de Kixster.**

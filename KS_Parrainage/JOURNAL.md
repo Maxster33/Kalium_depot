@@ -38,3 +38,5 @@ la liste blanche de Kixster doit être active (`whitelist on`) ; `fusion.yml` pr
 serveurs Paper) et KS_RewardsGUI 1.6.0 (Kixster).
 
 **Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé) ; actif après redémarrage ; `relay-token` à recopier ; non testé en jeu.**
+
+**23/10/2026 : premier démarrage à 16:36 sans erreur (jeton vide signalé, comme prévu) ; `relay-token` posé à 16:45 (original dans `_removed-ks_parrainage-config-2026-10-23/`) ; actif après le prochain redémarrage de Kixster.**
