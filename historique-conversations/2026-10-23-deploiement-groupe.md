@@ -75,6 +75,32 @@ travers les trains, sans doute la recette du wagon contrôleur de KS_Crafts 1.19
 - Serveur Jeux : déménagement du 21/10 sur la machine d'Event ; KG_BingoGame 0.12.0 (contre la montre).
 - KaliumRelay 1.9.0 et KLM_Contacts 1.4.0 (base du parrainage) : testés en solo seulement.
 
+## Autres serveurs : rien d'autre à déployer, mais beaucoup de versions jamais notées « testées »
+
+Seuls envois prévus hors Kixster : KaliumRelay 1.10.0 (proxy), KLM_Contacts 1.5.0 (lobby, Serveur Jeux, Kanvas),
+KalGames 1.28.0 (Kanvas). Geyser 2.12.0 est déjà sur le proxy depuis le 23/10 à 15:47 (autre session) : actif au
+prochain redémarrage du proxy, non testé (les joueurs Bedrock doivent entrer en 26.3).
+
+Versions en service jamais confirmées en jeu (relevé du 23/10, `REPRISE_PROJET.md` et `JOURNAL.md`). Beaucoup ont
+sans doute été jouées sans souci, mais personne ne l'a noté :
+- **Proxy** : KaliumRelay 1.6.0 à 1.8.0 (amis, groupes, parties de groupe : jamais testés à plusieurs), 1.9.0 testé
+  en solo ; Geyser 2.12.0.
+- **Lobby** : KLM_Contacts 1.0.0 à 1.2.0, KLM_Menu 2.9.0 à 2.11.0 (Recherche de joueurs, bouton Contacts, menus en
+  coffre), KLM_Hub 1.0.0 (barre de boss Discord / Twitch, QR codes), KLM_Chat 1.0.0. Testés : KLM_Portal 1.3.2,
+  KLM_Menu 2.5.0.
+- **Kanvas + Kal-Games** : fusion testée en solo (tchats séparés : à deux) ; KalGames 1.26.0 et 1.27.0, KG_Menu
+  1.2.0 (menus en coffre, accueil Créer / Rejoindre, salle d'attente et relance après 15 s), KG_Bingo 1.11.0,
+  KG_BuildBattle 0.6.0 / 0.7.0, KV_BuildBattle 0.5.0, KG_BoatRace 1.6.1 / 1.6.2 (anti-collision Bedrock, bateaux non
+  solides), KG_Parkour 1.2.0 (barème), KG_PvpKit 1.1.0, KG_HideAndSeek 0.2.0, KG_PiliersFortune 0.2.0, KG_ScoreBoards
+  1.9.0, KG_Rewards 1.3.0 et KV_Rewards 1.3.0 (paliers, tops ; les coffres eux-mêmes marchent), KV_Plots 1.7.0 +
+  KV_Menu 1.4.0 (points de notes au carré, concours pendant les votes), KLM_Chat 1.1.0, KLM_Espaces 1.0.0.
+- **Serveur Jeux** : déménagement du 21/10 (Bingo sur la nouvelle machine, mondes de réserve régénérés), KG_BingoGame
+  0.9.0 à 0.12.0 (barème de victoire, réserve de mondes, « Rejouer », contre la montre), KG_BingoObservateur 0.1.0
+  (`/observer`), KLM_Contacts 1.0.0 à 1.2.0.
+- **À vérifier** : le `rattrapage.yml` de KG_Rewards posé le 10/10 à 00:23 (5 coffres, dont les 16 récompenses parties
+  vers la boîte d'Event) était « à lancer par LeKiwi06 » (`/kgrewards rattrapage kixster confirmer`) ; rien ne dit
+  qu'il l'a été. Il est maintenant sur Kanvas avec les données de KG_Rewards.
+
 ## Tests conseillés, dans l'ordre (après redémarrage)
 
 1. Arrivée sur Kixster d'un joueur déjà inscrit : rien ne change ; `/didacticiel`, Informations › Statistiques.
