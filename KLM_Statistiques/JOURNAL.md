@@ -22,3 +22,5 @@ validée le même jour.
 
 **Compilé, non déployé, non testé en jeu.** Indépendant des autres plugins (seulement KLM_Menu). À vérifier au premier
 test : noms traduits côté Bedrock.
+
+**Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé) ; actif après redémarrage, non testé en jeu.**

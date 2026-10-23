@@ -1,7 +1,9 @@
-# 2026-10-23 — Plan du déploiement groupé (préparé, rien d'envoyé)
+# 2026-10-23 — Déploiement groupé (envoyé le 23/10 de 16:18 à 16:27, à redémarrer)
 
 Demande de LeKiwi06 (23/10/2026) : « prépare-toi à tout déployer, mais précise-moi ce que je n'ai pas encore testé ».
-Il attend la fin des autres sessions (Geyser 2.12.0 sur le proxy) pour tout envoyer en même temps.
+Il attendait la fin des autres sessions (Geyser 2.12.0 sur le proxy) pour tout envoyer en même temps.
+
+**Envoyé le 23/10/2026** (« allez on peut tout déployer »), serveurs en marche : proxy 16:18, Kixster 16:22, lobby, Serveur Jeux et Kanvas 16:27. Jars en place vérifiés avant (identiques à `jars-deployes/`) et après (mêmes tailles que `sortie/`). Copie de `jetons.yml` avant conversion : `_removed-ks_jetons-2.0.2/jetons-avant-2.1.0.yml` (la copie sur place n'est pas permise par le serveur : faite par téléchargement puis renvoi). Reste : redémarrages par LeKiwi06, puis réglages à la main et tests ci-dessous.
 
 ## Ce qui part, serveur par serveur
 

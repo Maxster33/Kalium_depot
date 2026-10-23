@@ -419,3 +419,5 @@ Demande de LeKiwi06 : « 9 os donnent 9 blocs d'os, ça évite de passer par l'�
 
 **Compilé, non déployé, non testé en jeu.** Empilé sur la 1.19.0 (testée à travers les trains seulement, sur Event).
 Remplace la 1.19.0 dans le déploiement groupé vers Kixster.
+
+**Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé, à la place de la 1.15.0 ; contient la 1.19.0) ; 1.15.0 dans `_removed-ks_crafts-1.15.0/` ; actif après redémarrage, non testé en jeu.**

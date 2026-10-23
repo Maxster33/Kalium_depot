@@ -1055,3 +1055,5 @@ une seule fois, à la création de la partie.
 - Le bouton s'appelle « Appliquer les réglages » dans ce cas (coffre et fenêtre).
 
 **Compilé, non déployé, non testé en jeu.**
+
+**Déployé sur Kanvas (Kal-Games) le 23/10/2026 à 16:27 (déploiement groupé) ; 1.27.0 dans `_removed-kalgames-1.27.0/` ; actif après redémarrage, non testé en jeu.**

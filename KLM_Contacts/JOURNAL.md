@@ -27,6 +27,8 @@ choisi parmi ses amis ou par un autre pseudo.
 **Compilé, non déployé, non testé en jeu.** Empilé sur la 1.4.0 (testée en solo seulement) : LeKiwi06 a répondu « je valide » au message qui le signalait, le
 23/10/2026. Exige KaliumRelay 1.10.0 ; à déployer sur tous les serveurs Paper avec lui.
 
+**Déployé le 23/10/2026 (16:22-16:27) sur Kixster, le lobby, Serveur Jeux et Kanvas (déploiement groupé, accord de LeKiwi06) ; anciens jars dans `_removed-klm_contacts-<version>/` ; actif après redémarrage, non testé en jeu.**
+
 ## 1.4.0 - serveur à plusieurs espaces (KLM_Espaces) (21/10/2026, LeKiwi06)
 
 **Demande de LeKiwi06 (21/10/2026)** : Kal-Games et Serveur Jeux expirent dans 3 jours ; « on va fusionner kal-games et kanvas en utilisant le même principe que pour les mondes simultanés dans serveur jeux » ; « les gens ne pourront pas passer de kanvas à kal-games sans le lobby, tout sera sur le même serveur mais de façon hermétique, on fera même des tchats séparés » ; inventaires séparés ; deux noms Velocity gardés (`kal-games` et `Kanvas`, même adresse). Plan : [Plan de migration](https://claude.ai/artifact/MyTJxpL8zq1XCy1sTZKdZh).

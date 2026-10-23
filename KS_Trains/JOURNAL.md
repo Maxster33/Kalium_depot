@@ -183,3 +183,5 @@ Compilé le 18/10/2026 (`sortie/KS_Trains-1.4.8.jar`). **Statut : non déployé,
 **Actif sur Event depuis son redémarrage du 18/10/2026 à 13:34 (journal lu à 14:16, heures en UTC : 11:34) : KS_Trains 1.4.8 activé sans erreur ni avertissement ; aucune erreur jusqu'à la lecture (LeKiwi06 connecté depuis 13:47). Statut : non testé en jeu.**
 
 **Testé en jeu par LeKiwi06 sur Event (signalé le 22/10/2026 : « j'ai testé tout marche bien »). Event retiré depuis le 21/10 ; pas encore déployé sur Kixster.**
+
+**Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé, accord de LeKiwi06 : « allez on peut tout déployer ») ; ancien jar dans `_removed-<plugin>-<version>/` ; actif après redémarrage.**

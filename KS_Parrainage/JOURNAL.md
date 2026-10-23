@@ -36,3 +36,5 @@ la liste blanche de Kixster doit être active (`whitelist on`) ; `fusion.yml` pr
 
 **Compilé, non déployé, non testé en jeu.** À déployer avec KaliumRelay 1.10.0 (proxy), KLM_Contacts 1.5.0 (tous les
 serveurs Paper) et KS_RewardsGUI 1.6.0 (Kixster).
+
+**Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé) ; actif après redémarrage ; `relay-token` à recopier ; non testé en jeu.**

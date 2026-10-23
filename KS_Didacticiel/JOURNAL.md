@@ -215,3 +215,5 @@ Contient la 1.2.2 (jamais déployée). Compilé le 18/10/2026 (`sortie/KS_Didact
 non testé en jeu.** À envoyer avec son `didacticiel.yml`.
 
 **Déployé sur Event le 18/10/2026 à 17:16 (LeKiwi06 : « Oui, envoie KS_Didacticiel 1.3.0 et son didacticiel.yml sur Event » ; jar en place (1.2.1) vérifié de la même taille que `jars-deployes/`, rangé avec l'ancien `didacticiel.yml` dans `_removed-ks_didacticiel-1.2.1/` ; nouveau jar et nouveau fichier de la même taille que ceux du dépôt), actif après redémarrage d'Event. Contient la 1.2.2. Kixster pas encore. Statut : non testé en jeu.**
+
+**Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé, accord de LeKiwi06 : « allez on peut tout déployer ») ; ancien jar dans `_removed-<plugin>-<version>/` ; actif après redémarrage.** Avec `plugins/KS_Didacticiel/didacticiel.yml` du dépôt (parrainage, statistiques, blocs d'os).

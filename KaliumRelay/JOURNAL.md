@@ -447,3 +447,5 @@ parrain, ou il a été sur Kixster) : il passe par une demande aux admins.
 **Compilé, non déployé, non testé en jeu.** Empilé sur la 1.9.0 testée en solo seulement (LeKiwi06 a répondu « je valide » au message qui le signalait, le
 23/10/2026). À déployer avec KLM_Contacts 1.5.0 (tous les serveurs Paper) et, sur Kixster, KS_Parrainage 1.0.0 +
 KS_RewardsGUI 1.6.0 (+ KLM_Statistiques 1.0.0 et `didacticiel.yml`).
+
+**Déployé sur le proxy le 23/10/2026 à 16:18 (déploiement groupé, accord de LeKiwi06 : « allez on peut tout déployer ») ; 1.9.0 dans `_removed-kaliumrelay-1.9.0/` ; actif après redémarrage du proxy, non testé en jeu.**

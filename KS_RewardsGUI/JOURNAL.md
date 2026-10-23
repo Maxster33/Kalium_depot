@@ -235,3 +235,5 @@ palier de temps de jeu, barème validé le même jour).
 
 **Compilé, non déployé, non testé en jeu.** À déployer sur Kixster avec KS_Parrainage 1.0.0 ; `fusion.yml` doit être
 présent dans `plugins/KS_RewardsGUI/` de Kixster.
+
+**Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé) ; 1.5.0 dans `_removed-ks_rewardsgui-1.5.0/` ; actif après redémarrage, non testé en jeu.**
