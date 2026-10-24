@@ -39,6 +39,6 @@ GrimAC pour les joueurs Java » (réglage de GrimAC : voir `REPRISE_PROJET.md`, 
 lui permet déjà). Les bateaux et autres véhicules ne sont pas concernés (contrôle séparé de Paper). Un rollback venu
 d'autre chose qu'un bloc (lag, GrimAC pour les Java) n'est pas touché.
 
-**Compilé, non déployé, non testé en jeu.** À déployer sur Kixster, Kanvas (Kal-Games), le lobby et Serveur Jeux.
+**Déployé le 24/10/2026 à 18:49 sur Kixster, Kanvas (Kal-Games), le lobby et Serveur Jeux (nouveau jar, rien à mettre de côté), actif après redémarrage. Statut : non testé en jeu.** Déployé dans la même opération que la nouvelle config de GrimAC (Kanvas et Kixster), sans lien de code entre les deux.
 À vérifier en jeu (joueur Bedrock) : marcher, courir et sauter dans une bambouseraie et contre des stalactites
 sans être ramené en arrière ; lire les lignes « Renvoi Bedrock » du journal après quelques jours.
