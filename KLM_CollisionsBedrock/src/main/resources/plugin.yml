@@ -1,0 +1,6 @@
+name: KLM_CollisionsBedrock
+version: '${project.version}'
+main: fr.kalium.collisionsbedrock.KlmCollisionsBedrock
+api-version: '26.2'
+description: Plus de retour en arriere des joueurs Bedrock (Geyser) dans les bambous, stalactites et autres blocs de la liste, dont la collision differe entre Java et Bedrock.
+authors: [KaLium]

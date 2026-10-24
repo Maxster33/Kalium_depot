@@ -1,0 +1,20 @@
+# ============================================================
+#  KLM_CollisionsBedrock - configuration
+#  Joueurs Bedrock (Geyser / Floodgate) seulement : quand Paper veut les renvoyer en arriere a cause d'un bloc de la
+#  liste ci-dessous (forme de collision differente entre Java et Bedrock), le deplacement est accepte.
+#  Les joueurs Java ne sont jamais concernes. Changement pris en compte au redemarrage du serveur.
+# ============================================================
+
+# Blocs en cause (noms Minecraft, ex. BAMBOO). Bambou et stalactite : decales au hasard en Java, pas pour Geyser.
+blocs:
+  - BAMBOO
+  - POINTED_DRIPSTONE
+
+# Deplacement maximal accepte en un seul mouvement (blocs) : au-dela, le renvoi de Paper est garde.
+deplacement-max: 1.0
+
+# Journal du serveur : une ligne « Renvoi Bedrock : <joueur> ... (monde x y z) » quand un joueur Bedrock est quand meme
+# renvoye, avec les blocs touches. Sert a trouver les autres blocs a ajouter a la liste.
+journal-des-renvois: true
+# Au plus une ligne par joueur toutes les N millisecondes.
+intervalle-journal: 5000
