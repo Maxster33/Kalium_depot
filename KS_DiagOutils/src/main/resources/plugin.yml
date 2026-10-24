@@ -1,0 +1,6 @@
+name: KS_DiagOutils
+version: '${project.version}'
+main: fr.kalium.diagoutils.KsDiagOutils
+api-version: '26.2'
+description: Temporaire - ecrit au journal chaque usage d'une houe, hache ou pelle sur un bloc (Bedrock et Java), pour trouver pourquoi il est refuse.
+authors: [KaLium]
