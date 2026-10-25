@@ -19,6 +19,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KLM_Espaces (nouveau), KaliumRelay, KalGames, KLM_Menu, KLM_Chat, KLM_Contacts, KG_BuildBattle, KV_BuildBattle — LeKiwi06 — depuis le 2026-10-21 01:45 — fusion de Kal-Games dans Kanvas (espaces étanches) et Serveur Jeux à la place d'Event (expiration des serveurs)
 - KS_DiagOutils (nouveau, temporaire) — LeKiwi06 — depuis le 2026-10-24 23:36 — diagnostic : houe, pelle, hache sans effet pour les joueurs Bedrock sur Kixster
 - KS_CoffreRenforce (nouveau) — LeKiwi06 — depuis le 2026-10-25 03:38 — coffre renforcé (1 000 stacks d'un seul objet, entonnoirs, comparateur) ; recette dans KS_Crafts (déjà réservé)
+- KS_Didacticiel — LeKiwi06 — depuis le 2026-10-25 03:43 — 1.4.0 : rappel à la connexion des nouveautés non lues
 
 
 
