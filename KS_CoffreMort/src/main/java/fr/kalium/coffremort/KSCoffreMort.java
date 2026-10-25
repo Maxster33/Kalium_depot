@@ -77,11 +77,12 @@ import java.util.UUID;
  * - /coffres (et bouton du menu) : coordonnées et temps restant de ses coffres (visibles sans jeton), contenu, et
  *   récupération certaine : le contenu part dans /rewards et le coffre disparaît, avec le badge de la mort (gratuit,
  *   une fois tous les N jours réels selon son niveau, délai tenu par joueur) sinon avec un jeton de la mort (KS_Jetons).
+ * - 1.1.0 : /coffres tous (opérateurs) : coffres de mort de tous les joueurs, aperçu et transfert dans /rewards (Staff).
  */
 public final class KSCoffreMort extends JavaPlugin implements Listener {
 
     /** Position d'un coffre de mort. */
-    private record Pos(String monde, int x, int y, int z) {
+    record Pos(String monde, int x, int y, int z) {
         static Pos de(Block bloc) {
             return new Pos(bloc.getWorld().getName(), bloc.getX(), bloc.getY(), bloc.getZ());
         }
@@ -96,7 +97,7 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
     }
 
     /** Aperçu du contenu depuis /coffres (rien ne se prend). */
-    private record Apercu() implements InventoryHolder {
+    record Apercu() implements InventoryHolder {
         @Override
         public Inventory getInventory() {
             return null;
@@ -104,7 +105,7 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
     }
 
     /** Un coffre de mort posé. */
-    private static final class Coffre {
+    static final class Coffre {
         String id;
         UUID joueur;
         String nom;
@@ -130,6 +131,7 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
 
     private Lang lang;
     private Gui gui;
+    private Staff staff;
     private File fichier;
     private NamespacedKey clePoints;
     /** Coffres actifs, du plus ancien au plus récent. */
@@ -146,6 +148,7 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
         clePoints = new NamespacedKey(this, "points");
         lang = new Lang(this);
         gui = new Gui(this, lang);
+        staff = new Staff(this, lang);
         fichier = new File(getDataFolder(), "coffres.yml");
         charger();
         getServer().getPluginManager().registerEvents(this, this);
@@ -279,24 +282,65 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
 
     /** Dépose les objets dans /rewards, par lots qui tiennent dans un inventaire. Faux si KS_RewardsGUI est absent. */
     private boolean versRewards(Player joueur, List<ItemStack> objets, String raison) {
-        if (!getServer().getPluginManager().isPluginEnabled("KS_RewardsGUI")) {
+        int deposees = deposer(joueur.getUniqueId(), joueur.getName(), objets, raison);
+        if (deposees < 0) {
             return false;
+        }
+        if (deposees < objets.size()) {
+            // Rien n'est perdu : le lot refusé et les suivants tombent aux pieds du joueur (ne devrait pas arriver).
+            for (ItemStack reste : objets.subList(deposees, objets.size())) {
+                joueur.getWorld().dropItemNaturally(joueur.getLocation(), reste);
+            }
+            getLogger().warning("Dépôt dans /rewards refusé pour " + joueur.getName() + " : objets lâchés au sol.");
+        }
+        return true;
+    }
+
+    /**
+     * Dépose les objets dans les récompenses de ce joueur (en ligne ou non), par lots de 27 piles. Renvoie le nombre de
+     * piles déposées (moins que tout si un lot est refusé : les suivants ne sont pas tentés), -1 sans KS_RewardsGUI.
+     */
+    private int deposer(UUID joueur, String nom, List<ItemStack> objets, String raison) {
+        if (!getServer().getPluginManager().isPluginEnabled("KS_RewardsGUI")) {
+            return -1;
         }
         int lots = (objets.size() + PILES_PAR_RECOMPENSE - 1) / PILES_PAR_RECOMPENSE;
         for (int lot = 0; lot < lots; lot++) {
             List<ItemStack> partie = objets.subList(lot * PILES_PAR_RECOMPENSE,
                     Math.min(objets.size(), (lot + 1) * PILES_PAR_RECOMPENSE));
-            if (!fr.kalium.rewardsgui.KSRewardsGUI.deposer(joueur.getUniqueId(), joueur.getName(), "Coffre de mort",
+            if (!fr.kalium.rewardsgui.KSRewardsGUI.deposer(joueur, nom, "Coffre de mort",
                     lots > 1 ? raison + " (" + (lot + 1) + "/" + lots + ")" : raison, partie)) {
-                // Rien n'est perdu : le lot refusé et les suivants tombent aux pieds du joueur (ne devrait pas arriver).
-                for (ItemStack reste : objets.subList(lot * PILES_PAR_RECOMPENSE, objets.size())) {
-                    joueur.getWorld().dropItemNaturally(joueur.getLocation(), reste);
-                }
-                getLogger().warning("Dépôt dans /rewards refusé pour " + joueur.getName() + " : objets lâchés au sol.");
-                return true;
+                return lot * PILES_PAR_RECOMPENSE;
             }
         }
-        return true;
+        return objets.size();
+    }
+
+    /**
+     * 1.1.0 (Staff) : le contenu du coffre part dans les récompenses du mort, et le coffre disparaît. Si un lot est
+     * refusé, ce qui n'a pas été déposé reste dans le coffre. Renvoie le nombre de piles déposées, -1 sans KS_RewardsGUI
+     * (coffre gardé).
+     */
+    int transferer(Coffre coffre, String raison) {
+        List<ItemStack> objets = contenu(coffre);
+        if (objets.isEmpty()) {
+            retirer(coffre);
+            return 0;
+        }
+        int deposees = deposer(coffre.joueur, coffre.nom, objets, raison);
+        if (deposees < 0) {
+            return -1;
+        }
+        if (deposees < objets.size()) {
+            coffre.contenu.clear();
+            for (ItemStack reste : objets.subList(deposees, objets.size())) {
+                coffre.contenu.addItem(reste);
+            }
+            sauverBientot();
+        } else {
+            retirer(coffre);
+        }
+        return deposees;
     }
 
     private void poser(Player joueur, Block bloc, List<ItemStack> objets) {
@@ -368,7 +412,24 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
         return liste;
     }
 
-    private static List<ItemStack> contenu(Coffre coffre) {
+    /** 1.1.0 (Staff) : tous les coffres actifs, du plus ancien au plus récent. */
+    List<Coffre> tousLesCoffres() {
+        return new ArrayList<>(coffres.values());
+    }
+
+    Coffre coffre(String id) {
+        return coffres.get(id);
+    }
+
+    /**
+     * 1.1.0 : ouvre aux opérateurs le menu des coffres de mort de tous les joueurs (rien pour un autre joueur). retour :
+     * l'écran d'où l'on vient (bouton « Retour »), ou null (« Fermer »).
+     */
+    public static void ouvrirStaff(Player joueur, java.util.function.Consumer<Player> retour) {
+        instance.staff.ouvrir(joueur, 0, retour);
+    }
+
+    static List<ItemStack> contenu(Coffre coffre) {
         List<ItemStack> objets = new ArrayList<>();
         for (ItemStack objet : coffre.contenu.getContents()) {
             if (objet != null && !objet.isEmpty()) {
@@ -378,7 +439,7 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
         return objets;
     }
 
-    private String nomMonde(String monde) {
+    String nomMonde(String monde) {
         World w = Bukkit.getWorld(monde);
         if (w == null) {
             return monde;
@@ -626,7 +687,10 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player joueur) {
+        if (sender instanceof Player joueur && args.length > 0 && args[0].equalsIgnoreCase("tous")
+                && joueur.hasPermission(Staff.PERMISSION)) {
+            staff.ouvrir(joueur, 0, null);
+        } else if (sender instanceof Player joueur) {
             ouvrir(joueur);
         } else {
             sender.sendMessage("Commande réservée aux joueurs.");
@@ -659,7 +723,7 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
         return jetons() ? fr.kalium.jetons.KSJetons.nombre(joueur, fr.kalium.jetons.KSJetons.Type.MORT) : 0;
     }
 
-    private static String temps(long ms) {
+    static String temps(long ms) {
         long s = Math.max(0, ms / 1000);
         if (s >= 86400) {
             return s / 86400 + " j " + (s % 86400) / 3600 + " h";
@@ -714,6 +778,11 @@ public final class KSCoffreMort extends JavaPlugin implements Listener {
             ouvrir(joueur);
             return;
         }
+        montrer(joueur, coffre);
+    }
+
+    /** Aperçu du contenu (rien ne se prend) ; 1.1.0 : aussi pour les opérateurs (Staff). */
+    void montrer(Player joueur, Coffre coffre) {
         Inventory vue = Bukkit.createInventory(new Apercu(), CASES, t("coffre.apercu", "Coffre de mort (aperçu)"));
         vue.setContents(coffre.contenu.getContents().clone());
         for (int i = 0; i < vue.getSize(); i++) {

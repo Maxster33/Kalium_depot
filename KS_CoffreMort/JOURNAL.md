@@ -88,3 +88,29 @@ coffre a disparu à 21:52 avec tout son contenu.
 **Déployé sur Kixster le 09/10/2026 à 23:25 (LeKiwi06 ; accord : « Oui, les deux » ; 1.0.2 et l'ancien `config.yml` dans `_removed-ks_coffremort-1.0.2/` ; `config.yml` du serveur passé à `duree-minutes: 60` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (1.0.1, 15 minutes ; décision de LeKiwi06 : « Non, Kixster seulement »). Statut : non testé en jeu.**
 
 **Journal de Kixster lu après le redémarrage du 09/10/2026 à 23:53 : 1.0.3 activée sans erreur ; `duree-minutes: 60` relu dans le `config.yml` du serveur. Reste à tester en jeu.**
+
+## 1.1.0 - coffres de mort de tous les joueurs pour les opérateurs (25/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (25/10/2026)** : « une interface pour que les opérateurs voient les coffres de morts actifs et
+puisse les transférer au rewards des joueurs concernés (si jamais le cas du bug de co de Lupo se représente, on sera
+prêt) ».
+
+- **`/coffres tous`** (permission `kscoffremort.staff`, opérateurs par défaut ; sans elle, `/coffres` comme avant) :
+  menu en coffre (6 rangées, 45 par page), un coffre de mort par case : tête du mort, monde, coordonnées, temps restant,
+  nombre de piles ; celui qui disparaît le plus tôt en premier. Barre d'actions : pages, aide, « Actualiser »,
+  « Fermer » (ou « Retour » vers l'écran d'où l'on vient).
+- **Un clic sur un coffre** : petit coffre avec « Voir le contenu » (aperçu, rien ne se prend) et « Transférer dans
+  /rewards ». Le transfert (après confirmation verte / rouge) envoie le contenu dans les récompenses du mort, **en
+  ligne ou hors ligne**, par lots de 27 piles comme à la mort (« Coffre de mort transféré le 25/10 03:10 »), puis
+  retire le coffre. Gratuit : ni badge ni jeton. Le mort, s'il est en ligne, reçoit un message.
+- Si KS_RewardsGUI refuse un lot (ne devrait pas arriver), ce qui n'est pas parti reste dans le coffre (rien n'est
+  lâché au sol) ; sans KS_RewardsGUI, le coffre est gardé.
+- **Journal** : chaque transfert est noté dans `plugins/KS_CoffreMort/transferts.log` et dans la console (date,
+  opérateur, mort et son UUID, position, piles envoyées, contenu).
+- API pour KS_RewardsGUI (bouton des opérateurs dans `/rewards`, à venir) : `KSCoffreMort.ouvrirStaff(joueur, retour)`.
+- Aucun changement pour les joueurs ; aucune nouvelle clé de `config.yml` ; nouveaux textes dans `lang.yml` (clés
+  `staff.*` et `contenant.*`).
+
+Limites : un coffre déjà disparu (temps écoulé) n'est plus récupérable, ni par les joueurs ni par les opérateurs.
+
+**Compilé, non déployé, non testé en jeu.**

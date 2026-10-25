@@ -8,6 +8,10 @@ depend: [KLM_Menu]
 softdepend: [KS_Menu, KS_Jetons, KS_RewardsGUI, WorldGuard, SimpleClaimSystem]
 commands:
   coffres:
-    description: Tes coffres de mort (coordonnees, temps restant, recuperation).
-    usage: /coffres
+    description: Tes coffres de mort (coordonnees, temps restant, recuperation) ; /coffres tous pour les operateurs.
+    usage: /coffres [tous]
     aliases: [coffremort]
+permissions:
+  kscoffremort.staff:
+    description: /coffres tous - coffres de mort de tous les joueurs, apercu et transfert dans /rewards.
+    default: op
