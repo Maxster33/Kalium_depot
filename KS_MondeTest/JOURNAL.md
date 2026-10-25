@@ -79,4 +79,22 @@ opérateur et le gamemode » ; opérateurs du monde de test : ceux qu'il désign
 - `/op` lancé depuis la console sur un joueur qui est dans le monde de test est annulé à sa sortie (statut de survie
   rendu).
 
-**Compilé, non déployé, non testé en jeu.**
+**Déployé sur Kixster le 25/10/2026 à 03:10 (accord de LeKiwi06 : « oui, déploie KS_MondeTest 1.0.0 et KLM_Menu 2.12.0
+(avec espaces-interfaces) sur Kixster, et règle SimpleClaimSystem pour le monde de test »)**, avec KLM_Menu 2.12.0
+(2.11.0 et son `config.yml` dans `_removed-klm_menu-2.11.0/`, clé `espaces-interfaces` ci-dessus ajoutée) et
+`plugins/SimpleClaimSystem/config.yml` (`Kixster Test: DISABLED` dans `claims-worlds-mode`, alias « Monde de test » ;
+ancien fichier dans `_removed-simpleclaimsystem-config-2026-10-25/`). **Actif après redémarrage (fait par LeKiwi06),
+non testé en jeu.**
+
+**Plan de test** (après `mondetest ajouter LeKiwi06 op` dans la console) :
+1. En survie : noter inventaire, XP, statut d'op ; poser un objet dans le bas du coffre de l'Ender.
+2. Menu › Modération › « Monde de test » : arrivée en créatif, op, inventaire et coffre de l'Ender vides, joueurs de la
+   survie invisibles, tchat séparé.
+3. Se donner des objets (diamants, `/kaliumgive`), remplir le coffre de l'Ender, mourir : objets gardés, pas de coffre
+   de mort.
+4. `/economie`, `/jetons`, `/rewards`, étoile du menu de Kixster, portail, `/give <joueur en survie> diamond`, `/op` :
+   refusés.
+5. « Retourner sur Kixster » : même endroit, inventaire, coffre de l'Ender, XP et statut d'op d'avant, aucun objet du
+   monde de test.
+6. Revenir dans le monde de test (objets de test retrouvés), puis en sortir par `/spawn` : inventaire de survie rendu.
+7. Depuis la survie, `/tp` vers le monde de test refusé ; vérifier `plugins/KS_MondeTest/journal.log`.

@@ -322,3 +322,8 @@ boîte à outils pour servir à tous les plugins.
 - À déployer seulement sur Kanvas (les autres serveurs n'en ont pas besoin).
 
 **Compilé, non déployé, non testé en jeu.** À déployer avec KLM_Espaces 1.0.0 et KaliumRelay 1.9.0 (fusion de Kal-Games dans Kanvas).
+
+**Déployé aussi sur Kixster le 25/10/2026 à 03:10** (même jar que Kanvas, avec KS_MondeTest 1.0.0 qui pose la métadonnée
+`klm_espace` : `kixster` ou `test`) ; `config.yml` de Kixster : `espaces-interfaces: kixster: [KS_Menu, KS_Economy,
+KS_Jetons, KS_RewardsGUI, KS_CoffreMort, KS_Claim, KS_Fly, KS_Parrainage, KS_AntiCheat]` (cachés dans le monde de test) ;
+2.11.0 dans `_removed-klm_menu-2.11.0/`. Actif après redémarrage, non testé en jeu.
