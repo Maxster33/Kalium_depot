@@ -1,0 +1,7 @@
+name: KS_CoffreRenforce
+version: '${project.version}'
+main: fr.kalium.coffrerenforce.KSCoffreRenforce
+api-version: '26.2'
+description: Kixster - coffre renforce, jusqu'a 1 000 stacks d'un seul objet (menu en coffre, entonnoirs, comparateur, jamais de coffre double).
+authors: [KaLium]
+depend: [KLM_Menu]

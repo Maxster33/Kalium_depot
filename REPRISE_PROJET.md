@@ -96,6 +96,11 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_CoffreRenforce 1.0.0** (nouveau, LeKiwi06, 25/10/2026) **+ KS_Crafts 1.21.0** (sa recette : coffre au centre,
+  blocs de fer sur les côtés, fragments de spawner aux coins), à déployer ensemble sur Kixster : coffre qui stocke
+  jusqu'à 1 000 stacks d'un seul objet, menu en coffre, entonnoirs et comparateur, jamais de coffre double, cassable
+  seulement vide, contenu affiché en le visant. Partie boutique (KS_Economy, points seulement, sans entonnoir) pas
+  encore faite. Détail : `KS_CoffreRenforce/JOURNAL.md`. **Compilés, non déployés, non testés en jeu.**
 - **KS_MondeTest 1.0.0** (nouveau, LeKiwi06, 25/10/2026) : monde de test `Kixster Test` (plat, bordure 500) sur
   Kixster, à la place d'Event comme serveur de test. Boutons « Monde de test » / « Retourner sur Kixster » dans la
   rubrique Modération du menu (ou `/mondetest`) ; tout séparé de la survie à chaque changement de monde : inventaire,

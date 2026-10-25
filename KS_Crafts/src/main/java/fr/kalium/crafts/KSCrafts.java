@@ -252,6 +252,20 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             getLogger().warning("KS_Trains absent : crafts de la locomotive et du wagon contrôleur ignorés.");
         }
 
+        // 1.21.0 (LeKiwi06, 25/10/2026) : coffre renforcé (KS_CoffreRenforce) : un coffre ordinaire au centre (pas un
+        // coffre renforcé ni un coffre renommé), 4 blocs de fer sur les côtés, 4 fragments de spawner aux coins.
+        if (actif("KS_ItemSimple") && actif("KS_CoffreRenforce")) {
+            ShapedRecipe coffre = new ShapedRecipe(key("coffre_renforce"),
+                    fr.kalium.coffrerenforce.KSCoffreRenforce.creerCoffre());
+            coffre.shape("FIF", "ICI", "FIF");
+            coffre.setIngredient('F', new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerFragmentSpawner()));
+            coffre.setIngredient('I', Material.IRON_BLOCK);
+            coffre.setIngredient('C', new RecipeChoice.ExactChoice(new ItemStack(Material.CHEST)));
+            add(coffre);
+        } else {
+            getLogger().warning("KS_ItemSimple ou KS_CoffreRenforce absent : craft du coffre renforcé ignoré.");
+        }
+
         // 1.8.0 (LeKiwi06) : réparation de la tête de wither squelette (KS_Decapitator 1.1.0), bloc de charbon de bois.
         TeteWither teteWither = new TeteWither(this);
         teteWither.enregistrer();

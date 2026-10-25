@@ -458,3 +458,14 @@ l'affichage du livre de recettes qui trompait.
 **Compilé, non déployé, non testé en jeu.** À envoyer sur Kixster avec `didacticiel.yml`.
 
 **Déployé sur Kixster le 24/10/2026 avec `didacticiel.yml` (accord de LeKiwi06) ; 1.20.1 dans `_removed-ks_crafts-1.20.1/`, ancien didacticiel dans `_removed-ks_didacticiel-yml-2026-10-24/` ; actif après redémarrage, non testé en jeu.**
+
+## 1.21.0 - coffre renforcé (25/10/2026, LeKiwi06)
+
+Recette du coffre renforcé de KS_CoffreRenforce 1.0.0 (nouveau, softdepend), choisie par LeKiwi06 : un coffre au
+centre, 4 blocs de fer sur les côtés, 4 fragments de spawner (KS_ItemSimple) aux coins. Le coffre du centre doit être
+un coffre ordinaire (ni un coffre renforcé, ni un coffre renommé). Ajoutée au livre de recettes comme les autres
+(débloquée dès qu'on obtient un ingrédient).
+
+Ajoutée sur la 1.20.2, déployée mais pas encore testée en jeu, à la demande de LeKiwi06 (craft du coffre renforcé).
+
+**Compilé, non déployé, non testé en jeu.** À déployer sur Kixster avec KS_CoffreRenforce 1.0.0.
