@@ -55,8 +55,12 @@ import java.util.UUID;
  * - Le coffre ne se pose pas, ne se renomme pas à l'enclume, ne sert ni d'ingrédient ni de combustible.
  * - 1.5.0 : fusion de deux coffres non ouverts à l'enclume (voir Fusion) ; 1.7.0 : dans l'enclume en coffre de
  *   KS_Enclume (accroupi + clic), le coffre en main ne s'ouvre donc pas sur une enclume.
+ * - 1.8.0 : plus de 100 émeraudes de valeur moyenne : la première ouverture demande une confirmation.
  */
 final class Coffres implements Listener {
+
+    /** 1.8.0 : au-delà de cette valeur moyenne (émeraudes), la première ouverture demande une confirmation. */
+    private static final double SEUIL_CONFIRMATION = 100;
 
     /** Un coffre : sa récompense, et ce qu'il reste dedans une fois ouvert. */
     private static final class Coffre {
@@ -189,10 +193,34 @@ final class Coffres implements Listener {
             lang.saveIfNeeded();
             return;
         }
-        Bukkit.getScheduler().runTask(plugin, () -> ouvrir(joueur, id));
+        Bukkit.getScheduler().runTask(plugin, () -> ouvrir(joueur, id, false));
     }
 
-    private void ouvrir(Player joueur, String id) {
+    /**
+     * 1.8.0 (LeKiwi06, 25/10/2026) : « met une sécurité sur les coffres d'une valeur supérieur à 100 emeraude, ou on doit
+     * valider l'ouverture » (un coffre fusionné s'ouvrait au lieu du coffre visé). Première ouverture d'un coffre de plus
+     * de SEUIL_CONFIRMATION émeraudes de valeur moyenne : petit coffre « Confirmer » / « Annuler » d'abord.
+     */
+    private void confirmer(Player joueur, String id, Coffre c) {
+        Contenant menu = new Contenant(3, lang.c("confirmation.titre", "<dark_gray>Ouvrir ce coffre ?"), "confirmation");
+        for (int place = 0; place < 27; place++) {
+            menu.poser(place, Contenant.decor(), null);
+        }
+        // On n'ouvre ni ne ferme une fenêtre pendant un clic : la suite attend le tick suivant.
+        menu.poser(11, Contenant.objet(Material.LIME_CONCRETE, lang.c("confirmation.ouvrir", "<green>Ouvrir"), List.of(
+                lang.c("confirmation.ouvrir-1", "<gray>Une fois ouvert, il ne pourra"),
+                lang.c("confirmation.ouvrir-2", "<gray>plus être fusionné ni revendu"),
+                lang.c("confirmation.ouvrir-3", "<gray>comme « Non ouvert »."))),
+                j -> Bukkit.getScheduler().runTask(plugin, () -> ouvrir(j, id, true)));
+        menu.poser(13, objet(id, c), null);
+        menu.poser(15, Contenant.objet(Material.RED_CONCRETE, lang.c("confirmation.annuler", "<red>Annuler"), List.of(
+                lang.c("confirmation.annuler-1", "<gray>Le coffre reste fermé."))),
+                j -> Bukkit.getScheduler().runTask(plugin, () -> j.closeInventory()));
+        menu.ouvrir(joueur);
+        lang.saveIfNeeded();
+    }
+
+    private void ouvrir(Player joueur, String id, boolean confirme) {
         int place = caseDe(joueur, id);
         if (!joueur.isOnline() || place < 0 || ouverts.contains(id)) {
             return;
@@ -202,6 +230,10 @@ final class Coffres implements Listener {
             joueur.getInventory().setItem(place, null);
             joueur.sendMessage(lang.c("coffre.vide", "<gray>Ce coffre était vide."));
             lang.saveIfNeeded();
+            return;
+        }
+        if (!c.ouvert && !confirme && c.recompense.valeur > SEUIL_CONFIRMATION) {
+            confirmer(joueur, id, c);
             return;
         }
         if (!c.ouvert) {

@@ -260,3 +260,26 @@ et sert aussi d'enclume ordinaire (bugs de l'enclume pour les joueurs Bedrock) ;
 
 **Compilé le 25/10/2026, non déployé, non testé en jeu. À déployer sur Kixster avec KS_Enclume 1.4.0 (sans elle, les
 coffres ne se fusionnent plus).**
+
+## 1.8.0 - confirmation avant d'ouvrir un coffre de plus de 100 émeraudes (25/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « met une sécurité sur les coffres d'une valeur supérieur à 100 emeraude, ou on doit valider
+l'ouverture pour que ça ouvre bien, j'ai eu plusieurs fois le soucis en voulant poser mon coffres fusionné dans mon
+coffre, ça ouvrait mon coffre de récompense au lieu du coffre que je visais ».
+
+- Clic droit avec un coffre de récompense **non ouvert** de **plus de 100 émeraudes** de valeur moyenne : au lieu de
+  s'ouvrir, il montre un petit coffre « Ouvrir ce coffre ? » : « Ouvrir » (béton vert, à gauche ; rappelle qu'un coffre
+  ouvert ne peut plus être fusionné ni revendu comme « Non ouvert »), l'image du coffre au centre, « Annuler » (béton
+  rouge, à droite : le coffre reste fermé). Fermer le petit coffre revient à annuler.
+- Coffres de 100 émeraudes ou moins, coffres déjà ouverts, coffres sans valeur connue : inchangés (ouverture directe).
+- Nouvelles clés `confirmation.*` de `lang.yml`. Seuil fixé dans le code (`SEUIL_CONFIRMATION`).
+- Contient la 1.7.0, jamais déployée.
+
+Choix de Claude, signalés : seuil strict (101 émeraudes et plus) ; seulement à la première ouverture (un coffre déjà
+ouvert n'a plus rien à protéger).
+
+Limite : le clic droit sur un coffre (bloc) avec un coffre de récompense en main vise toujours le coffre de récompense :
+la confirmation évite l'ouverture par erreur, mais il faut annuler, puis ouvrir son coffre avec une autre main pleine
+ou vide.
+
+**Compilé le 25/10/2026, non déployé, non testé en jeu. À déployer sur Kixster avec KS_Enclume 1.4.0.**

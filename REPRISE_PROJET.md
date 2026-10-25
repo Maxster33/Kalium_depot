@@ -96,7 +96,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-- **KS_Enclume 1.4.0 + KS_RewardsGUI 1.7.0** (LeKiwi06, 25/10/2026), à déployer ensemble sur Kixster, **compilés, non
+- **KS_Enclume 1.4.0 + KS_RewardsGUI 1.8.0** (LeKiwi06, 25/10/2026 ; la 1.8.0 contient la 1.7.0 et ajoute une confirmation avant d'ouvrir un coffre de récompense de plus de 100 émeraudes), à déployer ensemble sur Kixster, **compilés, non
   déployés, non testés en jeu** : enclume en coffre, accroupi + clic droit sur une enclume (le clic simple ouvre toujours
   l'enclume du jeu). Les objets sont posés dans ses cases et le résultat est calculé par le serveur (règles vanilla,
   réduction au-delà de 50 niveaux, sans plafond) : corrige pour les joueurs Bedrock l'enclume qui ne donnait rien au-delà

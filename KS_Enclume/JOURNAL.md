@@ -200,4 +200,4 @@ Limites :
   (choix « posés dans les cases »).
 - Un livre au-delà du niveau maximal du jeu (ex. Tranchant VI) est ramené au maximum, comme dans l'enclume du jeu.
 
-**Compilé le 25/10/2026, non déployé, non testé en jeu. À déployer sur Kixster avec KS_RewardsGUI 1.7.0.**
+**Compilé le 25/10/2026, non déployé, non testé en jeu. À déployer sur Kixster avec KS_RewardsGUI 1.7.0 (ou la 1.8.0, qui la contient).**
