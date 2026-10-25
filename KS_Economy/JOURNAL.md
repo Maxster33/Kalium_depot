@@ -762,3 +762,11 @@ Barème régénéré par `sortie/bareme` (paliers dans `bareme.py`, têtes ajout
 `exporter_rachats.py`.
 
 **Compilé, non déployé, non testé.** À déployer avec KS_BiomeChanger 1.2.0 et KS_Economy 1.10.1 (contenue dans 1.10.2).
+
+## 1.10.3 - nautile au palier B (25/10/2026, LeKiwi06)
+
+Le nautile se reproduit (code du jeu 26.3 : apprivoisé au poisson-globe, puis nourri de poisson ou de seau de
+poisson) : passif reproductible, donc palier B, demande de LeKiwi06. Têtes de nautile et de bébé nautile : 50 -> 10.
+Le nautile-zombie (non reproductible) reste à 50. Rien d'autre ne change dans `rachats.csv`.
+
+**Compilé, non déployé, non testé.** À déployer avec KS_BiomeChanger 1.2.0.

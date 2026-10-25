@@ -1643,8 +1643,8 @@ tete_zombie;tête;10;pdc:ks_decapitator:tete:s:zombie;Tête de zombie;64;
 tete_bebe_zombie;tête;300;pdc:ks_decapitator:tete:s:bebe_zombie;Tête de bébé zombie;64;
 tete_piglin_zombifie;tête;10;pdc:ks_decapitator:tete:s:piglin_zombifie;Tête de piglin zombifié;64;nether
 tete_bebe_piglin_zombifie;tête;50;pdc:ks_decapitator:tete:s:bebe_piglin_zombifie;Tête de bébé piglin zombifié;64;nether
-tete_nautile;tête;50;pdc:ks_decapitator:tete:s:nautile;Tête de nautile;64;
-tete_bebe_nautile;tête;50;pdc:ks_decapitator:tete:s:bebe_nautile;Tête de bébé nautile;64;
+tete_nautile;tête;10;pdc:ks_decapitator:tete:s:nautile;Tête de nautile;64;
+tete_bebe_nautile;tête;10;pdc:ks_decapitator:tete:s:bebe_nautile;Tête de bébé nautile;64;
 tete_axolotl_rose;tête;10;pdc:ks_decapitator:tete:s:axolotl_rose;Tête d'axolotl rose;64;
 tete_bebe_axolotl_rose;tête;10;pdc:ks_decapitator:tete:s:bebe_axolotl_rose;Tête de bébé axolotl rose;64;
 tete_axolotl_brun;tête;10;pdc:ks_decapitator:tete:s:axolotl_brun;Tête d'axolotl brun;64;
