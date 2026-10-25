@@ -93,3 +93,24 @@ KalGames 1.23.0).
 - **Exige KalGames 1.23.0 : à déployer ensemble.**
 
 **Déployé sur Kal-Games le 06/10/2026 à 13:55 (Maxster33 ; 1.0.1 dans `_removed-kg_pvpkit-1.0.1/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.2.0 - charger un kit dans son inventaire (25/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** (25/10/2026) : « rajouter une option dans la gestion des kits du pvp kits pour importer le kit
+dans mon inventaire histoire que je puisse le modifier facilement ».
+
+- Fiche d'un kit (Paramètres › PvP Kit › Kits du mini-jeu › Gérer les kits › un kit) : nouveau bouton **« Charger dans
+  mon inventaire »** (au-dessus de « Remplacer par mon inventaire actuel »). Le kit complet (sans déclassement : armure,
+  main secondaire, objets à leur case, objets sans case ajoutés à la suite) remplace l'inventaire ; la fiche du kit se
+  rouvre. On retouche l'inventaire puis « Remplacer par mon inventaire actuel » enregistre le kit modifié.
+- Inventaire **non vide** : page de confirmation (« son contenu sera remplacé par le kit et perdu ») avant de charger.
+- Objets verrouillés (objets du hub de KalGames, boussole et bouton Informations de KLM_Menu) : ne comptent pas comme
+  « non vide », et sont gardés : remis à leur case si le kit ne l'occupe pas, sinon à la première case libre.
+- Nouvelles clés de langue (valeurs par défaut du code, lang.yml de KalGames non touché) : `admin.kit-load`,
+  `admin.kit-load-tip`, `admin.kit-load-confirm`, `admin.kit-load-warning`, `admin.kit-loaded`.
+
+Limites : dans le hub, l'inventaire n'est modifiable qu'avec la permission `kalgames.bypass` (comme pour créer un kit) ;
+le bouton est réservé aux modérateurs, comme le reste de la gestion des kits.
+
+**Compilé contre les sources actuelles de KalGames (seuls des appels déjà utilisés par la 1.1.0) ; pas de déploiement
+groupé nécessaire. Statut : non déployé, non testé en jeu.**

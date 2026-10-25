@@ -501,6 +501,15 @@ le `config.yml` de Geyser (proxy) pour voir le motif.
 ### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici ; les précédents vont dans
 `archive_reprise.md`.
 
+### 2026-10-25 — LeKiwi06 (kits du PvP Kit)
+
+*(Session du 25/10/2026, à partir de 13 h 10 ; réservation de KG_PvpKit gardée en attendant le déploiement.)*
+
+**KG_PvpKit 1.2.0, compilé, non déployé, non testé en jeu** : bouton « Charger dans mon inventaire » dans la fiche d'un
+kit (gestion des kits) pour le retoucher, puis « Remplacer par mon inventaire actuel » ; confirmation si l'inventaire
+n'est pas vide. À déployer sur Kanvas (espace Kal-Games, 1.1.0 en service). Détail :
+`historique-conversations/2026-10-25-pvpkit-charger-kit.md`.
+
 ### 2026-10-25 — LeKiwi06 (outils des opérateurs)
 
 *(Session du 25/10/2026, de 02 h 15 à 03 h 15. Fin de session : réservations de KS_CoffreMort et KS_RewardsGUI libérées.)*

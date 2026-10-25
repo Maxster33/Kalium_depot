@@ -11,6 +11,7 @@ import net.kyori.adventure.text.JoinConfiguration;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
@@ -296,6 +297,15 @@ public final class PvpMenus {
     private void openKit(Player player, Kit kit) {
         List<Component> body = new ArrayList<>(pvp.kits().summary(kit, 20));
         List<ActionButton> buttons = new ArrayList<>();
+        // 1.2.0 : kit charge dans l'inventaire du moderateur pour le retoucher, puis « Remplacer par mon inventaire actuel ».
+        buttons.add(btn(t("admin.kit-load", "<aqua>Charger dans mon inventaire"),
+                t("admin.kit-load-tip", "<gray>Pour le modifier, puis « Remplacer par mon inventaire actuel »."), p -> {
+            if (hasOwnItems(p)) {
+                openLoadConfirm(p, kit);
+            } else {
+                loadKit(p, kit);
+            }
+        }));
         buttons.add(btn(t("admin.kit-update", "<yellow>Remplacer par mon inventaire actuel"), null, p -> {
             pvp.kits().createFromInventory(kit.id(), kit.display(), p, this::lockedItem);
             plugin.tell(p, "admin.kit-updated", "<green>Kit mis à jour.");
@@ -312,6 +322,48 @@ public final class PvpMenus {
         }));
         buttons.add(btn(t("menu.back", "<gray>Retour"), null, this::openKits));
         gui.open(player, plugin.lang().parse(kit.display()), body, List.of(), buttons, gui.close(), 1);
+    }
+
+    /** Vrai si l'inventaire contient autre chose que les objets verrouilles (ils sont gardes au chargement d'un kit). */
+    private boolean hasOwnItems(Player player) {
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && !item.getType().isAir() && !lockedItem(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void openLoadConfirm(Player player, Kit kit) {
+        List<ActionButton> buttons = new ArrayList<>();
+        buttons.add(btn(t("admin.kit-load-confirm", "<yellow>Remplacer mon inventaire"), null, p -> loadKit(p, kit)));
+        buttons.add(btn(t("menu.back", "<gray>Retour"), null, p -> openKit(p, kit)));
+        gui.open(player, plugin.lang().parse(kit.display()),
+                List.of(t("admin.kit-load-warning", "<gray>Votre inventaire n'est pas vide : son contenu sera remplacé par le kit et perdu.")),
+                List.of(), buttons, gui.close(), 1);
+    }
+
+    /** Kit complet (sans declassement) a la place de l'inventaire ; objets verrouilles remis a leur case si elle est libre. */
+    private void loadKit(Player player, Kit kit) {
+        PlayerInventory inventory = player.getInventory();
+        Map<Integer, ItemStack> locked = new HashMap<>();
+        for (int slot = 0; slot < inventory.getSize(); slot++) {
+            ItemStack item = inventory.getItem(slot);
+            if (item != null && !item.getType().isAir() && lockedItem(item)) {
+                locked.put(slot, item);
+            }
+        }
+        pvp.kits().apply(player, kit);
+        for (Map.Entry<Integer, ItemStack> entry : locked.entrySet()) {
+            ItemStack current = inventory.getItem(entry.getKey());
+            if (current == null || current.getType().isAir()) {
+                inventory.setItem(entry.getKey(), entry.getValue());
+            } else {
+                inventory.addItem(entry.getValue());
+            }
+        }
+        plugin.tell(player, "admin.kit-loaded", "<green>Kit chargé dans votre inventaire.");
+        openKit(player, kit);
     }
 
     private void openNewKit(Player player) {
