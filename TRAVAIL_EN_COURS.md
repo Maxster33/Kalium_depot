@@ -18,7 +18,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KLM_Espaces (nouveau), KaliumRelay, KalGames, KLM_Menu, KLM_Chat, KLM_Contacts, KG_BuildBattle, KV_BuildBattle — LeKiwi06 — depuis le 2026-10-21 01:45 — fusion de Kal-Games dans Kanvas (espaces étanches) et Serveur Jeux à la place d'Event (expiration des serveurs)
 - KS_DiagOutils (nouveau, temporaire) — LeKiwi06 — depuis le 2026-10-24 23:36 — diagnostic : houe, pelle, hache sans effet pour les joueurs Bedrock sur Kixster
-- KS_MondeTest, KS_Economy, KS_Jetons, KS_Teleport, KS_RewardsGUI, KS_FairPlay, KS_Fly, KS_Tableau, KLM_Statistiques, KS_Parrainage (ajouté à 11:40) — LeKiwi06 — depuis le 2026-10-25 11:18 — « moi de test » : comptes séparés dans le monde de test de Kixster (solde, jetons, maisons, récompenses, exploration), progrès et statistiques arrêtés dans le monde de test
+- KS_MondeTest, KS_Economy, KS_Jetons, KS_Teleport, KS_RewardsGUI, KS_FairPlay, KS_Fly, KS_Tableau, KLM_Statistiques, KS_Parrainage (ajouté à 11:40), KS_Menu (ajouté à 11:45) — LeKiwi06 — depuis le 2026-10-25 11:18 — « moi de test » : comptes séparés dans le monde de test de Kixster (solde, jetons, maisons, récompenses, exploration), progrès et statistiques arrêtés dans le monde de test
 
 
 ## Requis parfois
