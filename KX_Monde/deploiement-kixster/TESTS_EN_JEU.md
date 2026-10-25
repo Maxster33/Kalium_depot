@@ -320,7 +320,9 @@ Coût : **45 000 points** (ou 5 blocs d'émeraude compressés tier 3). Pour avoi
 - **Attendu** : menu avec « Historique », « Forme : sphère (passer au cube) » et la liste des biomes.
 - **Faire** : choisir un biome (ex. « Désert »).
 - **Attendu** : « Vous avez changé le biome pour : Désert » ; la couleur de l'herbe et des feuilles change autour
-  (32 blocs de rayon) ; un Changeur est consommé ; aucun bloc ne bouge.
+  (32 blocs de rayon) ; aucun bloc ne bouge ; « Utilisations restantes de ce Changeur de Biome : 9/10 », le Changeur
+  utilisé reste dans la main (description « Utilisations restantes : 9/10 »), l'autre va ailleurs dans l'inventaire.
+  À la 10e utilisation : « Ton Changeur de Biome s'est cassé. », son de casse, il disparaît.
 - **Faire** : réessayer **à moins de 32 blocs de la zone des shops**.
 - **Attendu** : « Impossible : la zone touche une zone protégée. Ton Changeur de Biome n'a pas été utilisé. »
 - **Faire** : essayer dans le Nether.

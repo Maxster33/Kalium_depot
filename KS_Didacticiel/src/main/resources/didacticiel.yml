@@ -182,10 +182,10 @@ themes:
       biome:
         nom: "Changeur de Biome"
         icone: END_CRYSTAL
-        texte: "Change le biome autour de toi (32 blocs) dans le monde normal, hors des zones protégées et des claims des autres."
+        texte: "Change le biome autour de toi (32 blocs) dans le monde normal, hors des zones protégées et des claims des autres. 10 utilisations, puis il se casse."
         recettes:
           - "ks_crafts:changeur_biome"
-        nouveau: "2026-10-18"
+        nouveau: "2026-10-25"
       bedrock:
         nom: "Bedrock Breaker"
         icone: BLAZE_ROD

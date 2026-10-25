@@ -9,6 +9,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
@@ -38,11 +39,14 @@ import java.util.UUID;
  * KS_BiomeChanger (demande de Maxster33, 29/09/2026) : le Changeur de Biome.
  *
  * - Objet : livre de connaissances (ni bloc, ni ingrédient vanilla) avec l'image du cristal de l'End, nommé « Changeur de
- *   Biome », empilable par 64 ; son clic droit vanilla est annulé.
+ *   Biome », empilable par 64 ; son clic droit vanilla est annulé. 1.2.0 : UTILISATIONS utilisations par Changeur,
+ *   restantes dans sa description (un Changeur sans compteur, d'avant 1.2.0, est neuf) ; seuls les Changeurs au même
+ *   nombre d'utilisations s'empilent.
  * - Clic droit avec l'objet en main (overworld seulement) : menu (MenuBiome) avec les biomes de l'overworld, un bouton
  *   pour choisir la forme (sphère de 32 blocs de rayon ou cube de même volume, retenue pour chaque joueur) et un bouton
  *   « Historique ». Le choix d'un biome revérifie qu'il reste un Changeur de Biome dans l'inventaire, refuse si la zone
- *   touche une région WorldGuard (ProtectionWorldGuard), consomme l'objet, change le biome autour du joueur (aucun bloc
+ *   touche une région WorldGuard (ProtectionWorldGuard), consomme une utilisation (le Changeur se casse à la
+ *   dernière), change le biome autour du joueur (aucun bloc
  *   ne bouge : seul le biome change, par cellules de 4 x 4 x 4 blocs comme dans le jeu), écrit « Vous avez changé le
  *   biome pour : <biome> » et inscrit le changement dans l'historique (Historique, fichier historique.yml).
  *
@@ -54,6 +58,8 @@ public final class KSBiomeChanger extends JavaPlugin implements Listener {
     static final int RAYON = 32;
     /** Demi-côté du cube de même volume que la sphère : côté = rayon x racine cubique de 4 pi / 3 (51,6 blocs). */
     static final double DEMI_COTE = RAYON * Math.cbrt(4 * Math.PI / 3) / 2;
+    /** Utilisations d'un Changeur de Biome neuf (1.2.0, demande de LeKiwi06). */
+    static final int UTILISATIONS = 10;
 
     /** Forme de la zone modifiée, choisie par le joueur dans le menu. */
     enum Forme {
@@ -67,6 +73,8 @@ public final class KSBiomeChanger extends JavaPlugin implements Listener {
     }
 
     private static NamespacedKey marqueur;
+    /** Utilisations restantes (absent : Changeur neuf). */
+    private static NamespacedKey cleUtilisations;
 
     private final Map<UUID, Long> derniereOuverture = new HashMap<>();
     /** Forme choisie par chaque joueur (sphère par défaut, oubliée au redémarrage). */
@@ -78,6 +86,7 @@ public final class KSBiomeChanger extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         marqueur = new NamespacedKey(this, "changeur_biome");
+        cleUtilisations = new NamespacedKey(this, "utilisations");
         biomes = new ArrayList<>(RegistryAccess.registryAccess().getRegistry(RegistryKey.BIOME)
                 .getTagValues(BiomeTagKeys.IS_OVERWORLD));
         biomes.sort(Comparator.comparing(biome -> biome.getKey().toString()));
@@ -116,6 +125,22 @@ public final class KSBiomeChanger extends JavaPlugin implements Listener {
         meta.setItemModel(NamespacedKey.minecraft("end_crystal"));
         meta.setMaxStackSize(64);
         meta.getPersistentDataContainer().set(marqueur, PersistentDataType.BYTE, (byte) 1);
+        item.setItemMeta(meta);
+        return avecUtilisations(item, UTILISATIONS);
+    }
+
+    /** Utilisations restantes d'un Changeur de Biome (UTILISATIONS s'il n'a pas de compteur). */
+    static int utilisations(ItemStack item) {
+        Integer restantes = item.getItemMeta().getPersistentDataContainer().get(cleUtilisations, PersistentDataType.INTEGER);
+        return restantes == null ? UTILISATIONS : restantes;
+    }
+
+    /** Le Changeur avec ce nombre d'utilisations restantes, écrit dans sa description. */
+    private static ItemStack avecUtilisations(ItemStack item, int restantes) {
+        ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().set(cleUtilisations, PersistentDataType.INTEGER, restantes);
+        meta.lore(List.of(Component.text("Utilisations restantes : " + restantes + "/" + UTILISATIONS, NamedTextColor.GRAY)
+                .decoration(TextDecoration.ITALIC, false)));
         item.setItemMeta(meta);
         return item;
     }
@@ -183,28 +208,60 @@ public final class KSBiomeChanger extends JavaPlugin implements Listener {
                     + " n'a pas été utilisé.", NamedTextColor.RED));
             return;
         }
-        ItemStack item = player.getInventory().getItem(slot);
-        item.setAmount(item.getAmount() - 1);
-        player.getInventory().setItem(slot, item.getAmount() > 0 ? item : null);
+        int restantes = utiliser(player, slot);
         appliquer(centre.getWorld(), cellules, biome);
         player.sendMessage(Component.text("Vous avez changé le biome pour : ", NamedTextColor.GREEN)
                 .append(Component.translatable(biome, NamedTextColor.GOLD)));
+        if (restantes > 0) {
+            player.sendMessage(Component.text("Utilisations restantes de ce Changeur de Biome : " + restantes + "/"
+                    + UTILISATIONS, NamedTextColor.GRAY));
+        } else {
+            player.sendMessage(Component.text("Ton Changeur de Biome s'est cassé.", NamedTextColor.GRAY));
+            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 1);
+        }
         historique.ajouter(player, centre, biome, forme);
     }
 
-    /** Case d'un Changeur de Biome : celui de la main principale en priorité, sinon le premier de l'inventaire ; -1. */
+    /**
+     * Retire une utilisation au Changeur de la case ; renvoie celles qui lui restent (0 : cassé, retiré). Dans une pile,
+     * le Changeur utilisé reste dans la case (il resservira en premier) et le reste de la pile va ailleurs dans
+     * l'inventaire (au sol s'il est plein).
+     */
+    private static int utiliser(Player player, int slot) {
+        PlayerInventory inventory = player.getInventory();
+        ItemStack item = inventory.getItem(slot);
+        int restantes = utilisations(item) - 1;
+        ItemStack reste = null;
+        if (item.getAmount() > 1) {
+            reste = item.clone();
+            reste.setAmount(item.getAmount() - 1);
+        }
+        inventory.setItem(slot, restantes > 0 ? avecUtilisations(item.asOne(), restantes) : null);
+        if (reste != null) {
+            for (ItemStack deborde : inventory.addItem(reste).values()) {
+                player.getWorld().dropItem(player.getLocation(), deborde);
+            }
+        }
+        return restantes;
+    }
+
+    /**
+     * Case d'un Changeur de Biome : celui de la main principale en priorité, sinon celui de l'inventaire qui a le moins
+     * d'utilisations restantes (pour finir un Changeur entamé avant d'en entamer un autre) ; -1.
+     */
     private static int slotChangeur(Player player) {
         PlayerInventory inventory = player.getInventory();
         if (estChangeur(inventory.getItemInMainHand())) {
             return inventory.getHeldItemSlot();
         }
         ItemStack[] contenu = inventory.getContents();
+        int slot = -1;
         for (int i = 0; i < contenu.length; i++) {
-            if (estChangeur(contenu[i])) {
-                return i;
+            if (estChangeur(contenu[i]) && (slot < 0 || utilisations(contenu[i]) < utilisations(contenu[slot]))) {
+                slot = i;
             }
         }
-        return -1;
+        return slot;
     }
 
     /**

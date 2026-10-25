@@ -722,3 +722,13 @@ Compilé le 18/10/2026 (`sortie/KS_Economy-1.10.0.jar`). **Statut : non déploy�
 **Déployé sur Event le 18/10/2026 à 08:44 (LeKiwi06 : « Envoie les cinq plugins sur Event pour que je teste, Kixster ensuite » ; envoi groupé : KS_Jetons 2.1.0, KS_Teleport 1.4.0, KS_Claim 1.5.0, KS_Economy 1.10.0, KS_Didacticiel 1.1.0 ; jars en place vérifiés de la même taille que `jars-deployes/` avant l'envoi, nouveaux jars de la même taille que ceux compilés ; ancien jar dans `_removed-ks_economy-1.8.2/`), actif après redémarrage d'Event. Kixster pas encore. Statut : non testé en jeu.** Event reçoit aussi la 1.9.0 (magasin à 450 points, tiers).
 
 **Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé, accord de LeKiwi06 : « allez on peut tout déployer ») ; ancien jar dans `_removed-<plugin>-<version>/` ; actif après redémarrage.**
+
+## 1.10.1 - Changeur de Biome racheté seulement neuf (25/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : KS_BiomeChanger 1.2.0 donne 10 utilisations au Changeur de Biome ; le rachat (522,7, prix d'un
+Changeur à usage unique) ne doit prendre que les Changeurs neufs (10/10). Un objet qui porte le compteur
+`ks_biomechanger:utilisations` à moins de 10 n'est plus reconnu par les rachats : il n'est ni compté ni retiré. Un
+Changeur sans compteur (donné avant KS_BiomeChanger 1.2.0) compte comme neuf, comme dans KS_BiomeChanger. Prix et
+`rachats.csv` inchangés.
+
+**Compilé, non déployé, non testé.** À déployer avec KS_BiomeChanger 1.2.0.

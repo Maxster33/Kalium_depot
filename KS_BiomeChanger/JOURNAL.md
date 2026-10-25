@@ -66,3 +66,23 @@ SimpleClaimSystem 1.13.1 ne crée pas son API lui-même : le plugin l'initialise
 (`SimpleClaimSystemAPI_Provider.initialize`, sans effet si c'est déjà fait). Aucun autre changement.
 
 **Déployé sur Event le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (ancienne version dans `_removed-ks_biomechanger-1.1.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.2.0 - 10 utilisations par Changeur de Biome (25/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « que le changeur de biome ait 10 utilisations avant de casser ».
+- **Compteur** : utilisations restantes dans l'objet (`ks_biomechanger:utilisations`) et dans sa description
+  (« Utilisations restantes : 10/10 »). Un Changeur sans compteur (donné avant 1.2.0) compte comme neuf (10). Seuls les
+  Changeurs au même nombre d'utilisations s'empilent (toujours par 64).
+- **Utilisation** : une utilisation retirée au lieu de l'objet ; message gris « Utilisations restantes de ce Changeur
+  de Biome : n/10 ». Dans une pile, le Changeur utilisé reste dans la case et le reste de la pile va ailleurs dans
+  l'inventaire (au sol s'il est plein). À la dernière : « Ton Changeur de Biome s'est cassé. », son de casse, objet
+  retiré. Refus (zone protégée, claim) : rien n'est retiré, comme avant.
+- **Choix du Changeur** : celui de la main en priorité, sinon celui de l'inventaire qui a le moins d'utilisations
+  restantes (finir un Changeur entamé avant d'en entamer un autre).
+- Texte du menu : « Une utilisation de ton Changeur de Biome sera consommée (10 par Changeur). » Didacticiel de Kixster
+  mis à jour (« 10 utilisations, puis il se casse. », marqué Nouveau le 25/10).
+
+Non changé : prix de rachat (KS_Economy, 522,7 par Changeur quel que soit le nombre d'utilisations restantes), recette
+(KS_Crafts) et taux dans les récompenses, établis pour un Changeur à usage unique.
+
+**Compilé, non déployé, non testé.**

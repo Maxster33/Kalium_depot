@@ -76,6 +76,9 @@ final class Rachats implements CommandExecutor {
     /** Bornes des gammes de prix : moins de 0,1 ; 0,1 à 1 ; 1 à 10 ; 10 à 100 ; 100 et plus. */
     private static final double[] BORNES = {0.1, 1, 10, 100};
     private static final long[] LOTS = {1, 10, 64, 320};
+    /** Utilisations restantes d'un Changeur de Biome (KS_BiomeChanger 1.2.0) et celles d'un neuf. */
+    private static final NamespacedKey UTILISATIONS_CHANGEUR = new NamespacedKey("ks_biomechanger", "utilisations");
+    private static final int UTILISATIONS_CHANGEUR_NEUF = 10;
 
     private final KSEconomy plugin;
     private final Lang lang;
@@ -229,6 +232,11 @@ final class Rachats implements CommandExecutor {
             return potion.getBasePotionType().getKey().getKey().equalsIgnoreCase(cible.substring(7));
         }
         if (cible.startsWith("pdc:")) {
+            // 1.10.1 : un Changeur de Biome entamé n'est pas racheté (sans compteur : neuf, comme dans KS_BiomeChanger).
+            Integer utilisations = marques.get(UTILISATIONS_CHANGEUR, PersistentDataType.INTEGER);
+            if (utilisations != null && utilisations < UTILISATIONS_CHANGEUR_NEUF) {
+                return false;
+            }
             String[] c = cible.split(":", 5);
             NamespacedKey cle = new NamespacedKey(c[1], c[2]);
             return switch (c[3]) {
