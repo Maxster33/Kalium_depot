@@ -36,7 +36,8 @@ final class Plot {
     String titre = "", description = "";
     /** Concours de build auquel ce plot participe (0 = plot normal). */
     int concours;
-    /** Plot d'un concours terminé ou annulé : plus de votes (mis à jour par le gestionnaire des concours). */
+    /** Plot d'un concours annulé : plus de votes (mis à jour par le gestionnaire des concours). 1.8.0 : un concours
+     *  terminé ne ferme plus les votes. */
     boolean votesFermes;
     Etat etat = Etat.TRAVAUX;
     Chantier chantier = Chantier.AUCUN;

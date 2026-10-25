@@ -67,8 +67,20 @@ public final class KVPlots extends JavaPlugin {
         concours.charger();
         for (Plot p : plots.tous()) {
             Concours.Un c = p.concours == 0 ? null : concours.parId(p.concours);
-            p.votesFermes = c != null && !c.actif();
+            // 1.8.0 (LeKiwi06 : « qu'on puisse voter les builds de concours après la fin de la phase de vote ») : seul un
+            // concours annulé ferme les votes.
+            p.votesFermes = c != null && c.phase == fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.ANNULE;
         }
+        // 1.8.0 : concours terminés avant cette version : classement figé d'après les notes actuelles (votes clos
+        // jusque-là, donc celles de la clôture).
+        boolean figes = false;
+        for (Concours.Un c : concours.termines()) {
+            if (c.classement.isEmpty() && !plotsDuConcours(c.id).isEmpty()) {
+                figerClassement(c);
+                figes = true;
+            }
+        }
+        if (figes) concours.sauver();
         regions = new Regions(this);
         chantier = new Chantier(this);
         chargerTuile();
@@ -515,14 +527,11 @@ public final class KVPlots extends JavaPlugin {
                 + " Fin des votes dans " + Concours.duree(c.dureeVotes) + ".");
     }
 
-    /** Fin des votes : classement, plots gardés à part (plus de votes). */
+    /** Fin des votes : classement figé, plots gardés à part. 1.8.0 : ils restent notables comme des plots normaux. */
     void terminer(Concours.Un c) {
         c.phase = fr.kalium.kvplots.api.KanvasPlots.PhaseConcours.TERMINE;
         c.finVotes = Math.min(c.finVotes, System.currentTimeMillis());
-        List<Plot> classement = plotsDuConcours(c.id);
-        for (Plot p : classement) p.votesFermes = true;
-        classement.sort(ORDRE_CLASSEMENT);
-        plots.sauver();
+        List<Plot> classement = figerClassement(c);
         concours.sauver();
         modeVote.rafraichir();
         // 1.5.0 (catégorie 4) : signal pour KV_Rewards (récompenses des places du concours).
@@ -532,7 +541,16 @@ public final class KVPlots extends JavaPlugin {
                 classement.stream().map(Api::info).toList()));
         annoncer("Votes clos pour « " + c.theme + " » ! " + (classement.isEmpty() ? "Aucun participant."
                 : "Vainqueur : " + nom(classement.get(0).createur) + " (plot n°" + classement.get(0).id + ", "
-                + classement.get(0).points() + " points)."));
+                + classement.get(0).points() + " points). Le classement est définitif, mais les plots restent notables."));
+    }
+
+    /** 1.8.0 : classe les plots du concours et garde ce classement (points et votes du moment) ; renvoie les plots classés. */
+    private List<Plot> figerClassement(Concours.Un c) {
+        List<Plot> classement = plotsDuConcours(c.id);
+        classement.sort(ORDRE_CLASSEMENT);
+        c.classement.clear();
+        for (Plot p : classement) c.classement.add(new Concours.Place(p.id, p.points(), p.votes.size()));
+        return classement;
     }
 
     /** Classement d'un concours : total de points, puis moyenne. */

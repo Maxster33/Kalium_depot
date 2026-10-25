@@ -96,6 +96,10 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KV_Plots 1.8.0** (LeKiwi06, 25/10/2026) : les plots d'un concours de build restent notables après la fin des votes
+  (anciens concours compris), classement figé à la clôture (`concours.yml`), notes tardives comptées pour les points des
+  bâtisseurs. Seul, sur Kanvas (KV_Menu et KV_Rewards inchangés). Détail : `KV_Plots/JOURNAL.md`. **Non déployé, non
+  testé en jeu.**
 - **« Moi de test » : KS_MondeTest 1.1.0 + KS_Economy 1.11.0, KS_Jetons 2.2.0, KS_Teleport 1.5.0, KS_RewardsGUI 1.10.0, KS_FairPlay 1.1.0, KS_Fly 1.1.0, KS_Tableau 1.1.0, KS_Menu 1.3.0, KS_Parrainage 1.2.0, KLM_Statistiques 1.2.0** (LeKiwi06, 25/10/2026) : dans le monde de test, chaque joueur a un compte de test séparé (même compte Java, identifiant automatique) : solde, jetons, maisons, récompenses, exploration et vol ; tableau et Tab montrent le moi de test ; magasins de Kixster refusés depuis le monde de test ; progrès, recettes, statistiques et temps de jeu (parrainage compris) n'y avancent pas. L'heure était déjà séparée (une horloge par monde, vérifié dans les fichiers du serveur). **À déployer ensemble sur Kixster** (avec KS_BiomeChanger 1.2.0, exigé par KS_Economy 1.10.1+), nouveau `config.yml` de KS_MondeTest et clé `espaces-interfaces` de KLM_Menu (détail dans le JOURNAL de KS_MondeTest). **Déployé sur Kixster le 25/10/2026 à 12:10, à redémarrer, non testé en jeu.**
 - **KS_CoffreRenforce 1.0.0** (nouveau, LeKiwi06, 25/10/2026) **+ KS_Crafts 1.21.0** (sa recette : coffre au centre,
   blocs de fer sur les côtés, fragments de spawner aux coins), à déployer ensemble sur Kixster : coffre qui stocke
@@ -501,6 +505,15 @@ le `config.yml` de Geyser (proxy) pour voir le motif.
 
 ### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici ; les précédents vont dans
 `archive_reprise.md`.
+
+### 2026-10-25 — LeKiwi06 (votes des concours terminés)
+
+*(Session du 25/10/2026 vers 21 h 20, heure de Paris. Fin de session : réservation de KV_Plots libérée.)*
+
+**KV_Plots 1.8.0, compilé, non déployé, non testé en jeu** : on peut noter les plots des concours de build après la fin
+des votes (comme un plot normal), le classement annoncé reste figé. Détail :
+`historique-conversations/2026-10-25-votes-concours-termines.md`. Attention à l'heure : le PC est réglé en UTC (pas
+à l'heure de Paris) ; la session précédente a daté ses commits en +09:30.
 
 ### 2026-10-26 — LeKiwi06 (historique de la whitelist)
 

@@ -139,7 +139,8 @@ public interface KanvasPlots {
 
     ConcoursInfo concours(int id);
 
-    /** Plots d'un concours ; classés (points puis moyenne) une fois les votes ouverts, sinon par numéro. */
+    /** Plots d'un concours ; classés (points puis moyenne) une fois les votes ouverts, sinon par numéro. 1.8.0 : concours
+     *  terminé : classement figé à la clôture des votes, avec les points, votes et moyenne de ce moment. */
     List<PlotInfo> plotsDuConcours(int id);
 
     /** Plot du joueur (créateur) dans le concours en construction, ou null. */

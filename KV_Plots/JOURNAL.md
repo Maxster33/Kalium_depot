@@ -4,6 +4,31 @@ Serveur Kanvas (ex Kal-Test-Dev). Cahier des charges : `KV_Plots/CAHIER_DES_CHAR
 de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` télécharge aussi les API WorldGuard
 7.0.19 et WorldEdit 7.4.5 (compilation seulement ; en jeu, ce sont les plugins du serveur qui servent).
 
+## 1.8.0 - plots des concours terminés notables, classement figé (25/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « j'aimerai qu'on puisse voter les builds de concours après la fin de la phase de vote ».
+Choix de LeKiwi06 (questions posées avant le code) : classement **figé** à la clôture, **tous** les anciens concours
+concernés, notes tardives comptées pour les points des bâtisseurs **comme sur un plot normal**.
+
+- **Votes** : à la fin des votes d'un concours, ses plots restent notables avec les terracottas (mode vote, « Au hasard :
+  un plot à noter »), aux mêmes conditions qu'un plot normal (ni créateur ni éditeur, même ancien). Seul un concours
+  **annulé** ferme encore les votes (ses plots sont supprimés). Les plots des concours déjà terminés redeviennent
+  notables au démarrage.
+- **Classement figé** : à la clôture, le classement (plot, points, nombre de votes) est enregistré dans `concours.yml`
+  (clé `classement`, liste « plot:points:votes »). `plotsDuConcours` d'un concours terminé renvoie ce classement, avec
+  les points, votes et moyenne **de la clôture** : le menu « Anciens concours » (vainqueur, « 1. », « 2. »..., points
+  affichés) ne bouge plus. La fiche du plot et le tableau sur le côté montrent les notes à jour.
+- **Anciens concours** (terminés avant la 1.8.0) : au premier démarrage, leur classement est figé d'après les notes
+  actuelles, qui sont celles de la clôture (votes fermés jusque-là), et enregistré.
+- **Points des bâtisseurs** (KV_Rewards) : une note donnée après la clôture compte comme sur un plot normal (paliers,
+  tops) ; les récompenses des places du concours, données à la clôture, ne changent pas. Aucun changement dans
+  KV_Rewards ni KV_Menu.
+- Annonce de fin des votes : « Le classement est définitif, mais les plots restent notables. » ajouté (choix de Claude,
+  signalé : « Votes clos » seul aurait laissé croire qu'on ne peut plus noter).
+- Empilée sur la 1.7.0, jamais testée en jeu (demande explicite de LeKiwi06).
+
+**Compilé le 25/10/2026 (`sortie/KV_Plots-1.8.0.jar`), non déployé. Statut : non testé en jeu.**
+
 ## 1.7.0 - un concours en construction pendant les votes du précédent, tableau plus court (11/10/2026, LeKiwi06)
 
 Demande de LeKiwi06 : « fait en sorte qu'on puisse avoir un concours de build en cours pendant que le précédent est en phase de votes , essaie aussi de reduire tout les sidebar trop long , sur kanvas , mais aussi pour kixster " exploration journalière : 10 / 10 " est bien trop long " exploration : 0/10 " suffit ».

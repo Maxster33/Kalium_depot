@@ -19,9 +19,13 @@ import fr.kalium.kvplots.api.Taille;
  * Concours de build (demande de LeKiwi06, 26/09/2026), gardés dans concours.yml. 1.7.0 (LeKiwi06, 11/10/2026) : un
  * seul concours en construction à la fois, mais il peut démarrer pendant les votes du précédent. Phases :
  * EN_COURS (participation et construction jusqu'à « fin »), puis VOTES (plots figés et notables jusqu'à « finVotes »),
- * puis TERMINE (votes clos, plots gardés à part) ; ANNULE si le staff l'annule.
+ * puis TERMINE (votes clos, plots gardés à part) ; ANNULE si le staff l'annule. 1.8.0 (LeKiwi06, 25/10/2026) : les plots
+ * d'un concours terminé restent notables comme des plots normaux ; son classement est figé à la clôture des votes.
  */
 final class Concours {
+
+    /** 1.8.0 : place au classement figé d'un concours terminé : plot, points et nombre de votes à la clôture. */
+    record Place(int plot, int points, int votes) {}
 
     static final class Un {
         final int id;
@@ -30,6 +34,8 @@ final class Concours {
         PhaseConcours phase = PhaseConcours.EN_COURS;
         final long debut;
         long fin, dureeVotes, finVotes;
+        /** 1.8.0 : classement à la clôture des votes (concours terminé), du premier au dernier. */
+        final List<Place> classement = new ArrayList<>();
 
         Un(int id, String theme, Taille taille, long debut, long fin, long dureeVotes) {
             this.id = id;
@@ -131,6 +137,10 @@ final class Concours {
                         s.getLong("debut"), s.getLong("fin"), s.getLong("duree-votes"));
                 c.phase = PhaseConcours.valueOf(s.getString("phase", "EN_COURS"));
                 c.finVotes = s.getLong("fin-votes");
+                for (String place : s.getStringList("classement")) { // « plot:points:votes »
+                    String[] v = place.split(":");
+                    c.classement.add(new Place(Integer.parseInt(v[0]), Integer.parseInt(v[1]), Integer.parseInt(v[2])));
+                }
                 parId.put(c.id, c);
                 prochainId = Math.max(prochainId, c.id + 1);
             } catch (RuntimeException e) {
@@ -151,6 +161,9 @@ final class Concours {
             yml.set(b + "fin", c.fin);
             yml.set(b + "duree-votes", c.dureeVotes);
             yml.set(b + "fin-votes", c.finVotes);
+            if (!c.classement.isEmpty()) {
+                yml.set(b + "classement", c.classement.stream().map(pl -> pl.plot() + ":" + pl.points() + ":" + pl.votes()).toList());
+            }
         }
         try {
             yml.save(fichier);

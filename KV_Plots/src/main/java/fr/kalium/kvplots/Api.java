@@ -209,8 +209,21 @@ final class Api implements KanvasPlots {
 
     @Override
     public List<PlotInfo> plotsDuConcours(int id) {
-        List<Plot> l = plugin.plotsDuConcours(id);
         Concours.Un c = plugin.concours().parId(id);
+        if (c != null && c.phase == PhaseConcours.TERMINE && !c.classement.isEmpty()) {
+            // 1.8.0 : concours terminé : classement figé à la clôture, avec les points et votes de ce moment (les notes
+            // données ensuite ne changent que la fiche du plot).
+            List<PlotInfo> fige = new java.util.ArrayList<>();
+            for (Concours.Place place : c.classement) {
+                Plot p = plugin.plots().parId(place.plot());
+                if (p == null || p.chantier == Plot.Chantier.SUPPRESSION) continue;
+                fige.add(new PlotInfo(p.id, p.taille, p.createur, List.copyOf(p.editeurs), p.etat == Plot.Etat.VALIDE,
+                        p.chantier != Plot.Chantier.AUCUN, place.points(), place.votes(),
+                        place.votes() == 0 ? 0 : (double) place.points() / place.votes(), p.titre, p.description, p.concours));
+            }
+            return fige;
+        }
+        List<Plot> l = plugin.plotsDuConcours(id);
         if (c != null && c.phase != PhaseConcours.EN_COURS) l.sort(KVPlots.ORDRE_CLASSEMENT);
         return l.stream().map(Api::vue).toList();
     }
