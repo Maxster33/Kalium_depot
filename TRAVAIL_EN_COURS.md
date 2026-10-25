@@ -20,6 +20,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_DiagOutils (nouveau, temporaire) — LeKiwi06 — depuis le 2026-10-24 23:36 — diagnostic : houe, pelle, hache sans effet pour les joueurs Bedrock sur Kixster
 - KS_Enclume, KS_RewardsGUI — LeKiwi06 — depuis le 2026-10-25 02:09 — enclume en coffre (accroupi + clic) : réparation et enchantements sans plafond pour les joueurs Bedrock, fusion des coffres de récompense déplacée dedans, usure de l'enclume
 - KS_CoffreMort — LeKiwi06 — depuis le 2026-10-25 02:50 — outils des opérateurs : liste de tous les coffres de mort actifs, transfert dans /rewards (KS_RewardsGUI suivra après le chantier de l'enclume : don de coffres par les opérateurs, historique)
+- KS_MondeTest (nouveau) — LeKiwi06 — depuis le 2026-10-25 02:53 — monde de test en créatif sur Kixster, étanche par rapport à la survie (remplace Event comme serveur de test)
 
 
 
