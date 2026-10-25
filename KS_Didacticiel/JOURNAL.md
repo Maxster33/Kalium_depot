@@ -232,3 +232,29 @@ Changeur de biome (« 10 utilisations », KS_BiomeChanger 1.2.0, compilé non d�
 mais **pas encore sur Kixster** : il partira avec KS_BiomeChanger 1.2.0 (envoyer alors le fichier du dépôt). Ancien
 fichier dans `_removed-ks_didacticiel-contenu-2026-10-25/`. Relu au redémarrage (ou `/didacticiel recharger`). Statut : non
 testé en jeu.
+
+## 1.4.0 - rappel à la connexion des nouveautés non lues (25/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « que les joueurs soit avertis des parties du didacticiel qu'ils n'ont pas lu par un message comme
+celui des rewards en attente quand ils se connectent a kixster, un truc du genre "<nombre> nouveautés disponibles dans
+le /didacticiel !" ; ça s'afficherait a chaque connexion dans le tchat tant qu'ils n'ont pas fait /didacticiel à
+nouveau ».
+
+- **Message** (4 secondes après la connexion, juste après celui des récompenses en attente de KS_RewardsGUI, même
+  couleur) : « n nouveautés disponibles dans le /didacticiel ! » (« 1 nouveauté disponible... » au singulier). n = toutes
+  les nouveautés encore marquées « Nouveau » pour ce joueur (celles montrées sur ce serveur, comme dans le menu).
+- **Quand il s'arrête** : dès que le joueur ouvre la liste des thèmes (/didacticiel, /help ou le bouton du comparateur
+  « Informations »), même sans ouvrir les thèmes : les nouveautés non lues de ce moment sont « annoncées » (`vus.yml`,
+  section `annonces`, uuid > thème > nouveauté = valeur annoncée). La marque « Nouveau » du menu, elle, reste jusqu'à
+  l'ouverture du thème, comme avant.
+- **Quand il revient** : quand une nouveauté est ajoutée ou que sa valeur `nouveau` change (nouvelle date) ; le nombre
+  affiché compte alors toutes les non lues, anciennes comprises.
+- Textes : nouvelles clés `rappel.une` et `rappel.plusieurs` du `lang.yml`.
+
+Choix de Claude, signalés : le bouton « Didacticiel » du comparateur arrête aussi le rappel (pas seulement la commande) ;
+au premier démarrage de la 1.4.0, tout joueur qui a encore des « Nouveau » reçoit le message à sa connexion, y compris
+pour des nouveautés plus anciennes que la 1.4.0.
+
+Limites : écrit sans serveur de test. Jar seul (`didacticiel.yml` inchangé).
+
+Compilé le 25/10/2026 (`sortie/KS_Didacticiel-1.4.0.jar`). **Statut : non déployé, non testé en jeu.**

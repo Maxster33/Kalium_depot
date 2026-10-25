@@ -13,6 +13,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.BlastingRecipe;
 import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.ItemStack;
@@ -52,8 +55,12 @@ import java.util.function.Consumer;
  * « ks_crafts:red_sand », ou un début suivi de « * ») : un clic montre ces recettes, une par page ; un thème ou une
  * nouveauté peut demander un plugin (« requiert : KS_Trains », ou « KS_Decapitator 1.3.0 » pour une version minimale) :
  * sans lui, il n'est pas montré.
+ *
+ * 1.4.0 (LeKiwi06, 25/10/2026 : « un message comme celui des rewards en attente [...] tant qu'ils n'ont pas fait
+ * /didacticiel à nouveau ») : à la connexion, « n nouveautés disponibles dans le /didacticiel ! » s'il reste une
+ * nouveauté non lue que le joueur n'a pas encore vue annoncée dans la liste des thèmes (vus.yml, section annonces).
  */
-public final class KSDidacticiel extends JavaPlugin {
+public final class KSDidacticiel extends JavaPlugin implements Listener {
 
     /** Plus de 45 objets ne tiennent pas au-dessus de la barre d'un coffre de 6 rangées. */
     private static final int MAX = Contenant.PAR_PAGE;
@@ -126,6 +133,7 @@ public final class KSDidacticiel extends JavaPlugin {
         // 1.3.0 : questions des joueurs, et l'outil du staff dans la rubrique « Modération » de /menu.
         questions = new Questions(this, lang, new Gui(this, lang));
         getServer().getPluginManager().registerEvents(questions, this);
+        getServer().getPluginManager().registerEvents(this, this);
         getServer().getServicesManager().register(MenuSection.class, MenuSection.moderation(this, "questions-didacticiel",
                 Questions.PERMISSION_STAFF, 60, lang.c("staff.section", "<gold>Questions du didacticiel"),
                 lang.c("staff.section-info", "<gray>Les questions des joueurs ; y répondre en jeu."),
@@ -285,10 +293,75 @@ public final class KSDidacticiel extends JavaPlugin {
                 change = true;
             }
         }
-        if (change && !enregistrementPrevu) {
+        if (change) {
+            prevoirEnregistrement();
+        }
+    }
+
+    private void prevoirEnregistrement() {
+        if (!enregistrementPrevu) {
             enregistrementPrevu = true;
             getServer().getScheduler().runTaskLater(this, this::enregistrerVus, 100L);
         }
+    }
+
+    // ------------------------------------------------------------------ rappel à la connexion (1.4.0)
+
+    private String cleAnnonce(Player joueur, Theme theme, Nouveaute nouveaute) {
+        return "annonces." + joueur.getUniqueId() + "." + theme.id() + "." + nouveaute.id();
+    }
+
+    /** Non lue, et pas encore montrée au joueur dans la liste des thèmes depuis que sa valeur « nouveau » a changé. */
+    private boolean nonAnnoncee(Player joueur, Theme theme, Nouveaute nouveaute) {
+        return nonLue(joueur, theme, nouveaute) && !nouveaute.nouveau().equals(vus.getString(cleAnnonce(joueur, theme,
+                nouveaute)));
+    }
+
+    /** Le joueur a ouvert le didacticiel : les nouveautés non lues lui sont annoncées, le rappel s'arrête. */
+    private void marquerAnnoncees(Player joueur, List<Theme> themes) {
+        boolean change = false;
+        for (Theme theme : themes) {
+            for (Nouveaute n : visibles(theme)) {
+                if (nonAnnoncee(joueur, theme, n)) {
+                    vus.set(cleAnnonce(joueur, theme, n), n.nouveau());
+                    change = true;
+                }
+            }
+        }
+        if (change) {
+            prevoirEnregistrement();
+        }
+    }
+
+    /**
+     * Comme le message des récompenses en attente de KS_RewardsGUI (3 secondes après la connexion), une seconde plus
+     * tard pour passer après lui : le nombre de nouveautés non lues, tant qu'une d'elles n'a pas été annoncée.
+     */
+    @EventHandler
+    public void onConnexion(PlayerJoinEvent event) {
+        Player joueur = event.getPlayer();
+        getServer().getScheduler().runTaskLater(this, () -> {
+            if (!joueur.isOnline()) {
+                return;
+            }
+            int nonLues = 0;
+            boolean aAnnoncer = false;
+            for (Theme theme : themesVisibles()) {
+                for (Nouveaute n : visibles(theme)) {
+                    if (nonLue(joueur, theme, n)) {
+                        nonLues++;
+                        aAnnoncer |= nonAnnoncee(joueur, theme, n);
+                    }
+                }
+            }
+            if (aAnnoncer) {
+                joueur.sendMessage(nonLues == 1
+                        ? lang.c("rappel.une", "<light_purple>1 nouveauté disponible dans le <gray>/didacticiel</gray> !")
+                        : lang.c("rappel.plusieurs", "<light_purple><nombre> nouveautés disponibles dans le "
+                                + "<gray>/didacticiel</gray> !", "nombre", nonLues));
+                lang.saveIfNeeded();
+            }
+        }, 80L);
     }
 
     private void enregistrerVus() {
@@ -342,6 +415,7 @@ public final class KSDidacticiel extends JavaPlugin {
                     Contenant::fermer);
         }
         menu.ouvrir(joueur);
+        marquerAnnoncees(joueur, themes);
         lang.saveIfNeeded();
     }
 
