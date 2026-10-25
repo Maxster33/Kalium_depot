@@ -94,6 +94,9 @@ final class Recherche {
      * un filtre le change et la liste suit. Seul le nom de l'objet se saisit (fenêtre de Gui).
      */
     private void resultats(Player joueur, Criteres c, int page) {
+        if (KSEconomy.magasinsCoupes(joueur)) {
+            return;
+        }
         List<Boutique> trouves = chercher(joueur, c);
         int pages = Math.max(1, (trouves.size() + PAR_PAGE - 1) / PAR_PAGE);
         int p = Math.max(0, Math.min(page, pages - 1));

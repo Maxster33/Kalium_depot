@@ -4,6 +4,9 @@
 # Lu au demarrage du serveur (un redemarrage est necessaire apres un changement).
 commande: event
 
+# 1.3.0 : boutons masques dans le monde de test de Kixster (KS_MondeTest) : plugins qui ne servent qu'en survie.
+monde-test-masques: [KS_Claim, KS_CoffreMort]
+
 # Case de la barre ou se place l'etoile du Nether (0 a 8 ; 4 = case 5).
 hub-item:
   slot: 4

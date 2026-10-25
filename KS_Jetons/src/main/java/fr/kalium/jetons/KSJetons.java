@@ -387,13 +387,14 @@ public final class KSJetons extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------ API (autres plugins)
 
+    /** 2.2.0 : dans le monde de test (KS_MondeTest), la fiche du compte de test du joueur. */
     private static Fiche fiche(UUID joueur) {
-        return instance.fiches.computeIfAbsent(joueur, u -> new Fiche());
+        return instance.fiches.computeIfAbsent(CompteTest.de(joueur), u -> new Fiche());
     }
 
     /** Jetons de ce type dans l'inventaire spécial du joueur (localisation : jetons posés dans ses cases). */
     public static long nombre(UUID joueur, Type type) {
-        Fiche f = instance.fiches.get(joueur);
+        Fiche f = instance.fiches.get(CompteTest.de(joueur));
         if (f == null) {
             return 0;
         }
@@ -432,7 +433,7 @@ public final class KSJetons extends JavaPlugin implements Listener {
 
     /** Niveau du badge de ce type porté par le joueur (rangé dans son inventaire spécial) ; 0 : aucun. */
     public static int niveauBadge(UUID joueur, Badge badge) {
-        Fiche f = instance.fiches.get(joueur);
+        Fiche f = instance.fiches.get(CompteTest.de(joueur));
         Integer n = f == null ? null : f.badges.get(badge);
         return n == null ? 0 : Math.min(n, niveauMax(badge));
     }
@@ -445,7 +446,7 @@ public final class KSJetons extends JavaPlugin implements Listener {
     /** 2.1.0 : jetons de localisation posés dans les cases du joueur : case (0, 1...) -> jeton (copie). */
     public static Map<Integer, ItemStack> localisations(UUID joueur) {
         Map<Integer, ItemStack> r = new TreeMap<>();
-        Fiche f = instance.fiches.get(joueur);
+        Fiche f = instance.fiches.get(CompteTest.de(joueur));
         if (f != null) {
             f.localisations.forEach((k, jeton) -> r.put(k, jeton.clone()));
         }
@@ -457,7 +458,9 @@ public final class KSJetons extends JavaPlugin implements Listener {
         Map<UUID, Map<Integer, ItemStack>> r = new HashMap<>();
         instance.fiches.forEach((u, f) -> {
             if (!f.localisations.isEmpty()) {
-                r.put(u, localisations(u));
+                Map<Integer, ItemStack> copie = new TreeMap<>(); // 2.2.0 : par fiche (compte de test compris)
+                f.localisations.forEach((k, jeton) -> copie.put(k, jeton.clone()));
+                r.put(u, copie);
             }
         });
         return r;
@@ -465,7 +468,7 @@ public final class KSJetons extends JavaPlugin implements Listener {
 
     /** 2.1.0 : temps (millisecondes) avant qu'une case de localisation vidée reprenne un jeton ; 0 : tout de suite. */
     public static long attenteLocalisation(UUID joueur, int caseLocalisation) {
-        Fiche f = instance.fiches.get(joueur);
+        Fiche f = instance.fiches.get(CompteTest.de(joueur));
         Long date = f == null ? null : f.liberees.get(caseLocalisation);
         return date == null ? 0 : Math.max(0, date + instance.delaiLocalisation() - System.currentTimeMillis());
     }
@@ -949,7 +952,7 @@ public final class KSJetons extends JavaPlugin implements Listener {
 
     /** Objets en attente pour ce joueur (reprise de la 2.0) : dans son inventaire, au sol s'il est plein. */
     private void donnerARendre(Player joueur) {
-        Fiche f = fiches.get(joueur.getUniqueId());
+        Fiche f = fiches.get(CompteTest.de(joueur.getUniqueId()));
         if (f == null || f.aRendre.isEmpty()) {
             return;
         }

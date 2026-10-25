@@ -137,6 +137,10 @@ final class Staff {
      * ce plugin : il est appelé sans dépendance à la compilation (sinon les deux plugins se demanderaient l'un l'autre).
      */
     private void coffresDeMort(Player op) {
+        if (CompteTest.enTest(op)) { // 1.10.0 : coffres de mort de la survie, pas depuis le monde de test
+            refuser(op, t("staff.refus-monde-test", "<red>Pas depuis le monde de test."));
+            return;
+        }
         Plugin p = coffreMort();
         try {
             p.getClass().getMethod("ouvrirStaff", Player.class, Consumer.class)
@@ -204,7 +208,18 @@ final class Staff {
                     "max", Coffres.nombre(VALEUR_MAX)));
             return;
         }
-        confirmer(op, cible.getUniqueId(), cible.getName() == null ? b.joueur : cible.getName(), b.nom, valeur);
+        UUID compte = cible.getUniqueId();
+        if (CompteTest.enTest(op)) {
+            // 1.10.0 : depuis le monde de test, seulement au compte de test d'un joueur qui s'y trouve.
+            Player enLigne = cible.getPlayer();
+            if (enLigne == null || !CompteTest.enTest(enLigne)) {
+                refuser(op, t("staff.refus-monde-test-joueur",
+                        "<red>Depuis le monde de test, on ne donne qu'aux joueurs qui s'y trouvent."));
+                return;
+            }
+            compte = CompteTest.de(compte);
+        }
+        confirmer(op, compte, cible.getName() == null ? b.joueur : cible.getName(), b.nom, valeur);
     }
 
     private void confirmer(Player op, UUID uuid, String joueur, String nom, double valeur) {

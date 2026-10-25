@@ -17,26 +17,22 @@ bordure: 500
 # Mode de jeu a la premiere entree (ensuite : celui que le joueur avait en sortant).
 mode-a-l-arrivee: CREATIVE
 
-# Dans le monde de test : commandes et coffres de ces plugins refuses (objets ou points qui passeraient en survie ;
-# claims, regions et reglages de l'anti-triche qui toucheraient la survie).
+# Dans le monde de test : commandes et coffres de ces plugins refuses (ils ne servent qu'en survie : coffres de mort,
+# claims, parrainage, regions et reglages de l'anti-triche qui toucheraient la survie).
+# 1.1.0 : KS_Economy, KS_Jetons, KS_RewardsGUI, KS_Fly et KS_Menu marchent dans le monde de test avec le compte de
+# test du joueur (« moi de test ») ; les magasins de KS_Economy y restent refuses par KS_Economy lui-meme.
 plugins-coupes:
-  - KS_Economy
-  - KS_Jetons
-  - KS_RewardsGUI
   - KS_CoffreMort
   - KS_Claim
-  - KS_Fly
   - KS_Parrainage
   - KS_AntiCheat
-  - KS_Menu
   - SimpleClaimSystem
   - WorldGuard
   - GrimAC
 
-# Dans le monde de test : autres commandes refusees (sans « / »). « kixster » : menu de KS_Menu ; les autres agissent
-# sur tout le serveur (un operateur du monde de test ne doit pas pouvoir les lancer).
+# Dans le monde de test : autres commandes refusees (sans « / »). « setspawn » : point de reapparition de la survie ;
+# les autres agissent sur tout le serveur (un operateur du monde de test ne doit pas pouvoir les lancer).
 commandes-coupees:
-  - kixster
   - setspawn
   - op
   - deop

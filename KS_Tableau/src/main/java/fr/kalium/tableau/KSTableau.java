@@ -175,7 +175,7 @@ public final class KSTableau extends JavaPlugin implements Listener {
             lignes.add(lang.c("ligne-exploration-courte", "<gray>Exploration : <white><n>/<limite>", "n",
                     exploration[0], "limite", exploration[1]));
         }
-        Integer n = claims.get(joueur.getUniqueId());
+        Integer n = CompteTest.enTest(joueur) ? null : claims.get(joueur.getUniqueId());
         if (n != null) {
             lignes.add(lang.c("ligne-claims", "<gray>Claims : <white><n>", "n", n));
         }
@@ -209,7 +209,9 @@ public final class KSTableau extends JavaPlugin implements Listener {
     }
 
     private void lireClaims(Player joueur) {
-        Integer n = Sources.claims(joueur.getUniqueId());
+        // 1.1.0 : pas de claims dans le monde de test (KS_MondeTest) : ligne masquée (score et exploration y sont ceux
+        // du compte de test, lus dans KS_Economy et KS_FairPlay).
+        Integer n = CompteTest.enTest(joueur) ? null : Sources.claims(joueur.getUniqueId());
         if (n == null) {
             claims.remove(joueur.getUniqueId());
         } else {

@@ -271,7 +271,8 @@ public final class KlmStatistiques extends JavaPlugin implements org.bukkit.even
     private void compter() {
         long maintenant = System.currentTimeMillis();
         for (Player joueur : getServer().getOnlinePlayers()) {
-            if (maintenant - activite.getOrDefault(joueur.getUniqueId(), 0L) <= AFK_MS) {
+            // 1.2.0 : le temps passé dans le monde de test de Kixster (KS_MondeTest, métadonnée « ks_compte ») ne compte pas.
+            if (!joueur.hasMetadata("ks_compte") && maintenant - activite.getOrDefault(joueur.getUniqueId(), 0L) <= AFK_MS) {
                 actif.merge(joueur.getUniqueId(), 60L, Long::sum);
                 aSauver = true;
             }

@@ -123,8 +123,9 @@ public final class KSFly extends JavaPlugin implements Listener {
         return Math.max(1, getConfig().getLong("badge-recharge-minutes", 60)) * 60_000L;
     }
 
+    /** 1.1.0 : dans le monde de test (KS_MondeTest), l'état du compte de test du joueur. */
     private Etat etat(UUID joueur) {
-        return etats.computeIfAbsent(joueur, u -> new Etat());
+        return etats.computeIfAbsent(CompteTest.de(joueur), u -> new Etat());
     }
 
     // ------------------------------------------------------------------ ce que le joueur a

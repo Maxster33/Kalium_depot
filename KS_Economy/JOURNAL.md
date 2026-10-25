@@ -770,3 +770,17 @@ poisson) : passif reproductible, donc palier B, demande de LeKiwi06. Têtes de n
 Le nautile-zombie (non reproductible) reste à 50. Rien d'autre ne change dans `rachats.csv`.
 
 **Compilé, non déployé, non testé.** À déployer avec KS_BiomeChanger 1.2.0.
+
+## 1.11.0 - moi de test : solde séparé dans le monde de test (25/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (25/10/2026, après le premier essai du monde de test)** : « je vois encore mon score de monnaie etc. dans le tableau à droite, donc ce n'est pas bien séparé [...] il faut vraiment scinder les 2, mis à part pour les plugins qui doivent marcher sur les 2 mondes, mais en faisant la distinction du moi de Kixster et le moi du mondetest ». Choix validés : « moi de test » (même compte Java, identifiant de test automatique) pour l'économie, les jetons, les maisons, le tableau, les récompenses, le fly et l'exploration ; progrès, recettes et statistiques : « rien ne compte en test ».
+
+Principe (KS_MondeTest 1.1.0) : dans le monde de test, le joueur porte la métadonnée `ks_compte`, identifiant de son compte de test (UUID de version 3 tiré du sien, toujours le même). Classe `CompteTest` (copiée dans chaque plugin concerné, sans dépendance) : `de(uuid)` rend ce compte de test si le joueur est dans le monde de test, sinon son UUID. Les données sont rangées sous cet identifiant : son compte de Kixster n'est jamais touché. Sans KS_MondeTest : rien ne change.
+
+- Comptes : `compte()`, `solde`, `gagne`, solde masqué et `aUnCompte` passent par `CompteTest.de` : dans le monde de test, solde, compteur des ventes au serveur et masquage sont ceux du compte de test (zéro au départ ; on le remplit en déposant des émeraudes de créatif). Les autres plugins (KS_Tableau, KS_Jetons, KS_Teleport, Vault) obtiennent donc le bon solde sans changement de leur côté.
+- Rachats de la semaine : quota par compte (le compte de test a le sien).
+- Liste Tab : solde remis à jour à chaque changement de monde.
+- **Magasins refusés depuis le monde de test** (« Les magasins de Kixster ne sont pas accessibles depuis le monde de test. ») : `/magasin`, `/magasins`, Mon magasin, catalogue, recherche, gestion et stock d'une boutique, achat. Sinon un compte de test (rempli en créatif) achèterait le stock réel d'un joueur et le paierait en points de test.
+- Pas changé : résumé de modération (KS_AntiCheat, compte réel), ventes et notifications des magasins.
+
+**À déployer ensemble sur Kixster** : KS_MondeTest 1.1.0, KS_Economy 1.11.0 (avec KS_BiomeChanger 1.2.0, exigé par KS_Economy 1.10.1), KS_Jetons 2.2.0, KS_Teleport 1.5.0, KS_RewardsGUI 1.10.0, KS_FairPlay 1.1.0, KS_Fly 1.1.0, KS_Tableau 1.1.0, KS_Menu 1.3.0, KS_Parrainage 1.2.0, KLM_Statistiques 1.2.0 ; nouveau `config.yml` de KS_MondeTest et clé `espaces-interfaces` de KLM_Menu à changer (voir le JOURNAL de KS_MondeTest). **Compilé, non déployé, non testé en jeu.**

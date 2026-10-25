@@ -83,6 +83,14 @@ import java.util.function.Consumer;
  *   l'autre cote est refusee des deux cotes.
  * Les autres plugins lisent le cote d'un joueur dans sa metadonnee « klm_espace » (comme avec KLM_Espaces) : KLM_Menu
  * 2.12.0 cache ainsi les interfaces des plugins rattaches a la survie (config.yml de KLM_Menu, « espaces-interfaces »).
+ *
+ * 1.1.0 (LeKiwi06, 25/10/2026 : « il faut vraiment scinder les 2, mis a part pour les plugins qui doivent marcher sur
+ * les 2 mondes, mais en faisant la distinction du moi de Kixster et du moi du monde de test ») : « moi de test ». Dans
+ * le monde de test, le joueur porte la metadonnee « ks_compte », identifiant de son compte de test (UUID de version 3
+ * tire du sien, toujours le meme) : KS_Economy, KS_Jetons, KS_Teleport, KS_RewardsGUI, KS_FairPlay et KS_Fly y rangent
+ * ses donnees (solde, jetons, maisons, recompenses, exploration, vol), son compte de Kixster n'est jamais touche ;
+ * KLM_Statistiques et KS_Parrainage n'y comptent pas le temps de jeu. Progres, recettes et statistiques vanilla
+ * n'avancent pas dans le monde de test.
  */
 public final class KsMondeTest extends JavaPlugin implements Listener {
 
@@ -265,12 +273,22 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
                 : lang.c("sortie", "<green>Retour sur Kixster : ton inventaire de survie t'est rendu."));
     }
 
+    /** 1.1.0 : identifiant du compte de test d'un joueur (« moi de test ») : UUID de version 3, toujours le meme. */
+    static UUID compteTest(UUID joueur) {
+        return UUID.nameUUIDFromBytes(("ks_mondetest:" + joueur).getBytes(StandardCharsets.UTF_8));
+    }
+
     /** Cote des donnees connu : metadonnee, registre, op du monde de test, visibilite. */
     private void appliquerCote(Player joueur) {
         UUID id = joueur.getUniqueId();
         String c = marque(joueur);
         coteDe.put(id, c);
         joueur.setMetadata("klm_espace", new FixedMetadataValue(this, c));
+        if (TEST.equals(c)) {
+            joueur.setMetadata("ks_compte", new FixedMetadataValue(this, compteTest(id).toString()));
+        } else {
+            joueur.removeMetadata("ks_compte", this);
+        }
         if (TEST.equals(c)) {
             joueur.setOp(opEnTest(id));
         }
@@ -463,7 +481,38 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
         coteDe.remove(id);
         departs.remove(id);
         moyens.remove(id);
-        event.getPlayer().removeMetadata("klm_espace", this);
+        // 1.1.0 : metadonnees retirees apres les autres plugins (ils sauvent encore le compte de test pendant le depart).
+        Player joueur = event.getPlayer();
+        Bukkit.getScheduler().runTask(this, () -> {
+            if (!joueur.isOnline()) {
+                joueur.removeMetadata("klm_espace", this);
+                joueur.removeMetadata("ks_compte", this);
+            }
+        });
+    }
+
+    // ------------------------------------------------------------------ progres, recettes, statistiques (1.1.0)
+
+    /** Rien n'avance dans le monde de test : le moi de Kixster garde ses progres, recettes et statistiques. */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onCritere(com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent event) {
+        if (enTest(event.getPlayer())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onRecette(org.bukkit.event.player.PlayerRecipeDiscoverEvent event) {
+        if (enTest(event.getPlayer())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onStatistique(org.bukkit.event.player.PlayerStatisticIncrementEvent event) {
+        if (enTest(event.getPlayer())) {
+            event.setCancelled(true);
+        }
     }
 
     /** Seule entree dans le monde de test : /mondetest ou le bouton (toute autre teleportation vers lui est refusee). */
@@ -578,14 +627,15 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
     }
 
     /**
-     * L'etoile de KS_Menu s'ouvre meme quand le clic est annule : son menu (Economie, Jetons, Recompenses...) est
-     * referme aussitot dans le monde de test.
+     * L'etoile de KS_Menu s'ouvre meme quand le clic est annule : si KS_Menu est dans « plugins-coupes », son menu est
+     * referme aussitot dans le monde de test (1.1.0 : KS_Menu n'y est plus par defaut, il masque lui-meme ses boutons
+     * de la survie).
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInteract(PlayerInteractEvent event) {
         ItemStack objet = event.getItem();
         if (objet == null || !objet.hasItemMeta() || !enTest(event.getPlayer())
-                || !objet.getItemMeta().getPersistentDataContainer().has(etoileKsMenu)) {
+                || !objet.getItemMeta().getPersistentDataContainer().has(etoileKsMenu) || !pluginCoupe("KS_Menu")) {
             return;
         }
         Player joueur = event.getPlayer();

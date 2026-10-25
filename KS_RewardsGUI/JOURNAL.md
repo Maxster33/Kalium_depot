@@ -322,3 +322,15 @@ historique de quelle personne a donné quoi à qui ». Maquette validée le mêm
 **Compilé, non déployé, non testé en jeu.**
 
 **Déployé sur Kixster le 25/10/2026 à 03:09 (LeKiwi06, avec KS_CoffreMort 1.1.0 ; 1.8.0 dans `_removed-ks_rewardsgui-1.8.0/` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage de Kixster. `config.yml` du serveur non touché. Statut : non testé en jeu.**
+
+## 1.10.0 - moi de test : /rewards séparé (25/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (25/10/2026, après le premier essai du monde de test)** : « je vois encore mon score de monnaie etc. dans le tableau à droite, donc ce n'est pas bien séparé [...] il faut vraiment scinder les 2, mis à part pour les plugins qui doivent marcher sur les 2 mondes, mais en faisant la distinction du moi de Kixster et le moi du mondetest ». Choix validés : « moi de test » (même compte Java, identifiant de test automatique) pour l'économie, les jetons, les maisons, le tableau, les récompenses, le fly et l'exploration ; progrès, recettes et statistiques : « rien ne compte en test ».
+
+Principe (KS_MondeTest 1.1.0) : dans le monde de test, le joueur porte la métadonnée `ks_compte`, identifiant de son compte de test (UUID de version 3 tiré du sien, toujours le même). Classe `CompteTest` (copiée dans chaque plugin concerné, sans dépendance) : `de(uuid)` rend ce compte de test si le joueur est dans le monde de test, sinon son UUID. Les données sont rangées sous cet identifiant : son compte de Kixster n'est jamais touché. Sans KS_MondeTest : rien ne change.
+
+- `/rewards` dans le monde de test : récompenses du compte de test (liste, récupération, message à la connexion).
+- Les dépôts des autres plugins (coffres de mort, parrainage, autres serveurs) vont toujours au compte de Kixster.
+- Outils des opérateurs depuis le monde de test : don de coffre seulement à un joueur qui s'y trouve (compte de test) ; coffres de mort refusés (survie).
+
+**À déployer ensemble sur Kixster** : KS_MondeTest 1.1.0, KS_Economy 1.11.0 (avec KS_BiomeChanger 1.2.0, exigé par KS_Economy 1.10.1), KS_Jetons 2.2.0, KS_Teleport 1.5.0, KS_RewardsGUI 1.10.0, KS_FairPlay 1.1.0, KS_Fly 1.1.0, KS_Tableau 1.1.0, KS_Menu 1.3.0, KS_Parrainage 1.2.0, KLM_Statistiques 1.2.0 ; nouveau `config.yml` de KS_MondeTest et clé `espaces-interfaces` de KLM_Menu à changer (voir le JOURNAL de KS_MondeTest). **Compilé, non déployé, non testé en jeu.**

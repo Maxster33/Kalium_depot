@@ -869,6 +869,9 @@ final class Boutiques implements Listener {
      * @param retour écran précédent (« Retour »), ou null (« Fermer »)
      */
     void ouvrirAchat(Player joueur, Boutique b, Consumer<Player> retour) {
+        if (KSEconomy.magasinsCoupes(joueur)) {
+            return;
+        }
         // 1.1.3 : pas d'achat dans sa propre boutique ; le propriétaire arrive sur sa gestion.
         if (b.proprio.equals(joueur.getUniqueId())) {
             plugin.menuMagasin().gererBoutique(joueur, b);
@@ -947,6 +950,9 @@ final class Boutiques implements Listener {
     }
 
     private void acheter(Player joueur, Boutique b, int lots, Consumer<Player> retour) {
+        if (KSEconomy.magasinsCoupes(joueur)) {
+            return;
+        }
         if (b.proprio.equals(joueur.getUniqueId())) {
             message(joueur, t("achat.soi-meme", "<red>Tu ne peux pas acheter dans ta propre boutique."));
             return;

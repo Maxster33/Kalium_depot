@@ -96,6 +96,9 @@ final class MenuMagasin implements Listener, TabExecutor {
             sender.sendMessage("Commande réservée aux joueurs.");
             return true;
         }
+        if (KSEconomy.magasinsCoupes(joueur)) {
+            return true;
+        }
         String action = args.length == 0 ? "" : args[0].toLowerCase();
         switch (action) {
             case "create", "creer", "créer" -> creer(joueur);
@@ -136,6 +139,9 @@ final class MenuMagasin implements Listener, TabExecutor {
 
     /** 1.5.0 : coffre ; sans magasin : comment en créer un ; sinon sa fiche et ses actions. */
     void ouvrir(Player joueur) {
+        if (KSEconomy.magasinsCoupes(joueur)) {
+            return;
+        }
         Magasin m = magasins.magasins.get(joueur.getUniqueId());
         if (m == null) {
             Contenant c = menus.menu(joueur, 4, t("magasin.titre-coffre", "<dark_gray>Mon magasin"), "magasin-aucun");
@@ -428,6 +434,9 @@ final class MenuMagasin implements Listener, TabExecutor {
 
     /** Gestion d'une boutique par son propriétaire (clic sur son panneau, ou depuis « Mes boutiques »). */
     void gererBoutique(Player joueur, Boutique b) {
+        if (KSEconomy.magasinsCoupes(joueur)) {
+            return;
+        }
         if (!magasins.boutiques.containsKey(b.id)) {
             ouvrir(joueur);
             return;
@@ -516,6 +525,9 @@ final class MenuMagasin implements Listener, TabExecutor {
 
     /** Contenu de la boutique, ouvert de n'importe où : copie verrouillée, recopiée à la fermeture. */
     private void ouvrirStock(Player joueur, Boutique b) {
+        if (KSEconomy.magasinsCoupes(joueur)) {
+            return;
+        }
         if (magasins.verrouillee(b)) {
             refus(joueur, t("boutique.verrouillee", "<red>Le propriétaire gère cette boutique : réessaie dans un instant."));
             return;
@@ -616,6 +628,9 @@ final class MenuMagasin implements Listener, TabExecutor {
 
     /** 1.5.0 : coffre ; un magasin par case (tête du propriétaire), classés par ventes de la semaine, 45 par page. */
     void catalogue(Player joueur, int page) {
+        if (KSEconomy.magasinsCoupes(joueur)) {
+            return;
+        }
         List<Magasin> liste = new ArrayList<>(magasins.magasins.values());
         // 1.1.3 : son propre magasin n'apparaît pas (il est dans « Mon magasin »).
         liste.removeIf(m -> m.proprio.equals(joueur.getUniqueId()));

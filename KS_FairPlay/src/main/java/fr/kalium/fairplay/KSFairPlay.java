@@ -164,7 +164,7 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
     /** 1.0.3 (pour KS_Tableau) : ouvertures comptées aujourd'hui par ce joueur. */
     public int ouverturesDuJour(UUID joueur) {
         verifierJour();
-        return compteurs.getOrDefault(joueur, 0);
+        return compteurs.getOrDefault(CompteTest.de(joueur), 0); // 1.1.0 : compte de test dans le monde de test
     }
 
     /** 1.0.3 (pour KS_Tableau) : limite journalière. */
@@ -218,7 +218,7 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
             return true;
         }
         verifierJour();
-        if (compteurs.getOrDefault(joueur.getUniqueId(), 0) < limite()) {
+        if (compteurs.getOrDefault(CompteTest.de(joueur.getUniqueId()), 0) < limite()) {
             return true;
         }
         // Un message toutes les 3 secondes au plus (coups répétés sur un gardien, clics sur un coffre).
@@ -257,7 +257,7 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
             return;
         }
         verifierJour();
-        int n = compteurs.merge(joueur.getUniqueId(), 1, Integer::sum);
+        int n = compteurs.merge(CompteTest.de(joueur.getUniqueId()), 1, Integer::sum);
         sauver();
         // 1.0.2 (LeKiwi06) : texte court, sans détailler ce qui compte (« pour ne pas trop spoil les changements »).
         Component compte = lang.c("compte-3", "<yellow>Exploration journalière : <n> / <limite>", "n", n,

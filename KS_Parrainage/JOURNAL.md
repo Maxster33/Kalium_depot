@@ -55,3 +55,13 @@ serveurs Paper) et KS_RewardsGUI 1.6.0 (Kixster).
 **Déployé sur Kixster le 23/10/2026 à 18:50 (accord de LeKiwi06) ; 1.0.0 dans `_removed-ks_parrainage-1.0.0/` (le `config.yml` avec le jeton reste en place) ; actif après redémarrage, non testé en jeu.**
 
 **Testé en jeu par LeKiwi06 le 24/10/2026 (« c'est bon, ça a juste mis du temps ») : LeKiwi06 parraine .PatientLime2170, déjà whitelisté (accepté à 01:37:06) ; KS_Parrainage reprend 84 h 11 de temps vanilla à 01:37:49 et dépose les coffres des 6 premiers paliers (1 h à 48 h) pour les deux. Délai : jusqu'à 2 minutes (relecture des filleuls chaque minute, puis le compte de la minute suivante).**
+
+## 1.2.0 - temps de jeu du monde de test non compté (25/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (25/10/2026, après le premier essai du monde de test)** : « je vois encore mon score de monnaie etc. dans le tableau à droite, donc ce n'est pas bien séparé [...] il faut vraiment scinder les 2, mis à part pour les plugins qui doivent marcher sur les 2 mondes, mais en faisant la distinction du moi de Kixster et le moi du mondetest ». Choix validés : « moi de test » (même compte Java, identifiant de test automatique) pour l'économie, les jetons, les maisons, le tableau, les récompenses, le fly et l'exploration ; progrès, recettes et statistiques : « rien ne compte en test ».
+
+Principe (KS_MondeTest 1.1.0) : dans le monde de test, le joueur porte la métadonnée `ks_compte`, identifiant de son compte de test (UUID de version 3 tiré du sien, toujours le même). Classe `CompteTest` (copiée dans chaque plugin concerné, sans dépendance) : `de(uuid)` rend ce compte de test si le joueur est dans le monde de test, sinon son UUID. Les données sont rangées sous cet identifiant : son compte de Kixster n'est jamais touché. Sans KS_MondeTest : rien ne change.
+
+- Le temps passé dans le monde de test (métadonnée `ks_compte`) ne compte pas dans le temps actif des filleuls.
+
+**À déployer ensemble sur Kixster** : KS_MondeTest 1.1.0, KS_Economy 1.11.0 (avec KS_BiomeChanger 1.2.0, exigé par KS_Economy 1.10.1), KS_Jetons 2.2.0, KS_Teleport 1.5.0, KS_RewardsGUI 1.10.0, KS_FairPlay 1.1.0, KS_Fly 1.1.0, KS_Tableau 1.1.0, KS_Menu 1.3.0, KS_Parrainage 1.2.0, KLM_Statistiques 1.2.0 ; nouveau `config.yml` de KS_MondeTest et clé `espaces-interfaces` de KLM_Menu à changer (voir le JOURNAL de KS_MondeTest). **Compilé, non déployé, non testé en jeu.**

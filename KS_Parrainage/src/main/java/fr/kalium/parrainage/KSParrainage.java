@@ -460,7 +460,9 @@ public final class KSParrainage extends JavaPlugin implements Listener {
         boolean change = false;
         for (Player joueur : Bukkit.getOnlinePlayers()) {
             Filleul f = filleuls.get(joueur.getUniqueId());
-            if (f == null || f.parrain == null || maintenant - activite.getOrDefault(joueur.getUniqueId(), 0L) > delai) {
+            // 1.2.0 : le temps passé dans le monde de test (KS_MondeTest, métadonnée « ks_compte ») ne compte pas.
+            if (f == null || f.parrain == null || joueur.hasMetadata("ks_compte")
+                    || maintenant - activite.getOrDefault(joueur.getUniqueId(), 0L) > delai) {
                 continue;
             }
             f.secondes += 60;

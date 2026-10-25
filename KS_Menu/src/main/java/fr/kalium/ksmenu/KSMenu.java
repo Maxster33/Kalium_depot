@@ -111,11 +111,22 @@ public final class KSMenu extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------ menu
 
+    /**
+     * 1.3.0 : dans le monde de test de Kixster (KS_MondeTest, métadonnée « ks_compte »), boutons des plugins de la survie
+     * seulement (claims, coffres de mort) masqués : config.yml, « monde-test-masques ».
+     */
+    private boolean masqueEnTest(String plugin) {
+        List<String> masques = getConfig().isList("monde-test-masques") ? getConfig().getStringList("monde-test-masques")
+                : List.of("KS_Claim", "KS_CoffreMort");
+        return masques.stream().anyMatch(plugin::equalsIgnoreCase);
+    }
+
     /** Menu d'Event : un bouton par plugin déclaré (plugins désactivés ignorés). */
     public void ouvrir(Player joueur) {
         List<ActionButton> boutons = new ArrayList<>();
         BOUTONS.stream()
                 .filter(b -> b.plugin().isEnabled())
+                .filter(b -> !joueur.hasMetadata("ks_compte") || !masqueEnTest(b.plugin().getName()))
                 .sorted(Comparator.comparingInt(Bouton::ordre))
                 .forEach(b -> boutons.add(gui.button(b.nom(), b.description(), p -> b.ouvrir().accept(p))));
         List<Component> corps = boutons.isEmpty()

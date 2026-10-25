@@ -293,7 +293,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
     /** 1.8.2 : points gagnés par un joueur en vendant au serveur (0 s'il n'a pas de compte) ; ne baisse jamais. */
     public static long gagne(UUID joueur) {
         synchronized (instance.comptes) {
-            Compte compte = instance.comptes.get(joueur);
+            Compte compte = instance.comptes.get(CompteTest.de(joueur));
             return compte == null ? 0 : compte.gagne;
         }
     }
@@ -313,7 +313,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
     /** Solde d'un joueur, en points (0 s'il n'a pas de compte). */
     public static long solde(UUID joueur) {
         synchronized (instance.comptes) {
-            Compte compte = instance.comptes.get(joueur);
+            Compte compte = instance.comptes.get(CompteTest.de(joueur));
             return compte == null ? 0 : compte.solde;
         }
     }
@@ -401,7 +401,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
     /** Le compte existe-t-il ? */
     static boolean aUnCompte(UUID joueur) {
         synchronized (instance.comptes) {
-            return instance.comptes.containsKey(joueur);
+            return instance.comptes.containsKey(CompteTest.de(joueur));
         }
     }
 
@@ -412,10 +412,11 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         }
     }
 
+    /** 1.11.0 : dans le monde de test (KS_MondeTest), le compte de test du joueur. */
     private Compte compte(UUID joueur) {
-        return comptes.computeIfAbsent(joueur, u -> {
+        return comptes.computeIfAbsent(CompteTest.de(joueur), u -> {
             Compte compte = new Compte();
-            Player enLigne = Bukkit.getPlayer(u);
+            Player enLigne = Bukkit.getPlayer(joueur);
             compte.nom = enLigne != null ? enLigne.getName() : null;
             return compte;
         });
@@ -423,7 +424,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
 
     boolean estMasque(UUID joueur) {
         synchronized (comptes) {
-            Compte compte = comptes.get(joueur);
+            Compte compte = comptes.get(CompteTest.de(joueur));
             return compte != null && compte.masque;
         }
     }
@@ -459,6 +460,22 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         } else {
             Bukkit.getScheduler().runTask(this, maj);
         }
+    }
+
+    /** 1.11.0 : entree dans le monde de test ou retour (KS_MondeTest) : solde du bon compte dans la liste Tab. */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onChangedWorld(org.bukkit.event.player.PlayerChangedWorldEvent event) {
+        majListe(event.getPlayer());
+    }
+
+    /** 1.11.0 : magasins de Kixster refuses depuis le monde de test (stock, achats, gains : ils sont en survie). */
+    static boolean magasinsCoupes(Player joueur) {
+        if (!CompteTest.enTest(joueur)) {
+            return false;
+        }
+        joueur.sendMessage(instance.lang.c("monde-test.magasins",
+                "<red>Les magasins de Kixster ne sont pas accessibles depuis le monde de test."));
+        return true;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

@@ -395,18 +395,23 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
         return true;
     }
 
+    /**
+     * 1.10.0 : dans le monde de test (KS_MondeTest), les récompenses du compte de test du joueur. Les dépôts des autres
+     * plugins (coffres de mort, parrainage, autres serveurs) vont toujours au compte de Kixster.
+     */
     synchronized List<Map.Entry<String, Recompense>> enAttente(UUID joueur) {
-        return new ArrayList<>(enAttente.getOrDefault(joueur, new LinkedHashMap<>()).entrySet());
+        return new ArrayList<>(enAttente.getOrDefault(CompteTest.de(joueur), new LinkedHashMap<>()).entrySet());
     }
 
     /** Retire une récompense récupérée et l'écrit dans le journal. */
     synchronized void recuperee(Player joueur, String id, Recompense r) {
-        LinkedHashMap<String, Recompense> liste = enAttente.get(joueur.getUniqueId());
+        UUID compte = CompteTest.de(joueur.getUniqueId());
+        LinkedHashMap<String, Recompense> liste = enAttente.get(compte);
         if (liste == null || liste.remove(id) == null) {
             return;
         }
         if (liste.isEmpty()) {
-            enAttente.remove(joueur.getUniqueId());
+            enAttente.remove(compte);
         }
         sauver();
         journal(joueur.getName() + " (" + joueur.getUniqueId() + ") | " + r.origine + " | " + r.raison + " | "

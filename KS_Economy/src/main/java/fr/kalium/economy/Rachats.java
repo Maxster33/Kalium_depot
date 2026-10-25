@@ -478,7 +478,7 @@ final class Rachats implements CommandExecutor {
     // ------------------------------------------------------------------ quota
 
     private long gagne(UUID joueur, String id) {
-        Map<String, Long> duJoueur = gains.get(joueur);
+        Map<String, Long> duJoueur = gains.get(CompteTest.de(joueur));
         return duJoueur == null ? 0 : duJoueur.getOrDefault(id, 0L);
     }
 
@@ -692,7 +692,7 @@ final class Rachats implements CommandExecutor {
         if (vendus > 0) {
             retirer(joueur, o.entree(), vendus * o.quantite());
             KSEconomy.crediterVente(id, total);
-            gains.computeIfAbsent(id, u -> new HashMap<>()).merge(objet, total, Long::sum);
+            gains.computeIfAbsent(CompteTest.de(id), u -> new HashMap<>()).merge(objet, total, Long::sum);
         }
         if (vendus == 0) {
             menus.message(joueur, t("rachats.quota-atteint", "<red>Quota du jour atteint pour cet objet "

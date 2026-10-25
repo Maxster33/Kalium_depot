@@ -177,8 +177,9 @@ public final class KSTeleport extends JavaPlugin implements Listener {
         return lang.c(cle, defaut, paires);
     }
 
+    /** 1.5.0 : dans le monde de test (KS_MondeTest), la fiche du compte de test du joueur. */
     private Fiche fiche(UUID joueur) {
-        return fiches.computeIfAbsent(joueur, u -> new Fiche());
+        return fiches.computeIfAbsent(CompteTest.de(joueur), u -> new Fiche());
     }
 
     /**

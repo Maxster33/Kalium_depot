@@ -98,3 +98,42 @@ non testé en jeu.**
    monde de test.
 6. Revenir dans le monde de test (objets de test retrouvés), puis en sortir par `/spawn` : inventaire de survie rendu.
 7. Depuis la survie, `/tp` vers le monde de test refusé ; vérifier `plugins/KS_MondeTest/journal.log`.
+
+## 1.1.0 - « moi de test » (25/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (25/10/2026, après le premier essai)** : « je vois encore mon score de monnaie etc. dans le tableau
+à droite, donc ce n'est pas bien séparé ; et l'heure du jour et de la nuit est synchro entre mondetest et kixster [...]
+il faut vraiment scinder les 2, mis à part pour les plugins qui doivent marcher sur les 2 mondes, mais en faisant la
+distinction du moi de Kixster et le moi du mondetest ». Choix validés : « moi de test » (même compte Java : « ton option
+moi de test nécessite que j'ai 2 comptes Java ? » ; non, identifiant de test automatique) ; progrès, recettes et
+statistiques : « rien ne compte en test ».
+
+- **Moi de test** : dans le monde de test, métadonnée `ks_compte` = identifiant du compte de test du joueur
+  (`UUID.nameUUIDFromBytes("ks_mondetest:" + uuid)`, version 3, toujours le même) ; retirée en survie. KS_Economy
+  1.11.0, KS_Jetons 2.2.0, KS_Teleport 1.5.0, KS_RewardsGUI 1.10.0, KS_FairPlay 1.1.0 et KS_Fly 1.1.0 y rangent les
+  données du joueur (solde, jetons, maisons, récompenses, exploration, vol) ; KS_Tableau 1.1.0 et la liste Tab montrent
+  donc le moi de test ; KS_Menu 1.3.0 y masque les boutons Claims et Coffres de mort ; KLM_Statistiques 1.2.0 et
+  KS_Parrainage 1.2.0 n'y comptent pas le temps de jeu. Métadonnées retirées un tick après la déconnexion (les autres
+  plugins sauvent encore le compte de test pendant le départ).
+- **Progrès, recettes et statistiques vanilla** : n'avancent pas dans le monde de test (critères de progrès, recettes
+  découvertes et statistiques annulés) ; ceux de Kixster restent intacts.
+- `plugins-coupes` (nouveau `config.yml`) : KS_CoffreMort, KS_Claim, KS_Parrainage, KS_AntiCheat, SimpleClaimSystem,
+  WorldGuard, GrimAC. KS_Economy, KS_Jetons, KS_RewardsGUI, KS_Fly et KS_Menu n'y sont plus (moi de test) ; `kixster`
+  retiré de `commandes-coupees`. L'étoile de KS_Menu n'est refermée que si KS_Menu est dans `plugins-coupes`.
+- **Heure** : déjà séparée côté serveur, rien à changer. Paper 26.3 donne une horloge à chaque monde
+  (`time.affects-all-worlds: false` dans `paper-global.yml` de Kixster ; `world_clocks.dat` propre à
+  `dimensions/minecraft/kixster_test/`) ; `/time` ne change que l'horloge du monde où on le tape. Vérifié le 25/10 à
+  11:08 : monde de test à 4 429 ticks, Kixster à 12 205 (sauvegardés au même instant). Le 25/10 à 04:35:52,
+  `/time set night` dans le monde de test puis retour sur Kixster à 04:35:54 : il y faisait déjà nuit (vers 19 400).
+
+**Au déploiement** :
+1. Nouveau `plugins/KS_MondeTest/config.yml` (l'ancien dans `_removed-ks_mondetest-1.0.0/`) : les listes de la 1.0.0
+   couperaient encore l'économie, les jetons et les récompenses.
+2. `config.yml` de KLM_Menu : `espaces-interfaces: kixster: ["KS_CoffreMort", "KS_Claim", "KS_Parrainage", "KS_AntiCheat"]`.
+3. Tous les plugins de la liste ci-dessus ensemble (et KS_BiomeChanger 1.2.0, exigé par KS_Economy depuis la 1.10.1).
+
+**Limites** : les comptes de test apparaissent dans les fichiers des plugins (`comptes.yml`, `jetons.yml`...) sous leur
+identifiant de test ; les magasins de Kixster ne sont pas testables depuis le monde de test (refusés : stock et gains
+réels) ; l'écran des statistiques montre celles de Kixster.
+
+**Compilé, non déployé, non testé en jeu.**
