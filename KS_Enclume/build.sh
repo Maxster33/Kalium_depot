@@ -4,7 +4,7 @@
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.3.0
+VERSION=1.4.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -17,7 +17,9 @@ case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) SEP=';'; win() { cygpath -w "$1"; } ;;
   *) SEP=':'; win() { printf '%s' "$1"; } ;;
 esac
-CP=""
+# 1.4.0 : compile contre KS_RewardsGUI (fusion des coffres de recompense, softdepend), compile d'abord, jamais embarque.
+sh "$DIR/../KS_RewardsGUI/build.sh" > /dev/null
+CP="$(win "$TOOLS/classes/KS_RewardsGUI")$SEP$(win "$TOOLS/classes/KLM_Menu")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
 OUT="$TOOLS/classes/KS_Enclume"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"

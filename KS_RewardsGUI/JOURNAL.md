@@ -237,3 +237,26 @@ palier de temps de jeu, barème validé le même jour).
 présent dans `plugins/KS_RewardsGUI/` de Kixster.
 
 **Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé) ; 1.5.0 dans `_removed-ks_rewardsgui-1.5.0/` ; actif après redémarrage, non testé en jeu.**
+
+## 1.7.0 - fusion dans l'enclume en coffre de KS_Enclume (25/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (voir `KS_Enclume/JOURNAL.md`, 1.4.0) : le menu de fusion s'ouvre accroupi + clic sur une enclume
+et sert aussi d'enclume ordinaire (bugs de l'enclume pour les joueurs Bedrock) ; coffres posés dans les cases ; usure de
+12 % à chaque validation, fusion comprise. Le menu est dans KS_Enclume 1.4.0 ; ce plugin garde les règles de la fusion.
+
+- **Menu « Fusion de coffres » retiré** (il ne s'ouvre plus au clic droit sur une enclume, coffre en main). Les coffres
+  se fusionnent dans l'enclume en coffre de KS_Enclume : deux coffres non ouverts posés dans ses cases.
+- Clic droit sur une enclume, coffre de récompense en main : sans s'accroupir, le coffre ne s'ouvre pas et un message
+  rappelle « Accroupis-toi et clique sur l'enclume pour fusionner des coffres. » (nouvelle clé `fusion.accroupi`) ;
+  accroupi, le clic est laissé à KS_Enclume.
+- Règles inchangées : coffres refusés (déjà ouvert, sans valeur moyenne, inconnu), coût = valeur du coffre fusionné en
+  points d'expérience (retirés par KS_Enclume), nouveau tirage dans `fusion.yml`, ligne « FUSION » de
+  `recuperations.log`. Nouveaux refus : un coffre avec un autre objet (`fusion.refus-autre`), deux fois le même coffre
+  (`fusion.refus-meme`).
+- API pour KS_Enclume : `estCoffre`, `refusFusion`, `apercuFusion` (image du coffre fusionné avant la fusion),
+  `coutFusion`, `fusionner` (renvoie le coffre fusionné ; c'est KS_Enclume qui remplace les deux coffres de ses cases).
+- Clés `fusion.titre`, `fusion.aide*`, `fusion.attente*`, `fusion.valider*`, `fusion.xp*`, `fusion.complet`,
+  `fusion.absent`, `fusion.fait`, `fusion.manque`, `fusion.cout`, `fusion.resultat` de `lang.yml` : ne servent plus.
+
+**Compilé le 25/10/2026, non déployé, non testé en jeu. À déployer sur Kixster avec KS_Enclume 1.4.0 (sans elle, les
+coffres ne se fusionnent plus).**

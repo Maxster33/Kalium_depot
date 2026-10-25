@@ -53,7 +53,8 @@ import java.util.UUID;
  *   (1.3.0 : les points du score d'une récompense y sont mis en émeraudes). Un clic sur un objet le prend ; on ne peut rien y
  *   déposer. Un coffre vidé disparaît ; sinon il garde ce qui reste et se rouvre.
  * - Le coffre ne se pose pas, ne se renomme pas à l'enclume, ne sert ni d'ingrédient ni de combustible.
- * - 1.5.0 : clic droit sur une enclume, coffre en main : menu de fusion de deux coffres non ouverts (voir Fusion).
+ * - 1.5.0 : fusion de deux coffres non ouverts à l'enclume (voir Fusion) ; 1.7.0 : dans l'enclume en coffre de
+ *   KS_Enclume (accroupi + clic), le coffre en main ne s'ouvre donc pas sur une enclume.
  */
 final class Coffres implements Listener {
 
@@ -171,17 +172,21 @@ final class Coffres implements Listener {
         if (id == null) {
             return;
         }
+        Player joueur = event.getPlayer();
+        // 1.7.0 : sur une enclume (neuve ou abîmée), le coffre ne s'ouvre pas. Accroupi : l'enclume en coffre de
+        // KS_Enclume s'ouvre (l'événement lui est laissé ; le coffre ne peut pas être posé, voir onPose) ; sinon, un
+        // message rappelle comment fusionner.
+        boolean enclume = event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null
+                && org.bukkit.Tag.ANVIL.isTagged(event.getClickedBlock().getType());
+        if (enclume && joueur.isSneaking()) {
+            return;
+        }
         // Le coffre ne se pose jamais : le clic droit l'ouvre.
         event.setCancelled(true);
-        Player joueur = event.getPlayer();
-        // 1.5.0 : sur une enclume (neuve ou abîmée), le clic droit ouvre le menu de fusion.
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null
-                && org.bukkit.Tag.ANVIL.isTagged(event.getClickedBlock().getType())) {
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                if (joueur.isOnline() && caseDe(joueur, id) >= 0) {
-                    plugin.fusion().ouvrir(joueur, id);
-                }
-            });
+        if (enclume) {
+            joueur.sendActionBar(lang.c("fusion.accroupi",
+                    "<yellow>Accroupis-toi et clique sur l'enclume pour fusionner des coffres."));
+            lang.saveIfNeeded();
             return;
         }
         Bukkit.getScheduler().runTask(plugin, () -> ouvrir(joueur, id));
@@ -351,22 +356,28 @@ final class Coffres implements Listener {
         return c == null ? 0 : c.recompense.valeur;
     }
 
-    /** L'objet d'un coffre, pour le montrer dans un menu (null s'il n'existe plus). */
-    ItemStack image(String id) {
-        Coffre c = coffres.get(id);
-        return c == null ? null : objet(id, c);
+    /** 1.7.0 : image du coffre fusionné de cette valeur, avant la fusion (aperçu de l'enclume de KS_Enclume). */
+    ItemStack apercuFusion(double valeur) {
+        ItemStack objet = new ItemStack(Material.CHEST);
+        ItemMeta meta = objet.getItemMeta();
+        meta.displayName(sansItalique(lang.c("coffre.fusionne", "<gold>Coffre de récompense fusionné")));
+        meta.lore(List.of(
+                sansItalique(lang.c("coffre.origine", "<gray>Origine : <origine>", "origine", "Fusion")),
+                sansItalique(lang.c("coffre.valeur", "<gray>Valeur moyenne : <yellow><valeur></yellow> émeraude(s)",
+                        "valeur", nombre(valeur))),
+                sansItalique(lang.c("coffre.non-ouvert", "<green>Non ouvert"))));
+        objet.setItemMeta(meta);
+        return objet;
     }
 
     /**
-     * Remplace deux coffres non ouverts de l'inventaire du joueur par un coffre de récompense fusionné, de la valeur
-     * et du contenu donnés (le contenu des deux coffres est abandonné). Renvoie l'identifiant du nouveau coffre, posé
-     * à la place du premier.
+     * Abandonne deux coffres non ouverts (et leur contenu) pour un coffre de récompense fusionné, de la valeur et du
+     * contenu donnés. 1.7.0 : renvoie l'objet du nouveau coffre ; les deux anciens sont dans l'enclume en coffre de
+     * KS_Enclume, qui les remplace (avant : remplacés ici dans l'inventaire du joueur).
      */
-    String fusionner(Player joueur, String a, String b, double valeur, int cout, List<Map<String, Object>> contenu) {
+    ItemStack fusionner(Player joueur, String a, String b, double valeur, int cout, List<Map<String, Object>> contenu) {
         Coffre ca = coffres.remove(a);
         Coffre cb = coffres.remove(b);
-        int place = caseDe(joueur, a);
-        joueur.getInventory().setItem(caseDe(joueur, b), null);
         YamlConfiguration yaml = new YamlConfiguration();
         yaml.set("joueur", joueur.getUniqueId().toString());
         yaml.set("nom", joueur.getName());
@@ -380,12 +391,11 @@ final class Coffres implements Listener {
         c.recompense = Recompense.lire(yaml.saveToString());
         String id = UUID.randomUUID().toString();
         coffres.put(id, c);
-        joueur.getInventory().setItem(place, objet(id, c));
         sauver();
         plugin.journal("FUSION | " + joueur.getName() + " (" + joueur.getUniqueId() + ") | coût " + cout + " points d'expérience"
                 + " | coffre " + a + " (" + decrit(ca) + ") + coffre " + b + " (" + decrit(cb) + ") | nouveau coffre " + id
                 + " (valeur " + nombre(valeur) + " ; contenu : " + c.recompense.resume() + ")");
-        return id;
+        return objet(id, c);
     }
 
     private static String decrit(Coffre c) {

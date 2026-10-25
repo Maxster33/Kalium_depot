@@ -142,3 +142,62 @@ Limites :
 
 **Déployé sur Event et Kixster le 08/10/2026 à 21:12 (Maxster33 ; 1.2.0 dans `_removed-ks_enclume-1.2.0/`), actif après
 redémarrage. Statut : non testé en jeu.**
+
+## 1.4.0 - enclume en coffre (accroupi + clic) (25/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « les joueurs bedrock m'ont dit que l'enclume n'arrive pas à dépasser la limite vanilla de prix
+d'xp, ça ne propose pas l'item dans la case de résultat » ; « un joueur bedrock ne peux pas mettre de livre affilage sur
+son épée, car leur jeu ne reconnais pas ce livre comme un livre enchanté valide ». Proposition : l'interface de fusion des
+coffres de récompense « s'ouvre quand on sneak+click, si on essaie de mettre 2 coffres de récompenses elle fonctionne
+comme d'habitude, mais elle peut également marcher comme une enclume normale » ; « il faut par contre veiller a ce que
+l'enclume s'use parfois ». Ses réponses aux trois questions de Claude : usure de 12 % à chaque validation, **fusion de
+coffres comprise** ; objets **posés dans les cases**, coffres de récompense compris ; menu dans **KS_Enclume**.
+
+Cause des deux bugs : le jeu Bedrock calcule lui-même l'aperçu du résultat de l'enclume (voir 1.1.3 et 1.1.4) ; au-delà de
+sa limite, ou pour un livre qu'il ne reconnaît pas, il n'affiche rien et le joueur ne peut rien prendre, même si le
+serveur a accepté. Dans un menu en coffre, c'est le serveur seul qui calcule et donne le résultat.
+
+- **Ouverture** : accroupi + clic droit sur une enclume (neuve, ébréchée ou endommagée) : menu « Enclume » (coffre de 3
+  rangées). Sans s'accroupir, l'enclume du jeu s'ouvre comme avant (renommage, coûts affichés des 1.1.x). Accroupi avec
+  une fiole vide en main : toujours le menu de KS_FioleExp (il passe avant). Un clic refusé par une protection (claim)
+  n'ouvre rien.
+- **Cases** : un clic sur un objet de son inventaire le pose (toute la pile) dans la 1re case libre (rangée du milieu,
+  3e puis 5e case) ; un clic sur un objet posé le reprend. Rien ne passe par le curseur (tous les clics sont annulés, le
+  plugin déplace lui-même les objets). À la fermeture (déconnexion et arrêt du plugin compris), les objets posés sont
+  rendus ; ce qui ne tient plus dans l'inventaire tombe aux pieds du joueur.
+- **Calcul** : par l'enclume du jeu, côté serveur, dans une fenêtre d'enclume jamais ouverte (`MenuType.ANVIL`) : règles
+  vanilla (réparation au matériau, fusion de deux objets, livres, enchantements incompatibles, pénalité des passages
+  successifs), réduction de la 1.2.0 au-delà de 50 niveaux, **aucun plafond**. Les refus des autres plugins s'appliquent
+  (`PrepareAnvilEvent` : coffres de KS_RewardsGUI, fioles de KS_FioleExp). Le nom d'un objet renommé est gardé (sans
+  champ de nom, le jeu l'aurait effacé et compté 1 niveau : il est retiré avant le calcul et remis sur le résultat).
+- **Aperçu** (7e case du milieu) : l'objet obtenu ; sinon « Aucun résultat » avec la raison. **Valider** (centre de la
+  rangée du bas) : « Valider (N niveaux) », vert si le joueur a les niveaux, rouge sinon. Au clic : niveaux retirés
+  (gratuit en créatif), le résultat prend la place du 1er objet, la 2e case perd les unités de matériau utilisées (ou est
+  vidée), comme dans le jeu. Le résultat reste dans le menu, pour enchaîner.
+- **Deux coffres de récompense non ouverts** : fusion de KS_RewardsGUI 1.7.0, comme avant (coût en points
+  d'expérience, « Valider (N XP) », nouveau tirage) ; l'aperçu montre le coffre fusionné et sa valeur moyenne. Un coffre
+  avec un autre objet : refusé.
+- **Jetons et badges de KS_Jetons** : refusés (« Badges : enclume normale (clic) ») : la fusion de deux badges est faite
+  par KS_Jetons à la prise du résultat dans l'enclume du jeu ; ici, elle aurait été faite comme une fusion vanilla, avec
+  un coût faux.
+- **Usure** : à chaque validation (réparation, enchantement ou fusion de coffres), hors créatif, 12 % de chances que
+  l'enclume s'abîme, comme dans le jeu (`AnvilMenu.onTake`, lu dans le code du jeu 26.3) : neuve → ébréchée →
+  endommagée → détruite (son de l'enclume qui casse ; le menu se ferme, les objets sont rendus). Sens de l'enclume gardé.
+- Validation refusée si l'enclume n'existe plus ou si le joueur s'en est éloigné de plus de 8 blocs (le menu se ferme).
+- `softdepend: [floodgate, KS_RewardsGUI]` ; `build.sh` compile KS_RewardsGUI d'abord (jamais embarqué). Sans
+  KS_RewardsGUI, l'enclume en coffre marche, sans fusion de coffres.
+
+Choix de Claude, signalés :
+- les textes du menu sont écrits dans le code (comme le reste de KS_Enclume, qui n'a pas de `lang.yml`) ;
+- accroupi + clic sur une enclume avec un bloc en main ouvre le menu au lieu de poser le bloc contre l'enclume ;
+- un clic pose toute la pile (le matériau en trop reste dans la case et revient à la fermeture) ;
+- pas de renommage dans ce menu (un coffre ne permet pas de taper un texte) : l'aide renvoie à l'enclume normale.
+
+Limites :
+- Écrit sans serveur de test : le calcul dans une fenêtre d'enclume jamais ouverte n'a pas été essayé en jeu (en cas
+  d'échec, le menu affiche « L'enclume en coffre est indisponible » et l'erreur est écrite une fois dans la console).
+- Si le serveur plante (arrêt brutal, pas un arrêt normal) pendant qu'un objet est posé dans le menu, cet objet est perdu
+  (choix « posés dans les cases »).
+- Un livre au-delà du niveau maximal du jeu (ex. Tranchant VI) est ramené au maximum, comme dans l'enclume du jeu.
+
+**Compilé le 25/10/2026, non déployé, non testé en jeu. À déployer sur Kixster avec KS_RewardsGUI 1.7.0.**

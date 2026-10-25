@@ -96,6 +96,14 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Enclume 1.4.0 + KS_RewardsGUI 1.7.0** (LeKiwi06, 25/10/2026), à déployer ensemble sur Kixster, **compilés, non
+  déployés, non testés en jeu** : enclume en coffre, accroupi + clic droit sur une enclume (le clic simple ouvre toujours
+  l'enclume du jeu). Les objets sont posés dans ses cases et le résultat est calculé par le serveur (règles vanilla,
+  réduction au-delà de 50 niveaux, sans plafond) : corrige pour les joueurs Bedrock l'enclume qui ne donnait rien au-delà
+  de la limite du jeu et le livre de Tranchant refusé par leur jeu. Deux coffres de récompense non ouverts s'y fusionnent
+  (le menu « Fusion de coffres » de KS_RewardsGUI est retiré). 12 % d'usure à chaque validation, fusion comprise. Jetons
+  et badges refusés (fusion des badges dans l'enclume du jeu). Détail : `KS_Enclume/JOURNAL.md`. Didacticiel de Kixster
+  à mettre à jour au déploiement (thème « Enclume », entrée « Fusion de coffres »).
 - **KLM_CollisionsBedrock 1.0.0** (nouveau, LeKiwi06, 24/10/2026) : plus de retour en arrière des joueurs Bedrock dans les bambous et les stalactites (Paper les renvoyait, souvent sans rien écrire au journal : Geyser n'applique pas le décalage aléatoire de ces blocs) ; liste de blocs réglable, ligne « Renvoi Bedrock » au journal pour trouver les autres blocs ; **déployé le 24/10/2026 à 18:49 sur Kixster, Kanvas (Kal-Games), le lobby et Serveur Jeux, à redémarrer, non testé en jeu**.
 - **GrimAC, `config.yml` de Kanvas (Kal-Games) et de Kixster** (LeKiwi06, 24/10/2026, choix « seuils relevés ») : section `Simulation` seulement, `setback-decay-multiplier` 0.999 → 0.99, `immediate-setback-threshold` 0.1 → 0.5, `max-advantage` 1 → 3 ; signalements inchangés. Cause : renvoi des joueurs Java dès 1 bloc d'écart cumulé, qui s'effaçait en 35 s (58 écarts de 0,02 à 0,09 bloc en PvP Kit le 23/10 vers 01:10, environ 15 renvois) ; rejoué sur l'historique de Grim : plus aucun renvoi pour ce PvP, et sur Kixster 375 renvois de LeKiwi06 → 33. Un tricheur qui gagne 0,05 bloc à chaque tick est encore renvoyé en 3 s environ. Fichier préparé hors dépôt ; **déployé le 24/10/2026 à 18:49 sur Kanvas et Kixster (ancien fichier dans `/plugins/_removed-grimac-config-2026-10-24/`), à redémarrer, non testé en jeu**.
 - **KS_Crafts 1.20.2** (LeKiwi06, 24/10/2026) : le livre de recettes montre le wagon contrôleur avec ses 5 pièces différentes (le craft à 5 pièces identiques était déjà refusé, seul l'affichage trompait) ; avec `didacticiel.yml` ; **déployé sur Kixster le 24/10/2026, à redémarrer, non testé en jeu**.

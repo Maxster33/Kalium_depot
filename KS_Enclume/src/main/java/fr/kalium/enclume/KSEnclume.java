@@ -63,6 +63,10 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 1.3.0 (Maxster33, 08/10/2026) : « ajouter le coût en niveaux nécessaire pour la réparation directement dans les
  * descriptions des équipements » ; choix : réparation complète avec le matériau de l'objet, sur tout objet réparable.
  * Dernière ligne de la description des objets de l'inventaire (voir Reparation).
+ *
+ * 1.4.0 (LeKiwi06, 25/10/2026) : enclume en coffre (accroupi + clic droit sur une enclume) : réparation et
+ * enchantements calculés par le serveur (joueurs Bedrock : plus de limite ni de livre refusé par leur jeu), fusion des
+ * coffres de récompense de KS_RewardsGUI, usure de 12 % à chaque validation (voir EnclumeCoffre).
  */
 public final class KSEnclume extends JavaPlugin implements Listener {
 
@@ -80,6 +84,10 @@ public final class KSEnclume extends JavaPlugin implements Listener {
 
     private final Map<UUID, Etat> etats = new HashMap<>();
 
+    /** 1.4.0 : vrai pendant un calcul de l'enclume en coffre (fenêtre d'enclume jamais ouverte) : pas d'affichage. */
+    boolean calculVirtuel;
+    private EnclumeCoffre enclumeCoffre;
+
     /** 1.1.4 : marque la ligne « Coût réel » ajoutée à l'objet de la 1re case (joueurs Bedrock). */
     private NamespacedKey marque;
 
@@ -90,6 +98,15 @@ public final class KSEnclume extends JavaPlugin implements Listener {
         Reparation reparation = new Reparation(this);
         getServer().getPluginManager().registerEvents(reparation, this);
         getServer().getScheduler().runTaskTimer(this, reparation::toutMettreAJour, 20L, 20L);
+        enclumeCoffre = new EnclumeCoffre(this);
+        getServer().getPluginManager().registerEvents(enclumeCoffre, this);
+    }
+
+    @Override
+    public void onDisable() {
+        if (enclumeCoffre != null) {
+            enclumeCoffre.fermerTout();
+        }
     }
 
     /** 1.2.0 : coût réduit au-delà de 50 niveaux (partie au-dessus comptée pour moitié) ; aussi pour 1.3.0. */
@@ -133,7 +150,7 @@ public final class KSEnclume extends JavaPlugin implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPrepareAffichage(PrepareAnvilEvent event) {
         AnvilView view = event.getView();
-        if (!(view.getPlayer() instanceof Player player)) {
+        if (calculVirtuel || !(view.getPlayer() instanceof Player player)) {
             return;
         }
         ItemStack result = event.getResult();

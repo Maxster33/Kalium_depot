@@ -53,6 +53,8 @@ import java.util.UUID;
  *   un dépôt local (coffre de mort) est toujours rendu en objets, comme avant.
  * - 1.6.0 : deposerCoffre(...) : un plugin de ce serveur dépose un coffre « Non ouvert » d'une valeur donnée, tiré avec
  *   les tables de fusion.yml (KS_Parrainage : coffres du parrain et du filleul à chaque palier).
+ * - 1.7.0 : estCoffre, refusFusion, apercuFusion, coutFusion, fusionner : fusion de deux coffres dans l'enclume en coffre de
+ *   KS_Enclume 1.4.0 (accroupi + clic sur une enclume), qui remplace le menu de fusion.
  */
 public final class KSRewardsGUI extends JavaPlugin implements Listener {
 
@@ -83,9 +85,8 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
         menu = new Menu(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(coffres, this);
-        // 1.5.0 : fusion de deux coffres de récompense (clic droit sur une enclume, coffre en main).
+        // 1.5.0 : fusion de deux coffres de récompense ; 1.7.0 : faite dans l'enclume en coffre de KS_Enclume.
         fusion = new Fusion(this);
-        getServer().getPluginManager().registerEvents(fusion, this);
         getServer().getPluginManager().registerEvents(new Contenant.Ecoute(), this);
         getCommand("rewards").setExecutor(this);
         // Bouton « Récompenses » du comparateur « Informations » de KLM_Menu 2.6.0 (s'il est présent).
@@ -293,6 +294,53 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
         }
         instance.sauver();
         return true;
+    }
+
+    // ------------------------------------------------------------------ 1.7.0 : fusion dans l'enclume de KS_Enclume
+
+    /** Vrai si cet objet est un coffre de récompense de ce plugin (ouvert ou non). */
+    public static boolean estCoffre(org.bukkit.inventory.ItemStack objet) {
+        return instance != null && instance.isEnabled() && instance.coffres.id(objet) != null;
+    }
+
+    /** Pourquoi ces deux coffres ne peuvent pas être fusionnés (message pour le joueur), ou null s'ils le peuvent. */
+    public static net.kyori.adventure.text.Component refusFusion(org.bukkit.inventory.ItemStack a, org.bukkit.inventory.ItemStack b) {
+        if (instance == null || !instance.isEnabled()) {
+            return net.kyori.adventure.text.Component.text("La fusion des coffres n'est pas disponible ici.",
+                    net.kyori.adventure.text.format.NamedTextColor.RED);
+        }
+        net.kyori.adventure.text.Component refus = instance.fusion.refus(instance.coffres.id(a), instance.coffres.id(b));
+        instance.lang.saveIfNeeded();
+        return refus;
+    }
+
+    /** Valeur moyenne (émeraudes) du coffre fusionné de ces deux coffres. */
+    public static double valeurFusion(org.bukkit.inventory.ItemStack a, org.bukkit.inventory.ItemStack b) {
+        return instance == null ? 0 : instance.fusion.valeur(instance.coffres.id(a), instance.coffres.id(b));
+    }
+
+    /** Image du coffre fusionné de ces deux coffres, avant la fusion (sans identifiant : il ne s'ouvre pas). */
+    public static org.bukkit.inventory.ItemStack apercuFusion(org.bukkit.inventory.ItemStack a, org.bukkit.inventory.ItemStack b) {
+        org.bukkit.inventory.ItemStack apercu = instance.coffres.apercuFusion(valeurFusion(a, b));
+        instance.lang.saveIfNeeded();
+        return apercu;
+    }
+
+    /** Coût de la fusion de ces deux coffres, en points d'expérience (pas en niveaux). */
+    public static int coutFusion(org.bukkit.inventory.ItemStack a, org.bukkit.inventory.ItemStack b) {
+        return Fusion.cout(valeurFusion(a, b));
+    }
+
+    /**
+     * Fusionne deux coffres acceptés par refusFusion : leur contenu est abandonné (journal « FUSION ») et l'objet du
+     * coffre fusionné est renvoyé ; l'appelant remplace les deux coffres par lui et retire les points d'expérience.
+     * Null si la fusion est impossible (rien n'est alors changé). Fil principal.
+     */
+    public static org.bukkit.inventory.ItemStack fusionner(Player joueur, org.bukkit.inventory.ItemStack a, org.bukkit.inventory.ItemStack b) {
+        if (instance == null || !instance.isEnabled()) {
+            return null;
+        }
+        return instance.fusion.fusionner(joueur, instance.coffres.id(a), instance.coffres.id(b));
     }
 
     /**
