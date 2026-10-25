@@ -232,6 +232,11 @@ themes:
         icone: IRON_SWORD
         texte: "La description de chaque équipement indique combien de niveaux coûte sa réparation complète."
         nouveau: "2026-10-18"
+      en-coffre:
+        nom: "Enclume en coffre"
+        icone: CHEST
+        texte: "Accroupi + clic droit sur une enclume : pose deux objets de ton inventaire, le résultat et son coût s'affichent, puis Valider. Calculé par le serveur, sans limite de prix (pratique sur Bedrock). Elle s'use comme une enclume normale. Pour renommer : clic droit sans s'accroupir."
+        nouveau: "2026-10-25"
       fioles:
         nom: "Fioles d'expérience"
         icone: EXPERIENCE_BOTTLE
@@ -383,14 +388,14 @@ themes:
       rewards:
         nom: "Récompenses"
         icone: ENDER_CHEST
-        texte: "Les gains des mini-jeux et de Kanvas arrivent ici, en coffres « Non ouvert » avec leur valeur moyenne. Clic droit, coffre en main, pour l'ouvrir."
+        texte: "Les gains des mini-jeux et de Kanvas arrivent ici, en coffres « Non ouvert » avec leur valeur moyenne. Clic droit, coffre en main, pour l'ouvrir (au-delà de 100 émeraudes, confirme l'ouverture). Sur un coffre ou un tonneau, c'est lui qui s'ouvre : tu peux y ranger ton coffre."
         commande: "/rewards"
-        nouveau: "2026-10-18"
+        nouveau: "2026-10-25"
       fusion:
         nom: "Fusion de coffres"
         icone: ANVIL
-        texte: "Clic droit sur une enclume, coffre de récompense en main : fusionne deux coffres en un plus gros, contre des points d'expérience."
-        nouveau: "2026-10-18"
+        texte: "Accroupi + clic droit sur une enclume, puis pose deux coffres de récompense non ouverts : ils fusionnent en un plus gros, contre des points d'expérience."
+        nouveau: "2026-10-25"
 
   parrainage:
     nom: "Parrainage"

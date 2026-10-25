@@ -435,11 +435,10 @@ final class EnclumeCoffre implements Listener {
             bloc.getWorld().playEffect(lieu, Effect.ANVIL_USE, 0);
             return;
         }
-        Material suivant = switch (bloc.getType()) {
-            case ANVIL -> Material.CHIPPED_ANVIL;
-            case CHIPPED_ANVIL -> Material.DAMAGED_ANVIL;
-            default -> null;
-        };
+        // Pas de switch sur Material : le compilateur y ajoute une table de tous les matériaux du jeu (jar 7 fois plus gros).
+        Material type = bloc.getType();
+        Material suivant = type == Material.ANVIL ? Material.CHIPPED_ANVIL
+                : type == Material.CHIPPED_ANVIL ? Material.DAMAGED_ANVIL : null;
         if (suivant == null) {
             bloc.setType(Material.AIR);
             bloc.getWorld().playEffect(lieu, Effect.ANVIL_BREAK, 0);

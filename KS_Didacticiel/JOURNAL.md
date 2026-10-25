@@ -217,3 +217,18 @@ non testé en jeu.** À envoyer avec son `didacticiel.yml`.
 **Déployé sur Event le 18/10/2026 à 17:16 (LeKiwi06 : « Oui, envoie KS_Didacticiel 1.3.0 et son didacticiel.yml sur Event » ; jar en place (1.2.1) vérifié de la même taille que `jars-deployes/`, rangé avec l'ancien `didacticiel.yml` dans `_removed-ks_didacticiel-1.2.1/` ; nouveau jar et nouveau fichier de la même taille que ceux du dépôt), actif après redémarrage d'Event. Contient la 1.2.2. Kixster pas encore. Statut : non testé en jeu.**
 
 **Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé, accord de LeKiwi06 : « allez on peut tout déployer ») ; ancien jar dans `_removed-<plugin>-<version>/` ; actif après redémarrage.** Avec `plugins/KS_Didacticiel/didacticiel.yml` du dépôt (parrainage, statistiques, blocs d'os).
+
+## Contenu du 25/10/2026 (LeKiwi06) : enclume en coffre, fusion et ouverture des coffres de récompense
+
+Pour KS_Enclume 1.4.0 et KS_RewardsGUI 1.8.0 (`didacticiel.yml` seul, jar inchangé) :
+- thème « Enclume, meule, expérience » : nouvelle entrée `en-coffre` « Enclume en coffre » (accroupi + clic droit, deux
+  objets posés, calcul par le serveur sans limite, usure, renommage par le clic simple) ;
+- thème des récompenses : `fusion` (accroupi + clic droit sur une enclume, deux coffres posés) et `rewards`
+  (confirmation au-delà de 100 émeraudes ; clic sur un coffre ou un tonneau : c'est lui qui s'ouvre) réécrites.
+Les trois portent `nouveau: "2026-10-25"`.
+
+**Envoyé sur Kixster le 25/10/2026 à 03:01** : le fichier du serveur avec ces trois changements seulement. Le texte du
+Changeur de biome (« 10 utilisations », KS_BiomeChanger 1.2.0, compilé non déployé, commit adcd52a) est dans le dépôt
+mais **pas encore sur Kixster** : il partira avec KS_BiomeChanger 1.2.0 (envoyer alors le fichier du dépôt). Ancien
+fichier dans `_removed-ks_didacticiel-contenu-2026-10-25/`. Relu au redémarrage (ou `/didacticiel recharger`). Statut : non
+testé en jeu.

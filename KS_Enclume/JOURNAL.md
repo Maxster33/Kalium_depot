@@ -200,4 +200,9 @@ Limites :
   (choix « posés dans les cases »).
 - Un livre au-delà du niveau maximal du jeu (ex. Tranchant VI) est ramené au maximum, comme dans l'enclume du jeu.
 
-**Compilé le 25/10/2026, non déployé, non testé en jeu. À déployer sur Kixster avec KS_RewardsGUI 1.7.0 (ou la 1.8.0, qui la contient).**
+Retouche avant l'envoi : l'usure n'utilise plus de `switch` sur `Material` (le compilateur y ajoutait une table de tous les
+matériaux : jar de 74 Ko au lieu de 24 Ko ; rien d'autre ne change).
+
+**Déployé sur Kixster le 25/10/2026 à 03:01 (LeKiwi06, avec KS_RewardsGUI 1.8.0 et le `didacticiel.yml` ; accord de LeKiwi06 :
+« déploie KS_Enclume 1.4.0 et KS_RewardsGUI 1.8.0 sur Kixster » ; 1.3.0 dans `_removed-ks_enclume-1.3.0/` ; jar en place
+vérifié identique à la référence avant l'envoi), actif après redémarrage de Kixster. Statut : non testé en jeu.**

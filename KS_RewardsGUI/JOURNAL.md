@@ -285,4 +285,6 @@ ouvert n'a plus rien à protéger).
   pas). Accroupi, le jeu n'ouvre pas le bloc : le coffre de récompense s'ouvre (avec la confirmation au-delà de 100
   émeraudes). Les protections (claims) s'appliquent comme pour tout clic sur un conteneur.
 
-**Compilé le 25/10/2026, non déployé, non testé en jeu. À déployer sur Kixster avec KS_Enclume 1.4.0.**
+**Déployé sur Kixster le 25/10/2026 à 03:01 (LeKiwi06, avec KS_Enclume 1.4.0 et le `didacticiel.yml` ; accord de LeKiwi06 ; 1.6.0 dans
+`_removed-ks_rewardsgui-1.6.0/` ; jar en place vérifié identique à la référence avant l'envoi ; `config.yml` et
+`fusion.yml` non touchés), actif après redémarrage de Kixster. Contient la 1.7.0. Statut : non testé en jeu.**
