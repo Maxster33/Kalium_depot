@@ -320,3 +320,5 @@ historique de quelle personne a donné quoi à qui ». Maquette validée le mêm
 À déployer avec KS_CoffreMort 1.1.0 (sinon pas de menu des coffres de mort). `fusion.yml` est déjà sur Kixster.
 
 **Compilé, non déployé, non testé en jeu.**
+
+**Déployé sur Kixster le 25/10/2026 à 03:09 (LeKiwi06, avec KS_CoffreMort 1.1.0 ; 1.8.0 dans `_removed-ks_rewardsgui-1.8.0/` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage de Kixster. `config.yml` du serveur non touché. Statut : non testé en jeu.**

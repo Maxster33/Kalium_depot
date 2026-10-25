@@ -16,11 +16,9 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Utilisés actuellement
 
-- KS_CoffreMort, KS_RewardsGUI — LeKiwi06 — depuis le 2026-10-25 03:08 — déploiement sur Kixster de KS_CoffreMort 1.1.0 et KS_RewardsGUI 1.9.0 (outils des opérateurs)
 - KLM_Espaces (nouveau), KaliumRelay, KalGames, KLM_Menu, KLM_Chat, KLM_Contacts, KG_BuildBattle, KV_BuildBattle — LeKiwi06 — depuis le 2026-10-21 01:45 — fusion de Kal-Games dans Kanvas (espaces étanches) et Serveur Jeux à la place d'Event (expiration des serveurs)
 - KS_DiagOutils (nouveau, temporaire) — LeKiwi06 — depuis le 2026-10-24 23:36 — diagnostic : houe, pelle, hache sans effet pour les joueurs Bedrock sur Kixster
 - KS_MondeTest (nouveau) — LeKiwi06 — depuis le 2026-10-25 02:53 — monde de test en créatif sur Kixster, étanche par rapport à la survie (remplace Event comme serveur de test)
-- KLM_Hub — LeKiwi06 — depuis le 2026-10-25 03:07 — éclairs décoratifs (sans dégâts ni feu) près des joueurs du lobby pendant l'orage
 
 
 

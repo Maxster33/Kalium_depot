@@ -18,7 +18,7 @@ représente, on sera prêt). »
 - KS_RewardsGUI 1.9.0 : bouton « Outils des opérateurs » dans /rewards (permission `ksrewardsgui.staff`) : donner un
   coffre (joueur, nom, valeur), historique des dons (`dons.yml`, lignes « DON » de `recuperations.log`), accès au menu
   des coffres de mort.
-- Les deux compilés ; rien de déployé.
+- Les deux compilés, puis déployés ensemble sur Kixster le 25/10/2026 à 03:09 (accord de LeKiwi06 : « Oui, déploie KS_CoffreMort 1.1.0 et KS_RewardsGUI 1.9.0 ensemble sur Kixster ») ; anciens jars dans `_removed-ks_coffremort-1.0.3/` et `_removed-ks_rewardsgui-1.8.0/`. Kixster à redémarrer.
 
 ## Décisions
 
@@ -32,6 +32,6 @@ représente, on sera prêt). »
 
 ## Reste à faire
 
-- Déployer KS_CoffreMort 1.1.0 et KS_RewardsGUI 1.9.0 ensemble sur Kixster, puis tester en jeu : don à un joueur hors
+- Redémarrer Kixster (humain), lire le journal, puis tester en jeu : don à un joueur hors
   ligne, refus (joueur inconnu, valeur invalide), historique, transfert d'un coffre de mort d'un joueur hors ligne,
   « Retour » entre les menus, saisie depuis Bedrock.

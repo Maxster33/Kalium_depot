@@ -3,6 +3,31 @@
 Plugin réseau (préfixe `KLM_`, prévu dans `ARCHITECTURE_CIBLE.md`) : ce qui accueille les joueurs sur un serveur
 d'arrivée. Installé sur le **lobby**. Dépend de **KLM_Menu 2.9.0** (service `QrCodes`, textes `Lang`).
 
+## 1.1.0 — éclairs décoratifs pendant l'orage (25/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « j'ai mis le monde du lobby en mode orage et nuit pour faire une ambiance halloween, mais je
+ne vois aucun éclair tomber durant l'orage, est-ce normal ? », puis « oui fais le » (des éclairs décoratifs qui tombent
+régulièrement pendant l'orage, sans dégâts ni feu).
+
+**Cause** : aucun plugin n'annule les éclairs. Le jeu en fait tomber très peu (1 chance sur 100 000 par chunk et par tick,
+seulement dans la distance de simulation) et chacun frappe le plus haut bloc d'une colonne prise au hasard : autour d'une
+île entourée de vide, presque tous tombent au fond du monde, hors de vue.
+
+- Toutes les 6 à 20 s (tiré au hasard), dans chaque monde du serveur où il y a de l'orage et au moins un joueur : un
+  éclair « effet seul » (`strikeLightningEffect` : ni dégâts, ni feu, ni bloc touché) à 16 à 48 blocs d'un joueur pris au
+  hasard, sur le plus haut bloc de la colonne. Colonne vide : jusqu'à 6 essais, puis l'éclair tombe à la hauteur du
+  joueur. Chunk non chargé : essai sauté (rien n'est chargé). Les éclairs du jeu continuent de tomber comme avant.
+- `config.yml` : nouvelle section `lightning` (`enabled`, `min-seconds`, `max-seconds`, `min-distance`, `max-distance`),
+  valeurs par défaut dans le code : **active sans toucher au `config.yml` déjà sur le lobby**. Pour la couper :
+  `lightning.enabled: false` à ajouter à la main, puis redémarrer.
+
+**Limites** : pas de commande de rechargement (inchangé) ; les éclairs suivent les joueurs, pas un point fixe ; le son
+du tonnerre et l'affichage pour les joueurs Bedrock (Geyser) ne sont pas vérifiés ; si un plugin du lobby annule les
+`LightningStrikeEvent`, ces éclairs sont annulés aussi.
+
+**Compilé, non déployé. Statut : non testé en jeu** (la 1.0.0 n'a pas non plus été testée en jeu ; ajout fait sur demande
+explicite). Se déploie seul (KLM_Menu 2.9.0 ou plus, déjà sur le lobby).
+
 ## 1.0.0 — barre de boss du lobby et QR codes (03/10/2026, LeKiwi06)
 
 **Demande de LeKiwi06** : « ajouter une boss bar KaLium SMC [...] (j'en avais déjà créé une tu peux peut-être la

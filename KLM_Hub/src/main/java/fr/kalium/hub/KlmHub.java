@@ -9,8 +9,10 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,6 +49,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * KLM_Hub 1.0.0 (demande de LeKiwi06, 03/10/2026) : ce qui accueille les joueurs au lobby.
@@ -55,6 +58,8 @@ import java.util.UUID;
  * - QR codes (service QrCodes de KLM_Menu, bouton « Recherche de joueurs » de la boussole) : une carte en main
  *   secondaire pendant 30 secondes ; la barre de boss du joueur se vide pendant ce temps (« le temps restant via les
  *   hp »). La carte est verrouillee et retiree a la fin, a la deconnexion et a la mort.
+ * 1.1.0 (demande de LeKiwi06, 25/10/2026, ambiance Halloween) : pendant un orage, des eclairs decoratifs tombent
+ * regulierement pres des joueurs, sans degats ni feu.
  */
 public final class KlmHub extends JavaPlugin implements Listener, QrCodes {
 
@@ -85,6 +90,14 @@ public final class KlmHub extends JavaPlugin implements Listener, QrCodes {
     private final Map<UUID, Long> finQr = new HashMap<>();
     private final Map<String, MapView> cartes = new HashMap<>();
     private final Map<String, Integer> numeros = new LinkedHashMap<>();
+
+    // Eclairs decoratifs pendant l'orage : delai (en ticks) avant le prochain, distances au joueur vise.
+    private boolean eclairs;
+    private int eclairMinTicks;
+    private int eclairMaxTicks;
+    private int eclairDistanceMin;
+    private int eclairDistanceMax;
+    private int prochainEclair;
 
     @Override
     public void onEnable() {
@@ -151,6 +164,12 @@ public final class KlmHub extends JavaPlugin implements Listener, QrCodes {
         attente = pauseTicks;
         titre = titre();
         dureeQr = Math.max(1, getConfig().getInt("qr.seconds", 30));
+        eclairs = getConfig().getBoolean("lightning.enabled", true);
+        eclairMinTicks = Math.max(20, (int) Math.round(getConfig().getDouble("lightning.min-seconds", 6) * 20));
+        eclairMaxTicks = Math.max(eclairMinTicks, (int) Math.round(getConfig().getDouble("lightning.max-seconds", 20) * 20));
+        eclairDistanceMin = Math.max(0, getConfig().getInt("lightning.min-distance", 16));
+        eclairDistanceMax = Math.max(eclairDistanceMin + 1, getConfig().getInt("lightning.max-distance", 48));
+        prochainEclair = eclairMinTicks;
     }
 
     // ------------------------------------------------------------------ barre de boss
@@ -184,6 +203,14 @@ public final class KlmHub extends JavaPlugin implements Listener, QrCodes {
 
     private void chaqueTick() {
         tick++;
+        if (eclairs && --prochainEclair <= 0) {
+            prochainEclair = ThreadLocalRandom.current().nextInt(eclairMinTicks, eclairMaxTicks + 1);
+            for (World monde : getServer().getWorlds()) {
+                if (monde.isThundering() && !monde.getPlayers().isEmpty()) {
+                    eclair(monde);
+                }
+            }
+        }
         if (defile) {
             if (attente > 0) {
                 attente--;
@@ -217,6 +244,39 @@ public final class KlmHub extends JavaPlugin implements Listener, QrCodes {
                     barre.progress(Math.max(0f, Math.min(1f, reste / (dureeQr * 1000f))));
                 }
             }
+        }
+    }
+
+    // ------------------------------------------------------------------ eclairs
+
+    /**
+     * Un eclair « effet seul » (ni degats, ni feu, ni bloc touche) pres d'un joueur pris au hasard. Le jeu n'en fait
+     * presque jamais tomber au lobby : ils sont rares (1 chance sur 100 000 par chunk et par tick) et, sur une ile
+     * entouree de vide, tombent surtout au fond du monde. On vise une colonne avec un bloc ; sans bloc trouve apres
+     * quelques essais, l'eclair tombe a la hauteur du joueur.
+     */
+    private void eclair(World monde) {
+        List<Player> joueurs = monde.getPlayers();
+        ThreadLocalRandom hasard = ThreadLocalRandom.current();
+        Location centre = joueurs.get(hasard.nextInt(joueurs.size())).getLocation();
+        Location cible = null;
+        for (int essai = 0; essai < 6 && cible == null; essai++) {
+            double angle = hasard.nextDouble(Math.PI * 2);
+            double distance = hasard.nextDouble(eclairDistanceMin, eclairDistanceMax);
+            int x = centre.getBlockX() + (int) Math.round(Math.cos(angle) * distance);
+            int z = centre.getBlockZ() + (int) Math.round(Math.sin(angle) * distance);
+            if (!monde.isChunkLoaded(x >> 4, z >> 4)) {
+                continue; // getHighestBlockYAt chargerait le chunk
+            }
+            int y = monde.getHighestBlockYAt(x, z);
+            if (y >= monde.getMinHeight()) {
+                cible = new Location(monde, x + 0.5, y + 1, z + 0.5);
+            } else if (essai == 5) {
+                cible = new Location(monde, x + 0.5, centre.getY(), z + 0.5);
+            }
+        }
+        if (cible != null) {
+            monde.strikeLightningEffect(cible);
         }
     }
 

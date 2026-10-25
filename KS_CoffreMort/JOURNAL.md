@@ -114,3 +114,5 @@ prêt) ».
 Limites : un coffre déjà disparu (temps écoulé) n'est plus récupérable, ni par les joueurs ni par les opérateurs.
 
 **Compilé, non déployé, non testé en jeu.**
+
+**Déployé sur Kixster le 25/10/2026 à 03:09 (LeKiwi06, avec KS_RewardsGUI 1.9.0 ; 1.0.3 dans `_removed-ks_coffremort-1.0.3/` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage de Kixster. `config.yml` du serveur non touché. Statut : non testé en jeu.**

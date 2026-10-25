@@ -30,3 +30,14 @@ bossbar:
 qr:
   # Duree d'affichage ; la barre de boss du joueur se vide pendant ce temps.
   seconds: 30
+
+# Eclairs decoratifs pendant un orage (ni degats, ni feu) : le jeu n'en fait presque jamais tomber au lobby.
+# Ils tombent pres d'un joueur pris au hasard, dans chaque monde du serveur ou il y a de l'orage.
+lightning:
+  enabled: true
+  # Delai entre deux eclairs, tire au hasard entre ces deux valeurs.
+  min-seconds: 6
+  max-seconds: 20
+  # Distance (en blocs) entre le joueur et l'eclair.
+  min-distance: 16
+  max-distance: 48
