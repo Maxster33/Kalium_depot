@@ -113,4 +113,7 @@ Limites : dans le hub, l'inventaire n'est modifiable qu'avec la permission `kalg
 le bouton est réservé aux modérateurs, comme le reste de la gestion des kits.
 
 **Compilé contre les sources actuelles de KalGames (seuls des appels déjà utilisés par la 1.1.0) ; pas de déploiement
-groupé nécessaire. Statut : non déployé, non testé en jeu.**
+groupé nécessaire.**
+
+**Déployé sur Kanvas (espace Kal-Games) le 26/10/2026 à 00:33 (Claude de LeKiwi06, accord de LeKiwi06 ; 1.1.0 dans
+`_removed-kg_pvpkit-1.1.0/`), actif après redémarrage. Statut : non testé en jeu.**

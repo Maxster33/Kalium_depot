@@ -12,7 +12,8 @@ que je puisse le modifier facilement »
 
 - KG_PvpKit 1.2.0 : bouton « Charger dans mon inventaire » dans la fiche d'un kit (Gérer les kits › un kit). Le kit
   complet remplace l'inventaire ; on le modifie puis « Remplacer par mon inventaire actuel » l'enregistre.
-- Compilé (`sortie/KG_PvpKit-1.2.0.jar`), non déployé.
+- Compilé, puis déployé sur Kanvas (espace Kal-Games) le 26/10/2026 à 00:33 (accord de LeKiwi06 : « oui ») ; 1.1.0
+  dans `_removed-kg_pvpkit-1.1.0/`. Kanvas à redémarrer.
 
 ## Décisions
 
@@ -21,5 +22,5 @@ que je puisse le modifier facilement »
 
 ## Reste à faire
 
-- Déployer sur Kanvas (espace Kal-Games) et redémarrer (humain), puis tester : chargement inventaire vide, confirmation
+- Redémarrer Kanvas (humain), puis tester : chargement inventaire vide, confirmation
   inventaire plein, objets du hub gardés, modification puis « Remplacer par mon inventaire actuel ».
