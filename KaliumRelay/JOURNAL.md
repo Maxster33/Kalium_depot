@@ -476,3 +476,5 @@ KS_RewardsGUI 1.6.0 (+ KLM_Statistiques 1.0.0 et `didacticiel.yml`).
 Limite (inchangée) : une demande en attente d'un joueur ajouté à la main à la whitelist de Kixster reste « en attente ».
 
 **Compilé, non déployé, non testé en jeu.** Empilé sur la 1.10.1 (parrainage testé par LeKiwi06 le 24/10/2026, demandes de whitelist jamais testées), à sa demande. À déployer avec KLM_Contacts 1.5.2 (tous les serveurs Paper) ; sans lui, le bouton « Demandes traitées » ne reçoit rien.
+
+**Déployé le 26/10/2026 à 01:11 sur le proxy (accord de LeKiwi06) ; 1.10.1 dans `_removed-kaliumrelay-1.10.1/` ; actif après redémarrage, non testé en jeu.**

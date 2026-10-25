@@ -12,6 +12,8 @@
 
 **Compilé, non déployé, non testé en jeu.** Exige KaliumRelay 1.10.2 (requête `whdemandes`) ; à déployer avec lui, sur tous les serveurs Paper (Kixster, lobby, Serveur Jeux, Kanvas).
 
+**Déployé le 26/10/2026 à 01:11 sur Kixster, le lobby, Serveur Jeux et Kanvas (accord de LeKiwi06) ; 1.5.1 dans `_removed-klm_contacts-1.5.1/` ; actif après redémarrage, non testé en jeu.**
+
 ## 1.5.1 - « whitelist », anciens joueurs parrainables (23/10/2026, LeKiwi06)
 
 **Demandes de LeKiwi06 (23/10/2026, après le déploiement)** : « j'ai voulu parrainer un joueur, ça me dit que Kixster n'a pas encore envoyé la liste blanche (j'aimerais que les joueurs déjà whitelist puissent prendre un parrain, pour qu'on puisse rattraper les récompenses qu'on aurait dû avoir) ; utilise le terme whitelist au lieu de liste blanche d'ailleurs » ; « j'aimerais aussi que les heures AFK sur le serveur ne comptent pas (considérer un joueur comme AFK s'il n'effectue pas d'actions pendant plus de 5 minutes et enlever l'AFK quand une action est effectuée) ». Ses choix : rattrapage sur le temps vanilla (CoreProtect, prévu d'abord, ne tourne pas sur Kixster en 26.3), temps actif aussi dans Statistiques.
