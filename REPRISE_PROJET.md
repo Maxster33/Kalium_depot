@@ -96,6 +96,14 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_MondeTest 1.0.0** (nouveau, LeKiwi06, 25/10/2026) : monde de test `Kixster Test` (plat, bordure 500) sur
+  Kixster, à la place d'Event comme serveur de test. Boutons « Monde de test » / « Retourner sur Kixster » dans la
+  rubrique Modération du menu (ou `/mondetest`) ; tout séparé de la survie à chaque changement de monde : inventaire,
+  coffre de l'Ender et son extension, expérience, effets, mode de jeu, **statut d'opérateur** (op dans le monde de test
+  pour ceux que LeKiwi06 désigne : `/mondetest ajouter <joueur> op`), joueurs visibles, tchat. Dans le monde de test :
+  pas de coffre de mort, pas de portail, plugins de valeur coupés (KS_Economy, KS_Jetons, KS_RewardsGUI...), commandes
+  qui visent l'autre côté refusées. **À déployer avec KLM_Menu 2.12.0 sur Kixster + clé `espaces-interfaces`** (détail
+  dans son `JOURNAL.md`). **Compilé, non déployé, non testé en jeu.**
 - **KS_Enclume 1.4.0 + KS_RewardsGUI 1.8.0** (LeKiwi06, 25/10/2026 ; **déployés sur Kixster le 25/10/2026 à 03:01, à redémarrer, non testés en jeu** ; la 1.8.0 contient la 1.7.0 et ajoute une confirmation avant d'ouvrir un coffre de récompense de plus de 100 émeraudes ; clic droit sur un conteneur, coffre de récompense en main : le conteneur s'ouvre), déployés ensemble : enclume en coffre, accroupi + clic droit sur une enclume (le clic simple ouvre toujours
   l'enclume du jeu). Les objets sont posés dans ses cases et le résultat est calculé par le serveur (règles vanilla,
   réduction au-delà de 50 niveaux, sans plafond) : corrige pour les joueurs Bedrock l'enclume qui ne donnait rien au-delà
@@ -452,6 +460,12 @@ une recherche, pas une navigation ; autoriser `Textinputhost` (clavier tactile W
 Format : `### 2026-10-23 — LeKiwi06
 
 *(Session du 23/10/2026, de 15 h 10 à 16 h. Réservations gardées : KS_Parrainage, KLM_Statistiques, KS_RewardsGUI, KaliumRelay, KLM_Contacts, KS_Didacticiel, jusqu'au déploiement.)*
+
+**Ajout (25/10/2026, 03:10, autre session de LeKiwi06) : KS_MondeTest 1.0.0 compilé et poussé, non déployé, non testé
+en jeu** : monde de test en créatif sur Kixster, étanche par rapport à la survie (voir « Versions compilées, non
+déployées »). Réservation gardée jusqu'au déploiement. Au déploiement : KLM_Menu 2.12.0 sur Kixster (réservé par
+LeKiwi06 depuis le 21/10 pour la migration) avec `espaces-interfaces`, monde de test sans claims dans
+SimpleClaimSystem, puis `mondetest ajouter LeKiwi06 op` dans la console.
 
 **Parrainage, liste blanche automatique, demande de liste blanche, statistiques : compilés et poussés, non déployés,
 non testés en jeu.** Demande faite à partir de son message d'annonce. Ses choix : demandes traitées dans un menu admin en

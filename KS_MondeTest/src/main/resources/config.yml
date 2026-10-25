@@ -1,0 +1,67 @@
+# ============================================================
+#  KS_MondeTest - Kixster
+#  Monde de test en creatif, etanche par rapport a la survie. On y entre par le bouton « Monde de test » de la
+#  rubrique Moderation du menu (ou /mondetest) ; on en sort par « Retourner sur Kixster » (ou tout autre moyen :
+#  les inventaires sont echanges a chaque changement de monde).
+#  Testeurs : /mondetest ajouter <joueur> [op] | retirer <joueur> | liste (console ou permission ksmondetest.admin),
+#  enregistres dans acces.yml. « op » : operateur dans le monde de test seulement.
+#  Journal : journal.log (entrees, sorties, refus).
+# ============================================================
+
+# Nom du monde de test (cree plat au premier demarrage).
+monde: "Kixster Test"
+
+# Cote de la bordure du monde, en blocs, centree sur son point d'apparition (0 = pas de bordure).
+bordure: 500
+
+# Mode de jeu a la premiere entree (ensuite : celui que le joueur avait en sortant).
+mode-a-l-arrivee: CREATIVE
+
+# Dans le monde de test : commandes et coffres de ces plugins refuses (objets ou points qui passeraient en survie ;
+# claims, regions et reglages de l'anti-triche qui toucheraient la survie).
+plugins-coupes:
+  - KS_Economy
+  - KS_Jetons
+  - KS_RewardsGUI
+  - KS_CoffreMort
+  - KS_Claim
+  - KS_Fly
+  - KS_Parrainage
+  - KS_AntiCheat
+  - KS_Menu
+  - SimpleClaimSystem
+  - WorldGuard
+  - GrimAC
+
+# Dans le monde de test : autres commandes refusees (sans « / »). « kixster » : menu de KS_Menu ; les autres agissent
+# sur tout le serveur (un operateur du monde de test ne doit pas pouvoir les lancer).
+commandes-coupees:
+  - kixster
+  - setspawn
+  - op
+  - deop
+  - whitelist
+  - ban
+  - ban-ip
+  - pardon
+  - pardon-ip
+  - stop
+  - restart
+  - reload
+  - lp
+  - luckperms
+  - difficulty
+  - defaultgamemode
+  - save-off
+  - tick
+  - datapack
+  - function
+  - schedule
+  - setidletimeout
+  - paper
+  - spigot
+
+# Commandes jamais filtrees (le reste est refuse s'il nomme un joueur de l'autre cote).
+commandes-libres:
+  - mondetest
+  - global

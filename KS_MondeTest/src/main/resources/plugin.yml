@@ -1,0 +1,20 @@
+name: KS_MondeTest
+version: '${project.version}'
+main: fr.kalium.mondetest.KsMondeTest
+api-version: '26.2'
+description: Kixster - monde de test en creatif, etanche par rapport a la survie (inventaires, coffre de l'Ender, experience, mode de jeu, statut d'operateur, joueurs visibles et tchat separes).
+authors: [KaLium]
+depend: [KLM_Menu]
+# Charge AVANT ces plugins : a la connexion, les donnees du bon cote doivent etre en place avant qu'ils donnent leurs
+# objets (etoile de KS_Menu, objets de KLM_Menu) ; tchat filtre avant KLM_Chat.
+loadbefore: [KS_Menu, KLM_Chat, KLM_Contacts]
+
+commands:
+  mondetest:
+    description: Entrer dans le monde de test ou en sortir ; ajouter / retirer des testeurs (administrateurs).
+    usage: /<command> [ajouter <joueur> [op] | retirer <joueur> | liste]
+
+permissions:
+  ksmondetest.admin:
+    description: Donner ou retirer l'acces au monde de test (et l'op dans ce monde).
+    default: op
