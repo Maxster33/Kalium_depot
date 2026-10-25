@@ -732,3 +732,33 @@ Changeur sans compteur (donné avant KS_BiomeChanger 1.2.0) compte comme neuf, c
 `rachats.csv` inchangés.
 
 **Compilé, non déployé, non testé.** À déployer avec KS_BiomeChanger 1.2.0.
+
+## 1.10.2 - têtes de mobs par paliers (25/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : les têtes de KS_Decapitator étaient bien trop chères pour des mobs banals (prix tirés d'une
+formule sur la rareté et la difficulté). Ses repères : passifs reproductibles et mobs des tours à mobs 5 à 10
+émeraudes ; mob « normal » comme l'abeille pollinisée environ 50 (il faut la tuer entre la fleur et la ruche) ;
+atypique et peu automatisable comme le bébé noyé environ 300. Paliers validés par lui :
+
+| Palier | Prix | Têtes |
+|---|---|---|
+| A | 5 | élevage courant (vache, cochon, mouton, poule, lapin) et golems fabriqués (71) |
+| B | 10 | fermes et tours à mobs, passifs reproductibles, abeille non pollinisée (196) |
+| C | 50 | ni élevage ni ferme courante : abeille pollinisée, perroquet, dauphin, ghast, piglin, shulker, évocateur, ravageur, allay, vex, panda brun, bébé piglin zombifié... (66) |
+| D | 300 | atypiques : bébés zombie, momifié, noyé, zombie-villageois, piglin, zoglin ; breeze, piglin barbare, creeper chargé, mooshroom marron, axolotl bleu (13) |
+| E | inchangé | Wither 2 013, warden 1 705, grand gardien 1 405, wither squelette 100 (4) |
+
+Une variante (couleur, race, métier, colère, bébé d'un animal) garde le palier de sa créature, sauf les variantes
+rares nommées ci-dessus. Le détail est dans `sortie/bareme/tetes-paliers-proposition.xlsx` (hors dépôt).
+
+- **Ajoutées au barème** (absentes depuis KS_Decapitator 1.3.0, donc jamais rachetées) : tête de bébé noyé (300),
+  16 têtes de shulker teint (50, End) et têtes de cube de soufre et de bébé cube de soufre (50).
+- **Suivent les têtes** : têtes vanilla au prix de la tête du même mob (zombie, squelette, creeper 10 ; piglin 50),
+  motif de bannière creeper (10,02), spawners (−10 à −100 sur environ 11 150).
+- Rien d'autre ne change dans `rachats.csv` (1 948 objets, dont 1 910 tirables). Une offre de la semaine dont le prix
+  du barème change est remplacée par un nouveau tirage au démarrage (depuis 1.8.0).
+
+Barème régénéré par `sortie/bareme` (paliers dans `bareme.py`, têtes ajoutées dans `remplir.py`), puis
+`exporter_rachats.py`.
+
+**Compilé, non déployé, non testé.** À déployer avec KS_BiomeChanger 1.2.0 et KS_Economy 1.10.1 (contenue dans 1.10.2).
