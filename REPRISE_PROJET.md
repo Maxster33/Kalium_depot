@@ -495,6 +495,15 @@ le `config.yml` de Geyser (proxy) pour voir le motif.
 ### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici ; les précédents vont dans
 `archive_reprise.md`.
 
+### 2026-10-25 — LeKiwi06 (outils des opérateurs)
+
+*(Session du 25/10/2026, de 02 h 15 à 03 h 15. Fin de session : réservations de KS_CoffreMort et KS_RewardsGUI libérées.)*
+
+**KS_CoffreMort 1.1.0 + KS_RewardsGUI 1.9.0, compilés, non déployés, non testés en jeu, à déployer ensemble sur
+Kixster** : bouton « Outils des opérateurs » dans /rewards (don d'un coffre de récompense : joueur, nom, valeur ;
+historique des dons) et `/coffres tous` (coffres de mort de tous les joueurs, transfert dans /rewards du mort). Détail
+et tests à faire : `historique-conversations/2026-10-25-outils-operateurs-rewards.md`.
+
 ### 2026-10-21 — LeKiwi06
 
 *(Session du 21/10/2026, de 01 h 25 à 01 h 50. Fin de session : réservations de KG_Bingo et KG_BuildBattle libérées.)*

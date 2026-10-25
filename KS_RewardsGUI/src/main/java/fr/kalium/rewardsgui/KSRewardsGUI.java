@@ -55,6 +55,8 @@ import java.util.UUID;
  *   les tables de fusion.yml (KS_Parrainage : coffres du parrain et du filleul à chaque palier).
  * - 1.7.0 : estCoffre, refusFusion, apercuFusion, coutFusion, fusionner : fusion de deux coffres dans l'enclume en coffre de
  *   KS_Enclume 1.4.0 (accroupi + clic sur une enclume), qui remplace le menu de fusion.
+ * - 1.9.0 : bouton « Outils des opérateurs » dans /rewards : don de coffres de récompense, historique des dons, coffres de
+ *   mort actifs (Staff).
  */
 public final class KSRewardsGUI extends JavaPlugin implements Listener {
 
@@ -72,6 +74,7 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
     private Menu menu;
     private Coffres coffres;
     private Fusion fusion;
+    private Staff staff;
 
     @Override
     public void onEnable() {
@@ -87,6 +90,8 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(coffres, this);
         // 1.5.0 : fusion de deux coffres de récompense ; 1.7.0 : faite dans l'enclume en coffre de KS_Enclume.
         fusion = new Fusion(this);
+        // 1.9.0 : outils des opérateurs (don de coffres, historique des dons), depuis /rewards.
+        staff = new Staff(this);
         getServer().getPluginManager().registerEvents(new Contenant.Ecoute(), this);
         getCommand("rewards").setExecutor(this);
         // Bouton « Récompenses » du comparateur « Informations » de KLM_Menu 2.6.0 (s'il est présent).
@@ -136,6 +141,15 @@ public final class KSRewardsGUI extends JavaPlugin implements Listener {
 
     Fusion fusion() {
         return fusion;
+    }
+
+    Staff staff() {
+        return staff;
+    }
+
+    /** /rewards du joueur (retour depuis les outils des opérateurs). */
+    void ouvrirMenu(Player joueur) {
+        menu.ouvrir(joueur);
     }
 
     @Override

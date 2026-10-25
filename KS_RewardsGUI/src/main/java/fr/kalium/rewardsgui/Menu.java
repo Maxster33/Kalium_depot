@@ -93,6 +93,10 @@ final class Menu {
         }
         menu.poser(50, Contenant.objet(Material.BARRIER, lang.c("liste.fermer", "<red>Fermer"), List.of()),
                 Player::closeInventory);
+        // 1.9.0 : outils des opérateurs (menu de KLM_Menu : ouvert au tick suivant, hors du clic).
+        if (joueur.hasPermission(Staff.PERMISSION)) {
+            menu.poser(52, plugin.staff().bouton(), j -> Bukkit.getScheduler().runTask(plugin, () -> plugin.staff().ouvrir(j)));
+        }
         menu.ouvrir(joueur);
         lang.saveIfNeeded();
     }

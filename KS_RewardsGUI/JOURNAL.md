@@ -288,3 +288,35 @@ ouvert n'a plus rien à protéger).
 **Déployé sur Kixster le 25/10/2026 à 03:01 (LeKiwi06, avec KS_Enclume 1.4.0 et le `didacticiel.yml` ; accord de LeKiwi06 ; 1.6.0 dans
 `_removed-ks_rewardsgui-1.6.0/` ; jar en place vérifié identique à la référence avant l'envoi ; `config.yml` et
 `fusion.yml` non touchés), actif après redémarrage de Kixster. Contient la 1.7.0. Statut : non testé en jeu.**
+
+## 1.9.0 - outils des opérateurs dans /rewards : don de coffres, historique (25/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (25/10/2026)** : « un bouton spécial dans le /rewards dédié aux opérateurs pour donner des
+coffres de récompenses aux joueurs ? comme variable il faut : nom du joueur, nom du coffre, valeur du coffre (c'est
+pour rétribuer les joueurs qui trouvent des bugs, [...] des récompenses d'événement etc.) ; il faut aussi y inclure un
+historique de quelle personne a donné quoi à qui ». Maquette validée le même jour (« La maquette me va »).
+
+- **Bouton « Outils des opérateurs »** (bloc de commande, case 52 de la barre de /rewards), visible avec la permission
+  `ksrewardsgui.staff` (opérateurs par défaut). Petit coffre : « Donner un coffre », « Historique des dons »,
+  « Coffres de mort actifs » (si KS_CoffreMort 1.1.0 est là : son menu `/coffres tous`, avec « Retour » vers ici),
+  « Retour » vers /rewards.
+- **Donner un coffre** : petite fenêtre avec trois champs : joueur, nom du coffre (40 caractères), valeur moyenne en
+  émeraudes (virgule acceptée). Refus avec message, puis retour à la fenêtre avec ce qui a été tapé : joueur jamais
+  connecté à ce serveur, nom vide, valeur hors de ]0 ; 10 000]. Puis confirmation verte / rouge (aperçu du coffre).
+  Le joueur reçoit dans /rewards, en ligne ou non, un coffre « Non ouvert » nommé « Coffre : <nom> », origine
+  « Staff », contenu tiré avec les tables de `fusion.yml` (`deposerCoffre`, comme le parrainage) ; message s'il est en
+  ligne. Sans `fusion.yml` (ou vide) : refusé, rien n'est enregistré.
+- **Historique des dons** : `plugins/KS_RewardsGUI/dons.yml` (date, opérateur, joueur et UUID, nom, valeur), affiché
+  du plus récent au plus ancien (45 par page). Chaque don est aussi écrit dans `recuperations.log` (ligne « DON ») et
+  dans la console.
+- Plafond de 10 000 émeraudes (non demandé, techniquement nécessaire) : le nombre de tirages d'un coffre croît avec sa
+  valeur, un coffre énorme ralentirait le serveur au moment du don.
+- Menus en coffre de la classe commune `fr.kalium.menu.api.Contenant` (KLM_Menu 2.11.0 et plus) ; /rewards garde sa
+  propre classe. Aucune nouvelle clé de `config.yml` ; nouveaux textes `staff.*` dans `lang.yml`.
+- KS_CoffreMort est appelé sans dépendance à la compilation (il dépend déjà de KS_RewardsGUI). Avec un KS_CoffreMort
+  plus ancien que 1.1.0, « Coffres de mort actifs » lance `/coffres tous`, qui n'ouvre alors que les coffres de
+  l'opérateur lui-même.
+
+À déployer avec KS_CoffreMort 1.1.0 (sinon pas de menu des coffres de mort). `fusion.yml` est déjà sur Kixster.
+
+**Compilé, non déployé, non testé en jeu.**

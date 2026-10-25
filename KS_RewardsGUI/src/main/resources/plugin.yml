@@ -11,3 +11,7 @@ commands:
     description: Recuperer ses recompenses.
     aliases: [recompenses, reward]
     usage: /rewards
+permissions:
+  ksrewardsgui.staff:
+    description: Bouton Outils des operateurs dans /rewards - donner des coffres de recompense, historique des dons.
+    default: op
