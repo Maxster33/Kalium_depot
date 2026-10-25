@@ -37,6 +37,8 @@ import net.kyori.adventure.text.Component;
  * - 1.5.1 : « whitelist » dans tous les textes (nouvelles clés de lang.yml) ; refus d'un parrainage croisé.
  * - Modération › Demandes de whitelist (permission klmcontacts.whitelist) : accepter / refuser chaque demande, et
  *   l'historique des parrainages (qui a fait venir qui).
+ * - 1.5.2 (LeKiwi06, 26/10/2026 : « j'aimerai que tu me créer un historique pour les demandes de whitelist traités ») :
+ *   « Demandes traitées » : chaque demande acceptée ou refusée (la plus récente d'abord), par qui, quand.
  */
 final class Parrainages {
 
@@ -63,6 +65,11 @@ final class Parrainages {
     }
 
     record Demande(UUID id, String nom, String discord, long date, boolean bedrock) {
+    }
+
+    /** 1.5.2 : demande traitée ; par = pseudo de l'admin, ou « parrainage » ; traite = 0 si la date est inconnue. */
+    record Traitee(UUID id, String nom, String discord, long date, boolean acceptee, String par, long traite,
+                   boolean bedrock) {
     }
 
     record Historique(UUID filleul, String nomFilleul, UUID parrain, String nomParrain, long date, long secondes) {
@@ -568,6 +575,9 @@ final class Parrainages {
             menu.poser(menu.bas(6), Contenant.objet(Material.WRITTEN_BOOK, t("demandes-wl.historique", "<aqua>Parrainages"),
                     l("demandes-wl.historique-info", "<gray>Qui a parrainé qui (le plus récent d'abord).")),
                     j -> historique(j, k -> demandes(k, retour)));
+            menu.poser(menu.bas(7), Contenant.objet(Material.BOOKSHELF, t("demandes-wl.traitees", "<aqua>Demandes traitées"),
+                    l("demandes-wl.traitees-info", "<gray>Demandes acceptées ou refusées (la plus récente d'abord).")),
+                    j -> traitees(j, k -> demandes(k, retour), 0));
             menu.ouvrir(joueur);
             lang.saveIfNeeded();
         });
@@ -632,6 +642,72 @@ final class Parrainages {
             } else if (liste.size() > n) {
                 menu.poser(menu.bas(3), Contenant.objet(Material.BOOK, t("historique.suite", "<gray><n> plus anciens non affichés",
                         "n", liste.size() - n), List.of()), null);
+            }
+            menu.poser(menu.bas(4), Contenant.objet(Material.OAK_DOOR, t("parrainage.retour", "<gray>Retour"), List.of()),
+                    retour::accept);
+            menu.ouvrir(joueur);
+            lang.saveIfNeeded();
+        });
+    }
+
+    // ------------------------------------------------------------------ 1.5.2 : demandes traitées
+
+    private void traitees(Player joueur, Consumer<Player> retour, int page) {
+        relais.appeler(joueur, "whdemandes", Map.of(), reponse -> {
+            if (reponse == null || !reponse.ok()) {
+                return;
+            }
+            List<Traitee> liste = new ArrayList<>();
+            for (String ligne : reponse.lignes()) {
+                String[] c = ligne.split("\t", -1);
+                try {
+                    if (c[0].equals("H")) {
+                        liste.add(new Traitee(UUID.fromString(c[1]), c[2], c[3], Long.parseLong(c[4]),
+                                c[5].equals("acceptee"), c[6], Long.parseLong(c[7]), Boolean.parseBoolean(c[8].trim())));
+                    }
+                } catch (RuntimeException e) {
+                    // ligne incomplète : ignorée
+                }
+            }
+            Contenant menu = Contenant.pour(joueur, t("traitees.titre", "<dark_gray>Demandes traitées"), MARQUE + "_admin");
+            int pages = Math.max(1, (liste.size() + Contenant.PAR_PAGE - 1) / Contenant.PAR_PAGE);
+            int p = Math.max(0, Math.min(pages - 1, page));
+            List<Traitee> visibles = liste.subList(p * Contenant.PAR_PAGE,
+                    Math.min(liste.size(), (p + 1) * Contenant.PAR_PAGE));
+            for (int i = 0; i < visibles.size(); i++) {
+                Traitee d = visibles.get(i);
+                List<Component> lignes = new ArrayList<>();
+                if (d.par().equals("parrainage")) {
+                    lignes.add(t("traitees.parrainage", "<green>Acceptée <gray>(parrainage accepté)"));
+                } else if (d.acceptee()) {
+                    lignes.add(t("traitees.acceptee", "<green>Acceptée <gray>par <white><admin>", "admin", d.par()));
+                } else {
+                    lignes.add(t("traitees.refusee", "<red>Refusée <gray>par <white><admin>", "admin", d.par()));
+                }
+                lignes.add(d.traite() > 0
+                        ? t("traitees.date", "<gray>Traitée le <white><date>", "date", DATE.format(Instant.ofEpochMilli(d.traite())))
+                        : t("traitees.date-inconnue", "<gray>Traitée avant le 26/10/2026"));
+                lignes.add(t("traitees.demandee", "<gray>Demandée le <white><date>", "date", DATE.format(Instant.ofEpochMilli(d.date()))));
+                lignes.add(t("demandes-wl.discord", "<gray>Discord : <white><discord>", "discord", d.discord()));
+                lignes.add(d.bedrock() ? t("demandes-wl.bedrock", "<gray>Joueur Bedrock") : t("demandes-wl.java", "<gray>Joueur Java"));
+                menu.poser(i, Contenant.objet(d.acceptee() ? Material.LIME_DYE : Material.RED_DYE,
+                        t("traitees.nom", "<white><nom>", "nom", d.nom()), lignes), null);
+            }
+            menu.barre();
+            if (liste.isEmpty()) {
+                menu.poser(22, Contenant.objet(Material.GRAY_DYE, t("traitees.vide", "<gray>Aucune demande traitée"), List.of()), null);
+            } else {
+                menu.poser(menu.bas(3), Contenant.objet(Material.BOOK, t("traitees.total", "<yellow><n> demandes traitées",
+                        "n", liste.size()), l("traitees.page", "<gray>Page <white><page></white> sur <white><pages></white>.",
+                        "page", p + 1, "pages", pages)), null);
+            }
+            if (p > 0) {
+                menu.poser(menu.bas(0), Contenant.objet(Material.ARROW, t("parrainage.precedente", "<gray>Page précédente"),
+                        List.of()), j -> traitees(j, retour, p - 1));
+            }
+            if (p < pages - 1) {
+                menu.poser(menu.bas(8), Contenant.objet(Material.ARROW, t("parrainage.suivante", "<gray>Page suivante"),
+                        List.of()), j -> traitees(j, retour, p + 1));
             }
             menu.poser(menu.bas(4), Contenant.objet(Material.OAK_DOOR, t("parrainage.retour", "<gray>Retour"), List.of()),
                     retour::accept);

@@ -462,3 +462,16 @@ KS_RewardsGUI 1.6.0 (+ KLM_Statistiques 1.0.0 et `didacticiel.yml`).
 **Compilé, non déployé, non testé en jeu.** À déployer ensemble : KaliumRelay 1.10.1 (proxy), KLM_Contacts 1.5.1 (tous les serveurs Paper), KS_Parrainage 1.1.0 + KLM_Statistiques 1.1.0 + `didacticiel.yml` (Kixster). Empilé sur les versions du 23/10 (déployées, pas encore testées), à la suite de la même demande.
 
 **Déployé sur le proxy le 23/10/2026 à 18:50 (accord de LeKiwi06) ; 1.10.0 dans `_removed-kaliumrelay-1.10.0/` ; actif après redémarrage, non testé en jeu.**
+
+## 1.10.2 - historique des demandes de whitelist traitées (26/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (26/10/2026)** : « j'aimerai que tu me créer un historique pour les demandes de whitelist traités ».
+
+- Chaque demande traitée (acceptée ou refusée par un admin, ou acceptée par un parrainage) est copiée dans l'historique avec la **date du traitement** (lignes `H` de `parrainage.txt`, gardées pour toujours). Avant, une nouvelle demande d'un joueur refusé remplaçait l'ancienne : l'historique les garde toutes.
+- Au premier démarrage en 1.10.2, les demandes déjà traitées (acceptées ou refusées avant) passent dans l'historique, sans date de traitement (inconnue).
+- Nouvelle requête `whdemandes` (KLM_Contacts 1.5.2) : l'historique, le plus récent d'abord.
+- Aucun réglage nouveau.
+
+Limite (inchangée) : une demande en attente d'un joueur ajouté à la main à la whitelist de Kixster reste « en attente ».
+
+**Compilé, non déployé, non testé en jeu.** Empilé sur la 1.10.1 (parrainage testé par LeKiwi06 le 24/10/2026, demandes de whitelist jamais testées), à sa demande. À déployer avec KLM_Contacts 1.5.2 (tous les serveurs Paper) ; sans lui, le bouton « Demandes traitées » ne reçoit rien.

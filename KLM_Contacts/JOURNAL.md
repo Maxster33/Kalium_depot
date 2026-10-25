@@ -2,6 +2,16 @@
 
 **Actif sur Event depuis son redémarrage du 17/10/2026 à 03:57 (journal lu, heures en UTC : 01:57) : KLM_Contacts 1.3.0 puis KS_Trains 1.4.0 activés sans erreur ni avertissement (KLM_Contacts avant KS_Trains, comme voulu pour le partage entre amis), démarrage en 12 s. Statut : non testé en jeu.**
 
+## 1.5.2 - demandes de whitelist traitées (26/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (26/10/2026)** : « j'aimerai que tu me créer un historique pour les demandes de whitelist traités ».
+
+- Modération › Demandes de whitelist : nouveau bouton « Demandes traitées » (bibliothèque, colonne 7 de la barre). Coffre de 45 demandes par page, la plus récente d'abord : colorant vert (acceptée) ou rouge (refusée) ; dans la description : par qui (pseudo de l'admin, ou « parrainage accepté »), date du traitement, date de la demande, Discord, Java / Bedrock. Livre au centre : nombre total et page.
+- Nouvelles clés de lang.yml : `demandes-wl.traitees`, `demandes-wl.traitees-info`, `traitees.*`.
+- Choix de Claude : colorants plutôt que têtes (l'état se lit d'un coup d'œil) ; pas de recherche par pseudo (non demandée).
+
+**Compilé, non déployé, non testé en jeu.** Exige KaliumRelay 1.10.2 (requête `whdemandes`) ; à déployer avec lui, sur tous les serveurs Paper (Kixster, lobby, Serveur Jeux, Kanvas).
+
 ## 1.5.1 - « whitelist », anciens joueurs parrainables (23/10/2026, LeKiwi06)
 
 **Demandes de LeKiwi06 (23/10/2026, après le déploiement)** : « j'ai voulu parrainer un joueur, ça me dit que Kixster n'a pas encore envoyé la liste blanche (j'aimerais que les joueurs déjà whitelist puissent prendre un parrain, pour qu'on puisse rattraper les récompenses qu'on aurait dû avoir) ; utilise le terme whitelist au lieu de liste blanche d'ailleurs » ; « j'aimerais aussi que les heures AFK sur le serveur ne comptent pas (considérer un joueur comme AFK s'il n'effectue pas d'actions pendant plus de 5 minutes et enlever l'AFK quand une action est effectuée) ». Ses choix : rattrapage sur le temps vanilla (CoreProtect, prévu d'abord, ne tourne pas sur Kixster en 26.3), temps actif aussi dans Statistiques.

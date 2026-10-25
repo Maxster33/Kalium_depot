@@ -49,6 +49,11 @@ import java.util.UUID;
  * temps passé estimé par KS_Parrainage) ; pas de parrainage croisé ; « whitelist » dans les textes (au lieu de « liste
  * blanche ») ; date d'acceptation envoyée à KS_Parrainage (« pkixster »).
  *
+ * 1.10.2 (LeKiwi06, 26/10/2026 : « j'aimerai que tu me créer un historique pour les demandes de whitelist traités ») :
+ * chaque demande traitée (par un admin, ou par un parrainage accepté) est gardée dans l'historique, avec la date de
+ * traitement ; elle y reste quand le joueur refait une demande (avant : la nouvelle demande remplaçait l'ancienne).
+ * Les demandes déjà traitées avant la 1.10.2 y sont reprises sans date de traitement.
+ *
  * Données : plugins/kaliumrelay/parrainage.txt (lignes à onglets) et whitelist-kixster.txt. Toutes les méthodes sont
  * appelées sous le verrou de {@link Contacts} (comme ContactsStore).
  */
@@ -61,13 +66,17 @@ final class Parrainage {
     record Accepte(UUID filleul, UUID parrain, long date) {
     }
 
-    /** Demande de liste blanche : etat « attente », « acceptee » ou « refusee » ; admin = pseudo de qui l'a traitee. */
+    /**
+     * Demande de liste blanche : etat « attente », « acceptee » ou « refusee » ; admin = pseudo de qui l'a traitee
+     * (« parrainage » : acceptee par un parrainage) ; traite = date du traitement (0 : inconnue, avant la 1.10.2).
+     */
     static final class Demande {
         final UUID joueur;
         String discord;
         long date;
         String etat = "attente";
         String admin = "";
+        long traite;
 
         Demande(UUID joueur) {
             this.joueur = joueur;
@@ -89,6 +98,8 @@ final class Parrainage {
     /** Joueur -> source (« parrain:&lt;uuid&gt; » ou « admin:&lt;pseudo&gt; ») : a ajouter a la liste blanche de Kixster. */
     private final Map<UUID, String> autorises = new LinkedHashMap<>();
     private final Map<UUID, Demande> demandes = new LinkedHashMap<>();
+    /** 1.10.2 : demandes traitees, dans l'ordre du traitement (gardees pour toujours). */
+    private final List<Demande> traitees = new ArrayList<>();
     /** Filleul -> {secondes de jeu actives, palier atteint} (copie de KS_Parrainage, pour l'affichage). */
     private final Map<UUID, long[]> jeu = new LinkedHashMap<>();
     /** Copie de la liste blanche de Kixster (joueurs et operateurs) ; null tant qu'elle n'a jamais ete envoyee. */
@@ -129,6 +140,15 @@ final class Parrainage {
                                 d.admin = c.length > 5 ? c[5] : "";
                                 demandes.put(d.joueur, d);
                             }
+                            case "H" -> {
+                                Demande d = new Demande(UUID.fromString(c[1]));
+                                d.discord = c[2];
+                                d.date = Long.parseLong(c[3]);
+                                d.etat = c[4];
+                                d.admin = c[5];
+                                d.traite = Long.parseLong(c[6]);
+                                traitees.add(d);
+                            }
                             case "T" -> paliers = c[1];
                             case "J" -> jeu.put(UUID.fromString(c[1]), new long[]{Long.parseLong(c[2]), Long.parseLong(c[3])});
                             default -> {
@@ -136,6 +156,14 @@ final class Parrainage {
                         }
                     } catch (RuntimeException e) {
                         // ligne abimee : ignoree
+                    }
+                }
+            }
+            if (traitees.isEmpty()) {
+                // Premier demarrage en 1.10.2 : les demandes deja traitees passent dans l'historique (sans date).
+                for (Demande d : demandes.values()) {
+                    if (!d.etat.equals("attente")) {
+                        traitees.add(copie(d));
                     }
                 }
             }
@@ -166,6 +194,8 @@ final class Parrainage {
         autorises.forEach((id, source) -> lignes.add("W\t" + id + "\t" + source));
         demandes.values().forEach(d -> lignes.add("D\t" + d.joueur + "\t" + d.discord + "\t" + d.date + "\t" + d.etat
                 + "\t" + d.admin));
+        traitees.forEach(d -> lignes.add("H\t" + d.joueur + "\t" + d.discord + "\t" + d.date + "\t" + d.etat + "\t"
+                + d.admin + "\t" + d.traite));
         jeu.forEach((id, v) -> lignes.add("J\t" + id + "\t" + v[0] + "\t" + v[1]));
         lignes.add("T\t" + paliers);
         ecrire(fichier, lignes);
@@ -186,6 +216,24 @@ final class Parrainage {
         } catch (IOException e) {
             logger.warn("[KaliumRelay] Parrainage : ecriture de " + cible.getFileName() + " impossible : " + e.getMessage());
         }
+    }
+
+    private static Demande copie(Demande d) {
+        Demande c = new Demande(d.joueur);
+        c.discord = d.discord;
+        c.date = d.date;
+        c.etat = d.etat;
+        c.admin = d.admin;
+        c.traite = d.traite;
+        return c;
+    }
+
+    /** 1.10.2 : la demande en attente est traitee ; une copie part dans l'historique. */
+    private void clore(Demande d, boolean acceptee, String par) {
+        d.etat = acceptee ? "acceptee" : "refusee";
+        d.admin = par;
+        d.traite = System.currentTimeMillis();
+        traitees.add(copie(d));
     }
 
     // ------------------------------------------------------------------ etat d'un joueur
@@ -284,7 +332,7 @@ final class Parrainage {
     // ------------------------------------------------------------------ requetes
 
     private static final Set<String> ACTIONS = Set.of("plist", "pparrainer", "pannuler", "paccepter", "prefuser",
-            "pkixster", "pjeu", "wdemande", "wliste", "whisto", "waccepter", "wrefuser", "wcheck", "wapplique", "wsync");
+            "pkixster", "pjeu", "wdemande", "wliste", "whisto", "whdemandes", "waccepter", "wrefuser", "wcheck", "wapplique", "wsync");
 
     static boolean gere(String action) {
         return ACTIONS.contains(action);
@@ -379,6 +427,7 @@ final class Parrainage {
             case "wdemande" -> demander(moi, params.getOrDefault("discord", ""));
             case "wliste" -> listeDemandes();
             case "whisto" -> historique();
+            case "whdemandes" -> historiqueDemandes();
             case "waccepter", "wrefuser" -> traiter(moi, cible(params.get("target")), action.equals("waccepter"));
             default -> "err:action";
         };
@@ -528,8 +577,7 @@ final class Parrainage {
         }
         Demande d = demandes.get(moi);
         if (d != null && d.etat.equals("attente")) {
-            d.etat = "acceptee";
-            d.admin = "parrainage";
+            clore(d, true, "parrainage");
         }
         sauver();
         contacts.tell(parrain, Contacts.prefix().append(Component.text(nom(moi), NamedTextColor.WHITE))
@@ -592,13 +640,27 @@ final class Parrainage {
         return out.toString();
     }
 
+    /**
+     * 1.10.2 : demandes de whitelist traitees, la plus recente d'abord (lignes « H » : joueur, pseudo, Discord, date de
+     * la demande, etat, traitee par, date du traitement, Bedrock).
+     */
+    private String historiqueDemandes() {
+        StringBuilder out = new StringBuilder("ok\n");
+        for (int i = traitees.size() - 1; i >= 0; i--) {
+            Demande d = traitees.get(i);
+            out.append("H\t").append(d.joueur).append('\t').append(nom(d.joueur)).append('\t').append(d.discord)
+                    .append('\t').append(d.date).append('\t').append(d.etat).append('\t').append(d.admin).append('\t')
+                    .append(d.traite).append('\t').append(bedrock(d.joueur)).append('\n');
+        }
+        return out.toString();
+    }
+
     private String traiter(UUID admin, UUID joueur, boolean accepter) {
         Demande d = joueur == null ? null : demandes.get(joueur);
         if (d == null || !d.etat.equals("attente")) {
             return "err:none";
         }
-        d.etat = accepter ? "acceptee" : "refusee";
-        d.admin = nom(admin);
+        clore(d, accepter, nom(admin));
         if (accepter) {
             autorises.put(joueur, "admin:" + nom(admin));
         }
