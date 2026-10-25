@@ -85,4 +85,4 @@ Demande de LeKiwi06 : « que le changeur de biome ait 10 utilisations avant de c
 Non changé : prix de rachat (KS_Economy, 522,7 par Changeur quel que soit le nombre d'utilisations restantes), recette
 (KS_Crafts) et taux dans les récompenses, établis pour un Changeur à usage unique.
 
-**Compilé, non déployé, non testé.**
+**Déployé sur Kixster le 25/10/2026 à 12:10 avec KS_Economy 1.11.0 (déploiement du « moi de test » de KS_MondeTest, accord de LeKiwi06) ; 1.1.1 dans `_removed-ks_biomechanger-1.1.1/` ; actif après redémarrage, non testé en jeu.**

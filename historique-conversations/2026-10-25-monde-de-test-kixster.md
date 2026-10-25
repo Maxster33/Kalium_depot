@@ -28,3 +28,25 @@ où je peux tester tout ça en créa, sans risquer de me give par accident des c
 - Plan de test : `KS_MondeTest/JOURNAL.md`.
 - Supprimables par l'humain sur Kixster : `_removed-klm_menu-2.9.0/`, `2.4.1/`, `2.0.0/`.
 - Plus tard si besoin : retouche de KS_AntiCheat (bouton Invsee de la rubrique Modération depuis la survie).
+
+## Suite (25/10/2026, 11 h 15 à 12 h 15) — « moi de test »
+
+### Demandé
+« je vois encore mon score de monnaie etc dans le tableau à droite [...] et l'heure du jour et de la nuit est synchro
+entre mondetest et kixster [...] il faut vraiment scinder les 2, mise à part pour les plugins qui doivent marcher sur
+les 2 mondes, mais en faisant la distinction du moi de kixster et le moi du mondetest ».
+
+### Fait
+- Heure : déjà séparée (une horloge par monde dans Paper 26.3, `world_clocks.dat` du monde de test distinct, valeurs
+  différentes le même instant) ; l'impression venait d'une nuit naturelle sur Kixster au moment du test.
+- « Moi de test » : KS_MondeTest 1.1.0 + KS_Economy 1.11.0, KS_Jetons 2.2.0, KS_Teleport 1.5.0, KS_RewardsGUI 1.10.0,
+  KS_FairPlay 1.1.0, KS_Fly 1.1.0, KS_Tableau 1.1.0, KS_Menu 1.3.0, KS_Parrainage 1.2.0, KLM_Statistiques 1.2.0
+  (commit 6d8fc12), déployés sur Kixster à 12:10 avec KS_BiomeChanger 1.2.0 et les deux configs.
+
+### Décisions
+- Même compte Java, identifiant de test automatique (métadonnée `ks_compte`) ; le compte de test part de zéro.
+- Progrès, recettes, statistiques et temps de jeu : rien ne compte dans le monde de test.
+- Magasins de Kixster refusés depuis le monde de test (choix de Claude : stock et gains réels).
+
+### Reste à faire
+- Redémarrage de Kixster (LeKiwi06), puis le plan de test du JOURNAL de KS_MondeTest (1.1.0).

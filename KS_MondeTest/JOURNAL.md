@@ -136,4 +136,4 @@ statistiques : « rien ne compte en test ».
 identifiant de test ; les magasins de Kixster ne sont pas testables depuis le monde de test (refusés : stock et gains
 réels) ; l'écran des statistiques montre celles de Kixster.
 
-**Compilé, non déployé, non testé en jeu.**
+**Déployé sur Kixster le 25/10/2026 à 12:10 (accord de LeKiwi06 : « oui, déploie les 11 plugins du moi de test et KS_BiomeChanger 1.2.0 sur Kixster, avec le nouveau config.yml de KS_MondeTest et espaces-interfaces de KLM_Menu ») ; ancien jar dans `_removed-<plugin>-<version>/` ; actif après redémarrage (fait par LeKiwi06), non testé en jeu.** Nouveau `config.yml` envoyé (ancien dans `_removed-ks_mondetest-1.0.0/`) ; `config.yml` de KLM_Menu : `espaces-interfaces` réduit à KS_CoffreMort, KS_Claim, KS_Parrainage, KS_AntiCheat (ancien dans `_removed-klm_menu-config-2026-10-25/`).
