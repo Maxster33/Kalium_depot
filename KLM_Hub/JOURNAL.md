@@ -25,8 +25,9 @@ seulement dans la distance de simulation) et chacun frappe le plus haut bloc d'u
 du tonnerre et l'affichage pour les joueurs Bedrock (Geyser) ne sont pas vérifiés ; si un plugin du lobby annule les
 `LightningStrikeEvent`, ces éclairs sont annulés aussi.
 
-**Compilé, non déployé. Statut : non testé en jeu** (la 1.0.0 n'a pas non plus été testée en jeu ; ajout fait sur demande
-explicite). Se déploie seul (KLM_Menu 2.9.0 ou plus, déjà sur le lobby).
+**Déployé sur le lobby le 25/10/2026 à 03:14 (LeKiwi06), actif après redémarrage ; 1.0.0 dans
+`/plugins/_removed-klm_hub-1.0.0/`. Statut : non testé en jeu** (la 1.0.0 n'a pas non plus été testée en jeu ; ajout fait
+sur demande explicite). Se déploie seul (KLM_Menu 2.9.0 ou plus, déjà sur le lobby).
 
 ## 1.0.0 — barre de boss du lobby et QR codes (03/10/2026, LeKiwi06)
 
