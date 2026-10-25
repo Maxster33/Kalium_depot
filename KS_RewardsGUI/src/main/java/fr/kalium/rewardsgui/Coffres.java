@@ -55,7 +55,8 @@ import java.util.UUID;
  * - Le coffre ne se pose pas, ne se renomme pas à l'enclume, ne sert ni d'ingrédient ni de combustible.
  * - 1.5.0 : fusion de deux coffres non ouverts à l'enclume (voir Fusion) ; 1.7.0 : dans l'enclume en coffre de
  *   KS_Enclume (accroupi + clic), le coffre en main ne s'ouvre donc pas sur une enclume.
- * - 1.8.0 : plus de 100 émeraudes de valeur moyenne : la première ouverture demande une confirmation.
+ * - 1.8.0 : plus de 100 émeraudes de valeur moyenne : la première ouverture demande une confirmation ; clic droit sur
+ *   un conteneur (coffre, tonneau...), coffre en main : c'est le conteneur qui s'ouvre.
  */
 final class Coffres implements Listener {
 
@@ -183,6 +184,14 @@ final class Coffres implements Listener {
         boolean enclume = event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null
                 && org.bukkit.Tag.ANVIL.isTagged(event.getClickedBlock().getType());
         if (enclume && joueur.isSneaking()) {
+            return;
+        }
+        // 1.8.0 (LeKiwi06 : « clic droit sur un coffre, tonneau ou autre conteneur avec un coffre de récompense en main,
+        // c'est le bloc visé qui s'ouvre ») : sans s'accroupir, le jeu ouvre le conteneur ; le coffre de récompense ne
+        // s'ouvre pas et ne peut pas être posé (onPose). Accroupi, le jeu n'ouvrirait pas le bloc : le coffre s'ouvre.
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && !joueur.isSneaking() && event.getClickedBlock() != null
+                && (event.getClickedBlock().getType() == Material.ENDER_CHEST
+                || event.getClickedBlock().getState(false) instanceof Container)) {
             return;
         }
         // Le coffre ne se pose jamais : le clic droit l'ouvre.

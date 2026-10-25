@@ -278,8 +278,11 @@ coffre, ça ouvrait mon coffre de récompense au lieu du coffre que je visais »
 Choix de Claude, signalés : seuil strict (101 émeraudes et plus) ; seulement à la première ouverture (un coffre déjà
 ouvert n'a plus rien à protéger).
 
-Limite : le clic droit sur un coffre (bloc) avec un coffre de récompense en main vise toujours le coffre de récompense :
-la confirmation évite l'ouverture par erreur, mais il faut annuler, puis ouvrir son coffre avec une autre main pleine
-ou vide.
+- **Conteneur visé** (accord de LeKiwi06 : « clic droit sur un coffre, tonneau ou autre conteneur avec un coffre de
+  récompense en main, c'est le bloc visé qui s'ouvre ») : sans s'accroupir, un clic droit sur un bloc à inventaire
+  (coffre, coffre piégé, tonneau, boîte de shulker, entonnoir, four, distributeur...) ou sur un coffre de l'Ender ouvre
+  ce bloc, comme avec n'importe quel objet en main ; le coffre de récompense ne s'ouvre pas (et ne se pose toujours
+  pas). Accroupi, le jeu n'ouvre pas le bloc : le coffre de récompense s'ouvre (avec la confirmation au-delà de 100
+  émeraudes). Les protections (claims) s'appliquent comme pour tout clic sur un conteneur.
 
 **Compilé le 25/10/2026, non déployé, non testé en jeu. À déployer sur Kixster avec KS_Enclume 1.4.0.**
