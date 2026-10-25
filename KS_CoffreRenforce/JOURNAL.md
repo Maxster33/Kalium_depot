@@ -59,4 +59,4 @@ Limites :
   entonnoirs refusés) reste à faire.
 - Didacticiel de Kixster à mettre à jour au déploiement.
 
-**Compilé, non déployé, non testé en jeu.** À déployer sur Kixster avec KS_Crafts 1.21.0.
+**Déployé sur Kixster le 25/10/2026 à 03:51** avec KS_Crafts 1.21.0 et `didacticiel.yml` (LeKiwi06 : « Oui, déploie KS_CoffreRenforce 1.0.0 et KS_Crafts 1.21.0 sur Kixster, avec la mise à jour du didacticiel » ; nouveau jar de la même taille que celui compilé), actif après redémarrage de Kixster. Statut : non testé en jeu.

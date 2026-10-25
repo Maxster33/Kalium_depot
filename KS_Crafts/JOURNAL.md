@@ -468,4 +468,4 @@ un coffre ordinaire (ni un coffre renforcé, ni un coffre renommé). Ajoutée au
 
 Ajoutée sur la 1.20.2, déployée mais pas encore testée en jeu, à la demande de LeKiwi06 (craft du coffre renforcé).
 
-**Compilé, non déployé, non testé en jeu.** À déployer sur Kixster avec KS_CoffreRenforce 1.0.0.
+**Déployé sur Kixster le 25/10/2026 à 03:51** avec KS_CoffreRenforce 1.0.0 (jar en place 1.20.2 vérifié de la même taille que `jars-deployes/`, rangé dans `_removed-ks_crafts-1.20.2/`), actif après redémarrage de Kixster. Statut : non testé en jeu.

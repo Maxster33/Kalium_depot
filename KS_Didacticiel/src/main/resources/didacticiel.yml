@@ -216,6 +216,14 @@ themes:
         recettes:
           - "ks_elixir:*"
         nouveau: "2026-10-18"
+      coffre_renforce:
+        nom: "Coffre renforcé"
+        icone: CHEST
+        texte: "Stocke jusqu'à 1 000 stacks d'un seul objet. Clic droit pour déposer ou retirer ; les entonnoirs le remplissent et le vident, un comparateur donne son remplissage. Jamais de coffre double, et il ne se casse que vide."
+        recettes:
+          - "ks_crafts:coffre_renforce"
+        requiert: "KS_CoffreRenforce"
+        nouveau: "2026-10-25"
 
   enclume:
     nom: "Enclume, meule, expérience"

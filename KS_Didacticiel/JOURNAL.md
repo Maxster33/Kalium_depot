@@ -260,3 +260,12 @@ Limites : écrit sans serveur de test. Jar seul (`didacticiel.yml` inchangé).
 Compilé le 25/10/2026 (`sortie/KS_Didacticiel-1.4.0.jar`).
 
 **Déployé sur Kixster le 25/10/2026 à 03:47 (LeKiwi06 : « Oui, envoie KS_Didacticiel 1.4.0 sur Kixster » ; jar en place (1.3.0) vérifié de la même taille que `jars-deployes/`, rangé dans `_removed-ks_didacticiel-1.3.0/` ; nouveau jar de la même taille que celui compilé ; `didacticiel.yml` du serveur inchangé), actif après redémarrage de Kixster. Statut : non testé en jeu.**
+
+## Contenu du 25/10/2026, 03:51 : coffre renforcé (LeKiwi06)
+
+Nouveauté `crafts > coffre_renforce` (« Coffre renforcé », recette `ks_crafts:coffre_renforce`, `requiert:
+"KS_CoffreRenforce"`, `nouveau: "2026-10-25"`), avec le déploiement de KS_CoffreRenforce 1.0.0 et KS_Crafts 1.21.0.
+
+**Envoyé sur Kixster le 25/10/2026 à 03:51** : le fichier du serveur avec cette seule entrée en plus (le texte du
+Changeur de biome 1.2.0 n'y est toujours pas, il partira avec KS_BiomeChanger 1.2.0). Ancien fichier dans
+`_removed-ks_didacticiel-contenu-2026-10-25b/`. Relu au redémarrage. Statut : non testé en jeu.
