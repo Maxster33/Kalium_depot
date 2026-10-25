@@ -257,4 +257,6 @@ pour des nouveautés plus anciennes que la 1.4.0.
 
 Limites : écrit sans serveur de test. Jar seul (`didacticiel.yml` inchangé).
 
-Compilé le 25/10/2026 (`sortie/KS_Didacticiel-1.4.0.jar`). **Statut : non déployé, non testé en jeu.**
+Compilé le 25/10/2026 (`sortie/KS_Didacticiel-1.4.0.jar`).
+
+**Déployé sur Kixster le 25/10/2026 à 03:47 (LeKiwi06 : « Oui, envoie KS_Didacticiel 1.4.0 sur Kixster » ; jar en place (1.3.0) vérifié de la même taille que `jars-deployes/`, rangé dans `_removed-ks_didacticiel-1.3.0/` ; nouveau jar de la même taille que celui compilé ; `didacticiel.yml` du serveur inchangé), actif après redémarrage de Kixster. Statut : non testé en jeu.**
