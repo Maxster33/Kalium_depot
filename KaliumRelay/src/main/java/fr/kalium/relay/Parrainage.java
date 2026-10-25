@@ -299,29 +299,40 @@ final class Parrainage {
         return false;
     }
 
-    /** Arrivee sur KaLium : propositions de parrainage recues, demandes en attente (admins). */
+    /** Arrivee sur KaLium : propositions de parrainage recues. */
     void arrivee(Player joueur) {
-        UUID id = joueur.getUniqueId();
         int recues;
-        int enAttente = 0;
         synchronized (contacts) {
-            Set<UUID> p = propositions.get(id);
+            Set<UUID> p = propositions.get(joueur.getUniqueId());
             recues = p == null ? 0 : p.size();
-            if (config.isAdmin(joueur.getUsername(), id)) {
-                for (Demande d : demandes.values()) {
-                    if (d.etat.equals("attente")) {
-                        enAttente++;
-                    }
-                }
-            }
         }
         if (recues > 0) {
             joueur.sendMessage(Contacts.info("Tu as " + recues + " proposition" + (recues > 1 ? "s" : "")
                     + " de parrainage pour Kixster : ").append(lien("/parrainage")));
         }
+    }
+
+    /**
+     * 1.10.2 (LeKiwi06, 26/10/2026 : « met moi un message quand je rejoins le lobby comme pour les rewards pour me dire
+     * combien de demande de whitelist sont en attente ») : appele 3 s apres chaque arrivee sur le lobby. Avant, le
+     * nombre n'etait envoye qu'a la premiere connexion, au moment meme de l'arrivee (message sans doute perdu).
+     */
+    void rappelWhitelist(Player joueur) {
+        if (!joueur.isActive() || !config.isAdmin(joueur.getUsername(), joueur.getUniqueId())) {
+            return;
+        }
+        int enAttente = 0;
+        synchronized (contacts) {
+            for (Demande d : demandes.values()) {
+                if (d.etat.equals("attente")) {
+                    enAttente++;
+                }
+            }
+        }
         if (enAttente > 0) {
-            joueur.sendMessage(Contacts.info(enAttente + " demande" + (enAttente > 1 ? "s" : "")
-                    + " de whitelist en attente : menu > Modération > Demandes de whitelist."));
+            joueur.sendMessage(Component.text("Tu as " + enAttente + " demande" + (enAttente > 1 ? "s" : "")
+                    + " de whitelist en attente : ", NamedTextColor.LIGHT_PURPLE)
+                    .append(Component.text("menu > Modération > Demandes de whitelist", NamedTextColor.GRAY)));
         }
     }
 

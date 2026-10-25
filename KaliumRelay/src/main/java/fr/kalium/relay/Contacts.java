@@ -161,10 +161,17 @@ final class Contacts {
     /** Arrivee sur KaLium (premier serveur) : annonce aux amis, rappel des demandes en attente. */
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
+        Player player = event.getPlayer();
+        // 1.10.2 (LeKiwi06, 26/10/2026) : a chaque arrivee sur le lobby (premier serveur de « try »), rappel des demandes
+        // de whitelist en attente aux admins, 3 s apres (comme le rappel des rewards de Kixster).
+        List<String> ordre = server.getConfiguration().getAttemptConnectionOrder();
+        if (!ordre.isEmpty() && event.getServer().getServerInfo().getName().equalsIgnoreCase(ordre.get(0))) {
+            server.getScheduler().buildTask(plugin, () -> parrainage.rappelWhitelist(player))
+                    .delay(3, java.util.concurrent.TimeUnit.SECONDS).schedule();
+        }
         if (event.getPreviousServer().isPresent()) {
             return;
         }
-        Player player = event.getPlayer();
         UUID id = player.getUniqueId();
         int pending;
         synchronized (this) {

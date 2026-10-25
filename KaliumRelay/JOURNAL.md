@@ -470,6 +470,7 @@ KS_RewardsGUI 1.6.0 (+ KLM_Statistiques 1.0.0 et `didacticiel.yml`).
 - Chaque demande traitée (acceptée ou refusée par un admin, ou acceptée par un parrainage) est copiée dans l'historique avec la **date du traitement** (lignes `H` de `parrainage.txt`, gardées pour toujours). Avant, une nouvelle demande d'un joueur refusé remplaçait l'ancienne : l'historique les garde toutes.
 - Au premier démarrage en 1.10.2, les demandes déjà traitées (acceptées ou refusées avant) passent dans l'historique, sans date de traitement (inconnue).
 - Nouvelle requête `whdemandes` (KLM_Contacts 1.5.2) : l'historique, le plus récent d'abord.
+- **Rappel au lobby** (deuxième demande du 26/10/2026 : « met moi un message quand je rejoins le lobby comme pour les rewards pour me dire combien de demande de whitelist sont en attente, histoire que je n'en laisse pas trainer trop longtemps ») : à **chaque** arrivée sur le lobby (premier serveur de la liste `try` de Velocity), 3 s après, comme le rappel des rewards de Kixster, un admin de `relay.properties` (`admins`) reçoit « Tu as N demande(s) de whitelist en attente : menu > Modération > Demandes de whitelist » (rien s'il n'y en a aucune). Remplace le message de la 1.10.0, envoyé seulement à la première connexion et au moment même de l'arrivée (sans doute jamais reçu).
 - Aucun réglage nouveau.
 
 Limite (inchangée) : une demande en attente d'un joueur ajouté à la main à la whitelist de Kixster reste « en attente ».
