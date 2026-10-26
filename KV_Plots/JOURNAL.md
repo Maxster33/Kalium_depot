@@ -21,7 +21,8 @@ n'était pas enchanté ».
 - **Correctif** : `onBlockExplode` traite le souffle de vent comme `onEntityExplode` (`TRIGGER_BLOCK` : liste de blocs
   vidée, explosion gardée) ; les autres explosions de blocs (lits, ancres de réapparition) restent annulées.
 
-**Compilé le 26/10/2026 (`sortie/KV_Plots-1.8.2.jar`), non déployé. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 26/10/2026 à 22:29 (LeKiwi06), actif après redémarrage, non testé en jeu.** 1.8.1 rangée
+dans `_removed-kv_plots-1.8.1/`.
 
 ## 1.8.1 - charges de vent et Wind Burst rétablis (26/10/2026, LeKiwi06)
 
