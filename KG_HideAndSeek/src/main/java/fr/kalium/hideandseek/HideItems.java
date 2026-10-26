@@ -12,7 +12,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.List;
 
 /**
- * Objets de la barre du hider : soundboard, changement de bloc, evasion. Chaque objet porte son role
+ * Objets de la barre du hider : soundboard, changement de bloc, evasions, orientation du bloc. Chaque objet porte son role
  * (clic droit : voir KGHideAndSeek.onInteract).
  */
 public final class HideItems {
@@ -20,6 +20,7 @@ public final class HideItems {
     public static final String SOUNDS = "sounds";
     public static final String BLOCK = "block";
     public static final String ESCAPE = "escape";
+    public static final String STATE = "state";
 
     private final KalGames games;
     private final NamespacedKey key;
@@ -37,7 +38,7 @@ public final class HideItems {
         return item;
     }
 
-    /** Role de l'objet (SOUNDS, BLOCK, ESCAPE) ou null. */
+    /** Role de l'objet (SOUNDS, BLOCK, ESCAPE, STATE) ou null. */
     public String kind(ItemStack item) {
         if (item == null || item.getType().isAir() || !item.hasItemMeta()) {
             return null;
@@ -56,10 +57,22 @@ public final class HideItems {
                 List.of(games.t("hns.item-block-lore", "<gray>Clic droit : choisir le bloc que vous imitez.")), BLOCK);
     }
 
-    public ItemStack escape(int points, int cooldown) {
-        return tagged(Material.RABBIT_FOOT, games.t("hns.item-escape", "<light_purple><bold>Évasion"),
+    /** Evasions en reserve (0.3.0 : une de plus tous les N points ; le nombre d'objets montre la reserve). */
+    public ItemStack escape(int points, int charges) {
+        ItemStack item = tagged(Material.RABBIT_FOOT, games.t("hns.item-escape-stock", "<light_purple><bold>Évasion <gray>(<n>)", "n", charges),
                 List.of(games.t("hns.item-escape-lore1", "<gray>Clic droit : Vitesse V pendant 2 secondes."),
-                        games.t("hns.item-escape-lore2", "<gray>Dès <white><points></white> points, puis toutes les <white><s></white> s.",
-                                "points", points, "s", cooldown)), ESCAPE);
+                        games.t("hns.item-escape-lore-stock", "<gray>Une évasion de plus tous les <white><points></white> points gagnés.",
+                                "points", points)), ESCAPE);
+        item.setAmount(Math.max(1, Math.min(64, charges)));
+        return item;
+    }
+
+    /** « Orienter le bloc » (0.3.0) : clic droit, tourner ; accroupi + clic droit, posture (statue du golem de cuivre). */
+    public ItemStack stateChanger(boolean pose) {
+        List<Component> lore = pose
+                ? List.of(games.t("hns.item-state-lore1", "<gray>Clic droit : tourner le bloc."),
+                        games.t("hns.item-state-lore2", "<gray>Accroupi + clic droit : changer de posture."))
+                : List.of(games.t("hns.item-state-lore1", "<gray>Clic droit : tourner le bloc."));
+        return tagged(Material.DEBUG_STICK, games.t("hns.item-state", "<yellow><bold>Orienter le bloc"), lore, STATE);
     }
 }

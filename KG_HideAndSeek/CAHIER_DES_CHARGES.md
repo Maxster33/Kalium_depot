@@ -139,6 +139,21 @@ Conséquences déduites par Claude (**À CONFIRMER**) :
 5. **Un seul objet** dans la barre pour le soundboard : la règle 13 (« 6 sons favoris dans la barre d'objets ») et le
    point 9 de la partie 4 ne valent plus ; barre du hider : soundboard, changer de bloc, évasion.
 
+## 5 ter. Modifications demandées par LeKiwi06 le 26/10/2026 (après un test, version 0.3.0)
+
+1. Le hider doit pouvoir devenir solide en imitant un **composteur** (troué sur le dessus : il tombait dedans et
+   redevenait mobile aussitôt) et **debout sur une barrière** (ou un muret, un portillon).
+2. Il ne doit **plus** pouvoir devenir solide **à travers une fleur, une trappe, etc.** : la case doit être vide.
+3. Un **objet en main pour changer l'état du bloc** : orientation (« le golem de cuivre n'est pas orienté
+   correctement ») et posture de la statue du golem de cuivre.
+4. Les **évasions s'accumulent** : une de plus tous les 5 points (remplace la règle 14 : plus de recharge de 60 s).
+5. Le soundboard est **mieux valorisé** : plus de délai de 10 s entre deux sons comptés (règle 24) ; chaque son entendu
+   par un seeker rapporte ses 0,25 point.
+6. **À droite de l'écran, la liste des blocs encore en vie**, pour aider les seekers.
+7. **Points de survie selon la proximité des seekers** (remplace la règle 22 pour la survie) : plus un seeker est
+   proche, plus le hider gagne ; si aucun seeker n'est passé « proche » depuis 1 minute, aucun point. Proche = zone
+   audible du soundboard.
+
 ## 6. Notes techniques (à confirmer au moment du code)
 
 - **Hider en mouvement** (décision de LeKiwi06, 06/10/2026, pour les joueurs Bedrock) : **joueur normal, visible,

@@ -9,6 +9,7 @@ import fr.kalium.games.world.Template;
 import fr.kalium.scoreboards.data.StatsService;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Axis;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -20,11 +21,19 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Orientable;
+import org.bukkit.block.data.Rotatable;
+import org.bukkit.block.data.type.CopperGolemStatue;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Criteria;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 
@@ -70,11 +79,20 @@ public final class HideInstance extends GameInstance {
     private static final int ESCAPE_AMPLIFIER = 4;
     /** Un hider solide redevient mobile au-dela de cet ecart avec le centre de sa case. */
     private static final double SOLID_SLACK = 0.4;
+    /** Demi-largeur d'un joueur : son emprise au sol, centree sur la case, va de 0,2 a 0,8. */
+    private static final double HALF_WIDTH = 0.3;
+    /** Objet « Orienter le bloc » : ordre des orientations (clic droit). */
+    private static final List<BlockFace> TURN = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST,
+            BlockFace.UP, BlockFace.DOWN);
+    private static final List<BlockFace> TURN_FINE = List.of(BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST,
+            BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST);
 
     /** Un hider en vie. */
     public static final class Hider {
         final UUID uuid;
         Material block;
+        /** Etat du bloc imite (orientation, posture), choisi avec l'objet « Orienter le bloc » ; remis a zero a chaque changement de bloc. */
+        BlockData state;
         /** Le hider a deja choisi son bloc lui-meme (le delai entre deux changements ne compte qu'ensuite). */
         boolean chosen;
         long lastChange;
@@ -85,10 +103,14 @@ public final class HideInstance extends GameInstance {
         BlockData cellOriginal;
         Location snap;
         long nextSound;
-        long nextSoundPoints;
-        boolean escapeUnlocked;
-        long escapeReady;
+        /** Evasions gagnees (une tous les N points) et utilisees ; fin de l'evasion en cours (ticks). */
+        int escapesEarned;
+        int escapesUsed;
+        long escapeUntil;
         int survived;
+        /** Derniere seconde de recherche ou un seeker libre etait a portee d'ecoute ; points de survie pas encore credites. */
+        int lastNear;
+        double surviveAcc;
 
         Hider(UUID uuid) {
             this.uuid = uuid;
@@ -139,6 +161,9 @@ public final class HideInstance extends GameInstance {
     private final Map<UUID, String> startRoles = new HashMap<>();
     private final Map<UUID, Integer> finds = new HashMap<>();
     private final List<PendingSound> pendingSounds = new ArrayList<>();
+    /** Tableau de droite (blocs encore en vie) de chaque joueur, et celui qu'il avait avant la partie. */
+    private final Map<UUID, Scoreboard> boards = new HashMap<>();
+    private final Map<UUID, Scoreboard> previousBoards = new HashMap<>();
     private List<Material> pool = List.of();
     private long ticks;
     private int elapsed;
@@ -376,6 +401,7 @@ public final class HideInstance extends GameInstance {
             } else {
                 Hider hider = new Hider(uuid);
                 hider.block = pool.get(ThreadLocalRandom.current().nextInt(pool.size()));
+                hider.state = hider.block.createBlockData();
                 hiders.put(uuid, hider);
                 startRoles.put(uuid, "hider");
                 setupHider(player, hider, hiderSpawn());
@@ -410,12 +436,18 @@ public final class HideInstance extends GameInstance {
         hider.stillTicks = 0;
     }
 
-    /** Barre d'objets du hider (0.2.0 : un seul objet pour le soundboard) : sons, changement de bloc, evasion ; bloc sur la tete. */
+    /**
+     * Barre d'objets du hider (0.2.0 : un seul objet pour le soundboard) : sons, changement de bloc, evasions en reserve,
+     * et (0.3.0) « Orienter le bloc » si le bloc imite peut se tourner ou changer de posture ; bloc sur la tete.
+     */
     public void giveHotbar(Player player, Hider hider) {
         PlayerInventory inventory = player.getInventory();
         inventory.setItem(0, hns.items().soundsMenu());
         inventory.setItem(1, hns.items().blockChanger(hider.block));
-        inventory.setItem(2, hns.items().escape(setting("escape-points", 5), setting("escape-cooldown-seconds", 60)));
+        inventory.setItem(2, hns.items().escape(escapeEvery(), escapesLeft(hider)));
+        BlockData probe = hider.block.createBlockData();
+        boolean pose = probe instanceof CopperGolemStatue;
+        inventory.setItem(3, pose || turn(probe) != null ? hns.items().stateChanger(pose) : null);
         inventory.setHelmet(new ItemStack(hider.block));
     }
 
@@ -509,6 +541,7 @@ public final class HideInstance extends GameInstance {
             case COUNTDOWN -> {
                 secondsLeft--;
                 refreshSolid();
+                refreshBoards();
                 if (secondsLeft <= 0) {
                     startSeek();
                 } else {
@@ -522,6 +555,7 @@ public final class HideInstance extends GameInstance {
                 jailSecond();
                 autoSound();
                 refreshSolid();
+                refreshBoards();
                 if (secondsLeft <= 0) {
                     finish(Winner.HIDERS);
                     return;
@@ -542,16 +576,36 @@ public final class HideInstance extends GameInstance {
         }
     }
 
-    /** Points de survie : comptes seulement pendant la recherche, pour les hiders en vie et connectes. */
+    /**
+     * Points de survie : comptes seulement pendant la recherche, pour les hiders en vie et connectes. 0.3.0 (demande de
+     * LeKiwi06, 26/10/2026) : ils dependent des seekers. Seeker libre a portee d'ecoute des sons (« Portee des sons ») :
+     * de x1 a la limite de la portee jusqu'a x(1 + bonus) au contact. Plus aucun seeker a portee depuis
+     * « near-window-seconds » (la premiere minute de recherche comptant comme un passage) : aucun point ; entre les deux,
+     * x1. Les points s'accumulent chaque seconde et sont credites a chaque intervalle de survie.
+     */
     private void survivalPoints() {
         int interval = Math.max(1, setting("survive-interval-seconds", 20));
+        double perSecond = setting("points-survive", 1) / (double) interval;
+        double range = hearingRange();
+        int window = Math.max(1, setting("near-window-seconds", 60));
+        double bonus = Math.max(0, setting("near-bonus-percent", 200)) / 100.0;
         for (Hider hider : hiders.values()) {
-            if (!present(hider.uuid)) {
+            Player player = presentPlayer(hider.uuid);
+            if (player == null) {
                 continue;
             }
             hider.survived++;
+            double distance = nearestSeeker(player.getLocation());
+            if (distance <= range) {
+                hider.lastNear = elapsed;
+            }
+            if (elapsed - hider.lastNear <= window) {
+                double factor = distance <= range ? 1 + bonus * (1 - distance / range) : 1;
+                hider.surviveAcc += perSecond * factor;
+            }
             if (hider.survived % interval == 0) {
-                addPoints(hider.uuid, setting("points-survive", 1));
+                addPoints(hider.uuid, hider.surviveAcc);
+                hider.surviveAcc = 0;
             }
         }
     }
@@ -602,6 +656,78 @@ public final class HideInstance extends GameInstance {
         }
     }
 
+    /**
+     * Tableau de droite (0.3.0, demande de LeKiwi06 : aider les seekers) : blocs imites par les hiders encore en vie et
+     * connectes, avec leur nombre, montre a tous les joueurs de la partie pendant la cachette et la recherche. Tableau
+     * propre a chaque joueur (comme la course de bateau) : l'equipe des hiders y est recopiee, sinon leur pseudo se
+     * verrait a travers les murs.
+     */
+    private void refreshBoards() {
+        Map<Material, Integer> counts = new LinkedHashMap<>();
+        int total = 0;
+        for (Hider hider : hiders.values()) {
+            if (present(hider.uuid)) {
+                counts.merge(hider.block, 1, Integer::sum);
+                total++;
+            }
+        }
+        List<Map.Entry<Material, Integer>> sorted = new ArrayList<>(counts.entrySet());
+        sorted.sort((a, b) -> b.getValue() - a.getValue());
+        List<Component> lines = new ArrayList<>();
+        for (Map.Entry<Material, Integer> entry : sorted) {
+            lines.add(t("hns.board-line", "<white><n>× <gray><block>", "n", entry.getValue(),
+                    "block", Component.translatable(entry.getKey().translationKey())));
+        }
+        Component title = t("hns.board-title", "<gold><bold>Blocs en vie <gray>(<n>)", "n", total);
+        for (UUID uuid : members) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player == null || player.getWorld() != world) {
+                continue;
+            }
+            Scoreboard board = boards.computeIfAbsent(uuid, u -> Bukkit.getScoreboardManager().getNewScoreboard());
+            hns.copyTeam(board);
+            Objective old = board.getObjective("kghns");
+            if (old != null) {
+                old.unregister();
+            }
+            Objective objective = board.registerNewObjective("kghns", Criteria.DUMMY, title);
+            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+            objective.numberFormat(io.papermc.paper.scoreboard.numbers.NumberFormat.blank());
+            int score = 15;
+            int index = 0;
+            for (Component line : lines) {
+                if (score <= 0) {
+                    break;
+                }
+                org.bukkit.scoreboard.Score entry = objective.getScore("l" + index++);
+                entry.customName(line);
+                entry.setScore(score--);
+            }
+            if (player.getScoreboard() != board) {
+                previousBoards.putIfAbsent(uuid, player.getScoreboard());
+                player.setScoreboard(board);
+            }
+        }
+    }
+
+    /** Rend a un joueur le tableau qu'il avait avant la partie. */
+    private void restoreBoard(UUID uuid) {
+        Scoreboard previous = previousBoards.remove(uuid);
+        Scoreboard board = boards.remove(uuid);
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null && board != null && player.getScoreboard() == board) {
+            player.setScoreboard(previous != null ? previous : Bukkit.getScoreboardManager().getMainScoreboard());
+        }
+    }
+
+    private void restoreAllBoards() {
+        for (UUID uuid : new ArrayList<>(boards.keySet())) {
+            restoreBoard(uuid);
+        }
+        previousBoards.clear();
+        boards.clear();
+    }
+
     // ------------------------------------------------------------------ solidite
 
     private static boolean movedFrom(Location snap, Location now) {
@@ -613,9 +739,32 @@ public final class HideInstance extends GameInstance {
         return dx * dx + dz * dz > SOLID_SLACK * SOLID_SLACK || Math.abs(now.getY() - snap.getY()) > 0.3;
     }
 
-    /** Une case peut recevoir un hider solide si rien n'y bloque le passage (air, herbe, fleur, eau, tapis fin). */
-    private static boolean replaceable(Block block) {
-        return block.isEmpty() || block.isPassable() || block.getBoundingBox().getHeight() <= 0.2;
+    /** Formes de collision du bloc, ramenees a sa case (de 0 a 1 ; donnees en coordonnees du monde selon les versions). */
+    private static List<BoundingBox> shape(Block block) {
+        List<BoundingBox> boxes = new ArrayList<>();
+        for (BoundingBox box : block.getCollisionShape().getBoundingBoxes()) {
+            boxes.add(box.getMaxY() > 2 ? box.clone().shift(-block.getX(), -block.getY(), -block.getZ()) : box);
+        }
+        return boxes;
+    }
+
+    /**
+     * Case ou poser le bloc du hider immobile : celle de ses pieds s'il se tient au bas d'une case (sol plein, sable des
+     * ames...). 0.3.0 : ou la case juste au-dessus d'une barriere, d'un muret ou d'un portillon sur lequel il se tient
+     * (on s'y tient une demi-case plus haut que leur dessin : le bloc est pose sur le haut visible). null : pieds a
+     * mi-hauteur d'une case (dalle, escalier...), le bloc flotterait.
+     */
+    private Block footCell(Location at) {
+        Block cell = world.getBlockAt(at.getBlockX(), (int) Math.floor(at.getY() + 0.5), at.getBlockZ());
+        if (Math.abs(at.getY() - cell.getY()) <= 0.2) {
+            return cell;
+        }
+        Block low = world.getBlockAt(at.getBlockX(), (int) Math.floor(at.getY()), at.getBlockZ());
+        double below = 0;
+        for (BoundingBox box : shape(low.getRelative(BlockFace.DOWN))) {
+            below = Math.max(below, box.getMaxY());
+        }
+        return low.isEmpty() && below > 1.2 && Math.abs(at.getY() - (low.getY() - 1 + below)) <= 0.2 ? low : null;
     }
 
     /**
@@ -626,16 +775,19 @@ public final class HideInstance extends GameInstance {
      * (comportement du jeu). Renvoie false si la case ne convient pas.
      */
     private boolean solidify(Hider hider, Player player) {
-        Location at = player.getLocation();
-        Block cell = world.getBlockAt(at.getBlockX(), (int) Math.floor(at.getY() + 0.5), at.getBlockZ());
+        Block cell = footCell(player.getLocation());
         boolean taken = false;
         for (Hider other : hiders.values()) {
-            taken |= other != hider && cell.equals(other.cell);
+            taken |= other != hider && cell != null && cell.equals(other.cell);
         }
-        // Les pieds doivent etre au bas de la case (pas sur une dalle ou un escalier) : sinon le bloc flotterait.
-        boolean level = Math.abs(at.getY() - cell.getY()) <= 0.2;
-        if (taken || !level || !inBounds(cell.getX(), cell.getY(), cell.getZ()) || !replaceable(cell)) {
+        if (cell == null || taken || !inBounds(cell.getX(), cell.getY(), cell.getZ())) {
             player.sendActionBar(t("hns.solid-refused", "<red>Impossible de devenir solide ici."));
+            return false;
+        }
+        // 0.3.0 : la case doit etre vide. Avant, une fleur, une herbe, une trappe ou un tapis y etait remplace par le bloc
+        // du hider (et disparaissait du decor).
+        if (!cell.isEmpty()) {
+            player.sendActionBar(t("hns.solid-occupied", "<red>Impossible de devenir solide ici : la case doit être vide (pas de fleur, d'herbe, de trappe, de tapis...)."));
             return false;
         }
         if (!cell.getRelative(BlockFace.UP).isPassable()) {
@@ -644,7 +796,7 @@ public final class HideInstance extends GameInstance {
         }
         BlockData original = cell.getBlockData();
         trackOriginal(cell.getX(), cell.getY(), cell.getZ(), original);
-        cell.setBlockData(hider.block.createBlockData(), false);
+        cell.setBlockData(hider.state.clone(), false);
         hider.cell = cell;
         hider.cellOriginal = original;
         standOn(hider, player);
@@ -653,17 +805,22 @@ public final class HideInstance extends GameInstance {
         return true;
     }
 
-    /** Place le hider solide debout sur son bloc, au centre de la case (a la hauteur reelle du dessus du bloc). */
+    /**
+     * Place le hider solide debout sur son bloc, au centre de la case, a la hauteur ou il s'y tient vraiment. 0.3.0 : on
+     * ne compte que les parties du bloc sous l'emprise du joueur : dans un composteur (troue sur le dessus), il se tient
+     * sur le fond, pas sur les bords (avant, il y tombait et redevenait mobile aussitot : jamais solide).
+     */
     private void standOn(Hider hider, Player player) {
         Block cell = hider.cell;
         double top = 0;
-        for (BoundingBox box : cell.getCollisionShape().getBoundingBoxes()) {
-            top = Math.max(top, box.getMaxY());
+        double min = 0.5 - HALF_WIDTH;
+        double max = 0.5 + HALF_WIDTH;
+        for (BoundingBox box : shape(cell)) {
+            if (box.getMinX() < max && box.getMaxX() > min && box.getMinZ() < max && box.getMaxZ() > min) {
+                top = Math.max(top, box.getMaxY());
+            }
         }
-        if (top > 2) {
-            top -= cell.getY(); // forme donnee en coordonnees du monde
-        }
-        if (top <= 0 || top > 1.5) {
+        if (top > 1.5) {
             top = 1.0;
         }
         Location at = player.getLocation();
@@ -705,7 +862,100 @@ public final class HideInstance extends GameInstance {
             hns.menus().openBlocks(player, this);
         } else if (kind.equals(HideItems.ESCAPE)) {
             escape(player, hider);
+        } else if (kind.equals(HideItems.STATE)) {
+            changeState(player, hider, player.isSneaking());
         }
+    }
+
+    /**
+     * Objet « Orienter le bloc » (0.3.0, demande de LeKiwi06 : la statue du golem de cuivre n'etait ni dans le bon sens
+     * ni dans la bonne posture) : clic droit, orientation suivante ; accroupi + clic droit, posture suivante (statue du
+     * golem de cuivre ; les autres blocs tournent). Garde pour les prochaines fois ou le hider devient solide.
+     */
+    private void changeState(Player player, Hider hider, boolean pose) {
+        BlockData data = hider.state.clone();
+        Component done;
+        if (pose && data instanceof CopperGolemStatue statue) {
+            CopperGolemStatue.Pose[] poses = CopperGolemStatue.Pose.values();
+            CopperGolemStatue.Pose next = poses[(statue.getCopperGolemPose().ordinal() + 1) % poses.length];
+            statue.setCopperGolemPose(next);
+            String name = next.name().toLowerCase(java.util.Locale.ROOT);
+            done = t("hns.state-pose", "<gray>Posture : <white><pose>", "pose", t("hns.pose." + name, poseName(next)));
+        } else {
+            Component turned = turn(data);
+            if (turned == null) {
+                player.sendActionBar(t("hns.state-none", "<red>Ce bloc ne peut pas être tourné."));
+                return;
+            }
+            done = t("hns.state-facing", "<gray>Orientation : <white><dir>", "dir", turned);
+        }
+        hider.state = data;
+        if (hider.solid()) {
+            hider.cell.setBlockData(data.clone(), false);
+            standOn(hider, player); // la forme peut changer avec l'orientation
+        }
+        player.sendActionBar(done);
+    }
+
+    /** Tourne le bloc d'un cran (orientation, rotation fine ou axe) ; renvoie le nom de la nouvelle orientation, ou null. */
+    private Component turn(BlockData data) {
+        if (data instanceof Directional directional) {
+            List<BlockFace> faces = new ArrayList<>();
+            for (BlockFace face : TURN) {
+                if (directional.getFaces().contains(face)) {
+                    faces.add(face);
+                }
+            }
+            if (faces.size() > 1) {
+                BlockFace next = faces.get((faces.indexOf(directional.getFacing()) + 1) % faces.size());
+                directional.setFacing(next);
+                return faceName(next);
+            }
+        }
+        if (data instanceof Rotatable rotatable) {
+            BlockFace next = TURN_FINE.get((TURN_FINE.indexOf(rotatable.getRotation()) + 1) % TURN_FINE.size());
+            rotatable.setRotation(next);
+            return faceName(next);
+        }
+        if (data instanceof Orientable orientable && orientable.getAxes().size() > 1) {
+            List<Axis> axes = new ArrayList<>(orientable.getAxes());
+            axes.sort(Comparator.naturalOrder());
+            Axis next = axes.get((axes.indexOf(orientable.getAxis()) + 1) % axes.size());
+            orientable.setAxis(next);
+            String name = next.name().toLowerCase(java.util.Locale.ROOT);
+            return t("hns.axis." + name, switch (next) {
+                case X -> "est-ouest";
+                case Y -> "debout";
+                case Z -> "nord-sud";
+            });
+        }
+        return null;
+    }
+
+    private Component faceName(BlockFace face) {
+        String name = switch (face) {
+            case NORTH -> "nord";
+            case EAST -> "est";
+            case SOUTH -> "sud";
+            case WEST -> "ouest";
+            case UP -> "vers le haut";
+            case DOWN -> "vers le bas";
+            case NORTH_EAST -> "nord-est";
+            case SOUTH_EAST -> "sud-est";
+            case SOUTH_WEST -> "sud-ouest";
+            case NORTH_WEST -> "nord-ouest";
+            default -> face.name().toLowerCase(java.util.Locale.ROOT);
+        };
+        return t("hns.face." + face.name().toLowerCase(java.util.Locale.ROOT), name);
+    }
+
+    private static String poseName(CopperGolemStatue.Pose pose) {
+        return switch (pose) {
+            case STANDING -> "debout";
+            case SITTING -> "assis";
+            case RUNNING -> "en course";
+            case STAR -> "en étoile";
+        };
     }
 
     /** Secondes d'attente avant le prochain changement de bloc (0 : possible tout de suite). */
@@ -733,18 +983,24 @@ public final class HideInstance extends GameInstance {
             return null;
         }
         hider.block = material;
+        hider.state = material.createBlockData();
         giveHotbar(player, hider);
         if (hider.solid()) {
-            hider.cell.setBlockData(material.createBlockData(), false);
+            hider.cell.setBlockData(hider.state.clone(), false);
             standOn(hider, player); // le dessus du nouveau bloc n'est pas forcement a la meme hauteur
         }
         return null;
     }
 
+    /** Portee d'ecoute des sons des hiders (« Portee des sons », 30 blocs par defaut). */
+    private double hearingRange() {
+        return Math.max(16, setting("sound-range", 30));
+    }
+
     private void playAt(Hider hider, Player player, String sound) {
         Location spot = hider.solid() ? hider.cell.getLocation().add(0.5, 0.5, 0.5) : player.getEyeLocation();
         // Un son s'entend a 16 blocs par point de volume : 0.2.0, portee reglable (30 blocs par defaut).
-        float volume = Math.max(1f, setting("sound-range", 30) / 16f);
+        float volume = (float) (hearingRange() / 16);
         world.playSound(spot, sound, SoundCategory.MASTER, volume, 1f);
     }
 
@@ -766,9 +1022,9 @@ public final class HideInstance extends GameInstance {
         }
         hider.nextSound = ticks + Math.max(0, setting("sound-cooldown-seconds", 3)) * 20L;
         playAt(hider, player, entry.key());
+        // 0.3.0 : chaque son entendu compte (plus de delai de 10 s entre deux sons comptes).
         double value = setting("points-sound-hundredths", 25) / 100.0;
-        if (phase == Phase.RUNNING && value > 0 && ticks >= hider.nextSoundPoints && seekerNear(player.getLocation())) {
-            hider.nextSoundPoints = ticks + Math.max(0, setting("sound-points-seconds", 10)) * 20L;
+        if (phase == Phase.RUNNING && value > 0 && seekerNear(player.getLocation())) {
             addPoints(hider.uuid, value);
             player.sendActionBar(t("hns.sound-points", "<gold>+<points> pt <gray>(son entendu par un seeker)",
                     "points", StatsService.formatPoints(value)));
@@ -777,30 +1033,51 @@ public final class HideInstance extends GameInstance {
 
     /** Un seeker libre est-il a portee d'ecoute ? */
     private boolean seekerNear(Location spot) {
-        double range = Math.max(1, setting("sound-points-range", 24));
-        for (Seeker seeker : seekers.values()) {
-            Player player = presentPlayer(seeker.uuid);
-            if (player != null && seeker.jail <= 0 && player.getWorld() == spot.getWorld()
-                    && player.getLocation().distanceSquared(spot) <= range * range) {
-                return true;
-            }
-        }
-        return false;
+        return nearestSeeker(spot) <= Math.max(1, setting("sound-points-range", 24));
     }
 
+    /** Distance du seeker libre (connecte, hors de la salle) le plus proche ; Double.MAX_VALUE s'il n'y en a aucun. */
+    private double nearestSeeker(Location spot) {
+        double best = Double.MAX_VALUE;
+        for (Seeker seeker : seekers.values()) {
+            Player player = presentPlayer(seeker.uuid);
+            if (player != null && seeker.jail <= 0 && player.getWorld() == spot.getWorld()) {
+                best = Math.min(best, player.getLocation().distance(spot));
+            }
+        }
+        return best;
+    }
+
+    /** Une evasion de plus tous les N points gagnes dans la partie (0.3.0 : elles s'accumulent). */
+    private int escapeEvery() {
+        return Math.max(1, setting("escape-points", 5));
+    }
+
+    private static int escapesLeft(Hider hider) {
+        return Math.max(0, hider.escapesEarned - hider.escapesUsed);
+    }
+
+    private void refreshEscape(Player player, Hider hider) {
+        player.getInventory().setItem(2, hns.items().escape(escapeEvery(), escapesLeft(hider)));
+    }
+
+    /** Evasion : une de la reserve (0.3.0 : plus de recharge de 60 s ; refusee seulement pendant l'evasion en cours). */
     private void escape(Player player, Hider hider) {
-        if (!hider.escapeUnlocked) {
-            player.sendActionBar(t("hns.escape-locked", "<red>Évasion disponible à <points> points.", "points", setting("escape-points", 5)));
+        int left = escapesLeft(hider);
+        if (left <= 0) {
+            player.sendActionBar(t("hns.escape-none", "<red>Aucune évasion en réserve : une de plus tous les <points> points.",
+                    "points", escapeEvery()));
             return;
         }
-        if (ticks < hider.escapeReady) {
-            player.sendActionBar(t("hns.escape-wait", "<red>Évasion disponible dans <s> s.",
-                    "s", (int) Math.ceil((hider.escapeReady - ticks) / 20.0)));
+        if (ticks < hider.escapeUntil) {
+            player.sendActionBar(t("hns.escape-active", "<red>Évasion déjà en cours."));
             return;
         }
-        hider.escapeReady = ticks + Math.max(1, setting("escape-cooldown-seconds", 60)) * 20L;
+        hider.escapesUsed++;
+        hider.escapeUntil = ticks + ESCAPE_TICKS;
         player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, ESCAPE_TICKS, ESCAPE_AMPLIFIER, false, false, true));
-        player.sendActionBar(t("hns.escape-used", "<light_purple>Évasion !"));
+        refreshEscape(player, hider);
+        player.sendActionBar(t("hns.escape-used-left", "<light_purple>Évasion ! <gray>Il en reste <white><n></white>.", "n", left - 1));
     }
 
     private void addPoints(UUID uuid, double value) {
@@ -809,12 +1086,15 @@ public final class HideInstance extends GameInstance {
         }
         double total = points.merge(uuid, value, Double::sum);
         Hider hider = hiders.get(uuid);
-        if (hider != null && !hider.escapeUnlocked && total >= setting("escape-points", 5)) {
-            hider.escapeUnlocked = true;
-            Player player = Bukkit.getPlayer(uuid);
+        int earned = (int) Math.floor(total / escapeEvery() + 1e-6);
+        if (hider != null && earned > hider.escapesEarned) {
+            hider.escapesEarned = earned;
+            Player player = presentPlayer(uuid);
             if (player != null) {
-                player.sendMessage(plugin.prefix().append(t("hns.escape-ready",
-                        "<light_purple>Évasion débloquée : <gray>clic droit sur la patte de lapin (Vitesse V, 2 s).")));
+                refreshEscape(player, hider);
+                player.sendMessage(plugin.prefix().append(t("hns.escape-gained",
+                        "<light_purple>Nouvelle évasion ! <gray>En réserve : <white><n></white>. Clic droit sur la patte de lapin (Vitesse V, 2 s).",
+                        "n", escapesLeft(hider))));
             }
         }
     }
@@ -1002,6 +1282,7 @@ public final class HideInstance extends GameInstance {
                 darken(player, false);
             }
         }
+        restoreAllBoards();
         Component headline = result == Winner.HIDERS
                 ? t("hns.win-hiders", "<green><bold>Les hiders gagnent !")
                 : t("hns.win-seekers", "<red><bold>Les seekers gagnent !");
@@ -1109,6 +1390,7 @@ public final class HideInstance extends GameInstance {
     @Override
     protected void onMemberLeft(UUID uuid, boolean wasParticipant, boolean disconnected) {
         greeted.remove(uuid);
+        restoreBoard(uuid);
         Player player = Bukkit.getPlayer(uuid);
         Hider hider = hiders.get(uuid);
         Seeker seeker = seekers.get(uuid);
@@ -1166,6 +1448,7 @@ public final class HideInstance extends GameInstance {
 
     @Override
     protected void onMatchReset() {
+        restoreAllBoards();
         resetState();
         volunteers.clear();
         pool = List.of();
@@ -1176,6 +1459,7 @@ public final class HideInstance extends GameInstance {
         for (Hider hider : hiders.values()) {
             unsolidify(hider, null);
         }
+        restoreAllBoards();
         Set<UUID> known = new HashSet<>(names.keySet());
         known.addAll(members);
         for (UUID uuid : known) {

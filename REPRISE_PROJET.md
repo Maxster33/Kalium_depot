@@ -96,6 +96,11 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KG_HideAndSeek 0.3.0** (LeKiwi06, 26/10/2026) : composteur et blocs creux utilisables en solide, solide debout sur
+  une barrière, plus de solide à travers une fleur ou une trappe, objet « Orienter le bloc » (orientation, posture du
+  golem de cuivre), évasions cumulables tous les 5 points, chaque son du soundboard compté, tableau de droite « Blocs en
+  vie », points de survie selon la proximité des seekers. Seul, sur Kal-Games (Kanvas). Détail :
+  `KG_HideAndSeek/JOURNAL.md`. **Non déployé, non testé en jeu.**
 - **KV_Plots 1.8.0** (LeKiwi06, 25/10/2026) : les plots d'un concours de build restent notables après la fin des votes
   (anciens concours compris), classement figé à la clôture (`concours.yml`), notes tardives comptées pour les points des
   bâtisseurs. Seul, sur Kanvas (KV_Menu et KV_Rewards inchangés). Détail : `KV_Plots/JOURNAL.md`. **Non déployé, non
@@ -505,6 +510,14 @@ le `config.yml` de Geyser (proxy) pour voir le motif.
 
 ### <aaaa-mm-jj> — <pseudo>`. Un seul compte rendu par personne ici ; les précédents vont dans
 `archive_reprise.md`.
+
+### 2026-10-26 — LeKiwi06 (Hide and Seek, retours de test)
+
+*(Session du 26/10/2026 à 12 h 34. Réservation de KG_HideAndSeek en cours.)*
+
+**KG_HideAndSeek 0.3.0, compilé, non déployé, non testé en jeu** : retours de test du Hide and Seek (composteur,
+barrière, fleurs et trappes, orientation et posture du bloc, évasions cumulables, soundboard, liste des blocs en vie,
+points selon la proximité des seekers). Détail : `historique-conversations/2026-10-26-hide-and-seek-retours-2.md`.
 
 ### 2026-10-25 — LeKiwi06 (votes des concours terminés)
 

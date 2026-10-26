@@ -31,6 +31,7 @@ import org.bukkit.scoreboard.Team;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static fr.kalium.games.model.PointSpec.single;
 import static fr.kalium.games.model.SettingSpec.bool;
@@ -92,21 +93,21 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
                         integer("solid-seconds", "Immobile avant solide (s)", 3, 1, 30, "Un hider immobile devient son bloc ; il redevient un joueur dès qu'il bouge."),
                         integer("block-change-seconds", "Délai entre 2 blocs (s)", 30, 0, 300, "Entre deux changements de bloc d'un hider."),
                         integer("sound-cooldown-seconds", "Délai du soundboard (s)", 3, 0, 60, "Entre deux sons joués par un hider."),
-                        integer("sound-range", "Portée des sons (blocs)", 30, 16, 96, "Distance à laquelle on entend le son automatique et les sons du soundboard."),
+                        integer("sound-range", "Portée des sons (blocs)", 30, 16, 96, "Distance à laquelle on entend le son automatique et les sons du soundboard. C'est aussi la distance « seeker proche » des points de survie."),
                         integer("auto-sound-seconds", "Son automatique : intervalle (s)", 30, 0, 300, "Chaque hider sonne à cet intervalle pendant la recherche. 0 = jamais."),
                         integer("auto-sound-gap-ticks", "Son automatique : écart (ticks)", 15, 0, 100, "Entre deux hiders. 20 ticks = 1 seconde : 15 = 0,75 s."),
                         text("auto-sound", "Son automatique", "entity.villager.ambient", "Identifiant Minecraft du son (villageois par défaut)."),
-                        integer("escape-points", "Évasion : points requis", 5, 0, 100, "Points gagnés dans la partie pour obtenir l'évasion (Vitesse V, 2 s)."),
-                        integer("escape-cooldown-seconds", "Évasion : recharge (s)", 60, 5, 600, "Entre deux évasions."),
+                        integer("escape-points", "Évasion : points par évasion", 5, 1, 100, "Une évasion de plus (Vitesse V, 2 s) tous les N points gagnés dans la partie ; elles s'accumulent."),
                         integer("seeker-respawn-seconds", "Retour d'un seeker (s)", 15, 0, 120, "Temps passé dans la salle des seekers à 0 cœur, ou pour un hider devenu seeker."),
                         bool("eliminated-becomes-seeker", "Hider éliminé : devient seeker", false, "Non : il devient spectateur. Toujours appliqué en partie publique ; choix de l'hôte en partie privée."),
                         integer("survive-interval-seconds", "Survie : intervalle (s)", 20, 5, 300, "Un hider en vie gagne des points à cet intervalle, pendant la recherche."),
-                        integer("points-survive", "Survie : points", 1, 0, 100, "Points gagnés à chaque intervalle de survie."),
+                        integer("points-survive", "Survie : points", 1, 0, 100, "Points de chaque intervalle de survie, avec un seeker passé à portée des sons il y a peu (sans bonus de proximité)."),
+                        integer("near-bonus-percent", "Survie : bonus de proximité (%)", 200, 0, 1000, "Seeker à portée des sons : points de survie en plus, de 0 % à la limite de la portée jusqu'à ce bonus au contact (200 = ×3)."),
+                        integer("near-window-seconds", "Survie : seeker proche récemment (s)", 60, 10, 600, "Aucun seeker à portée des sons pendant ce temps : plus aucun point de survie (la première minute de recherche compte comme un passage)."),
                         integer("points-survivor", "Hider en vie à la fin", 8, 0, 100, "Points de chaque hider encore en vie à la fin du chrono."),
                         integer("points-find", "Seeker : points par hider", 6, 0, 100, "Pour chaque hider éliminé."),
                         integer("points-all-found", "Seekers : tous trouvés", 5, 0, 100, "Pour chaque seeker si tous les hiders sont trouvés avant la fin."),
-                        integer("points-sound-hundredths", "Soundboard : centièmes de point", 25, 0, 1000, "Points par son du soundboard, en centièmes : 25 = 0,25 point."),
-                        integer("sound-points-seconds", "Soundboard : intervalle compté (s)", 10, 0, 300, "Un seul son rapporte des points pendant cet intervalle."),
+                        integer("points-sound-hundredths", "Soundboard : centièmes de point", 25, 0, 1000, "Points par son du soundboard, en centièmes : 25 = 0,25 point. Chaque son entendu par un seeker compte."),
                         integer("sound-points-range", "Soundboard : distance (blocs)", 24, 1, 128, "Le son ne rapporte des points que si un seeker est à cette distance au plus."),
                         integer("end-delay-seconds", "Délai après la fin (s)", 8, 1, 30, "Avant le retour au hub."),
                         integer("prewarm-arenas", "Arènes préchargées", 0, 0, 10, "Copies de chaque arène, collées dès le démarrage du serveur et gardées de côté : aucune arène à charger au lancement d'une partie (0 = aucune)."),
@@ -200,6 +201,31 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
 
     void joinTeam(Player player) {
         team().addEntry(player.getName());
+    }
+
+    /**
+     * Tableau propre a un joueur (liste des blocs en vie, 0.3.0) : y recopie l'equipe des hiders du tableau principal
+     * (pseudo masque, pas de bousculade), sinon ce joueur verrait leur pseudo.
+     */
+    void copyTeam(Scoreboard board) {
+        Team main = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(TEAM);
+        Team copy = board.getTeam(TEAM);
+        if (copy == null) {
+            copy = board.registerNewTeam(TEAM);
+            copy.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
+            copy.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
+        }
+        Set<String> wanted = main == null ? Set.of() : main.getEntries();
+        for (String entry : new ArrayList<>(copy.getEntries())) {
+            if (!wanted.contains(entry)) {
+                copy.removeEntry(entry);
+            }
+        }
+        for (String entry : wanted) {
+            if (!copy.hasEntry(entry)) {
+                copy.addEntry(entry);
+            }
+        }
     }
 
     /** Cache le hider (devenu un bloc) a tous les autres joueurs du serveur. */

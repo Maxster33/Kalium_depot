@@ -4,6 +4,69 @@ Hide and Seek de Kal-Games : un plugin par jeu (règle 2.2 de `REGLES.md`), comm
 Serveur : `kal-games` (machine 7001). Dépend de KalGames (1.22.2 en service) et KG_ScoreBoards. Aucun changement dans
 KalGames : le jeu n'utilise que les crochets existants du moteur de parties.
 
+## 0.3.0 — retours de test du 26/10/2026
+
+**Statut : compilé, non déployé, non testé en jeu.** Seul (aucun changement dans KalGames). Serveur : Kal-Games, hébergé
+dans Kanvas depuis le 22/10/2026.
+
+**Demande de LeKiwi06 (26/10/2026)** : « le composteur en hide and seek ne fonctionne pas, comme il est troué sur le
+dessus on ne peut jamais se solidifier ; il faudrait aussi un item en main pour changer d'état notre block, car le
+copper golem n'est pas orienté correctement ni dans la bonne posture ; on ne peut pas se solidifier sur une barrière
+aussi, ce n'est pas normal ; par contre on peut se solidifier à travers des blocks comme les fleurs, les trappes, etc ;
+il faut aussi que les évasions s'accumulent tous les 5 points [...] et le fait de soundboard n'est pas assez valorisé,
+retire le cooldown de 10 secondes entre chaque comptage ; j'aimerais aussi qu'on voie à droite la liste des blocks
+encore en vie pour aider les seekers ; et plus un seeker est proche de nous, plus on gagne de points (si aucun seeker
+n'est passé proche de nous pendant 1 minute, alors ne pas gagner de points : proche = zone audible des soundboard) ».
+
+- **Composteur** (et tout bloc creux : chaudron, entonnoir...). Cause : le hider solide était placé sur le point le
+  plus haut du bloc (le bord du composteur) au centre de la case, donc au-dessus du trou ; il tombait au fond, cet
+  écart de hauteur le faisait redevenir mobile, et ainsi de suite. Correction : la hauteur où il se tient ne compte que
+  les parties du bloc sous son emprise (0,6 bloc de large, centrée) : dans un composteur, il se tient sur le fond.
+- **Debout sur une barrière, un muret ou un portillon** : on s'y tient à 1,5 bloc de hauteur, ce qui était refusé
+  (« pieds à mi-hauteur, le bloc flotterait »). Le bloc est maintenant posé dans la case juste au-dessus, donc sur le
+  haut visible de la barrière (sa forme de collision dépasse d'une demi-case au-dessus de son dessin).
+- **Plus de solidification à travers une fleur, une herbe, une trappe, un tapis...** : la case du hider doit être vide
+  (air). Avant, ces blocs étaient remplacés par le bloc du hider (et disparaissaient). Nouveau message « Impossible de
+  devenir solide ici : la case doit être vide (pas de fleur, d'herbe, de trappe, de tapis...) ». Conséquence : on ne
+  devient plus solide debout sur un tapis ou une trappe fermée posée au sol.
+- **Objet « Orienter le bloc »** (bâton de débogage, case 4 de la barre, donné seulement si le bloc imité peut tourner
+  ou changer de posture) : clic droit, orientation suivante (nord, est, sud, ouest, puis haut et bas si le bloc le
+  permet ; 8 directions pour les têtes, bannières... ; axe pour les bûches) ; **accroupi + clic droit, posture
+  suivante** de la statue du golem de cuivre (debout, assis, en course, en étoile). Le choix est gardé pour les
+  prochaines fois où le hider devient solide, appliqué tout de suite s'il l'est déjà ; remis à zéro quand il change de
+  bloc. Le bloc porté sur la tête ne montre pas l'état choisi.
+- **Évasions cumulables** : une de plus tous les `escape-points` points gagnés dans la partie (5 par défaut, survie +
+  soundboard) ; le nombre d'objets « Évasion » montre la réserve. Plus de recharge de 60 s : le réglage
+  `escape-cooldown-seconds` est retiré ; une évasion est seulement refusée pendant les 2 s de celle en cours (un double
+  clic ne gaspille pas la réserve).
+- **Soundboard** : le réglage `sound-points-seconds` (un seul son compté toutes les 10 s) est retiré : chaque son joué
+  (toujours 3 s entre deux sons) avec un seeker libre à 24 blocs au plus (`sound-points-range`) rapporte 0,25 point.
+- **Tableau de droite « Blocs en vie (N) »** : les blocs imités par les hiders en vie et connectés, avec leur nombre
+  (« 2× Composteur »), montré à tous les joueurs de la partie pendant la cachette et la recherche, retiré à la fin. Le
+  tableau est propre à chaque joueur (comme la course de bateau) ; l'équipe des hiders y est recopiée chaque seconde,
+  sinon leur pseudo se verrait.
+- **Points de survie selon la proximité des seekers** : « proche » = à portée des sons (`sound-range`, 30 blocs), seeker
+  libre (pas dans sa salle). Chaque seconde de recherche : seeker proche, ×1 à la limite de la portée jusqu'à ×3 au
+  contact (`near-bonus-percent`, 200 %) ; plus aucun seeker proche depuis 60 s (`near-window-seconds`), aucun point ;
+  entre les deux, ×1. La première minute de recherche compte comme un passage. Les points restent crédités toutes les
+  20 s (`points-survive` : 1 point par intervalle à ×1).
+  Nouveaux réglages (valeur par défaut dans le code, absents du `config.yml` en place, modifiables dans la page du
+  jeu) : `near-bonus-percent`, `near-window-seconds`.
+
+Choix à signaler (non demandés mot pour mot) : la distance « proche » des points de survie est la portée des sons
+(30 blocs), alors que les points du soundboard gardent leur distance de 24 blocs ; la proximité ne change pas les
+points du soundboard ; ×3 au contact est une valeur proposée (à régler) ; la première minute de recherche donne des
+points sans seeker proche ; posture au clic droit accroupi (un seul objet) ; un hider absent n'apparaît pas dans le
+tableau.
+
+Rythme : à ×1 en continu, le même qu'avant (3 points / min). Un hider qui reste près des seekers gagne jusqu'à 9 points
+/ min ; un hider isolé ne gagne plus rien après la première minute. Le soundboard peut rapporter jusqu'à 5 points / min
+(un son toutes les 3 s, seeker à 24 blocs au plus). Repère `EQUILIBRAGE_POINTS.md` : ~135 points pour 30 min.
+
+À tester : composteur, chaudron, entonnoir (hider solide stable) ; debout sur une barrière, un muret ; refus sur une
+fleur, une trappe ; statue du golem de cuivre (orientation, 4 postures, en Bedrock aussi) ; réserve d'évasions ;
+tableau de droite (Java et Bedrock), pseudo des hiders toujours masqué avec ce tableau ; rythme des points.
+
 ## 0.2.0 — retours du premier test (07/10/2026)
 
 **Statut : déployé sur Kal-Games le 07/10/2026 à 22 h 10 (LeKiwi06), actif après redémarrage, non testé en jeu.**
