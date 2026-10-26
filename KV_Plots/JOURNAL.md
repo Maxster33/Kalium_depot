@@ -4,6 +4,22 @@ Serveur Kanvas (ex Kal-Test-Dev). Cahier des charges : `KV_Plots/CAHIER_DES_CHAR
 de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` télécharge aussi les API WorldGuard
 7.0.19 et WorldEdit 7.4.5 (compilation seulement ; en jeu, ce sont les plugins du serveur qui servent).
 
+## 1.8.1 - charges de vent et Wind Burst rétablis (26/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « je suis entrain de build un parkour sur kanvas , mais le wind burst ne fonctionne pas ».
+
+- **Cause** (vérifiée dans le code de Paper 26.2) : `ReglesMonde` annulait toutes les explosions du monde des plots.
+  La charge de vent passe par `ExplosionPrimeEvent` (annulé : elle n'explose pas du tout) ; le Wind Burst de la masse
+  passe par `EntityExplodeEvent` (annulé : `ServerLevel.explode` s'arrête avant d'envoyer au joueur le paquet qui porte
+  sa poussée, son mouvement étant géré par son client).
+- **Correctif** : `ExplosionPrimeEvent` laissé passer pour les charges de vent (`AbstractWindCharge`) ;
+  `EntityExplodeEvent` d'un souffle de vent (`ExplosionResult.TRIGGER_BLOCK`) non annulé, mais sa liste de blocs vidée :
+  la poussée fonctionne, aucune porte, trappe, cloche ou bouton n'est actionné (pas d'effet sur le plot d'un voisin).
+  Les autres explosions restent annulées.
+- Empilée sur la 1.8.0 (non déployée) : déployer la 1.8.1 déploie aussi la 1.8.0.
+
+**Compilé le 26/10/2026 (`sortie/KV_Plots-1.8.1.jar`), non déployé. Statut : non testé en jeu.**
+
 ## 1.8.0 - plots des concours terminés notables, classement figé (25/10/2026, LeKiwi06)
 
 Demande de LeKiwi06 : « j'aimerai qu'on puisse voter les builds de concours après la fin de la phase de vote ».

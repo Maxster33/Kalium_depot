@@ -1,8 +1,10 @@
 package fr.kalium.kvplots;
 
+import org.bukkit.ExplosionResult;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.AbstractWindCharge;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,8 +29,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 /**
- * Règles du monde des plots : créatif + vol pour tous, pas de TNT ni d'explosion, rien ne brûle (la lave et l'eau
- * coulent, mais pas hors de leur plot), redstone désactivée.
+ * Règles du monde des plots : créatif + vol pour tous, pas de TNT ni d'explosion (sauf les souffles de vent, sans effet
+ * sur les blocs), rien ne brûle (la lave et l'eau coulent, mais pas hors de leur plot), redstone désactivée.
  */
 final class ReglesMonde implements Listener {
 
@@ -99,14 +101,22 @@ final class ReglesMonde implements Listener {
         }
     }
 
+    /** La charge de vent n'explose qu'après cet événement : l'annuler supprimerait aussi sa poussée. */
     @EventHandler(ignoreCancelled = true)
     public void onPrime(ExplosionPrimeEvent e) {
+        if (e.getEntity() instanceof AbstractWindCharge) return;
         if (e.getEntity().getWorld().equals(plugin.monde())) e.setCancelled(true);
     }
 
+    /**
+     * Souffles de vent (charge de vent, Wind Burst de la masse) : on garde la poussée pour les parcours, mais aucun bloc
+     * n'est actionné. Annuler l'événement empêcherait Paper d'envoyer la poussée au joueur (demande de LeKiwi06, 26/10/2026).
+     */
     @EventHandler(ignoreCancelled = true)
     public void onEntityExplode(EntityExplodeEvent e) {
-        if (e.getEntity().getWorld().equals(plugin.monde())) e.setCancelled(true);
+        if (!e.getEntity().getWorld().equals(plugin.monde())) return;
+        if (e.getExplosionResult() == ExplosionResult.TRIGGER_BLOCK) e.blockList().clear();
+        else e.setCancelled(true);
     }
 
     @EventHandler(ignoreCancelled = true)
