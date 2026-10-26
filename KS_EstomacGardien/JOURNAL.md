@@ -62,9 +62,17 @@ fusionner dans l'enclume ) il faut qu'il contiennent + d'items ».
   de KS_Economy ne reconnaissent que les estomacs non ouverts (aucun changement dans KS_Economy).
 - **Enclume** : refusé, ouvert ou non (enclume du jeu et enclume en coffre de KS_Enclume, qui applique ce refus) : ni
   renommage, ni fusion. Les coffres de récompense de KS_RewardsGUI ne se fusionnent qu'entre eux.
-- **Contenu** : inchangé pour l'instant (tirage 1 : 20 % casque ; tirage 2 : 2 fois). Proposition d'un contenu plus
-  fourni (tirage 2 fait 4 fois, nouveau tirage de butin marin fait 3 fois) dans
-  `sortie/peche/proposition-peche-et-estomac.xlsx`, à coder après validation.
+- **Contenu** (proposition `sortie/peche/proposition-peche-et-estomac.xlsx`, validée par LeKiwi06 : « code le nouveau
+  contenu de l'Estomac tel que proposé ») : 7 à 8 piles au lieu de 2 à 3.
+  - tirage 1 inchangé : 20 % casque en diamant enchanté niveau 30 à 50 ;
+  - tirage 2 (même table) fait **4 fois** au lieu de 2 ;
+  - **nouveau tirage 3** (butin marin), fait 3 fois, poids sur 54 : éclats de prismarine x4-8 (10), cristaux de
+    prismarine x2-5 (10), poisson cru au hasard parmi morue, saumon, poisson tropical, poisson-globe x2-5 (10),
+    concombres de mer x2-4 (6), sacs d'encre luisante x2-4 (6), lanternes aquatiques x2-4 (5), carapace de nautile (3),
+    écaille de tortue x1-2 (3), éponge (1).
+  - Valeur moyenne ajoutée au barème : environ 10,9 émeraudes par estomac (2 tirages 2 à 4,8 + 3 tirages 3 à 0,4). Le
+    prix de l'estomac dans `rachats.csv` de KS_Economy (155,4) n'est pas changé : une autre session travaille sur
+    KS_Economy en ce moment ; à recalculer au prochain passage du barème.
 - Didacticiel : nouvelle entrée « Estomac du gardien » (thème Butin), marquée Nouveau le 26/10.
 
 Choix de Claude, signalés : contenu gardé dans l'objet (il n'est tiré qu'à la première ouverture, rien n'est donc

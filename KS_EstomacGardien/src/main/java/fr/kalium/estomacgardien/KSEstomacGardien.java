@@ -304,18 +304,61 @@ public final class KSEstomacGardien extends JavaPlugin implements Listener {
 
     /**
      * Tirage 1 (1 tirage) : 20 % casque en diamant enchanté niveau 30 à 50.
-     * Tirage 2 (2 tirages, poids) : oeuf de tortue 3, bateau 3, corail x2-3 10, algue x2-3 10, trident enchanté niveau
+     * Tirage 2 (4 tirages, poids) : oeuf de tortue 3, bateau 3, corail x2-3 10, algue x2-3 10, trident enchanté niveau
      * 10 à 29 3, armure de nautile en diamant 1, coeur de la mer 1.
+     * Tirage 3 (3 tirages, poids) : voir tirage3.
+     * 2.0.0 (LeKiwi06 : « il faut qu'il contiennent + d'items », proposition validée) : tirage 2 fait 4 fois (avant : 2),
+     * nouveau tirage 3 de butin marin.
      */
     static List<ItemStack> contenu() {
         List<ItemStack> items = new ArrayList<>();
         if (random().nextDouble() < 0.20) {
             items.add(enchanter(new ItemStack(Material.DIAMOND_HELMET), entre(30, 50)));
         }
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 4; i++) {
             items.add(tirage2());
         }
+        for (int i = 0; i < 3; i++) {
+            items.add(tirage3());
+        }
         return items;
+    }
+
+    private static final List<Material> POISSONS = List.of(Material.COD, Material.SALMON, Material.TROPICAL_FISH,
+            Material.PUFFERFISH);
+
+    /**
+     * 2.0.0 : butin marin (poids sur 54) : éclats de prismarine x4-8 10, cristaux de prismarine x2-5 10, poisson cru au
+     * hasard (morue, saumon, poisson tropical, poisson-globe) x2-5 10, concombres de mer x2-4 6, sacs d'encre luisante
+     * x2-4 6, lanternes aquatiques x2-4 5, carapace de nautile 3, écaille de tortue x1-2 3, éponge 1.
+     */
+    private static ItemStack tirage3() {
+        int roll = random().nextInt(54);
+        if ((roll -= 10) < 0) {
+            return new ItemStack(Material.PRISMARINE_SHARD, entre(4, 8));
+        }
+        if ((roll -= 10) < 0) {
+            return new ItemStack(Material.PRISMARINE_CRYSTALS, entre(2, 5));
+        }
+        if ((roll -= 10) < 0) {
+            return new ItemStack(POISSONS.get(random().nextInt(POISSONS.size())), entre(2, 5));
+        }
+        if ((roll -= 6) < 0) {
+            return new ItemStack(Material.SEA_PICKLE, entre(2, 4));
+        }
+        if ((roll -= 6) < 0) {
+            return new ItemStack(Material.GLOW_INK_SAC, entre(2, 4));
+        }
+        if ((roll -= 5) < 0) {
+            return new ItemStack(Material.SEA_LANTERN, entre(2, 4));
+        }
+        if ((roll -= 3) < 0) {
+            return new ItemStack(Material.NAUTILUS_SHELL);
+        }
+        if ((roll -= 3) < 0) {
+            return new ItemStack(Material.TURTLE_SCUTE, entre(1, 2));
+        }
+        return new ItemStack(Material.SPONGE);
     }
 
     private static ItemStack tirage2() {
