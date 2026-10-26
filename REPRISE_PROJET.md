@@ -100,7 +100,8 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
   une barrière, plus de solide à travers une fleur ou une trappe, objet « Orienter le bloc » (orientation, posture du
   golem de cuivre), évasions cumulables tous les 5 points, chaque son du soundboard compté, tableau de droite « Blocs en
   vie », points de survie selon la proximité des seekers et la rareté du bloc dans la map, petite partie (4 joueurs ou
-  moins) enfermée dans le bâtiment central (deux coins à poser dans l'arène). Seul, sur Kal-Games (Kanvas). Détail :
+  moins) enfermée dans le bâtiment central (deux coins à poser dans l'arène), solide sous une dalle ou une trappe du
+  haut (hider rapetissé), plus de solide sur un autre joueur (exploit d'escalade). Seul, sur Kal-Games (Kanvas). Détail :
   `KG_HideAndSeek/JOURNAL.md`. **Non déployé, non testé en jeu.**
 - **KV_Plots 1.8.0** (LeKiwi06, 25/10/2026) : les plots d'un concours de build restent notables après la fin des votes
   (anciens concours compris), classement figé à la clôture (`concours.yml`), notes tardives comptées pour les points des

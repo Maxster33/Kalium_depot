@@ -156,6 +156,8 @@ Conséquences déduites par Claude (**À CONFIRMER**) :
 8. **Petite partie (4 joueurs ou moins)** : on ne peut pas sortir du bâtiment central, et les seekers partent du même
    endroit que les hiders (ils partaient de l'extérieur).
 9. **Plus un bloc est rare dans la map, plus il rapporte de points**, pour valoriser le fait de l'utiliser.
+10. On peut devenir solide **même sous une dalle haute ou une trappe haute**.
+11. On ne peut **pas devenir solide sur un autre joueur** (exploit : escalade en s'empilant à tour de rôle).
 
 ## 6. Notes techniques (à confirmer au moment du code)
 

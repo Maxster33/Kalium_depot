@@ -82,6 +82,9 @@ public final class HideInstance extends GameInstance {
     private static final double SOLID_SLACK = 0.4;
     /** Demi-largeur d'un joueur : son emprise au sol, centree sur la case, va de 0,2 a 0,8. */
     private static final double HALF_WIDTH = 0.3;
+    /** Taille d'un joueur, et place minimale au-dessus du bloc pour y tenir rapetisse (taille 0,0625 au plus petit). */
+    private static final double PLAYER_HEIGHT = 1.8;
+    private static final double MIN_ROOM = 0.2;
     /** Objet « Orienter le bloc » : ordre des orientations (clic droit). */
     private static final List<BlockFace> TURN = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST,
             BlockFace.UP, BlockFace.DOWN);
@@ -103,6 +106,9 @@ public final class HideInstance extends GameInstance {
         Block cell;
         BlockData cellOriginal;
         Location snap;
+        /** Position du hider juste avant de devenir solide, et s'il a ete rapetisse pour tenir sous un plafond bas. */
+        Location ground;
+        boolean shrunk;
         long nextSound;
         /** Evasions gagnees (une tous les N points) et utilisees ; fin de l'evasion en cours (ticks). */
         int escapesEarned;
@@ -871,11 +877,7 @@ public final class HideInstance extends GameInstance {
 
     /** Formes de collision du bloc, ramenees a sa case (de 0 a 1 ; donnees en coordonnees du monde selon les versions). */
     private static List<BoundingBox> shape(Block block) {
-        List<BoundingBox> boxes = new ArrayList<>();
-        for (BoundingBox box : block.getCollisionShape().getBoundingBoxes()) {
-            boxes.add(box.getMaxY() > 2 ? box.clone().shift(-block.getX(), -block.getY(), -block.getZ()) : box);
-        }
-        return boxes;
+        return relative(block.getCollisionShape().getBoundingBoxes(), block);
     }
 
     /**
@@ -907,11 +909,23 @@ public final class HideInstance extends GameInstance {
     private boolean solidify(Hider hider, Player player) {
         Block cell = footCell(player.getLocation());
         boolean taken = false;
+        boolean onHider = false;
         for (Hider other : hiders.values()) {
             taken |= other != hider && cell != null && cell.equals(other.cell);
+            onHider |= other != hider && cell != null && cell.getRelative(BlockFace.DOWN).equals(other.cell);
         }
         if (cell == null || taken || !inBounds(cell.getX(), cell.getY(), cell.getZ())) {
             player.sendActionBar(t("hns.solid-refused", "<red>Impossible de devenir solide ici."));
+            return false;
+        }
+        // 0.3.0 : jamais sur le bloc d'un autre hider ni dans la case d'un autre joueur (cache ou non). Sinon deux hiders
+        // montaient aussi haut qu'ils voulaient en devenant solides l'un sur l'autre a tour de role.
+        BoundingBox space = BoundingBox.of(cell);
+        for (Player other : world.getPlayers()) {
+            onHider |= !other.equals(player) && other.getGameMode() != GameMode.SPECTATOR && other.getBoundingBox().overlaps(space);
+        }
+        if (onHider) {
+            player.sendActionBar(t("hns.solid-on-player", "<red>Impossible de devenir solide sur un autre joueur."));
             return false;
         }
         // 0.3.0 : la case doit etre vide. Avant, une fleur, une herbe, une trappe ou un tapis y etait remplace par le bloc
@@ -920,10 +934,14 @@ public final class HideInstance extends GameInstance {
             player.sendActionBar(t("hns.solid-occupied", "<red>Impossible de devenir solide ici : la case doit être vide (pas de fleur, d'herbe, de trappe, de tapis...)."));
             return false;
         }
-        if (!cell.getRelative(BlockFace.UP).isPassable()) {
+        // 0.3.0 : sous un plafond bas (dalle ou trappe du haut...), le hider est rapetisse pour tenir sur son bloc ; refus
+        // seulement s'il ne reste presque aucune place.
+        double top = standHeight(relative(hider.state.getCollisionShape(cell.getLocation()).getBoundingBoxes(), cell));
+        if (roomAbove(cell, top) < MIN_ROOM) {
             player.sendActionBar(t("hns.solid-no-room", "<red>Pas assez de place au-dessus de vous pour devenir solide."));
             return false;
         }
+        hider.ground = player.getLocation();
         BlockData original = cell.getBlockData();
         trackOriginal(cell.getX(), cell.getY(), cell.getZ(), original);
         cell.setBlockData(hider.state.clone(), false);
@@ -942,23 +960,55 @@ public final class HideInstance extends GameInstance {
      */
     private void standOn(Hider hider, Player player) {
         Block cell = hider.cell;
-        double top = 0;
-        double min = 0.5 - HALF_WIDTH;
-        double max = 0.5 + HALF_WIDTH;
-        for (BoundingBox box : shape(cell)) {
-            if (box.getMinX() < max && box.getMaxX() > min && box.getMinZ() < max && box.getMaxZ() > min) {
-                top = Math.max(top, box.getMaxY());
-            }
-        }
-        if (top > 1.5) {
-            top = 1.0;
-        }
+        double top = standHeight(shape(cell));
         Location at = player.getLocation();
         hider.snap = new Location(world, cell.getX() + 0.5, cell.getY() + top, cell.getZ() + 0.5, at.getYaw(), at.getPitch());
+        // 0.3.0 : plafond trop bas pour un joueur debout sur le bloc : rapetisse a la place disponible (attribut de taille).
+        double room = roomAbove(cell, top);
+        hider.shrunk = room < PLAYER_HEIGHT;
+        hns.scale(player, hider.shrunk ? Math.max(0.0625, (room - 0.05) / PLAYER_HEIGHT) : 1);
         // Le bloc est envoye au joueur AVANT son deplacement (la pose du vrai bloc n'est diffusee qu'en fin de tick) :
         // sinon son jeu le ferait tomber a travers un bloc qu'il ne connait pas encore.
         player.sendBlockChange(cell.getLocation(), cell.getBlockData());
         player.teleport(hider.snap);
+    }
+
+    /** Formes de collision ramenees a la case (de 0 a 1), comme shape(Block). */
+    private static List<BoundingBox> relative(java.util.Collection<BoundingBox> boxes, Block block) {
+        List<BoundingBox> list = new ArrayList<>();
+        for (BoundingBox box : boxes) {
+            list.add(box.getMaxY() > 2 ? box.clone().shift(-block.getX(), -block.getY(), -block.getZ()) : box);
+        }
+        return list;
+    }
+
+    /** Hauteur (dans la case) ou un joueur centre se tient sur le bloc : seules comptent les parties sous son emprise. */
+    private static double standHeight(List<BoundingBox> boxes) {
+        double top = 0;
+        double min = 0.5 - HALF_WIDTH;
+        double max = 0.5 + HALF_WIDTH;
+        for (BoundingBox box : boxes) {
+            if (box.getMinX() < max && box.getMaxX() > min && box.getMinZ() < max && box.getMaxZ() > min) {
+                top = Math.max(top, box.getMaxY());
+            }
+        }
+        return top > 1.5 ? 1.0 : top;
+    }
+
+    /** Place libre au-dessus d'un joueur centre debout a la hauteur top de la case (plafond cherche sur 3 cases). */
+    private static double roomAbove(Block cell, double top) {
+        double min = 0.5 - HALF_WIDTH;
+        double max = 0.5 + HALF_WIDTH;
+        double ceiling = top + PLAYER_HEIGHT;
+        for (int dy = 1; dy <= 3; dy++) {
+            for (BoundingBox box : shape(cell.getRelative(0, dy, 0))) {
+                double bottom = dy + box.getMinY();
+                if (bottom >= top && box.getMinX() < max && box.getMaxX() > min && box.getMinZ() < max && box.getMaxZ() > min) {
+                    ceiling = Math.min(ceiling, bottom);
+                }
+            }
+        }
+        return ceiling - top;
     }
 
     /** Le hider redevient un joueur visible : sa case retrouve son contenu d'origine. */
@@ -973,9 +1023,19 @@ public final class HideInstance extends GameInstance {
         hider.snap = null;
         hider.stillTicks = 0;
         if (player != null) {
+            if (hider.shrunk && player.isOnline() && hider.ground != null) {
+                // Rapetisse sous un plafond bas : il reprend sa place d'avant AVANT de retrouver sa taille, sinon il
+                // grandirait dans le plafond.
+                Location back = hider.ground.clone();
+                back.setYaw(player.getLocation().getYaw());
+                back.setPitch(player.getLocation().getPitch());
+                player.teleport(back);
+            }
+            hns.scale(player, 1);
             hns.reveal(player);
             hider.lastPos = player.getLocation();
         }
+        hider.shrunk = false;
     }
 
     // ------------------------------------------------------------------ actions du hider

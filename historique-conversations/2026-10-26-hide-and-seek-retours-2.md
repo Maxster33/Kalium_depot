@@ -10,7 +10,8 @@ travers des fleurs, des trappes ; évasions cumulables tous les 5 points ; sound
 10 s entre deux comptages) ; liste des blocs encore en vie à droite de l'écran pour aider les seekers ; points selon la
 proximité des seekers, aucun point si aucun seeker n'est passé proche depuis 1 minute (proche = zone audible du
 soundboard). Puis : en partie de 4 joueurs ou moins, ne pas pouvoir sortir du bâtiment central, seekers au même
-départ que les hiders ; plus un bloc est rare dans la map, plus il rapporte de points.
+départ que les hiders ; plus un bloc est rare dans la map, plus il rapporte de points. Enfin : solide possible sous
+une dalle ou une trappe du haut ; jamais sur un autre joueur (exploit d'escalade en s'empilant).
 
 ## Fait
 - KG_HideAndSeek 0.3.0 : hider solide stable dans un bloc creux (il se tient sur le fond du composteur) ; solide debout
@@ -21,6 +22,8 @@ départ que les hiders ; plus un bloc est rare dans la map, plus il rapporte de 
   ×3 selon la distance du seeker le plus proche (30 blocs), nuls sans seeker proche depuis 60 s ; points d'arène
   facultatifs « Bâtiment : coin 1 / 2 » : à 4 joueurs ou moins, personne ne sort de la zone et les seekers partent du
   départ des hiders ; points de survie ×1 à ×2 selon la rareté du bloc imité dans la map (affichée dans « Votre bloc »).
+- Sous un plafond bas, le hider solide est rapetissé (attribut de taille) pour tenir sur son bloc ; refus si la case du
+  dessous est le bloc d'un autre hider ou si un autre joueur occupe la case.
 - Compilé (`sortie/KG_HideAndSeek-0.3.0.jar`). Détail : `KG_HideAndSeek/JOURNAL.md`.
 
 ## Décisions (prises par Claude, à confirmer)

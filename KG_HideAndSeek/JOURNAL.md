@@ -75,6 +75,25 @@ pour valoriser le fait de l'utiliser ».
   dans la map s'affichent au survol de chaque bloc, et dans le message du choix.
   Nouveaux réglages : `building-max-players`, `rarity-bonus-percent`.
 
+**Deuxième complément (LeKiwi06, même jour)** : « j'aimerais aussi qu'un joueur puisse se solidifier même s'il y a une
+dalle haute ou une trappe haute au-dessus de lui, et il ne faut pas qu'un joueur puisse se solidifier sur un autre
+joueur (on a trouvé un exploit où on pouvait escalader une énorme hauteur en s'empilant à tour de rôle l'un sur
+l'autre) ».
+
+- **Plafond bas** : avant, il fallait une case entièrement libre au-dessus du bloc (le hider solide se tient debout
+  dessus). Maintenant on mesure la place libre au-dessus de l'endroit où il se tient (plafond cherché sur 3 cases, sous
+  son emprise) ; s'il manque de la place pour un joueur debout (1,8 bloc), il est **rapetissé** (attribut de taille,
+  modificateur `kg_hideandseek:solid_scale`) juste assez pour tenir. Exemple : sous une dalle du haut posée juste
+  au-dessus de son bloc, il reste 0,5 bloc, taille ×0,25. Caché aux autres joueurs, seul lui le voit (caméra plus
+  basse). Quand il redevient mobile, il est ramené à sa place d'avant puis reprend sa taille (sinon il grandirait dans
+  le plafond). Refus « Pas assez de place au-dessus de vous » seulement sous 0,2 bloc de place. Remplace la limite de la
+  0.2.0 (plus de hider couché sous un plafond à 2 blocs : il est rapetissé). Modificateur retiré aussi par sécurité à
+  chaque nettoyage du joueur (fin de partie, arrivée sur le serveur).
+- **Pas de solide sur un autre joueur** : refus « Impossible de devenir solide sur un autre joueur » si la case juste
+  en dessous est le bloc d'un autre hider solide, ou si un autre joueur (caché ou non, sauf spectateur) occupe la case.
+  Cause de l'escalade : B montait sur le bloc de A et devenait solide au-dessus de lui ; A, alors dans le bloc de B,
+  en ressortait par le dessus et recommençait.
+
 Choix à signaler (non demandés mot pour mot) : la distance « proche » des points de survie est la portée des sons
 (30 blocs), alors que les points du soundboard gardent leur distance de 24 blocs ; la proximité ne change pas les
 points du soundboard ; ×3 au contact est une valeur proposée (à régler) ; la première minute de recherche donne des
@@ -92,7 +111,9 @@ Rythme : à ×1 en continu, le même qu'avant (3 points / min). Un hider qui res
 fleur, une trappe ; statue du golem de cuivre (orientation, 4 postures, en Bedrock aussi) ; réserve d'évasions ;
 tableau de droite (Java et Bedrock), pseudo des hiders toujours masqué avec ce tableau ; rythme des points ; petite
 partie à 4 joueurs (poser d'abord les deux coins du bâtiment) : sortie par une porte et par le toit, seekers lâchés au
-départ des hiders ; multiplicateurs des blocs dans le menu « Votre bloc ».
+départ des hiders ; multiplicateurs des blocs dans le menu « Votre bloc » ; solide sous une dalle du haut et une trappe
+du haut (taille réduite, retour à la taille normale sans rester coincé, **en Bedrock surtout** : Geyser doit appliquer
+la taille à la boîte de collision du joueur) ; refus sur le bloc d'un autre hider.
 
 ## 0.2.0 — retours du premier test (07/10/2026)
 

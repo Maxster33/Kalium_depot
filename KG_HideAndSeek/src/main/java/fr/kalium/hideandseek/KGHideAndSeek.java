@@ -65,6 +65,7 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
     private NamespacedKey heartsKey;
     private NamespacedKey absorptionKey;
     private NamespacedKey locatorKey;
+    private NamespacedKey scaleKey;
 
     public static KGHideAndSeek get() {
         return instance;
@@ -77,6 +78,7 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
         heartsKey = new NamespacedKey(this, "seeker_hearts");
         absorptionKey = new NamespacedKey(this, "seeker_absorption");
         locatorKey = new NamespacedKey(this, "no_locator_bar");
+        scaleKey = new NamespacedKey(this, "solid_scale");
         blocks = new MapBlocks(this);
         blocks.load();
         sounds = new SoundBoard(this);
@@ -273,6 +275,21 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
         setModifier(player, Attribute.WAYPOINT_TRANSMIT_RANGE, locatorKey, -1.0, AttributeModifier.Operation.MULTIPLY_SCALAR_1);
     }
 
+    /**
+     * 0.3.0 : taille du hider solide sous un plafond bas (1 : taille normale, modificateur retire). Il est cache aux
+     * autres joueurs : seul lui voit la difference (camera plus basse).
+     */
+    void scale(Player player, double scale) {
+        AttributeInstance value = player.getAttribute(Attribute.SCALE);
+        if (value == null) {
+            return;
+        }
+        value.removeModifier(scaleKey);
+        if (scale < 1) {
+            value.addModifier(new AttributeModifier(scaleKey, scale - 1, AttributeModifier.Operation.ADD_NUMBER));
+        }
+    }
+
     private void setModifier(Player player, Attribute attribute, NamespacedKey key, double amount) {
         setModifier(player, attribute, key, amount, AttributeModifier.Operation.ADD_NUMBER);
     }
@@ -296,6 +313,7 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
         if (absorption != null) {
             absorption.removeModifier(absorptionKey);
         }
+        scale(player, 1);
         AttributeInstance locator = player.getAttribute(Attribute.WAYPOINT_TRANSMIT_RANGE);
         if (locator != null) {
             locator.removeModifier(locatorKey);
