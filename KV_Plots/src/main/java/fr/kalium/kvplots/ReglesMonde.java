@@ -109,8 +109,9 @@ final class ReglesMonde implements Listener {
     }
 
     /**
-     * Souffles de vent (charge de vent, Wind Burst de la masse) : on garde la poussée pour les parcours, mais aucun bloc
-     * n'est actionné. Annuler l'événement empêcherait Paper d'envoyer la poussée au joueur (demande de LeKiwi06, 26/10/2026).
+     * Souffles de vent : on garde la poussée pour les parcours, mais aucun bloc n'est actionné. Annuler l'événement
+     * empêcherait Paper d'envoyer la poussée au joueur (demande de LeKiwi06, 26/10/2026). La charge de vent passe par
+     * {@link EntityExplodeEvent} ; le Wind Burst de la masse, sans entité source, par {@link BlockExplodeEvent}.
      */
     @EventHandler(ignoreCancelled = true)
     public void onEntityExplode(EntityExplodeEvent e) {
@@ -121,7 +122,9 @@ final class ReglesMonde implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockExplode(BlockExplodeEvent e) {
-        if (ici(e.getBlock())) e.setCancelled(true);
+        if (!ici(e.getBlock())) return;
+        if (e.getExplosionResult() == ExplosionResult.TRIGGER_BLOCK) e.blockList().clear();
+        else e.setCancelled(true);
     }
 
     // --- Rien ne brûle ---

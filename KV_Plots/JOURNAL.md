@@ -4,6 +4,25 @@ Serveur Kanvas (ex Kal-Test-Dev). Cahier des charges : `KV_Plots/CAHIER_DES_CHAR
 de FAWE, qui fournit l'API WorldEdit). Compilation : `sh telecharger-outils.sh` télécharge aussi les API WorldGuard
 7.0.19 et WorldEdit 7.4.5 (compilation seulement ; en jeu, ce sont les plugins du serveur qui servent).
 
+## 1.8.2 - Wind Burst de la masse rétabli pour de bon (26/10/2026, LeKiwi06)
+
+Retour de LeKiwi06 après la 1.8.1 : « ça ne fonctionne toujours pas ... » ; masse enchantée Wind Burst sur un golem de
+fer (Résistance 255), vers x 200000, z 100000 du monde Kanvas ; « j'arrive à le frapper , mais c'est comme si ma mace
+n'était pas enchanté ».
+
+- **Cause** (vérifiée dans Paper 26.3, version de Kanvas) : l'explosion du Wind Burst n'a **pas d'entité source**
+  (`wind_burst.json` ne met pas `attribute_to_user`, donc `ExplodeEffect` passe `null`). Sans source, Paper déclenche
+  `BlockExplodeEvent` et non `EntityExplodeEvent` : `onBlockExplode` l'annulait toujours, d'où aucun envoi de la
+  poussée. L'analyse de la 1.8.1 sur ce point était fausse.
+- Écartés en lisant leur code : WorldGuard 7.0.19 (le drapeau `wind-charge-burst` non réglé laisse passer la poussée
+  qu'on se donne à soi-même ; `other-explosion` autorisé par défaut ; les blocs protégés sont retirés, l'explosion
+  n'est pas annulée), KalGames, KLM_*, GrimAC (aucune alerte), la Résistance 255 (un coup à 0 dégât déclenche quand
+  même les enchantements).
+- **Correctif** : `onBlockExplode` traite le souffle de vent comme `onEntityExplode` (`TRIGGER_BLOCK` : liste de blocs
+  vidée, explosion gardée) ; les autres explosions de blocs (lits, ancres de réapparition) restent annulées.
+
+**Compilé le 26/10/2026 (`sortie/KV_Plots-1.8.2.jar`), non déployé. Statut : non testé en jeu.**
+
 ## 1.8.1 - charges de vent et Wind Burst rétablis (26/10/2026, LeKiwi06)
 
 Demande de LeKiwi06 : « je suis entrain de build un parkour sur kanvas , mais le wind burst ne fonctionne pas ».
