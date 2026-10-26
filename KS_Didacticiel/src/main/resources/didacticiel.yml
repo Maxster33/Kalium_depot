@@ -99,7 +99,7 @@ themes:
       peche:
         nom: "Pêche"
         icone: FISHING_ROD
-        texte: "Les livres enchantés sont de retour à la pêche, mais on n'y pêche jamais Raccommodage (ni livre, ni arc, ni canne)."
+        texte: "Les livres enchantés sont de retour à la pêche, mais on n'y pêche jamais Raccommodage (ni livre, ni arc, ni canne). Avec de la patience, on remonte aussi des têtes de créatures marines, et parfois des trésors bien plus rares."
         nouveau: "2026-10-26"
       tetes:
         nom: "Têtes de mobs"

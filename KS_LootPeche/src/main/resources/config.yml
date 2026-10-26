@@ -1,0 +1,44 @@
+# KS_LootPeche
+# Prises rares (1.2.0) : chaque prise a, pour chaque ligne, 1 chance sur N d'être remplacée par cet objet.
+# Clés : « tete:<id> » = tête de KS_Decapitator (id de /kaliumgive sans « tete_ », ex. tete:axolotl_bleu) ;
+# « fiole_sinistre » (Mauvais présage, niveau I à V au hasard) ; « pomme_de_notch ».
+# La tête de wither squelette a toujours ses 3 défauts (KS_Decapitator). Redémarrer le serveur après un changement.
+prises-rares:
+  # Palier B : 1 sur 1 000
+  tete:morue: 1000
+  tete:saumon: 1000
+  tete:poisson_globe: 1000
+  tete:poisson_tropical: 1000
+  tete:poulpe: 1000
+  tete:bebe_poulpe: 1000
+  tete:poulpe_luisant: 1000
+  tete:bebe_poulpe_luisant: 1000
+  tete:tortue: 1000
+  tete:bebe_tortue: 1000
+  tete:nautile: 1000
+  tete:bebe_nautile: 1000
+  tete:tetard: 1000
+  tete:gardien: 1000
+  tete:noye: 1000
+  tete:axolotl_rose: 1000
+  tete:bebe_axolotl_rose: 1000
+  tete:axolotl_brun: 1000
+  tete:bebe_axolotl_brun: 1000
+  tete:axolotl_dore: 1000
+  tete:bebe_axolotl_dore: 1000
+  tete:axolotl_cyan: 1000
+  tete:bebe_axolotl_cyan: 1000
+  # Palier C : 1 sur 5 000
+  tete:dauphin: 5000
+  tete:bebe_dauphin: 5000
+  tete:nautile_zombie: 5000
+  tete:nautile_zombie_des_coraux: 5000
+  # Palier D : 1 sur 25 000
+  tete:axolotl_bleu: 25000
+  tete:bebe_axolotl_bleu: 25000
+  tete:bebe_noye: 25000
+  # Boss et objets extrêmement rares
+  tete:grand_gardien: 100000
+  tete:wither_squelette: 50000
+  fiole_sinistre: 50000
+  pomme_de_notch: 75000
