@@ -96,4 +96,13 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
 - **Geyser 2.12.0 (23/10/2026, LeKiwi06)** : `Geyser-Velocity-2.12.0-b1269.jar` (Java 26.3) à la place de la
   2.11.3-b1249 (rangée avec une copie du `config.yml` dans `/plugins/_removed-geyser-2.11.3-b1249/`). Correspondances
   (format 2) et pack 1.4.0 inchangés ; Floodgate 2.2.5 b141 inchangé (déjà la dernière). Envoyé le 23/10/2026 à 15:47 ;
-  actif après redémarrage du proxy. **Non testé.** Le réglage de pile reste à remettre (point ouvert ci-dessus).
+  actif après redémarrage du proxy. **Non testé.**
+- **Réglage de pile remis (26/10/2026, LeKiwi06 : « remets le réglage de pile (max_stack_size) dans geyser-bedrock et
+  envoie-le sur le proxy »)** : `kalium_objets.json` revient à la version d'avant le retrait du 11/10 (commit e428b1e) :
+  `"minecraft:max_stack_size": 64` sur les 11 objets empilables (Clé de l'End, Bedrock Breaker, Fragment et Cœur de
+  Spawner, Changeur de Biome, 5 jetons, Cristal de purification) ; Estomac du gardien et badges à 1, comme sur Java.
+  Retiré le 11/10 pour un test (téléphone bloqué au chargement des packs), ce réglage n'en était pas la cause. Pack
+  1.4.0 inchangé. Fichier du proxy vérifié identique au dépôt avant l'envoi. **Envoyé sur le proxy le 26/10/2026 à
+  14:33 (l'ancien dans `/plugins/Geyser-Velocity/_removed-kalium-objets-sans-pile-2026-10-26/`), actif après
+  redémarrage du proxy. Non testé** : sur Bedrock, vérifier qu'un joueur entre toujours (packs chargés) et que les
+  jetons s'empilent.

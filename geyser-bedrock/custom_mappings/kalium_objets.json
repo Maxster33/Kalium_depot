@@ -20,6 +20,9 @@
         "bedrock_options": {
           "icon": "kalium.cle_de_l_end",
           "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
         }
       },
       {
@@ -30,6 +33,9 @@
         "bedrock_options": {
           "icon": "kalium.bedrock_breaker",
           "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
         }
       },
       {
@@ -40,6 +46,9 @@
         "bedrock_options": {
           "icon": "kalium.fragment_spawner",
           "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
         }
       },
       {
@@ -50,6 +59,9 @@
         "bedrock_options": {
           "icon": "kalium.coeur_spawner",
           "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
         }
       },
       {
@@ -60,6 +72,9 @@
         "bedrock_options": {
           "icon": "kalium.changeur_biome",
           "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
         }
       },
       {
@@ -70,6 +85,9 @@
         "bedrock_options": {
           "icon": "kalium.jeton_fly",
           "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
         }
       },
       {
@@ -80,6 +98,9 @@
         "bedrock_options": {
           "icon": "kalium.jeton_mort",
           "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
         }
       },
       {
@@ -90,6 +111,9 @@
         "bedrock_options": {
           "icon": "kalium.jeton_tp",
           "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
         }
       },
       {
@@ -100,6 +124,9 @@
         "bedrock_options": {
           "icon": "kalium.jeton_localisation",
           "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
         }
       },
       {
@@ -110,6 +137,9 @@
         "bedrock_options": {
           "icon": "kalium.jeton_claim",
           "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
         }
       },
       {
@@ -160,6 +190,9 @@
         "bedrock_options": {
           "icon": "kalium.cristal_purification",
           "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
         }
       }
     ]
