@@ -1,0 +1,5 @@
+# KS_BedrockBreaker
+# Régions WorldGuard où le Bedrock Breaker ne fonctionne pas (le joueur ou le bloc visé y est).
+# Ids des régions tels que WorldGuard les écrit (en minuscules). Redémarrer le serveur après un changement.
+regions-interdites:
+  - ile-centrale-end
