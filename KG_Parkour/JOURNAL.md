@@ -126,7 +126,7 @@ entrainement ».
 - Nouveaux textes (`lang.yml` de KalGames) : `race.training-choice-*`, `race.training-partial-sub`,
   `race.training-partial-result`.
 
-**Compilé, non déployé, non testé.**
+**Compilé, jamais déployé seul : déployé dans la 1.4.0.**
 
 ## 1.4.0 — 1 000 émeraudes au premier qui finit chaque map (26/10/2026)
 
@@ -146,4 +146,5 @@ l'entraînement ; **opérateurs compris**.
 - `softdepend: [KG_Rewards]`. Nouveaux textes : `race.first-map-broadcast`, `race.first-map-reward`.
 - Contient la 1.3.0 (choix du point de contrôle en entraînement), jamais déployée.
 
-**Compilé, non déployé, non testé. À déployer avec KG_Rewards 1.4.0.**
+**Déployé sur Kanvas (espace Kal-Games) le 26/10/2026 à 23:28 avec KG_Rewards 1.4.0 (LeKiwi06 ; 1.2.0 dans
+`_removed-kg_parkour-1.2.0/`), actif après redémarrage. Statut : non testé en jeu.**

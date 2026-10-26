@@ -176,4 +176,5 @@ Demande de LeKiwi06 : 1 000 émeraudes au premier joueur qui finit chaque map du
   autres récompenses (boîte de `config.yml`, file `envois.yml`).
 - Aucun autre changement (paliers, tops, butin, commandes).
 
-**Compilé, non déployé, non testé. À déployer avec KG_Parkour 1.4.0.**
+**Déployé sur Kanvas (espace Kal-Games) le 26/10/2026 à 23:28 avec KG_Parkour 1.4.0 (LeKiwi06 ; 1.3.0 dans
+`_removed-kg_rewards-1.3.0/`), actif après redémarrage. Statut : non testé en jeu.**
