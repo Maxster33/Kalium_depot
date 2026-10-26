@@ -18,7 +18,8 @@ Demande de LeKiwi06 : « je suis entrain de build un parkour sur kanvas , mais l
   Les autres explosions restent annulées.
 - Empilée sur la 1.8.0 (non déployée) : déployer la 1.8.1 déploie aussi la 1.8.0.
 
-**Compilé le 26/10/2026 (`sortie/KV_Plots-1.8.1.jar`), non déployé. Statut : non testé en jeu.**
+**Déployé sur Kanvas le 26/10/2026 à 21:39 (LeKiwi06), avec la 1.8.0, actif après redémarrage, non testé en jeu.**
+1.7.0 rangée dans `_removed-kv_plots-1.7.0/`.
 
 ## 1.8.0 - plots des concours terminés notables, classement figé (25/10/2026, LeKiwi06)
 
@@ -43,7 +44,8 @@ concernés, notes tardives comptées pour les points des bâtisseurs **comme sur
   signalé : « Votes clos » seul aurait laissé croire qu'on ne peut plus noter).
 - Empilée sur la 1.7.0, jamais testée en jeu (demande explicite de LeKiwi06).
 
-**Compilé le 25/10/2026 (`sortie/KV_Plots-1.8.0.jar`), non déployé. Statut : non testé en jeu.**
+**Compilé le 25/10/2026 (`sortie/KV_Plots-1.8.0.jar`) ; déployé avec la 1.8.1 le 26/10/2026 à 21:39. Statut : non testé
+en jeu.**
 
 ## 1.7.0 - un concours en construction pendant les votes du précédent, tableau plus court (11/10/2026, LeKiwi06)
 
