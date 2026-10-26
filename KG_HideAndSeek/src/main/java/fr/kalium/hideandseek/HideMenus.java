@@ -5,6 +5,7 @@ import fr.kalium.games.gui.Gui;
 import fr.kalium.games.model.Arena;
 import fr.kalium.games.model.Minigame;
 import fr.kalium.games.util.Items;
+import fr.kalium.scoreboards.data.StatsService;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import net.kyori.adventure.text.Component;
@@ -60,18 +61,24 @@ public final class HideMenus {
             if (material == hider.block()) {
                 label = t("hns.selected", "<green>✔ ").append(label);
             }
-            buttons.add(gui.button(label, null, p -> {
+            // 0.3.0 : multiplicateur de points de survie du bloc (rarete dans la map), dans l'info-bulle et le message.
+            String factor = StatsService.formatPoints(Math.round(game.rarity(material) * 10) / 10.0);
+            Component tip = t("hns.block-rarity", "<gray>Points de survie <gold>×<x></gold> <dark_gray>(<n> dans la map)",
+                    "x", factor, "n", game.mapCount(material));
+            buttons.add(gui.button(label, tip, p -> {
                 Component refusal = game.changeBlock(p, material);
                 if (refusal != null) {
                     p.sendMessage(plugin.prefix().append(refusal));
                     return;
                 }
-                p.sendMessage(plugin.prefix().append(t("hns.block-chosen", "<gray>Vous imitez : <white><block></white>",
-                        "block", blockName(material))));
+                p.sendMessage(plugin.prefix().append(t("hns.block-chosen-rarity",
+                        "<gray>Vous imitez : <white><block></white> <dark_gray>(points de survie <gold>×<x></gold>)",
+                        "block", blockName(material), "x", factor)));
             }));
         }
         List<Component> body = new ArrayList<>();
         body.add(t("hns.blocks-body", "<gray>Choisissez le bloc du décor que vous imitez."));
+        body.add(t("hns.blocks-rarity", "<gray>Plus un bloc est rare dans la map, plus il rapporte de points de survie (survolez un bloc)."));
         int wait = game.blockWait(hider);
         if (wait > 0) {
             body.add(t("hns.blocks-wait", "<red>Prochain changement possible dans <s> s.", "s", wait));

@@ -153,6 +153,9 @@ Conséquences déduites par Claude (**À CONFIRMER**) :
 7. **Points de survie selon la proximité des seekers** (remplace la règle 22 pour la survie) : plus un seeker est
    proche, plus le hider gagne ; si aucun seeker n'est passé « proche » depuis 1 minute, aucun point. Proche = zone
    audible du soundboard.
+8. **Petite partie (4 joueurs ou moins)** : on ne peut pas sortir du bâtiment central, et les seekers partent du même
+   endroit que les hiders (ils partaient de l'extérieur).
+9. **Plus un bloc est rare dans la map, plus il rapporte de points**, pour valoriser le fait de l'utiliser.
 
 ## 6. Notes techniques (à confirmer au moment du code)
 

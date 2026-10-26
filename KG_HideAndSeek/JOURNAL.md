@@ -53,11 +53,36 @@ n'est passé proche de nous pendant 1 minute, alors ne pas gagner de points : pr
   Nouveaux réglages (valeur par défaut dans le code, absents du `config.yml` en place, modifiables dans la page du
   jeu) : `near-bonus-percent`, `near-window-seconds`.
 
+**Complément demandé par LeKiwi06 le même jour** : « la map de hide and seek est constituée d'un bâtiment central et d'un
+décor autour, peux-tu faire en sorte que si on est 4 ou moins, on ne puisse pas sortir du bâtiment ? [...] il faut
+déplacer le spawnpoint des seekers, car ils spawn en extérieur (il faudrait qu'ils aient le même spawnpoint que les
+hiders dans cette configuration) ; j'aimerais aussi que plus un bloc est rare dans la map, plus il rapporte de points,
+pour valoriser le fait de l'utiliser ».
+
+- **Petite partie enfermée dans le bâtiment** : deux nouveaux points d'arène facultatifs, « Bâtiment : coin 1 » (un
+  coin, au sol) et « Bâtiment : coin 2 » (le coin opposé, au niveau du toit). Avec `building-max-players` joueurs ou
+  moins au lancement (4 par défaut, 0 = jamais) et les deux coins posés : hiders et seekers libres qui sortent de la
+  zone entre les deux coins sont ramenés à leur dernière position dedans (« Petite partie : restez dans le bâtiment »),
+  et les seekers partent du **départ des hiders** (à la sortie de leur salle et à chaque retour). La salle des seekers ne
+  change pas. Annonce au lancement : « Petite partie : tout le monde reste dans le bâtiment ». Sécurité : si le départ
+  des hiders n'est pas dans la zone, pas d'enfermement (avertissement dans la console). Aucun bloc à poser dans la map.
+- **Blocs rares mieux payés** : au premier lancement sur une map, chaque bloc est compté dans la copie de l'arène (une
+  fois par capture, gardé en mémoire jusqu'au redémarrage). Les points de survie sont multipliés par la rareté du bloc
+  imité : ×1 pour le bloc de la liste le plus courant dans la map, jusqu'à ×2 pour le plus rare
+  (`rarity-bonus-percent`, 100 %), sur une échelle logarithmique (un bloc présent 10 fois gagne autant sur un bloc
+  présent 100 fois que celui-ci sur un bloc présent 1 000 fois). Un bloc absent de la map compte comme présent une fois.
+  Se cumule avec la proximité des seekers (jusqu'à ×6 au total). Menu « Votre bloc » : le multiplicateur et le nombre
+  dans la map s'affichent au survol de chaque bloc, et dans le message du choix.
+  Nouveaux réglages : `building-max-players`, `rarity-bonus-percent`.
+
 Choix à signaler (non demandés mot pour mot) : la distance « proche » des points de survie est la portée des sons
 (30 blocs), alors que les points du soundboard gardent leur distance de 24 blocs ; la proximité ne change pas les
 points du soundboard ; ×3 au contact est une valeur proposée (à régler) ; la première minute de recherche donne des
 points sans seeker proche ; posture au clic droit accroupi (un seul objet) ; un hider absent n'apparaît pas dans le
-tableau.
+tableau. Bâtiment : zone rectangulaire entre deux coins plutôt que des blocs invisibles (ils bloqueraient aussi les
+grandes parties) ; le nombre de joueurs compte au lancement (pas de changement en cours de partie) ; le toit compte
+comme dehors s'il est au-dessus du coin 2. Rareté : seulement les points de survie (pas le soundboard ni le +8 de fin) ;
+×2 pour le plus rare est une valeur proposée.
 
 Rythme : à ×1 en continu, le même qu'avant (3 points / min). Un hider qui reste près des seekers gagne jusqu'à 9 points
 / min ; un hider isolé ne gagne plus rien après la première minute. Le soundboard peut rapporter jusqu'à 5 points / min
@@ -65,7 +90,9 @@ Rythme : à ×1 en continu, le même qu'avant (3 points / min). Un hider qui res
 
 À tester : composteur, chaudron, entonnoir (hider solide stable) ; debout sur une barrière, un muret ; refus sur une
 fleur, une trappe ; statue du golem de cuivre (orientation, 4 postures, en Bedrock aussi) ; réserve d'évasions ;
-tableau de droite (Java et Bedrock), pseudo des hiders toujours masqué avec ce tableau ; rythme des points.
+tableau de droite (Java et Bedrock), pseudo des hiders toujours masqué avec ce tableau ; rythme des points ; petite
+partie à 4 joueurs (poser d'abord les deux coins du bâtiment) : sortie par une porte et par le toit, seekers lâchés au
+départ des hiders ; multiplicateurs des blocs dans le menu « Votre bloc ».
 
 ## 0.2.0 — retours du premier test (07/10/2026)
 

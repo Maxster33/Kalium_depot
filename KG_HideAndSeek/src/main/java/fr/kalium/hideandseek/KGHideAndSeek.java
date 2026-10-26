@@ -5,6 +5,7 @@ import fr.kalium.games.game.GameInstance;
 import fr.kalium.games.model.Arena;
 import fr.kalium.games.model.Minigame;
 import fr.kalium.games.model.MinigameType;
+import fr.kalium.games.world.Template;
 import io.papermc.paper.event.player.PlayerArmSwingEvent;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import net.kyori.adventure.text.Component;
@@ -32,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.function.Supplier;
 
 import static fr.kalium.games.model.PointSpec.single;
 import static fr.kalium.games.model.SettingSpec.bool;
@@ -57,6 +60,8 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
     private SoundBoard sounds;
     private HideItems items;
     private HideMenus menus;
+    /** Nombre de chaque bloc dans chaque map (indice : Material.ordinal()), compte une fois par capture de l'arene. */
+    private final Map<Template, int[]> blockCounts = new WeakHashMap<>();
     private NamespacedKey heartsKey;
     private NamespacedKey absorptionKey;
     private NamespacedKey locatorKey;
@@ -86,6 +91,7 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
                 List.of(
                         integer("hide-seconds", "Temps de cachette (s)", 30, 5, 180, "Les seekers restent enfermés dans leur salle pendant ce temps."),
                         integer("seek-seconds", "Durée de la recherche (s)", 300, 60, 1800, "Au moins un hider en vie à la fin : les hiders gagnent."),
+                        integer("building-max-players", "Petite partie : joueurs au plus", 4, 0, 16, "Jusqu'à ce nombre de joueurs au lancement, personne ne sort du bâtiment (points « Bâtiment : coin 1 / 2 ») et les seekers partent du départ des hiders. 0 = jamais."),
                         integer("players-per-seeker", "Joueurs pour 1 seeker", 5, 2, 16, "5 : 1 seeker jusqu'à 5 joueurs, 2 jusqu'à 10, 3 jusqu'à 15, 4 à 16. Les volontaires d'abord."),
                         integer("min-players", "Joueurs minimum", 3, 2, 16, "Pour lancer une partie."),
                         integer("max-players", "Joueurs maximum", 16, 3, 16, "Par partie."),
@@ -104,6 +110,7 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
                         integer("points-survive", "Survie : points", 1, 0, 100, "Points de chaque intervalle de survie, avec un seeker passé à portée des sons il y a peu (sans bonus de proximité)."),
                         integer("near-bonus-percent", "Survie : bonus de proximité (%)", 200, 0, 1000, "Seeker à portée des sons : points de survie en plus, de 0 % à la limite de la portée jusqu'à ce bonus au contact (200 = ×3)."),
                         integer("near-window-seconds", "Survie : seeker proche récemment (s)", 60, 10, 600, "Aucun seeker à portée des sons pendant ce temps : plus aucun point de survie (la première minute de recherche compte comme un passage)."),
+                        integer("rarity-bonus-percent", "Survie : bonus des blocs rares (%)", 100, 0, 1000, "Points de survie en plus selon la rareté du bloc imité dans la map : 0 % pour le bloc de la liste le plus courant, jusqu'à ce bonus pour le plus rare (100 = ×2)."),
                         integer("points-survivor", "Hider en vie à la fin", 8, 0, 100, "Points de chaque hider encore en vie à la fin du chrono."),
                         integer("points-find", "Seeker : points par hider", 6, 0, 100, "Pour chaque hider éliminé."),
                         integer("points-all-found", "Seekers : tous trouvés", 5, 0, 100, "Pour chaque seeker si tous les hiders sont trouvés avant la fin."),
@@ -117,7 +124,9 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
                         single("stands", "Tribune", true, "Où attendent les joueurs avant la partie."),
                         single("hider-spawn", "Départ des hiders", true, "Où les hiders apparaissent au début de la cachette."),
                         single("seeker-room", "Salle des seekers", true, "Pièce fermée : les seekers y attendent pendant la cachette, et y reviennent à 0 cœur."),
-                        single("seeker-spawn", "Départ des seekers", true, "À la sortie de la salle : où les seekers sont lâchés.")))
+                        single("seeker-spawn", "Départ des seekers", true, "À la sortie de la salle : où les seekers sont lâchés."),
+                        single("building-1", "Bâtiment : coin 1", false, "Facultatif : un coin du bâtiment central, au sol. Avec le coin 2, zone dont on ne sort pas en petite partie."),
+                        single("building-2", "Bâtiment : coin 2", false, "Facultatif : le coin opposé du bâtiment central, au niveau du toit.")))
                 .engine(HideInstance::new)
                 .prewarmAllowed(true)
                 .createForm(new CreateForm())
@@ -172,6 +181,11 @@ public final class KGHideAndSeek extends JavaPlugin implements Listener {
 
     public HideMenus menus() {
         return menus;
+    }
+
+    /** Nombre de chaque bloc de la map ; compte au premier lancement d'une partie sur cette capture de l'arene. */
+    int[] blockCounts(Template template, Supplier<int[]> count) {
+        return blockCounts.computeIfAbsent(template, t -> count.get());
     }
 
     private HideInstance gameOf(Player player) {

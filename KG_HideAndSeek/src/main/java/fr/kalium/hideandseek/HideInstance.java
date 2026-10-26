@@ -9,6 +9,7 @@ import fr.kalium.games.world.Template;
 import fr.kalium.scoreboards.data.StatsService;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.ChunkSnapshot;
 import org.bukkit.Axis;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameMode;
@@ -147,6 +148,7 @@ public final class HideInstance extends GameInstance {
     }
 
     private final KGHideAndSeek hns;
+    private final Template template;
     private final int privateCap;
     private final boolean becomeSeeker;
 
@@ -165,6 +167,12 @@ public final class HideInstance extends GameInstance {
     private final Map<UUID, Scoreboard> boards = new HashMap<>();
     private final Map<UUID, Scoreboard> previousBoards = new HashMap<>();
     private List<Material> pool = List.of();
+    /** Nombre de chaque bloc de la liste dans la map, et multiplicateur de points de survie qui en decoule (rarete). */
+    private final Map<Material, Integer> mapCounts = new HashMap<>();
+    private final Map<Material, Double> rarity = new HashMap<>();
+    /** Petite partie : personne ne sort du batiment central (zone entre ses deux coins), derniere position dedans. */
+    private BoundingBox building;
+    private final Map<UUID, Location> lastInside = new HashMap<>();
     private long ticks;
     private int elapsed;
     private int found;
@@ -174,6 +182,7 @@ public final class HideInstance extends GameInstance {
                         boolean publicGame, Map<String, Object> options, int slot) {
         super(plugin, id, minigame, arena, template, publicGame, options, slot);
         this.hns = KGHideAndSeek.get();
+        this.template = template;
         this.privateCap = Math.max(minPlayers(), Math.min(maxPlayers(), optionInt("maxPlayers", maxPlayers())));
         boolean byDefault = minigame.getBool("eliminated-becomes-seeker", false);
         this.becomeSeeker = publicGame ? byDefault : optionBool("becomeSeeker", byDefault);
@@ -243,8 +252,34 @@ public final class HideInstance extends GameInstance {
         return point("seeker-room");
     }
 
+    /** En petite partie (enfermee dans le batiment), les seekers partent du depart des hiders. */
     private Location seekerSpawn() {
-        return point("seeker-spawn");
+        return building != null ? hiderSpawn() : point("seeker-spawn");
+    }
+
+    /**
+     * Petite partie (0.3.0, demande de LeKiwi06) : jusqu'a « building-max-players » joueurs au lancement, tout le monde
+     * reste dans le batiment central, entre les points « Batiment : coin 1 / 2 ». null : partie normale, ou coins non
+     * poses.
+     */
+    private BoundingBox buildingZone(int players) {
+        Pos one = arena().point("building-1");
+        Pos two = arena().point("building-2");
+        if (one == null || two == null || players > setting("building-max-players", 4)) {
+            return null;
+        }
+        Location a = loc(one);
+        Location b = loc(two);
+        BoundingBox zone = new BoundingBox(Math.min(a.getBlockX(), b.getBlockX()), Math.min(a.getBlockY(), b.getBlockY()),
+                Math.min(a.getBlockZ(), b.getBlockZ()), Math.max(a.getBlockX(), b.getBlockX()) + 1,
+                Math.max(a.getBlockY(), b.getBlockY()) + 1, Math.max(a.getBlockZ(), b.getBlockZ()) + 1);
+        // Les joueurs sortis sont ramenes au besoin au depart des hiders : il doit etre dans la zone, sinon ils y seraient
+        // renvoyes sans fin.
+        if (!zone.contains(hiderSpawn().toVector())) {
+            hns.getLogger().warning("Arène " + arena().id() + " : le départ des hiders n'est pas entre les coins du bâtiment, petite partie sans enfermement.");
+            return null;
+        }
+        return zone;
     }
 
     // ------------------------------------------------------------------ admission
@@ -345,6 +380,10 @@ public final class HideInstance extends GameInstance {
         startRoles.clear();
         finds.clear();
         pendingSounds.clear();
+        mapCounts.clear();
+        rarity.clear();
+        building = null;
+        lastInside.clear();
         ticks = 0;
         elapsed = 0;
         found = 0;
@@ -376,6 +415,8 @@ public final class HideInstance extends GameInstance {
                 candidates.add(uuid);
             }
         }
+        building = buildingZone(order.size());
+        computeRarity();
         int per = Math.max(2, setting("players-per-seeker", 5));
         int count = Math.max(1, Math.min(order.size() - 1, (order.size() + per - 1) / per));
         Set<UUID> picked = new HashSet<>(candidates.subList(0, count));
@@ -420,6 +461,60 @@ public final class HideInstance extends GameInstance {
         broadcastTo(hiders.keySet(), t("hns.hider-help",
                 "<gray>Vous portez votre bloc sur la tête. Restez immobile <white><s></white> s pour devenir ce bloc ; bougez pour redevenir un joueur.",
                 "s", Math.max(1, setting("solid-seconds", 3))));
+        if (building != null) {
+            broadcast(t("hns.building-start", "<yellow>Petite partie : tout le monde reste dans le bâtiment."));
+        }
+    }
+
+    /**
+     * Rarete des blocs (0.3.0, demande de LeKiwi06 : valoriser les blocs rares) : chaque bloc de la liste est compte dans
+     * la map ; multiplicateur des points de survie de x1 pour le plus courant jusqu'a x(1 + bonus) pour le plus rare,
+     * sur une echelle logarithmique (un bloc 10 fois plus rare qu'un autre gagne autant d'ecart qu'un bloc 10 fois plus
+     * rare que lui). Un bloc absent de la map compte comme present une fois.
+     */
+    private void computeRarity() {
+        int[] counts = hns.blockCounts(template, this::countBlocks);
+        double low = Double.MAX_VALUE;
+        double high = 0;
+        for (Material material : pool) {
+            int count = counts[material.ordinal()];
+            mapCounts.put(material, count);
+            low = Math.min(low, Math.log(Math.max(1, count)));
+            high = Math.max(high, Math.log(Math.max(1, count)));
+        }
+        double bonus = Math.max(0, setting("rarity-bonus-percent", 100)) / 100.0;
+        for (Material material : pool) {
+            double log = Math.log(Math.max(1, mapCounts.get(material)));
+            rarity.put(material, high > low ? 1 + bonus * (high - log) / (high - low) : 1);
+        }
+    }
+
+    /** Compte les blocs de la copie de l'arene (avant que les hiders n'y posent les leurs), par photo de chaque chunk. */
+    private int[] countBlocks() {
+        int[] counts = new int[Material.values().length];
+        for (int cx = minX >> 4; cx <= maxX >> 4; cx++) {
+            for (int cz = minZ >> 4; cz <= maxZ >> 4; cz++) {
+                ChunkSnapshot snapshot = world.getChunkAt(cx, cz).getChunkSnapshot(false, false, false);
+                for (int x = Math.max(minX, cx << 4); x <= Math.min(maxX, (cx << 4) + 15); x++) {
+                    for (int z = Math.max(minZ, cz << 4); z <= Math.min(maxZ, (cz << 4) + 15); z++) {
+                        for (int y = minY; y <= maxY; y++) {
+                            counts[snapshot.getBlockType(x & 15, y, z & 15).ordinal()]++;
+                        }
+                    }
+                }
+            }
+        }
+        return counts;
+    }
+
+    /** Multiplicateur de points de survie du bloc (rarete dans la map). */
+    public double rarity(Material material) {
+        return rarity.getOrDefault(material, 1.0);
+    }
+
+    /** Nombre de blocs de ce type dans la map. */
+    public int mapCount(Material material) {
+        return mapCounts.getOrDefault(material, 0);
     }
 
     /** Etat d'un hider : mode aventure, bloc sur la tete, barre d'objets, pseudo masque et pas de bousculade. */
@@ -496,6 +591,7 @@ public final class HideInstance extends GameInstance {
     @Override
     protected void matchTick() {
         ticks += TICK_INTERVAL;
+        confineAll();
         int solidTicks = Math.max(1, setting("solid-seconds", 3)) * 20;
         for (Hider hider : new ArrayList<>(hiders.values())) {
             Player player = presentPlayer(hider.uuid);
@@ -576,12 +672,46 @@ public final class HideInstance extends GameInstance {
         }
     }
 
+    /** Petite partie : les hiders et les seekers libres ne sortent pas du batiment (ramenes a leur derniere position dedans). */
+    private void confineAll() {
+        if (building == null || !playing()) {
+            return;
+        }
+        for (Hider hider : hiders.values()) {
+            Player player = hider.solid() ? null : presentPlayer(hider.uuid);
+            if (player != null) {
+                confine(player);
+            }
+        }
+        for (Seeker seeker : seekers.values()) {
+            Player player = phase == Phase.RUNNING && seeker.jail <= 0 ? presentPlayer(seeker.uuid) : null;
+            if (player != null) {
+                confine(player);
+            }
+        }
+    }
+
+    private void confine(Player player) {
+        Location at = player.getLocation();
+        if (at.getWorld() == world && building.contains(at.toVector())) {
+            lastInside.put(player.getUniqueId(), at);
+            return;
+        }
+        Location back = lastInside.get(player.getUniqueId());
+        Location to = (back == null ? hiderSpawn() : back).clone();
+        to.setYaw(at.getYaw());
+        to.setPitch(at.getPitch());
+        player.teleport(to);
+        player.sendActionBar(t("hns.building-out", "<red>Petite partie : restez dans le bâtiment."));
+    }
+
     /**
      * Points de survie : comptes seulement pendant la recherche, pour les hiders en vie et connectes. 0.3.0 (demande de
      * LeKiwi06, 26/10/2026) : ils dependent des seekers. Seeker libre a portee d'ecoute des sons (« Portee des sons ») :
      * de x1 a la limite de la portee jusqu'a x(1 + bonus) au contact. Plus aucun seeker a portee depuis
      * « near-window-seconds » (la premiere minute de recherche comptant comme un passage) : aucun point ; entre les deux,
-     * x1. Les points s'accumulent chaque seconde et sont credites a chaque intervalle de survie.
+     * x1. Les points s'accumulent chaque seconde et sont credites a chaque intervalle de survie. Multiplies aussi par la
+     * rarete du bloc imite (voir computeRarity).
      */
     private void survivalPoints() {
         int interval = Math.max(1, setting("survive-interval-seconds", 20));
@@ -601,7 +731,7 @@ public final class HideInstance extends GameInstance {
             }
             if (elapsed - hider.lastNear <= window) {
                 double factor = distance <= range ? 1 + bonus * (1 - distance / range) : 1;
-                hider.surviveAcc += perSecond * factor;
+                hider.surviveAcc += perSecond * factor * rarity(hider.block);
             }
             if (hider.survived % interval == 0) {
                 addPoints(hider.uuid, hider.surviveAcc);
