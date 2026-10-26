@@ -269,3 +269,5 @@ Nouveauté `crafts > coffre_renforce` (« Coffre renforcé », recette `ks_craft
 **Envoyé sur Kixster le 25/10/2026 à 03:51** : le fichier du serveur avec cette seule entrée en plus (le texte du
 Changeur de biome 1.2.0 n'y est toujours pas, il partira avec KS_BiomeChanger 1.2.0). Ancien fichier dans
 `_removed-ks_didacticiel-contenu-2026-10-25b/`. Relu au redémarrage. Statut : non testé en jeu.
+
+**26/10/2026 19:48 : `didacticiel.yml` envoyé sur Kixster (LeKiwi06) : pêche, Estomac du gardien, spawners, Bedrock Breaker, cuivre brut retiré, texte du Changeur de Biome du 25/10 ; ancien fichier dans `_removed-ks_didacticiel-yml-2026-10-26/`. Relu au redémarrage (ou `/didacticiel recharger`).**

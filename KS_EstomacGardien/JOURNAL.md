@@ -80,3 +80,5 @@ caché avant) ; ouvert = plus revendable aux rachats ; pas de confirmation avant
 au-delà de 100 émeraudes).
 
 **Compilé, non déployé, non testé en jeu.**
+
+**Déployé sur Kixster le 26/10/2026 à 19:48 (LeKiwi06 : « ok vas y déploie ça me conviens »), actif après redémarrage de Kixster. Statut : non testé en jeu.**

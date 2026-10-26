@@ -497,3 +497,5 @@ vient de KS_Spawners 1.1.0. Didacticiel : texte de « Spawners » mis à jour, m
 
 **Compilé, non déployé, non testé en jeu.** Contient la 1.21.1 (cuivre brut retiré), pas encore déployée. À déployer
 avec KS_Spawners 1.1.0 et `didacticiel.yml`.
+
+**Déployé sur Kixster le 26/10/2026 à 19:48 (LeKiwi06 : « ok vas y déploie ça me conviens »), actif après redémarrage de Kixster. Statut : non testé en jeu.**

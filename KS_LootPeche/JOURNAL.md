@@ -58,3 +58,5 @@ courant » : appliqué.
 - Didacticiel : texte de « Pêche » complété (sans dévoiler les objets), date Nouveau du 26/10 inchangée.
 
 **Compilé, non déployé, non testé en jeu.** Contient la 1.1.0, jamais déployée.
+
+**Déployé sur Kixster le 26/10/2026 à 19:48 (LeKiwi06 : « ok vas y déploie ça me conviens »), actif après redémarrage de Kixster. Statut : non testé en jeu.**

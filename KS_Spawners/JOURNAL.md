@@ -45,3 +45,5 @@ joueur (sinon il ne s'empilerait plus avec les nouveaux). `rachats.csv` de KS_Ec
 sa prochaine compilation ; le script du barème lit déjà les noms dans KSSpawners.java).
 
 **Compilé, non déployé, non testé en jeu.** À déployer avec KS_Crafts 1.22.0.
+
+**Déployé sur Kixster le 26/10/2026 à 19:48 (LeKiwi06 : « ok vas y déploie ça me conviens »), actif après redémarrage de Kixster. Statut : non testé en jeu.**
