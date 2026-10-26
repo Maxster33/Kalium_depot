@@ -46,6 +46,7 @@ import java.util.Map;
  * 1.18.0 (LeKiwi06) : recette du wagon jukebox de KS_Trains (voir onEnable).
  * 1.20.0 (LeKiwi06) : 9 os donnent 3 blocs d'os sans passer par la poudre d'os (voir onEnable).
  * 1.20.2 (LeKiwi06) : le livre de recettes montre le wagon contrôleur avec ses 5 pièces différentes (voir onEnable).
+ * 1.21.1 (LeKiwi06) : recette des blocs de cuivre en blocs de cuivre brut retirée (voir onEnable).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -77,10 +78,7 @@ public final class KSCrafts extends JavaPlugin implements Listener {
                 Material.RED_SANDSTONE, Material.CHISELED_RED_SANDSTONE, Material.CUT_RED_SANDSTONE, Material.SMOOTH_RED_SANDSTONE));
         shapeless("raw_iron_block", new ItemStack(Material.RAW_IRON_BLOCK, 4), repeat(new RecipeChoice.MaterialChoice(Material.IRON_BLOCK), 4));
         shapeless("raw_gold_block", new ItemStack(Material.RAW_GOLD_BLOCK, 4), repeat(new RecipeChoice.MaterialChoice(Material.GOLD_BLOCK), 4));
-        shapeless("raw_copper_block", new ItemStack(Material.RAW_COPPER_BLOCK, 4), repeat(new RecipeChoice.MaterialChoice(
-                Material.COPPER_BLOCK, Material.EXPOSED_COPPER, Material.WEATHERED_COPPER, Material.OXIDIZED_COPPER,
-                Material.WAXED_COPPER_BLOCK, Material.WAXED_EXPOSED_COPPER, Material.WAXED_WEATHERED_COPPER,
-                Material.WAXED_OXIDIZED_COPPER), 4));
+        // 1.21.1 (LeKiwi06) : plus de recette « 4 blocs de cuivre (toutes les versions) -> 4 blocs de cuivre brut ».
         shapeless("calcite", new ItemStack(Material.CALCITE, 9), concat(
                 repeat(new RecipeChoice.MaterialChoice(Material.DIORITE), 5),
                 repeat(new RecipeChoice.MaterialChoice(Material.QUARTZ_BLOCK), 4)));

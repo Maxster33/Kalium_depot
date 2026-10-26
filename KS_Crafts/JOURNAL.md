@@ -469,3 +469,13 @@ un coffre ordinaire (ni un coffre renforcé, ni un coffre renommé). Ajoutée au
 Ajoutée sur la 1.20.2, déployée mais pas encore testée en jeu, à la demande de LeKiwi06 (craft du coffre renforcé).
 
 **Déployé sur Kixster le 25/10/2026 à 03:51** avec KS_CoffreRenforce 1.0.0 (jar en place 1.20.2 vérifié de la même taille que `jars-deployes/`, rangé dans `_removed-ks_crafts-1.20.2/`), actif après redémarrage de Kixster. Statut : non testé en jeu.
+
+## 1.21.1 - plus de blocs de cuivre brut par craft (26/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « il y a un craft buggué avec le cuivre oxydé [...] 4 blocks oxydés qui donnent 4 cuivre brut ,
+je ne t'ai jamais demandé ce craft , retire le ». Recette `ks_crafts:raw_copper_block` retirée (4 blocs de cuivre, de
+n'importe quelle oxydation, cirés ou non -> 4 blocs de cuivre brut ; venue du cahier des charges d'Event, 1.0.0). Les
+recettes des blocs de fer et d'or bruts restent. Didacticiel : la recette n'est plus dans « Crafts pratiques » (simple
+correction, date `nouveau` inchangée).
+
+**Compilé, non déployé, non testé en jeu.** À envoyer sur Kixster avec `didacticiel.yml`.
