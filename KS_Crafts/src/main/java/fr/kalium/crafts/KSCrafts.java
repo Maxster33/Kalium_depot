@@ -47,6 +47,7 @@ import java.util.Map;
  * 1.20.0 (LeKiwi06) : 9 os donnent 3 blocs d'os sans passer par la poudre d'os (voir onEnable).
  * 1.20.2 (LeKiwi06) : le livre de recettes montre le wagon contrôleur avec ses 5 pièces différentes (voir onEnable).
  * 1.21.1 (LeKiwi06) : recette des blocs de cuivre en blocs de cuivre brut retirée (voir onEnable).
+ * 1.22.0 (LeKiwi06) : spawners avec forme : fragments en jambières, Cœur au centre, tête dessous (voir spawner).
  */
 public final class KSCrafts extends JavaPlugin implements Listener {
 
@@ -142,9 +143,9 @@ public final class KSCrafts extends JavaPlugin implements Listener {
         // les têtes de KS_Decapitator, toutes variantes, états et bébés du mob acceptés ; zombie, squelette et creeper :
         // tête vanilla (recette d'avant) ou tête de KS_Decapitator (2e recette « _tete »).
         if (actif("KS_ItemSimple") && actif("KS_Spawners")) {
-            spawner("zombi", new RecipeChoice.MaterialChoice(Material.ZOMBIE_HEAD));
-            spawner("squelette", new RecipeChoice.MaterialChoice(Material.SKELETON_SKULL));
-            spawner("creeper", new RecipeChoice.MaterialChoice(Material.CREEPER_HEAD));
+            spawner("zombi", "zombi", new RecipeChoice.MaterialChoice(Material.ZOMBIE_HEAD));
+            spawner("squelette", "squelette", new RecipeChoice.MaterialChoice(Material.SKELETON_SKULL));
+            spawner("creeper", "creeper", new RecipeChoice.MaterialChoice(Material.CREEPER_HEAD));
             if (actif("KS_Decapitator")) {
                 spawnerTete("zombi_tete", "zombi", EntityType.ZOMBIE);
                 spawnerTete("squelette_tete", "squelette", EntityType.SKELETON);
@@ -489,11 +490,20 @@ public final class KSCrafts extends JavaPlugin implements Listener {
         return getServer().getPluginManager().isPluginEnabled(plugin);
     }
 
-    /** 1.6.0 : 7 Fragments de Spawner + 1 Cœur de Spawner + la tête -> spawner (id : zombi, squelette...). */
-    private void spawner(String id, RecipeChoice tete) {
-        shapeless("spawner_" + id, fr.kalium.spawners.KSSpawners.creerSpawner(id), concat(
-                repeat(new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerFragmentSpawner()), 7),
-                List.of(new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerCoeurSpawner()), tete)));
+    /**
+     * 1.6.0 : 7 Fragments de Spawner + 1 Cœur de Spawner + la tête -> spawner (id : zombi, squelette...).
+     * 1.22.0 (LeKiwi06, 26/10/2026 : « la tête du mob doit être placé sous le spawner avec une forme de jambière en
+     * fragments de spawners ») : avec forme : les 7 fragments en jambières, le Cœur au centre, la tête en bas au milieu
+     * (avant : sans forme).
+     */
+    private void spawner(String recetteId, String id, RecipeChoice tete) {
+        ShapedRecipe recette = new ShapedRecipe(key("spawner_" + recetteId),
+                fr.kalium.spawners.KSSpawners.creerSpawner(id));
+        recette.shape("FFF", "FCF", "FTF");
+        recette.setIngredient('F', new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerFragmentSpawner()));
+        recette.setIngredient('C', new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerCoeurSpawner()));
+        recette.setIngredient('T', tete);
+        add(recette);
     }
 
     /** 1.7.0 : spawner (id de KS_Spawners) avec n'importe quelle tête de KS_Decapitator de la créature. */
@@ -503,10 +513,7 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             getLogger().warning("Aucune tête de " + creature.getKey().getKey() + " dans KS_Decapitator : craft ignoré.");
             return;
         }
-        shapeless("spawner_" + recette, fr.kalium.spawners.KSSpawners.creerSpawner(id), concat(
-                repeat(new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerFragmentSpawner()), 7),
-                List.of(new RecipeChoice.ExactChoice(fr.kalium.itemsimple.KSItemSimple.creerCoeurSpawner()),
-                        new RecipeChoice.ExactChoice(tetes))));
+        spawner(recette, id, new RecipeChoice.ExactChoice(tetes));
     }
 
     void add(org.bukkit.inventory.Recipe recipe) {

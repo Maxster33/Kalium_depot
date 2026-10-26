@@ -86,6 +86,11 @@ themes:
         icone: ECHO_SHARD
         texte: "Certains mobs cachent un butin inattendu. Le crâne de wither squelette, lui, ne tombe plus tel quel."
         nouveau: "2026-10-18"
+      estomac:
+        nom: "Estomac du gardien"
+        icone: BLACK_BUNDLE
+        texte: "Le grand gardien lâche parfois son estomac. Clic droit : il s'ouvre comme un coffre et tu prends ce que tu veux. Tant qu'il est « Non ouvert », personne ne sait ce qu'il cache."
+        nouveau: "2026-10-26"
       coffres:
         nom: "Coffres de structures"
         icone: CHEST
@@ -94,8 +99,8 @@ themes:
       peche:
         nom: "Pêche"
         icone: FISHING_ROD
-        texte: "Plus de livres enchantés à la pêche : d'autres trésors à la place."
-        nouveau: "2026-10-18"
+        texte: "Les livres enchantés sont de retour à la pêche, mais on n'y pêche jamais Raccommodage (ni livre, ni arc, ni canne)."
+        nouveau: "2026-10-26"
       tetes:
         nom: "Têtes de mobs"
         icone: ZOMBIE_HEAD
@@ -174,10 +179,10 @@ themes:
       spawners:
         nom: "Spawners"
         icone: SPAWNER
-        texte: "Les spawners naturels donnent des Fragments de Spawner. 7 fragments, un Cœur de Spawner et une tête de mob font un spawner de ce mob, qui se récupère quand on le casse."
+        texte: "Les spawners naturels donnent des Fragments de Spawner. 7 fragments en forme de jambières, un Cœur de Spawner au centre et une tête de mob juste en dessous font un spawner de ce mob, qui se récupère quand on le casse."
         recettes:
           - "ks_crafts:spawner_*"
-        nouveau: "2026-10-18"
+        nouveau: "2026-10-26"
       biome:
         nom: "Changeur de Biome"
         icone: END_CRYSTAL

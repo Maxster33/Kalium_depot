@@ -45,3 +45,30 @@ diamant enchanté niveau 30 à 50 (sinon rien) ; le reste est inchangé.
 
 **Déployé sur Event le 29/09/2026 à 00:02 (1.2.0 dans `_removed-ks_estomacgardien-1.2.0/` ;
 `_removed-ks_estomacgardien-1.0.0/` supprimable par l'humain, 3 versions derrière). Statut : non testé en jeu.**
+
+## 2.0.0 - l'estomac s'ouvre comme un coffre de récompense (26/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « on va aussi rework l'estomac de gardien : il marchera comme un coffre de récompense avec une
+interface de coffre malgré que ce soit un bundle , avec une mention non ouvert ou ouvert ( mais on ne peux pas le
+fusionner dans l'enclume ) il faut qu'il contiennent + d'items ».
+- **Objet** : même image (sac noir), ligne verte « Non ouvert ». Les estomacs déjà en jeu reçoivent cette ligne quand
+  ils arrivent dans un inventaire de joueur, et s'ouvrent de la même façon.
+- **Ouverture** : clic droit (dans le vide ou sur un bloc) : fenêtre de coffre « Estomac du gardien » (3 rangées). À la
+  première ouverture, le contenu est tiré et écrit dans l'objet, qui devient « Ouvert (reste n piles) » (gris). Un clic
+  sur un objet de la fenêtre le prend (inventaire plein : il reste dans la fenêtre) ; rien ne peut y être déposé et
+  aucun objet ne bouge par les clics du jeu pendant que la fenêtre est ouverte. Fenêtre fermée : l'estomac garde ce qui
+  reste et se rouvre ; vidé, il disparaît.
+- **Rachats** : un estomac ouvert perd la marque `ks_estomacgardien:estomac` (il porte `estomac_ouvert`) : les rachats
+  de KS_Economy ne reconnaissent que les estomacs non ouverts (aucun changement dans KS_Economy).
+- **Enclume** : refusé, ouvert ou non (enclume du jeu et enclume en coffre de KS_Enclume, qui applique ce refus) : ni
+  renommage, ni fusion. Les coffres de récompense de KS_RewardsGUI ne se fusionnent qu'entre eux.
+- **Contenu** : inchangé pour l'instant (tirage 1 : 20 % casque ; tirage 2 : 2 fois). Proposition d'un contenu plus
+  fourni (tirage 2 fait 4 fois, nouveau tirage de butin marin fait 3 fois) dans
+  `sortie/peche/proposition-peche-et-estomac.xlsx`, à coder après validation.
+- Didacticiel : nouvelle entrée « Estomac du gardien » (thème Butin), marquée Nouveau le 26/10.
+
+Choix de Claude, signalés : contenu gardé dans l'objet (il n'est tiré qu'à la première ouverture, rien n'est donc
+caché avant) ; ouvert = plus revendable aux rachats ; pas de confirmation avant d'ouvrir (KS_RewardsGUI en demande une
+au-delà de 100 émeraudes).
+
+**Compilé, non déployé, non testé en jeu.**

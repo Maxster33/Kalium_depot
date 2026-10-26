@@ -35,3 +35,13 @@ Limites :
 - Un spawner posé cassé par le corps du Wither (pas une explosion) est perdu, comme un spawner vanilla.
 
 **Déployé sur Event le 29/09/2026 à 17:22 avec KS_ItemSimple, KS_Spawners, KS_BiomeChanger, KS_Crafts 1.6.0, KS_KaliumGive 1.5.0 et KS_LootBlocs 1.1.0 (apparence Bedrock : geyser-bedrock 1.2.0 sur le proxy à 17:23), actifs après redémarrage d'Event et du proxy. Statut : non testé en jeu.**
+
+## 1.1.0 - « Spawner à zombie » (26/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « le mot zombie est mal écrit ». Nom de l'objet : « Spawner à zombie » (avant : « Spawner à
+zombi »). L'id reste `zombi` (objets déjà donnés, blocs posés, `/kaliumgive <pseudo> spawner_zombi`, rachats). Un spawner
+du plugin dont le nom n'est plus le bon (anciens « Spawner à zombi ») est renommé dès qu'il arrive dans l'inventaire d'un
+joueur (sinon il ne s'empilerait plus avec les nouveaux). `rachats.csv` de KS_Economy corrigé aussi (pris en compte à
+sa prochaine compilation ; le script du barème lit déjà les noms dans KSSpawners.java).
+
+**Compilé, non déployé, non testé en jeu.** À déployer avec KS_Crafts 1.22.0.

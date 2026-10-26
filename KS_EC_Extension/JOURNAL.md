@@ -34,3 +34,19 @@ Correctif de duplication par ecsee (KS_AntiCheat 1.1.1) : `coffreOuvert`, `ferme
 fermée), `extension`, `casesDebloquees`, `ecrireExtension`, `imageCaseBloquee`. Aucun changement pour les joueurs.
 
 **Déployé sur Event le 03/10/2026 à 18:42 (LeKiwi06, en 1.1.0 ; ancienne version dans `_removed-ks_ec_extension-1.0.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.2.0 - coffre de l'Ender animé, interface fermée si le bloc disparaît (26/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « quand on ouvre le coffre de l'end il ne s'ouvre pas visuellement , et même si un joueur casse
+l'ender chest qui a servis a ouvrir l'interface , elle ne se ferme pas , règle ça ».
+- Cause : l'ouverture vanilla est annulée pour montrer l'interface à 6 lignes du plugin, donc le jeu n'animait plus le
+  bloc et ne surveillait plus sa présence.
+- **Animation** : le couvercle s'ouvre avec le son vanilla tant qu'au moins un joueur a l'interface ouverte depuis ce
+  bloc, et se referme (avec son) quand le dernier la ferme.
+- **Fermeture** : l'interface se ferme (contenu enregistré comme à une fermeture normale) si le bloc n'est plus un
+  coffre de l'Ender (cassé, remplacé) ou si le joueur s'en éloigne de plus de 9 blocs. Vérifié toutes les 0,5 s, et
+  aussitôt après qu'un joueur casse un coffre de l'Ender ouvert.
+- Bloc reconnu par le jeu (coffre ouvert depuis un bloc), sinon par le dernier coffre de l'Ender cliqué. Un coffre
+  ouvert sans bloc (commande d'un autre plugin) n'est ni animé ni surveillé, comme avant.
+
+**Compilé, non déployé, non testé en jeu.**

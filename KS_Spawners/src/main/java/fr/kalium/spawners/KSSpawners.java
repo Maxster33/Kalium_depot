@@ -28,13 +28,17 @@ import java.util.Map;
 /**
  * KS_Spawners (demande de Maxster33, 29/09/2026) : spawners avec leur créature, fabriqués avec KS_Crafts.
  *
- * - Objet : spawner « Spawner à zombi »... marqué (id de la créature), empilable par 64.
+ * - Objet : spawner « Spawner à zombie »... marqué (id de la créature), empilable par 64.
  * - Pose : le jeu n'applique la créature d'un objet spawner que pour un opérateur ; le plugin la règle lui-même et
  *   marque le bloc comme posé par un joueur. Ensuite, le spawner fonctionne comme un spawner vanilla.
  * - Cassage (n'importe quel outil, choix de Maxster33) : un spawner posé par un joueur tombe tel quel, sans XP (sinon
  *   on pourrait produire de l'XP à l'infini) ; en créatif, rien ne tombe (comme en vanilla). Les spawners naturels
  *   gardent le comportement vanilla (KS_LootBlocs y ajoute les Fragments de Spawner).
  * - Explosion (TNT, creeper...) : un spawner posé par un joueur n'est pas perdu, il tombe au sol.
+ *
+ * 1.1.0 (LeKiwi06) : « Spawner à zombie » (avant : « zombi ») ; l'id reste « zombi » (objets déjà donnés,
+ * /kaliumgive, rachats). Un spawner du plugin dont le nom n'est plus le bon est renommé quand il arrive dans un inventaire
+ * de joueur.
  *
  * Marqueur du bloc posé : « ks_spawners:pose » (lu aussi par KS_LootBlocs). Autres plugins : creerSpawner(id)
  * (KS_Crafts, KS_KaliumGive).
@@ -47,7 +51,7 @@ public final class KSSpawners extends JavaPlugin implements Listener {
     private static final Map<String, String> NOMS = new LinkedHashMap<>();
 
     static {
-        ajouter("zombi", EntityType.ZOMBIE, "Spawner à zombi");
+        ajouter("zombi", EntityType.ZOMBIE, "Spawner à zombie");
         ajouter("squelette", EntityType.SKELETON, "Spawner à squelette");
         ajouter("araignee", EntityType.SPIDER, "Spawner à araignée");
         ajouter("creeper", EntityType.CREEPER, "Spawner à creeper");
@@ -89,6 +93,24 @@ public final class KSSpawners extends JavaPlugin implements Listener {
         meta.getPersistentDataContainer().set(marqueurObjet, PersistentDataType.STRING, id);
         item.setItemMeta(meta);
         return item;
+    }
+
+    /** 1.1.0 : un spawner du plugin arrivé dans l'inventaire d'un joueur reprend le nom actuel (« zombi » corrigé). */
+    @EventHandler
+    public void onSlot(io.papermc.paper.event.player.PlayerInventorySlotChangeEvent event) {
+        ItemStack item = event.getNewItemStack();
+        String id = idObjet(item);
+        String nom = id == null ? null : NOMS.get(id);
+        if (nom == null) {
+            return;
+        }
+        Component attendu = Component.text(nom, NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false);
+        ItemMeta meta = item.getItemMeta();
+        if (!attendu.equals(meta.displayName())) {
+            meta.displayName(attendu);
+            item.setItemMeta(meta);
+            event.getPlayer().getInventory().setItem(event.getSlot(), item);
+        }
     }
 
     private static String idObjet(ItemStack item) {

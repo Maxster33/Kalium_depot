@@ -479,3 +479,21 @@ recettes des blocs de fer et d'or bruts restent. Didacticiel : la recette n'est 
 correction, date `nouveau` inchangée).
 
 **Compilé, non déployé, non testé en jeu.** À envoyer sur Kixster avec `didacticiel.yml`.
+
+## 1.22.0 - spawners en forme de jambières (26/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « les spawner : le craft mal fait [...] la tête du mob doit être placé sous le spawner avec une
+forme de jambière en fragments de spawners ». Les 11 recettes de spawners (mêmes ids) ont maintenant une forme :
+
+| | gauche | milieu | droite |
+|---|---|---|---|
+| haut | Fragment | Fragment | Fragment |
+| milieu | Fragment | Cœur de Spawner | Fragment |
+| bas | Fragment | tête du mob | Fragment |
+
+Mêmes ingrédients qu'avant (7 fragments, 1 cœur, 1 tête vanilla ou de KS_Decapitator) ; seule la place compte
+maintenant. Livre de recettes inchangé (débloquées par le premier Fragment de Spawner). Le nom « Spawner à zombie »
+vient de KS_Spawners 1.1.0. Didacticiel : texte de « Spawners » mis à jour, marqué Nouveau le 26/10.
+
+**Compilé, non déployé, non testé en jeu.** Contient la 1.21.1 (cuivre brut retiré), pas encore déployée. À déployer
+avec KS_Spawners 1.1.0 et `didacticiel.yml`.

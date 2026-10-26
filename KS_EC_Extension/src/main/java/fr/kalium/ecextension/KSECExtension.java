@@ -4,13 +4,16 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -28,7 +31,9 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -43,6 +48,9 @@ import java.util.UUID;
  * ecrireExtension, imageCaseBloquee) : l'ecsee travaille sur le vrai coffre, joueur empêché de l'ouvrir pendant ce
  * temps (avant : il travaillait sur sa copie en même temps, ce qui dupliquait les objets).
  *
+ * 1.2.0 (LeKiwi06) : le coffre de l'Ender ouvert depuis un bloc s'anime (couvercle et son, comme en vanilla) et
+ * l'interface se ferme si ce bloc disparaît (cassé...) ou si le joueur s'en éloigne (avant : elle restait ouverte).
+ *
  * Clé de l'End : livre de connaissances (aucun craft, pas de bloc) avec l'image de la clé des épreuves sinistre, qui
  * ne peut donc pas ouvrir les coffres-forts ; son clic droit vanilla est annulé. Autres plugins : creerCle()
  * (KS_Crafts, KS_KaliumGive).
@@ -50,6 +58,9 @@ import java.util.UUID;
 public final class KSECExtension extends JavaPlugin implements Listener {
 
     private static final int TAILLE = 27;
+
+    /** 1.2.0 : distance au bloc (au carré) au-delà de laquelle l'interface se ferme (le jeu : environ 8,5 blocs). */
+    private static final double DISTANCE_MAX_CARRE = 9 * 9;
 
     private static NamespacedKey cleCle;
     private static NamespacedKey verrou;
@@ -61,6 +72,8 @@ public final class KSECExtension extends JavaPlugin implements Listener {
         private final UUID joueur;
         private int masque;
         private Inventory inventaire;
+        /** 1.2.0 : bloc de coffre de l'Ender qui a ouvert l'interface (null : ouvert autrement). */
+        private Block bloc;
 
         private Coffre(UUID joueur, int masque) {
             this.joueur = joueur;
@@ -84,6 +97,7 @@ public final class KSECExtension extends JavaPlugin implements Listener {
         contenu = new NamespacedKey(this, "extension");
         debloquees = new NamespacedKey(this, "cases_debloquees");
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getScheduler().runTaskTimer(this, this::verifierBlocs, 10L, 10L);
     }
 
     @Override
@@ -95,6 +109,9 @@ public final class KSECExtension extends JavaPlugin implements Listener {
                 player.closeInventory();
             }
         }
+        // 1.2.0 : couvercles refermés (normalement déjà fait par la fermeture des interfaces).
+        ouvertures.keySet().forEach(bloc -> animer(bloc, false));
+        ouvertures.clear();
     }
 
     // ------------------------------------------------------------------ Clé de l'End
@@ -135,25 +152,95 @@ public final class KSECExtension extends JavaPlugin implements Listener {
             return;
         }
         event.setCancelled(true);
+        // 1.2.0 : bloc ouvert (le jeu le donne pour un coffre de l'Ender ouvert depuis un bloc), sinon le dernier coffre
+        // de l'Ender cliqué par le joueur.
+        Location position = event.getInventory().getLocation();
+        Block bloc = position != null ? position.getBlock() : dernierClic.remove(player.getUniqueId());
+        if (bloc != null && bloc.getType() != Material.ENDER_CHEST) {
+            bloc = null;
+        }
+        Block blocOuvert = bloc;
         Bukkit.getScheduler().runTask(this, () -> {
             if (player.isOnline()) {
-                ouvrir(player);
+                ouvrir(player, blocOuvert);
             }
         });
     }
 
-    private void ouvrir(Player player) {
+    /** 1.2.0 : dernier coffre de l'Ender cliqué par chaque joueur (secours si le jeu ne donne pas le bloc). */
+    private final Map<UUID, Block> dernierClic = new HashMap<>();
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onClicBloc(PlayerInteractEvent event) {
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null
+                && event.getClickedBlock().getType() == Material.ENDER_CHEST) {
+            dernierClic.put(event.getPlayer().getUniqueId(), event.getClickedBlock());
+        }
+    }
+
+    // ------------------------------------------------------------------ 1.2.0 : bloc ouvert (animation, fermeture)
+
+    /** Nombre d'interfaces ouvertes par bloc de coffre de l'Ender. */
+    private static final Map<Block, Integer> ouvertures = new HashMap<>();
+
+    private static void animer(Block bloc, boolean ouvrir) {
+        if (bloc.getType() == Material.ENDER_CHEST && bloc.getState() instanceof org.bukkit.block.EnderChest coffre) {
+            if (ouvrir) {
+                coffre.open();
+            } else {
+                coffre.close();
+            }
+        }
+    }
+
+    private static void blocOuvert(Block bloc) {
+        if (ouvertures.merge(bloc, 1, Integer::sum) == 1) {
+            animer(bloc, true);
+        }
+    }
+
+    private static void blocFerme(Block bloc) {
+        Integer reste = ouvertures.computeIfPresent(bloc, (b, n) -> n > 1 ? n - 1 : null);
+        if (reste == null) {
+            animer(bloc, false);
+        }
+    }
+
+    /** Ferme l'interface si son bloc a disparu ou si le joueur s'en est éloigné. */
+    private void verifierBlocs() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.getOpenInventory().getTopInventory().getHolder() instanceof Coffre coffre && coffre.bloc != null
+                    && (coffre.bloc.getType() != Material.ENDER_CHEST
+                            || !coffre.bloc.getWorld().equals(player.getWorld())
+                            || coffre.bloc.getLocation().add(0.5, 0.5, 0.5).distanceSquared(player.getLocation())
+                                    > DISTANCE_MAX_CARRE)) {
+                player.closeInventory();
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCasse(BlockBreakEvent event) {
+        if (event.getBlock().getType() == Material.ENDER_CHEST && ouvertures.containsKey(event.getBlock())) {
+            Bukkit.getScheduler().runTask(this, this::verifierBlocs);
+        }
+    }
+
+    private void ouvrir(Player player, Block bloc) {
         PersistentDataContainer data = player.getPersistentDataContainer();
         Coffre coffre = new Coffre(player.getUniqueId(), data.getOrDefault(debloquees, PersistentDataType.INTEGER, 0));
         Inventory inventaire = Bukkit.createInventory(coffre, 2 * TAILLE, Component.translatable("container.enderchest"));
         coffre.inventaire = inventaire;
+        coffre.bloc = bloc;
         ItemStack[] haut = player.getEnderChest().getContents();
         ItemStack[] bas = lireExtension(player);
         for (int i = 0; i < TAILLE; i++) {
             inventaire.setItem(i, i < haut.length ? haut[i] : null);
             inventaire.setItem(TAILLE + i, coffre.debloquee(i) ? bas[i] : caseBloquee());
         }
-        player.openInventory(inventaire);
+        if (player.openInventory(inventaire) != null && bloc != null) {
+            blocOuvert(bloc);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -161,6 +248,10 @@ public final class KSECExtension extends JavaPlugin implements Listener {
         if (event.getInventory().getHolder() instanceof Coffre coffre && event.getPlayer() instanceof Player player
                 && coffre.joueur.equals(player.getUniqueId())) {
             sauver(player, coffre);
+            if (coffre.bloc != null) {
+                blocFerme(coffre.bloc);
+                coffre.bloc = null;
+            }
         }
     }
 
