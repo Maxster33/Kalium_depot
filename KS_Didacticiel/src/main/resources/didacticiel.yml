@@ -188,7 +188,7 @@ themes:
       bedrock:
         nom: "Bedrock Breaker"
         icone: BLAZE_ROD
-        texte: "Clic droit sur un bloc de bedrock : il disparaît. Usage unique."
+        texte: "Clic droit sur un bloc de bedrock : il disparaît. Usage unique. Ne fonctionne pas sur l'île centrale de l'End."
         recettes:
           - "ks_crafts:bedrock_breaker"
         nouveau: "2026-10-18"

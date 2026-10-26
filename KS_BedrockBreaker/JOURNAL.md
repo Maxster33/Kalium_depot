@@ -56,3 +56,21 @@ un passage vers le vide. Message « La couche du fond ne peut pas être cassée.
 (protections WorldGuard, mode aventure, un bloc par seconde).
 
 **Déployé sur Event le 29/09/2026 à 13:59 (1.0.1 dans `_removed-ks_bedrockbreaker-1.0.1/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.1.0 - pas sur l'île centrale de l'End (26/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « le bedrock breaker doit pouvoir casser la bedrock du fond de la map , mais pas les endgates et
+le portail au centre de l'end ( fait en sorte que si les joueurs sont dans la région ile-cenrale-end alors le bedrock
+breaker ne fonctionne pas ».
+- Nouveau `config.yml` : `regions-interdites` (ids de régions WorldGuard), `ile-centrale-end` par défaut. Si le joueur
+  **ou** le bloc visé est dans l'une de ces régions : rien n'est cassé, le Bedrock Breaker n'est pas consommé, message
+  rouge en barre d'action « Le Bedrock Breaker ne fonctionne pas sur l'île centrale de l'End. ».
+- `softdepend: [WorldGuard]` ; sans WorldGuard, avertissement au démarrage et aucune région interdite.
+- Le reste ne change pas : couche du fond cassable, protections, mode aventure, un bloc par seconde.
+- **La région n'existe pas encore sur Kixster** (aucune région dans `Kixster SMP_the_end`, vu le 26/10) : à créer avec
+  ce nom exact (l'id écrit dans la demande, « ile-cenrale-end », a une faute de frappe ; c'est `ile-centrale-end` qui est
+  attendu, modifiable dans `config.yml`).
+- Les portails d'accès des îles extérieures (créés au bout des portails de l'île centrale) restent hors de la région.
+- Didacticiel : texte de la nouveauté « Bedrock Breaker » complété (date `nouveau` inchangée).
+
+**Compilé, non déployé, non testé en jeu.**

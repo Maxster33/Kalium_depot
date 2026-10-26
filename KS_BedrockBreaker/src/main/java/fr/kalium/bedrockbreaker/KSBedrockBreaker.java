@@ -22,8 +22,11 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -38,6 +41,8 @@ import java.util.UUID;
  * 1.0.1 : un bloc par seconde au plus et par joueur (un clic répété cassait aussi le bloc juste derrière).
  * 1.0.2 : la couche du fond (hauteur minimale du monde, refusée en 1.0.0 et 1.0.1) peut de nouveau être cassée
  * (demande de Maxster33).
+ * 1.1.0 (LeKiwi06) : ne fonctionne pas si le joueur ou le bloc visé est dans une région WorldGuard de config.yml
+ * (regions-interdites, par défaut ile-centrale-end : portail de sortie et portails d'accès de l'End).
  *
  * Les anciens Bedrock Breaker (houe en bois marquée par KS_Crafts 1.0.0 à 1.3.0) marchent encore, avec ces règles.
  * Autres plugins : creerBreaker() (KS_Crafts, KS_KaliumGive).
@@ -55,9 +60,17 @@ public final class KSBedrockBreaker extends JavaPlugin implements Listener {
     /** Heure du dernier bloc cassé par chaque joueur. */
     private final Map<UUID, Long> dernierCassage = new HashMap<>();
 
+    /** 1.1.0 : ids des régions WorldGuard où le Bedrock Breaker ne fonctionne pas. */
+    private final Set<String> regionsInterdites = new HashSet<>();
+
     @Override
     public void onEnable() {
         marqueur = new NamespacedKey(this, "bedrock_breaker");
+        saveDefaultConfig();
+        getConfig().getStringList("regions-interdites").forEach(id -> regionsInterdites.add(id.toLowerCase(Locale.ROOT)));
+        if (!regionsInterdites.isEmpty() && !getServer().getPluginManager().isPluginEnabled("WorldGuard")) {
+            getLogger().warning("WorldGuard absent : le Bedrock Breaker fonctionne partout, régions interdites comprises.");
+        }
         getServer().getPluginManager().registerEvents(this, this);
     }
 
@@ -104,6 +117,14 @@ public final class KSBedrockBreaker extends JavaPlugin implements Listener {
         }
         Player player = event.getPlayer();
         if (player.getGameMode() == GameMode.ADVENTURE) {
+            return;
+        }
+        // 1.1.0 : île centrale de l'End (portail de sortie, portails d'accès) ; le Bedrock Breaker n'est pas consommé.
+        if (!regionsInterdites.isEmpty() && getServer().getPluginManager().isPluginEnabled("WorldGuard")
+                && (RegionsWorldGuard.dans(player.getLocation(), regionsInterdites)
+                        || RegionsWorldGuard.dans(block.getLocation(), regionsInterdites))) {
+            player.sendActionBar(Component.text("Le Bedrock Breaker ne fonctionne pas sur l'île centrale de l'End.",
+                    NamedTextColor.RED));
             return;
         }
         // 1.0.1 : clic droit maintenu (répété par le jeu) ou clic Bedrock en double : sans ce délai, le bloc de bedrock

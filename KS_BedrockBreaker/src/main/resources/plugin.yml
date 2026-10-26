@@ -4,3 +4,4 @@ main: fr.kalium.bedrockbreaker.KSBedrockBreaker
 api-version: '26.2'
 description: Bedrock Breaker (usage unique) - un clic droit sur un bloc de bedrock le retire.
 authors: [KaLium]
+softdepend: [WorldGuard]
