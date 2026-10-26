@@ -1,7 +1,7 @@
 # 26/10/2026 — Hide and Seek : retours de test (composteur, orientation, évasions, points)
 
 - Plugin concerné : KG_HideAndSeek (Kal-Games, hébergé dans Kanvas)
-- Versions avant / après : 0.2.0 (en service) / 0.3.0 (compilée, non déployée)
+- Versions avant / après : 0.2.0 (en service) / 0.3.0 (déployée sur Kanvas le 26/10/2026 à 15:03, à redémarrer)
 
 ## Demandé
 Composteur impossible à imiter solide (troué sur le dessus) ; un objet en main pour changer l'état du bloc (statue du
@@ -24,7 +24,7 @@ une dalle ou une trappe du haut ; jamais sur un autre joueur (exploit d'escalade
   départ des hiders ; points de survie ×1 à ×2 selon la rareté du bloc imité dans la map (affichée dans « Votre bloc »).
 - Sous un plafond bas, le hider solide est rapetissé (attribut de taille) pour tenir sur son bloc ; refus si la case du
   dessous est le bloc d'un autre hider ou si un autre joueur occupe la case.
-- Compilé (`sortie/KG_HideAndSeek-0.3.0.jar`). Détail : `KG_HideAndSeek/JOURNAL.md`.
+- Compilé, déployé sur Kanvas le 26/10/2026 à 15:03 (0.2.0 dans `_removed-kg_hideandseek-0.2.0/`). Détail : `KG_HideAndSeek/JOURNAL.md`.
 
 ## Décisions (prises par Claude, à confirmer)
 - « Proche » = portée des sons (30 blocs) ; ×3 au contact ; première minute de recherche comptée comme un passage.
@@ -36,4 +36,4 @@ une dalle ou une trappe du haut ; jamais sur un autre joueur (exploit d'escalade
 
 ## Reste à faire
 - Poser les points « Bâtiment : coin 1 / 2 » de l'arène (Informations > Paramètres > Hide and Seek > Arènes).
-- Déployer KG_HideAndSeek 0.3.0 sur Kal-Games (Kanvas), seul, puis tester en jeu (liste dans le journal).
+- Redémarrer Kanvas (fait par l'humain), puis tester en jeu (liste dans le journal), en Bedrock aussi.

@@ -6,7 +6,8 @@ KalGames : le jeu n'utilise que les crochets existants du moteur de parties.
 
 ## 0.3.0 — retours de test du 26/10/2026
 
-**Statut : compilé, non déployé, non testé en jeu.** Seul (aucun changement dans KalGames). Serveur : Kal-Games, hébergé
+**Statut : déployé sur Kanvas (Kal-Games) le 26/10/2026 à 15:03 (LeKiwi06), actif après redémarrage, non testé en
+jeu.** 0.2.0 rangée dans `_removed-kg_hideandseek-0.2.0/`. Seul (aucun changement dans KalGames). Serveur : Kal-Games, hébergé
 dans Kanvas depuis le 22/10/2026.
 
 **Demande de LeKiwi06 (26/10/2026)** : « le composteur en hide and seek ne fonctionne pas, comme il est troué sur le
