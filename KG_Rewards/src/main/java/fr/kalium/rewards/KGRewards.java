@@ -102,6 +102,26 @@ public final class KGRewards extends JavaPlugin implements Listener {
         moteur.periodeCloturee(event.type(), event.classements());
     }
 
+    /**
+     * 1.4.0 (demande de LeKiwi06, 26/10/2026 : 1 000 émeraudes au premier joueur qui finit chaque map du Parcours) :
+     * récompense en émeraudes donnée par un autre plugin de Kal-Games (KG_Parkour 1.4.0). Comme les autres
+     * récompenses : coffre « Non ouvert » de KS_RewardsGUI (contenu « argent », mis en émeraudes dans le coffre),
+     * valeur affichée = le nombre d'émeraudes, envoyé dans la boîte de config.yml, gardé dans envois.yml tant que le
+     * relais ne l'a pas accepté.
+     */
+    public void envoyerEmeraudes(java.util.UUID joueur, String nom, String raison, long emeraudes) {
+        if (emeraudes <= 0) {
+            return;
+        }
+        Butin.Contenu contenu = new Butin.Contenu();
+        java.util.Map<String, Object> argent = new java.util.LinkedHashMap<>();
+        argent.put("type", "argent");
+        argent.put("montant", emeraudes);
+        contenu.add(argent);
+        contenu.valeur = emeraudes;
+        envois.envoyer(joueur, nom, raison, contenu);
+    }
+
     /** Interface Récompenses (bouton de KLM_Menu, /kgrewards) : progression ; bouton admin pour les opérateurs. */
     public void ouvrir(Player joueur) {
         menuJoueur.ouvrir(joueur);

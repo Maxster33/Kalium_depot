@@ -105,3 +105,45 @@ comme « non comptés » (comme avant). Nouveaux textes : `race.checkpoint-score
 
 **Déployé sur Kal-Games le 04/10/2026 à 22:16 (LeKiwi06 ; 1.1.1 dans `_removed-kg_parkour-1.1.1/`), actif après
 redémarrage. Statut : non testé en jeu.**
+
+## 1.3.0 — choix du point de contrôle en entraînement (26/10/2026)
+
+**Demande de LeKiwi06** : « ajoute un item en parkour pour se téléporter vers le checkpoint de son choix en mode
+entrainement ».
+
+- Nouvel objet **« Choisir un point de contrôle »** (plume, case 1 de la barre d'objets), donné seulement aux joueurs
+  d'un parcours d'entraînement (avec le message d'accueil : « Plume : aller au point de contrôle de votre choix. »).
+- Clic droit : la liste du **départ** et de **tous les points de contrôle** du parcours, atteints ou non sur le tour en
+  cours. En coffre (plaques de pression dorées numérotées, le dernier point atteint en surbrillance, pages de 45,
+  barrière « Fermer ») ou en fenêtre à boutons, selon le réglage d'affichage du joueur (KalGames, coffres / fenêtres).
+- Un clic téléporte au point choisi : le chrono du tour repart de zéro, le point suivant est à atteindre, une chute
+  ramène à ce point. « Départ » = « Recommencer depuis le départ » du menu de la partie.
+- Un tour commencé à un point de contrôle n'est **pas un meilleur temps** : à l'arrivée, « m:ss depuis le point de
+  contrôle N » (titre et message), sans toucher au meilleur temps ni au nombre de tours ; puis retour au départ, comme
+  pour un tour complet.
+- Tout est dans KG_Parkour (KalGames n'est pas modifié) : l'objet porte une marque de KG_Parkour, `ChoixCheckpoint`
+  l'écoute après KalGames. Dépend maintenant aussi de KLM_Menu (coffre commun `Contenant`, déjà requis par KalGames).
+- Nouveaux textes (`lang.yml` de KalGames) : `race.training-choice-*`, `race.training-partial-sub`,
+  `race.training-partial-result`.
+
+**Compilé, non déployé, non testé.**
+
+## 1.4.0 — 1 000 émeraudes au premier qui finit chaque map (26/10/2026)
+
+**Demande de LeKiwi06** : « fais une récompense de 1000 émeraudes pour la 1ère personne qui arrive à finir le
+parkour ». Ses réponses : **une fois par map** ; parties **publiques et privées** (solo compris), jamais
+l'entraînement ; **opérateurs compris**.
+
+- Premier joueur à franchir l'arrivée d'une map (identifiant de l'arène) : annonce à la partie (« X est le premier à
+  finir cette map : 1 000 émeraudes ! »), son de défi, message « Ta récompense t'attend sur la survie : /rewards ».
+- Récompense envoyée par **KG_Rewards 1.4.0** (`envoyerEmeraudes`) : coffre « Non ouvert » de KS_RewardsGUI avec
+  1 000 émeraudes (contenu `argent`), valeur affichée 1 000, boîte de `config.yml` de KG_Rewards (`kixster`).
+- Gagnants gardés dans `plugins/KG_Parkour/premiers.yml` (`maps.<arène>` : map, joueur, nom, temps, date, émeraudes,
+  `envoye`). Pour remettre une map en jeu : supprimer sa section (serveur arrêté).
+- KG_Rewards absent ou plus ancien que la 1.4.0 : la récompense reste `envoye: false` et repart au démarrage suivant.
+- Nouveau réglage du jeu `first-map-emeralds` (« Émeraudes du 1er à finir une map », 1 000 ; 0 = aucune).
+- Pas rétroactif : les maps déjà finies avant le déploiement sont encore à gagner.
+- `softdepend: [KG_Rewards]`. Nouveaux textes : `race.first-map-broadcast`, `race.first-map-reward`.
+- Contient la 1.3.0 (choix du point de contrôle en entraînement), jamais déployée.
+
+**Compilé, non déployé, non testé. À déployer avec KG_Rewards 1.4.0.**

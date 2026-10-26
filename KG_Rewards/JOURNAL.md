@@ -166,3 +166,14 @@ Légendaire ; le jeton de claim passe de 9,0 à 6,7 %, le Changeur de Biome de 2
 
 **`butin.yml` envoyé sur Kal-Games le 11/10/2026 à 09:00 (LeKiwi06 ; accord de LeKiwi06 : « oui déploie tout » ; le fichier en place était celui envoyé à 06:05 ; ancien fichier
 dans `_removed-kg_rewards-butin-2026-10-11-2/`), actif après redémarrage de Kal-Games. Non testé.**
+
+## 1.4.0 - récompense en émeraudes pour les autres plugins (26/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : 1 000 émeraudes au premier joueur qui finit chaque map du Parcours (KG_Parkour 1.4.0).
+
+- Nouvelle méthode publique `KGRewards.envoyerEmeraudes(joueur, nom, raison, émeraudes)` : un coffre « Non ouvert » de
+  KS_RewardsGUI avec ces émeraudes (contenu `{type: argent, montant: n}`), valeur affichée = n ; même envoi que les
+  autres récompenses (boîte de `config.yml`, file `envois.yml`).
+- Aucun autre changement (paliers, tops, butin, commandes).
+
+**Compilé, non déployé, non testé. À déployer avec KG_Parkour 1.4.0.**

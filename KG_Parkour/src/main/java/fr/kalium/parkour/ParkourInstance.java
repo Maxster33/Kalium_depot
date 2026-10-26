@@ -37,6 +37,13 @@ import java.util.UUID;
  * 1.2.0 (demande de LeKiwi06, 04/10/2026) : nouveau bareme. Points de base de chaque section selon sa position dans le
  * parcours (1, 1, 3, 3, 3, 5, 5, 7, 7, 7, 10), multiplicateurs additifs (1er a valider, sans chute, temps), +25 au 1er
  * arrive ; rien de ce qui est « en 1er » en solo. Points decimaux, credites a chaque section (voir scoreSection).
+ *
+ * 1.3.0 (demande de LeKiwi06, 26/10/2026) : en entrainement, objet « Choisir un point de contrôle » (voir
+ * ChoixCheckpoint) pour aller au depart ou a n'importe quel point de controle ; le chrono repart de ce point, et un tour
+ * commence ailleurs qu'au depart n'est pas un meilleur temps.
+ *
+ * 1.4.0 (demande de LeKiwi06, 26/10/2026) : le premier joueur qui finit chaque map gagne 1 000 emeraudes, une seule
+ * fois (voir PremiersArrives).
  */
 public final class ParkourInstance extends GameInstance {
 
@@ -68,6 +75,8 @@ public final class ParkourInstance extends GameInstance {
         double points;
         /** 1.2.0 : retour au point de controle depuis la derniere section validee (plus de bonus « sans chute »). */
         boolean fell;
+        /** 1.3.0 : entrainement, tour commence a ce point de controle (numero, 1 = premier) ; 0 = depuis le depart. */
+        int from;
     }
 
     /** Parcours en partie privee : sans limite de temps, sans points ni classement. */
@@ -410,11 +419,67 @@ public final class ParkourInstance extends GameInstance {
         plugin.hub().resetPlayer(player, GameMode.ADVENTURE);
         player.teleport(spot);
         plugin.hub().giveInGameItems(player, true);
+        KGParkour.get().choix().give(player);
         ghosts.join(player);
         if (old == null) {
             player.sendMessage(plugin.prefix().append(t("race.training-welcome",
                     "<green>Entraînement : pas de limite de temps, ni points, ni classement. Chute = retour au dernier point de contrôle ; à l'arrivée vous repartez du début.")));
+            player.sendMessage(plugin.prefix().append(t("race.training-choice-tip",
+                    "<gray>Plume : aller au point de contrôle de votre choix.")));
         }
+    }
+
+    // ------------------------------------------------------------------ choix du point de controle (1.3.0)
+
+    public int checkpointCount() {
+        return arena().list("checkpoints").size();
+    }
+
+    /** Points de controle atteints sur le tour en cours (0 = aucun, le joueur repart du depart). */
+    public int reachedCheckpoints(Player player) {
+        Racer racer = racers.get(player.getUniqueId());
+        return racer == null ? 0 : racer.next;
+    }
+
+    /** L'objet « Choisir un point de contrôle » est-il utilisable (entrainement en cours) ? */
+    public boolean canChooseCheckpoint(Player player) {
+        Racer racer = racers.get(player.getUniqueId());
+        return training && phase == Phase.RUNNING && racer != null && !racer.finished && !racer.out;
+    }
+
+    /**
+     * 1.3.0 : teleporte un joueur en entrainement au point de controle choisi (index, 0 = premier ; -1 = depart). Le
+     * tour repart de ce point : chrono a zero, point de controle suivant a atteindre, retour en cas de chute ici.
+     */
+    public void teleportTraining(Player player, int checkpoint) {
+        if (!canChooseCheckpoint(player)) {
+            return;
+        }
+        List<Pos> checkpoints = arena().list("checkpoints");
+        if (checkpoint < 0 || checkpoint >= checkpoints.size()) {
+            startTraining(player);
+            return;
+        }
+        Racer racer = racers.get(player.getUniqueId());
+        Location spot = loc(checkpoints.get(checkpoint));
+        long now = System.currentTimeMillis();
+        racer.next = checkpoint + 1;
+        racer.from = checkpoint + 1;
+        racer.lastCheckpoint = spot.clone();
+        racer.previous = spot.clone();
+        racer.runStart = now;
+        racer.segmentStart = now;
+        racer.fell = false;
+        released.add(player.getUniqueId());
+        player.leaveVehicle();
+        player.teleport(spot);
+        released.remove(player.getUniqueId());
+        player.setFallDistance(0);
+        player.setVelocity(new Vector());
+        racer.noticeUntil = now + 2000;
+        player.sendActionBar(t("race.training-choice-done", "<green>Point de contrôle <white><n>/<total></white> <gray>: chrono remis à zéro",
+                "n", racer.next, "total", checkpoints.size()));
+        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.6f, 1.2f);
     }
 
     /** Menu de la partie : repartir du debut. */
@@ -426,6 +491,10 @@ public final class ParkourInstance extends GameInstance {
 
     private void trainingLap(Player player, Racer racer) {
         long time = System.currentTimeMillis() - racer.runStart;
+        if (racer.from > 0) {
+            partialLap(player, racer, time);
+            return;
+        }
         racer.runs++;
         boolean best = racer.bestRun < 0 || time < racer.bestRun;
         if (best) {
@@ -439,6 +508,24 @@ public final class ParkourInstance extends GameInstance {
                 "<gray>Tour d'entraînement n°<n> : <white><time></white> <dark_gray>(meilleur : <best>)",
                 "n", racer.runs, "time", formatTime(time), "best", formatTime(racer.bestRun))));
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1.2f);
+        backToStart(player, racer);
+    }
+
+    /** 1.3.0 : arrivee d'un tour commence a un point de controle choisi : temps affiche, pas un meilleur temps. */
+    private void partialLap(Player player, Racer racer, long time) {
+        player.showTitle(net.kyori.adventure.title.Title.title(
+                t("race.training-finish", "<gold><bold>Arrivée !"),
+                t("race.training-partial-sub", "<white><time> <gray>depuis le point de contrôle <cp>",
+                        "time", formatTime(time), "cp", racer.from)));
+        player.sendMessage(plugin.prefix().append(t("race.training-partial-result",
+                "<gray>Depuis le point de contrôle <cp> : <white><time></white> <dark_gray>(pas compté comme meilleur temps)",
+                "cp", racer.from, "time", formatTime(time))));
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1.2f);
+        backToStart(player, racer);
+    }
+
+    /** Apres l'arrivee d'un tour d'entrainement : nouveau tour depuis le depart (meilleur temps et tours gardes). */
+    private void backToStart(Player player, Racer racer) {
         Racer fresh = new Racer();
         Location spot = trainingStart();
         fresh.lastCheckpoint = spot.clone();
@@ -491,6 +578,16 @@ public final class ParkourInstance extends GameInstance {
         if (plugin.scores().recordTime(this, player, racer.finishMillis)) {
             player.sendMessage(plugin.prefix().append(t("race.record", "<light_purple>Nouveau record personnel : <white><time></white> !",
                     "time", formatTime(racer.finishMillis))));
+        }
+        // 1.4.0 : premier joueur a finir cette map (une seule fois par map, jamais en entrainement).
+        long emeralds = KGParkour.get().premiers().arrivee(arena().id(), arena().display(), player, racer.finishMillis,
+                Math.max(0, minigame().getInt("first-map-emeralds", 1000)));
+        if (emeralds > 0) {
+            broadcast(t("race.first-map-broadcast", "<gold><bold><name></bold> <yellow>est le premier à finir cette map : <white><n> émeraudes</white> !",
+                    "name", player.getName(), "n", groupDigits(emeralds)));
+            player.sendMessage(plugin.prefix().append(t("race.first-map-reward",
+                    "<green>Ta récompense t'attend sur la survie : <white>/rewards</white>.")));
+            player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1f);
         }
         Map<String, Object> fields = journal(section, score);
         fields.put("finishBonus", bonus);
@@ -802,6 +899,15 @@ public final class ParkourInstance extends GameInstance {
 
     private static String formatTime(long millis) {
         return fr.kalium.scoreboards.data.StatsService.formatTime(millis);
+    }
+
+    /** 1 000, 10 000... (espace ordinaire : l'espace fine insecable n'est pas dans la police du jeu). */
+    private static String groupDigits(long value) {
+        StringBuilder digits = new StringBuilder(Long.toString(value));
+        for (int i = digits.length() - 3; i > 0; i -= 3) {
+            digits.insert(i, ' ');
+        }
+        return digits.toString();
     }
 
     private static String formatTenths(long millis) {

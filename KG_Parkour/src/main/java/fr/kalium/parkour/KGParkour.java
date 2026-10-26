@@ -21,6 +21,23 @@ import static fr.kalium.games.model.SettingSpec.integer;
  */
 public final class KGParkour extends JavaPlugin {
 
+    /** 1.3.0 : objet « Choisir un point de contrôle » de l'entrainement. */
+    private ChoixCheckpoint choix;
+    /** 1.4.0 : premier joueur a finir chaque map (recompense en emeraudes). */
+    private PremiersArrives premiers;
+
+    static KGParkour get() {
+        return getPlugin(KGParkour.class);
+    }
+
+    ChoixCheckpoint choix() {
+        return choix;
+    }
+
+    PremiersArrives premiers() {
+        return premiers;
+    }
+
     @Override
     public void onEnable() {
         MinigameType type = new MinigameType("PARKOUR", "Parcours",
@@ -51,6 +68,9 @@ public final class KGParkour extends JavaPlugin {
                         integer("finish-time-seconds", "Arrivée : temps bonus (s)", 0, 0, 3600,
                                 "Temps du bonus entre le dernier point de contrôle et l'arrivée. 0 = pas de bonus de temps."),
                         integer("points-first-finish", "Points du 1er arrivé", 25, 0, 200, "Ajoutés tels quels au premier arrivé. Jamais en solo."),
+                        // 1.4.0 : une seule fois par map (plugins/KG_Parkour/premiers.yml), envoye par KG_Rewards.
+                        integer("first-map-emeralds", "Émeraudes du 1er à finir une map", 1000, 0, 100000,
+                                "Une seule fois par map : le premier joueur qui la finit (partie publique ou privée, pas l'entraînement) reçoit ces émeraudes sur la survie. 0 = aucune."),
                         integer("void-y", "Hauteur de chute (Y absolu)", 1, -64, 320, "Sous cette hauteur : retour au dernier point de contrôle. -64 = automatique (juste sous l'arène)."),
                         integer("time-limit-seconds", "Temps limite de la course (s)", 0, 0, 7200, "Fin de la course pour tout le monde. 0 = pas de limite globale."),
                         integer("countdown-seconds", "Compte à rebours (s)", 5, 0, 15, "Avant le départ."),
@@ -75,6 +95,11 @@ public final class KGParkour extends JavaPlugin {
                         "Mode entraînement (sans limite de temps, sans points ni classement)"))
                 .prewarmAllowed(true);
         MinigameType.register(type);
+        choix = new ChoixCheckpoint(this, (fr.kalium.games.KalGames) getServer().getPluginManager().getPlugin("KalGames"));
+        getServer().getPluginManager().registerEvents(choix, this);
+        premiers = new PremiersArrives(this);
+        // Une fois tous les plugins actives (KG_Rewards) : recompenses restees en attente.
+        getServer().getScheduler().runTask(this, premiers::envoyerEnAttente);
         getLogger().info("Parcours enregistré auprès de KalGames.");
     }
 

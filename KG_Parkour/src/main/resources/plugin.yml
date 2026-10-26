@@ -4,4 +4,6 @@ main: fr.kalium.parkour.KGParkour
 api-version: '26.2'
 description: Parcours de Kal-Games (sorti de KalGames), branche sur le moteur de parties de KalGames.
 authors: [KaLium]
-depend: [KalGames, KG_ScoreBoards]
+depend: [KalGames, KG_ScoreBoards, KLM_Menu]
+# 1.4.0 : envoi de la recompense du premier a finir une map.
+softdepend: [KG_Rewards]
