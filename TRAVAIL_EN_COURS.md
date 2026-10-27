@@ -18,6 +18,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KLM_Espaces (nouveau), KaliumRelay, KalGames, KLM_Menu, KLM_Chat, KLM_Contacts, KG_BuildBattle, KV_BuildBattle — LeKiwi06 — depuis le 2026-10-21 01:45 — fusion de Kal-Games dans Kanvas (espaces étanches) et Serveur Jeux à la place d'Event (expiration des serveurs)
 - KS_Contrats (nouveau), KS_Economy, KS_Menu, KS_Didacticiel — LeKiwi06 — depuis le 2026-10-27 03:20 — /contrat : contrats entre joueurs, garanties en séquestre, litiges tranchés par un admin ; choix d'un contrat dans /echange ; bouton du menu de Kixster ; entrée du didacticiel
+- KS_DisquesBundle (nouveau) — LeKiwi06 — depuis le 2026-10-27 03:38 — disques de musique : poids d'un objet empilable par 64 dans les bundles (non empilables ailleurs)
 - KS_DiagOutils (nouveau, temporaire) — LeKiwi06 — depuis le 2026-10-24 23:36 — diagnostic : houe, pelle, hache sans effet pour les joueurs Bedrock sur Kixster
 
 
