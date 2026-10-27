@@ -437,6 +437,49 @@ themes:
         texte: "Un joueur qui n'est pas whitelisté voit une fenêtre de demande en essayant de rejoindre Kixster : il donne son pseudo Discord, un admin la traite dès que possible."
         nouveau: "2026-10-23b"
 
+  contrats:
+    nom: "Contrats"
+    icone: WRITABLE_BOOK
+    resume: "Engage-toi avec d'autres joueurs, garanties à la clé."
+    requiert: "KS_Contrats"
+    nouveautes:
+      contrat:
+        nom: "Passer un contrat"
+        icone: WRITABLE_BOOK
+        texte: "/contrat > « Créer un contrat » : choisis ton équipe (facultatif), les joueurs d'en face, à quoi chaque partie s'engage, une durée et une garantie. Le contrat est actif quand tous ont accepté : il garde une trace de vos engagements."
+        commande: "/contrat"
+        nouveau: "2026-10-27"
+      biens-services:
+        nom: "Biens ou services"
+        icone: CHEST
+        texte: "Un engagement est un bien (jusqu'à 5 objets différents, et des points, avec leur quantité) ou un service (creuser une zone, faire un build...). Un contrat peut se faire une fois ou se répéter : chaque jour, chaque semaine, toutes les 2 semaines ou chaque mois."
+        nouveau: "2026-10-27"
+      livrer:
+        nom: "Livrer par /echange"
+        icone: HOPPER
+        texte: "Dans /echange, choisis le contrat : seuls ses objets et ses points passent, sans dépasser ce qui reste à livrer, et la livraison est comptée dans le contrat (10/64)."
+        nouveau: "2026-10-27"
+      accord:
+        nom: "Tout se décide ensemble"
+        icone: PLAYER_HEAD
+        texte: "Modifier, valider en avance ou annuler un contrat : la demande doit être acceptée par tous les autres joueurs du contrat. Un seul refus la fait tomber. Tu peux aussi proposer ta propre version d'une proposition reçue."
+        nouveau: "2026-10-27"
+      garantie:
+        nom: "Garantie"
+        icone: GOLD_INGOT
+        texte: "Chaque partie peut mettre des points en garantie, partagés entre ses joueurs : ils sont retenus jusqu'à la fin du contrat, puis rendus."
+        nouveau: "2026-10-27"
+      litige:
+        nom: "En cas de non-respect"
+        icone: RED_BANNER
+        texte: "À la fin d'une période ou du contrat, chacun valide ou conteste (7 jours sans réponse : validé ; tout livré par /echange : validé d'office). Contester ou signaler un non-respect bloque les garanties : un admin tranche et peut les répartir comme il le juge juste."
+        nouveau: "2026-10-27"
+      perso:
+        nom: "Tes contrats, à ta façon"
+        icone: NAME_TAG
+        texte: "Donne à chaque contrat ton propre nom et ton propre logo, et mets tes préférés en favoris : ils passent en tête de liste. Seul toi les vois."
+        nouveau: "2026-10-27"
+
   vehicules:
     nom: "Véhicules"
     icone: OAK_BOAT
@@ -743,6 +786,12 @@ themes:
         texte: "Parrainer un ami sur Kixster, voir tes filleuls, répondre à une proposition."
         requiert: "KS_Parrainage"
         nouveau: "2026-10-23"
+      contrat-cmd:
+        nom: "/contrat"
+        icone: WRITABLE_BOOK
+        texte: "Tes contrats avec les autres joueurs : en créer, répondre aux propositions, valider ou contester."
+        requiert: "KS_Contrats"
+        nouveau: "2026-10-27"
       statistiques-cmd:
         nom: "/statistiques (/stats)"
         icone: CLOCK

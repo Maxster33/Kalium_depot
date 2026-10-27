@@ -1,0 +1,17 @@
+name: KS_Contrats
+version: '${project.version}'
+main: fr.kalium.contrats.KSContrats
+api-version: '26.2'
+description: Contrats entre joueurs sur Kixster (/contrat) - trace des engagements, garanties en sequestre, litiges tranches par un admin, livraisons par /echange.
+authors: [KaLium]
+depend: [KLM_Menu, KS_Economy]
+softdepend: [KS_Menu, KS_MondeTest]
+commands:
+  contrat:
+    description: Tes contrats avec les autres joueurs (admins - /contrat admin).
+    aliases: [contrats]
+    usage: /<command> [admin]
+permissions:
+  kscontrats.admin:
+    description: Voir et trancher les litiges des contrats (/contrat admin).
+    default: op

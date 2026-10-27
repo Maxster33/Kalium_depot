@@ -784,3 +784,54 @@ Principe (KS_MondeTest 1.1.0) : dans le monde de test, le joueur porte la métad
 - Pas changé : résumé de modération (KS_AntiCheat, compte réel), ventes et notifications des magasins.
 
 **À déployer ensemble sur Kixster** : KS_MondeTest 1.1.0, KS_Economy 1.11.0 (avec KS_BiomeChanger 1.2.0, exigé par KS_Economy 1.10.1), KS_Jetons 2.2.0, KS_Teleport 1.5.0, KS_RewardsGUI 1.10.0, KS_FairPlay 1.1.0, KS_Fly 1.1.0, KS_Tableau 1.1.0, KS_Menu 1.3.0, KS_Parrainage 1.2.0, KLM_Statistiques 1.2.0 ; nouveau `config.yml` de KS_MondeTest et clé `espaces-interfaces` de KLM_Menu à changer (voir le JOURNAL de KS_MondeTest). **Déployé sur Kixster le 25/10/2026 à 12:10 (accord de LeKiwi06 : « oui, déploie les 11 plugins du moi de test et KS_BiomeChanger 1.2.0 sur Kixster, avec le nouveau config.yml de KS_MondeTest et espaces-interfaces de KLM_Menu ») ; ancien jar dans `_removed-<plugin>-<version>/` ; actif après redémarrage (fait par LeKiwi06), non testé en jeu.** Contient les versions 1.10.1 à 1.10.3 (jamais déployées seules), avec KS_BiomeChanger 1.2.0.
+
+## 1.11.1 - cuivre taillé au prix du tailleur de pierre (26/10/2026, LeKiwi06)
+
+Signalé par LeKiwi06 : « les dalles de cuivre cirés érodés taillés sont bien trop cher : les stonecutter quadruple les
+blocks en version taillé, et les trials les donnent en abondance ». Cause : le barème comptait un bloc de cuivre entier
+pour une pièce taillée, ciselée, une grille ou un escalier, et un demi-bloc pour une dalle. Au tailleur de pierre, un
+bloc (de n'importe quel état d'oxydation, ciré ou non) donne 4 de ces pièces, ou 8 dalles. Le prix suit maintenant
+cette recette, attente d'oxydation et rayon de miel compris (un seul bloc oxydé ou ciré pour 4 ou 8 pièces) :
+
+| Objet | Avant | Après |
+|---|---|---|
+| Dalle de cuivre taillé | 0,0675 | 0,0169 |
+| Dalle de cuivre taillé érodé ciré | 0,1975 | 0,0456 |
+| Cuivre taillé érodé ciré (et escalier, ciselé, grille) | 0,365 | 0,0913 |
+| Cuivre taillé oxydé (et escalier, ciselé, grille) | 0,435 | 0,1087 |
+
+40 lignes de `rachats.csv` baissent d'un facteur 4 environ (taillé, ciselé, grille, dalle, escalier, dans les 4 états,
+cirés ou non) ; rien d'autre ne change. Les blocs pleins de cuivre (0,135 à 0,465) gardent leur prix. Barème régénéré
+par `sortie/bareme` (`bareme.py` : recettes du tailleur ; `faire_moteur.py` : attente et cire par bloc), puis
+`exporter_rachats.py`. Aucun changement de code.
+
+Effet au déploiement : une offre de la semaine sur l'un de ces objets est remplacée par un nouveau tirage au
+redémarrage (prix du barème changé, 1.8.0).
+
+**Compilé, non déployé, non testé.**
+
+## 1.12.0 - choix d'un contrat dans /echange (27/10/2026, LeKiwi06)
+
+Demande (/contrat de KS_Contrats 1.0.0) : « on va aussi modifier le /echange pour pouvoir sélectionner un contrat
+quand on échange, comme ça si le contrat contient un item, il est marqué comme validé dans le contrat par la suite (ou
+bien avec une mention 10/64) » ; « on ne peut mettre que les items ou les points du contrat, pas d'autres biens, et on
+ne peut pas mettre plus que le maximum du contrat (pour éviter les petits malins qui profiteraient d'un échange banal
+pour discrètement valider une clause de contrat) ».
+
+- Panneau d'échange : bouton « Contrat » (case 47, livre et plume), seulement si KS_Contrats est là (service
+  `fr.kalium.economy.api.ContratsEchange`, déclaré par KS_Contrats : KS_Economy ne dépend pas de lui). Menu des
+  contrats actifs que les deux joueurs ont ensemble, chacun d'un côté ; le contrat choisi s'affiche chez les deux
+  (« Choisi par ... »), « Retirer le contrat » repasse en échange normal.
+- Contrat choisi : à la fermeture du coffre des objets (et au choix du contrat), les objets que la partie du joueur ne
+  doit pas, ou au-delà de ce qui reste à livrer, lui sont rendus (message) ; le montant est limité à ce qui reste dû
+  en points. Tout est revérifié à la conclusion (livraison d'un coéquipier entre-temps, litige : le contrat n'est plus
+  valable et l'échange redevient normal, validations retirées).
+- Conclusion : les objets et points de chacun sont comptés dans le contrat (`livrer`) ; le journal de la console
+  nomme le contrat.
+- API publique pour KS_Contrats : `chercherObjets(texte)` (recherche des noms français, celle des boutiques),
+  `nomObjet(objet)`, `soldeCompte` / `crediterCompte` / `debiterCompte` (compte exact, sans passer par le compte de
+  test : une garantie rendue au compte de Kixster d'un joueur qui est dans le monde de test reste sur ce compte).
+
+Contient la 1.11.1 (prix du cuivre taillé, jamais déployée seule).
+
+**À déployer avec KS_Contrats 1.0.0. Compilé, non déployé, non testé en jeu.**

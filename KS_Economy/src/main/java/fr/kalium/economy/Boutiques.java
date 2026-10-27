@@ -208,7 +208,7 @@ final class Boutiques implements Listener {
     }
 
     /** Objets dont le nom français ou l'id correspond (exact d'abord, puis « contient »), 20 au plus. */
-    private List<Material> rechercher(String texte) {
+    static List<Material> rechercher(String texte) {
         String cherche = simplifier(texte);
         List<Material> exacts = new ArrayList<>();
         List<Material> proches = new ArrayList<>();

@@ -54,6 +54,10 @@ import java.util.UUID;
  *
  * Les objets déposés restent dans le coffre de l'échange (hors de l'inventaire du joueur) jusqu'à la fin : rendus à
  * l'annulation, donnés à l'autre à la conclusion.
+ *
+ * 1.12.0 (LeKiwi06, 27/10/2026, /contrat de KS_Contrats) : bouton « Contrat » (si KS_Contrats est là) : l'un des deux
+ * choisit un contrat qu'ils ont ensemble ; chacun ne peut alors poser que les objets et les points que sa partie doit
+ * encore livrer (le reste lui est rendu), et la livraison est comptée dans le contrat à la conclusion.
  */
 final class Echanges implements Listener, TabExecutor {
 
@@ -63,10 +67,11 @@ final class Echanges implements Listener, TabExecutor {
     private static final int CASES_OBJETS = 16;
 
     // Cases du panneau.
-    private static final int OBJETS = 45, MONTANT = 46, VALIDER = 48, ANNULER = 49, MONTANT_AUTRE = 52, VALIDE_AUTRE = 53;
+    private static final int OBJETS = 45, MONTANT = 46, CONTRAT = 47, VALIDER = 48, ANNULER = 49, MONTANT_AUTRE = 52,
+            VALIDE_AUTRE = 53;
 
-    /** Où se trouve le joueur dans l'échange. */
-    private enum Vue { PANNEAU, OBJETS, MONTANT, AILLEURS }
+    /** Où se trouve le joueur dans l'échange (1.12.0 : CONTRAT, menu du choix d'un contrat). */
+    private enum Vue { PANNEAU, OBJETS, MONTANT, CONTRAT, AILLEURS }
 
     /** La part d'un joueur. */
     private final class Part implements InventoryHolder {
@@ -117,6 +122,14 @@ final class Echanges implements Listener, TabExecutor {
         Part a;
         Part b;
         boolean fini;
+        /** 1.12.0 : contrat choisi (KS_Contrats), null : échange normal. */
+        String contrat;
+        String contratChoisiPar;
+    }
+
+    /** 1.12.0 : contrats de KS_Contrats (null s'il n'est pas là). */
+    private static fr.kalium.economy.api.ContratsEchange contrats() {
+        return Bukkit.getServicesManager().load(fr.kalium.economy.api.ContratsEchange.class);
     }
 
     private final KSEconomy plugin;
@@ -371,6 +384,7 @@ final class Echanges implements Listener, TabExecutor {
                 : bouton(Material.WHITE_CONCRETE, lang.c("echange.bouton-valider", "<white><bold>Valider"),
                 lang.c("echange.info-valider", "<gray>L'échange a lieu quand vous avez validé tous les deux")));
         p.setItem(ANNULER, bouton(Material.BARRIER, lang.c("echange.annuler", "<red>Annuler l'échange")));
+        dessinerContrat(part);
         p.setItem(MONTANT_AUTRE, bouton(Material.GOLD_NUGGET, lang.c("echange.montant-autre", "<gold>Montant de "
                 + "<autre> : <montant>", "autre", autre.joueur.getName(), "montant", KSEconomy.points(autre.montant))));
         p.setItem(VALIDE_AUTRE, autre.valide
@@ -378,6 +392,133 @@ final class Echanges implements Listener, TabExecutor {
                 autre.joueur.getName()))
                 : bouton(Material.RED_CONCRETE, lang.c("echange.autre-attend", "<red><autre> n'a pas validé",
                 "autre", autre.joueur.getName())));
+    }
+
+    /** 1.12.0 : bouton « Contrat » (rien sans KS_Contrats). */
+    private void dessinerContrat(Part part) {
+        fr.kalium.economy.api.ContratsEchange service = contrats();
+        Echange echange = part.echange;
+        if (service == null) {
+            return;
+        }
+        ItemStack icone = echange.contrat == null ? null : service.icone(echange.contrat, part.joueur);
+        if (icone == null) {
+            part.panneau.setItem(CONTRAT, bouton(Material.WRITABLE_BOOK, lang.c("echange.contrat-aucun",
+                    "<yellow>Contrat : aucun"), lang.c("echange.contrat-info1", "<gray>Clic : choisir un contrat que"),
+                    lang.c("echange.contrat-info2", "<gray>vous avez ensemble ; seuls ses"),
+                    lang.c("echange.contrat-info3", "<gray>objets et ses points passeront.")));
+            return;
+        }
+        ItemMeta meta = icone.getItemMeta();
+        List<Component> lignes = meta.lore() == null ? new ArrayList<>() : new ArrayList<>(meta.lore());
+        lignes.add(lang.c("echange.contrat-par", "<gray>Choisi par <joueur>", "joueur", echange.contratChoisiPar)
+                .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+        lignes.add(lang.c("echange.contrat-clic", "<gray>Clic : changer ou retirer le contrat")
+                .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+        meta.lore(lignes);
+        icone.setItemMeta(meta);
+        part.panneau.setItem(CONTRAT, icone);
+    }
+
+    /** 1.12.0 : menu du choix d'un contrat ; un clic le choisit pour les deux joueurs. */
+    private void choisirContrat(Part part) {
+        fr.kalium.economy.api.ContratsEchange service = contrats();
+        if (service == null) {
+            return;
+        }
+        Part autre = part.autre();
+        List<String> communs = service.communs(part.joueur, autre.joueur);
+        Contenant menu = plugin.menus().menu(part.joueur, 6, lang.c("echange.contrat-titre",
+                "<dark_gray>Contrat de l'échange"), "echange-contrat");
+        int place = 0;
+        for (String id : communs) {
+            ItemStack icone = service.icone(id, part.joueur);
+            if (icone == null || place >= Contenant.PAR_PAGE) {
+                continue;
+            }
+            menu.poser(place++, icone, j -> Contenant.apres(() -> {
+                if (part.echange.fini || part.vue != Vue.CONTRAT) {
+                    return;
+                }
+                part.echange.contrat = id;
+                part.echange.contratChoisiPar = j.getName();
+                appliquerContrat(part);
+                appliquerContrat(autre);
+                modifie(part.echange);
+                ouvrirPanneau(part);
+                lang.saveIfNeeded();
+            }));
+        }
+        if (communs.isEmpty()) {
+            menu.poser(22, Contenant.objet(Material.PAPER, lang.c("echange.contrat-vide",
+                    "<gray>Aucun contrat actif entre vous"), Contenant.lignes(lang.c("echange.contrat-vide-info",
+                    "<gray>Il faut un contrat actif où vous êtes chacun d'un côté (/contrat)."))), null);
+        }
+        if (part.echange.contrat != null) {
+            menu.poser(menu.bas(4), Contenant.objet(Material.BARRIER, lang.c("echange.contrat-retirer",
+                    "<red>Retirer le contrat"), List.of(lang.c("echange.contrat-retirer-info",
+                    "<gray>Revient à un échange normal"))), j -> Contenant.apres(() -> {
+                if (part.echange.fini || part.vue != Vue.CONTRAT) {
+                    return;
+                }
+                part.echange.contrat = null;
+                part.echange.contratChoisiPar = null;
+                modifie(part.echange);
+                ouvrirPanneau(part);
+            }));
+        }
+        plugin.menus().sortie(menu, j -> Contenant.apres(() -> {
+            if (!part.echange.fini && part.vue == Vue.CONTRAT) {
+                ouvrirPanneau(part);
+            }
+        }));
+        part.vue = Vue.CONTRAT;
+        menu.ouvrir(part.joueur);
+        lang.saveIfNeeded();
+    }
+
+    /**
+     * 1.12.0 : contrat choisi : les objets posés qui ne sont pas dus (ou en trop) sont rendus, et le montant ramené à
+     * ce qui reste à livrer. Contrat qui n'est plus valable : retour à un échange normal. Vrai si rien n'a changé.
+     */
+    private boolean appliquerContrat(Part part) {
+        Echange echange = part.echange;
+        if (echange.contrat == null) {
+            return true;
+        }
+        fr.kalium.economy.api.ContratsEchange service = contrats();
+        Part autre = part.autre();
+        fr.kalium.economy.api.ContratsEchange.Tri tri = service == null ? null
+                : service.trier(echange.contrat, part.joueur, autre.joueur, copie(part.objetsDeposes()));
+        long max = service == null ? -1 : service.pointsMax(echange.contrat, part.joueur, autre.joueur);
+        if (tri == null || max < 0) {
+            echange.contrat = null;
+            echange.contratChoisiPar = null;
+            Component plus = lang.c("echange.contrat-invalide", "<red>Ce contrat n'est plus valable : échange normal.");
+            dire(part.joueur, plus);
+            dire(autre.joueur, plus);
+            return false;
+        }
+        boolean inchange = true;
+        if (!tri.refuses().isEmpty()) {
+            for (int i = 0; i < CASES_OBJETS; i++) {
+                part.objets.setItem(i, null);
+            }
+            for (int i = 0; i < tri.acceptes().size() && i < CASES_OBJETS; i++) {
+                part.objets.setItem(i, tri.acceptes().get(i));
+            }
+            donner(part.joueur, tri.refuses());
+            dire(part.joueur, lang.c("echange.contrat-rendus", "<yellow>Objets rendus : ta partie ne les doit pas dans "
+                    + "ce contrat (ou ils dépassent ce qui reste à livrer)."));
+            inchange = false;
+        }
+        if (part.montant > max) {
+            part.montant = max;
+            dire(part.joueur, lang.c("echange.contrat-montant", "<yellow>Montant ramené à <montant> : ce qui reste à "
+                    + "livrer du contrat.", "montant", KSEconomy.points(max)));
+            inchange = false;
+        }
+        return inchange;
     }
 
     private void ouvrirPanneau(Part part) {
@@ -433,6 +574,12 @@ final class Echanges implements Listener, TabExecutor {
                 modifie(part.echange);
                 saisirMontant(part);
             }
+            case CONTRAT -> {
+                if (contrats() != null) {
+                    modifie(part.echange);
+                    choisirContrat(part);
+                }
+            }
             case VALIDER -> {
                 part.valide = !part.valide;
                 if (part.valide && part.autre().valide) {
@@ -464,11 +611,24 @@ final class Echanges implements Listener, TabExecutor {
 
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
+        // 1.12.0 : menu du choix d'un contrat fermé (Échap) : retour au panneau.
+        if (event.getInventory().getHolder() instanceof Contenant
+                && parts.get(event.getPlayer().getUniqueId()) instanceof Part enChoix && enChoix.vue == Vue.CONTRAT) {
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (!enChoix.echange.fini && enChoix.vue == Vue.CONTRAT && enChoix.joueur.isOnline()
+                        && Contenant.ouvert(enChoix.joueur, "echange-contrat") == null) {
+                    ouvrirPanneau(enChoix);
+                }
+            });
+            return;
+        }
         if (!(event.getInventory().getHolder() instanceof Part part) || part.echange.fini) {
             return;
         }
         if (event.getInventory() == part.objets && part.vue == Vue.OBJETS) {
             // Retour au panneau ; une modification des objets retire les validations.
+            // 1.12.0 : avec un contrat, les objets qui ne sont pas dus sont rendus.
+            appliquerContrat(part);
             if (!memes(part.avant, part.objetsDeposes())) {
                 modifie(part.echange);
             } else {
@@ -543,9 +703,15 @@ final class Echanges implements Listener, TabExecutor {
                 montant = -1;
             }
             long solde = KSEconomy.solde(part.joueur.getUniqueId());
+            fr.kalium.economy.api.ContratsEchange service = contrats();
+            long max = part.echange.contrat == null || service == null ? Long.MAX_VALUE
+                    : service.pointsMax(part.echange.contrat, part.joueur, part.autre().joueur);
             if (montant < 0 || montant > solde) {
                 dire(part.joueur, lang.c("montant.invalide", "<red>Montant invalide (entre 0 et ton solde : <solde>).",
                         "solde", KSEconomy.points(solde)));
+            } else if (montant > Math.max(0, max)) {
+                dire(part.joueur, lang.c("montant.contrat", "<red>Le contrat ne demande plus que <max> à ta partie.",
+                        "max", KSEconomy.points(Math.max(0, max))));
             } else if (montant != part.montant) {
                 part.montant = montant;
                 modifie(part.echange);
@@ -664,6 +830,14 @@ final class Echanges implements Listener, TabExecutor {
     private void conclure(Echange echange) {
         Part a = echange.a;
         Part b = echange.b;
+        // 1.12.0 : le contrat a pu changer depuis le dépôt (livraison d'un coéquipier, litige) : tout est revérifié.
+        boolean contratInchange = appliquerContrat(a);
+        contratInchange &= appliquerContrat(b);
+        if (!contratInchange) {
+            modifie(echange);
+            return;
+        }
+        String contrat = echange.contrat;
         List<ItemStack> objetsA = a.objetsDeposes();
         List<ItemStack> objetsB = b.objetsDeposes();
         Component probleme = null;
@@ -702,11 +876,17 @@ final class Echanges implements Listener, TabExecutor {
         // 1.1.5 : signal pour l'anti-triche (revente suspecte).
         Bukkit.getPluginManager().callEvent(new fr.kalium.economy.api.EchangeTermineEvent(a.joueur, b.joueur, objetsA,
                 objetsB, a.montant, b.montant));
+        fr.kalium.economy.api.ContratsEchange service = contrats();
+        if (contrat != null && service != null) {
+            service.livrer(contrat, a.joueur, b.joueur, copie(objetsA), a.montant);
+            service.livrer(contrat, b.joueur, a.joueur, copie(objetsB), b.montant);
+        }
         Component fait = lang.c("echange.fait", "<green>Échange effectué.");
         dire(a.joueur, fait);
         dire(b.joueur, fait);
         plugin.getLogger().info("Échange : " + a.joueur.getName() + " (" + objetsA.size() + " piles, " + a.montant
-                + " points) <-> " + b.joueur.getName() + " (" + objetsB.size() + " piles, " + b.montant + " points)");
+                + " points) <-> " + b.joueur.getName() + " (" + objetsB.size() + " piles, " + b.montant + " points)"
+                + (contrat == null ? "" : ", contrat " + contrat));
         lang.saveIfNeeded();
     }
 }

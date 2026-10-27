@@ -366,6 +366,58 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         return r;
     }
 
+    /**
+     * 1.12.0 (KS_Contrats) : solde, crédit et débit d'un compte précis, déjà choisi par l'appelant (compte de test ou
+     * non) : contrairement à solde / crediter / debiter, le monde où se trouve le joueur ne change pas le compte touché
+     * (une garantie rendue au compte de Kixster d'un joueur qui est dans le monde de test reste sur ce compte).
+     */
+    public static long soldeCompte(UUID compte) {
+        synchronized (instance.comptes) {
+            Compte c = instance.comptes.get(compte);
+            return c == null ? 0 : c.solde;
+        }
+    }
+
+    public static void crediterCompte(UUID compte, long points) {
+        if (points <= 0) {
+            return;
+        }
+        synchronized (instance.comptes) {
+            Compte c = instance.compteExact(compte);
+            c.solde = Math.addExact(c.solde, points);
+            instance.aSauver = true;
+        }
+        instance.planifierSauvegarde();
+        instance.majListePlusTard(compte);
+    }
+
+    public static boolean debiterCompte(UUID compte, long points) {
+        if (points < 0) {
+            return false;
+        }
+        synchronized (instance.comptes) {
+            Compte c = instance.compteExact(compte);
+            if (c.solde < points) {
+                return false;
+            }
+            c.solde -= points;
+            instance.aSauver = true;
+        }
+        instance.planifierSauvegarde();
+        instance.majListePlusTard(compte);
+        return true;
+    }
+
+    /** 1.12.0 (KS_Contrats) : objets dont le nom français ou l'id correspond (exact d'abord), 20 au plus. */
+    public static java.util.List<org.bukkit.Material> chercherObjets(String texte) {
+        return Boutiques.rechercher(texte);
+    }
+
+    /** 1.12.0 (KS_Contrats) : nom d'un objet : nom donné, sinon nom français, sinon nom traduit par le client. */
+    public static net.kyori.adventure.text.Component nomObjet(ItemStack objet) {
+        return Boutiques.nomObjet(objet);
+    }
+
     /** Ajoute des points (points &gt; 0). */
     public static void crediter(UUID joueur, long points) {
         if (points <= 0) {
@@ -413,6 +465,16 @@ public final class KSEconomy extends JavaPlugin implements Listener {
     }
 
     /** 1.11.0 : dans le monde de test (KS_MondeTest), le compte de test du joueur. */
+    /** 1.12.0 : compte de cet identifiant tel quel (sans passer par le compte de test). */
+    private Compte compteExact(UUID compte) {
+        return comptes.computeIfAbsent(compte, u -> {
+            Compte c = new Compte();
+            Player enLigne = Bukkit.getPlayer(compte);
+            c.nom = enLigne != null ? enLigne.getName() : null;
+            return c;
+        });
+    }
+
     private Compte compte(UUID joueur) {
         return comptes.computeIfAbsent(CompteTest.de(joueur), u -> {
             Compte compte = new Compte();

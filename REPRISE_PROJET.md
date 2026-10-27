@@ -96,6 +96,12 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Contrats 1.0.0 + KS_Economy 1.12.0** (LeKiwi06, 27/10/2026), **non testés en jeu** : `/contrat` sur Kixster
+  (nouveau plugin) : contrats entre joueurs ou équipes (bien ou service, une fois ou récurrent), garanties en séquestre
+  divisées par partie, toute demande acceptée par tous, « valider ou contester » à chaque fin de période (7 jours sans
+  réponse = validé), litiges tranchés par un admin (`kscontrats.admin`, montant libre) ; KS_Economy : bouton « Contrat »
+  dans /echange (seuls les objets et points dus passent, livraison comptée « 10/64 ») et API (comptes exacts, noms
+  d'objets). À déployer ensemble, avec `didacticiel.yml` (thème « Contrats »). Détail : `KS_Contrats/JOURNAL.md`.
 - **KS_DisquesBundle 1.0.0** (LeKiwi06, 27/10/2026), nouveau plugin pour Kixster, **non testé en jeu** : les disques de
   musique pèsent 1/64 dans un bundle (64 disques par bundle, regroupés en piles) et restent non empilables ailleurs ;
   sortis d'un bundle, ils sont remis à l'unité (un sur le curseur, le reste dans l'inventaire). À tester aussi par un

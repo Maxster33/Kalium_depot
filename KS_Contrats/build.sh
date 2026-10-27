@@ -1,0 +1,31 @@
+#!/bin/sh
+# Compile KS_Contrats (ECJ, cible Java 21 : tourne sur Java 21+ / 25) et assemble le .jar
+# Outils : <racine du depot>/outils-build si present (PC local, ignore par git), sinon /tmp/claude-0 (espace cloud).
+# Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
+set -e
+export JAVA_TOOL_OPTIONS=
+VERSION=1.0.0
+DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$DIR"
+if [ -d "$DIR/../outils-build" ]; then
+  TOOLS="$DIR/../outils-build"; DEST="$DIR/../sortie"
+else
+  TOOLS=/tmp/claude-0; DEST=/mnt/user-data/outputs
+fi
+# Sous Windows (Git Bash), java attend des chemins Windows separes par ";".
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*) SEP=';'; win() { cygpath -w "$1"; } ;;
+  *) SEP=':'; win() { printf '%s' "$1"; } ;;
+esac
+# Depend de KS_Economy (points, /echange) et KS_Menu (bouton du menu) : compiles d'abord, jamais embarques.
+sh "$DIR/../KS_Menu/build.sh" > /dev/null
+sh "$DIR/../KS_Economy/build.sh" > /dev/null
+CP="$(win "$TOOLS/classes/KS_Economy")$SEP$(win "$TOOLS/classes/KS_Menu")$SEP$(win "$TOOLS/classes/KLM_Menu")$SEP"
+for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
+OUT="$TOOLS/classes/KS_Contrats"
+rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"
+java -jar "$(win "$TOOLS/ecj.jar")" -21 -proc:none -nowarn -encoding UTF-8 \
+  -cp "$CP" -d "$(win "$OUT")" src/main/java
+sed "s/\${project.version}/$VERSION/" src/main/resources/plugin.yml > "$OUT/plugin.yml"
+jar cf "$DEST/KS_Contrats-$VERSION.jar" -C "$OUT" .
+echo "OK -> $DEST/KS_Contrats-$VERSION.jar"
