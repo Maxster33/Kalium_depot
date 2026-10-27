@@ -18,6 +18,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 - KLM_Espaces (nouveau), KaliumRelay, KalGames, KLM_Menu, KLM_Chat, KLM_Contacts, KG_BuildBattle, KV_BuildBattle — LeKiwi06 — depuis le 2026-10-21 01:45 — fusion de Kal-Games dans Kanvas (espaces étanches) et Serveur Jeux à la place d'Event (expiration des serveurs)
 - KS_CoffreRenforce, KS_Trains — LeKiwi06 — depuis le 2026-10-27 09:13 — bateau et minecart avec coffre renforcé (wagon de train compris)
+- KG_Parkour — LeKiwi06 — depuis le 2026-10-27 16:40 — lave qui monte sur la nouvelle map de jump vertical
 - KS_DiagOutils (nouveau, temporaire) — LeKiwi06 — depuis le 2026-10-24 23:36 — diagnostic : houe, pelle, hache sans effet pour les joueurs Bedrock sur Kixster
 
 
