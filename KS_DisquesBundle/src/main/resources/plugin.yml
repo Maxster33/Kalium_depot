@@ -1,0 +1,6 @@
+name: KS_DisquesBundle
+version: '${project.version}'
+main: fr.kalium.disquesbundle.KSDisquesBundle
+api-version: '26.2'
+description: Disques de musique empilables par 64 dans les bundles (non empilables ailleurs).
+authors: [KaLium]

@@ -96,6 +96,10 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_DisquesBundle 1.0.0** (LeKiwi06, 27/10/2026), nouveau plugin pour Kixster, **non testé en jeu** : les disques de
+  musique pèsent 1/64 dans un bundle (64 disques par bundle, regroupés en piles) et restent non empilables ailleurs ;
+  sortis d'un bundle, ils sont remis à l'unité (un sur le curseur, le reste dans l'inventaire). À tester aussi par un
+  joueur Bedrock. Détail : `KS_DisquesBundle/JOURNAL.md`.
 - **KG_HideAndSeek 0.3.0** (LeKiwi06, 26/10/2026) : composteur et blocs creux utilisables en solide, solide debout sur
   une barrière, plus de solide à travers une fleur ou une trappe, objet « Orienter le bloc » (orientation, posture du
   golem de cuivre), évasions cumulables tous les 5 points, chaque son du soundboard compté, tableau de droite « Blocs en
