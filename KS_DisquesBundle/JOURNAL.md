@@ -2,7 +2,7 @@
 
 Plugin de la survie (Kixster) : disques de musique empilables par 64 dans les bundles. Aucune dépendance.
 
-## 1.0.0 - disques à 1/64 du bundle (27/10/2026, LeKiwi06) - compilé, non déployé, non testé en jeu
+## 1.0.0 - disques à 1/64 du bundle (27/10/2026, LeKiwi06) - déployé sur Kixster le 27/10/2026 à 03:49 (à redémarrer), non testé en jeu
 
 Demande de LeKiwi06 : « fait en sorte que les disques agissent comme un item stackable par 64 dans les bundle ».
 
