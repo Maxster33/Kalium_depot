@@ -315,8 +315,8 @@ public final class KSCoffreRenforce extends JavaPlugin implements Listener {
     /**
      * Craft « comme le vanilla » : la recette du jeu d'un bateau à coffre (de chaque bois, radeau compris) ou d'un
      * minecart à coffre, faite avec un coffre renforcé, donne le véhicule avec coffre renforcé (avant : un véhicule à
-     * coffre ordinaire, et le coffre renforcé était perdu). Un véhicule avec coffre renforcé ne sert d'ingrédient à
-     * aucune recette (bateau à jukebox de KS_JukeboxBoat compris : le coffre renforcé serait perdu).
+     * coffre ordinaire, et le coffre renforcé était perdu). Le coffre renforcé ne sert à aucune autre recette, et un
+     * véhicule avec coffre renforcé à aucune (bateau à jukebox de KS_JukeboxBoat compris).
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPreparerCraft(PrepareItemCraftEvent event) {
@@ -352,14 +352,21 @@ public final class KSCoffreRenforce extends JavaPlugin implements Listener {
             }
             coffre |= estObjet(objet);
         }
-        if (!coffre || !(recette instanceof Keyed k) || !k.getKey().getNamespace().equals(NamespacedKey.MINECRAFT)) {
+        if (!coffre || recette == null) {
             return null;
         }
-        Material type = recette.getResult().getType();
-        if (type == Material.CHEST_MINECART) {
-            return creerMinecart();
+        if (recette instanceof Keyed k && k.getKey().getNamespace().equals(NamespacedKey.MINECRAFT)) {
+            Material type = recette.getResult().getType();
+            if (type == Material.CHEST_MINECART) {
+                return creerMinecart();
+            }
+            if (Tag.ITEMS_CHEST_BOATS.isTagged(type)) {
+                return creerBateau(type);
+            }
         }
-        return Tag.ITEMS_CHEST_BOATS.isTagged(type) ? creerBateau(type) : null;
+        // LeKiwi06 (27/10/2026) : « il ne faut pas que le coffre renforcé serve aux crafts normaux » (entonnoir,
+        // wagonnet à entonnoir, coffre piégé... : il y était consommé comme un coffre ordinaire).
+        return ItemStack.empty();
     }
 
     /** Un distributeur poserait un véhicule à coffre ordinaire : le véhicule avec coffre renforcé y reste. */
