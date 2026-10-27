@@ -30,35 +30,50 @@ import java.util.concurrent.ThreadLocalRandom;
  * (bébés et axolotls compris, plus la tête est rare, moins elle sort), tête de wither squelette (ses 3 défauts), fiole
  * sinistre, pomme de Notch. Chaque prise a 1 chance sur N par ligne d'être remplacée par cet objet (un seul tirage par
  * prise). Chances validées par LeKiwi06 (« rend tout 2 fois plus courant » que la 1re proposition).
+ *
+ * 1.3.0 (LeKiwi06, 27/10/2026 : « fait un sous tirage aux tirage par catégorie dans la pêche exemple : une tête commune
+ * a 1/1000 de taux de spawn , et on tire un tête parmis les 23 quand cette proba est tirée ») : tirage par catégorie
+ * (config.yml, categories) : 1 chance sur N de tomber sur la catégorie, puis un objet parmi les siens, à chances égales.
  */
 public final class KSLootPeche extends JavaPlugin implements Listener {
 
     /** Tirages au plus avant de retirer simplement Raccommodage (il sort rarement : jamais atteint en pratique). */
     private static final int ESSAIS = 50;
 
-    /** 1.2.0 : une prise rare (clé de config.yml) et sa chance par prise. */
-    private record PriseRare(String cle, double chance) {
+    /** 1.3.0 : une catégorie de prises rares, sa chance par prise et ses objets (clés de config.yml). */
+    private record Categorie(String nom, double chance, List<String> objets) {
     }
 
-    private final List<PriseRare> prisesRares = new ArrayList<>();
+    private final List<Categorie> categories = new ArrayList<>();
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        var section = getConfig().getConfigurationSection("prises-rares");
+        // Sans section « categories » dans le fichier du serveur (config.yml de la 1.2.0), celle du jar s'applique.
+        var section = getConfig().getConfigurationSection("categories");
+        int objets = 0;
         if (section != null) {
-            for (String cle : section.getKeys(false)) {
-                double n = section.getDouble(cle);
+            for (String nom : section.getKeys(false)) {
+                double n = section.getDouble(nom + ".chance");
+                List<String> valides = new ArrayList<>();
+                for (String cle : section.getStringList(nom + ".objets")) {
+                    if (creer(cle) == null) {
+                        getLogger().warning("Prise rare ignorée (objet inconnu ou KS_Decapitator absent) : " + cle);
+                    } else {
+                        valides.add(cle);
+                    }
+                }
                 if (n < 1) {
-                    getLogger().warning("Prise rare ignorée (1 chance sur N, N doit valoir au moins 1) : " + cle);
-                } else if (creer(cle) == null) {
-                    getLogger().warning("Prise rare ignorée (objet inconnu ou KS_Decapitator absent) : " + cle);
+                    getLogger().warning("Catégorie ignorée (1 chance sur N, N doit valoir au moins 1) : " + nom);
+                } else if (valides.isEmpty()) {
+                    getLogger().warning("Catégorie ignorée (aucun objet) : " + nom);
                 } else {
-                    prisesRares.add(new PriseRare(cle, 1 / n));
+                    categories.add(new Categorie(nom, 1 / n, List.copyOf(valides)));
+                    objets += valides.size();
                 }
             }
         }
-        getLogger().info(prisesRares.size() + " prises rares.");
+        getLogger().info(categories.size() + " catégories de prises rares, " + objets + " objets.");
         getServer().getPluginManager().registerEvents(this, this);
     }
 
@@ -82,13 +97,14 @@ public final class KSLootPeche extends JavaPlugin implements Listener {
         };
     }
 
-    /** 1.2.0 : la prise rare tirée pour cette prise, ou null (un seul tirage pour toute la table). */
+    /** 1.3.0 : la prise rare tirée pour cette prise, ou null : une catégorie (un seul tirage), puis un de ses objets. */
     private ItemStack priseRare() {
-        double tirage = ThreadLocalRandom.current().nextDouble();
-        for (PriseRare prise : prisesRares) {
-            tirage -= prise.chance();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        double tirage = random.nextDouble();
+        for (Categorie categorie : categories) {
+            tirage -= categorie.chance();
             if (tirage < 0) {
-                return creer(prise.cle());
+                return creer(categorie.objets().get(random.nextInt(categorie.objets().size())));
             }
         }
         return null;

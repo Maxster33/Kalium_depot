@@ -1,44 +1,63 @@
 # KS_LootPeche
-# Prises rares (1.2.0) : chaque prise a, pour chaque ligne, 1 chance sur N d'être remplacée par cet objet.
-# Clés : « tete:<id> » = tête de KS_Decapitator (id de /kaliumgive sans « tete_ », ex. tete:axolotl_bleu) ;
+# Prises rares (1.3.0) : par catégorie. Chaque prise a 1 chance sur « chance » de tomber sur la catégorie ; l'objet est
+# alors tiré parmi ses « objets », à chances égales. Un seul tirage par prise ; l'objet remplace la prise.
+# Objets : « tete:<id> » = tête de KS_Decapitator (id de /kaliumgive sans « tete_ », ex. tete:axolotl_bleu) ;
 # « fiole_sinistre » (Mauvais présage, niveau I à V au hasard) ; « pomme_de_notch ».
 # La tête de wither squelette a toujours ses 3 défauts (KS_Decapitator). Redémarrer le serveur après un changement.
-prises-rares:
-  # Palier B : 1 sur 1 000
-  tete:morue: 1000
-  tete:saumon: 1000
-  tete:poisson_globe: 1000
-  tete:poisson_tropical: 1000
-  tete:poulpe: 1000
-  tete:bebe_poulpe: 1000
-  tete:poulpe_luisant: 1000
-  tete:bebe_poulpe_luisant: 1000
-  tete:tortue: 1000
-  tete:bebe_tortue: 1000
-  tete:nautile: 1000
-  tete:bebe_nautile: 1000
-  tete:tetard: 1000
-  tete:gardien: 1000
-  tete:noye: 1000
-  tete:axolotl_rose: 1000
-  tete:bebe_axolotl_rose: 1000
-  tete:axolotl_brun: 1000
-  tete:bebe_axolotl_brun: 1000
-  tete:axolotl_dore: 1000
-  tete:bebe_axolotl_dore: 1000
-  tete:axolotl_cyan: 1000
-  tete:bebe_axolotl_cyan: 1000
-  # Palier C : 1 sur 5 000
-  tete:dauphin: 5000
-  tete:bebe_dauphin: 5000
-  tete:nautile_zombie: 5000
-  tete:nautile_zombie_des_coraux: 5000
-  # Palier D : 1 sur 25 000
-  tete:axolotl_bleu: 25000
-  tete:bebe_axolotl_bleu: 25000
-  tete:bebe_noye: 25000
-  # Boss et objets extrêmement rares
-  tete:grand_gardien: 100000
-  tete:wither_squelette: 50000
-  fiole_sinistre: 50000
-  pomme_de_notch: 75000
+# (La section « prises-rares » de la 1.2.0, une chance par objet, n'est plus lue.)
+categories:
+  tetes-communes:
+    chance: 1000
+    objets:
+      - tete:morue
+      - tete:saumon
+      - tete:poisson_globe
+      - tete:poisson_tropical
+      - tete:poulpe
+      - tete:bebe_poulpe
+      - tete:poulpe_luisant
+      - tete:bebe_poulpe_luisant
+      - tete:tortue
+      - tete:bebe_tortue
+      - tete:nautile
+      - tete:bebe_nautile
+      - tete:tetard
+      - tete:gardien
+      - tete:noye
+      - tete:axolotl_rose
+      - tete:bebe_axolotl_rose
+      - tete:axolotl_brun
+      - tete:bebe_axolotl_brun
+      - tete:axolotl_dore
+      - tete:bebe_axolotl_dore
+      - tete:axolotl_cyan
+      - tete:bebe_axolotl_cyan
+  tetes-peu-communes:
+    chance: 5000
+    objets:
+      - tete:dauphin
+      - tete:bebe_dauphin
+      - tete:nautile_zombie
+      - tete:nautile_zombie_des_coraux
+  tetes-rares:
+    chance: 25000
+    objets:
+      - tete:axolotl_bleu
+      - tete:bebe_axolotl_bleu
+      - tete:bebe_noye
+  tete-grand-gardien:
+    chance: 100000
+    objets:
+      - tete:grand_gardien
+  tete-wither-squelette:
+    chance: 50000
+    objets:
+      - tete:wither_squelette
+  fiole-sinistre:
+    chance: 50000
+    objets:
+      - fiole_sinistre
+  pomme-de-notch:
+    chance: 75000
+    objets:
+      - pomme_de_notch

@@ -60,3 +60,30 @@ courant » : appliqué.
 **Compilé, non déployé, non testé en jeu.** Contient la 1.1.0, jamais déployée.
 
 **Déployé sur Kixster le 26/10/2026 à 19:48 (LeKiwi06 : « ok vas y déploie ça me conviens »), actif après redémarrage de Kixster. Statut : non testé en jeu.**
+
+## 1.3.0 - prises rares tirées par catégorie (27/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « fait un sous tirage aux tirage par catégorie dans la pêche exemple : une tête commune a 1/1000
+de taux de spawn , et on tire un tête parmis les 23 quand cette proba est tirée ».
+- `config.yml` : nouvelle section `categories` (nom : `chance`, `objets`). Chaque prise a 1 chance sur `chance` de tomber
+  sur une catégorie (un seul tirage par prise pour toutes les catégories), puis l'objet est tiré parmi ceux de la
+  catégorie, à chances égales ; il remplace la prise. La section `prises-rares` de la 1.2.0 n'est plus lue : un
+  `config.yml` de la 1.2.0 déjà créé sur le serveur n'a pas de `categories`, c'est alors celle du jar qui s'applique.
+- Chances des catégories reprises de la 1.2.0 (même 1 sur N, mais pour la catégorie entière au lieu de chaque objet) :
+
+| Catégorie | 1 chance sur | Objets | Une tête de la catégorie (sans Appât / Appât III) | Une tête précise |
+|---|---|---|---|---|
+| tetes-communes | 1 000 | 23 | 5,8 h / 2,2 h | 134 h / 51 h |
+| tetes-peu-communes | 5 000 | 4 | 29 h / 11 h | 117 h / 44 h |
+| tetes-rares | 25 000 | 3 | 146 h / 56 h | 438 h / 167 h |
+| tete-grand-gardien | 100 000 | 1 | 583 h / 222 h | |
+| tete-wither-squelette | 50 000 | 1 | 292 h / 111 h | |
+| fiole-sinistre | 50 000 | 1 | 292 h / 111 h | |
+| pomme-de-notch | 75 000 | 1 | 438 h / 167 h | |
+
+  Une prise rare quelconque : environ 1 prise sur 767 (4,5 h sans Appât) ; valeur moyenne au barème environ 10
+  émeraudes par heure de pêche sans Appât, 26 avec Appât III (1.2.0 : 57 et 149). Signalé à LeKiwi06 : une tête
+  commune précise (1 sur 23 000) devient plus rare qu'une tête peu commune précise (1 sur 20 000).
+- Journal du serveur au démarrage : « 7 catégories de prises rares, 35 objets. ».
+
+**Compilé, non déployé, non testé en jeu.** La 1.2.0 est sur Kixster depuis le 26/10 à 19:48.
