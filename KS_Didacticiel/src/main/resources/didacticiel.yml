@@ -220,6 +220,14 @@ themes:
         recettes:
           - "ks_elixir:*"
         nouveau: "2026-10-18"
+      casse_croute:
+        nom: "Casse-croûte doré"
+        icone: SUSPICIOUS_STEW
+        texte: "Pomme d'or, carotte dorée, pissenlit doré, pastèque scintillante, tournesol et bol. Il nourrit bien, se mange même rassasié et donne 4 cœurs d'absorption, Célérité II et Vitesse I pendant 5 minutes."
+        recettes:
+          - "ks_cassecroute:casse_croute_dore"
+        requiert: "KS_CasseCroute"
+        nouveau: "2026-10-27"
       coffre_renforce:
         nom: "Coffre renforcé"
         icone: CHEST

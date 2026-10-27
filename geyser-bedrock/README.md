@@ -112,4 +112,7 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   nouvelle liste `minecraft:pumpkin_pie` dans `kalium_objets.json`, avec `minecraft:food` (7, 5, mangeable rassasié)
   et `minecraft:max_stack_size` 16 déclarés (Geyser ne reprend pas les composants changés par le serveur ; animation
   et durée de consommation : celles de la tarte, inchangées). Pack `KaLium-objets-1.5.0.mcpack` construit (image
-  extraite du jeu 26.2). **Non envoyé sur le proxy.**
+  extraite du jeu 26.2). **Envoyé sur le proxy le 27/10/2026 à 09:12 (LeKiwi06 ; `KaLium-objets-1.5.0.mcpack` et
+  `kalium_objets.json` ; fichiers du proxy vérifiés identiques au dépôt avant l'envoi ; pack 1.4.0 et ancienne
+  correspondance dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.4.0-2026-10-27/`), actif après redémarrage du
+  proxy. Non testé.**

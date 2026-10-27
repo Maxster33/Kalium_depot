@@ -22,4 +22,6 @@ Limites :
 - Pour les joueurs Bedrock, la consommation suit les composants déclarés dans `kalium_objets.json` : à garder
   identiques au plugin si les valeurs changent.
 
-**Compilé le 27/10/2026, non déployé, non testé.**
+**Déployé sur Kixster le 27/10/2026 à 09:12 (LeKiwi06 : « Oui, déploie KS_CasseCroute sur Kixster… ») avec l'entrée
+« Casse-croûte doré » du didacticiel (thème Crafts) ; apparence Bedrock (geyser-bedrock 1.5.0) envoyée sur le proxy à la
+même heure. Actif après redémarrage de Kixster et du proxy. Statut : non testé en jeu.**

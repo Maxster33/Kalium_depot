@@ -271,3 +271,5 @@ Changeur de biome 1.2.0 n'y est toujours pas, il partira avec KS_BiomeChanger 1.
 `_removed-ks_didacticiel-contenu-2026-10-25b/`. Relu au redémarrage. Statut : non testé en jeu.
 
 **26/10/2026 19:48 : `didacticiel.yml` envoyé sur Kixster (LeKiwi06) : pêche, Estomac du gardien, spawners, Bedrock Breaker, cuivre brut retiré, texte du Changeur de Biome du 25/10 ; ancien fichier dans `_removed-ks_didacticiel-yml-2026-10-26/`. Relu au redémarrage (ou `/didacticiel recharger`).**
+
+**27/10/2026 09:12 : `didacticiel.yml` envoyé sur Kixster (LeKiwi06) : nouveauté « Casse-croûte doré » dans le thème Crafts (`casse_croute`, recette cliquable, `requiert: "KS_CasseCroute"`, nouveau `2026-10-27`). Fichier du serveur vérifié identique au dépôt avant l'envoi ; ancien dans `_removed-ks_didacticiel-yml-2026-10-27-casse-croute/`. Visible après redémarrage de Kixster (le plugin requis doit être chargé).**
