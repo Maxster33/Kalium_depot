@@ -185,3 +185,24 @@ Compilé le 18/10/2026 (`sortie/KS_Trains-1.4.8.jar`). **Statut : non déployé,
 **Testé en jeu par LeKiwi06 sur Event (signalé le 22/10/2026 : « j'ai testé tout marche bien »). Event retiré depuis le 21/10 ; pas encore déployé sur Kixster.**
 
 **Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé, accord de LeKiwi06 : « allez on peut tout déployer ») ; ancien jar dans `_removed-<plugin>-<version>/` ; actif après redémarrage.**
+
+## 1.5.0 - minecart avec coffre renforcé dans un train (27/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : bateau et minecart avec coffre renforcé (KS_CoffreRenforce 1.1.0) ; choix « Oui, avec
+KS_Trains » pour que le minecart serve de wagon.
+
+- Le minecart avec coffre renforcé s'attelle comme un wagon à coffre (rien de changé là). Son stock (jusqu'à 1 000
+  stacks d'un seul objet) n'est qu'en partie dans ses 27 cases : les **wagons à entonnoir du train** prennent et
+  donnent un objet à la fois par l'API de KS_CoffreRenforce (`CoffresRenforces`), en respectant ses réglages entrée /
+  sortie ; un objet qu'il refuse (autre objet que celui stocké, plein) reste dans l'entonnoir, qui essaie le wagon
+  suivant.
+- **Menu du train** : « Coffre renforcé » au lieu de « Coffre », avec son contenu (« 12 345 x Diamant » ou « Vide ») ;
+  « Ouvrir le contenu » ouvre le menu du coffre renforcé.
+- Wagon libre percuté et vide : il se brise et redonne le minecart avec coffre renforcé (avant : un minecart à coffre
+  ordinaire). Avec un contenu, il est projeté comme les autres.
+- `softdepend` sur KS_CoffreRenforce : sans lui, rien ne change (ses classes ne sont jamais chargées).
+
+Limite : le wagon jukebox derrière un minecart avec coffre renforcé ne voit que ses 27 cases (non modifié).
+
+Compilé le 27/10/2026 (`sortie/KS_Trains-1.5.0.jar`, avec `KS_CoffreRenforce` compilé d'abord). **Statut : non
+déployé, non testé en jeu.**

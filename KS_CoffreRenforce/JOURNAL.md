@@ -60,3 +60,50 @@ Limites :
 - Didacticiel de Kixster à mettre à jour au déploiement.
 
 **Déployé sur Kixster le 25/10/2026 à 03:51** avec KS_Crafts 1.21.0 et `didacticiel.yml` (LeKiwi06 : « Oui, déploie KS_CoffreRenforce 1.0.0 et KS_Crafts 1.21.0 sur Kixster, avec la mise à jour du didacticiel » ; nouveau jar de la même taille que celui compilé), actif après redémarrage de Kixster. Statut : non testé en jeu.
+
+## 1.1.0 - bateau et minecart avec coffre renforcé (27/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « peux-tu faire le bateau et le minecart avec coffre renforcé ».
+
+Choix de LeKiwi06 (questions du 27/10/2026) :
+
+| Question | Choix |
+|---|---|
+| Recette | Comme le vanilla : un bateau (n'importe quel bois, radeau compris) + un coffre renforcé ; un minecart + un coffre renforcé |
+| Casser un véhicule plein | « il est cassable s'il contient moins de 27 stacks » (le contenu tombe au sol) |
+| Wagon de train (KS_Trains) | Oui, avec KS_Trains (1.5.0) |
+| Bateau à jukebox (KS_JukeboxBoat) | Non |
+
+Fonctionnement :
+
+- **Objets** : « Bateau avec coffre renforcé » (bateau à coffre du bois choisi), « Radeau avec coffre renforcé »
+  (bambou), « Minecart avec coffre renforcé » : objets vanilla nommés, même marqueur que le coffre renforcé. Vrais
+  bateaux et minecarts à coffre une fois posés : visibles tels quels sur Bedrock, rien à ajouter dans `geyser-bedrock`.
+- **Craft** : la recette du jeu (bateau à coffre de chaque bois, minecart à coffre) faite avec un coffre renforcé donne
+  le véhicule avec coffre renforcé, du même bois ; aussi dans un crafter. Avant, elle donnait un véhicule à coffre
+  ordinaire et le coffre renforcé était perdu. Un véhicule avec coffre renforcé ne sert d'ingrédient à aucune recette
+  (bateau à jukebox compris). Un distributeur ne le pose pas (il poserait un véhicule ordinaire).
+- **Stock** : gardé dans le véhicule (données de l'entité), avec les 27 cases de son coffre comme tampon, exactement
+  comme le bloc (capacité 1 000 stacks, entonnoirs, comparateur sur rail détecteur pour le minecart).
+- **Menu** : le même que le bloc (clic droit sur le minecart, Maj + clic droit sur le bateau, ou inventaire à bord) ;
+  l'aide donne la règle du véhicule. Texte au-dessus de la barre d'objets en le visant, comme le bloc.
+- **Casser** : refusé (message) avec plus de 27 stacks dedans, coups et explosions compris ; avec 27 stacks ou moins,
+  tout le stock tombe au sol et le véhicule redonne l'objet « … avec coffre renforcé » (avec son nom s'il a été
+  renommé). Dans un train, KS_Trains refuse toujours de casser un wagon attelé.
+- **API** : `estCoffreRenforce`, `objet`, `nombre`, `retirer`, `ajouter` existent aussi pour une entité (véhicule) ;
+  `creerBateau(Material)`, `creerMinecart()`.
+- Le code passe par un « support » (bloc ou véhicule) dans `Stockage` et `MenuCoffre` ; rien de changé pour le bloc.
+
+Limites :
+
+- « Moins de 27 stacks » compris comme **27 stacks ou moins** (ce que contient un coffre normal) : à confirmer par
+  LeKiwi06 (`STACKS_CASSABLE`).
+- Un véhicule qui disparaît sans être cassé (tombé dans le vide, `/kill`) perd son contenu, comme un véhicule vanilla.
+- Le menu reste utilisable tant qu'il est ouvert, même si le véhicule s'éloigne (pas de distance vérifiée).
+- Remplacement de l'objet lâché par le jeu fait comme KS_JukeboxBoat (`EntityDropItemEvent`), non vérifié en jeu.
+- Le wagon jukebox de KS_Trains lit ses disques dans les 27 cases du wagon à coffre devant lui : derrière un minecart
+  avec coffre renforcé, il ne voit que le tampon (non modifié, à décider).
+- Didacticiel de Kixster (`crafts > coffre_renforce`) à compléter au déploiement ; KS_Didacticiel est réservé en ce
+  moment par le chantier /contrat.
+
+Compilé le 27/10/2026 (`sortie/KS_CoffreRenforce-1.1.0.jar`). **Statut : non déployé, non testé en jeu.**

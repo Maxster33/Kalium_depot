@@ -1,5 +1,6 @@
 package fr.kalium.coffrerenforce;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -7,6 +8,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.entity.ChestBoat;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -18,10 +22,10 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.List;
 
 /**
- * Le stock d'un coffre renforcé, gardé dans le bloc lui-même (données du coffre) : l'objet stocké (un exemplaire) et
- * le nombre d'objets en réserve.
+ * Le stock d'un coffre renforcé, gardé dans le bloc lui-même (données du coffre) ou, 1.1.0, dans le bateau ou le
+ * minecart qui le porte (données de l'entité) : l'objet stocké (un exemplaire) et le nombre d'objets en réserve.
  *
- * Les 27 cases du vrai coffre servent de tampon pour la redstone : jamais ouvertes par un joueur, elles contiennent
+ * Les 27 cases du vrai coffre (ou du coffre du véhicule) servent de tampon pour la redstone : jamais ouvertes par un joueur, elles contiennent
  * une partie du stock, pour que les entonnoirs puissent en prendre ou en mettre et qu'un comparateur lise le
  * remplissage. Stock total = réserve + objets du tampon. Après chaque passage d'entonnoir (et chaque action du menu),
  * le tampon est recalculé :
@@ -67,18 +71,84 @@ final class Stockage {
 
     // ------------------------------------------------------------------ reconnaître
 
+    /** 1.1.0 : ce qui porte un coffre renforcé : un coffre posé, ou un véhicule (bateau ou minecart à coffre). */
+    sealed interface Support permits SurBloc, SurVehicule {
+
+        /** Marque du menu ouvert sur ce coffre renforcé. */
+        String marque();
+
+        /** Où tombent les objets rejetés ou lâchés. */
+        Location lieu();
+    }
+
+    record SurBloc(Block bloc) implements Support {
+
+        @Override
+        public String marque() {
+            return "coffre_renforce:" + bloc.getWorld().getName() + ":" + bloc.getX() + ":" + bloc.getY() + ":"
+                    + bloc.getZ();
+        }
+
+        @Override
+        public Location lieu() {
+            return bloc.getLocation().add(0.5, 1.1, 0.5);
+        }
+    }
+
+    record SurVehicule(Entity vehicule) implements Support {
+
+        @Override
+        public String marque() {
+            return "coffre_renforce:" + vehicule.getUniqueId();
+        }
+
+        @Override
+        public Location lieu() {
+            return vehicule.getLocation().add(0, 0.5, 0);
+        }
+    }
+
     boolean est(Block bloc) {
         return bloc != null && bloc.getType() == Material.CHEST && bloc.getState(false) instanceof Chest coffre
                 && coffre.getPersistentDataContainer().has(cle);
     }
 
-    /** Le bloc d'un inventaire (entonnoir, ouverture) s'il s'agit d'un coffre renforcé, sinon null. */
-    Block bloc(Inventory inventaire) {
-        if (inventaire == null || !(inventaire.getHolder(false) instanceof Chest coffre)
-                || !coffre.getPersistentDataContainer().has(cle)) {
+    /** 1.1.0 : bateau ou minecart avec coffre renforcé (même cassé : son objet est lâché après sa disparition). */
+    boolean est(Entity vehicule) {
+        return (vehicule instanceof ChestBoat || vehicule instanceof StorageMinecart)
+                && vehicule.getPersistentDataContainer().has(cle);
+    }
+
+    /** Coffre renforcé toujours là (bloc pas cassé, véhicule pas cassé ni déchargé). */
+    boolean est(Support support) {
+        return switch (support) {
+            case SurBloc s -> est(s.bloc());
+            case SurVehicule s -> s.vehicule().isValid() && est(s.vehicule());
+        };
+    }
+
+    /** Le coffre renforcé d'un inventaire (entonnoir, ouverture), sinon null. */
+    Support support(Inventory inventaire) {
+        if (inventaire == null) {
             return null;
         }
-        return coffre.getBlock();
+        InventoryHolder detenteur = inventaire.getHolder(false);
+        if (detenteur instanceof Chest coffre && coffre.getPersistentDataContainer().has(cle)) {
+            return new SurBloc(coffre.getBlock());
+        }
+        if (detenteur instanceof Entity vehicule && est(vehicule)) {
+            return new SurVehicule(vehicule);
+        }
+        return null;
+    }
+
+    /** 1.1.0 : un bateau ou un minecart avec coffre renforcé vient d'être posé. */
+    void marquer(Entity vehicule) {
+        vehicule.getPersistentDataContainer().set(cle, PersistentDataType.BYTE, (byte) 1);
+    }
+
+    private static Inventory tamponDe(Entity vehicule) {
+        return ((InventoryHolder) vehicule).getInventory();
     }
 
     /** Un coffre renforcé vient d'être posé. */
@@ -107,39 +177,31 @@ final class Stockage {
     // ------------------------------------------------------------------ lire et écrire
 
     /** Lecture seule (texte visé, entonnoirs) : rien n'est modifié. */
-    Stock apercu(Block bloc) {
-        if (!(bloc.getState(false) instanceof Chest coffre)) {
-            return new Stock(null, 0);
-        }
-        PersistentDataContainer donnees = coffre.getPersistentDataContainer();
-        ItemStack modele = modele(donnees);
-        long total = donnees.getOrDefault(cleReserve, PersistentDataType.LONG, 0L);
-        for (ItemStack objet : coffre.getBlockInventory().getContents()) {
-            if (objet == null || objet.getType().isAir()) {
-                continue;
-            }
-            if (modele == null && accepte(objet)) {
-                modele = objet.asOne();
-            }
-            if (modele != null && modele.isSimilar(objet)) {
-                total += objet.getAmount();
-            }
-        }
-        return new Stock(total == 0 ? null : modele, total);
+    Stock apercu(Support support) {
+        return switch (support) {
+            case SurBloc s -> s.bloc().getState(false) instanceof Chest coffre
+                    ? compter(coffre.getPersistentDataContainer(), coffre.getBlockInventory(), null) : new Stock(null, 0);
+            case SurVehicule s -> compter(s.vehicule().getPersistentDataContainer(), tamponDe(s.vehicule()), null);
+        };
     }
 
     /**
      * Stock à jour avant une modification : les objets du tampon sont comptés ; un objet étranger (posé là par
      * autre chose qu'un entonnoir) est rejeté au-dessus du coffre.
      */
-    Stock lire(Block bloc) {
-        if (!(bloc.getState(false) instanceof Chest coffre)) {
-            return new Stock(null, 0);
-        }
-        PersistentDataContainer donnees = coffre.getPersistentDataContainer();
+    Stock lire(Support support) {
+        return switch (support) {
+            case SurBloc s -> s.bloc().getState(false) instanceof Chest coffre
+                    ? compter(coffre.getPersistentDataContainer(), coffre.getBlockInventory(), s.lieu())
+                    : new Stock(null, 0);
+            case SurVehicule s -> compter(s.vehicule().getPersistentDataContainer(), tamponDe(s.vehicule()), s.lieu());
+        };
+    }
+
+    /** Réserve + objets du tampon ; sans lieu de rejet (aperçu), un objet étranger est seulement ignoré. */
+    private Stock compter(PersistentDataContainer donnees, Inventory tampon, Location rejet) {
         ItemStack modele = modele(donnees);
         long total = donnees.getOrDefault(cleReserve, PersistentDataType.LONG, 0L);
-        Inventory tampon = coffre.getBlockInventory();
         for (int place = 0; place < tampon.getSize(); place++) {
             ItemStack objet = tampon.getItem(place);
             if (objet == null || objet.getType().isAir()) {
@@ -150,23 +212,36 @@ final class Stockage {
             }
             if (modele != null && modele.isSimilar(objet)) {
                 total += objet.getAmount();
-            } else {
+            } else if (rejet != null) {
                 tampon.setItem(place, null);
-                bloc.getWorld().dropItemNaturally(bloc.getLocation().add(0.5, 1.1, 0.5), objet);
+                rejet.getWorld().dropItemNaturally(rejet, objet);
             }
         }
         return new Stock(total == 0 ? null : modele, total);
     }
 
-    /** Enregistre le stock : réserve dans les données du coffre, le reste dans le tampon. */
-    void ecrire(Block bloc, Stock stock) {
-        if (!(bloc.getState() instanceof Chest coffre)) {
-            return;
-        }
+    /** Enregistre le stock : réserve dans les données du coffre (ou du véhicule), le reste dans le tampon. */
+    void ecrire(Support support, Stock stock) {
         long total = stock.modele() == null ? 0 : Math.max(0, stock.total());
-        int pile = stock.pile();
-        long dansTampon = tampon(total, pile);
-        PersistentDataContainer donnees = coffre.getPersistentDataContainer();
+        long dansTampon = tampon(total, stock.pile());
+        switch (support) {
+            case SurBloc s -> {
+                if (!(s.bloc().getState() instanceof Chest coffre)) {
+                    return;
+                }
+                noter(coffre.getPersistentDataContainer(), stock, total, dansTampon);
+                // update() remet aussi les objets de la copie : le tampon est donc écrit après, dans le vrai coffre.
+                coffre.update(true, false);
+                coffre.getBlockInventory().setContents(contenu(stock, dansTampon));
+            }
+            case SurVehicule s -> {
+                noter(s.vehicule().getPersistentDataContainer(), stock, total, dansTampon);
+                tamponDe(s.vehicule()).setContents(contenu(stock, dansTampon));
+            }
+        }
+    }
+
+    private void noter(PersistentDataContainer donnees, Stock stock, long total, long dansTampon) {
         if (total == 0) {
             donnees.remove(cleObjet);
             donnees.remove(cleReserve);
@@ -174,15 +249,17 @@ final class Stockage {
             donnees.set(cleObjet, PersistentDataType.BYTE_ARRAY, stock.modele().asOne().serializeAsBytes());
             donnees.set(cleReserve, PersistentDataType.LONG, total - dansTampon);
         }
-        // update() remet aussi les objets de la copie : le tampon est donc écrit après, dans le vrai coffre.
-        coffre.update(true, false);
+    }
+
+    private static ItemStack[] contenu(Stock stock, long dansTampon) {
+        int pile = stock.pile();
         ItemStack[] contenu = new ItemStack[CASES];
         for (int place = 0; place < CASES && dansTampon > 0; place++) {
             int n = (int) Math.min(pile, dansTampon);
             contenu[place] = stock.modele().asQuantity(n);
             dansTampon -= n;
         }
-        coffre.getBlockInventory().setContents(contenu);
+        return contenu;
     }
 
     private ItemStack modele(PersistentDataContainer donnees) {

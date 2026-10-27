@@ -95,6 +95,13 @@ final class Entonnoirs implements Listener {
     private void prendre(Train train, int rang, Inventory entonnoir) {
         for (int j = rang + 1; j <= Math.min(train.wagons.size() - 1, rang + PORTEE); j++) {
             Minecart wagon = train.wagons.get(j);
+            // 1.5.0 : minecart avec coffre renforcé : son stock passe par KS_CoffreRenforce.
+            if (wagon instanceof StorageMinecart coffre && CoffresRenforces.est(coffre)) {
+                if (sortie(coffre) && CoffresRenforces.prendreUn(coffre, entonnoir)) {
+                    return;
+                }
+                continue;
+            }
             Inventory source = wagon instanceof StorageMinecart coffre && sortie(coffre) ? coffre.getInventory()
                     : wagon instanceof HopperMinecart autre ? autre.getInventory() : null;
             if (source != null && deplacerUn(source, entonnoir)) {
@@ -137,6 +144,12 @@ final class Entonnoirs implements Listener {
         }
         for (int j = rang - 1; j >= Math.max(0, rang - PORTEE); j--) {
             Minecart wagon = train.wagons.get(j);
+            if (wagon instanceof StorageMinecart coffre && CoffresRenforces.est(coffre)) {
+                if (entree(coffre) && CoffresRenforces.donnerUn(entonnoir, coffre)) {
+                    return;
+                }
+                continue;
+            }
             Inventory cible = wagon instanceof StorageMinecart coffre && entree(coffre) ? coffre.getInventory()
                     : wagon instanceof HopperMinecart autre ? autre.getInventory() : null;
             if (cible != null && deplacerUn(entonnoir, cible)) {

@@ -184,6 +184,7 @@ public final class KSTrains extends JavaPlugin implements Listener {
         cleProprioNom = new NamespacedKey(this, "proprietaire-nom");
         cleNomTrain = new NamespacedKey(this, "nom");
         contacts = getServer().getPluginManager().isPluginEnabled("KLM_Contacts");
+        CoffresRenforces.activer(getServer().getPluginManager().isPluginEnabled("KS_CoffreRenforce"));
         cleBrule = new NamespacedKey(this, "brule");
         cleJukebox = new NamespacedKey(this, "jukebox");
         lang = new Lang(this);
@@ -1135,7 +1136,9 @@ public final class KSTrains extends JavaPlugin implements Listener {
             return false;
         }
         Location lieu = wagon.getLocation();
+        // 1.5.0 : minecart avec coffre renforce (vide : sinon il est projete) : redonne le meme minecart.
         ItemStack objet = estControleur(wagon) ? creerControleur() : estJukebox(wagon) ? creerJukebox()
+                : CoffresRenforces.est(wagon) ? CoffresRenforces.creerMinecart()
                 : new ItemStack(wagon.getMinecartMaterial());
         wagon.getWorld().dropItemNaturally(lieu, objet);
         if (wagon instanceof InventoryHolder detenteur) {
@@ -2122,7 +2125,16 @@ public final class KSTrains extends JavaPlugin implements Listener {
                     : t("wagon.vide", "<red>Sans carburant"));
         } else if (wagon instanceof StorageMinecart coffre) {
             materiau = Material.CHEST_MINECART;
-            nom = t("wagon.coffre", "<white><n>. Coffre", "n", numero);
+            if (CoffresRenforces.est(coffre)) {
+                // 1.5.0 : minecart avec coffre renforce (KS_CoffreRenforce) et son contenu.
+                nom = t("wagon.coffre-renforce", "<white><n>. Coffre renforcé", "n", numero);
+                ItemStack stocke = CoffresRenforces.objet(coffre);
+                lignes.add(stocke == null ? t("wagon.coffre-renforce-vide", "<gray>Vide")
+                        : t("wagon.coffre-renforce-contenu", "<gray><q> x <o>", "q", CoffresRenforces.nombre(coffre),
+                        "o", stocke.effectiveName()));
+            } else {
+                nom = t("wagon.coffre", "<white><n>. Coffre", "n", numero);
+            }
             lignes.add(entonnoirs.entree(coffre) ? t("wagon.entree-oui", "<green>Entrée : autorisée")
                     : t("wagon.entree-non", "<red>Entrée : refusée"));
             lignes.add(entonnoirs.sortie(coffre) ? t("wagon.sortie-oui", "<green>Sortie : autorisée")
