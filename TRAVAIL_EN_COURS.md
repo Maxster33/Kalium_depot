@@ -17,7 +17,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 ## Utilisés actuellement
 
 - KLM_Espaces (nouveau), KaliumRelay, KalGames, KLM_Menu, KLM_Chat, KLM_Contacts, KG_BuildBattle, KV_BuildBattle — LeKiwi06 — depuis le 2026-10-21 01:45 — fusion de Kal-Games dans Kanvas (espaces étanches) et Serveur Jeux à la place d'Event (expiration des serveurs)
-- KS_CasseCroute (nouveau), geyser-bedrock — LeKiwi06 — depuis le 2026-10-27 03:48 — Casse-croûte doré (aliment custom craftable) et son apparence Bedrock
+- KS_CasseCroute (nouveau), geyser-bedrock, KS_Didacticiel — LeKiwi06 — depuis le 2026-10-27 03:48 — Casse-croûte doré (aliment custom craftable) et son apparence Bedrock ; déploiement + entrée du didacticiel
 - KS_DiagOutils (nouveau, temporaire) — LeKiwi06 — depuis le 2026-10-24 23:36 — diagnostic : houe, pelle, hache sans effet pour les joueurs Bedrock sur Kixster
 
 
