@@ -369,6 +369,22 @@ public final class KSCoffreRenforce extends JavaPlugin implements Listener {
         return ItemStack.empty();
     }
 
+    /**
+     * LeKiwi06 (27/10/2026 : « bloque-le aussi ») : un coffre renforcé, ou un véhicule avec coffre renforcé, ne brûle
+     * pas dans un four, un fumoir ou un haut fourneau (il reste dans la case du combustible).
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBruler(org.bukkit.event.inventory.FurnaceBurnEvent event) {
+        if (estObjetRenforce(event.getFuel())) {
+            event.setCancelled(true);
+        }
+    }
+
+    /** Coffre renforcé ou véhicule avec coffre renforcé (objet) : jamais un combustible (KS_Trains : locomotive). */
+    public static boolean estObjetRenforce(ItemStack objet) {
+        return instance != null && (instance.estObjet(objet) || instance.estVehiculeObjet(objet));
+    }
+
     /** Un distributeur poserait un véhicule à coffre ordinaire : le véhicule avec coffre renforcé y reste. */
     @EventHandler(ignoreCancelled = true)
     public void onDistribuer(BlockDispenseEvent event) {

@@ -26,6 +26,11 @@ final class CoffresRenforces {
         return actif && KSCoffreRenforce.estCoffreRenforce(wagon);
     }
 
+    /** Coffre renforcé ou véhicule avec coffre renforcé (objet) : jamais un carburant de four. */
+    static boolean objetRenforce(ItemStack objet) {
+        return actif && KSCoffreRenforce.estObjetRenforce(objet);
+    }
+
     /** Objet du minecart avec coffre renforcé (wagon brisé). */
     static ItemStack creerMinecart() {
         return KSCoffreRenforce.creerMinecart();

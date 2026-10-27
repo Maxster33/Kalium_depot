@@ -86,6 +86,9 @@ Fonctionnement :
 - **Aucun autre craft** (LeKiwi06 : « il ne faut pas que le coffre renforcé serve aux crafts normaux ») : une recette
   avec un coffre renforcé autre que celle du bateau ou du minecart à coffre ne donne rien, dans un établi comme dans
   un crafter (avant : entonnoir, coffre piégé, wagonnet à entonnoir... le consommaient comme un coffre ordinaire).
+- **Aucun combustible** (LeKiwi06 : « bloque-le aussi ») : un coffre renforcé ou un véhicule avec coffre renforcé ne
+  brûle pas dans un four, un fumoir ou un haut fourneau (il reste dans la case du combustible), ni dans les fours de
+  la locomotive de KS_Trains 1.5.0 (`estObjetRenforce`).
 - **Stock** : gardé dans le véhicule (données de l'entité), avec les 27 cases de son coffre comme tampon, exactement
   comme le bloc (capacité 1 000 stacks, entonnoirs, comparateur sur rail détecteur pour le minecart).
 - **Menu** : le même que le bloc (clic droit sur le minecart, Maj + clic droit sur le bateau, ou inventaire à bord) ;

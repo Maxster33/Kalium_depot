@@ -105,7 +105,8 @@ final class Foyers implements Listener {
     }
 
     static boolean carburant(ItemStack objet) {
-        return objet != null && !objet.isEmpty() && cuisson(objet.getType()) > 0;
+        // 1.5.0 : jamais un coffre renforcé ni un véhicule avec coffre renforcé (KS_CoffreRenforce).
+        return objet != null && !objet.isEmpty() && cuisson(objet.getType()) > 0 && !CoffresRenforces.objetRenforce(objet);
     }
 
     // ------------------------------------------------------------------ réserve et case

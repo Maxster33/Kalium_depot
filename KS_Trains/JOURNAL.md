@@ -200,6 +200,8 @@ KS_Trains » pour que le minecart serve de wagon.
   « Ouvrir le contenu » ouvre le menu du coffre renforcé.
 - Wagon libre percuté et vide : il se brise et redonne le minecart avec coffre renforcé (avant : un minecart à coffre
   ordinaire). Avec un contenu, il est projeté comme les autres.
+- Un coffre renforcé ou un véhicule avec coffre renforcé n'est plus un carburant des fours du train (case du four,
+  wagons à entonnoir) : il aurait brûlé comme un coffre ou un bateau ordinaire (LeKiwi06 : « bloque-le aussi »).
 - `softdepend` sur KS_CoffreRenforce : sans lui, rien ne change (ses classes ne sont jamais chargées).
 
 Limite : le wagon jukebox derrière un minecart avec coffre renforcé ne voit que ses 27 cases (non modifié).
