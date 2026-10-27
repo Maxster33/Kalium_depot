@@ -854,4 +854,4 @@ fermeture.
 Limite signalée, pas changée (KS_Contrats) : une ligne écrite par son nom (« n'importe quel objet de ce type ») accepte
 aussi un bundle ou une boîte de Shulker pleins, si le contrat en demande.
 
-**Compilé, non déployé, non testé en jeu.**
+**Déployé sur Kixster le 27/10/2026 à 13:55 (LeKiwi06 : « Oui, déploie KS_Economy 1.12.1 sur Kixster ») ; 1.12.0 dans `_removed-ks_economy-1.12.0/` ; actif après redémarrage, non testé en jeu.**
