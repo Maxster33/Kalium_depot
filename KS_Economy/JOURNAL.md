@@ -835,3 +835,23 @@ pour discrètement valider une clause de contrat) ».
 Contient la 1.11.1 (prix du cuivre taillé, jamais déployée seule).
 
 **Déployé sur Kixster le 27/10/2026 à 03:49 (LeKiwi06) avec KS_Contrats 1.0.0 et `didacticiel.yml` ; 1.11.0 dans `_removed-ks_economy-1.11.0/` ; actif après redémarrage, non testé en jeu.**
+
+## 1.12.1 - objets hors contrat refusés dès la pose (27/10/2026, LeKiwi06)
+
+Retour de LeKiwi06 : « les objets hors contrat sont bien refusés de la proposition d'échange, on ne peut pas les
+mettre dedans dès le début ? (il faut éviter qu'un joueur en arnaque un autre en faisant croire que les items seront
+dans l'échange) ». En 1.12.0, un objet hors contrat se posait dans le coffre des objets et n'était rendu qu'à sa
+fermeture.
+
+- Contrat choisi : poser dans le coffre des objets un objet que la partie du joueur ne doit pas (ou plus : tout est
+  livré) est refusé tout de suite (clic, clic avec Maj depuis l'inventaire, touche de la barre ou de la seconde main,
+  glisser), avec un message au-dessus de la barre d'objets.
+- Un objet dû posé en trop grande quantité (stack de 64 pour 10 restants) : le surplus est rendu juste après le clic,
+  pas à la fermeture du coffre ; de même pour un clic qu'on ne sait pas lire d'avance (objets sortis d'un bundle).
+- Objets posés AVANT le choix du contrat (visibles dans l'aperçu de l'autre) : toujours rendus au choix du contrat,
+  et l'autre joueur est maintenant prévenu qu'ils ne font pas partie de l'échange.
+
+Limite signalée, pas changée (KS_Contrats) : une ligne écrite par son nom (« n'importe quel objet de ce type ») accepte
+aussi un bundle ou une boîte de Shulker pleins, si le contrat en demande.
+
+**Compilé, non déployé, non testé en jeu.**

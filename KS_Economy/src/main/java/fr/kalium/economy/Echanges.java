@@ -58,6 +58,12 @@ import java.util.UUID;
  * 1.12.0 (LeKiwi06, 27/10/2026, /contrat de KS_Contrats) : bouton « Contrat » (si KS_Contrats est là) : l'un des deux
  * choisit un contrat qu'ils ont ensemble ; chacun ne peut alors poser que les objets et les points que sa partie doit
  * encore livrer (le reste lui est rendu), et la livraison est comptée dans le contrat à la conclusion.
+ *
+ * 1.12.1 (LeKiwi06, 27/10/2026 : « on ne peut pas les mettre dedans dès le début ? il faut éviter qu'un joueur en
+ * arnaque un autre en faisant croire que les items seront dans l'échange ») : avec un contrat, un objet que la partie
+ * du joueur ne doit pas ne se pose plus dans le coffre des objets (clic refusé) ; une quantité au-delà de ce qui reste
+ * à livrer est rendue juste après le clic ; des objets déjà posés avant le choix du contrat sont rendus et l'autre
+ * joueur en est prévenu.
  */
 final class Echanges implements Listener, TabExecutor {
 
@@ -510,6 +516,10 @@ final class Echanges implements Listener, TabExecutor {
             donner(part.joueur, tri.refuses());
             dire(part.joueur, lang.c("echange.contrat-rendus", "<yellow>Objets rendus : ta partie ne les doit pas dans "
                     + "ce contrat (ou ils dépassent ce qui reste à livrer)."));
+            // 1.12.1 : l'autre joueur voit que ces objets ne font pas partie de l'échange.
+            dire(autre.joueur, lang.c("echange.contrat-rendus-autre", "<yellow>Les objets de <joueur> qui ne sont pas "
+                    + "dus dans ce contrat lui sont rendus : ils ne font pas partie de l'échange.", "joueur",
+                    part.joueur.getName()));
             inchange = false;
         }
         if (part.montant > max) {
@@ -545,6 +555,19 @@ final class Echanges implements Listener, TabExecutor {
             // Coffre des objets : libre, sauf les cases bloquées.
             if (event.getClickedInventory() == haut && event.getSlot() >= CASES_OBJETS) {
                 event.setCancelled(true);
+                return;
+            }
+            // 1.12.1 : avec un contrat, un objet que sa partie ne doit pas ne se pose pas.
+            if (part.echange.contrat != null) {
+                ItemStack pose = objetPose(event);
+                if (pose != null && !pose.getType().isAir() && !dansLeContrat(part, pose)) {
+                    event.setCancelled(true);
+                    Contenant.message(part.joueur, lang.c("echange.contrat-refuse", "<red>Ta partie ne doit pas cet "
+                            + "objet dans ce contrat (ou tout est déjà livré)."), true);
+                    return;
+                }
+                // Quantité en trop, ou clic d'un autre genre (bundle...) : rendu juste après le clic.
+                Bukkit.getScheduler().runTask(plugin, () -> rogner(part));
             }
             return;
         }
@@ -596,10 +619,56 @@ final class Echanges implements Listener, TabExecutor {
         }
     }
 
+    /** 1.12.1 : objet qu'un clic pose dans le coffre des objets (null : aucun, ou impossible à savoir). */
+    private static ItemStack objetPose(InventoryClickEvent event) {
+        boolean dansHaut = event.getClickedInventory() == event.getView().getTopInventory();
+        return switch (event.getAction()) {
+            case PLACE_ALL, PLACE_SOME, PLACE_ONE, SWAP_WITH_CURSOR -> dansHaut ? event.getCursor() : null;
+            case MOVE_TO_OTHER_INVENTORY -> dansHaut ? null : event.getCurrentItem();
+            case HOTBAR_SWAP, HOTBAR_MOVE_AND_READD -> !dansHaut ? null : event.getHotbarButton() >= 0
+                    ? event.getWhoClicked().getInventory().getItem(event.getHotbarButton())
+                    : event.getWhoClicked().getInventory().getItemInOffHand();
+            default -> null;
+        };
+    }
+
+    /** 1.12.1 : cet objet (un seul) peut-il s'ajouter à ce que le joueur a déjà posé, au titre du contrat ? */
+    private boolean dansLeContrat(Part part, ItemStack objet) {
+        fr.kalium.economy.api.ContratsEchange service = contrats();
+        if (service == null || part.echange.contrat == null) {
+            return true;
+        }
+        List<ItemStack> essai = copie(part.objetsDeposes());
+        ItemStack un = objet.clone();
+        un.setAmount(1);
+        essai.add(un);
+        fr.kalium.economy.api.ContratsEchange.Tri tri = service.trier(part.echange.contrat, part.joueur,
+                part.autre().joueur, essai);
+        return tri != null && tri.refuses().isEmpty();
+    }
+
+    /** 1.12.1 : juste après un clic dans le coffre des objets : ce qui n'est pas dû (ou en trop) est rendu. */
+    private void rogner(Part part) {
+        if (!part.echange.fini && part.echange.contrat != null && part.vue == Vue.OBJETS) {
+            appliquerContrat(part);
+        }
+    }
+
     @EventHandler
     public void onDrag(InventoryDragEvent event) {
         if (!(event.getView().getTopInventory().getHolder() instanceof Part part)) {
             return;
+        }
+        // 1.12.1 : glisser un objet que sa partie ne doit pas dans le coffre des objets : refusé.
+        if (event.getView().getTopInventory() == part.objets && part.echange.contrat != null
+                && event.getRawSlots().stream().anyMatch(c -> c < CASES_OBJETS)) {
+            if (!dansLeContrat(part, event.getOldCursor())) {
+                event.setCancelled(true);
+                Contenant.message(part.joueur, lang.c("echange.contrat-refuse", "<red>Ta partie ne doit pas cet "
+                        + "objet dans ce contrat (ou tout est déjà livré)."), true);
+                return;
+            }
+            Bukkit.getScheduler().runTask(plugin, () -> rogner(part));
         }
         int taille = event.getView().getTopInventory().getSize();
         boolean haut = event.getRawSlots().stream().anyMatch(caseBrute -> caseBrute < taille);
