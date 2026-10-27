@@ -148,3 +148,34 @@ l'entraînement ; **opérateurs compris**.
 
 **Déployé sur Kanvas (espace Kal-Games) le 26/10/2026 à 23:28 avec KG_Rewards 1.4.0 (LeKiwi06 ; 1.2.0 dans
 `_removed-kg_parkour-1.2.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.5.0 — lave qui monte, map de jump vertical (27/10/2026)
+
+**Demande de LeKiwi06** : « la nouvelle map de jump est un parkour vertical qui commence à se remplir de lave au bout
+de 30 secondes et monte de 1 bloc toutes les 3 secondes ». Ses réponses : toucher la lave ramène au dernier point de
+contrôle, **sauf si ce point est sous la lave : le joueur est alors éliminé** ; **pas de lave en entraînement**.
+
+- **Map concernée** : nouveau point d'arène facultatif **« Départ de la lave »** (arène > points). Sa hauteur est la
+  première couche de lave ; sans ce point (toutes les maps actuelles), rien ne change. Rien à régler dans KalGames.
+- **Montée** : `lava-delay-seconds` (« Lave : départ après (s) », 30) après « Partez ! », la couche du point se remplit,
+  puis une couche de plus toutes les `lava-rise-seconds` (« Lave : 1 bloc toutes les (s) », 3), jusqu'en haut de
+  l'arène. Chaque couche : toutes les cases **d'air** de cette hauteur dans toute l'arène (les blocs du parcours
+  restent). Réglages du jeu, communs à toutes les maps avec lave.
+- **Lave touchée** (pieds sous la surface de la lave) : retour au dernier point de contrôle (« Lave ! Retour au dernier
+  point de contrôle. », plus de bonus « sans chute » sur la section) ; si la lave a déjà recouvert ce point (ou le
+  départ), le joueur est **englouti par la lave** : spectateur, comme « tombé au temps » (ce n'est pas un abandon).
+  Résultats : « englouti par la lave ». Pas de dégâts ni de feu (le Parcours n'en fait jamais).
+- **Annonces** : « La lave commence à monter dans 30 s ! » au départ, « La lave monte ! » (son de seau de lave) à la
+  première couche. Barre d'action : « Lave dans 0:25 », puis « Lave N bloc(s) » (en rouge à 5 blocs ou moins).
+- **Remise en état** : chaque case remplie est enregistrée auprès de KalGames, qui remet l'air en fin de partie (copies
+  d'arène réutilisées comprises) ; la lave qui coulerait hors de l'arène est déjà bloquée par KalGames.
+- Nouveaux textes (valeurs par défaut dans le code) : `race.lava-announce`, `race.lava-start`, `race.lava-respawn`,
+  `race.lava-out-broadcast`, `race.lava-out-title`, `race.result-lava-points`, `race.status-lava-wait`,
+  `race.status-lava`, `race.status-lava-low`.
+
+Limites : pensé pour une map étroite ; les chunks de l'arène non chargés au moment d'une couche (aucun joueur à
+proximité) ne reçoivent pas cette couche. La lave ne dépend pas du chrono : les deux s'appliquent. Empilée sur la
+1.4.0, déployée le 26/10 mais pas encore testée (demande explicite de LeKiwi06).
+
+**Compilé, non déployé. Statut : non testé en jeu.** À faire avant de jouer : placer le point « Départ de la lave »
+sur la nouvelle map.

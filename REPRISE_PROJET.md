@@ -211,7 +211,8 @@ Architecture visée et charte du réseau (nommage, menus inter-serveurs, sécuri
 - **KG_Parkour** (cahier des charges : `KG_Parkour/CAHIER_DES_CHARGES.md`) : **étape 0 faite** le 26/09/2026
   (KG_Parkour 1.0.0 + KalGames 1.20.0 : le Parcours sort de KalGames tel quel ; déployés sur Kal-Games, testés et confirmés par LeKiwi06 le 26/09/2026).
   1.1.0 : chrono par checkpoint, anti-collision. **1.2.0 (déployé le 04/10/2026 à 22:16, non testé) : nouveau barème**
-  (voir son `JOURNAL.md`). Restent : cumul crédité en fin de partie, chrono réglable par checkpoint, barème calé sur la course de
+  (voir son `JOURNAL.md`). **1.5.0 (27/10/2026, compilée, non déployée, non testée en jeu) : lave qui monte** pour la map de jump vertical
+  (point facultatif « Départ de la lave » de l'arène ; 30 s puis 1 bloc toutes les 3 s ; contient la 1.4.0 déployée le 26/10). Restent : cumul crédité en fin de partie, chrono réglable par checkpoint, barème calé sur la course de
   bateau (voir `EQUILIBRAGE_POINTS.md`), contre-la-montre solo avec fantôme (Mannequin).
 - **Équilibrage des barèmes** (`EQUILIBRAGE_POINTS.md`, 26/09/2026) : 30 min à fond = autant de points dans chaque
   jeu, référence = course de bateau (~135 / 30 min). Bingo fait (barème doublé + classements, testé et confirmé par LeKiwi06 le 26/09/2026). Restent :

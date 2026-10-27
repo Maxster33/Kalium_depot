@@ -44,10 +44,19 @@ import java.util.UUID;
  *
  * 1.4.0 (demande de LeKiwi06, 26/10/2026) : le premier joueur qui finit chaque map gagne 1 000 emeraudes, une seule
  * fois (voir PremiersArrives).
+ *
+ * 1.5.0 (demande de LeKiwi06, 27/10/2026) : lave qui monte, pour la map de jump vertical. Sur une map qui a le point
+ * « Départ de la lave », la lave commence a cette hauteur 30 s apres le depart puis monte d'un bloc toutes les 3 s
+ * (reglages du jeu). Toucher la lave ramene au dernier point de controle, sauf si la lave l'a deja recouvert : le
+ * joueur est alors elimine (spectateur). Jamais en entrainement.
  */
 public final class ParkourInstance extends GameInstance {
 
     private static final int GRACE_SECONDS = 30;
+    /** 1.5.0 : pas encore de lave. */
+    private static final int NO_LAVA = Integer.MIN_VALUE;
+    /** 1.5.0 : hauteur de la surface d'une lave source au-dessus du bas de sa case (8/9 d'un bloc, arrondi en dessous). */
+    private static final double LAVA_SURFACE = 0.8;
     /** 1.2.0 : points de base des sections selon leur position dans le parcours (au-dela : comme la derniere). */
     private static final int[] BASE_POINTS = {1, 1, 3, 3, 3, 5, 5, 7, 7, 7, 10};
 
@@ -77,6 +86,8 @@ public final class ParkourInstance extends GameInstance {
         boolean fell;
         /** 1.3.0 : entrainement, tour commence a ce point de controle (numero, 1 = premier) ; 0 = depuis le depart. */
         int from;
+        /** 1.5.0 : elimine par la lave (sinon, « out » = tombe au temps). */
+        boolean lava;
     }
 
     /** Parcours en partie privee : sans limite de temps, sans points ni classement. */
@@ -95,6 +106,14 @@ public final class ParkourInstance extends GameInstance {
     private int elapsed;
     /** 1.1.0 : anti-collision et bottes de proximite. */
     private final ProximityGhosts ghosts = new ProximityGhosts();
+    /** 1.5.0 : la lave monte dans cette course (map avec le point « Départ de la lave », hors entrainement). */
+    private boolean lava;
+    /** 1.5.0 : premiere couche de lave (Y absolu). */
+    private int lavaStartY;
+    /** 1.5.0 : derniere couche remplie de lave (Y absolu), NO_LAVA tant que la lave n'a pas commence. */
+    private int lavaY = NO_LAVA;
+    /** 1.5.0 : instant de la prochaine couche de lave. */
+    private long lavaNextMillis;
 
     public ParkourInstance(KalGames plugin, String id, Minigame minigame, Arena arena, Template template,
                            boolean publicGame, Map<String, Object> options, int slot) {
@@ -192,6 +211,8 @@ public final class ParkourInstance extends GameInstance {
         finishedCount = 0;
         graceLeft = -1;
         elapsed = 0;
+        lava = false;
+        lavaY = NO_LAVA;
         phase = Phase.COUNTDOWN;
         secondsLeft = Math.max(0, minigame().getInt("countdown-seconds", 5));
 
@@ -243,6 +264,80 @@ public final class ParkourInstance extends GameInstance {
                 player.playSound(player.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 0.8f, 1f);
             }
         }
+        // 1.5.0 : lave qui monte (map avec le point « Départ de la lave »), jamais en entrainement.
+        Pos lavaPoint = arena().point("lava");
+        lava = !training && lavaPoint != null;
+        lavaY = NO_LAVA;
+        if (lava) {
+            int delay = Math.max(0, minigame().getInt("lava-delay-seconds", 30));
+            lavaStartY = Math.max(minY, loc(lavaPoint).getBlockY());
+            lavaNextMillis = startMillis + delay * 1000L;
+            broadcastTo(participants, t("race.lava-announce", "<gold>La lave commence à monter dans <white><s></white> s !", "s", delay));
+        }
+    }
+
+    // ------------------------------------------------------------------ lave qui monte (1.5.0)
+
+    /** Une couche de plus quand c'est l'heure : toutes les cases vides de la hauteur suivante, dans toute l'arene. */
+    private void riseLava(long now) {
+        if (!lava || now < lavaNextMillis) {
+            return;
+        }
+        int y = lavaY == NO_LAVA ? lavaStartY : lavaY + 1;
+        if (y > maxY) {
+            return;
+        }
+        lavaNextMillis += Math.max(1, minigame().getInt("lava-rise-seconds", 3)) * 1000L;
+        org.bukkit.block.data.BlockData lavaBlock = org.bukkit.Material.LAVA.createBlockData();
+        // Chunks non charges (aucun joueur a proximite) laisses de cote : pas de chargement force a chaque couche.
+        for (int cx = minX >> 4; cx <= maxX >> 4; cx++) {
+            for (int cz = minZ >> 4; cz <= maxZ >> 4; cz++) {
+                if (!world.isChunkLoaded(cx, cz)) {
+                    continue;
+                }
+                for (int x = Math.max(minX, cx << 4); x <= Math.min(maxX, (cx << 4) + 15); x++) {
+                    for (int z = Math.max(minZ, cz << 4); z <= Math.min(maxZ, (cz << 4) + 15); z++) {
+                        Block block = world.getBlockAt(x, y, z);
+                        if (block.getType().isAir()) {
+                            // Case remise a l'air a la fin de la partie (restoreBlocks de KalGames).
+                            track(block);
+                            block.setBlockData(lavaBlock, false);
+                        }
+                    }
+                }
+            }
+        }
+        boolean first = lavaY == NO_LAVA;
+        lavaY = y;
+        if (first) {
+            broadcastTo(participants, t("race.lava-start", "<red><bold>La lave monte !"));
+            for (UUID uuid : participants) {
+                Player player = Bukkit.getPlayer(uuid);
+                if (player != null) {
+                    player.playSound(player.getLocation(), Sound.ITEM_BUCKET_EMPTY_LAVA, 1f, 0.8f);
+                }
+            }
+        }
+    }
+
+    /** Une hauteur (pieds d'un joueur, point de controle) est-elle dans la lave ? */
+    private boolean underLava(double y) {
+        return lavaY != NO_LAVA && y < lavaY + LAVA_SURFACE;
+    }
+
+    /**
+     * Joueur dans la lave : retour au dernier point de controle s'il est encore hors de la lave, sinon elimine
+     * (choix de LeKiwi06, 27/10/2026).
+     */
+    private void lavaTouched(Player player, Racer racer) {
+        player.setFireTicks(0);
+        if (racer.lastCheckpoint != null && !underLava(racer.lastCheckpoint.getY())) {
+            respawn(player, racer);
+            player.sendActionBar(t("race.lava-respawn", "<gold>Lave ! <yellow>Retour au dernier point de contrôle."));
+            return;
+        }
+        racer.lava = true;
+        eliminate(player, racer);
     }
 
     // ------------------------------------------------------------------ boucle
@@ -268,6 +363,7 @@ public final class ParkourInstance extends GameInstance {
         int configuredVoid = minigame().getInt("void-y", -64);
         int voidY = configuredVoid <= -64 ? minY - 5 : configuredVoid;
         long now = System.currentTimeMillis();
+        riseLava(now);
         for (Map.Entry<UUID, Racer> entry : new ArrayList<>(racers.entrySet())) {
             Racer racer = entry.getValue();
             Player player = Bukkit.getPlayer(entry.getKey());
@@ -279,6 +375,10 @@ public final class ParkourInstance extends GameInstance {
                 continue;
             }
             Location current = player.getLocation();
+            if (underLava(current.getY())) {
+                lavaTouched(player, racer);
+                continue;
+            }
             // Si le dernier point de controle est lui-meme sous la limite, on retombe sur la limite automatique (pas de boucle).
             double limit = racer.lastCheckpoint != null && racer.lastCheckpoint.getY() < voidY ? minY - 5 : voidY;
             if (current.getY() < limit) {
@@ -291,7 +391,7 @@ public final class ParkourInstance extends GameInstance {
             }
             racer.previous = current;
             if (!racer.finished && !racer.out && now >= racer.noticeUntil) {
-                player.sendActionBar(racerStatus(racer, now));
+                player.sendActionBar(racerStatus(player, racer, now));
             }
         }
     }
@@ -314,15 +414,18 @@ public final class ParkourInstance extends GameInstance {
 
     /**
      * 1.1.0 : chrono a zero, le joueur "tombe au temps" (cahier des charges, point 2) : il passe spectateur ; ce n'est
-     * pas un abandon, il a fini sa partie.
+     * pas un abandon, il a fini sa partie. 1.5.0 : meme chose quand la lave a recouvert son dernier point de controle
+     * (racer.lava), avec d'autres textes.
      */
     private void eliminate(Player player, Racer racer) {
         racer.out = true;
         ghosts.leave(player.getUniqueId());
-        broadcast(t("race.chrono-out-broadcast", "<aqua><name></aqua> <red>tombe au temps.",
-                "name", player.getName()));
+        broadcast(racer.lava
+                ? t("race.lava-out-broadcast", "<aqua><name></aqua> <red>est englouti par la lave.", "name", player.getName())
+                : t("race.chrono-out-broadcast", "<aqua><name></aqua> <red>tombe au temps.", "name", player.getName()));
         player.showTitle(net.kyori.adventure.title.Title.title(
-                t("race.chrono-out-title", "<red><bold>Temps écoulé"),
+                racer.lava ? t("race.lava-out-title", "<red><bold>Englouti par la lave")
+                        : t("race.chrono-out-title", "<red><bold>Temps écoulé"),
                 t("race.chrono-out-sub", "<gray>Tu as fini ta partie : regarde les autres coureurs.")));
         player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.8f, 1f);
         player.leaveVehicle();
@@ -332,21 +435,32 @@ public final class ParkourInstance extends GameInstance {
         }
     }
 
-    /** Ligne d'action bar d'un coureur : chrono, points de controle atteints, temps restant. */
-    private Component racerStatus(Racer racer, long now) {
+    /** Ligne d'action bar d'un coureur : chrono, points de controle atteints, temps restant, lave (1.5.0). */
+    private Component racerStatus(Player player, Racer racer, long now) {
         List<Pos> checkpoints = arena().list("checkpoints");
         long run = Math.max(0, now - racer.runStart);
         Component base = t(training ? "race.status-training" : "race.status-parkour",
                 training ? "<green>Entraînement <dark_gray>| <gold>⏱ <time> <dark_gray>| <gray>Checkpoint <white><cp>/<total></white>"
                         : "<gold>⏱ <time> <dark_gray>| <gray>Checkpoint <white><cp>/<total></white>",
                 "time", formatTenths(run), "cp", racer.next, "total", checkpoints.size());
-        if (racer.deadline <= 0) {
+        if (racer.deadline > 0) {
+            long left = Math.max(0, racer.deadline - now);
+            base = base.append(t(left < 10_000L ? "race.status-chrono-low" : "race.status-chrono",
+                    left < 10_000L ? " <dark_gray>| <gray>Chrono <red><left></red>" : " <dark_gray>| <gray>Chrono <white><left></white>",
+                    "left", formatClock((left + 999) / 1000)));
+        }
+        if (!lava) {
             return base;
         }
-        long left = Math.max(0, racer.deadline - now);
-        return base.append(t(left < 10_000L ? "race.status-chrono-low" : "race.status-chrono",
-                left < 10_000L ? " <dark_gray>| <gray>Chrono <red><left></red>" : " <dark_gray>| <gray>Chrono <white><left></white>",
-                "left", formatClock((left + 999) / 1000)));
+        if (lavaY == NO_LAVA) {
+            return base.append(t("race.status-lava-wait", " <dark_gray>| <gold>Lave dans <white><left></white>",
+                    "left", formatClock((Math.max(0, lavaNextMillis - now) + 999) / 1000)));
+        }
+        // Blocs entre les pieds du joueur et la surface de la lave.
+        int gap = Math.max(0, (int) Math.floor(player.getLocation().getY() - (lavaY + 1)));
+        return base.append(t(gap <= 5 ? "race.status-lava-low" : "race.status-lava",
+                gap <= 5 ? " <dark_gray>| <gold>Lave <red><n> bloc(s)</red>" : " <dark_gray>| <gold>Lave <white><n> bloc(s)</white>",
+                "n", gap));
     }
 
     private void reached(Player player, Racer racer) {
@@ -872,7 +986,10 @@ public final class ParkourInstance extends GameInstance {
         for (Map.Entry<UUID, Racer> entry : unfinished) {
             Racer racer = entry.getValue();
             racer.rank = position;
-            broadcast(racer.out
+            broadcast(racer.out && racer.lava
+                    ? t("race.result-lava-points", "<gray><rank>. <white><name></white> <dark_gray>- <red>englouti par la lave <gray>(<points> pts)",
+                            "rank", position, "name", nameOf(entry.getKey()), "points", fmt(racer.points))
+                    : racer.out
                     ? t("race.result-chrono-out-points", "<gray><rank>. <white><name></white> <dark_gray>- <red>tombé au temps <gray>(<points> pts)",
                             "rank", position, "name", nameOf(entry.getKey()), "points", fmt(racer.points))
                     : t("race.result-dnf-points", "<gray><rank>. <white><name></white> <dark_gray>- <red>non arrivé <gray>(<points> pts)",
@@ -971,6 +1088,8 @@ public final class ParkourInstance extends GameInstance {
         sectionsTaken.clear();
         finishedCount = 0;
         graceLeft = -1;
+        lava = false;
+        lavaY = NO_LAVA;
     }
 
     @Override
@@ -1040,7 +1159,7 @@ public final class ParkourInstance extends GameInstance {
         Racer racer = racers.get(uuid);
         if (racer != null && phase == Phase.RUNNING && !racer.finished && !racer.out) {
             long now = System.currentTimeMillis();
-            return now < racer.noticeUntil ? null : racerStatus(racer, now);
+            return now < racer.noticeUntil ? null : racerStatus(player, racer, now);
         }
         if (isPublic()) {
             return queueStatus(player);

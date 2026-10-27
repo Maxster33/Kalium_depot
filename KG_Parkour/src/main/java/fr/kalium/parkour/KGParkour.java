@@ -71,6 +71,11 @@ public final class KGParkour extends JavaPlugin {
                         // 1.4.0 : une seule fois par map (plugins/KG_Parkour/premiers.yml), envoye par KG_Rewards.
                         integer("first-map-emeralds", "Émeraudes du 1er à finir une map", 1000, 0, 100000,
                                 "Une seule fois par map : le premier joueur qui la finit (partie publique ou privée, pas l'entraînement) reçoit ces émeraudes sur la survie. 0 = aucune."),
+                        // 1.5.0 : lave qui monte, seulement sur les maps qui ont le point « Départ de la lave ».
+                        integer("lava-delay-seconds", "Lave : départ après (s)", 30, 0, 600,
+                                "Maps avec le point « Départ de la lave » : la lave commence à monter ce temps après le départ. Jamais en entraînement."),
+                        integer("lava-rise-seconds", "Lave : 1 bloc toutes les (s)", 3, 1, 60,
+                                "Toucher la lave : retour au dernier point de contrôle, ou éliminé si la lave l'a recouvert."),
                         integer("void-y", "Hauteur de chute (Y absolu)", 1, -64, 320, "Sous cette hauteur : retour au dernier point de contrôle. -64 = automatique (juste sous l'arène)."),
                         integer("time-limit-seconds", "Temps limite de la course (s)", 0, 0, 7200, "Fin de la course pour tout le monde. 0 = pas de limite globale."),
                         integer("countdown-seconds", "Compte à rebours (s)", 5, 0, 15, "Avant le départ."),
@@ -88,7 +93,10 @@ public final class KGParkour extends JavaPlugin {
                                                 "Avant les multiplicateurs. 0 = selon la position du point : 1, 1, 3, 3, 3, 5, 5, 7, 7, 7, 10 (10 ensuite)."),
                                         integer("time-seconds", "Temps du bonus (s)", 0, 0, 3600,
                                                 "Temps depuis le point précédent (ou le départ). Juste en dessous : x1,25 ; à la moitié de ce temps ou moins : x1,75. 0 = pas de bonus de temps."))),
-                        single("finish", "Arrivée", true, "Zone d'arrivée.")))
+                        single("finish", "Arrivée", true, "Zone d'arrivée."),
+                        // 1.5.0 : facultatif ; sa hauteur est la premiere couche de lave.
+                        single("lava", "Départ de la lave", false,
+                                "Facultatif (jump vertical) : la lave monte à partir de cette hauteur. Sans ce point, pas de lave.")))
                 .engine(ParkourInstance::new)
                 .ranking(fr.kalium.scoreboards.Category.Kind.TIME)
                 .createToggle(new MinigameType.CreateToggle("training",
