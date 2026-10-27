@@ -49,6 +49,9 @@
     },
     "kalium.cristal_purification": {
       "textures": ["textures/items/kalium_cristal_purification"]
+    },
+    "kalium.casse_croute_dore": {
+      "textures": ["textures/items/kalium_casse_croute_dore"]
     }
   }
 }

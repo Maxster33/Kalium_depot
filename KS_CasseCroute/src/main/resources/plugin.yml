@@ -1,0 +1,6 @@
+name: KS_CasseCroute
+version: '${project.version}'
+main: fr.kalium.cassecroute.KSCasseCroute
+api-version: '26.2'
+description: Casse-croute dore de Kixster (aliment custom craftable, effets de 5 minutes).
+authors: [KaLium]

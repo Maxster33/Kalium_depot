@@ -23,6 +23,7 @@ côté serveur (aucun effet du vrai sac ou de la vraie clé).
 | Badge de téléportation (KS_Jetons) | `knowledge_book` | `minecraft:gold_block` | `kalium:badge_tp` | face du bloc d'or (image plate) |
 | Badge de localisation (KS_Jetons) | `knowledge_book` | `minecraft:copper_block` | `kalium:badge_localisation` | face du bloc de cuivre (image plate) |
 | Cristal de purification (KS_Meule) | `knowledge_book` | `minecraft:amethyst_shard` | `kalium:cristal_purification` | éclat d'améthyste |
+| Casse-croûte doré (KS_CasseCroute) | `pumpkin_pie` | `minecraft:suspicious_stew` | `kalium:casse_croute_dore` | ragoût suspect |
 
 Attention : **tout** livre de connaissances qui a l'un de ces `item_model` prend cette apparence ; un futur objet
 custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne ici.
@@ -106,3 +107,9 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   14:33 (l'ancien dans `/plugins/Geyser-Velocity/_removed-kalium-objets-sans-pile-2026-10-26/`), actif après
   redémarrage du proxy. Non testé** : sur Bedrock, vérifier qu'un joueur entre toujours (packs chargés) et que les
   jetons s'empilent.
+- **1.5.0 (27/10/2026, LeKiwi06)** : Casse-croûte doré de KS_CasseCroute 1.0.0 (image du ragoût suspect). Premier objet
+  qui n'est pas sur un livre de connaissances (un livre ne peut pas être mangé) : base Java `pumpkin_pie`, d'où une
+  nouvelle liste `minecraft:pumpkin_pie` dans `kalium_objets.json`, avec `minecraft:food` (7, 5, mangeable rassasié)
+  et `minecraft:max_stack_size` 16 déclarés (Geyser ne reprend pas les composants changés par le serveur ; animation
+  et durée de consommation : celles de la tarte, inchangées). Pack `KaLium-objets-1.5.0.mcpack` construit (image
+  extraite du jeu 26.2). **Non envoyé sur le proxy.**
