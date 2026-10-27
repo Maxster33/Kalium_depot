@@ -834,4 +834,4 @@ pour discrètement valider une clause de contrat) ».
 
 Contient la 1.11.1 (prix du cuivre taillé, jamais déployée seule).
 
-**À déployer avec KS_Contrats 1.0.0. Compilé, non déployé, non testé en jeu.**
+**Déployé sur Kixster le 27/10/2026 à 03:49 (LeKiwi06) avec KS_Contrats 1.0.0 et `didacticiel.yml` ; 1.11.0 dans `_removed-ks_economy-1.11.0/` ; actif après redémarrage, non testé en jeu.**
