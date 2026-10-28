@@ -115,3 +115,12 @@ Limites :
 Compilé le 27/10/2026 (`sortie/KS_CoffreRenforce-1.1.0.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Kixster le 28/10/2026 à 09:34** (LeKiwi06 : « Oui, déploie KS_CoffreRenforce 1.1.0 et KS_Trains 1.5.0 sur Kixster »), avec KS_Trains 1.5.0 et `didacticiel.yml` (Véhicules › « Bateau et minecart avec coffre renforcé ») : jars en place vérifiés identiques à `jars-deployes/` avant l'envoi, rangés dans `_removed-ks_coffrerenforce-1.0.0/` et `_removed-ks_trains-1.4.8/` ; fichiers du serveur vérifiés identiques à ceux compilés. À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.2.0 - décraft des véhicules avec coffre renforcé (28/10/2026, LeKiwi06)
+
+Décraft demandé par LeKiwi06 (fait dans KS_Crafts 1.23.0) : bateau, radeau ou minecart avec coffre renforcé seul dans
+la grille -> coffre renforcé, et le bateau, le radeau ou le minecart reste dans la grille. Ici, seulement : la recette
+`ks_crafts:decraft_vehicule` n'est plus refusée (le véhicule avec coffre renforcé reste refusé dans toutes les autres).
+**À déployer avec KS_Crafts 1.23.0.**
+
+Compilé le 28/10/2026 (`sortie/KS_CoffreRenforce-1.2.0.jar`). **Statut : non déployé, non testé en jeu.**

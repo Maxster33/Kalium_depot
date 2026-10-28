@@ -345,6 +345,10 @@ public final class KSCoffreRenforce extends JavaPlugin implements Listener {
 
     /** Résultat corrigé, objet vide si le craft est refusé, null si ce craft n'est pas concerné. */
     private ItemStack craftCorrige(Recipe recette, ItemStack[] matrice) {
+        if (recette instanceof Keyed d && d.getKey().toString().equals("ks_crafts:decraft_vehicule")) {
+            // 1.2.0 : décraft d'un véhicule avec coffre renforcé (KS_Crafts 1.23.0) : coffre renforcé rendu.
+            return null;
+        }
         boolean coffre = false;
         for (ItemStack objet : matrice) {
             if (estVehiculeObjet(objet)) {

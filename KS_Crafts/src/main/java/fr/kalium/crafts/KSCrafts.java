@@ -265,6 +265,15 @@ public final class KSCrafts extends JavaPlugin implements Listener {
             getLogger().warning("KS_ItemSimple ou KS_CoffreRenforce absent : craft du coffre renforcé ignoré.");
         }
 
+        // 1.23.0 (LeKiwi06, 28/10/2026) : décraft des bateaux et minecarts spéciaux (Decrafts) ; recette cachée du livre.
+        if (actif("KS_JukeboxBoat") || actif("KS_Trains") || actif("KS_CoffreRenforce")) {
+            Decrafts decrafts = new Decrafts(this);
+            add(decrafts.recette());
+            ingredients.remove(key(Decrafts.ID));
+            cachees.add(key(Decrafts.ID));
+            getServer().getPluginManager().registerEvents(decrafts, this);
+        }
+
         // 1.8.0 (LeKiwi06) : réparation de la tête de wither squelette (KS_Decapitator 1.1.0), bloc de charbon de bois.
         TeteWither teteWither = new TeteWither(this);
         teteWither.enregistrer();

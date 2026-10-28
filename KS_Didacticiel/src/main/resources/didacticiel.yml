@@ -513,6 +513,12 @@ themes:
         texte: "Bateau (ou radeau) + coffre renforcé, ou minecart + coffre renforcé, à l'établi : 1 000 stacks d'un seul objet qui voyagent. Même menu et mêmes entonnoirs que le coffre renforcé ; le minecart s'attelle à un train. Il ne se casse qu'avec 27 stacks ou moins dedans, qui tombent alors au sol."
         requiert: "KS_CoffreRenforce 1.1.0"
         nouveau: "2026-10-28"
+      decraft:
+        nom: "Décrafter un véhicule spécial"
+        icone: CRAFTING_TABLE
+        texte: "Seul dans l'établi, un bateau à jukebox, un wagon jukebox ou un véhicule avec coffre renforcé rend son jukebox ou son coffre renforcé, et le bateau ou le minecart reste dans la grille."
+        requiert: "KS_Crafts 1.23.0"
+        nouveau: "2026-10-28"
       laisse:
         nom: "Laisse courte"
         icone: LEAD

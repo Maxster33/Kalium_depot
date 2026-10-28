@@ -499,3 +499,28 @@ vient de KS_Spawners 1.1.0. Didacticiel : texte de « Spawners » mis à jour, m
 avec KS_Spawners 1.1.0 et `didacticiel.yml`.
 
 **Déployé sur Kixster le 26/10/2026 à 19:48 (LeKiwi06 : « ok vas y déploie ça me conviens »), actif après redémarrage de Kixster. Statut : non testé en jeu.**
+
+## 1.23.0 - décraft des bateaux et minecarts spéciaux (28/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « j'aimerais qu'on puisse décrafter les bateaux et minecarts spéciaux (jukebox et
+renforcé) : si un craft ne peut pas donner 2 résultats différents, alors supprimer le véhicule et conserver le bloc
+spécial ». Choix (questions du 28/10/2026) : les deux rendus (le bloc spécial en résultat, le véhicule simple reste
+dans la grille, comme le seau vide d'un gâteau) ; le wagon jukebox de KS_Trains aussi.
+
+- Un véhicule spécial **seul** dans la grille (établi ou inventaire) :
+  - bateau à jukebox -> jukebox, le bateau reste ; bateau à coffre et jukebox -> jukebox, le bateau à coffre reste ;
+  - bateau, radeau ou minecart avec coffre renforcé -> coffre renforcé, le bateau, le radeau ou le minecart reste ;
+  - wagon jukebox -> jukebox, le minecart reste.
+- Le véhicule simple est posé dans la case du véhicule spécial au tick suivant (le jeu retire l'objet après le craft) ;
+  inventaire fermé entre-temps : il va dans l'inventaire (au sol s'il est plein). Rien n'est rendu si le craft n'a pas
+  eu lieu (Maj + clic avec l'inventaire plein).
+- **Crafter** : même résultat ; le véhicule simple reste dans sa case (comme les restes d'un craft vanilla), ou tombe
+  au-dessus du crafter si la case est prise.
+- Une seule recette (`ks_crafts:decraft_vehicule` : n'importe quel bateau ou minecart seul), cachée du livre de
+  recettes ; le résultat est choisi dans `Decrafts`, et refusé pour un véhicule ordinaire. Passe après le refus de
+  KS_JukeboxBoat (priorité normale) ; KS_CoffreRenforce 1.2.0 laisse passer cette recette (**à déployer ensemble**).
+
+Limite : sur Bedrock, le livre de recettes peut montrer « bateau -> jukebox » pour n'importe quel bateau (Geyser
+traduit les recettes) ; un bateau ordinaire ne donne rien. Non vérifié en jeu.
+
+Compilé le 28/10/2026 (`sortie/KS_Crafts-1.23.0.jar`). **Statut : non déployé, non testé en jeu.**
