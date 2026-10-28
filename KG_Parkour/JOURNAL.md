@@ -153,6 +153,9 @@ l'entraînement ; **opérateurs compris**.
 v1.3.0`)**, donc rien à .LupoSaint, premier à finir le Parcours (Croquis, 27/10 à 21:17, 5:30,6, partie privée ; seule
 arrivée du journal). Rattrapage (accord de LeKiwi06) : `premiers.yml` posé le 28/10 à 09:46 dans `/plugins/KG_Parkour/`
 (Croquis, .LupoSaint, 1 000 émeraudes, `envoye: false`) ; la 1.4.0 l'envoie au démarrage. Pas d'annonce dans le chat.
+Redémarrage de Kanvas le 28/10 à 10:47 : `KG_Parkour v1.4.0` et `KG_Rewards v1.4.0` actifs, aucune erreur ; récompense
+envoyée à 10:48:11 (`envoye: true`), reçue par KS_RewardsGUI sur Kixster (`recompenses.yml`, 1 000 émeraudes, en
+attente de récupération par le joueur).
 
 ## 1.5.0 — lave qui monte, map de jump vertical (27/10/2026)
 
