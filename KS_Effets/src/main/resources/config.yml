@@ -1,0 +1,4 @@
+# KS_Effets
+# Les effets custom suivent les regles des effets du jeu : ils s'effacent a la mort et quand on boit du lait.
+effacer-a-la-mort: true
+effacer-au-lait: true

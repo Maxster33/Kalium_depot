@@ -1,0 +1,13 @@
+name: KS_Effets
+version: '${project.version}'
+main: fr.kalium.effets.KSEffets
+api-version: '26.2'
+description: Effets custom de Kixster (minuteurs gardes a la deconnexion) et /effects (effets en cours, suivi en barre de boss ou d'action).
+authors: [KaLium]
+depend: [KLM_Menu]
+softdepend: [KS_MondeTest]
+commands:
+  effects:
+    description: Tes effets en cours ; suivre le temps restant d'un effet en barre de boss ou en barre d'action.
+    aliases: [effets]
+    usage: /<command>
