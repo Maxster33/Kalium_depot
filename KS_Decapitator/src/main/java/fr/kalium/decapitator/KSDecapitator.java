@@ -83,8 +83,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * - 1.3.0 : un shulker se teint au colorant (TeintureShulker), pour que ses têtes colorées soient obtenables.
  * - 1.3.0 : têtes de joueurs (TetesDeJoueurs, Kixster SMP) : un mob secret par joueur, renommé à son pseudo puis tué.
  * - 1.4.0 : bébés nés d'une pomme d'amour (KS_Cuisine, mini-mobs marqués « ks_cuisine:bebe ») : comptés comme bébés ;
- *   toute créature sans tête de bébé dans tetes.txt reçoit une « Tête de bébé ... » par tête d'adulte, avec la même
- *   texture (sauf les créatures de SANS_BEBE) ; slime : une tête par taille (petit, moyen, gros).
+ *   leurs têtes (« Tête de bébé ... », même texture que l'adulte) sont dans tetes.txt ; slime : une tête par taille
+ *   (petit, moyen, gros).
  * - /tetes : menu de toutes les têtes. 1.2.0 : ouvert à tous, il montre à chaque joueur les têtes qu'il a déjà
  *   obtenues (une tête compte dès qu'elle a été dans son inventaire) ; les opérateurs les voient toutes et en
  *   prennent une d'un clic, pour les vérifier en jeu.
@@ -107,14 +107,6 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
 
     /** 1.4.0 : marque des mini-mobs nés d'une pomme d'amour (KS_Cuisine), lue sans dépendre du plugin. */
     private static final NamespacedKey BEBE_CUISINE = new NamespacedKey("ks_cuisine", "bebe");
-    /**
-     * 1.4.0 : créatures sans tête de bébé ajoutée : les 4 boss et, choix de LeKiwi06 du 28/10, le shulker (immobile),
-     * le perroquet, le marchand ambulant et le têtard (déjà un bébé), tous exclus de la pomme d'amour ; la grenouille
-     * (elle se reproduit déjà ; son bébé est le têtard) ; le slime (la pomme donne un petit slime : têtes par taille).
-     */
-    private static final java.util.Set<String> SANS_BEBE = java.util.Set.of("elder_guardian", "warden", "wither",
-            "ender_dragon", "frog", "shulker", "parrot", "wandering_trader", "tadpole", "slime");
-
     private static NamespacedKey marqueur;
     /** 1.2.0 : têtes déjà obtenues par chaque joueur. */
     private static Collection collection;
@@ -195,36 +187,6 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
                 PAR_UUID.put(uuid, tete);
             }
         }
-        tetesDeBebes();
-    }
-
-    /**
-     * 1.4.0 : têtes des bébés nés d'une pomme d'amour. Pour chaque créature qui n'a aucune tête de bébé dans la table :
-     * « Tête de bébé X » pour chaque tête d'adulte « Tête de X », même texture, profil propre (id « bebe_x »).
-     */
-    private void tetesDeBebes() {
-        java.util.Set<String> avecBebe = new java.util.HashSet<>();
-        for (String cle : PAR_CLE.keySet()) {
-            if (cle.endsWith(".baby")) {
-                avecBebe.add(cle.split("\\.")[0]);
-            }
-        }
-        int ajoutees = 0;
-        for (Tete adulte : List.copyOf(PAR_CLE.values())) {
-            String creature = adulte.cle().split("\\.")[0];
-            if (avecBebe.contains(creature) || SANS_BEBE.contains(creature)) {
-                continue;
-            }
-            String nom = "Tête de bébé " + adulte.nom().replaceFirst("^Tête d(e |')", "");
-            String id = idDepuisNom(nom);
-            UUID uuid = UUID.nameUUIDFromBytes(("ks_decapitator:" + id).getBytes(StandardCharsets.UTF_8));
-            Tete tete = new Tete(adulte.cle() + ".baby", id, nom, adulte.empreinte(), uuid);
-            if (PAR_CLE.putIfAbsent(tete.cle(), tete) == null && PAR_ID.putIfAbsent(id, tete) == null) {
-                PAR_UUID.put(uuid, tete);
-                ajoutees++;
-            }
-        }
-        getLogger().info(ajoutees + " têtes de bébés (pomme d'amour) ajoutées.");
     }
 
     /** « Tête de bébé mouton rouge » -> « bebe_mouton_rouge » (sans accents, id de /kaliumgive). */

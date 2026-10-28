@@ -194,15 +194,17 @@ nés d'une pomme d'amour (KS_Cuisine) ont leur tête.
 
 - Un mini-mob de KS_Cuisine (marque `ks_cuisine:bebe`, lue sans dépendre du plugin) compte comme un bébé (clé
   « ...baby »), comme un bébé du jeu.
-- Pour chaque créature qui n'a **aucune** tête de bébé dans `tetes.txt`, une « Tête de bébé X » est ajoutée au
-  démarrage pour chaque tête d'adulte « Tête de X » (variantes et états compris), **même texture**, profil et id
-  propres (`bebe_x`) : **44 têtes**. Sans tête de bébé : les 4 boss ; le shulker, le perroquet, le marchand ambulant et
+- Pour chaque créature qui n'avait **aucune** tête de bébé dans `tetes.txt`, une ligne « Tête de bébé X » est ajoutée
+  à `tetes.txt` pour chaque tête d'adulte « Tête de X » (variantes et états compris), **même texture**, id propre
+  (`bebe_x`) : **44 têtes** (écrites dans la table plutôt que créées au démarrage, pour que le barème de KS_Economy
+  les voie aussi ; 397 têtes au total). Sans tête de bébé : les 4 boss ; le shulker, le perroquet, le marchand ambulant et
   le têtard (exclus de la pomme d'amour, LeKiwi06, 28/10) ; la grenouille (son bébé est le têtard) ; le slime.
 - **Slime** (LeKiwi06, 28/10 : la pomme d'amour donne un petit slime) : une tête par taille, même texture : petit
   (« Tête de slime », clé `slime` d'avant), moyen (`slime.medium`, « Tête de slime moyen »), gros (`slime.big`, « Tête
   de gros slime », taille 4 et plus). Le cube de magma, aussi un slime pour Bukkit, garde une seule tête.
 - Elles apparaissent dans `/tetes`, dans les ids de `/kaliumgive` et dans la collection, comme les autres.
 - Prix : proposition `sortie/bareme/tetes-bebes-proposition.xlsx` (palier de l'adulte ; bébé wither squelette et bébé
-  grinceur en C ; slimes moyen et gros en B), en attente de validation ; KS_Economy ensuite.
+  grinceur en C ; slimes moyen et gros en B), **validée par LeKiwi06 le 28/10/2026** : KS_Economy 1.12.2, à déployer
+  avec cette version.
 
 Compilé le 28/10/2026 (`sortie/KS_Decapitator-1.4.0.jar`). **Statut : non déployé, non testé en jeu.**

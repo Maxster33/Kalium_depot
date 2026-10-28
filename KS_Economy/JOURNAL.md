@@ -855,3 +855,20 @@ Limite signalée, pas changée (KS_Contrats) : une ligne écrite par son nom («
 aussi un bundle ou une boîte de Shulker pleins, si le contrat en demande.
 
 **Déployé sur Kixster le 27/10/2026 à 13:55 (LeKiwi06 : « Oui, déploie KS_Economy 1.12.1 sur Kixster ») ; 1.12.0 dans `_removed-ks_economy-1.12.0/` ; actif après redémarrage, non testé en jeu.**
+
+## 1.12.2 - prix des têtes des bébés de la pomme d'amour (28/10/2026, LeKiwi06)
+
+Étape 3 du chantier « atouts, alcools, aliments » (cahier local `Atouts_Alcools_Aliments.md`) : prix des nouvelles
+têtes de KS_Decapitator 1.4.0, proposition `sortie/bareme/tetes-bebes-proposition.xlsx` **validée telle quelle par
+LeKiwi06 le 28/10/2026** (« Prix validés tels que proposés (44 têtes de bébés, slime moyen et gros) »).
+
+- 44 « Tête de bébé ... » au palier de la tête de l'adulte (A 5 / B 10 / C 50 / D 300), sauf bébé wither squelette
+  (50 : tête décorative, sous l'adulte à 100) et bébé grinceur (50 : le bébé n'a pas de cœur et peut être tué ;
+  l'adulte reste sans prix).
+- Tête de slime moyen et tête de gros slime : 10 (palier B du slime).
+- Barème : `PALIER_BEBE` complété dans `sortie/bareme/bareme.py` (le palier d'un bébé passe avant celui de l'adulte),
+  chaîne relancée (`faire_moteur`, `prix_moteur`, `remplir`, `exporter_rachats`) : `rachats.csv` gagne exactement ces
+  46 lignes, aucune autre ne change (comparé avant / après).
+- Code inchangé. **À déployer avec KS_Decapitator 1.4.0** (sinon ces têtes n'existent pas).
+
+Compilé le 28/10/2026 (`sortie/KS_Economy-1.12.2.jar`). **Statut : non déployé, non testé en jeu.**

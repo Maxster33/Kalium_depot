@@ -1932,9 +1932,54 @@ bloc_emeraude_compresse_tier_4;émeraude;90000;-;Bloc d'émeraude compressé (ti
 bloc_emeraude_compresse_tier_5;émeraude;900000;-;Bloc d'émeraude compressé (tier 5);;
 bloc_emeraude_compresse_tier_6;émeraude;9000000;-;Bloc d'émeraude compressé (tier 6);;
 bloc_charbon_de_bois;charbon;0.27;pdc:ks_crafts:bloc_charbon_de_bois:b;Bloc de charbon de bois;64;
+tete_bebe_allay;tête;50;pdc:ks_decapitator:tete:s:bebe_allay;Tête de bébé allay;64;
+tete_bebe_araignee;tête;10;pdc:ks_decapitator:tete:s:bebe_araignee;Tête de bébé araignée;64;
+tete_bebe_araignee_venimeuse;tête;50;pdc:ks_decapitator:tete:s:bebe_araignee_venimeuse;Tête de bébé araignée venimeuse;64;
+tete_bebe_blaze;tête;10;pdc:ks_decapitator:tete:s:bebe_blaze;Tête de bébé blaze;64;nether
+tete_bebe_breeze;tête;300;pdc:ks_decapitator:tete:s:bebe_breeze;Tête de bébé breeze;64;
+tete_bebe_chauve_souris;tête;10;pdc:ks_decapitator:tete:s:bebe_chauve_souris;Tête de bébé chauve-souris;64;
+tete_bebe_cheval_squelette;tête;50;pdc:ks_decapitator:tete:s:bebe_cheval_squelette;Tête de bébé cheval-squelette;64;
+tete_bebe_cheval_zombie;tête;50;pdc:ks_decapitator:tete:s:bebe_cheval_zombie;Tête de bébé cheval-zombie;64;
+tete_bebe_creeper;tête;10;pdc:ks_decapitator:tete:s:bebe_creeper;Tête de bébé creeper;64;
+tete_bebe_creeper_charge;tête;300;pdc:ks_decapitator:tete:s:bebe_creeper_charge;Tête de bébé creeper chargé;64;
+tete_bebe_cube_de_magma;tête;10;pdc:ks_decapitator:tete:s:bebe_cube_de_magma;Tête de bébé cube de magma;64;nether
 tete_bebe_cube_de_soufre;tête;50;pdc:ks_decapitator:tete:s:bebe_cube_de_soufre;Tête de bébé cube de soufre;64;
+tete_bebe_desseche;tête;50;pdc:ks_decapitator:tete:s:bebe_desseche;Tête de bébé desséché;64;
+tete_bebe_dromadaire_momifie;tête;50;pdc:ks_decapitator:tete:s:bebe_dromadaire_momifie;Tête de bébé dromadaire momifié;64;
+tete_bebe_embourbe;tête;50;pdc:ks_decapitator:tete:s:bebe_embourbe;Tête de bébé embourbé;64;
+tete_bebe_enderman;tête;10;pdc:ks_decapitator:tete:s:bebe_enderman;Tête de bébé enderman;64;
+tete_bebe_endermite;tête;50;pdc:ks_decapitator:tete:s:bebe_endermite;Tête de bébé endermite;64;
+tete_bebe_evocateur;tête;50;pdc:ks_decapitator:tete:s:bebe_evocateur;Tête de bébé évocateur;64;
+tete_bebe_gardien;tête;10;pdc:ks_decapitator:tete:s:bebe_gardien;Tête de bébé gardien;64;
+tete_bebe_ghast;tête;50;pdc:ks_decapitator:tete:s:bebe_ghast;Tête de bébé ghast;64;nether
+tete_bebe_golem_de_cuivre;tête;5;pdc:ks_decapitator:tete:s:bebe_golem_de_cuivre;Tête de bébé golem de cuivre;64;
+tete_bebe_golem_de_cuivre_erode;tête;5;pdc:ks_decapitator:tete:s:bebe_golem_de_cuivre_erode;Tête de bébé golem de cuivre érodé;64;
+tete_bebe_golem_de_cuivre_expose;tête;5;pdc:ks_decapitator:tete:s:bebe_golem_de_cuivre_expose;Tête de bébé golem de cuivre exposé;64;
+tete_bebe_golem_de_cuivre_oxyde;tête;5;pdc:ks_decapitator:tete:s:bebe_golem_de_cuivre_oxyde;Tête de bébé golem de cuivre oxydé;64;
+tete_bebe_golem_de_fer;tête;10;pdc:ks_decapitator:tete:s:bebe_golem_de_fer;Tête de bébé golem de fer;64;
+tete_bebe_golem_de_neige;tête;5;pdc:ks_decapitator:tete:s:bebe_golem_de_neige;Tête de bébé golem de neige;64;
+tete_bebe_grinceur;tête;50;pdc:ks_decapitator:tete:s:bebe_grinceur;Tête de bébé grinceur;64;
+tete_bebe_morue;tête;10;pdc:ks_decapitator:tete:s:bebe_morue;Tête de bébé morue;64;
+tete_bebe_nautile_zombie;tête;50;pdc:ks_decapitator:tete:s:bebe_nautile_zombie;Tête de bébé nautile-zombie;64;
+tete_bebe_nautile_zombie_des_coraux;tête;50;pdc:ks_decapitator:tete:s:bebe_nautile_zombie_des_coraux;Tête de bébé nautile-zombie des coraux;64;
 tete_bebe_noye;tête;300;pdc:ks_decapitator:tete:s:bebe_noye;Tête de bébé noyé;64;
+tete_bebe_phantom;tête;10;pdc:ks_decapitator:tete:s:bebe_phantom;Tête de bébé phantom;64;
+tete_bebe_piglin_barbare;tête;300;pdc:ks_decapitator:tete:s:bebe_piglin_barbare;Tête de bébé piglin barbare;64;nether
+tete_bebe_pillard;tête;10;pdc:ks_decapitator:tete:s:bebe_pillard;Tête de bébé pillard;64;
+tete_bebe_poisson_d_argent;tête;50;pdc:ks_decapitator:tete:s:bebe_poisson_d_argent;Tête de bébé poisson d'argent;64;
+tete_bebe_poisson_globe;tête;10;pdc:ks_decapitator:tete:s:bebe_poisson_globe;Tête de bébé poisson-globe;64;
+tete_bebe_poisson_tropical;tête;10;pdc:ks_decapitator:tete:s:bebe_poisson_tropical;Tête de bébé poisson tropical;64;
+tete_bebe_ravageur;tête;50;pdc:ks_decapitator:tete:s:bebe_ravageur;Tête de bébé ravageur;64;
+tete_bebe_saumon;tête;10;pdc:ks_decapitator:tete:s:bebe_saumon;Tête de bébé saumon;64;
+tete_bebe_sorciere;tête;10;pdc:ks_decapitator:tete:s:bebe_sorciere;Tête de bébé sorcière;64;
+tete_bebe_squelette;tête;10;pdc:ks_decapitator:tete:s:bebe_squelette;Tête de bébé squelette;64;
+tete_bebe_vagabond;tête;10;pdc:ks_decapitator:tete:s:bebe_vagabond;Tête de bébé vagabond;64;
+tete_bebe_vex;tête;50;pdc:ks_decapitator:tete:s:bebe_vex;Tête de bébé vex;64;
+tete_bebe_vex_en_charge;tête;50;pdc:ks_decapitator:tete:s:bebe_vex_en_charge;Tête de bébé vex en charge;64;
+tete_bebe_vindicateur;tête;10;pdc:ks_decapitator:tete:s:bebe_vindicateur;Tête de bébé vindicateur;64;
+tete_bebe_wither_squelette;tête;50;pdc:ks_decapitator:tete:s:bebe_wither_squelette;Tête de bébé wither squelette;64;nether
 tete_cube_de_soufre;tête;50;pdc:ks_decapitator:tete:s:cube_de_soufre;Tête de cube de soufre;64;
+tete_gros_slime;tête;10;pdc:ks_decapitator:tete:s:gros_slime;Tête de gros slime;64;
 tete_shulker_blanc;tête;50;pdc:ks_decapitator:tete:s:shulker_blanc;Tête de shulker blanc;64;end
 tete_shulker_bleu;tête;50;pdc:ks_decapitator:tete:s:shulker_bleu;Tête de shulker bleu;64;end
 tete_shulker_bleu_clair;tête;50;pdc:ks_decapitator:tete:s:shulker_bleu_clair;Tête de shulker bleu clair;64;end
@@ -1951,3 +1996,4 @@ tete_shulker_rouge;tête;50;pdc:ks_decapitator:tete:s:shulker_rouge;Tête de shu
 tete_shulker_vert;tête;50;pdc:ks_decapitator:tete:s:shulker_vert;Tête de shulker vert;64;end
 tete_shulker_vert_clair;tête;50;pdc:ks_decapitator:tete:s:shulker_vert_clair;Tête de shulker vert clair;64;end
 tete_shulker_violet;tête;50;pdc:ks_decapitator:tete:s:shulker_violet;Tête de shulker violet;64;end
+tete_slime_moyen;tête;10;pdc:ks_decapitator:tete:s:slime_moyen;Tête de slime moyen;64;
