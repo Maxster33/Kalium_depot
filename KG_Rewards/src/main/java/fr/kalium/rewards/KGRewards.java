@@ -122,6 +122,26 @@ public final class KGRewards extends JavaPlugin implements Listener {
         envois.envoyer(joueur, nom, raison, contenu);
     }
 
+    /**
+     * 1.5.0 (LeKiwi06, 28/10/2026 : « c'est pas 1000 emeraudes qu'il doit recevoir, mais un coffre de récompense d'une
+     * valeur de 1000 emeraude ») : coffre tiré d'un niveau des tables de butin (ex. « mois », « exceptionnelle », valeur
+     * 1 000), donné par un autre plugin de Kal-Games (KG_Parkour 1.6.0). Même envoi que envoyerEmeraudes. Renvoie false
+     * (rien envoyé) si la période ou le niveau n'existe pas ou si le tirage est vide.
+     */
+    public boolean envoyerCoffre(java.util.UUID joueur, String nom, String raison, String periode, String niveau) {
+        if (!Butin.PERIODES.contains(periode) || !Butin.niveauxDe(periode).containsKey(niveau)) {
+            getLogger().warning("Coffre demandé pour " + nom + " : niveau inconnu " + periode + " / " + niveau + ".");
+            return false;
+        }
+        List<Map<String, Object>> contenu = butin.tirer(periode, niveau, 1);
+        if (contenu.isEmpty()) {
+            getLogger().warning("Coffre demandé pour " + nom + " : tirage vide (" + periode + " / " + niveau + ").");
+            return false;
+        }
+        envois.envoyer(joueur, nom, raison, contenu);
+        return true;
+    }
+
     /** Interface Récompenses (bouton de KLM_Menu, /kgrewards) : progression ; bouton admin pour les opérateurs. */
     public void ouvrir(Player joueur) {
         menuJoueur.ouvrir(joueur);

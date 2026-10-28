@@ -69,8 +69,11 @@ public final class KGParkour extends JavaPlugin {
                                 "Temps du bonus entre le dernier point de contrôle et l'arrivée. 0 = pas de bonus de temps."),
                         integer("points-first-finish", "Points du 1er arrivé", 25, 0, 200, "Ajoutés tels quels au premier arrivé. Jamais en solo."),
                         // 1.4.0 : une seule fois par map (plugins/KG_Parkour/premiers.yml), envoye par KG_Rewards.
-                        integer("first-map-emeralds", "Émeraudes du 1er à finir une map", 1000, 0, 100000,
-                                "Une seule fois par map : le premier joueur qui la finit (partie publique ou privée, pas l'entraînement) reçoit ces émeraudes sur la survie. 0 = aucune."),
+                        // 1.6.0 : coffre (KG_Rewards, mois / exceptionnelle) au lieu de « first-map-emeralds », émeraudes aux suivants.
+                        bool("first-map-chest", "Coffre au 1er à finir une map", true,
+                                "Une seule fois par map : le premier joueur qui la finit (partie publique ou privée, pas l'entraînement) reçoit un coffre exceptionnel (valeur 1 000) sur la survie."),
+                        integer("map-finish-emeralds", "Émeraudes des suivants", 500, 0, 100000,
+                                "Les joueurs qui finissent une map après le premier reçoivent ces émeraudes sur la survie, une fois par map. 0 = aucune."),
                         // 1.5.0 : lave qui monte, seulement sur les maps qui ont le point « Départ de la lave ».
                         integer("lava-delay-seconds", "Lave : départ après (s)", 30, 0, 600,
                                 "Maps avec le point « Départ de la lave » : la lave commence à monter ce temps après le départ. Jamais en entraînement."),

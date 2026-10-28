@@ -693,15 +693,23 @@ public final class ParkourInstance extends GameInstance {
             player.sendMessage(plugin.prefix().append(t("race.record", "<light_purple>Nouveau record personnel : <white><time></white> !",
                     "time", formatTime(racer.finishMillis))));
         }
-        // 1.4.0 : premier joueur a finir cette map (une seule fois par map, jamais en entrainement).
-        long emeralds = KGParkour.get().premiers().arrivee(arena().id(), arena().display(), player, racer.finishMillis,
-                Math.max(0, minigame().getInt("first-map-emeralds", 1000)));
-        if (emeralds > 0) {
-            broadcast(t("race.first-map-broadcast", "<gold><bold><name></bold> <yellow>est le premier à finir cette map : <white><n> émeraudes</white> !",
-                    "name", player.getName(), "n", groupDigits(emeralds)));
+        // 1.4.0 : premier joueur a finir cette map (une seule fois par map, jamais en entrainement). 1.6.0 : coffre pour
+        // le premier, emeraudes pour les suivants (une fois par map).
+        PremiersArrives.Gain gain = KGParkour.get().premiers().arrivee(arena().id(), arena().display(), player,
+                racer.finishMillis, minigame().getBool("first-map-chest", true),
+                Math.max(0, minigame().getInt("map-finish-emeralds", 500)));
+        if (gain.coffre()) {
+            broadcast(t("race.first-map-chest-broadcast", "<gold><bold><name></bold> <yellow>est le premier à finir cette map : <white>coffre exceptionnel</white> !",
+                    "name", player.getName()));
+            player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1f);
+        } else if (!gain.rien()) {
+            player.sendMessage(plugin.prefix().append(t("race.map-finish-emeralds", "<yellow>Première arrivée sur cette map : <white><n> émeraudes</white> !",
+                    "n", groupDigits(gain.emeraudes()))));
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1f);
+        }
+        if (!gain.rien()) {
             player.sendMessage(plugin.prefix().append(t("race.first-map-reward",
                     "<green>Ta récompense t'attend sur la survie : <white>/rewards</white>.")));
-            player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.8f, 1f);
         }
         Map<String, Object> fields = journal(section, score);
         fields.put("finishBonus", bonus);

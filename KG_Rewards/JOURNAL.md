@@ -178,3 +178,16 @@ Demande de LeKiwi06 : 1 000 émeraudes au premier joueur qui finit chaque map du
 
 **Déployé sur Kanvas (espace Kal-Games) le 26/10/2026 à 23:28 avec KG_Parkour 1.4.0 (LeKiwi06 ; 1.3.0 dans
 `_removed-kg_rewards-1.3.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.5.0 - coffre de butin pour les autres plugins (28/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : le premier à finir une map du Parcours reçoit « un coffre de récompense d'une valeur de 1000
+emeraude » et non 1 000 émeraudes (KG_Parkour 1.6.0).
+
+- Nouvelle méthode publique `KGRewards.envoyerCoffre(joueur, nom, raison, période, niveau)` : tirage du niveau des
+  tables de butin (KG_Parkour : `mois` / `exceptionnelle`, valeur 1 000), même envoi que les autres récompenses.
+  Renvoie `false` sans rien envoyer si le niveau n'existe pas ou si le tirage est vide (KG_Parkour garde alors la
+  récompense pour le démarrage suivant).
+- Aucun autre changement.
+
+**Compilé, non déployé. Statut : non testé en jeu. À déployer avec KG_Parkour 1.6.0.**

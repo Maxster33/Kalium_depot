@@ -187,3 +187,28 @@ proximité) ne reçoivent pas cette couche. La lave ne dépend pas du chrono : l
 
 **Compilé, non déployé. Statut : non testé en jeu.** À faire avant de jouer : placer le point « Départ de la lave »
 sur la nouvelle map.
+
+## 1.6.0 — coffre au premier, émeraudes aux suivants (28/10/2026)
+
+**Demande de LeKiwi06** : « c'est pas 1000 emeraudes qu'il doit recevoir, mais un coffre de récompense d'une valeur de
+1000 emeraude, c'est les joueurs qui reussissent ensuite qui reçoivent une simple somme en emeraudes ». Ses réponses :
+coffre tiré du niveau **« mois / exceptionnelle »** des tables de KG_Rewards (valeur 1 000, 16 tirages) ; **500
+émeraudes** aux suivants, **une fois par map** ; .LupoSaint : ses 1 000 émeraudes **remplacées** par le coffre.
+
+- **Premier à finir une map** (partie publique ou privée, pas l'entraînement) : coffre envoyé par
+  `KGRewards.envoyerCoffre` (KG_Rewards 1.5.0), raison « Premier à finir le parcours « <map> » ». Annonce à la partie
+  « X est le premier à finir cette map : coffre exceptionnel ! » (nouvelle clé `race.first-map-chest-broadcast`).
+- **Suivants** : à leur première arrivée sur la map, 500 émeraudes (`envoyerEmeraudes`), raison « Parcours « <map> »
+  terminé », message au joueur seul « Première arrivée sur cette map : 500 émeraudes ! » (nouvelle clé
+  `race.map-finish-emeralds`), puis « Ta récompense t'attend sur la survie : /rewards ». Le premier ne les reçoit pas
+  en plus.
+- Réglages du jeu : `first-map-emeralds` remplacé par `first-map-chest` (« Coffre au 1er à finir une map », oui ;
+  désactivé, tout le monde reçoit les émeraudes des suivants) et `map-finish-emeralds` (« Émeraudes des suivants »,
+  500 ; 0 = aucune).
+- `premiers.yml` : `maps.<arène>` (le premier, `recompense: coffre` ; les entrées 1.4.0 gardent `emeraudes`) et
+  `arrivees.<arène>.<uuid>` (les suivants). Une récompense non prise par KG_Rewards reste `envoye: false` et repart au
+  démarrage.
+- Pas rétroactif pour les suivants : ceux qui ont fini une map avant le déploiement n'ont rien.
+- Contient la 1.5.0 (lave qui monte), jamais déployée ; sans point « Départ de la lave », rien ne change.
+
+**Compilé, non déployé. Statut : non testé en jeu. À déployer avec KG_Rewards 1.5.0.**
