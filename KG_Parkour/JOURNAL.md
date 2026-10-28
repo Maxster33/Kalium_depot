@@ -149,6 +149,11 @@ l'entraînement ; **opérateurs compris**.
 **Déployé sur Kanvas (espace Kal-Games) le 26/10/2026 à 23:28 avec KG_Rewards 1.4.0 (LeKiwi06 ; 1.2.0 dans
 `_removed-kg_parkour-1.2.0/`), actif après redémarrage. Statut : non testé en jeu.**
 
+**28/10/2026 : Kanvas n'avait pas redémarré depuis le 26/10 à 22:41 (journal : `KG_Parkour v1.2.0`, `KG_Rewards
+v1.3.0`)**, donc rien à .LupoSaint, premier à finir le Parcours (Croquis, 27/10 à 21:17, 5:30,6, partie privée ; seule
+arrivée du journal). Rattrapage (accord de LeKiwi06) : `premiers.yml` posé le 28/10 à 09:46 dans `/plugins/KG_Parkour/`
+(Croquis, .LupoSaint, 1 000 émeraudes, `envoye: false`) ; la 1.4.0 l'envoie au démarrage. Pas d'annonce dans le chat.
+
 ## 1.5.0 — lave qui monte, map de jump vertical (27/10/2026)
 
 **Demande de LeKiwi06** : « la nouvelle map de jump est un parkour vertical qui commence à se remplir de lave au bout
