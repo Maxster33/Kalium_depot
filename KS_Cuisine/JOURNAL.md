@@ -24,9 +24,12 @@ d'amour ferait de la manzana). Le jeu plafonne la saturation au niveau de faim (
 
 **Pomme d'amour sur les mobs** : clic droit sur un mob qui ne se reproduit pas : hostiles compris ; ni les 4 boss
 (Wither, Ender Dragon, Warden, grand gardien), ni les animaux qui ont déjà une nourriture de reproduction, ni les
-villageois, ni un bébé. Il est amoureux 30 s (cœurs) ; deux amoureux de la même espèce à 8 blocs ou moins marchent
+villageois, ni un bébé ; ni (LeKiwi06, 28/10) le shulker (immobile), le perroquet, le marchand ambulant (pas de
+marchands à l'infini) et le têtard (déjà un bébé). Il est amoureux 30 s (cœurs) ; deux amoureux de la même espèce à 8 blocs ou moins marchent
 l'un vers l'autre, un bébé naît à leur contact, et les parents attendent 5 min (comme les animaux du jeu).
-- Espèce qui a un bébé dans le jeu (zombie, piglin, perroquet, cheval-squelette...) : le vrai bébé.
+- Espèce qui a un bébé dans le jeu (zombie, piglin, cheval-squelette...) : le vrai bébé.
+- Slime : un **petit slime** (le jeu en a déjà de plusieurs tailles ; LeKiwi06, 28/10). Le cube de magma reste un
+  mini-mob.
 - Sinon : **mini-mob** (taille 0,5, marqué `ks_cuisine:bebe`), qui grandit au bout de 20 min passées dans un chunk
   chargé. Sa tête : KS_Decapitator 1.4.0 (« Tête de bébé ... », même texture que l'adulte).
 - Les bébés ne disparaissent pas loin des joueurs (comme un animal né d'un élevage).

@@ -17,9 +17,15 @@ import org.bukkit.entity.ElderGuardian;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Shulker;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Tadpole;
 import org.bukkit.entity.Villager;
+import org.bukkit.entity.WanderingTrader;
 import org.bukkit.entity.Warden;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
@@ -47,10 +53,12 @@ import java.util.UUID;
  * Pomme d'amour (cahier, partie 3.4).
  *
  * Mobs : clic droit avec la pomme sur un mob qui ne se reproduit pas (hostiles compris ; ni les 4 boss, ni les animaux
- * qui se reproduisent déjà, ni les villageois, ni un bébé) : il est amoureux 30 s (cœurs). Deux amoureux de la même
+ * qui se reproduisent déjà, ni les villageois, ni un bébé ; ni, choix de LeKiwi06 du 28/10, le shulker (immobile), le
+ * perroquet, le marchand ambulant (pas de marchands à l'infini) et le têtard (déjà un bébé)) : il est amoureux 30 s. Deux amoureux de la même
  * espèce à 8 blocs ou moins vont l'un vers l'autre ; à leur contact, un bébé naît et les parents attendent 5 min avant
  * de recommencer (comme les animaux). Bébé : le vrai bébé du jeu si l'espèce en a un (zombie, piglin...), sinon un
- * mini-mob (taille 0,5, marqué « bebe ») qui grandit au bout de 20 min passées dans un chunk chargé. Les bébés ne
+ * mini-mob (taille 0,5, marqué « bebe ») qui grandit au bout de 20 min passées dans un chunk chargé. Slime : un petit
+ * slime (le jeu en a déjà de plusieurs tailles ; choix de LeKiwi06). Les bébés ne
  * disparaissent pas loin des joueurs.
  *
  * Joueurs : manger une pomme d'amour rend « Amoureux » 30 s (effet de KS_Effets). Deux amoureux qui se touchent : son
@@ -103,6 +111,8 @@ final class Amour implements Listener {
     private boolean eligible(Entity entite) {
         if (!(entite instanceof Mob mob) || mob instanceof Wither || mob instanceof EnderDragon
                 || mob instanceof Warden || mob instanceof ElderGuardian || mob instanceof Villager || estMini(mob)
+                || mob instanceof Shulker || mob instanceof Parrot || mob instanceof WanderingTrader
+                || mob instanceof Tadpole
                 || (mob instanceof Ageable a && !a.isAdult())) {
             return false;
         }
@@ -205,7 +215,9 @@ final class Amour implements Listener {
             return;
         }
         bebe.setRemoveWhenFarAway(false);
-        if (bebe instanceof Ageable ageable) {
+        if (bebe instanceof Slime slime && !(bebe instanceof MagmaCube)) {
+            slime.setSize(1);
+        } else if (bebe instanceof Ageable ageable) {
             ageable.setBaby();
         } else {
             AttributeInstance taille = bebe.getAttribute(Attribute.SCALE);

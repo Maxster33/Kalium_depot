@@ -26,6 +26,7 @@ import org.bukkit.entity.Frog;
 import org.bukkit.entity.Goat;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Llama;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Panda;
@@ -35,6 +36,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Shulker;
+import org.bukkit.entity.Slime;
 import org.bukkit.entity.Strider;
 import org.bukkit.entity.Vex;
 import org.bukkit.entity.Villager;
@@ -82,7 +84,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * - 1.3.0 : têtes de joueurs (TetesDeJoueurs, Kixster SMP) : un mob secret par joueur, renommé à son pseudo puis tué.
  * - 1.4.0 : bébés nés d'une pomme d'amour (KS_Cuisine, mini-mobs marqués « ks_cuisine:bebe ») : comptés comme bébés ;
  *   toute créature sans tête de bébé dans tetes.txt reçoit une « Tête de bébé ... » par tête d'adulte, avec la même
- *   texture (sauf les 4 boss, qui n'ont pas de bébé).
+ *   texture (sauf les créatures de SANS_BEBE) ; slime : une tête par taille (petit, moyen, gros).
  * - /tetes : menu de toutes les têtes. 1.2.0 : ouvert à tous, il montre à chaque joueur les têtes qu'il a déjà
  *   obtenues (une tête compte dès qu'elle a été dans son inventaire) ; les opérateurs les voient toutes et en
  *   prennent une d'un clic, pour les vérifier en jeu.
@@ -106,11 +108,12 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
     /** 1.4.0 : marque des mini-mobs nés d'une pomme d'amour (KS_Cuisine), lue sans dépendre du plugin. */
     private static final NamespacedKey BEBE_CUISINE = new NamespacedKey("ks_cuisine", "bebe");
     /**
-     * 1.4.0 : créatures sans tête de bébé ajoutée : les 4 boss (exclus de la pomme d'amour) et la grenouille (elle se
-     * reproduit déjà ; son bébé est le têtard, qui a sa tête).
+     * 1.4.0 : créatures sans tête de bébé ajoutée : les 4 boss et, choix de LeKiwi06 du 28/10, le shulker (immobile),
+     * le perroquet, le marchand ambulant et le têtard (déjà un bébé), tous exclus de la pomme d'amour ; la grenouille
+     * (elle se reproduit déjà ; son bébé est le têtard) ; le slime (la pomme donne un petit slime : têtes par taille).
      */
     private static final java.util.Set<String> SANS_BEBE = java.util.Set.of("elder_guardian", "warden", "wither",
-            "ender_dragon", "frog");
+            "ender_dragon", "frog", "shulker", "parrot", "wandering_trader", "tadpole", "slime");
 
     private static NamespacedKey marqueur;
     /** 1.2.0 : têtes déjà obtenues par chaque joueur. */
@@ -388,6 +391,15 @@ public final class KSDecapitator extends JavaPlugin implements Listener {
             case Vex v -> {
                 if (v.isCharging()) {
                     cle.append(".charging");
+                }
+            }
+            // 1.4.0 (LeKiwi06) : une tête par taille de slime (petit : clé « slime » d'avant). Le cube de magma, qui est
+            // aussi un slime pour Bukkit, garde une seule tête.
+            case Slime s when !(s instanceof MagmaCube) -> {
+                if (s.getSize() >= 4) {
+                    cle.append(".big");
+                } else if (s.getSize() >= 2) {
+                    cle.append(".medium");
                 }
             }
             case Creeper c -> {
