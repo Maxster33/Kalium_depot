@@ -211,4 +211,7 @@ coffre tiré du niveau **« mois / exceptionnelle »** des tables de KG_Rewards 
 - Pas rétroactif pour les suivants : ceux qui ont fini une map avant le déploiement n'ont rien.
 - Contient la 1.5.0 (lave qui monte), jamais déployée ; sans point « Départ de la lave », rien ne change.
 
-**Compilé, non déployé. Statut : non testé en jeu. À déployer avec KG_Rewards 1.5.0.**
+**Déployé sur Kanvas (espace Kal-Games) le 28/10/2026 à 15:09, serveur arrêté, avec KG_Rewards 1.5.0 (LeKiwi06 ; 1.4.0
+dans `_removed-kg_parkour-1.4.0/`), actif au démarrage. Statut : non testé en jeu.** `premiers.yml` : Croquis de
+.LupoSaint repassé en `recompense: coffre`, `envoye: false` (coffre envoyé au démarrage) ; ses 1 000 émeraudes retirées
+de `recompenses.yml` de KS_RewardsGUI sur Kixster (arrêté), original dans `_removed-ks_rewardsgui-recompenses-2026-10-28/`.

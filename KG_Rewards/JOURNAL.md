@@ -190,4 +190,5 @@ emeraude » et non 1 000 émeraudes (KG_Parkour 1.6.0).
   récompense pour le démarrage suivant).
 - Aucun autre changement.
 
-**Compilé, non déployé. Statut : non testé en jeu. À déployer avec KG_Parkour 1.6.0.**
+**Déployé sur Kanvas (espace Kal-Games) le 28/10/2026 à 15:09, serveur arrêté, avec KG_Parkour 1.6.0 (LeKiwi06 ; 1.4.0
+dans `_removed-kg_rewards-1.4.0/`), actif au démarrage. Statut : non testé en jeu.**
