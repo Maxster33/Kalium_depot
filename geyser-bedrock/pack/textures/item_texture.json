@@ -55,6 +55,12 @@
     },
     "kalium.bandage": {
       "textures": ["textures/items/kalium_bandage"]
+    },
+    "kalium.ble_souffle": {
+      "textures": ["textures/items/kalium_ble_souffle"]
+    },
+    "kalium.bol_cereales": {
+      "textures": ["textures/items/kalium_bol_cereales"]
     }
   }
 }

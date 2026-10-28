@@ -186,3 +186,20 @@ Limites :
 **Déployé sur Kixster le 23/10/2026 à 16:22 (déploiement groupé, accord de LeKiwi06 : « allez on peut tout déployer ») ; ancien jar dans `_removed-<plugin>-<version>/` ; actif après redémarrage.** `tetes-de-joueurs: true` à mettre dans le `config.yml` créé au démarrage.
 
 **23/10/2026 : 351 têtes chargées au démarrage de 16:36 ; `tetes-de-joueurs: true` posé à 16:45 (original dans `_removed-ks_decapitator-config-2026-10-23/`) ; actif après le prochain redémarrage de Kixster.**
+
+## 1.4.0 - têtes des bébés de la pomme d'amour (28/10/2026, LeKiwi06)
+
+Étape 3 du chantier « atouts, alcools, aliments » (cahier local `Atouts_Alcools_Aliments.md`, partie 3.4) : les bébés
+nés d'une pomme d'amour (KS_Cuisine) ont leur tête.
+
+- Un mini-mob de KS_Cuisine (marque `ks_cuisine:bebe`, lue sans dépendre du plugin) compte comme un bébé (clé
+  « ...baby »), comme un bébé du jeu.
+- Pour chaque créature qui n'a **aucune** tête de bébé dans `tetes.txt`, une « Tête de bébé X » est ajoutée au
+  démarrage pour chaque tête d'adulte « Tête de X » (variantes et états compris), **même texture**, profil et id
+  propres (`bebe_x`) : **69 têtes**. Sans tête de bébé : les 4 boss (exclus de la pomme d'amour) et la grenouille (elle
+  se reproduit déjà ; son bébé est le têtard).
+- Elles apparaissent dans `/tetes`, dans les ids de `/kaliumgive` et dans la collection, comme les autres.
+- Prix : proposition `sortie/bareme/tetes-bebes-proposition.xlsx` (palier de l'adulte ; bébé wither squelette et bébé
+  grinceur en C), en attente de validation ; KS_Economy ensuite.
+
+Compilé le 28/10/2026 (`sortie/KS_Decapitator-1.4.0.jar`). **Statut : non déployé, non testé en jeu.**

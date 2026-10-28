@@ -4,7 +4,7 @@
 # Usage : sh geyser-bedrock/build.sh [chemin du .jar du jeu] (par defaut : version 26.2 du launcher officiel).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.6.0
+VERSION=1.7.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 GAME_JAR="${1:-$APPDATA/.minecraft/versions/26.2/26.2.jar}"
 DEST="$DIR/../sortie"
@@ -36,6 +36,9 @@ unzip -p "$GAME_JAR" assets/minecraft/textures/item/amethyst_shard.png > "$WORK/
 unzip -p "$GAME_JAR" assets/minecraft/textures/item/suspicious_stew.png > "$WORK/textures/items/kalium_casse_croute_dore.png"
 # 1.6.0 : Bandage de KS_Alcools (papier ; base Java : kelp seche).
 unzip -p "$GAME_JAR" assets/minecraft/textures/item/paper.png > "$WORK/textures/items/kalium_bandage.png"
+# 1.7.0 : Ble souffle (ble ; base Java : kelp seche) et Bol de cereales (ragout de champignons ; base : tarte) de KS_Cuisine.
+unzip -p "$GAME_JAR" assets/minecraft/textures/item/wheat.png > "$WORK/textures/items/kalium_ble_souffle.png"
+unzip -p "$GAME_JAR" assets/minecraft/textures/item/mushroom_stew.png > "$WORK/textures/items/kalium_bol_cereales.png"
 for f in "$WORK"/textures/items/*.png; do [ -s "$f" ] || { echo "Image manquante : $f"; exit 1; }; done
 rm -f "$DEST/KaLium-objets-$VERSION.mcpack"
 (cd "$WORK" && jar cfM "../KaLium-objets-$VERSION.mcpack" .)

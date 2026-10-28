@@ -25,6 +25,8 @@ côté serveur (aucun effet du vrai sac ou de la vraie clé).
 | Cristal de purification (KS_Meule) | `knowledge_book` | `minecraft:amethyst_shard` | `kalium:cristal_purification` | éclat d'améthyste |
 | Casse-croûte doré (KS_CasseCroute) | `pumpkin_pie` | `minecraft:suspicious_stew` | `kalium:casse_croute_dore` | ragoût suspect |
 | Bandage (KS_Alcools) | `dried_kelp` | `minecraft:paper` | `kalium:bandage` | papier |
+| Blé soufflé (KS_Cuisine) | `dried_kelp` | `minecraft:wheat` | `kalium:ble_souffle` | blé |
+| Bol de céréales (KS_Cuisine) | `pumpkin_pie` | `minecraft:mushroom_stew` | `kalium:bol_cereales` | ragoût de champignons |
 
 Attention : **tout** livre de connaissances qui a l'un de ces `item_model` prend cette apparence ; un futur objet
 custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne ici.
@@ -122,3 +124,9 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   nouvelle liste `minecraft:dried_kelp` dans `kalium_objets.json`, avec `minecraft:food` (0, 0, mangeable rassasié),
   `minecraft:consumable` (0,8 s, manger) et `minecraft:max_stack_size` 64 déclarés. Pack `KaLium-objets-1.6.0.mcpack`
   construit (image extraite du jeu 26.2). **Envoyé sur le proxy le 28/10/2026 à 18:31 (LeKiwi06 ; pack 1.5.0 et ancienne correspondance dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.5.0-2026-10-28/`), actif après redémarrage du proxy. Non testé.**
+- **1.7.0 (28/10/2026, LeKiwi06)** : Blé soufflé (image du blé ; base Java `dried_kelp`, 0,8 s comme le kelp séché) et
+  Bol de céréales (image du ragoût de champignons ; base Java `pumpkin_pie`) de KS_Cuisine 1.0.0, avec
+  `minecraft:food` (1 / 1 et 10 / 10) et `minecraft:max_stack_size` 64 déclarés. Les autres aliments de KS_Cuisine
+  (pomme d'amour, cookies, sandwich, brunch) gardent l'image de leur base (pomme, cookie, pain, côtelette cuite) :
+  pas de correspondance. Pack `KaLium-objets-1.7.0.mcpack` construit (images extraites du jeu 26.2). **Non envoyé sur
+  le proxy, non testé.**

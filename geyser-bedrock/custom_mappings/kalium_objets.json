@@ -214,6 +214,23 @@
           },
           "minecraft:max_stack_size": 16
         }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:mushroom_stew",
+        "bedrock_identifier": "kalium:bol_cereales",
+        "display_name": "Bol de céréales",
+        "bedrock_options": {
+          "icon": "kalium.bol_cereales",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 10,
+            "saturation": 10.0
+          },
+          "minecraft:max_stack_size": 64
+        }
       }
     ],
     "minecraft:dried_kelp": [
@@ -235,6 +252,23 @@
           "minecraft:consumable": {
             "consume_seconds": 0.8,
             "animation": "eat"
+          },
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:wheat",
+        "bedrock_identifier": "kalium:ble_souffle",
+        "display_name": "Blé soufflé",
+        "bedrock_options": {
+          "icon": "kalium.ble_souffle",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 1,
+            "saturation": 1.0
           },
           "minecraft:max_stack_size": 64
         }

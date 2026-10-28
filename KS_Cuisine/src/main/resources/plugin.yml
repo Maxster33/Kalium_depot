@@ -1,0 +1,7 @@
+name: KS_Cuisine
+version: '${project.version}'
+main: fr.kalium.cuisine.KSCuisine
+api-version: '26.2'
+description: Aliments de Kixster (pomme d'amour, cookies a la baie sucree et a la baie lumineuse, sandwich, brunch, ble souffle, bol de cereales) et bebes des mobs qui ne se reproduisent pas.
+authors: [KaLium]
+depend: [KLM_Menu, KS_Effets]
