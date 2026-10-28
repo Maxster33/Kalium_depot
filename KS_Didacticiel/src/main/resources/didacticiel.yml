@@ -231,7 +231,7 @@ themes:
       coffre_renforce:
         nom: "Coffre renforcé"
         icone: CHEST
-        texte: "Stocke jusqu'à 1 000 stacks d'un seul objet. Clic droit pour déposer ou retirer ; les entonnoirs le remplissent et le vident, un comparateur donne son remplissage. Jamais de coffre double, et il ne se casse que vide."
+        texte: "Stocke jusqu'à 1 000 stacks d'un seul objet. Clic droit pour déposer ou retirer ; les entonnoirs le remplissent et le vident, un comparateur donne son remplissage. Jamais de coffre double, et il ne se casse que vide. Il ne sert à aucun autre craft et ne brûle pas."
         recettes:
           - "ks_crafts:coffre_renforce"
         requiert: "KS_CoffreRenforce"
@@ -507,6 +507,12 @@ themes:
         recettes:
           - "ks_crafts:bateau_coffre_jukebox_*"
         nouveau: "2026-10-18"
+      coffre-renforce:
+        nom: "Bateau et minecart avec coffre renforcé"
+        icone: CHEST_MINECART
+        texte: "Bateau (ou radeau) + coffre renforcé, ou minecart + coffre renforcé, à l'établi : 1 000 stacks d'un seul objet qui voyagent. Même menu et mêmes entonnoirs que le coffre renforcé ; le minecart s'attelle à un train. Il ne se casse qu'avec 27 stacks ou moins dedans, qui tombent alors au sol."
+        requiert: "KS_CoffreRenforce 1.1.0"
+        nouveau: "2026-10-28"
       laisse:
         nom: "Laisse courte"
         icone: LEAD
