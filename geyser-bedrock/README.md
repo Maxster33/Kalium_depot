@@ -121,4 +121,4 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   image du papier. Base Java `dried_kelp` (se mange en 0,8 s, comme le kelp séché, sur Java et sur Bedrock), d'où une
   nouvelle liste `minecraft:dried_kelp` dans `kalium_objets.json`, avec `minecraft:food` (0, 0, mangeable rassasié),
   `minecraft:consumable` (0,8 s, manger) et `minecraft:max_stack_size` 64 déclarés. Pack `KaLium-objets-1.6.0.mcpack`
-  construit (image extraite du jeu 26.2). **Non envoyé sur le proxy, non testé** (à envoyer avec KS_Alcools).
+  construit (image extraite du jeu 26.2). **Envoyé sur le proxy le 28/10/2026 à 18:31 (LeKiwi06 ; pack 1.5.0 et ancienne correspondance dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.5.0-2026-10-28/`), actif après redémarrage du proxy. Non testé.**

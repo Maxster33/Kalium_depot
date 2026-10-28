@@ -36,4 +36,4 @@ Limites :
 - Aucun effet custom n'existe encore : ils arriveront avec KS_Alcools, KS_Cuisine et KS_Atouts.
 - Entrée du didacticiel (`/effects`) : à ajouter dans `didacticiel.yml` au déploiement (KS_Didacticiel).
 
-**Compilé le 28/10/2026, non déployé. Statut : non testé en jeu.**
+Compilé le 28/10/2026. **Déployé sur Kixster le 28/10/2026 à 18:31** (LeKiwi06 : « Oui, déploie KS_Effets 1.0.0, KS_Alcools 1.0.0 et KS_Trains 1.6.0 sur Kixster, et geyser-bedrock 1.6.0 sur le proxy, avec les entrées du didacticiel »), avec `didacticiel.yml` ; fichiers en place vérifiés identiques au dépôt avant l'envoi. À redémarrer par LeKiwi06. Statut : non testé en jeu. Entrées du didacticiel : Menus › « Tes effets », Commandes › « /effects (/effets) ».

@@ -82,5 +82,4 @@ Limites et points à tester en premier :
   un bloc posé dans un bloc de lumière le remplace (trou dans la grille jusqu'à la prochaine pose voisine).
 - Rhum et Shéjiǔ : étapes 5 et 6 du cahier. `/kaliumgive` (KS_KaliumGive) et entrées du didacticiel : à faire.
 
-Compilé le 28/10/2026 (`sortie/KS_Alcools-1.0.0.jar`, après KLM_Menu et KS_Effets). **Statut : non déployé, non
-testé en jeu.**
+Compilé le 28/10/2026 (`sortie/KS_Alcools-1.0.0.jar`, après KLM_Menu et KS_Effets). **Déployé sur Kixster le 28/10/2026 à 18:31** (LeKiwi06 : « Oui, déploie KS_Effets 1.0.0, KS_Alcools 1.0.0 et KS_Trains 1.6.0 sur Kixster, et geyser-bedrock 1.6.0 sur le proxy, avec les entrées du didacticiel »), avec `didacticiel.yml` ; fichiers en place vérifiés identiques au dépôt avant l'envoi. À redémarrer par LeKiwi06. Statut : non testé en jeu. Didacticiel : thème « Alcools et alambic » (5 nouveautés) ; apparence Bedrock du bandage (geyser-bedrock 1.6.0) envoyée sur le proxy à la même heure.

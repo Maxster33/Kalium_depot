@@ -237,6 +237,44 @@ themes:
         requiert: "KS_CoffreRenforce"
         nouveau: "2026-10-25"
 
+  alcools:
+    nom: "Alcools et alambic"
+    icone: POTION
+    resume: "Alcools à l'alambic, combustible, Molotov, bandage, torche."
+    requiert: "KS_Alcools"
+    nouveautes:
+      neutre:
+        nom: "Alcool neutre"
+        icone: POISONOUS_POTATO
+        texte: "Fiole d'eau + patate empoisonnée à l'alambic. C'est la base de tous les alcools, et un combustible : 50 cuissons dans un four, un fumoir ou un haut fourneau. La fiole vide reste dans la case ; un entonnoir sous le four la récupère."
+        nouveau: "2026-10-28"
+      alcools:
+        nom: "Les alcools"
+        icone: HONEY_BOTTLE
+        texte: "Alcool neutre + fleur de cactus : tequila (résistance) ; + patate : vodka (lévitation, en pause quand tu t'accroupis) ; + bouteille de miel : hydromel (célérité) ; + pomme : manzana (bonus de vie) ; + blé : bière (grâce du dauphin) ; + crème de magma : tabascoolisé (ni gel ni poudreuse). Redstone, glowstone et poudre à canon comme pour les potions. Attention, un alcool peut donner la nausée !"
+        nouveau: "2026-10-28"
+      molotov:
+        nom: "Cocktail Molotov"
+        icone: FIRE_CHARGE
+        texte: "Alcool neutre + papier. Lancé, il met le feu sur 3 × 3 blocs et allume les creepers. Il ne prend pas dans le claim d'un autre joueur."
+        recettes:
+          - "ks_alcools:molotov"
+        nouveau: "2026-10-28"
+      bandage:
+        nom: "Bandage"
+        icone: PAPER
+        texte: "8 papiers autour d'un alcool neutre. Il s'applique comme on mange du kelp séché, même rassasié, et rend 1,5 cœur. Il ne nourrit pas."
+        recettes:
+          - "ks_alcools:bandage"
+        nouveau: "2026-10-28"
+      torche:
+        nom: "Torche augmentée"
+        icone: TORCH
+        texte: "Torche + papier + alcool neutre donnent 4 torches augmentées. Posée, elle éclaire tout sur 15 blocs autour d'elle (pas dans le claim d'un autre joueur) : plus de monstres alentour."
+        recettes:
+          - "ks_alcools:torche_augmentee"
+        nouveau: "2026-10-28"
+
   enclume:
     nom: "Enclume, meule, expérience"
     icone: ANVIL
@@ -568,9 +606,9 @@ themes:
       carburant:
         nom: "Train : carburant"
         icone: COAL
-        texte: "Clic droit sur un four : sa case de carburant (tout combustible). Il brûle selon la distance, la vitesse et la charge : plus le train est long, plus il lui faut de fours."
+        texte: "Clic droit sur un four : sa case de carburant (tout combustible, et l'alcool neutre : 500 blocs, la fiole vide reste dans la case). Il brûle selon la distance, la vitesse et la charge : plus le train est long, plus il lui faut de fours."
         requiert: "KS_Trains"
-        nouveau: "2026-10-18c"
+        nouveau: "2026-10-28"
       wagon-entonnoir:
         nom: "Train : wagon à entonnoir"
         icone: HOPPER_MINECART
@@ -649,6 +687,13 @@ themes:
         commande: "/statistiques (/stats)"
         requiert: "KLM_Statistiques"
         nouveau: "2026-10-23b"
+      effets:
+        nom: "Tes effets"
+        icone: GLASS_BOTTLE
+        texte: "Tous tes effets en cours, ceux du jeu et ceux du serveur, avec leur temps restant. Clique sur un effet pour suivre son temps en barre de boss ou en barre d'action."
+        commande: "/effects (/effets)"
+        requiert: "KS_Effets"
+        nouveau: "2026-10-28"
       reseau:
         nom: "Le réseau"
         icone: BELL
@@ -818,3 +863,9 @@ themes:
         texte: "Tes statistiques sur ce serveur."
         requiert: "KLM_Statistiques"
         nouveau: "2026-10-23"
+      effets-cmd:
+        nom: "/effects (/effets)"
+        icone: GLASS_BOTTLE
+        texte: "Tes effets en cours et leur temps restant ; suivre un effet en barre de boss ou d'action."
+        requiert: "KS_Effets"
+        nouveau: "2026-10-28"
