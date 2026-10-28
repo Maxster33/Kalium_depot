@@ -215,3 +215,6 @@ coffre tiré du niveau **« mois / exceptionnelle »** des tables de KG_Rewards 
 dans `_removed-kg_parkour-1.4.0/`), actif au démarrage. Statut : non testé en jeu.** `premiers.yml` : Croquis de
 .LupoSaint repassé en `recompense: coffre`, `envoye: false` (coffre envoyé au démarrage) ; ses 1 000 émeraudes retirées
 de `recompenses.yml` de KS_RewardsGUI sur Kixster (arrêté), original dans `_removed-ks_rewardsgui-recompenses-2026-10-28/`.
+Redémarrage du 28/10 à 15:14 : `KG_Parkour v1.6.0` et `KG_Rewards v1.5.0` actifs, aucune erreur ; coffre de .LupoSaint
+envoyé à 15:14:17 (16 éléments, valeur 1 000), reçu par KS_RewardsGUI sur Kixster, en attente de récupération ; plus
+de coffre d'émeraudes. Émeraudes des suivants pas encore vues en jeu.

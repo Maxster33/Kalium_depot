@@ -191,4 +191,5 @@ emeraude » et non 1 000 émeraudes (KG_Parkour 1.6.0).
 - Aucun autre changement.
 
 **Déployé sur Kanvas (espace Kal-Games) le 28/10/2026 à 15:09, serveur arrêté, avec KG_Parkour 1.6.0 (LeKiwi06 ; 1.4.0
-dans `_removed-kg_rewards-1.4.0/`), actif au démarrage. Statut : non testé en jeu.**
+dans `_removed-kg_rewards-1.4.0/`), actif au démarrage. Statut : non testé en jeu.** Redémarrage du 28/10 à 15:14 :
+actif, aucune erreur ; premier `envoyerCoffre` (.LupoSaint, Croquis : 16 éléments, valeur 1 000) reçu sur Kixster.
