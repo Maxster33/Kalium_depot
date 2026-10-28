@@ -124,3 +124,5 @@ la grille -> coffre renforcé, et le bateau, le radeau ou le minecart reste dans
 **À déployer avec KS_Crafts 1.23.0.**
 
 Compilé le 28/10/2026 (`sortie/KS_CoffreRenforce-1.2.0.jar`). **Statut : non déployé, non testé en jeu.**
+
+**Déployé sur Kixster le 28/10/2026 à 10:49** (LeKiwi06 : « Oui, déploie KS_Crafts 1.23.0 et KS_CoffreRenforce 1.2.0 sur Kixster avec le didacticiel »), avec `didacticiel.yml` : jars en place vérifiés identiques à `jars-deployes/` avant l'envoi, rangés dans `_removed-ks_crafts-1.22.0/` et `_removed-ks_coffrerenforce-1.1.0/` ; fichiers du serveur vérifiés identiques à ceux compilés. À redémarrer par LeKiwi06. Statut : non testé en jeu.
