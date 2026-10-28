@@ -210,3 +210,18 @@ Compilé le 27/10/2026 (`sortie/KS_Trains-1.5.0.jar`, avec `KS_CoffreRenforce` c
 déployé, non testé en jeu.**
 
 **Déployé sur Kixster le 28/10/2026 à 10:34** (LeKiwi06 : « Oui, déploie KS_CoffreRenforce 1.1.0 et KS_Trains 1.5.0 sur Kixster »), avec KS_Trains 1.5.0 et `didacticiel.yml` (Véhicules › « Bateau et minecart avec coffre renforcé ») : jars en place vérifiés identiques à `jars-deployes/` avant l'envoi, rangés dans `_removed-ks_coffrerenforce-1.0.0/` et `_removed-ks_trains-1.4.8/` ; fichiers du serveur vérifiés identiques à ceux compilés. À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.6.0 - alcool neutre comme carburant (28/10/2026, LeKiwi06)
+
+Étape 2 du chantier « atouts, alcools, aliments » (cahier local `Atouts_Alcools_Aliments.md`, partie 3.2.1) :
+l'alcool neutre de KS_Alcools est un carburant des fours du train.
+
+- **500 blocs** par alcool neutre (10 000 ticks de cuisson, comme 50 cuissons dans un four ; 1 charbon = 80 blocs).
+- **Case du four** : l'alcool neutre s'y pose comme un autre carburant ; brûlé, il laisse la **fiole vide** dans la
+  case (comme le seau vide de la lave), qui la bloque jusqu'à ce qu'un joueur la retire (clic droit sur le four ou menu
+  du train, puis la case).
+- **Wagons à entonnoir** : comme le seau de lave, l'alcool neutre est versé seulement dans un four dont la réserve
+  est vide (+500 blocs) et **la fiole vide reste dans le wagon à entonnoir**.
+- Reconnu par sa marque (`ks_alcools:alcool` = `neutre`) : pas de dépendance à KS_Alcools.
+
+Compilé le 28/10/2026 (`sortie/KS_Trains-1.6.0.jar`). **Statut : non déployé, non testé en jeu.**

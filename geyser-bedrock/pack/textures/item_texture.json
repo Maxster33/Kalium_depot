@@ -52,6 +52,9 @@
     },
     "kalium.casse_croute_dore": {
       "textures": ["textures/items/kalium_casse_croute_dore"]
+    },
+    "kalium.bandage": {
+      "textures": ["textures/items/kalium_bandage"]
     }
   }
 }

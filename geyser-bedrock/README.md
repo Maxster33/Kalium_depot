@@ -24,6 +24,7 @@ côté serveur (aucun effet du vrai sac ou de la vraie clé).
 | Badge de localisation (KS_Jetons) | `knowledge_book` | `minecraft:copper_block` | `kalium:badge_localisation` | face du bloc de cuivre (image plate) |
 | Cristal de purification (KS_Meule) | `knowledge_book` | `minecraft:amethyst_shard` | `kalium:cristal_purification` | éclat d'améthyste |
 | Casse-croûte doré (KS_CasseCroute) | `pumpkin_pie` | `minecraft:suspicious_stew` | `kalium:casse_croute_dore` | ragoût suspect |
+| Bandage (KS_Alcools) | `dried_kelp` | `minecraft:paper` | `kalium:bandage` | papier |
 
 Attention : **tout** livre de connaissances qui a l'un de ces `item_model` prend cette apparence ; un futur objet
 custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne ici.
@@ -116,3 +117,8 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   `kalium_objets.json` ; fichiers du proxy vérifiés identiques au dépôt avant l'envoi ; pack 1.4.0 et ancienne
   correspondance dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.4.0-2026-10-27/`), actif après redémarrage du
   proxy. Non testé.**
+- **1.6.0 (28/10/2026, LeKiwi06)** : Bandage de KS_Alcools 1.0.0 (étape 2 du chantier « atouts, alcools, aliments ») :
+  image du papier. Base Java `dried_kelp` (se mange en 0,8 s, comme le kelp séché, sur Java et sur Bedrock), d'où une
+  nouvelle liste `minecraft:dried_kelp` dans `kalium_objets.json`, avec `minecraft:food` (0, 0, mangeable rassasié),
+  `minecraft:consumable` (0,8 s, manger) et `minecraft:max_stack_size` 64 déclarés. Pack `KaLium-objets-1.6.0.mcpack`
+  construit (image extraite du jeu 26.2). **Non envoyé sur le proxy, non testé** (à envoyer avec KS_Alcools).

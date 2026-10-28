@@ -30,12 +30,17 @@ import java.util.UUID;
  * Carburant des wagonnets à four d'un train (cahier, règles 6 et 7) : chaque four a une réserve (en blocs à parcourir)
  * et une case de carburant. 1 charbon = 80 blocs : un carburant vaut sa durée de cuisson (ticks) / 20 blocs. Un seau
  * de lave mis dans la case donne 1 000 blocs et y laisse le seau vide, qui bloque la case jusqu'à ce qu'on le retire.
+ * 1.6.0 : l'alcool neutre de KS_Alcools (cahier « atouts, alcools, aliments », partie 3.2.1) fait de même : 500 blocs
+ * (10 000 ticks, 50 cuissons dans un four), la fiole vide reste dans la case.
  */
 final class Foyers implements Listener {
 
     /** Case du carburant dans l'interface d'un four (petit coffre d'une rangée). */
     static final int CASE = 4;
     private static final int CASE_RESERVE = 3;
+
+    /** 1.6.0 : marque des alcools de KS_Alcools (lue sans dépendre du plugin). */
+    private static final NamespacedKey ALCOOL = new NamespacedKey("ks_alcools", "alcool");
 
     private final KSTrains plugin;
     private final NamespacedKey cleReserve;
@@ -104,9 +109,30 @@ final class Foyers implements Listener {
         return m.isFuel() ? 300 : 0;
     }
 
+    /** 1.6.0 : durée de cuisson d'un objet (alcool neutre de KS_Alcools : 10 000 ticks, soit 500 blocs). */
+    static int cuisson(ItemStack objet) {
+        return alcoolNeutre(objet) ? 10000 : cuisson(objet.getType());
+    }
+
+    /** 1.6.0 : alcool neutre de KS_Alcools (potion marquée « neutre »). */
+    static boolean alcoolNeutre(ItemStack objet) {
+        return objet != null && objet.getType() == Material.POTION && objet.hasItemMeta()
+                && "neutre".equals(objet.getItemMeta().getPersistentDataContainer().get(ALCOOL, PersistentDataType.STRING));
+    }
+
+    /** 1.6.0 : carburant dans un récipient (seau de lave, alcool neutre) : le récipient vide reste après lui. */
+    static boolean liquide(ItemStack objet) {
+        return objet != null && (objet.getType() == Material.LAVA_BUCKET || alcoolNeutre(objet));
+    }
+
+    /** Récipient vide laissé par un carburant liquide : seau, fiole. */
+    static ItemStack recipient(ItemStack objet) {
+        return new ItemStack(objet.getType() == Material.LAVA_BUCKET ? Material.BUCKET : Material.GLASS_BOTTLE);
+    }
+
     static boolean carburant(ItemStack objet) {
         // 1.5.0 : jamais un coffre renforcé ni un véhicule avec coffre renforcé (KS_CoffreRenforce).
-        return objet != null && !objet.isEmpty() && cuisson(objet.getType()) > 0 && !CoffresRenforces.objetRenforce(objet);
+        return objet != null && !objet.isEmpty() && cuisson(objet) > 0 && !CoffresRenforces.objetRenforce(objet);
     }
 
     // ------------------------------------------------------------------ réserve et case
@@ -150,7 +176,7 @@ final class Foyers implements Listener {
     /** 1.3.0 : carburant d'un four en blocs (réserve + case), pour servir d'abord le moins rempli. */
     double charge(PoweredMinecart four) {
         ItemStack objet = caseCarburant(four);
-        return reserve(four) + (carburant(objet) ? cuisson(objet.getType()) / 20.0 * objet.getAmount() : 0);
+        return reserve(four) + (carburant(objet) ? cuisson(objet) / 20.0 * objet.getAmount() : 0);
     }
 
     /** Vrai si le four a une réserve, ou un carburant brûlable dans sa case (pas un seau vide). */
@@ -160,7 +186,7 @@ final class Foyers implements Listener {
 
     /**
      * Le train a parcouru {@code blocs} : la réserve baisse ; vide, le four brûle un objet de sa case (seau de lave :
-     * le seau vide reste dans la case).
+     * le seau vide reste dans la case ; 1.6.0 : alcool neutre, la fiole vide).
      */
     void consommer(PoweredMinecart four, double blocs) {
         double reserve = reserve(four) - blocs;
@@ -170,9 +196,9 @@ final class Foyers implements Listener {
                 reserve = 0;
                 break;
             }
-            reserve += cuisson(objet.getType()) / 20.0;
-            if (objet.getType() == Material.LAVA_BUCKET) {
-                objet = new ItemStack(Material.BUCKET);
+            reserve += cuisson(objet) / 20.0;
+            if (liquide(objet)) {
+                objet = recipient(objet);
             } else {
                 objet = objet.clone();
                 objet.setAmount(objet.getAmount() - 1);
@@ -188,13 +214,13 @@ final class Foyers implements Listener {
 
     /**
      * 1.2.0 : un wagon à entonnoir verse un seau de lave : accepté seulement si la réserve du four est vide (règle du
-     * cahier) ; la réserve prend 1 000 blocs.
+     * cahier) ; la réserve prend 1 000 blocs. 1.6.0 : de même pour l'alcool neutre (500 blocs).
      */
-    boolean verserLave(PoweredMinecart four) {
+    boolean verser(PoweredMinecart four, ItemStack liquide) {
         if (reserve(four) > 0) {
             return false;
         }
-        reserve(four, cuisson(Material.LAVA_BUCKET) / 20.0);
+        reserve(four, cuisson(liquide) / 20.0);
         Inventory ouverte = ouvertes.get(four.getUniqueId());
         if (ouverte != null) {
             ouverte.setItem(CASE_RESERVE, infoReserve(four));
@@ -203,11 +229,11 @@ final class Foyers implements Listener {
     }
 
     /**
-     * 1.2.0 : un wagon à entonnoir donne un carburant (un seul, pas un seau de lave) : il va dans la case, si elle est
-     * vide ou contient le même carburant avec de la place.
+     * 1.2.0 : un wagon à entonnoir donne un carburant (un seul, pas un seau de lave ni un alcool neutre) : il va dans la
+     * case, si elle est vide ou contient le même carburant avec de la place.
      */
     boolean ajouter(PoweredMinecart four, ItemStack objet) {
-        if (!carburant(objet) || objet.getType() == Material.LAVA_BUCKET) {
+        if (!carburant(objet) || liquide(objet)) {
             return false;
         }
         ItemStack dedans = caseCarburant(four);

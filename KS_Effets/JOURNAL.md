@@ -17,7 +17,8 @@ Dépend de KLM_Menu (menus en coffre, textes).
 - **Minuteurs** : en secondes, ne s'écoulent qu'en jeu ; gardés à la déconnexion et au redémarrage (`effets.yml`,
   enregistré chaque minute s'il a changé, à la déconnexion et à l'arrêt).
 - **Mort et lait** : un effet custom s'efface, comme un effet du jeu (`effacer-a-la-mort`, `effacer-au-lait` dans
-  `config.yml`, vrais par défaut). **Choix de Claude, non écrit dans le cahier : à confirmer par LeKiwi06.**
+  `config.yml`, vrais par défaut). Choix de Claude, non écrit dans le cahier, **confirmé par LeKiwi06 le 28/10/2026**
+  (« Oui, garde l'effacement à la mort et au lait »).
 - **`/effects`** (alias `/effets`) : menu en coffre des effets en cours, ceux du jeu (nom traduit, niveau, couleur
   bleue / rouge / grise selon le type, fiole à la couleur de l'effet) puis les custom, avec le temps restant, rafraîchi
   chaque seconde. Clic sur un effet : petit menu « Barre de boss », « Barre d'action », « Ne plus suivre », « Retour ».

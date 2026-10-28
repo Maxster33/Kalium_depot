@@ -1,6 +1,5 @@
 package fr.kalium.trains;
 
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
@@ -28,7 +27,8 @@ import java.util.List;
  * autorisée, autres entonnoirs) et donne aux 3 wagons devant lui (fours : carburant seulement, dans leur case ; coffres
  * dont l'entrée est autorisée ; autres entonnoirs). Devant = côté locomotive (rang plus petit), même en marche arrière.
  * Rythme d'un entonnoir du jeu : 1 objet tous les 8 ticks dans chaque sens. Seau de lave donné à un four dont la
- * réserve est vide : la réserve prend 1 000 blocs et le seau vide reste dans l'entonnoir. Dans un train, l'entonnoir
+ * réserve est vide : la réserve prend 1 000 blocs et le seau vide reste dans l'entonnoir (1.6.0 : alcool neutre de
+ * KS_Alcools, 500 blocs, la fiole vide reste dans l'entonnoir). Dans un train, l'entonnoir
  * n'aspire plus les objets au sol ni les contenants au-dessus des rails.
  *
  * Réglages d'un wagon à coffre (entrée, sortie ; autorisées par défaut) : respectés par les entonnoirs du train
@@ -176,17 +176,17 @@ final class Entonnoirs implements Listener {
         return false;
     }
 
-    /** Donne à un four le premier carburant de l'entonnoir qu'il accepte (seau de lave : le seau vide reste). */
+    /** Donne à un four le premier carburant de l'entonnoir qu'il accepte (seau de lave, alcool neutre : le récipient vide reste). */
     private boolean alimenter(PoweredMinecart four, Inventory entonnoir) {
         for (int place = 0; place < entonnoir.getSize(); place++) {
             ItemStack objet = entonnoir.getItem(place);
             if (!Foyers.carburant(objet)) {
                 continue;
             }
-            if (objet.getType() == Material.LAVA_BUCKET) {
-                // Un seau de lave ne s'empile pas : le seau vide prend sa place.
-                if (foyers.verserLave(four)) {
-                    entonnoir.setItem(place, new ItemStack(Material.BUCKET));
+            if (Foyers.liquide(objet)) {
+                // Un seau de lave ou une potion ne s'empile pas : le récipient vide prend sa place.
+                if (foyers.verser(four, objet)) {
+                    entonnoir.setItem(place, Foyers.recipient(objet));
                     return true;
                 }
             } else if (foyers.ajouter(four, objet)) {
