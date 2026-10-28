@@ -19,7 +19,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KLM_Espaces (nouveau), KaliumRelay, KalGames, KLM_Menu, KLM_Chat, KLM_Contacts, KG_BuildBattle, KV_BuildBattle — LeKiwi06 — depuis le 2026-10-21 01:45 — fusion de Kal-Games dans Kanvas (espaces étanches) et Serveur Jeux à la place d'Event (expiration des serveurs)
 - KG_Parkour — LeKiwi06 — depuis le 2026-10-27 16:40 — lave qui monte sur la nouvelle map de jump vertical
 - KS_Effets (nouveau) — LeKiwi06 — depuis le 2026-10-28 15:15 — étape 1 du chantier atouts / alcools / aliments : moteur des effets custom et /effects
-- KS_Alcools (nouveau), KS_Trains, geyser-bedrock — LeKiwi06 — depuis le 2026-10-28 18:10 — étape 2 du chantier atouts / alcools / aliments (geyser-bedrock : apparence Bedrock du bandage) : alcools à l'alambic, alcool neutre comme carburant (fours et trains), Molotov, bandage, torche augmentée
+- KS_Alcools (nouveau), KS_Trains, geyser-bedrock, KS_Didacticiel — LeKiwi06 — depuis le 2026-10-28 18:10 — étape 2 du chantier atouts / alcools / aliments (geyser-bedrock : apparence Bedrock du bandage) : alcools à l'alambic, alcool neutre comme carburant (fours et trains), Molotov, bandage, torche augmentée
 - KS_DiagOutils (nouveau, temporaire) — LeKiwi06 — depuis le 2026-10-24 23:36 — diagnostic : houe, pelle, hache sans effet pour les joueurs Bedrock sur Kixster
 
 
