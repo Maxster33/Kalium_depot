@@ -323,7 +323,7 @@ themes:
       regles:
         nom: "Comment ça marche"
         icone: CRAFTING_TABLE
-        texte: "Entoure une pièce d'équipement de 8 ressources à l'établi : elle gagne un atout pour 1 heure, qui ne s'écoule que quand tu la portes. Refais le craft pour ajouter une heure ; un autre atout remplace le premier. L'objet change d'apparence mais garde sa protection, ses enchantements et son usure. Temps restant : dans sa description et dans /effects."
+        texte: "Entoure une pièce d'équipement de 8 ressources à l'établi : elle gagne un atout pour 1 heure, qui ne s'écoule que quand tu la portes. Refais le craft pour ajouter une heure ; un autre atout remplace le premier. L'objet change d'apparence mais garde sa protection, ses enchantements et son usure. Temps restant : dans sa description et dans /effects. Tant qu'elle a un atout, la pièce ne se pose pas et ne sert dans aucun autre craft."
         nouveau: "2026-10-29"
       ski:
         nom: "Bottes de ski"
@@ -345,6 +345,13 @@ themes:
         texte: "8 crèmes de magma autour de bottes : les blocs de magma ne te brûlent plus."
         recettes:
           - "ks_atouts:coupe_feu"
+        nouveau: "2026-10-29"
+      ventouse:
+        nom: "Casque ventouse"
+        icone: HONEY_BLOCK
+        texte: "8 blocs de miel autour d'un casque : quand ta tête touche un plafond, tu y restes collé et tu peux glisser dessous. Accroupis-toi pour retomber (en sautant accroupi, tu ne colles pas). Ne colle pas dans l'eau ni dans la lave."
+        recettes:
+          - "ks_atouts:ventouse"
         nouveau: "2026-10-29"
 
   enclume:

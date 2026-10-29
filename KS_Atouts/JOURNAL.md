@@ -30,9 +30,8 @@ touche, pour retomber, il suffit de sneak ».
 Limites :
 - Bedrock : le bloc de miel porté sur la tête reste à vérifier en jeu (Bedrock dessine peut-être seulement les têtes
   et la citrouille).
-- Didacticiel (nouvelle entrée dans le thème « Atouts d'équipement ») : à faire au déploiement.
 
-Compilé le 29/10/2026 (`sortie/KS_Atouts-1.1.0.jar`). **Statut : non déployé, non testé en jeu.**
+Compilé le 29/10/2026 (`sortie/KS_Atouts-1.1.0.jar`). **Déployé sur Kixster le 29/10/2026 à 15:46** (LeKiwi06 : « Oui, déploie KS_Atouts 1.1.0 sur Kixster avec l'entrée du didacticiel »), avec `didacticiel.yml` (entrée « Casque ventouse » dans « Atouts d'équipement », règles complétées : pas de pose, pas d'autre craft) ; fichiers en place vérifiés identiques au dépôt avant l'envoi, et après. 1.0.0 dans `_removed-ks_atouts-1.0.0/`, ancien didacticiel dans `_removed-ks_didacticiel-yml-2026-10-29-ventouse/`. À redémarrer par LeKiwi06 (la recette `ks_atouts:ventouse` du didacticiel n'existe qu'après le redémarrage). Statut : non testé en jeu.
 
 ## 1.0.0 - bottes de ski, casque poiscaille, bottes coupe-feu (28/10/2026)
 
