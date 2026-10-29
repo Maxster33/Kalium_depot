@@ -2,6 +2,6 @@ name: KS_Atouts
 version: '${project.version}'
 main: fr.kalium.atouts.KSAtouts
 api-version: '26.2'
-description: Atouts d'equipement de Kixster (bottes de ski, casque poiscaille, bottes coupe-feu) a duree limitee, decomptee en portant l'objet.
+description: Atouts d'equipement de Kixster (bottes de ski, casque poiscaille, bottes coupe-feu, casque ventouse) a duree limitee, decomptee en portant l'objet.
 authors: [KaLium]
 depend: [KLM_Menu, KS_Effets]

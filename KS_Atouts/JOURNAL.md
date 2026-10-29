@@ -4,6 +4,36 @@ Serveur Kixster. Atouts d'équipement (étape 4 du chantier « atouts, alcools, 
 28/10/2026 ; cahier local `Atouts_Alcools_Aliments.md`, partie 3.5, à copier ici au déploiement).
 Dépend de KLM_Menu (textes) et de KS_Effets (/effects).
 
+## 1.1.0 - casque ventouse (29/10/2026)
+
+Demande de LeKiwi06 du 29/10 : « entourer un casque de block de miel fait nous coller au plafond si notre tête le
+touche, pour retomber, il suffit de sneak ».
+
+| Atout | Craft (à l'établi) | Apparence pendant l'atout | Effet |
+|---|---|---|---|
+| Casque ventouse | 8 blocs de miel autour d'un casque | bloc de miel (posé sur la tête) | collé au plafond quand la tête le touche, sneak pour retomber |
+
+- **Collage** (vérifié chaque tick) : en l'air, la tête touche le dessous d'un bloc solide (dalle, escalier, verre,
+  feuilles…). Pas dans l'eau ou la lave, pas en sneakant (on saute dans un tunnel de 2 blocs sans rester accroché),
+  ni en véhicule, en élytre, en vol ou en spectateur. Pas non plus si le joueur lévite déjà (shulker).
+- **Collé** : une lévitation I sans particules ni icône (15 s renouvelées chaque seconde) le plaque au plafond ; il
+  glisse au plafond comme on avance en l'air. Le mouvement est calculé par le client : même rendu Java et Bedrock.
+- **Décollage** : sneak, sortie de sous le plafond (plus de bloc à 0,15 bloc au-dessus de la tête), eau ou lave,
+  casque retiré, lait ou mort, déconnexion, arrêt du serveur. Dégâts de chute normaux.
+- Choix de LeKiwi06 (29/10) : glisse au plafond plutôt que figé (figer saccade, surtout sur Bedrock) ; apparence bloc
+  de miel (« ça fonctionne sur l'emplacement de la tête » ; vérifié dans le client 26.3 : un objet sans apparence
+  d'armure est dessiné sur la tête) ; sneak = pas collé ; hors de l'eau.
+- **Protections ajoutées pour tous les atouts** : un objet sous atout ne se pose pas comme un bloc (la tête de gardien
+  et le bloc de miel posés perdaient l'équipement), et ne sert dans aucun autre craft, à l'établi comme au fabricant
+  (un casque ventouse donnait des fioles de miel ; teindre des bottes de ski n'est donc plus possible).
+
+Limites :
+- Bedrock : le bloc de miel porté sur la tête reste à vérifier en jeu (Bedrock dessine peut-être seulement les têtes
+  et la citrouille).
+- Didacticiel (nouvelle entrée dans le thème « Atouts d'équipement ») : à faire au déploiement.
+
+Compilé le 29/10/2026 (`sortie/KS_Atouts-1.1.0.jar`). **Statut : non déployé, non testé en jeu.**
+
 ## 1.0.0 - bottes de ski, casque poiscaille, bottes coupe-feu (28/10/2026)
 
 | Atout | Craft (à l'établi) | Apparence pendant l'atout | Effet |

@@ -30,10 +30,10 @@ import java.util.UUID;
 /**
  * Les atouts et leur pose sur un équipement (cahier, partie 3.5).
  *
- * Pendant l'atout, l'objet change vraiment de type (bottes en cuir, tête de gardien, bottes en cuivre) en gardant ses
- * caractéristiques : le type d'origine, ses modificateurs d'attributs (armure, robustesse, résistance au recul),
- * sa durabilité, sa réparation, sa résistance au feu (netherite), son enchantabilité, sa pile de 1 et son nom de
- * base sont recopiés comme valeurs explicites ; son apparence portée vient du nouveau type. Les enchantements, le nom
+ * Pendant l'atout, l'objet change vraiment de type (bottes en cuir, tête de gardien, bottes en cuivre, bloc de miel) en
+ * gardant ses caractéristiques : le type d'origine, ses modificateurs d'attributs (armure, robustesse, résistance au
+ * recul), sa durabilité, sa réparation, sa résistance au feu (netherite), son enchantabilité, sa pile de 1 et son nom
+ * de base sont recopiés comme valeurs explicites ; son apparence portée vient du nouveau type. Les enchantements, le nom
  * donné, la garniture et l'usure suivent d'eux-mêmes. Fin de l'atout : il reprend son type, et les valeurs recopiées
  * qui venaient de son type d'origine sont retirées (l'usure reste).
  *
@@ -49,6 +49,7 @@ final class Atouts {
     static final String SKI = "ski";
     static final String POISCAILLE = "poiscaille";
     static final String COUPE_FEU = "coupe_feu";
+    static final String VENTOUSE = "ventouse";
 
     static final Map<String, Atout> ATOUTS = new LinkedHashMap<>();
 
@@ -58,6 +59,9 @@ final class Atouts {
                 Material.PLAYER_HEAD));
         ATOUTS.put(COUPE_FEU, new Atout(COUPE_FEU, "Bottes coupe-feu", Material.MAGMA_CREAM, EquipmentSlot.FEET,
                 Material.COPPER_BOOTS));
+        // Un bloc de miel porté s'affiche sur la tête (pas d'apparence d'armure : le jeu dessine l'objet).
+        ATOUTS.put(VENTOUSE, new Atout(VENTOUSE, "Casque ventouse", Material.HONEY_BLOCK, EquipmentSlot.HEAD,
+                Material.HONEY_BLOCK));
     }
 
     /** Une heure par craft (choix de LeKiwi06), cumulable sans plafond. */

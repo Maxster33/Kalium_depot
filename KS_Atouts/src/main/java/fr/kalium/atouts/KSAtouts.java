@@ -7,13 +7,17 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+import org.bukkit.block.Crafter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.CrafterCraftEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -29,6 +33,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.BoundingBox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,19 +49,28 @@ import java.util.UUID;
  * étape 4.
  *
  * - Craft : 8 ressources autour de l'équipement, à l'établi (pied de lapin autour de bottes : bottes de ski ; poisson-
- *   globe autour d'un casque : casque poiscaille ; crème de magma autour de bottes : bottes coupe-feu).
+ *   globe autour d'un casque : casque poiscaille ; crème de magma autour de bottes : bottes coupe-feu ; bloc de miel
+ *   autour d'un casque : casque ventouse, ajouté le 29/10).
  * - Chaque craft ajoute 1 heure, décomptée seulement quand l'objet est porté, sans plafond. Un autre atout remplace le
  *   précédent (son temps est perdu).
- * - Pendant l'atout, l'objet prend l'apparence (le vrai type) de bottes en cuir, d'une tête de gardien ou de bottes en
- *   cuivre, en gardant ses caractéristiques ({@link Atouts}) ; fin de l'atout : il reprend son type.
+ * - Pendant l'atout, l'objet prend l'apparence (le vrai type) de bottes en cuir, d'une tête de gardien, de bottes en
+ *   cuivre ou d'un bloc de miel, en gardant ses caractéristiques ({@link Atouts}) ; fin de l'atout : il reprend son
+ *   type. Un objet sous atout ne se pose pas comme un bloc et ne sert dans aucun autre craft.
  * - Effets : bottes de ski = marcher sur la poudreuse (le jeu le permet aux bottes en cuir) ; casque poiscaille =
- *   vision nocturne tant que la tête est sous l'eau ; bottes coupe-feu = aucun dégât des blocs de magma.
+ *   vision nocturne tant que la tête est sous l'eau ; bottes coupe-feu = aucun dégât des blocs de magma ; casque
+ *   ventouse = la tête qui touche un plafond (bloc solide, hors de l'eau et de la lave, pas en sneakant) y reste
+ *   collée par une lévitation invisible ; le joueur glisse au plafond, retombe en sneakant ou en sortant de dessous.
  * - Temps restant : dans la description de l'objet (mise à jour chaque minute) et dans /effects (KS_Effets).
  */
 public final class KSAtouts extends JavaPlugin implements Listener {
 
     /** Vision nocturne du casque poiscaille : 15 s renouvelées chaque seconde (pas de clignotement sous 10 s). */
     private static final int VISION = 15 * 20;
+    /** Lévitation du casque ventouse : 15 s renouvelées chaque seconde tant que le joueur est collé. */
+    private static final int LEVITE = 15 * 20;
+    /** Écart toléré entre le haut de la tête et le plafond : contact, puis maintien (retard de la position). */
+    private static final double CONTACT = 0.06;
+    private static final double MAINTIEN = 0.15;
 
     private Lang lang;
 
@@ -66,6 +80,8 @@ public final class KSAtouts extends JavaPlugin implements Listener {
     private final Map<UUID, int[]> portees = new HashMap<>();
     /** Joueurs à qui le casque poiscaille donne la vision nocturne. */
     private final Set<UUID> voyants = new HashSet<>();
+    /** Joueurs collés au plafond par le casque ventouse. */
+    private final Set<UUID> colles = new HashSet<>();
 
     @Override
     public void onEnable() {
@@ -79,6 +95,7 @@ public final class KSAtouts extends JavaPlugin implements Listener {
             KSEffets.fournisseur(id, joueur -> restantPorte(joueur, a));
         }
         Bukkit.getScheduler().runTaskTimer(this, this::seconde, 20L, 20L);
+        Bukkit.getScheduler().runTaskTimer(this, this::ventouses, 1L, 1L);
         Bukkit.getOnlinePlayers().forEach(this::livreDeRecettes);
         lang.saveIfNeeded();
     }
@@ -86,6 +103,12 @@ public final class KSAtouts extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         Bukkit.getOnlinePlayers().forEach(this::ecrire);
+        for (UUID id : new ArrayList<>(colles)) {
+            Player joueur = Bukkit.getPlayer(id);
+            if (joueur != null) {
+                decoller(joueur);
+            }
+        }
         recettes.keySet().forEach(Bukkit::removeRecipe);
     }
 
@@ -100,8 +123,9 @@ public final class KSAtouts extends JavaPlugin implements Listener {
     private void recettes() {
         List<Material> bottes = new ArrayList<>(Tag.ITEMS_FOOT_ARMOR.getValues());
         List<Material> casques = new ArrayList<>(Tag.ITEMS_HEAD_ARMOR.getValues());
-        // Un casque déjà sous atout est une tête : acceptée, puis vérifiée par ses marques.
+        // Un casque déjà sous atout est une tête ou un bloc de miel : accepté, puis vérifié par ses marques.
         casques.add(Material.PLAYER_HEAD);
+        casques.add(Material.HONEY_BLOCK);
         for (Atouts.Atout a : Atouts.ATOUTS.values()) {
             NamespacedKey cle = new NamespacedKey(this, a.id());
             ShapedRecipe r = new ShapedRecipe(cle, apercu(a));
@@ -124,18 +148,52 @@ public final class KSAtouts extends JavaPlugin implements Listener {
         return item;
     }
 
-    /** Résultat réel : l'équipement du centre avec l'atout (rien si ce n'est pas une pièce acceptée). */
+    /**
+     * Résultat réel : l'équipement du centre avec l'atout (rien si ce n'est pas une pièce acceptée). Un objet sous atout
+     * ailleurs (autre craft, ou autour de l'équipement) ne donne rien : un casque ventouse n'est pas un bloc de miel.
+     */
     @EventHandler(priority = EventPriority.HIGH)
     public void onPreparer(PrepareItemCraftEvent event) {
         Recipe recette = event.getRecipe();
-        if (!(recette instanceof ShapedRecipe forme) || !recettes.containsKey(forme.getKey())) {
+        if (recette == null) {
             return;
         }
-        Atouts.Atout a = recettes.get(forme.getKey());
         CraftingInventory grille = event.getInventory();
         ItemStack[] cases = grille.getMatrix();
+        Atouts.Atout a = recette instanceof ShapedRecipe forme ? recettes.get(forme.getKey()) : null;
+        for (int i = 0; i < cases.length; i++) {
+            if ((a == null || i != 4) && Atouts.atout(cases[i]) != null) {
+                grille.setResult(null);
+                return;
+            }
+        }
+        if (a == null) {
+            return;
+        }
         ItemStack centre = cases.length == 9 ? cases[4] : null;
         grille.setResult(Atouts.accepte(centre, a) ? Atouts.poser(centre, a) : null);
+    }
+
+    /** Fabricant (crafter) : rien avec un objet sous atout dans sa grille. */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onFabricant(CrafterCraftEvent event) {
+        if (!(event.getBlock().getState(false) instanceof Crafter fabricant)) {
+            return;
+        }
+        for (ItemStack item : fabricant.getInventory().getContents()) {
+            if (Atouts.atout(item) != null) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    /** Un objet sous atout (tête, bloc de miel) ne se pose pas : posé, il perdrait ses caractéristiques. */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPoser(BlockPlaceEvent event) {
+        if (Atouts.atout(event.getItemInHand()) != null) {
+            event.setCancelled(true);
+        }
     }
 
     // ------------------------------------------------------------------ décompte et effets
@@ -157,13 +215,19 @@ public final class KSAtouts extends JavaPlugin implements Listener {
         return Math.max(1, Atouts.restant(item) - deja);
     }
 
-    /** Chaque seconde : temps porté (écrit dans l'objet chaque minute), vision nocturne du casque poiscaille. */
+    /**
+     * Chaque seconde : temps porté (écrit dans l'objet chaque minute), lévitation du casque ventouse, vision nocturne du
+     * casque poiscaille.
+     */
     private void seconde() {
         for (Player joueur : Bukkit.getOnlinePlayers()) {
             int[] s = portees.computeIfAbsent(joueur.getUniqueId(), u -> new int[2]);
             PlayerInventory inv = joueur.getInventory();
             compter(joueur, inv.getBoots(), s, 0, EquipmentSlot.FEET);
             compter(joueur, inv.getHelmet(), s, 1, EquipmentSlot.HEAD);
+            if (colles.contains(joueur.getUniqueId()) && leviteVentouse(joueur)) {
+                joueur.addPotionEffect(levitation());
+            }
             boolean vision = porte(joueur, Atouts.ATOUTS.get(Atouts.POISCAILLE)) != null && joueur.isUnderWater();
             if (vision) {
                 joueur.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, VISION, 0, true, false, true));
@@ -219,6 +283,64 @@ public final class KSAtouts extends JavaPlugin implements Listener {
     public void onQuitter(PlayerQuitEvent event) {
         ecrire(event.getPlayer());
         voyants.remove(event.getPlayer().getUniqueId());
+        if (colles.contains(event.getPlayer().getUniqueId())) {
+            decoller(event.getPlayer());
+        }
+    }
+
+    // ------------------------------------------------------------------ casque ventouse
+
+    /** Chaque tick : collage quand la tête touche un plafond, décollage en sneakant ou hors de dessous le plafond. */
+    private void ventouses() {
+        Atouts.Atout ventouse = Atouts.ATOUTS.get(Atouts.VENTOUSE);
+        for (Player joueur : Bukkit.getOnlinePlayers()) {
+            ItemStack casque = joueur.getInventory().getHelmet();
+            boolean porte = casque != null && casque.getType() == ventouse.apparence() && Atouts.atout(casque) == ventouse;
+            if (colles.contains(joueur.getUniqueId())) {
+                // Lévitation retirée par le jeu (lait, mort) ou remplacée : décollé.
+                if (!porte || !peutColler(joueur) || !plafond(joueur, MAINTIEN) || !leviteVentouse(joueur)) {
+                    decoller(joueur);
+                }
+            } else if (porte && peutColler(joueur) && !joueur.isOnGround() && plafond(joueur, CONTACT)
+                    && joueur.getPotionEffect(PotionEffectType.LEVITATION) == null) {
+                joueur.addPotionEffect(levitation());
+                colles.add(joueur.getUniqueId());
+            }
+        }
+    }
+
+    /** Ni sneak, ni eau ou lave, ni véhicule, élytre, vol ou spectateur. */
+    private static boolean peutColler(Player joueur) {
+        return !joueur.isDead() && !joueur.isSneaking() && !joueur.isInWater() && !joueur.isInLava()
+                && !joueur.isInsideVehicle() && !joueur.isGliding() && !joueur.isFlying()
+                && joueur.getGameMode() != GameMode.SPECTATOR;
+    }
+
+    /** Un bloc qui arrête la tête juste au-dessus d'elle (fine tranche au-dessus de la boîte du joueur). */
+    private static boolean plafond(Player joueur, double ecart) {
+        BoundingBox b = joueur.getBoundingBox();
+        BoundingBox tranche = new BoundingBox(b.getMinX() + 0.01, b.getMaxY(), b.getMinZ() + 0.01,
+                b.getMaxX() - 0.01, b.getMaxY() + ecart, b.getMaxZ() - 0.01);
+        return joueur.getWorld().hasCollisionsIn(tranche);
+    }
+
+    /** Lévitation de la ventouse : niveau I, sans particules ni icône. */
+    private static PotionEffect levitation() {
+        return new PotionEffect(PotionEffectType.LEVITATION, LEVITE, 0, true, false, false);
+    }
+
+    /** La lévitation actuelle est-elle celle de la ventouse (une autre, de shulker par exemple, n'est pas touchée) ? */
+    private static boolean leviteVentouse(Player joueur) {
+        PotionEffect actuelle = joueur.getPotionEffect(PotionEffectType.LEVITATION);
+        return actuelle != null && !actuelle.hasParticles() && !actuelle.hasIcon() && actuelle.getAmplifier() == 0
+                && actuelle.getDuration() <= LEVITE;
+    }
+
+    private void decoller(Player joueur) {
+        colles.remove(joueur.getUniqueId());
+        if (leviteVentouse(joueur)) {
+            joueur.removePotionEffect(PotionEffectType.LEVITATION);
+        }
     }
 
     /** Bottes coupe-feu : aucun dégât des blocs de magma. */
