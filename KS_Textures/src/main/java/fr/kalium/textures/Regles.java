@@ -141,11 +141,26 @@ final class Regles {
     }
 
     /**
+     * Ce qui est envoyé au joueur : l'objet avec sa texture et, depuis la 1.1.0, la couleur de sa rareté
+     * ({@link Raretes}). Une copie, ou l'objet lui-même s'il n'y a rien à changer ; l'objet reçu n'est jamais modifié.
+     */
+    static ItemStack marquer(ItemStack objet) {
+        ItemStack texture = texturer(objet);
+        return Raretes.colorer(texture, texture != objet);
+    }
+
+    /** L'inverse de {@link #marquer}, pour un objet renvoyé par un joueur en créatif. */
+    static ItemStack demarquer(ItemStack objet) {
+        ItemStack sans = detexturer(objet);
+        return Raretes.decolorer(sans, sans != objet);
+    }
+
+    /**
      * Une copie de l'objet avec sa texture en première chaîne de custom_model_data (le pack choisit le modèle d'après
      * elle), ou l'objet lui-même s'il n'a pas de texture ou l'a déjà. L'objet reçu n'est jamais modifié : il peut être
      * celui du serveur.
      */
-    static ItemStack marquer(ItemStack objet) {
+    private static ItemStack texturer(ItemStack objet) {
         String texture = texture(objet);
         if (texture == null) {
             return objet;
@@ -168,10 +183,10 @@ final class Regles {
     }
 
     /**
-     * L'inverse de {@link #marquer}, pour un objet renvoyé par un joueur en créatif : sans cela, la marque d'affichage
+     * L'inverse de {@link #texturer}, pour un objet renvoyé par un joueur en créatif : sans cela, la marque d'affichage
      * serait enregistrée dans l'objet du serveur (et il ne s'empilerait plus avec les autres).
      */
-    static ItemStack demarquer(ItemStack objet) {
+    private static ItemStack detexturer(ItemStack objet) {
         if (objet == null || objet.isEmpty()) {
             return objet;
         }

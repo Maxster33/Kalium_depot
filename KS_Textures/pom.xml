@@ -6,7 +6,7 @@
 
     <groupId>fr.kalium</groupId>
     <artifactId>KS_Textures</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
     <name>KS_Textures</name>
 
@@ -38,6 +38,12 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+            </resource>
+            <!-- 1.1.0 : bareme de KS_Economy, pour la couleur de rarete -->
+            <resource>
+                <directory>../KS_Economy/src/main/resources</directory>
+                <includes><include>rachats.csv</include></includes>
+                <filtering>false</filtering>
             </resource>
         </resources>
         <plugins>

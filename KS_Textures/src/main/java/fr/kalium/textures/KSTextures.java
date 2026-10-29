@@ -12,6 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -32,6 +34,8 @@ import java.util.UUID;
  * Le pack est proposé (facultatif) à chaque joueur Java qui arrive sur le serveur, si config.yml donne son adresse et
  * son SHA-1 ; pas aux joueurs Bedrock (identifiant Floodgate, qui commence par des zéros).
  *
+ * 1.1.0 : le nom des objets custom prend la couleur de leur rareté, dans ce qui est envoyé aux joueurs ({@link Raretes}).
+ *
  * Code du serveur Paper 26.3 (paquets, composants) : à revérifier à chaque mise à jour de Minecraft. Ne pas recharger
  * le plugin à chaud (/reload) : les connexions déjà ouvertes garderaient l'ancienne réécriture.
  */
@@ -48,6 +52,15 @@ public final class KSTextures extends JavaPlugin implements Listener {
     public void onEnable() {
         saveDefaultConfig();
         demande = demande();
+        // 1.1.0 : barème de KS_Economy (copié dans le jar à la compilation), pour la couleur de rareté
+        int bareme = 0;
+        try (InputStream flux = getResource("rachats.csv")) {
+            if (flux != null) {
+                bareme = Raretes.charger(flux);
+            }
+        } catch (IOException e) {
+            getLogger().warning("Bareme illisible : " + e.getMessage());
+        }
         ChannelInitializeListenerHolder.addListener(ECOUTEUR, canal -> {
             if (canal.pipeline().get("packet_handler") != null) {
                 canal.pipeline().addBefore("packet_handler", NOM, new Reecriture(getLogger()));
@@ -56,7 +69,8 @@ public final class KSTextures extends JavaPlugin implements Listener {
             }
         });
         getServer().getPluginManager().registerEvents(this, this);
-        getLogger().info(Regles.TEXTURES.size() + " textures d'objets ; pack "
+        getLogger().info(Regles.TEXTURES.size() + " textures d'objets ; " + bareme
+                + " objets custom au bareme pour la rarete ; pack "
                 + (demande == null ? "non propose (adresse ou SHA-1 vide dans config.yml)" : "propose aux joueurs Java"));
     }
 

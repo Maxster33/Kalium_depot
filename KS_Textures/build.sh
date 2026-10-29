@@ -6,7 +6,7 @@
 # et <outils>/serveur/libraries, produits par telecharger-outils.sh (jamais embarques).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.0.0
+VERSION=1.1.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -38,5 +38,7 @@ java -jar "$(win "$TOOLS/ecj.jar")" -21 -proc:none -nowarn -encoding UTF-8 \
   -cp "$CP" -d "$(win "$OUT")" src/main/java
 sed "s/\${project.version}/$VERSION/" src/main/resources/plugin.yml > "$OUT/plugin.yml"
 cp src/main/resources/config.yml "$OUT/config.yml"
+# 1.1.0 : bareme de KS_Economy (prix des objets custom, pour la couleur de rarete) : recompiler apres un changement de prix
+cp ../KS_Economy/src/main/resources/rachats.csv "$OUT/rachats.csv"
 jar cf "$DEST/KS_Textures-$VERSION.jar" -C "$OUT" .
 echo "OK -> $DEST/KS_Textures-$VERSION.jar"

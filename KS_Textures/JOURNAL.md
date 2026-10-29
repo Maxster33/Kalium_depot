@@ -55,3 +55,49 @@ Compilé le 29/10/2026 (`sortie/KS_Textures-1.0.0.jar`).
 
 Actif sur Kixster depuis son redémarrage du 29/10/2026 à 10:47 (journal lu : chargé et activé sans erreur ; « 60 textures d'objets ; pack propose aux joueurs Java »). Statut : non testé en jeu.
 Sur le proxy, geyser-bedrock 1.8.0 au même moment (voir `geyser-bedrock/README.md`).
+
+## 1.1.0 - couleur de rareté dans le nom des objets custom (29/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « j'aimerai que nos items ait une couleur dans leurs noms pour signifier la rareté comme les
+items de base du jeu ».
+
+Choix de LeKiwi06 (questions du 29/10/2026) :
+
+| Question | Choix |
+|---|---|
+| Méthode | Affichage seul, dans ce plugin (comme les textures) : anciens objets couverts, toujours empilables avec les nouveaux, aucun autre plugin modifié |
+| Niveaux | Les 4 du jeu (Commun blanc, Peu commun jaune, Rare aqua, Épique violet clair) + Légendaire doré |
+| Couleurs propres (alcools, élixirs, aliments) | Remplacées par la rareté |
+| Choix de la rareté | Seuils de prix : 10 / 100 / 1 000 / 10 000 émeraudes, avec plancher vanilla (« Oui, code avec ces seuils et le plancher vanilla ») |
+
+Tableau validé : `sortie/rarete/raretes-proposition.xlsx` (hors du dépôt ; 107 objets, onglet « Seuils » modifiable).
+
+Fonctionnement (`Raretes.java`) :
+
+- Dans ce qui est envoyé aux joueurs (mêmes paquets que les textures), le nom (`custom_name`) d'un objet custom reconnu
+  prend la couleur de sa rareté ; les parties du nom perdent leur propre couleur (gras, etc. gardés).
+- **Prix** : barème de KS_Economy (`rachats.csv`, copié dans le jar par `build.sh` : **recompiler KS_Textures après un
+  changement de prix**) pour les objets marqués `pdc:` (têtes, spawners, élixirs...) et les jetons / blocs d'émeraude
+  compressés par leur identifiant. Absents du barème, valeurs dans le code : jeton de fly 30, cristal 600, badges de
+  niveau 1 (fly 450, téléportation 600, localisation 750, mort 3 600 ; chaque niveau × 2) = valeurs des récompenses ;
+  jeton de localisation, coffre renforcé et ses véhicules, alcools, aliments, trains, verrou, bateaux à jukebox =
+  recette estimée. Fioles d'expérience (KS_FioleExp, KS_CoffreMort) : selon les points contenus (prix de la fiole de
+  15 niveaux ÷ 315 par point).
+- **Plancher** : jamais moins rare que la rareté que le jeu donne à l'objet (fiole d'expérience et têtes : jaune au
+  moins ; un objet enchanté monte d'un cran, comme en vanilla).
+- **Créatif** : le nom d'origine est rangé dans l'objet envoyé (`custom_data`, clé `ks_textures:nom`) et lui est
+  rendu quand un joueur en créatif le renvoie.
+- **Pas recolorés** : atouts (équipement du joueur, son nom est celui du joueur), objets sans nom, têtes de joueurs.
+
+Limites : comme les textures (échanges des villageois, livre de recettes, infobulle d'un sac ou d'une shulker) ; les
+messages du chat qui citent un objet gardent la couleur d'aujourd'hui.
+
+Vérifié hors jeu (classe d'essai lancée contre le serveur 26.3, hors du dépôt) : 426 objets custom lus dans le barème,
+prix et rareté conformes au tableau pour 22 marques (tête d'allay Peu commun, bébé zombie Rare, Wither Épique, spawner
+et élixir de Fortune Légendaire, fiole de mort de 7 000 points Rare, badge de la mort niveau 3 Légendaire...), nom
+recoloré, nom d'origine rangé puis rendu à l'identique. Le passage par un vrai objet (rareté du jeu) n'a pas pu être
+essayé hors jeu.
+
+Empilée sur la 1.0.0, déployée le 29/10 mais jamais testée en jeu (demande explicite de LeKiwi06).
+
+Compilé le 29/10/2026 (`sortie/KS_Textures-1.1.0.jar`). **Statut : non déployé, non testé en jeu.**
