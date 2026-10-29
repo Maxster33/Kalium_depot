@@ -126,3 +126,18 @@ la grille -> coffre renforcé, et le bateau, le radeau ou le minecart reste dans
 Compilé le 28/10/2026 (`sortie/KS_CoffreRenforce-1.2.0.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Kixster le 28/10/2026 à 10:49** (LeKiwi06 : « Oui, déploie KS_Crafts 1.23.0 et KS_CoffreRenforce 1.2.0 sur Kixster avec le didacticiel »), avec `didacticiel.yml` : jars en place vérifiés identiques à `jars-deployes/` avant l'envoi, rangés dans `_removed-ks_crafts-1.22.0/` et `_removed-ks_coffrerenforce-1.1.0/` ; fichiers du serveur vérifiés identiques à ceux compilés. À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.3.0 - aspect enchanté (29/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** (choix des visuels des objets custom) : « pour les coffres renforcés et véhicules a coffre
+renforcé : visuel de coffre , mais enchanté ».
+
+Changement : l'objet coffre renforcé, et les objets bateau, radeau et minecart avec coffre renforcé, ont l'aspect
+enchanté (`enchantment_glint_override`, sans enchantement). Image vanilla inchangée. Le bloc posé et le véhicule posé
+ne changent pas (l'aspect enchanté ne concerne que les objets).
+
+Limite : les objets déjà dans les inventaires et les coffres gardent l'aspect normal ; ils prennent l'aspect enchanté
+une fois posés puis cassés (l'objet rendu est recréé). Aucune autre version de plugin n'est nécessaire (KS_Crafts,
+KS_Trains et KS_KaliumGive recréent l'objet par `creerCoffre()`, `creerBateau()` et `creerMinecart()`).
+
+Compilé le 29/10/2026 (`sortie/KS_CoffreRenforce-1.3.0.jar`). **Statut : non déployé, non testé en jeu.**

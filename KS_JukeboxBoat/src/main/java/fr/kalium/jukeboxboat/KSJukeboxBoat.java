@@ -89,6 +89,9 @@ import java.util.UUID;
  * Le jukebox fait 0,75 bloc ; bateau à coffre : contre la serrure du coffre ; bateau simple : à la place exacte
  * qu'aurait le coffre.
  *
+ * 1.2.0 (LeKiwi06, 29/10/2026 : « bateau avec coffre et jukebox : look du vehicule jukebox , mais enchanté ») : l'objet
+ * bateau (radeau) à coffre et jukebox a l'aspect enchanté (sans enchantement), pour le distinguer du bateau à jukebox.
+ *
  * Autres plugins : creerBateau() (KS_Crafts), estBateau().
  */
 public final class KSJukeboxBoat extends JavaPlugin implements Listener {
@@ -181,6 +184,7 @@ public final class KSJukeboxBoat extends JavaPlugin implements Listener {
                     p.t("objet-coffre.ligne-2", "<gray>Clic droit : lecture / pause"),
                     p.t("objet-coffre.ligne-3", "<gray>Accroupi + clic droit : coffre"),
                     p.t("objet-coffre.ligne-4", "<gray>On n'y monte pas : laisse"));
+            meta.setEnchantmentGlintOverride(true); // 1.2.0
         } else {
             nom = radeau ? p.t("objet.nom-radeau", "<white>Radeau à jukebox") : p.t("objet.nom", "<white>Bateau à jukebox");
             description = List.of(p.t("objet.ligne-1", "<gray>Joue les disques de ton inventaire"),

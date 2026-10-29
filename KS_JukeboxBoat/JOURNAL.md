@@ -207,3 +207,19 @@ Actif depuis le redémarrage d'Event du 13/10/2026 à 10:46 (journal lu : 1.1.2 
 Actif sur Kixster depuis son redémarrage du 13/10/2026 à 14:11 (journal lu : 1.1.2 chargée et activée sans erreur ; `config.yml` et `lang.yml` créés). Statut : non testé en jeu sur Kixster.
 
 À savoir (constaté dans ce journal, 14:13) : WorldGuard 7.0.19 ne connaît pas le bois ajouté par la 26.3 (peuplier, `poplar_boat`). Poser un bateau de ce bois, à jukebox ou non, lui fait écrire une erreur dans la console (« Could not pass event PlayerInteractEvent to WorldGuard », `NullPointerException` dans `SpawnEntityEvent`) et il ne contrôle pas cette pose. Le bateau est posé normalement. Défaut de WorldGuard, pas du plugin.
+
+## 1.2.0 - aspect enchanté du bateau à coffre et jukebox (29/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** (choix des visuels des objets custom) : « bateau avec coffre et jukebox : look du vehicule
+jukebox , mais enchanté ».
+
+Changement : l'objet bateau (ou radeau) à coffre et jukebox a l'aspect enchanté (`enchantment_glint_override`, sans
+enchantement), pour le distinguer du bateau à jukebox. Le bateau à jukebox sans coffre ne change pas. L'image reste
+celle du bateau à coffre vanilla tant que les textures des objets (dossier `visuels-objets`) ne sont pas branchées
+en jeu : il faudra pour cela un pack de ressources, qui n'existe pas encore.
+
+Limite : les objets déjà dans les inventaires et les coffres gardent l'aspect normal ; ils prennent l'aspect enchanté
+une fois posés puis cassés (l'objet rendu est recréé). KS_Crafts et KS_KaliumGive recréent l'objet au démarrage par
+`creerBateau()` : rien à changer chez eux.
+
+Compilé le 29/10/2026 (`sortie/KS_JukeboxBoat-1.2.0.jar`). **Statut : non déployé, non testé en jeu.**

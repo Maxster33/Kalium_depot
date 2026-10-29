@@ -67,6 +67,8 @@ import java.util.Set;
  *   et minecart avec coffre renforcé, craftés comme les vanilla (bateau ou minecart + coffre renforcé) ; même menu,
  *   mêmes entonnoirs ; cassables seulement avec 27 stacks ou moins dedans (le contenu tombe au sol). Le minecart sert
  *   de wagon dans un train de KS_Trains (API à entité ci-dessous).
+ * - 1.3.0 (LeKiwi06, 29/10/2026 : « pour les coffres renforcés et véhicules a coffre renforcé : visuel de coffre ,
+ *   mais enchanté ») : le coffre renforcé et ses véhicules, en objet, ont l'aspect enchanté (sans enchantement).
  *
  * Le bloc est un vrai coffre (visible sur Bedrock), l'objet un coffre nommé : aucune apparence à ajouter sur le proxy.
  * Les véhicules sont de vrais bateaux et minecarts à coffre, leurs objets des objets vanilla nommés : idem.
@@ -132,6 +134,7 @@ public final class KSCoffreRenforce extends JavaPlugin implements Listener {
                 "<gray>Stocke jusqu'à 1 000 stacks d'un seul objet. Se remplit et se vide par entonnoir.")).stream()
                 .map(l -> l.decoration(TextDecoration.ITALIC, false)).toList());
         meta.getPersistentDataContainer().set(cle, PersistentDataType.BYTE, (byte) 1);
+        meta.setEnchantmentGlintOverride(true); // 1.3.0
         objet.setItemMeta(meta);
         lang.saveIfNeeded();
         return objet;

@@ -96,6 +96,9 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_CoffreRenforce 1.3.0 + KS_JukeboxBoat 1.2.0** (LeKiwi06, 29/10/2026) : aspect enchanté (sans enchantement) sur
+  l'objet coffre renforcé, les objets véhicules avec coffre renforcé et l'objet bateau (radeau) à coffre et jukebox.
+  Indépendants l'un de l'autre. Détail : leurs `JOURNAL.md`. **Compilés, non déployés, non testés en jeu.**
 - **KG_HideAndSeek 0.3.0** (LeKiwi06, 26/10/2026) : composteur et blocs creux utilisables en solide, solide debout sur
   une barrière, plus de solide à travers une fleur ou une trappe, objet « Orienter le bloc » (orientation, posture du
   golem de cuivre), évasions cumulables tous les 5 points, chaque son du soundboard compté, tableau de droite « Blocs en
