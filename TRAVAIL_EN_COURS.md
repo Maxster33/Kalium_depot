@@ -19,7 +19,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KLM_Espaces (nouveau), KaliumRelay, KalGames, KLM_Menu, KLM_Chat, KLM_Contacts, KG_BuildBattle, KV_BuildBattle — LeKiwi06 — depuis le 2026-10-21 01:45 — fusion de Kal-Games dans Kanvas (espaces étanches) et Serveur Jeux à la place d'Event (expiration des serveurs)
 - KG_Parkour — LeKiwi06 — depuis le 2026-10-27 16:40 — lave qui monte sur la nouvelle map de jump vertical
 - KS_Effets (nouveau) — LeKiwi06 — depuis le 2026-10-28 15:15 — étape 1 du chantier atouts / alcools / aliments : moteur des effets custom et /effects
-- KS_Alcools (nouveau), geyser-bedrock, KS_Didacticiel — LeKiwi06 — depuis le 2026-10-28 18:10 (geyser-bedrock depuis le 2026-10-29 15:50) — chantier atouts / alcools / aliments : 1.1.0 (rhum) et geyser-bedrock 1.9.0 (sons du rhum) compilés le 29/10, non déployés ; Shéjiǔ à venir (étape 6). geyser-bedrock est aussi réservé par la session des textures (KS_Textures), qui n'y avait aucune modification en cours
+- KS_Alcools (nouveau) — LeKiwi06 — depuis le 2026-10-28 18:10 — chantier atouts / alcools / aliments : 1.1.0 (rhum) déployée le 29/10 à 23:35 (non testée) ; Shéjiǔ à venir (étape 6)
 - KS_DiagOutils (nouveau, temporaire) — LeKiwi06 — depuis le 2026-10-24 23:36 — diagnostic : houe, pelle, hache sans effet pour les joueurs Bedrock sur Kixster
 - KS_CadresBedrock (nouveau, prototype) — LeKiwi06 — depuis le 2026-10-29 01:23 — cadres invisibles pour les joueurs Bedrock : objet tenu par un porte-armure invisible, essai dans « Kixster Test » seulement
 - KS_CoffreRenforce, KS_JukeboxBoat — LeKiwi06 — depuis le 2026-10-29 03:55 — aspect enchanté du coffre renforcé, des véhicules avec coffre renforcé et des bateaux à coffre et jukebox

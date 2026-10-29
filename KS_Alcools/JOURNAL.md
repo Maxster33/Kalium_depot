@@ -29,7 +29,7 @@ Limites :
   et que le son est bien sans position. **À déployer avec geyser-bedrock 1.9.0** sur le proxy.
 - Didacticiel (entrée « Les alcools » à compléter) : au déploiement.
 
-Compilé le 29/10/2026 (`sortie/KS_Alcools-1.1.0.jar`). **Statut : non déployé, non testé en jeu.**
+Compilé le 29/10/2026 (`sortie/KS_Alcools-1.1.0.jar`). **Déployé le 29/10/2026 à 23:35** (LeKiwi06 : « Oui, déploie ») sur Kixster, avec `didacticiel.yml` (entrée « Les alcools » complétée du rhum ; ancien dans `_removed-ks_didacticiel-yml-2026-10-29-rhum/`), et geyser-bedrock 1.9.0 sur le proxy à la même heure ; fichiers en place vérifiés identiques au dépôt avant l'envoi. 1.0.0 dans `_removed-ks_alcools-1.0.0/`. À redémarrer par LeKiwi06 (Kixster et proxy). Statut : non testé en jeu.
 
 ## 1.0.0 - alcools, combustible, Molotov, bandage, torche augmentée (28/10/2026)
 

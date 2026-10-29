@@ -164,6 +164,6 @@ alcool a deux objets Bedrock (potion et potion jetable), un bateau à jukebox un
   (`sounds/music/game/records/...`, relevés dans les ressources officielles de Mojang, `bedrock-samples` ; pigstep :
   `pigstep_master`) : aucun fichier de son copié. Le serveur envoie `minecraft:kalium.rhum.<disque>` aux seuls joueurs
   Bedrock ; Geyser 2.12.0 transmet tel quel un son qu'il ne connaît pas (sans `minecraft:`), arrêt compris (vérifié dans
-  son code). Pack `KaLium-objets-1.9.0.mcpack` construit. **Non envoyé sur le proxy, non testé.** À vérifier sur
+  son code). Pack `KaLium-objets-1.9.0.mcpack` construit. **Envoyé sur le proxy le 29/10/2026 à 23:35** (LeKiwi06 : « Oui, déploie ») dans `packs/` ; le 1.8.0 (même identifiant), vérifié identique à celui construit, dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.8.0-2026-10-29/` ; `kalium_objets.json` inchangé. Actif après redémarrage du proxy. **Non testé.** À vérifier sur
   Bedrock : que le pack peut utiliser les fichiers de Bedrock lui-même, et que le son est bien sans position.
 
