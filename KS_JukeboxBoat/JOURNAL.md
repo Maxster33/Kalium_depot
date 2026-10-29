@@ -222,4 +222,6 @@ Limite : les objets déjà dans les inventaires et les coffres gardent l'aspect 
 une fois posés puis cassés (l'objet rendu est recréé). KS_Crafts et KS_KaliumGive recréent l'objet au démarrage par
 `creerBateau()` : rien à changer chez eux.
 
-Compilé le 29/10/2026 (`sortie/KS_JukeboxBoat-1.2.0.jar`). **Statut : non déployé, non testé en jeu.**
+Compilé le 29/10/2026 (`sortie/KS_JukeboxBoat-1.2.0.jar`).
+
+**Déployé sur Kixster le 29/10/2026 à 10:43 (Claude de LeKiwi06 ; accord : « Oui, déploie KS_Textures, KS_CoffreRenforce et KS_JukeboxBoat sur Kixster et geyser-bedrock 1.8.0 sur le proxy » ; 1.1.2 dans `/plugins/_removed-textures-2026-10-29/`), actif après redémarrage de Kixster. Statut : non testé en jeu.**

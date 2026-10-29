@@ -49,4 +49,7 @@ Pack 1.0.0 déposé par LeKiwi06 sur minepack.fr (adresse et SHA-1 dans le `conf
 hébergé vérifié identique le 29/10). À déployer avec geyser-bedrock 1.8.0 sur le proxy pour Bedrock (mêmes
 textures, reconnues par la même marque).
 
-Compilé le 29/10/2026 (`sortie/KS_Textures-1.0.0.jar`). **Statut : non déployé, non testé en jeu.**
+Compilé le 29/10/2026 (`sortie/KS_Textures-1.0.0.jar`).
+
+**Déployé sur Kixster le 29/10/2026 à 10:43 (Claude de LeKiwi06 ; accord : « Oui, déploie KS_Textures, KS_CoffreRenforce et KS_JukeboxBoat sur Kixster et geyser-bedrock 1.8.0 sur le proxy » ; nouveau sur ce serveur, son `config.yml` y sera créé au premier démarrage avec l'adresse du pack), actif après redémarrage de Kixster. Statut : non testé en jeu.**
+Sur le proxy, geyser-bedrock 1.8.0 au même moment (voir `geyser-bedrock/README.md`).

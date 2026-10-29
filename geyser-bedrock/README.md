@@ -149,5 +149,9 @@ alcool a deux objets Bedrock (potion et potion jetable), un bateau à jukebox un
   compressés, Bloc de charbon de bois, 2 fioles d'expérience, bateau à jukebox et bateau à coffre et jukebox des
   10 bois, radeau à jukebox avec et sans coffre. Contient la 1.7.0 (Blé soufflé, Bol de céréales). **À envoyer avec
   KS_Textures 1.0.0 sur Kixster.** À vérifier sur Bedrock : boire, lancer (alcool jetable, Molotov, fioles), poser
-  (torche, bateaux, minecarts, blocs) avec l'objet custom. Pack `KaLium-objets-1.8.0.mcpack` construit. **Non envoyé
-  sur le proxy, non testé.**
+  (torche, bateaux, minecarts, blocs) avec l'objet custom. Pack `KaLium-objets-1.8.0.mcpack` construit. **Envoyé
+  sur le proxy le 29/10/2026 à 10:43 (Claude de LeKiwi06, accord de LeKiwi06) : `kalium_objets.json` dans
+  `custom_mappings/` (l'ancienne dans `_removed-kalium-objets-1.6.0-2026-10-29/`) ; le pack 1.8.0 attend dans
+  `/plugins/Geyser-Velocity/_attente-kalium-objets-1.8.0/` : il a le même identifiant que le 1.6.0, qui reste dans
+  `packs/` (Geyser relit à chaque connexion le pack chargé au démarrage). Juste avant le redémarrage du proxy :
+  ranger le 1.6.0 dans `_removed-kalium-objets-1.6.0-2026-10-29/` et mettre le 1.8.0 dans `packs/`. Non testé.**
