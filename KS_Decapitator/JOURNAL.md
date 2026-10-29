@@ -207,4 +207,4 @@ nés d'une pomme d'amour (KS_Cuisine) ont leur tête.
   grinceur en C ; slimes moyen et gros en B), **validée par LeKiwi06 le 28/10/2026** : KS_Economy 1.12.2, à déployer
   avec cette version.
 
-Compilé le 28/10/2026 (`sortie/KS_Decapitator-1.4.0.jar`). **Statut : non déployé, non testé en jeu.**
+Compilé le 28/10/2026 (`sortie/KS_Decapitator-1.4.0.jar`). **Déployé sur Kixster le 29/10/2026 à 11:17** (LeKiwi06 : « Oui, déploie KS_Cuisine 1.0.0, KS_Atouts 1.0.0, KS_Decapitator 1.4.0 et KS_Economy 1.12.2 sur Kixster, et geyser-bedrock 1.7.0 sur le proxy, avec les entrées du didacticiel »), avec `didacticiel.yml` ; fichiers en place vérifiés identiques au dépôt avant l'envoi. À redémarrer par LeKiwi06. Statut : non testé en jeu. 1.3.0 dans `_removed-ks_decapitator-1.3.0/`.

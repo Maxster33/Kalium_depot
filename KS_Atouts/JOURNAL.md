@@ -35,5 +35,4 @@ Limites :
 - Bedrock : apparence par le vrai type (aucun réglage du pack) ; la tête de gardien portée reste à vérifier.
 - Didacticiel et `/kaliumgive` : à faire au déploiement.
 
-Compilé le 28/10/2026 (`sortie/KS_Atouts-1.0.0.jar`, après KLM_Menu et KS_Effets). **Statut : non déployé, non testé
-en jeu.**
+Compilé le 28/10/2026 (`sortie/KS_Atouts-1.0.0.jar`, après KLM_Menu et KS_Effets). **Déployé sur Kixster le 29/10/2026 à 11:17** (LeKiwi06 : « Oui, déploie KS_Cuisine 1.0.0, KS_Atouts 1.0.0, KS_Decapitator 1.4.0 et KS_Economy 1.12.2 sur Kixster, et geyser-bedrock 1.7.0 sur le proxy, avec les entrées du didacticiel »), avec `didacticiel.yml` ; fichiers en place vérifiés identiques au dépôt avant l'envoi. À redémarrer par LeKiwi06. Statut : non testé en jeu. Didacticiel : thème « Atouts d'équipement » (4 nouveautés).

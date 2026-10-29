@@ -275,6 +275,78 @@ themes:
           - "ks_alcools:torche_augmentee"
         nouveau: "2026-10-28"
 
+  cuisine:
+    nom: "Cuisine"
+    icone: COOKIE
+    resume: "Nouveaux aliments, cookies à effets, pomme d'amour."
+    requiert: "KS_Cuisine"
+    nouveautes:
+      pomme-amour:
+        nom: "Pomme d'amour"
+        icone: APPLE
+        texte: "Pomme entourée de 8 sucres. Donne-la à deux mobs de la même espèce qui ne se reproduisent pas, même hostiles : ils tombent amoureux et un bébé naît. Les petits nouveaux ont leur propre tête... Mangée par deux joueurs qui se touchent, elle réserve une autre surprise."
+        recettes:
+          - "ks_cuisine:pomme_amour"
+        nouveau: "2026-10-29"
+      cookies:
+        nom: "Cookies aux baies"
+        icone: COOKIE
+        texte: "Un cookie et 3 baies sucrées : plus nourrissant, et pendant 3 minutes les animaux craintifs (renards, lapins, ocelots...) ne te fuient plus. Un cookie et 3 baies lumineuses : tu éclaires autour de toi pendant 3 minutes."
+        recettes:
+          - "ks_cuisine:cookie_baie_sucree"
+          - "ks_cuisine:cookie_baie_lumineuse"
+        nouveau: "2026-10-29"
+      sandwich-brunch:
+        nom: "Sandwich et brunch"
+        icone: BREAD
+        texte: "Pain, côtelette cuite et seau de lait : un sandwich jambon-beurre qui nourrit très bien (le seau revient). Côtelette crue et œuf : un brunch."
+        recettes:
+          - "ks_cuisine:sandwich"
+          - "ks_cuisine:brunch"
+        nouveau: "2026-10-29"
+      cereales:
+        nom: "Blé soufflé et céréales"
+        icone: WHEAT
+        texte: "Du blé au four ou au fumoir donne du blé soufflé, qui se grignote vite. 8 blés soufflés autour d'un seau de lait : un bol de céréales qui remet à zéro ton temps sans dormir (plus de phantoms), sans t'enlever tes effets."
+        recettes:
+          - "ks_cuisine:ble_souffle"
+          - "ks_cuisine:ble_souffle_fumoir"
+          - "ks_cuisine:bol_cereales"
+        nouveau: "2026-10-29"
+
+  atouts:
+    nom: "Atouts d'équipement"
+    icone: LEATHER_BOOTS
+    resume: "Un pouvoir temporaire pour tes bottes et ton casque."
+    requiert: "KS_Atouts"
+    nouveautes:
+      regles:
+        nom: "Comment ça marche"
+        icone: CRAFTING_TABLE
+        texte: "Entoure une pièce d'équipement de 8 ressources à l'établi : elle gagne un atout pour 1 heure, qui ne s'écoule que quand tu la portes. Refais le craft pour ajouter une heure ; un autre atout remplace le premier. L'objet change d'apparence mais garde sa protection, ses enchantements et son usure. Temps restant : dans sa description et dans /effects."
+        nouveau: "2026-10-29"
+      ski:
+        nom: "Bottes de ski"
+        icone: RABBIT_FOOT
+        texte: "8 pieds de lapin autour de bottes : tu marches sur la poudreuse."
+        recettes:
+          - "ks_atouts:ski"
+        nouveau: "2026-10-29"
+      poiscaille:
+        nom: "Casque poiscaille"
+        icone: PUFFERFISH
+        texte: "8 poissons-globes autour d'un casque : tu vois clair sous l'eau."
+        recettes:
+          - "ks_atouts:poiscaille"
+        nouveau: "2026-10-29"
+      coupe-feu:
+        nom: "Bottes coupe-feu"
+        icone: MAGMA_CREAM
+        texte: "8 crèmes de magma autour de bottes : les blocs de magma ne te brûlent plus."
+        recettes:
+          - "ks_atouts:coupe_feu"
+        nouveau: "2026-10-29"
+
   enclume:
     nom: "Enclume, meule, expérience"
     icone: ANVIL

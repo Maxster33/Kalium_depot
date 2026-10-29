@@ -20,7 +20,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KG_Parkour — LeKiwi06 — depuis le 2026-10-27 16:40 — lave qui monte sur la nouvelle map de jump vertical
 - KS_Effets (nouveau) — LeKiwi06 — depuis le 2026-10-28 15:15 — étape 1 du chantier atouts / alcools / aliments : moteur des effets custom et /effects
 - KS_Alcools (nouveau) — LeKiwi06 — depuis le 2026-10-28 18:10 — chantier atouts / alcools / aliments : 1.0.0 déployée le 28/10 à 18:31 (non testée) ; rhum et Shéjiǔ à venir (étapes 5 et 6)
-- KS_Cuisine (nouveau), KS_Atouts (nouveau), KS_Decapitator, KS_Economy, geyser-bedrock, KS_Didacticiel — LeKiwi06 — depuis le 2026-10-28 19:19 — étapes 3 et 4 du chantier atouts / alcools / aliments : aliments et pomme d'amour, têtes des bébés et leur prix, atouts d'équipement, apparences Bedrock
 - KS_DiagOutils (nouveau, temporaire) — LeKiwi06 — depuis le 2026-10-24 23:36 — diagnostic : houe, pelle, hache sans effet pour les joueurs Bedrock sur Kixster
 - KS_CadresBedrock (nouveau, prototype) — LeKiwi06 — depuis le 2026-10-29 01:23 — cadres invisibles pour les joueurs Bedrock : objet tenu par un porte-armure invisible, essai dans « Kixster Test » seulement
 - KS_CoffreRenforce, KS_JukeboxBoat — LeKiwi06 — depuis le 2026-10-29 03:55 — aspect enchanté du coffre renforcé, des véhicules avec coffre renforcé et des bateaux à coffre et jukebox
