@@ -96,6 +96,11 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_Textures 1.0.0** (nouveau, LeKiwi06, 29/10/2026) : textures des 60 objets custom de Kixster. Les objets ne
+  changent pas : la texture est ajoutée seulement dans ce qui est envoyé aux joueurs ; pack Java facultatif fabriqué
+  par `visuels-objets/pack.py` (hors du dépôt), à héberger sur mc-packs.net (adresse et SHA-1 dans `config.yml`).
+  Bedrock : geyser-bedrock à mettre à jour. Détail : `KS_Textures/JOURNAL.md`. **Compilé, non déployé, non testé en
+  jeu.**
 - **KS_CoffreRenforce 1.3.0 + KS_JukeboxBoat 1.2.0** (LeKiwi06, 29/10/2026) : aspect enchanté (sans enchantement) sur
   l'objet coffre renforcé, les objets véhicules avec coffre renforcé et l'objet bateau (radeau) à coffre et jukebox.
   Indépendants l'un de l'autre. Détail : leurs `JOURNAL.md`. **Compilés, non déployés, non testés en jeu.**

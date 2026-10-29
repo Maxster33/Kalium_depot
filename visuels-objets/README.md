@@ -55,11 +55,19 @@ jukebox, avec l'aspect enchanté (KS_JukeboxBoat 1.2.0). Leurs anciens PNG sont 
 texture pour les têtes (KS_Decapitator : skin du joueur ou du mob) ni pour les spawners (KS_Spawners : le mob
 s'y voit déjà).
 
-## Pas encore en jeu
+## En jeu : pack de ressources (KS_Textures)
 
-Ces images ne sont branchées nulle part. Pour qu'elles s'affichent :
+```
+python visuels-objets/pack.py
+```
 
-- **Java** : il faut un pack de ressources serveur (il n'y en a pas aujourd'hui) avec un modèle `kalium:<id>` par
-  objet, et chaque plugin doit passer à `item_model` = `kalium:<id>` (au lieu de l'image vanilla actuelle).
-- **Bedrock** : `geyser-bedrock/build.sh` prendrait ces PNG à la place des images extraites du jeu, et chaque objet
-  doit avoir sa ligne dans `kalium_objets.json` (aujourd'hui, seuls les 18 premiers l'ont).
+Il fabrique `sortie/KaLium-textures-<version>.zip` (hors du dépôt) à partir des PNG et affiche son SHA-1. Après une
+retouche : changer `VERSION` dans `pack.py`, refaire le pack, le déposer sur mc-packs.net et recopier l'adresse et le
+SHA-1 dans `plugins/KS_Textures/config.yml` sur Kixster (puis redémarrer).
+
+- **Java** : KS_Textures ajoute la texture (1re chaîne de `custom_model_data`) aux objets custom envoyés aux joueurs,
+  sans changer les objets du serveur ; le pack choisit le modèle `kalium:item/<id>` d'après elle, et garde l'image
+  vanilla pour tout le reste ou si le joueur refuse le pack. Un nouvel objet : son PNG ici, une ligne dans
+  `KS_Textures/.../Regles.java`, son objet de base dans `pack.py` (`BASES`).
+- **Bedrock** : `geyser-bedrock` doit reconnaître la même marque (`predicate` sur `custom_model_data`) et prendre ces
+  PNG à la place des images extraites du jeu.

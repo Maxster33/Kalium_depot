@@ -1,0 +1,6 @@
+name: KS_Textures
+version: '${project.version}'
+main: fr.kalium.textures.KSTextures
+api-version: '26.2'
+description: Textures des objets custom (pack de ressources facultatif pour Java, marque lue par Geyser pour Bedrock).
+authors: [KaLium]

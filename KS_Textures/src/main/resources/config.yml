@@ -1,0 +1,7 @@
+# KS_Textures : pack de ressources des objets custom, propose (facultatif) aux joueurs Java a leur arrivee.
+# Le pack se fabrique avec visuels-objets/pack.py (dans le depot), puis se depose sur mc-packs.net, qui donne
+# l'adresse de telechargement et le SHA-1. Adresse ou SHA-1 vide : pack non propose (les objets gardent leur image).
+pack:
+  url: ""
+  sha1: ""
+  message: "Textures des objets de KaLium (facultatif)"
