@@ -23,6 +23,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_Cuisine (nouveau), KS_Atouts (nouveau), KS_Decapitator, KS_Economy, geyser-bedrock — LeKiwi06 — depuis le 2026-10-28 19:19 — étapes 3 et 4 du chantier atouts / alcools / aliments : aliments et pomme d'amour, têtes des bébés et leur prix, atouts d'équipement, apparences Bedrock
 - KS_DiagOutils (nouveau, temporaire) — LeKiwi06 — depuis le 2026-10-24 23:36 — diagnostic : houe, pelle, hache sans effet pour les joueurs Bedrock sur Kixster
 - KS_CadresBedrock (nouveau, prototype) — LeKiwi06 — depuis le 2026-10-29 01:23 — cadres invisibles pour les joueurs Bedrock : objet tenu par un porte-armure invisible, essai dans « Kixster Test » seulement
+- KS_CoffreRenforce, KS_JukeboxBoat — LeKiwi06 — depuis le 2026-10-29 03:55 — aspect enchanté du coffre renforcé, des véhicules avec coffre renforcé et des bateaux à coffre et jukebox
 
 
 ## Requis parfois
