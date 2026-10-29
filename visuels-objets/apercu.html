@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Textures des objets</title>
+<style>
+:root { --fond:#f4f1ea; --carte:#fff; --texte:#222; --gris:#6b6b6b; --slot:#8b8b8b; }
+@media (prefers-color-scheme: dark) { :root { --fond:#1c1c1c; --carte:#2a2a2a; --texte:#eee; --gris:#aaa; } }
+body { background:var(--fond); color:var(--texte); font:14px/1.4 system-ui, sans-serif; margin:0; padding:24px 16px; }
+h1 { font-size:20px; margin:0 0 4px; } p { color:var(--gris); margin:0 0 20px; }
+.grille { display:grid; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); gap:12px; }
+figure { margin:0; background:var(--carte); border-radius:8px; padding:12px; display:flex; gap:12px; align-items:center; }
+.slot { background:var(--slot); border:3px solid; border-color:#373737 #fff #fff #373737; padding:4px; flex:none; }
+.slot img { width:64px; height:64px; image-rendering:pixelated; display:block; }
+figcaption { display:flex; flex-direction:column; min-width:0; }
+figcaption span { color:var(--gris); font-size:12px; overflow-wrap:anywhere; }
+label { display:inline-flex; gap:6px; align-items:center; margin-bottom:16px; color:var(--gris); }
+body.grand .slot img { width:128px; height:128px; }
+body.grand .grille { grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); }
+</style></head><body>
+<h1>Textures des objets custom (60)</h1>
+<p>Premier jet, à retoucher. Chaque image est un PNG 16×16 du dossier png/ : ouvre-le dans un éditeur de pixel art, puis recharge cette page.</p>
+<label><input type="checkbox" onchange="document.body.classList.toggle('grand', this.checked)"> Grandes images</label>
+<div class="grille">
+<figure><div class="slot"><img src="png/estomac_gardien.png" alt=""></div><figcaption><b>Estomac du gardien</b><span>estomac_gardien.png</span><span>KS_EstomacGardien · aujourd'hui : item_model black_bundle</span></figcaption></figure>
+<figure><div class="slot"><img src="png/cle_de_l_end.png" alt=""></div><figcaption><b>Clé de l'End</b><span>cle_de_l_end.png</span><span>KS_EC_Extension · aujourd'hui : item_model ominous_trial_key</span></figcaption></figure>
+<figure><div class="slot"><img src="png/bedrock_breaker.png" alt=""></div><figcaption><b>Bedrock Breaker</b><span>bedrock_breaker.png</span><span>KS_BedrockBreaker · aujourd'hui : item_model blaze_rod</span></figcaption></figure>
+<figure><div class="slot"><img src="png/fragment_spawner.png" alt=""></div><figcaption><b>Fragment de Spawner</b><span>fragment_spawner.png</span><span>KS_ItemSimple · aujourd'hui : item_model disc_fragment_5</span></figcaption></figure>
+<figure><div class="slot"><img src="png/coeur_spawner.png" alt=""></div><figcaption><b>Cœur de Spawner</b><span>coeur_spawner.png</span><span>KS_ItemSimple · aujourd'hui : item_model respawn_anchor</span></figcaption></figure>
+<figure><div class="slot"><img src="png/changeur_biome.png" alt=""></div><figcaption><b>Changeur de Biome</b><span>changeur_biome.png</span><span>KS_BiomeChanger · aujourd'hui : item_model end_crystal</span></figcaption></figure>
+<figure><div class="slot"><img src="png/jeton_fly.png" alt=""></div><figcaption><b>Jeton de fly</b><span>jeton_fly.png</span><span>KS_Jetons · aujourd'hui : item_model iron_ingot</span></figcaption></figure>
+<figure><div class="slot"><img src="png/jeton_mort.png" alt=""></div><figcaption><b>Jeton de la mort</b><span>jeton_mort.png</span><span>KS_Jetons · aujourd'hui : item_model netherite_ingot</span></figcaption></figure>
+<figure><div class="slot"><img src="png/jeton_tp.png" alt=""></div><figcaption><b>Jeton de téléportation</b><span>jeton_tp.png</span><span>KS_Jetons · aujourd'hui : item_model gold_ingot</span></figcaption></figure>
+<figure><div class="slot"><img src="png/jeton_localisation.png" alt=""></div><figcaption><b>Jeton de localisation</b><span>jeton_localisation.png</span><span>KS_Jetons · aujourd'hui : item_model copper_ingot</span></figcaption></figure>
+<figure><div class="slot"><img src="png/jeton_claim.png" alt=""></div><figcaption><b>Jeton de claim</b><span>jeton_claim.png</span><span>KS_Jetons · aujourd'hui : item_model golden_shovel</span></figcaption></figure>
+<figure><div class="slot"><img src="png/badge_fly.png" alt=""></div><figcaption><b>Badge de fly</b><span>badge_fly.png</span><span>KS_Jetons · aujourd'hui : item_model iron_block</span></figcaption></figure>
+<figure><div class="slot"><img src="png/badge_mort.png" alt=""></div><figcaption><b>Badge de la mort</b><span>badge_mort.png</span><span>KS_Jetons · aujourd'hui : item_model netherite_block</span></figcaption></figure>
+<figure><div class="slot"><img src="png/badge_tp.png" alt=""></div><figcaption><b>Badge de téléportation</b><span>badge_tp.png</span><span>KS_Jetons · aujourd'hui : item_model gold_block</span></figcaption></figure>
+<figure><div class="slot"><img src="png/badge_localisation.png" alt=""></div><figcaption><b>Badge de localisation</b><span>badge_localisation.png</span><span>KS_Jetons · aujourd'hui : item_model copper_block</span></figcaption></figure>
+<figure><div class="slot"><img src="png/cristal_purification.png" alt=""></div><figcaption><b>Cristal de purification</b><span>cristal_purification.png</span><span>KS_Meule · aujourd'hui : item_model amethyst_shard</span></figcaption></figure>
+<figure><div class="slot"><img src="png/casse_croute_dore.png" alt=""></div><figcaption><b>Casse-croûte doré</b><span>casse_croute_dore.png</span><span>KS_CasseCroute · aujourd'hui : item_model suspicious_stew (base tarte)</span></figcaption></figure>
+<figure><div class="slot"><img src="png/bandage.png" alt=""></div><figcaption><b>Bandage</b><span>bandage.png</span><span>KS_Alcools · aujourd'hui : item_model paper (base kelp séché)</span></figcaption></figure>
+<figure><div class="slot"><img src="png/alcool_neutre.png" alt=""></div><figcaption><b>Alcool neutre</b><span>alcool_neutre.png</span><span>KS_Alcools · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/alcool_tequila.png" alt=""></div><figcaption><b>Tequila</b><span>alcool_tequila.png</span><span>KS_Alcools · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/alcool_vodka.png" alt=""></div><figcaption><b>Vodka</b><span>alcool_vodka.png</span><span>KS_Alcools · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/alcool_hydromel.png" alt=""></div><figcaption><b>Hydromel</b><span>alcool_hydromel.png</span><span>KS_Alcools · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/alcool_manzana.png" alt=""></div><figcaption><b>Manzana</b><span>alcool_manzana.png</span><span>KS_Alcools · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/alcool_biere.png" alt=""></div><figcaption><b>Bière</b><span>alcool_biere.png</span><span>KS_Alcools · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/alcool_tabascoolise.png" alt=""></div><figcaption><b>Tabascoolisé</b><span>alcool_tabascoolise.png</span><span>KS_Alcools · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/molotov.png" alt=""></div><figcaption><b>Cocktail Molotov</b><span>molotov.png</span><span>KS_Alcools · aujourd'hui : splash_potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/torche_augmentee.png" alt=""></div><figcaption><b>Torche augmentée</b><span>torche_augmentee.png</span><span>KS_Alcools · aujourd'hui : torch</span></figcaption></figure>
+<figure><div class="slot"><img src="png/elixir_super_gateau.png" alt=""></div><figcaption><b>Super Gâteau</b><span>elixir_super_gateau.png</span><span>KS_Elixir · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/elixir_chauve_souris.png" alt=""></div><figcaption><b>Élixir de chauve-souris</b><span>elixir_chauve_souris.png</span><span>KS_Elixir · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/elixir_anguille.png" alt=""></div><figcaption><b>Élixir d'anguille</b><span>elixir_anguille.png</span><span>KS_Elixir · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/elixir_ignifugation.png" alt=""></div><figcaption><b>Élixir d'ignifugation</b><span>elixir_ignifugation.png</span><span>KS_Elixir · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/elixir_plume.png" alt=""></div><figcaption><b>Élixir de Plume</b><span>elixir_plume.png</span><span>KS_Elixir · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/elixir_phenix.png" alt=""></div><figcaption><b>Élixir de Phénix</b><span>elixir_phenix.png</span><span>KS_Elixir · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/elixir_fantome.png" alt=""></div><figcaption><b>Élixir du Fantôme</b><span>elixir_fantome.png</span><span>KS_Elixir · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/elixir_titan.png" alt=""></div><figcaption><b>Élixir de Titan</b><span>elixir_titan.png</span><span>KS_Elixir · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/elixir_vent.png" alt=""></div><figcaption><b>Élixir du Vent</b><span>elixir_vent.png</span><span>KS_Elixir · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/elixir_rebond.png" alt=""></div><figcaption><b>Élixir de Rebond</b><span>elixir_rebond.png</span><span>KS_Elixir · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/elixir_fortune.png" alt=""></div><figcaption><b>Élixir de Fortune</b><span>elixir_fortune.png</span><span>KS_Elixir · aujourd'hui : potion</span></figcaption></figure>
+<figure><div class="slot"><img src="png/locomotive.png" alt=""></div><figcaption><b>Locomotive</b><span>locomotive.png</span><span>KS_Trains · aujourd'hui : furnace_minecart</span></figcaption></figure>
+<figure><div class="slot"><img src="png/wagon_controleur.png" alt=""></div><figcaption><b>Wagon contrôleur</b><span>wagon_controleur.png</span><span>KS_Trains · aujourd'hui : minecart</span></figcaption></figure>
+<figure><div class="slot"><img src="png/boussole_train.png" alt=""></div><figcaption><b>Boussole du train</b><span>boussole_train.png</span><span>KS_Trains · aujourd'hui : compass</span></figcaption></figure>
+<figure><div class="slot"><img src="png/verrou_vehicule.png" alt=""></div><figcaption><b>Verrou de véhicule</b><span>verrou_vehicule.png</span><span>KS_VerrouVehicule · aujourd'hui : tripwire_hook</span></figcaption></figure>
+<figure><div class="slot"><img src="png/cookie_baie_sucree.png" alt=""></div><figcaption><b>Cookie à la baie sucrée</b><span>cookie_baie_sucree.png</span><span>KS_Cuisine · aujourd'hui : cookie</span></figcaption></figure>
+<figure><div class="slot"><img src="png/cookie_baie_lumineuse.png" alt=""></div><figcaption><b>Cookie à la baie lumineuse</b><span>cookie_baie_lumineuse.png</span><span>KS_Cuisine · aujourd'hui : cookie</span></figcaption></figure>
+<figure><div class="slot"><img src="png/sandwich.png" alt=""></div><figcaption><b>Sandwich jambon-beurre</b><span>sandwich.png</span><span>KS_Cuisine · aujourd'hui : bread</span></figcaption></figure>
+<figure><div class="slot"><img src="png/brunch.png" alt=""></div><figcaption><b>Brunch</b><span>brunch.png</span><span>KS_Cuisine · aujourd'hui : cooked_porkchop</span></figcaption></figure>
+<figure><div class="slot"><img src="png/ble_souffle.png" alt=""></div><figcaption><b>Blé soufflé</b><span>ble_souffle.png</span><span>KS_Cuisine · aujourd'hui : item_model wheat (base kelp séché)</span></figcaption></figure>
+<figure><div class="slot"><img src="png/bol_cereales.png" alt=""></div><figcaption><b>Bol de céréales</b><span>bol_cereales.png</span><span>KS_Cuisine · aujourd'hui : item_model mushroom_stew (base tarte)</span></figcaption></figure>
+<figure><div class="slot"><img src="png/emeraude_compressee_1.png" alt=""></div><figcaption><b>Bloc d'émeraude compressé (tier 1)</b><span>emeraude_compressee_1.png</span><span>KS_Economy · aujourd'hui : emerald_block</span></figcaption></figure>
+<figure><div class="slot"><img src="png/emeraude_compressee_2.png" alt=""></div><figcaption><b>Bloc d'émeraude compressé (tier 2)</b><span>emeraude_compressee_2.png</span><span>KS_Economy · aujourd'hui : emerald_block</span></figcaption></figure>
+<figure><div class="slot"><img src="png/emeraude_compressee_3.png" alt=""></div><figcaption><b>Bloc d'émeraude compressé (tier 3)</b><span>emeraude_compressee_3.png</span><span>KS_Economy · aujourd'hui : emerald_block</span></figcaption></figure>
+<figure><div class="slot"><img src="png/emeraude_compressee_4.png" alt=""></div><figcaption><b>Bloc d'émeraude compressé (tier 4)</b><span>emeraude_compressee_4.png</span><span>KS_Economy · aujourd'hui : emerald_block</span></figcaption></figure>
+<figure><div class="slot"><img src="png/emeraude_compressee_5.png" alt=""></div><figcaption><b>Bloc d'émeraude compressé (tier 5)</b><span>emeraude_compressee_5.png</span><span>KS_Economy · aujourd'hui : emerald_block</span></figcaption></figure>
+<figure><div class="slot"><img src="png/emeraude_compressee_6.png" alt=""></div><figcaption><b>Bloc d'émeraude compressé (tier 6)</b><span>emeraude_compressee_6.png</span><span>KS_Economy · aujourd'hui : emerald_block</span></figcaption></figure>
+<figure><div class="slot"><img src="png/bloc_charbon_de_bois.png" alt=""></div><figcaption><b>Bloc de charbon de bois</b><span>bloc_charbon_de_bois.png</span><span>KS_Crafts · aujourd'hui : coal_block</span></figcaption></figure>
+<figure><div class="slot"><img src="png/fiole_experience.png" alt=""></div><figcaption><b>Fiole d'expérience (niveaux)</b><span>fiole_experience.png</span><span>KS_FioleExp · aujourd'hui : experience_bottle</span></figcaption></figure>
+<figure><div class="slot"><img src="png/fiole_experience_mort.png" alt=""></div><figcaption><b>Fiole d'expérience (points, coffre de mort)</b><span>fiole_experience_mort.png</span><span>KS_CoffreMort · aujourd'hui : experience_bottle</span></figcaption></figure>
+<figure><div class="slot"><img src="png/bateau_jukebox.png" alt=""></div><figcaption><b>Bateau à jukebox (et à coffre et jukebox, enchanté)</b><span>bateau_jukebox.png</span><span>KS_JukeboxBoat · aujourd'hui : oak_boat</span></figcaption></figure>
+<figure><div class="slot"><img src="png/radeau_jukebox.png" alt=""></div><figcaption><b>Radeau à jukebox (et à coffre et jukebox, enchanté)</b><span>radeau_jukebox.png</span><span>KS_JukeboxBoat · aujourd'hui : bamboo_raft</span></figcaption></figure>
+<figure><div class="slot"><img src="png/wagon_jukebox.png" alt=""></div><figcaption><b>Wagon jukebox</b><span>wagon_jukebox.png</span><span>KS_Trains · aujourd'hui : minecart</span></figcaption></figure>
+</div></body></html>

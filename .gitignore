@@ -8,3 +8,9 @@ Thumbs.db
 # Outils de compilation (compilateur + bibliotheques, 32 Mo) et jars produits sur le PC local
 outils-build/
 sortie/
+
+# Textures des objets custom : faites a partir des images du jeu (Mojang), le depot est public
+visuels-objets/png/
+visuels-objets/planche.png
+visuels-objets/planche.txt
+visuels-objets/textures-du-jeu/
