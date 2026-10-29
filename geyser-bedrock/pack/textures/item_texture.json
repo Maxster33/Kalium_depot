@@ -3,64 +3,304 @@
   "texture_name": "atlas.items",
   "texture_data": {
     "kalium.estomac_gardien": {
-      "textures": ["textures/items/kalium_estomac_gardien"]
+      "textures": [
+        "textures/items/kalium_estomac_gardien"
+      ]
     },
     "kalium.cle_de_l_end": {
-      "textures": ["textures/items/kalium_cle_de_l_end"]
+      "textures": [
+        "textures/items/kalium_cle_de_l_end"
+      ]
     },
     "kalium.bedrock_breaker": {
-      "textures": ["textures/items/kalium_bedrock_breaker"]
+      "textures": [
+        "textures/items/kalium_bedrock_breaker"
+      ]
     },
     "kalium.fragment_spawner": {
-      "textures": ["textures/items/kalium_fragment_spawner"]
+      "textures": [
+        "textures/items/kalium_fragment_spawner"
+      ]
     },
     "kalium.coeur_spawner": {
-      "textures": ["textures/items/kalium_coeur_spawner"]
+      "textures": [
+        "textures/items/kalium_coeur_spawner"
+      ]
     },
     "kalium.changeur_biome": {
-      "textures": ["textures/items/kalium_changeur_biome"]
+      "textures": [
+        "textures/items/kalium_changeur_biome"
+      ]
     },
     "kalium.jeton_fly": {
-      "textures": ["textures/items/kalium_jeton_fly"]
+      "textures": [
+        "textures/items/kalium_jeton_fly"
+      ]
     },
     "kalium.jeton_mort": {
-      "textures": ["textures/items/kalium_jeton_mort"]
+      "textures": [
+        "textures/items/kalium_jeton_mort"
+      ]
     },
     "kalium.jeton_tp": {
-      "textures": ["textures/items/kalium_jeton_tp"]
+      "textures": [
+        "textures/items/kalium_jeton_tp"
+      ]
     },
     "kalium.jeton_localisation": {
-      "textures": ["textures/items/kalium_jeton_localisation"]
+      "textures": [
+        "textures/items/kalium_jeton_localisation"
+      ]
     },
     "kalium.jeton_claim": {
-      "textures": ["textures/items/kalium_jeton_claim"]
+      "textures": [
+        "textures/items/kalium_jeton_claim"
+      ]
     },
     "kalium.badge_fly": {
-      "textures": ["textures/items/kalium_badge_fly"]
+      "textures": [
+        "textures/items/kalium_badge_fly"
+      ]
     },
     "kalium.badge_mort": {
-      "textures": ["textures/items/kalium_badge_mort"]
+      "textures": [
+        "textures/items/kalium_badge_mort"
+      ]
     },
     "kalium.badge_tp": {
-      "textures": ["textures/items/kalium_badge_tp"]
+      "textures": [
+        "textures/items/kalium_badge_tp"
+      ]
     },
     "kalium.badge_localisation": {
-      "textures": ["textures/items/kalium_badge_localisation"]
+      "textures": [
+        "textures/items/kalium_badge_localisation"
+      ]
     },
     "kalium.cristal_purification": {
-      "textures": ["textures/items/kalium_cristal_purification"]
+      "textures": [
+        "textures/items/kalium_cristal_purification"
+      ]
     },
     "kalium.casse_croute_dore": {
-      "textures": ["textures/items/kalium_casse_croute_dore"]
+      "textures": [
+        "textures/items/kalium_casse_croute_dore"
+      ]
     },
     "kalium.bandage": {
-      "textures": ["textures/items/kalium_bandage"]
+      "textures": [
+        "textures/items/kalium_bandage"
+      ]
     },
     "kalium.ble_souffle": {
-      "textures": ["textures/items/kalium_ble_souffle"]
+      "textures": [
+        "textures/items/kalium_ble_souffle"
+      ]
     },
     "kalium.bol_cereales": {
-      "textures": ["textures/items/kalium_bol_cereales"]
+      "textures": [
+        "textures/items/kalium_bol_cereales"
+      ]
+    },
+    "kalium.alcool_neutre": {
+      "textures": [
+        "textures/items/kalium_alcool_neutre"
+      ]
+    },
+    "kalium.alcool_tequila": {
+      "textures": [
+        "textures/items/kalium_alcool_tequila"
+      ]
+    },
+    "kalium.alcool_vodka": {
+      "textures": [
+        "textures/items/kalium_alcool_vodka"
+      ]
+    },
+    "kalium.alcool_hydromel": {
+      "textures": [
+        "textures/items/kalium_alcool_hydromel"
+      ]
+    },
+    "kalium.alcool_manzana": {
+      "textures": [
+        "textures/items/kalium_alcool_manzana"
+      ]
+    },
+    "kalium.alcool_biere": {
+      "textures": [
+        "textures/items/kalium_alcool_biere"
+      ]
+    },
+    "kalium.alcool_tabascoolise": {
+      "textures": [
+        "textures/items/kalium_alcool_tabascoolise"
+      ]
+    },
+    "kalium.molotov": {
+      "textures": [
+        "textures/items/kalium_molotov"
+      ]
+    },
+    "kalium.torche_augmentee": {
+      "textures": [
+        "textures/items/kalium_torche_augmentee"
+      ]
+    },
+    "kalium.elixir_super_gateau": {
+      "textures": [
+        "textures/items/kalium_elixir_super_gateau"
+      ]
+    },
+    "kalium.elixir_chauve_souris": {
+      "textures": [
+        "textures/items/kalium_elixir_chauve_souris"
+      ]
+    },
+    "kalium.elixir_anguille": {
+      "textures": [
+        "textures/items/kalium_elixir_anguille"
+      ]
+    },
+    "kalium.elixir_ignifugation": {
+      "textures": [
+        "textures/items/kalium_elixir_ignifugation"
+      ]
+    },
+    "kalium.elixir_plume": {
+      "textures": [
+        "textures/items/kalium_elixir_plume"
+      ]
+    },
+    "kalium.elixir_phenix": {
+      "textures": [
+        "textures/items/kalium_elixir_phenix"
+      ]
+    },
+    "kalium.elixir_fantome": {
+      "textures": [
+        "textures/items/kalium_elixir_fantome"
+      ]
+    },
+    "kalium.elixir_titan": {
+      "textures": [
+        "textures/items/kalium_elixir_titan"
+      ]
+    },
+    "kalium.elixir_vent": {
+      "textures": [
+        "textures/items/kalium_elixir_vent"
+      ]
+    },
+    "kalium.elixir_rebond": {
+      "textures": [
+        "textures/items/kalium_elixir_rebond"
+      ]
+    },
+    "kalium.elixir_fortune": {
+      "textures": [
+        "textures/items/kalium_elixir_fortune"
+      ]
+    },
+    "kalium.locomotive": {
+      "textures": [
+        "textures/items/kalium_locomotive"
+      ]
+    },
+    "kalium.wagon_controleur": {
+      "textures": [
+        "textures/items/kalium_wagon_controleur"
+      ]
+    },
+    "kalium.boussole_train": {
+      "textures": [
+        "textures/items/kalium_boussole_train"
+      ]
+    },
+    "kalium.verrou_vehicule": {
+      "textures": [
+        "textures/items/kalium_verrou_vehicule"
+      ]
+    },
+    "kalium.cookie_baie_sucree": {
+      "textures": [
+        "textures/items/kalium_cookie_baie_sucree"
+      ]
+    },
+    "kalium.cookie_baie_lumineuse": {
+      "textures": [
+        "textures/items/kalium_cookie_baie_lumineuse"
+      ]
+    },
+    "kalium.sandwich": {
+      "textures": [
+        "textures/items/kalium_sandwich"
+      ]
+    },
+    "kalium.brunch": {
+      "textures": [
+        "textures/items/kalium_brunch"
+      ]
+    },
+    "kalium.emeraude_compressee_1": {
+      "textures": [
+        "textures/items/kalium_emeraude_compressee_1"
+      ]
+    },
+    "kalium.emeraude_compressee_2": {
+      "textures": [
+        "textures/items/kalium_emeraude_compressee_2"
+      ]
+    },
+    "kalium.emeraude_compressee_3": {
+      "textures": [
+        "textures/items/kalium_emeraude_compressee_3"
+      ]
+    },
+    "kalium.emeraude_compressee_4": {
+      "textures": [
+        "textures/items/kalium_emeraude_compressee_4"
+      ]
+    },
+    "kalium.emeraude_compressee_5": {
+      "textures": [
+        "textures/items/kalium_emeraude_compressee_5"
+      ]
+    },
+    "kalium.emeraude_compressee_6": {
+      "textures": [
+        "textures/items/kalium_emeraude_compressee_6"
+      ]
+    },
+    "kalium.bloc_charbon_de_bois": {
+      "textures": [
+        "textures/items/kalium_bloc_charbon_de_bois"
+      ]
+    },
+    "kalium.fiole_experience": {
+      "textures": [
+        "textures/items/kalium_fiole_experience"
+      ]
+    },
+    "kalium.fiole_experience_mort": {
+      "textures": [
+        "textures/items/kalium_fiole_experience_mort"
+      ]
+    },
+    "kalium.bateau_jukebox": {
+      "textures": [
+        "textures/items/kalium_bateau_jukebox"
+      ]
+    },
+    "kalium.radeau_jukebox": {
+      "textures": [
+        "textures/items/kalium_radeau_jukebox"
+      ]
+    },
+    "kalium.wagon_jukebox": {
+      "textures": [
+        "textures/items/kalium_wagon_jukebox"
+      ]
     }
   }
 }

@@ -31,20 +31,30 @@ côté serveur (aucun effet du vrai sac ou de la vraie clé).
 Attention : **tout** livre de connaissances qui a l'un de ces `item_model` prend cette apparence ; un futur objet
 custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne ici.
 
+**Depuis la 1.8.0**, les autres objets custom (alcools, élixirs, objets des trains, verrou, aliments, blocs
+d'émeraude compressés, bloc de charbon de bois, fioles d'expérience, bateaux et radeaux à jukebox de tous les bois)
+sont reconnus par la marque que **KS_Textures** ajoute aux objets envoyés aux joueurs : 1re chaîne de
+`custom_model_data` = identifiant de la texture (`predicate` de type `match` sur `custom_model_data`). Sans
+KS_Textures sur Kixster, ces objets restent vanilla sur Bedrock (les 20 du tableau ci-dessus ne changent pas). Un
+alcool a deux objets Bedrock (potion et potion jetable), un bateau à jukebox un par bois (avec et sans coffre).
+
 ## Fichiers
 
 - `custom_mappings/kalium_objets.json` : correspondance Geyser (format 2, `type: definition`), à mettre dans
   `/plugins/Geyser-Velocity/custom_mappings/` du proxy.
 - `pack/` : sources du pack de ressources Bedrock (`manifest.json`, `textures/item_texture.json`). Les images ne sont
-  **pas** dans le dépôt (public ; images de Mojang) : `build.sh` les extrait du jeu Java installé.
+  **pas** dans le dépôt (public ; images de Mojang) : depuis la 1.8.0, `build.sh` prend les textures de
+  `visuels-objets/png` (les mêmes que le pack Java de KS_Textures), une par icône de `item_texture.json`.
 - `build.sh` : `export PATH="/c/Program Files/Java/jdk-27/bin:$PATH"; sh geyser-bedrock/build.sh` →
   `sortie/KaLium-objets-<version>.mcpack`, à mettre dans `/plugins/Geyser-Velocity/packs/` du proxy.
 
 ## Ajouter un objet
 
-1. Dans le plugin : `meta.setItemModel(...)` avec un `item_model` qui n'est utilisé par aucun autre objet custom.
-2. Une entrée dans `custom_mappings/kalium_objets.json` (`model` = cet `item_model`) et dans
-   `pack/textures/item_texture.json` ; l'image dans `build.sh`.
+1. Sa texture dans `visuels-objets/png` et sa règle dans KS_Textures (`Regles.java`) : rien à changer dans le
+   plugin de l'objet.
+2. Une entrée dans `custom_mappings/kalium_objets.json` (objet Java de base, `model` = son `item_model`, `predicate`
+   sur `custom_model_data` = l'identifiant de la texture ; `components` si le plugin change la nourriture ou la
+   taille de pile) et son icône dans `pack/textures/item_texture.json`.
 3. Changer la version du pack (`manifest.json`, `header.version`, et `VERSION=` dans `build.sh`) pour que les
    joueurs Bedrock retéléchargent le pack ; retirer l'ancien `.mcpack` de `packs/` (le ranger dans un `_removed-…`).
 4. Redémarrer le proxy (l'humain).
@@ -130,3 +140,14 @@ custom doit avoir son propre `item_model` (ou une autre base) et sa propre ligne
   (pomme d'amour, cookies, sandwich, brunch) gardent l'image de leur base (pomme, cookie, pain, côtelette cuite) :
   pas de correspondance. Pack `KaLium-objets-1.7.0.mcpack` construit (images extraites du jeu 26.2). **Non envoyé sur
   le proxy, non testé.**
+- **1.8.0 (29/10/2026, LeKiwi06)** : demande de LeKiwi06 (« tu peux faire le texture pack », mêmes textures sur
+  Bedrock ; accord pour passer outre la réservation du chantier aliments). Toutes les images viennent de
+  `visuels-objets/png` (les 20 objets déjà là changent d'image, leur correspondance ne change pas). 67 nouvelles
+  correspondances reconnues par la marque de KS_Textures 1.0.0 : 7 alcools (potion et potion jetable), Cocktail
+  Molotov, Torche augmentée, 11 élixirs, Locomotive, Wagon contrôleur, Wagon jukebox, Boussole du train, Verrou de
+  véhicule, 2 cookies, Sandwich jambon-beurre, Brunch (nourriture de KS_Cuisine déclarée), 6 blocs d'émeraude
+  compressés, Bloc de charbon de bois, 2 fioles d'expérience, bateau à jukebox et bateau à coffre et jukebox des
+  10 bois, radeau à jukebox avec et sans coffre. Contient la 1.7.0 (Blé soufflé, Bol de céréales). **À envoyer avec
+  KS_Textures 1.0.0 sur Kixster.** À vérifier sur Bedrock : boire, lancer (alcool jetable, Molotov, fioles), poser
+  (torche, bateaux, minecarts, blocs) avec l'objet custom. Pack `KaLium-objets-1.8.0.mcpack` construit. **Non envoyé
+  sur le proxy, non testé.**

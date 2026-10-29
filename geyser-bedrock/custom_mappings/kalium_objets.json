@@ -273,6 +273,1172 @@
           "minecraft:max_stack_size": 64
         }
       }
+    ],
+    "minecraft:potion": [
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:alcool_neutre",
+        "display_name": "Alcool neutre",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_neutre",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_neutre",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:alcool_tequila",
+        "display_name": "Tequila",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_tequila",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_tequila",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:alcool_vodka",
+        "display_name": "Vodka",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_vodka",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_vodka",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:alcool_hydromel",
+        "display_name": "Hydromel",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_hydromel",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_hydromel",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:alcool_manzana",
+        "display_name": "Manzana",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_manzana",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_manzana",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:alcool_biere",
+        "display_name": "Bière",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_biere",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_biere",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:alcool_tabascoolise",
+        "display_name": "Tabascoolisé",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_tabascoolise",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_tabascoolise",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:elixir_super_gateau",
+        "display_name": "Super Gâteau",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "elixir_super_gateau",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.elixir_super_gateau",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:elixir_chauve_souris",
+        "display_name": "Élixir de chauve-souris",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "elixir_chauve_souris",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.elixir_chauve_souris",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:elixir_anguille",
+        "display_name": "Élixir d'anguille",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "elixir_anguille",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.elixir_anguille",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:elixir_ignifugation",
+        "display_name": "Élixir d'ignifugation",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "elixir_ignifugation",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.elixir_ignifugation",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:elixir_plume",
+        "display_name": "Élixir de Plume",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "elixir_plume",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.elixir_plume",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:elixir_phenix",
+        "display_name": "Élixir de Phénix",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "elixir_phenix",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.elixir_phenix",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:elixir_fantome",
+        "display_name": "Élixir du Fantôme",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "elixir_fantome",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.elixir_fantome",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:elixir_titan",
+        "display_name": "Élixir de Titan",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "elixir_titan",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.elixir_titan",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:elixir_vent",
+        "display_name": "Élixir du Vent",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "elixir_vent",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.elixir_vent",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:elixir_rebond",
+        "display_name": "Élixir de Rebond",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "elixir_rebond",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.elixir_rebond",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:elixir_fortune",
+        "display_name": "Élixir de Fortune",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "elixir_fortune",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.elixir_fortune",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:splash_potion": [
+      {
+        "type": "definition",
+        "model": "minecraft:splash_potion",
+        "bedrock_identifier": "kalium:alcool_neutre_jetable",
+        "display_name": "Alcool neutre (jetable)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_neutre",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_neutre",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:splash_potion",
+        "bedrock_identifier": "kalium:alcool_tequila_jetable",
+        "display_name": "Tequila (jetable)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_tequila",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_tequila",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:splash_potion",
+        "bedrock_identifier": "kalium:alcool_vodka_jetable",
+        "display_name": "Vodka (jetable)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_vodka",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_vodka",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:splash_potion",
+        "bedrock_identifier": "kalium:alcool_hydromel_jetable",
+        "display_name": "Hydromel (jetable)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_hydromel",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_hydromel",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:splash_potion",
+        "bedrock_identifier": "kalium:alcool_manzana_jetable",
+        "display_name": "Manzana (jetable)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_manzana",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_manzana",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:splash_potion",
+        "bedrock_identifier": "kalium:alcool_biere_jetable",
+        "display_name": "Bière (jetable)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_biere",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_biere",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:splash_potion",
+        "bedrock_identifier": "kalium:alcool_tabascoolise_jetable",
+        "display_name": "Tabascoolisé (jetable)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_tabascoolise",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_tabascoolise",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:splash_potion",
+        "bedrock_identifier": "kalium:molotov",
+        "display_name": "Cocktail Molotov",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "molotov",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.molotov",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:torch": [
+      {
+        "type": "definition",
+        "model": "minecraft:torch",
+        "bedrock_identifier": "kalium:torche_augmentee",
+        "display_name": "Torche augmentée",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "torche_augmentee",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.torche_augmentee",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:furnace_minecart": [
+      {
+        "type": "definition",
+        "model": "minecraft:furnace_minecart",
+        "bedrock_identifier": "kalium:locomotive",
+        "display_name": "Locomotive",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "locomotive",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.locomotive",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:minecart": [
+      {
+        "type": "definition",
+        "model": "minecraft:minecart",
+        "bedrock_identifier": "kalium:wagon_controleur",
+        "display_name": "Wagon contrôleur",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "wagon_controleur",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.wagon_controleur",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:minecart",
+        "bedrock_identifier": "kalium:wagon_jukebox",
+        "display_name": "Wagon jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "wagon_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.wagon_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:compass": [
+      {
+        "type": "definition",
+        "model": "minecraft:compass",
+        "bedrock_identifier": "kalium:boussole_train",
+        "display_name": "Boussole du train",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "boussole_train",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.boussole_train",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:tripwire_hook": [
+      {
+        "type": "definition",
+        "model": "minecraft:tripwire_hook",
+        "bedrock_identifier": "kalium:verrou_vehicule",
+        "display_name": "Verrou de véhicule",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "verrou_vehicule",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.verrou_vehicule",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:cookie": [
+      {
+        "type": "definition",
+        "model": "minecraft:cookie",
+        "bedrock_identifier": "kalium:cookie_baie_sucree",
+        "display_name": "Cookie à la baie sucrée",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "cookie_baie_sucree",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.cookie_baie_sucree",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 6,
+            "saturation": 1.2
+          }
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:cookie",
+        "bedrock_identifier": "kalium:cookie_baie_lumineuse",
+        "display_name": "Cookie à la baie lumineuse",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "cookie_baie_lumineuse",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.cookie_baie_lumineuse",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 2,
+            "saturation": 0.4
+          }
+        }
+      }
+    ],
+    "minecraft:bread": [
+      {
+        "type": "definition",
+        "model": "minecraft:bread",
+        "bedrock_identifier": "kalium:sandwich",
+        "display_name": "Sandwich jambon-beurre",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "sandwich",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.sandwich",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 15,
+            "saturation": 20.8
+          }
+        }
+      }
+    ],
+    "minecraft:cooked_porkchop": [
+      {
+        "type": "definition",
+        "model": "minecraft:cooked_porkchop",
+        "bedrock_identifier": "kalium:brunch",
+        "display_name": "Brunch",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "brunch",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.brunch",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 10,
+            "saturation": 7.0
+          }
+        }
+      }
+    ],
+    "minecraft:emerald_block": [
+      {
+        "type": "definition",
+        "model": "minecraft:emerald_block",
+        "bedrock_identifier": "kalium:emeraude_compressee_1",
+        "display_name": "Bloc d'émeraude compressé (tier 1)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "emeraude_compressee_1",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.emeraude_compressee_1",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:emerald_block",
+        "bedrock_identifier": "kalium:emeraude_compressee_2",
+        "display_name": "Bloc d'émeraude compressé (tier 2)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "emeraude_compressee_2",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.emeraude_compressee_2",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:emerald_block",
+        "bedrock_identifier": "kalium:emeraude_compressee_3",
+        "display_name": "Bloc d'émeraude compressé (tier 3)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "emeraude_compressee_3",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.emeraude_compressee_3",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:emerald_block",
+        "bedrock_identifier": "kalium:emeraude_compressee_4",
+        "display_name": "Bloc d'émeraude compressé (tier 4)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "emeraude_compressee_4",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.emeraude_compressee_4",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:emerald_block",
+        "bedrock_identifier": "kalium:emeraude_compressee_5",
+        "display_name": "Bloc d'émeraude compressé (tier 5)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "emeraude_compressee_5",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.emeraude_compressee_5",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:emerald_block",
+        "bedrock_identifier": "kalium:emeraude_compressee_6",
+        "display_name": "Bloc d'émeraude compressé (tier 6)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "emeraude_compressee_6",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.emeraude_compressee_6",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:coal_block": [
+      {
+        "type": "definition",
+        "model": "minecraft:coal_block",
+        "bedrock_identifier": "kalium:bloc_charbon_de_bois",
+        "display_name": "Bloc de charbon de bois",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bloc_charbon_de_bois",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bloc_charbon_de_bois",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:experience_bottle": [
+      {
+        "type": "definition",
+        "model": "minecraft:experience_bottle",
+        "bedrock_identifier": "kalium:fiole_experience",
+        "display_name": "Fiole d'expérience (niveaux)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "fiole_experience",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.fiole_experience",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:experience_bottle",
+        "bedrock_identifier": "kalium:fiole_experience_mort",
+        "display_name": "Fiole d'expérience (coffre de mort)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "fiole_experience_mort",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.fiole_experience_mort",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:oak_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:oak_boat",
+        "bedrock_identifier": "kalium:bateau_jukebox_oak",
+        "display_name": "Bateau à jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:oak_chest_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:oak_chest_boat",
+        "bedrock_identifier": "kalium:bateau_coffre_jukebox_oak",
+        "display_name": "Bateau à coffre et jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:spruce_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:spruce_boat",
+        "bedrock_identifier": "kalium:bateau_jukebox_spruce",
+        "display_name": "Bateau à jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:spruce_chest_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:spruce_chest_boat",
+        "bedrock_identifier": "kalium:bateau_coffre_jukebox_spruce",
+        "display_name": "Bateau à coffre et jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:birch_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:birch_boat",
+        "bedrock_identifier": "kalium:bateau_jukebox_birch",
+        "display_name": "Bateau à jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:birch_chest_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:birch_chest_boat",
+        "bedrock_identifier": "kalium:bateau_coffre_jukebox_birch",
+        "display_name": "Bateau à coffre et jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:jungle_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:jungle_boat",
+        "bedrock_identifier": "kalium:bateau_jukebox_jungle",
+        "display_name": "Bateau à jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:jungle_chest_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:jungle_chest_boat",
+        "bedrock_identifier": "kalium:bateau_coffre_jukebox_jungle",
+        "display_name": "Bateau à coffre et jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:acacia_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:acacia_boat",
+        "bedrock_identifier": "kalium:bateau_jukebox_acacia",
+        "display_name": "Bateau à jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:acacia_chest_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:acacia_chest_boat",
+        "bedrock_identifier": "kalium:bateau_coffre_jukebox_acacia",
+        "display_name": "Bateau à coffre et jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:dark_oak_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:dark_oak_boat",
+        "bedrock_identifier": "kalium:bateau_jukebox_dark_oak",
+        "display_name": "Bateau à jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:dark_oak_chest_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:dark_oak_chest_boat",
+        "bedrock_identifier": "kalium:bateau_coffre_jukebox_dark_oak",
+        "display_name": "Bateau à coffre et jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:mangrove_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:mangrove_boat",
+        "bedrock_identifier": "kalium:bateau_jukebox_mangrove",
+        "display_name": "Bateau à jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:mangrove_chest_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:mangrove_chest_boat",
+        "bedrock_identifier": "kalium:bateau_coffre_jukebox_mangrove",
+        "display_name": "Bateau à coffre et jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:cherry_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:cherry_boat",
+        "bedrock_identifier": "kalium:bateau_jukebox_cherry",
+        "display_name": "Bateau à jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:cherry_chest_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:cherry_chest_boat",
+        "bedrock_identifier": "kalium:bateau_coffre_jukebox_cherry",
+        "display_name": "Bateau à coffre et jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:pale_oak_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:pale_oak_boat",
+        "bedrock_identifier": "kalium:bateau_jukebox_pale_oak",
+        "display_name": "Bateau à jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:pale_oak_chest_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:pale_oak_chest_boat",
+        "bedrock_identifier": "kalium:bateau_coffre_jukebox_pale_oak",
+        "display_name": "Bateau à coffre et jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:poplar_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:poplar_boat",
+        "bedrock_identifier": "kalium:bateau_jukebox_poplar",
+        "display_name": "Bateau à jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:poplar_chest_boat": [
+      {
+        "type": "definition",
+        "model": "minecraft:poplar_chest_boat",
+        "bedrock_identifier": "kalium:bateau_coffre_jukebox_poplar",
+        "display_name": "Bateau à coffre et jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "bateau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.bateau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:bamboo_raft": [
+      {
+        "type": "definition",
+        "model": "minecraft:bamboo_raft",
+        "bedrock_identifier": "kalium:radeau_jukebox",
+        "display_name": "Radeau à jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "radeau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.radeau_jukebox",
+          "allow_offhand": true
+        }
+      }
+    ],
+    "minecraft:bamboo_chest_raft": [
+      {
+        "type": "definition",
+        "model": "minecraft:bamboo_chest_raft",
+        "bedrock_identifier": "kalium:radeau_coffre_jukebox",
+        "display_name": "Radeau à coffre et jukebox",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "radeau_jukebox",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.radeau_jukebox",
+          "allow_offhand": true
+        }
+      }
     ]
   }
 }

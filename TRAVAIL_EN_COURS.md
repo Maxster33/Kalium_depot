@@ -24,7 +24,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_DiagOutils (nouveau, temporaire) — LeKiwi06 — depuis le 2026-10-24 23:36 — diagnostic : houe, pelle, hache sans effet pour les joueurs Bedrock sur Kixster
 - KS_CadresBedrock (nouveau, prototype) — LeKiwi06 — depuis le 2026-10-29 01:23 — cadres invisibles pour les joueurs Bedrock : objet tenu par un porte-armure invisible, essai dans « Kixster Test » seulement
 - KS_CoffreRenforce, KS_JukeboxBoat — LeKiwi06 — depuis le 2026-10-29 03:55 — aspect enchanté du coffre renforcé, des véhicules avec coffre renforcé et des bateaux à coffre et jukebox
-- KS_Textures (nouveau) — LeKiwi06 — depuis le 2026-10-29 04:14 — pack de ressources des objets custom : textures ajoutées aux objets dans ce qui est envoyé aux joueurs, pack proposé aux joueurs Java
+- KS_Textures (nouveau), geyser-bedrock — LeKiwi06 — depuis le 2026-10-29 04:14 — pack de ressources des objets custom : textures ajoutées aux objets dans ce qui est envoyé aux joueurs, pack proposé aux joueurs Java ; geyser-bedrock 1.8.0 (mêmes textures sur Bedrock), aussi réservé par le chantier aliments ci-dessus : accord de LeKiwi06 le 29/10
 
 
 ## Requis parfois

@@ -45,6 +45,7 @@ Limites :
 - Test hors jeu impossible (le jeu ne lie les composants des objets qu'au chargement de ses données) : rien n'a été
   vérifié en jeu.
 
-À déployer avec : le pack sur mc-packs.net (adresse et SHA-1 dans `config.yml`), et geyser-bedrock pour Bedrock.
+À déployer avec : le pack sur mc-packs.net (adresse et SHA-1 dans `config.yml`), et geyser-bedrock 1.8.0 sur le
+proxy pour Bedrock (mêmes textures, reconnues par la même marque).
 
 Compilé le 29/10/2026 (`sortie/KS_Textures-1.0.0.jar`). **Statut : non déployé, non testé en jeu.**
