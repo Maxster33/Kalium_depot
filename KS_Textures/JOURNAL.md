@@ -100,4 +100,6 @@ essayé hors jeu.
 
 Empilée sur la 1.0.0, déployée le 29/10 mais jamais testée en jeu (demande explicite de LeKiwi06).
 
-Compilé le 29/10/2026 (`sortie/KS_Textures-1.1.0.jar`). **Statut : non déployé, non testé en jeu.**
+Compilé le 29/10/2026 (`sortie/KS_Textures-1.1.0.jar`).
+
+**Déployé sur Kixster le 29/10/2026 à 11:04 (Claude de LeKiwi06 ; accord : « Oui, déploie KS_Textures 1.1.0 sur Kixster » ; jar en place vérifié identique à `jars-deployes/KS_Textures-1.0.0.jar` avant l'envoi, 1.0.0 rangée dans `_removed-ks_textures-1.0.0/` ; `config.yml` inchangé, aucune nouvelle clé), actif après redémarrage de Kixster. Statut : non testé en jeu.**
