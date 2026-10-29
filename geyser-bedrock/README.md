@@ -154,4 +154,5 @@ alcool a deux objets Bedrock (potion et potion jetable), un bateau à jukebox un
   `custom_mappings/` (l'ancienne dans `_removed-kalium-objets-1.6.0-2026-10-29/`) ; le pack 1.8.0 attend dans
   `/plugins/Geyser-Velocity/_attente-kalium-objets-1.8.0/` : il a le même identifiant que le 1.6.0, qui reste dans
   `packs/` (Geyser relit à chaque connexion le pack chargé au démarrage). Juste avant le redémarrage du proxy :
-  ranger le 1.6.0 dans `_removed-kalium-objets-1.6.0-2026-10-29/` et mettre le 1.8.0 dans `packs/`. Non testé.**
+  ranger le 1.6.0 dans `_removed-kalium-objets-1.6.0-2026-10-29/` et mettre le 1.8.0 dans `packs/` : fait à 10:46
+  (LeKiwi06 : « tu peux tout deployer et dès que c'est fait je restart tout »). Non testé.**
