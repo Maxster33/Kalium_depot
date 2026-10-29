@@ -1,0 +1,21 @@
+# KS_CadresBedrock (prototype) : cadres invisibles pour les joueurs Bedrock.
+# Apres une modification : /cadresbedrock recharger (aucun redemarrage).
+
+# Mondes ou le plugin agit. Prototype : le monde de test seulement.
+mondes:
+  - "Kixster Test"
+
+# Porte-armure petit (objet tenu deux fois plus petit, plus proche de la taille d'un objet dans un cadre).
+petit: true
+
+# Position de la main droite par rapport aux pieds du porte-armure (en blocs, pour un porte-armure de taille normale ;
+# divisee par 2 s'il est petit) : decalage sur le cote et hauteur. Le plugin place la main sur le centre du cadre.
+main:
+  cote: 0.3125
+  hauteur: 0.65
+
+# Distance entre le mur et le porte-armure (en blocs), pour que l'objet ne rentre pas dans le mur.
+ecart-mur: 0.1
+
+# Intervalle de mise a jour (en ticks, 20 = 1 s) : delai maximal avant qu'un objet pose apparaisse cote Bedrock.
+intervalle: 10

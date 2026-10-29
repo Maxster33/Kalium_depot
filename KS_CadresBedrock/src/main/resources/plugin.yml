@@ -1,0 +1,14 @@
+name: KS_CadresBedrock
+version: '${project.version}'
+main: fr.kalium.cadresbedrock.KsCadresBedrock
+api-version: '26.2'
+description: Prototype. Cadres invisibles pour les joueurs Bedrock (Geyser) - l'objet est tenu par un porte-armure invisible, montre aux seuls joueurs Bedrock.
+authors: [KaLium]
+commands:
+  cadresbedrock:
+    description: Relire le config.yml (decalages du porte-armure) ou voir l'etat du prototype.
+    usage: /cadresbedrock recharger | info
+    permission: ks.cadresbedrock.admin
+permissions:
+  ks.cadresbedrock.admin:
+    default: op
