@@ -5,6 +5,32 @@ Serveur Kixster. Alcools à l'alambic, alcool neutre comme combustible, cocktail
 `Atouts_Alcools_Aliments.md`, parties 3.2 et 3.3, à copier ici au déploiement).
 Dépend de KLM_Menu (textes) et de KS_Effets (effets custom) ; SimpleClaimSystem facultatif (claims).
 
+## 1.1.0 - rhum (29/10/2026)
+
+Étape 5 du chantier (cahier, partie 3.2.2, solution A). Choix de LeKiwi06 du 29/10 : **les 22 disques** du jeu plutôt
+que les musiques de fond (sans pack Java, Java ne permet de jouer un morceau précis de musique de fond que pour 3
+d'entre elles ; chaque disque, lui, a son propre son sur Java et sur Bedrock, donc tout le monde entend le même).
+
+- **Rhum** : alcool neutre + canne à sucre ; 3 min, redstone 8 min, poudre à canon (jetable) ; pas de glowstone.
+  Effet custom « Rhum » (KS_Effets). Nausée comme les autres alcools.
+- **Musique** : un disque au hasard (jamais deux fois de suite le même). Au début d'un morceau, seuls les joueurs à
+  **5 blocs** ou moins du buveur l'entendent, tous au même moment. Un joueur qui s'éloigne au-delà de 5 blocs (ou
+  change de monde) ne l'entend plus ; celui qui arrive pendant un morceau attend le suivant. À la fin d'un morceau
+  (durées des données du jeu, + 1 s), le suivant commence pour les joueurs proches.
+- **Java** : le son du disque est attaché au buveur et le suit (catégorie « Jukebox / blocs musicaux »).
+- **Bedrock** : son `kalium.rhum.<disque>` du pack geyser-bedrock 1.9.0, **sans position** (même volume où qu'on
+  soit), envoyé à ce seul joueur ; joueur Bedrock reconnu par Floodgate (sans dépendance de compilation).
+- **Fin** : effet terminé (temps, lait, mort), déconnexion du buveur, arrêt du serveur : la musique s'arrête pour tous
+  ses auditeurs, même au milieu d'un morceau.
+
+Limites :
+- Deux buveurs proches : un joueur près des deux entend les deux musiques en même temps.
+- Bedrock : à vérifier en jeu que le pack peut utiliser les fichiers de disques de Bedrock lui-même (rien n'est copié)
+  et que le son est bien sans position. **À déployer avec geyser-bedrock 1.9.0** sur le proxy.
+- Didacticiel (entrée « Les alcools » à compléter) : au déploiement.
+
+Compilé le 29/10/2026 (`sortie/KS_Alcools-1.1.0.jar`). **Statut : non déployé, non testé en jeu.**
+
 ## 1.0.0 - alcools, combustible, Molotov, bandage, torche augmentée (28/10/2026)
 
 **Alcools** (potions sans type de base, marquées ; aucune recette d'alambic du jeu ne les reconnaît) :

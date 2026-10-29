@@ -1,0 +1,291 @@
+{
+  "format_version": "1.20.20",
+  "sound_definitions": {
+    "kalium.rhum.11": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/11",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.13": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/13",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.5": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/5",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.blocks": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/blocks",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.bounce": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/bounce",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.cat": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/cat",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.chirp": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/chirp",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.creator": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/creator",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.creator_music_box": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/creator_music_box",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.far": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/far",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.lava_chicken": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/lava_chicken",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.mall": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/mall",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.mellohi": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/mellohi",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.otherside": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/otherside",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.pigstep": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/pigstep_master",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.precipice": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/precipice",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.relic": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/relic",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.stal": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/stal",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.strad": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/strad",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.tears": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/tears",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.wait": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/wait",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    },
+    "kalium.rhum.ward": {
+      "category": "record",
+      "min_distance": 64.0,
+      "max_distance": 128.0,
+      "sounds": [
+        {
+          "name": "sounds/music/game/records/ward",
+          "stream": true,
+          "is3D": false,
+          "volume": 0.5
+        }
+      ]
+    }
+  }
+}

@@ -41,6 +41,7 @@ final class Alcools {
     static final String NEUTRE = "neutre";
     static final String VODKA = "vodka";
     static final String TABASCOOLISE = "tabascoolise";
+    static final String RHUM = "rhum";
 
     /** Durée de base, redstone, glowstone (comme les potions du jeu). */
     enum Variante {
@@ -85,6 +86,8 @@ final class Alcools {
         ajouter(new Alcool("biere", "Bière", Color.fromRGB(0xD9902B), Material.WHEAT,
                 PotionEffectType.DOLPHINS_GRACE, false));
         ajouter(new Alcool(TABASCOOLISE, "Tabascoolisé", Color.fromRGB(0xC8261E), Material.MAGMA_CREAM, null, false));
+        // 1.1.0 : rhum (étape 5) : musique d'un disque autour du buveur (Rhum) ; pas de niveau II.
+        ajouter(new Alcool(RHUM, "Rhum", Color.fromRGB(0x8B4513), Material.SUGAR_CANE, null, false));
     }
 
     private static void ajouter(Alcool alcool) {
@@ -175,6 +178,10 @@ final class Alcools {
             case TABASCOOLISE -> {
                 lignes.add(ligne("Antigel (" + duree(v.secondes) + ")", NamedTextColor.BLUE));
                 lignes.add(ligne("Ni gel ni dégâts de la poudreuse", NamedTextColor.DARK_GRAY));
+            }
+            case RHUM -> {
+                lignes.add(ligne("Musique (" + duree(v.secondes) + ")", NamedTextColor.BLUE));
+                lignes.add(ligne("Un disque au hasard, entendu à 5 blocs", NamedTextColor.DARK_GRAY));
             }
             default -> {
             }

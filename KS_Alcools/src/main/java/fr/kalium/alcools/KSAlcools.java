@@ -47,7 +47,7 @@ import java.util.UUID;
  *   effets et nausée ({@link Boire}) ; effets custom tenus par KS_Effets.
  * - Alcool neutre comme combustible des fours, fumoirs et hauts fourneaux ({@link Carburant}) ; trains : KS_Trains.
  * - Cocktail Molotov ({@link Molotov}), bandage, torche augmentée ({@link Torches}), à l'établi.
- * - Le rhum et le Shéjiǔ viendront plus tard (étapes 5 et 6 du cahier).
+ * - 1.1.0 : rhum ({@link Rhum}) : musique d'un disque autour du buveur (étape 5). Le Shéjiǔ viendra plus tard (étape 6).
  *
  * Autres plugins : alcool(id, variante, jetable), ids(), idAlcool(objet), estAlcoolNeutre(objet), creerMolotov(),
  * creerBandage(), creerTorche(nombre).
@@ -61,6 +61,7 @@ public final class KSAlcools extends JavaPlugin implements Listener {
     private NamespacedKey cleBandage;
     private NamespacedKey cleTorche;
     private boolean scs;
+    private Rhum rhum;
 
     /** Recettes ajoutées : clé -> ingrédients, pour le livre de recettes. */
     private final Map<NamespacedKey, List<RecipeChoice>> recettes = new LinkedHashMap<>();
@@ -85,20 +86,26 @@ public final class KSAlcools extends JavaPlugin implements Listener {
         Boire boire = new Boire(this);
         Carburant carburant = new Carburant(this);
         Torches torches = new Torches(this);
+        rhum = new Rhum(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(boire, this);
         getServer().getPluginManager().registerEvents(carburant, this);
         getServer().getPluginManager().registerEvents(new Molotov(this), this);
         getServer().getPluginManager().registerEvents(torches, this);
+        getServer().getPluginManager().registerEvents(rhum, this);
         boire.demarrer();
         carburant.demarrer();
         torches.demarrer();
+        rhum.demarrer();
         Bukkit.getOnlinePlayers().forEach(this::livreDeRecettes);
         lang.saveIfNeeded();
     }
 
     @Override
     public void onDisable() {
+        if (rhum != null) {
+            rhum.toutArreter();
+        }
         Alcools.retirerMelanges();
         recettes.keySet().forEach(Bukkit::removeRecipe);
         instance = null;
@@ -128,6 +135,8 @@ public final class KSAlcools extends JavaPlugin implements Listener {
                 Alcools.creer(Alcools.VODKA, Alcools.Variante.FORT, false));
         KSEffets.declarer(Boire.EFFET_TABASCO, Component.text("Tabascoolisé", NamedTextColor.RED),
                 Alcools.creer(Alcools.TABASCOOLISE, Alcools.Variante.NORMAL, false));
+        KSEffets.declarer(Rhum.EFFET_RHUM, Component.text("Rhum", NamedTextColor.GOLD),
+                Alcools.creer(Alcools.RHUM, Alcools.Variante.NORMAL, false));
     }
 
     // ------------------------------------------------------------------ objets (autres plugins)

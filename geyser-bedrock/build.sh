@@ -4,13 +4,15 @@
 # Usage : sh geyser-bedrock/build.sh
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.8.0
+VERSION=1.9.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 DEST="$DIR/../sortie"
 WORK="$DIR/../sortie/geyser-pack-tmp"
 rm -rf "$WORK" && mkdir -p "$WORK/textures/items" "$DEST"
 cp "$DIR/pack/manifest.json" "$WORK/"
 cp "$DIR/pack/textures/item_texture.json" "$WORK/textures/"
+# 1.9.0 : sons du rhum de KS_Alcools (disques sans position, fichiers de Bedrock lui-meme : rien a copier).
+mkdir -p "$WORK/sounds" && cp "$DIR/pack/sounds/sound_definitions.json" "$WORK/sounds/"
 # 1.8.0 : les images sont les textures de visuels-objets (png/, hors du depot : faites a partir des images du jeu), les
 # memes que le pack Java de KS_Textures ; une par icone de pack/textures/item_texture.json.
 PNG="$DIR/../visuels-objets/png"

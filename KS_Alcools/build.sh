@@ -5,7 +5,7 @@
 # Compiler d'abord KLM_Menu et KS_Effets (leurs classes servent a compiler).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.0.0
+VERSION=1.1.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
