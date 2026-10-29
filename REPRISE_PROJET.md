@@ -98,7 +98,7 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 - **KS_Textures 1.0.0** (nouveau, LeKiwi06, 29/10/2026) : textures des 60 objets custom de Kixster. Les objets ne
   changent pas : la texture est ajoutée seulement dans ce qui est envoyé aux joueurs ; pack Java facultatif fabriqué
-  par `visuels-objets/pack.py` (hors du dépôt), à héberger sur mc-packs.net (adresse et SHA-1 dans `config.yml`).
+  par `visuels-objets/pack.py` (hors du dépôt), hébergé sur minepack.fr (adresse et SHA-1 dans `config.yml`).
   Bedrock : geyser-bedrock 1.8.0 (mêmes textures, 67 correspondances de plus), à envoyer sur le proxy en même temps.
   Détail : `KS_Textures/JOURNAL.md`, `geyser-bedrock/README.md`. **Compilé, non déployé, non testé en
   jeu.**

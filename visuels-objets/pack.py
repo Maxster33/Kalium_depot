@@ -1,7 +1,7 @@
 # Pack de ressources Java des objets custom (KS_Textures), a partir des PNG de visuels-objets/png.
 # Usage : python visuels-objets/pack.py [--jar <jar du jeu 26.3>]
 # Sortie : sortie/KaLium-textures-<VERSION>.zip (hors du depot : pixels de Mojang) et son SHA-1, a deposer sur
-# mc-packs.net puis a recopier dans plugins/KS_Textures/config.yml (pack.url, pack.sha1).
+# minepack.fr puis a recopier dans plugins/KS_Textures/config.yml (pack.url, pack.sha1).
 #
 # Fonctionnement : pour chaque objet de base (potion, bateau, lingot de fer...), la definition vanilla
 # assets/minecraft/items/<base>.json est remplacee par un choix sur la 1re chaine de custom_model_data, que

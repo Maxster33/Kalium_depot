@@ -11,7 +11,7 @@ Choix de LeKiwi06 (questions du 29/10/2026) :
 
 | Question | Choix |
 |---|---|
-| Hébergement du pack | mc-packs.net |
+| Hébergement du pack | mc-packs.net, puis minepack.fr (introuvable de son côté ; hébergeur du serveur, « on limite les risques ») |
 | Joueur Java qui refuse le pack | Pack facultatif : l'objet garde son image d'aujourd'hui |
 | Bedrock | Mêmes textures (geyser-bedrock) |
 | Méthode | Un seul plugin d'affichage, aucun autre plugin modifié (plutôt qu'une marque dans chaque plugin, qui aurait empêché les anciens objets de s'empiler avec les nouveaux) |
@@ -45,7 +45,8 @@ Limites :
 - Test hors jeu impossible (le jeu ne lie les composants des objets qu'au chargement de ses données) : rien n'a été
   vérifié en jeu.
 
-À déployer avec : le pack sur mc-packs.net (adresse et SHA-1 dans `config.yml`), et geyser-bedrock 1.8.0 sur le
-proxy pour Bedrock (mêmes textures, reconnues par la même marque).
+Pack 1.0.0 déposé par LeKiwi06 sur minepack.fr (adresse et SHA-1 dans le `config.yml` par défaut ; SHA-1 du fichier
+hébergé vérifié identique le 29/10). À déployer avec geyser-bedrock 1.8.0 sur le proxy pour Bedrock (mêmes
+textures, reconnues par la même marque).
 
 Compilé le 29/10/2026 (`sortie/KS_Textures-1.0.0.jar`). **Statut : non déployé, non testé en jeu.**

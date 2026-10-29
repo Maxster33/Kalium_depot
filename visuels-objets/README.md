@@ -62,7 +62,7 @@ python visuels-objets/pack.py
 ```
 
 Il fabrique `sortie/KaLium-textures-<version>.zip` (hors du dépôt) à partir des PNG et affiche son SHA-1. Après une
-retouche : changer `VERSION` dans `pack.py`, refaire le pack, le déposer sur mc-packs.net et recopier l'adresse et le
+retouche : changer `VERSION` dans `pack.py`, refaire le pack, le déposer sur minepack.fr et recopier l'adresse et le
 SHA-1 dans `plugins/KS_Textures/config.yml` sur Kixster (puis redémarrer).
 
 - **Java** : KS_Textures ajoute la texture (1re chaîne de `custom_model_data`) aux objets custom envoyés aux joueurs,

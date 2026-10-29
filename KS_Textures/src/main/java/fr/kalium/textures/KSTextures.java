@@ -20,7 +20,7 @@ import java.util.UUID;
  * KS_Textures (LeKiwi06, 29/10/2026 : « tu peux faire le texture pack ») : les textures des objets custom de Kixster
  * (dossier visuels-objets du dépôt), sur Java et sur Bedrock.
  *
- * Choix de LeKiwi06 : pack hébergé sur mc-packs.net ; pack facultatif, un joueur Java qui le refuse voit l'image
+ * Choix de LeKiwi06 : pack hébergé sur minepack.fr ; pack facultatif, un joueur Java qui le refuse voit l'image
  * d'aujourd'hui ; mêmes textures sur Bedrock (geyser-bedrock) ; un seul plugin d'affichage plutôt qu'une marque dans
  * chaque plugin.
  *
