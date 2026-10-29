@@ -52,4 +52,6 @@ textures, reconnues par la même marque).
 Compilé le 29/10/2026 (`sortie/KS_Textures-1.0.0.jar`).
 
 **Déployé sur Kixster le 29/10/2026 à 10:43 (Claude de LeKiwi06 ; accord : « Oui, déploie KS_Textures, KS_CoffreRenforce et KS_JukeboxBoat sur Kixster et geyser-bedrock 1.8.0 sur le proxy » ; nouveau sur ce serveur, son `config.yml` y sera créé au premier démarrage avec l'adresse du pack), actif après redémarrage de Kixster. Statut : non testé en jeu.**
+
+Actif sur Kixster depuis son redémarrage du 29/10/2026 à 10:47 (journal lu : chargé et activé sans erreur ; « 60 textures d'objets ; pack propose aux joueurs Java »). Statut : non testé en jeu.
 Sur le proxy, geyser-bedrock 1.8.0 au même moment (voir `geyser-bedrock/README.md`).
