@@ -24,6 +24,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_CadresBedrock (nouveau, prototype) — LeKiwi06 — depuis le 2026-10-29 01:23 — cadres invisibles pour les joueurs Bedrock : objet tenu par un porte-armure invisible, essai dans « Kixster Test » seulement
 - KS_CoffreRenforce, KS_JukeboxBoat — LeKiwi06 — depuis le 2026-10-29 03:55 — aspect enchanté du coffre renforcé, des véhicules avec coffre renforcé et des bateaux à coffre et jukebox
 - KS_Textures (nouveau), geyser-bedrock — LeKiwi06 — depuis le 2026-10-29 04:14 — pack de ressources des objets custom : textures ajoutées aux objets dans ce qui est envoyé aux joueurs, pack proposé aux joueurs Java ; couleur de rareté dans le nom des objets custom (depuis le 2026-10-29, même plugin, affichage seul) ; geyser-bedrock 1.8.0 (mêmes textures sur Bedrock), aussi réservé par le chantier aliments ci-dessus : accord de LeKiwi06 le 29/10
+- KS_MaleficesNether (nouveau), KS_Jetons, KS_Atouts — LeKiwi06 — depuis le 2026-10-30 13:00 — maléfices du Nether (cahier local validé le 30/10) : compteur et maléfices, amulette mangeuse de mal (rangée « Équipements spéciaux » de /jetons), plastron anti-radiation (atout)
 
 
 ## Requis parfois
@@ -34,6 +35,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_VerrouVehicule — LeKiwi06 — depuis le 2026-10-16 20:05 — déploiement sur Event (tests) ; petite retouche pour KS_Trains étape 3 (wagon verrouillé dans un train non ancré)
 - KS_LaisseBateau — LeKiwi06 — depuis le 2026-10-14 20:32 — compilé, en attente du déploiement sur Kixster (passé en « requis parfois » le 2026-10-16)
 - KS_Crafts — LeKiwi06 — depuis le 2026-10-16 18:59 — recette de la locomotive (KS_Trains)
+- KS_Economy, KS_KaliumGive, KS_Didacticiel — LeKiwi06 — depuis le 2026-10-30 13:00 — maléfices du Nether : prix de l'amulette (7 500), id de l'amulette pour le butin, entrée du didacticiel au déploiement
 
 
 
