@@ -465,6 +465,12 @@ themes:
         icone: WANDERING_TRADER_SPAWN_EGG
         texte: "Les villageois n'ont plus d'échanges. Le marchand ambulant, lui, rachète 10 lots en points, en stock limité."
         nouveau: "2026-10-18"
+      adminshop:
+        nom: "Admin shop"
+        icone: JACK_O_LANTERN
+        texte: "Pendant les événements seulement (rare) : le serveur vend des objets rares (jetons, badges, livres Raccommodage, coffres de récompense...) contre des points. Les rachats de la semaine passent alors à 100 objets."
+        commande: "/adminshop"
+        nouveau: "2026-10-31"
 
   claims:
     nom: "Claims"
@@ -869,6 +875,11 @@ themes:
         icone: HOPPER
         texte: "Les rachats de la semaine : vends des objets au serveur."
         nouveau: "2026-10-18c"
+      adminshop:
+        nom: "/adminshop"
+        icone: JACK_O_LANTERN
+        texte: "L'admin shop, ouvert seulement pendant les événements : achète au serveur avec tes points."
+        nouveau: "2026-10-31"
       claim:
         nom: "/claim"
         icone: GOLDEN_SHOVEL

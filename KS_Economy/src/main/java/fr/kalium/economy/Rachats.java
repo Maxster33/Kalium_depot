@@ -58,6 +58,9 @@ import java.util.concurrent.ThreadLocalRandom;
  *   (compteur du compte, qui ne baisse jamais : retirer ses émeraudes n'y change rien), un objet ne rapporte pas plus
  *   de 0,5 % de ces gains (0,75 % si le solde est masqué) ; la vente qui fait dépasser passe, les suivantes sont
  *   refusées. Avant : 25 000 de cagnotte (le solde), 5 % et 7,5 %.
+ * - 1.13.0 (LeKiwi06, 30/10/2026, Halloween) : pendant un événement (AdminShop), 100 objets au lieu de 10
+ *   (evenement.rachats-objets) : le tirage en cours est complété, puis ramené aux 10 premiers à la fermeture ; menu par
+ *   pages de 10. Quotas inchangés.
  */
 final class Rachats implements CommandExecutor {
 
@@ -308,9 +311,40 @@ final class Rachats implements CommandExecutor {
         if (remplacerFermes()) {
             change = true;
         }
+        if (ajuster()) {
+            change = true;
+        }
         if (change) {
             sauver();
         }
+    }
+
+    /** 1.13.0 : objets rachetés en ce moment : 100 pendant un événement (admin shop ouvert), 10 sinon. */
+    int nombre() {
+        AdminShop shop = plugin.adminShop();
+        return shop != null && shop.ouvert()
+                ? Math.max(1, plugin.getConfig().getInt("evenement.rachats-objets", 100))
+                : Math.max(1, plugin.getConfig().getInt("rachats.objets", 10));
+    }
+
+    /**
+     * 1.13.0 : début d'un événement : les offres de la semaine sont complétées (les premières gardent leur prix) ; fin :
+     * on garde les premières. Vrai si les offres ont changé.
+     */
+    private boolean ajuster() {
+        int voulu = nombre();
+        int avant = offres.size();
+        if (avant > voulu) {
+            offres.subList(voulu, avant).clear();
+        } else if (avant < voulu) {
+            completer(ouverte("nether-portals-enabled"), ouverte("end-portals-enabled"));
+        }
+        if (offres.size() == avant) {
+            return false;
+        }
+        journal("Rachats de la semaine " + semaine + " : " + avant + " -> " + offres.size() + " objets (événement)",
+                ouverte("nether-portals-enabled"), ouverte("end-portals-enabled"));
+        return true;
     }
 
     /** Portails de cette dimension ouverts dans KS_Dimensions (clé de son config.yml) ; vrai sans ce plugin. */
@@ -329,7 +363,7 @@ final class Rachats implements CommandExecutor {
      * ses objets. Une famille déjà présente ne revient que s'il n'en reste pas d'autre.
      */
     private void completer(boolean nether, boolean end) {
-        completer(offres, Math.max(1, plugin.getConfig().getInt("rachats.objets", 10)), nether, end);
+        completer(offres, nombre(), nether, end);
     }
 
     /** Le même tirage, dans la liste donnée (rachats de la semaine, ou d'un marchand ambulant depuis la 1.7.0). */
@@ -434,7 +468,7 @@ final class Rachats implements CommandExecutor {
         }
         boolean nether = ouverte("nether-portals-enabled");
         boolean end = ouverte("end-portals-enabled");
-        completer(offres, Math.max(1, plugin.getConfig().getInt("rachats.objets", 10)), nether, end, retires);
+        completer(offres, nombre(), nether, end, retires);
         journal("Rachats de la semaine " + semaine + " : objets au prix modifié remplacés (" + String.join(", ", retires)
                 + ")", nether, end);
         return true;
@@ -594,7 +628,14 @@ final class Rachats implements CommandExecutor {
 
     /** 1.5.0 : coffre ; un objet par rachat (la pile montre le lot), un clic ouvre la vente. */
     void ouvrir(Player joueur) {
+        ouvrir(joueur, 0);
+    }
+
+    /** 1.13.0 : page de 10 rachats (plusieurs pages pendant un événement). */
+    void ouvrir(Player joueur, int page) {
         verifier();
+        int pages = Math.max(1, (offres.size() + PLACES.length - 1) / PLACES.length);
+        int p0 = Math.max(0, Math.min(page, pages - 1));
         Contenant c = menus.menu(joueur, 6, titre(), "rachats");
         c.poser(4, Menus.objet(Material.CLOCK, t("rachats.info", "<gold>Rachats de la semaine"),
                 t("rachats.intro", "<white>Le serveur rachète ces objets jusqu'à dimanche soir (minuit, heure de "
@@ -602,10 +643,10 @@ final class Rachats implements CommandExecutor {
                 t("eco.solde", "<white>Solde : <green><solde>", "solde",
                         KSEconomy.points(KSEconomy.solde(joueur.getUniqueId()))),
                 ligneQuota(joueur)), null);
-        for (int i = 0; i < offres.size() && i < 36; i++) {
+        for (int i = p0 * PLACES.length; i < offres.size() && i < (p0 + 1) * PLACES.length; i++) {
             Offre o = offres.get(i);
             int possede = compter(joueur, o.entree());
-            int place = offres.size() <= PLACES.length ? PLACES[i] : 9 + i;
+            int place = PLACES[i % PLACES.length];
             c.poser(place, Contenant.objet(icone(o),
                     t("rachats.objet", "<yellow><quantite> x <objet>", "quantite", o.quantite(), "objet",
                             nom(o.entree())),
@@ -619,9 +660,15 @@ final class Rachats implements CommandExecutor {
             c.poser(22, Contenant.objet(Material.BARRIER, t("rachats.vide", "<red>Aucun rachat cette semaine."),
                     List.of()), null);
         }
+        menus.pages(c, p0, pages, this::ouvrir);
         menus.sortie(c, plugin.menuEconomie()::ouvrir);
         c.ouvrir(joueur);
         lang.saveIfNeeded();
+    }
+
+    /** 1.13.0 : page du menu où se trouve ce rachat. */
+    private int page(Offre o) {
+        return Math.max(0, offres.indexOf(o)) / PLACES.length;
     }
 
     /** 1.5.0 : vente d'un objet : un lot, ou tout ce que l'inventaire et le quota permettent. */
@@ -652,7 +699,8 @@ final class Rachats implements CommandExecutor {
                     t("rachats.vendre-tout-info", "<gray><lots> lots, dans la limite du quota", "lots", lots)),
                     p -> vendre(p, o, true));
         }
-        menus.sortie(c, this::ouvrir);
+        int page = page(o);
+        menus.sortie(c, p -> ouvrir(p, page));
         c.ouvrir(joueur);
         lang.saveIfNeeded();
     }

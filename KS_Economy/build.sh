@@ -4,7 +4,7 @@
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.12.2
+VERSION=1.13.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -30,6 +30,8 @@ cp src/main/resources/noms_objets.txt "$OUT/noms_objets.txt"
 cp src/main/resources/rachats.csv "$OUT/rachats.csv"
 # 1.8.0 : objets au prix modifié depuis le barème précédent (offres tirées avant la 1.8.0 à remplacer).
 cp src/main/resources/rachats-modifies.txt "$OUT/rachats-modifies.txt"
+# 1.13.0 : objets et prix de l'admin shop.
+cp src/main/resources/adminshop.yml "$OUT/adminshop.yml"
 sed "s/\${project.version}/$VERSION/" src/main/resources/plugin.yml > "$OUT/plugin.yml"
 jar cf "$DEST/KS_Economy-$VERSION.jar" -C "$OUT" .
 echo "OK -> $DEST/KS_Economy-$VERSION.jar"

@@ -84,8 +84,15 @@ final class MenuEconomie implements Listener {
                 p -> plugin.menuMagasin().catalogue(p, 0));
         // 1.3.0 : rachats de la semaine.
         c.poser(24, Menus.objet(Material.GOLD_INGOT, lang.c("menu.bouton-rachats", "<gold>Rachats de la semaine"),
-                lang.c("menu.info-rachats", "<gray>10 objets rachetés par le serveur, tirés chaque lundi")),
+                lang.c("menu.info-rachats-nombre", "<gray><n> objets rachetés par le serveur, tirés chaque lundi", "n",
+                        plugin.rachats().nombre())),
                 p -> plugin.rachats().ouvrir(p));
+        // 1.13.0 : admin shop, seulement pendant un événement.
+        if (plugin.adminShop().ouvert()) {
+            c.poser(22, Menus.objet(Material.JACK_O_LANTERN, lang.c("menu.bouton-adminshop", "<gold>Admin shop"),
+                    lang.c("menu.info-adminshop", "<gray>Le serveur vend des objets rares, seulement pendant "
+                            + "l'événement")), p -> plugin.adminShop().ouvrir(p));
+        }
         if (masque) {
             c.poser(25, Menus.objet(Material.GLASS, lang.c("menu.bouton-reveler", "<aqua>Révéler mon solde"),
                     lang.c("menu.info-reveler", "<gray>Gratuit, immédiat")), p -> {

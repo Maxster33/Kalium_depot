@@ -872,3 +872,34 @@ LeKiwi06 le 28/10/2026** (« Prix validés tels que proposés (44 têtes de béb
 - Code inchangé. **À déployer avec KS_Decapitator 1.4.0** (sinon ces têtes n'existent pas).
 
 Compilé le 28/10/2026 (`sortie/KS_Economy-1.12.2.jar`). **Déployé sur Kixster le 29/10/2026 à 11:17** (LeKiwi06 : « Oui, déploie KS_Cuisine 1.0.0, KS_Atouts 1.0.0, KS_Decapitator 1.4.0 et KS_Economy 1.12.2 sur Kixster, et geyser-bedrock 1.7.0 sur le proxy, avec les entrées du didacticiel »), avec `didacticiel.yml` ; fichiers en place vérifiés identiques au dépôt avant l'envoi. À redémarrer par LeKiwi06. Statut : non testé en jeu. 1.12.1 dans `_removed-ks_economy-1.12.1/`.
+
+## 1.13.0 - admin shop d'Halloween et rachats à 100 objets (30/10/2026, LeKiwi06)
+
+Chantier Halloween de Kixster (cahier local `Halloween_AdminShop.md`, **validé par LeKiwi06 le 30/10/2026** : « Je
+valide, code »). Événement de 15 jours à partir du 31/10.
+
+- **`/adminshop ouvrir <jours>`**, `/adminshop fermer`, `/adminshop etat` (permission `kseconomy.staff`, comme les
+  signalements) ; état dans `plugins/KS_Economy/evenement.yml`. Fermeture automatique à la fin (vérifiée chaque
+  minute). Message à tous à l'ouverture, 24 h avant la fin (`evenement.annonce-veille-heures`) et à la fermeture ; les
+  menus de l'admin shop ouverts sont refermés.
+- **Admin shop** (`/adminshop`, ou le bouton citrouille du menu Économie, présent seulement pendant l'événement) :
+  coffre, un objet par case, prix au survol ; clic : acheter 1 / 8 / 64 (non empilable : 1 / 2 / 4 ; coffre :
+  1 / 5 / 10), puis confirmation. Paiement en points ; refus si le solde ou la place dans l'inventaire manque.
+  **Aucune limite d'achat** (LeKiwi06). Chaque achat écrit dans la console.
+- **Objets et prix : `adminshop.yml`** (copié du jar au premier démarrage, modifiable sur le serveur, lu au
+  démarrage) : coffres de récompense de valeur 10 / 100 / 1 000 à 15 / 150 / 1 500 (déposés dans /rewards par
+  KS_RewardsGUI, `deposerCoffre`, contenu tiré avec `fusion.yml`), livre Raccommodage 2 250, Cristal de purification
+  900, Estomac du gardien 233, Fragment de Spawner 192, Cœur de Spawner 15 353, jetons fly 45 / mort 450 / claim 1 500,
+  badges niveau 1 fly 675 / TP 900 / localisation 1 125 / mort 5 400, amulette mangeuse de mal 11 250 (par exception :
+  elle a un craft). Prix = 1,5 × la valeur validée (LeKiwi06). Le jeton de TP n'y est pas (déjà vendu 20 dans
+  /jetons). Objets custom créés par KS_KaliumGive (réflexion, comme les rachats) : un objet dont le plugin est absent
+  n'est pas proposé (l'amulette tant que KS_MaleficesNether et KS_KaliumGive 1.13.0 ne sont pas sur le serveur).
+- **Rachats de la semaine pendant l'événement : 100 objets** (`evenement.rachats-objets`) au lieu de 10 : à
+  l'ouverture, le tirage de la semaine est complété (les offres déjà là gardent leur prix) ; à la fermeture, on garde
+  les 10 premières sans attendre lundi ; un tirage du lundi pendant l'événement fait 100 objets. Mêmes règles
+  (familles, ± 25 %, lots, dimensions fermées, quotas inchangés). Menu par pages de 10 (flèches en bas). Le marchand
+  ambulant reste à 10.
+- Monde de test : achats payés avec le compte de test, coffres déposés au compte de test de /rewards.
+- Didacticiel : entrées « Admin shop » (Économie) et « /adminshop » (commandes) dans `didacticiel.yml`.
+
+Compilé le 30/10/2026 (`sortie/KS_Economy-1.13.0.jar`). Non déployé, non testé.

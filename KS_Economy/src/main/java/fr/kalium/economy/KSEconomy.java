@@ -86,6 +86,8 @@ public final class KSEconomy extends JavaPlugin implements Listener {
     private Favoris favoris;
     private Recherche recherche;
     private Rachats rachats;
+    /** 1.13.0 : admin shop et événement (rachats étendus). */
+    private AdminShop adminShop;
     /** 1.2.0 : une sauvegarde des comptes est déjà prévue au tick suivant. */
     private volatile boolean sauvegardePrevue;
 
@@ -121,6 +123,10 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         favoris = new Favoris(this);
         recherche = new Recherche(this, magasins, boutiques);
         getServer().getPluginManager().registerEvents(ventes, this);
+        // 1.13.0 : admin shop (avant Rachats : le nombre de rachats dépend de l'événement en cours).
+        adminShop = new AdminShop(this);
+        getCommand("adminshop").setExecutor(adminShop);
+        getCommand("adminshop").setTabCompleter(adminShop);
         // 1.3.0 : barème des prix et rachats de la semaine (après Boutiques : noms français des objets).
         rachats = new Rachats(this);
         getCommand("rachat").setExecutor(rachats);
@@ -166,6 +172,7 @@ public final class KSEconomy extends JavaPlugin implements Listener {
         getServer().getScheduler().runTaskTimer(this, () -> {
             prelevementDuJour();
             sauverSiBesoin();
+            adminShop.verifier();
             rachats.verifier();
         }, 20L * 60, 20L * 60);
         Bukkit.getOnlinePlayers().forEach(this::majListe);
@@ -220,6 +227,10 @@ public final class KSEconomy extends JavaPlugin implements Listener {
 
     Rachats rachats() {
         return rachats;
+    }
+
+    AdminShop adminShop() {
+        return adminShop;
     }
 
     MenuEconomie menuEconomie() {

@@ -1,0 +1,65 @@
+# KS_Economy 1.13.0 - objets de l'admin shop (ouvert seulement pendant un evenement : /adminshop ouvrir <jours>).
+# Liste et prix valides par LeKiwi06 le 30/10/2026 (Halloween) : objets custom sans craft, livre Raccommodage,
+# amulette (par exception), coffres de recompense ; prix = 1,5 x la valeur validee ; aucune limite d'achat.
+# Ordre = ordre du menu (21 objets au plus). Un objet dont le plugin est absent n'est pas propose.
+# type : custom (id de /kaliumgive), livre (id de l'enchantement, niveau maximal), coffre (valeur moyenne, /rewards).
+# Modifiable sur le serveur ; pris en compte au redemarrage.
+objets:
+  coffre_10:
+    type: coffre
+    valeur: 10
+    prix: 15
+  coffre_100:
+    type: coffre
+    valeur: 100
+    prix: 150
+  coffre_1000:
+    type: coffre
+    valeur: 1000
+    prix: 1500
+  livre_raccommodage:
+    type: livre
+    id: mending
+    # 1 500 x 1,5
+    prix: 2250
+  cristal_purification:
+    type: custom
+    # 600 x 1,5
+    prix: 900
+  estomac_gardien:
+    type: custom
+    # 155,4 x 1,5
+    prix: 233
+  fragment_spawner:
+    type: custom
+    # 128 x 1,5
+    prix: 192
+  coeur_spawner:
+    type: custom
+    # 10 235 (provisoire) x 1,5
+    prix: 15353
+  jeton_fly:
+    type: custom
+    prix: 45
+  jeton_mort:
+    type: custom
+    prix: 450
+  jeton_claim:
+    type: custom
+    prix: 1500
+  badge_fly_1:
+    type: custom
+    prix: 675
+  badge_tp_1:
+    type: custom
+    prix: 900
+  badge_localisation_1:
+    type: custom
+    prix: 1125
+  badge_mort_1:
+    type: custom
+    prix: 5400
+  amulette_mangeuse_de_mal:
+    type: custom
+    # 7 500 x 1,5 ; proposee seulement quand KS_MaleficesNether est installe.
+    prix: 11250

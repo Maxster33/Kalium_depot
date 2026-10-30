@@ -46,3 +46,11 @@ marchand:
   # Nombre de fois qu'un rachat sert, pour tous les joueurs ensemble, selon le prix a l'unite :
   # moins de 0,1 ; 0,1 a 1 ; 1 a 10 ; 10 a 100 ; 100 et plus.
   echanges: [10, 10, 5, 2, 1]
+
+# 1.13.0 - evenement (admin shop, /adminshop ouvrir <jours>) ; a ajouter a la main dans le config.yml du serveur pour
+# les modifier. Objets et prix de l'admin shop : adminshop.yml.
+evenement:
+  # Objets des rachats de la semaine pendant l'evenement (rachats.objets en temps normal).
+  rachats-objets: 100
+  # Heures avant la fin ou tous les joueurs sont prevenus de la fermeture.
+  annonce-veille-heures: 24

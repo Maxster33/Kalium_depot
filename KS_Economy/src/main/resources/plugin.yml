@@ -2,7 +2,7 @@ name: KS_Economy
 version: '${project.version}'
 main: fr.kalium.economy.KSEconomy
 api-version: '26.2'
-description: Economie du serveur Event (score en emeraudes dematerialisees, blocs compresses, /echange, economie Vault, rachats de la semaine).
+description: Economie du serveur Event (score en emeraudes dematerialisees, blocs compresses, /echange, economie Vault, rachats de la semaine, admin shop d'evenement).
 authors: [KaLium]
 depend: [KLM_Menu]
 softdepend: [KS_Menu, Vault, WorldGuard, SimpleClaimSystem, KS_Dimensions]
@@ -24,11 +24,14 @@ commands:
   magasin:
     description: Ton magasin (creer, agrandir, position).
     usage: /magasin [create | agrandir | position | signalements]
+  adminshop:
+    description: Admin shop (pendant un evenement) ; staff : ouvrir <jours>, fermer, etat.
+    usage: /adminshop [ouvrir <jours> | fermer | etat]
   magasins:
     description: Catalogue des magasins des autres joueurs (et les rachats de la semaine).
     aliases: [shop, market]
     usage: /magasins
 permissions:
   kseconomy.staff:
-    description: Recevoir et traiter les signalements de boutiques et de magasins (/magasin signalements).
+    description: Recevoir et traiter les signalements de boutiques et de magasins (/magasin signalements) ; ouvrir et fermer l'admin shop (/adminshop ouvrir <jours>).
     default: op
