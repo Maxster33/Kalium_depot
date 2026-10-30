@@ -65,7 +65,7 @@ final class Morts implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDeath(EntityDeathEvent event) {
         LivingEntity e = event.getEntity();
-        if (e instanceof Player || !importante(e)) {
+        if (e instanceof Player || !importante(e) || plugin.mondeTest(e.getWorld())) {
             return;
         }
         String nom = e.customName() == null ? "" : " « " + PlainTextComponentSerializer.plainText().serialize(e.customName()) + " »";

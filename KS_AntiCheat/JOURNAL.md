@@ -232,3 +232,23 @@ Limites :
 **Déployé sur Kixster le 09/10/2026 à 18:31 (LeKiwi06, envoi groupé : KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2, KS_RewardsGUI 1.4.1 ; accord de LeKiwi06 : « Oui, sur Kixster » ; 1.2.0 dans `_removed-ks_anticheat-1.2.0/` ; jars en place vérifiés identiques aux références avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (KS_AntiCheat 1.1.1). Statut : non testé en jeu.**
 
 **Journal de Kixster lu après le redémarrage de 18:36 (09/10/2026) : activé sans erreur, avec KS_AntiCheat 1.3.0, KS_Economy 1.4.1, KS_Teleport 1.0.1, KS_CoffreMort 1.0.2 et KS_RewardsGUI 1.4.1 ; KS_AntiCheat démarre après eux. Personne n'avait encore ouvert la fiche d'un joueur : reste à tester en jeu.**
+
+## 1.4.0 - monde de test exclu, Timer et TimerLimit plus « lourdes » (30/10/2026, LeKiwi06)
+
+LeKiwi06 a été suspendu automatiquement le 30/10 à 22:14 pendant un test : « GrimAC TimerLimit : niveau 100 (seuil
+100) ». Le niveau est passé de 62 à 100 en une fraction de seconde (rafale après un pic de lag). « Timer » dans
+`grimac.lourdes` était comparé au début du nom et prenait donc TimerLimit. LeKiwi06 avait déjà 16 alertes légères
+Timer / TimerLimit depuis le 09/10 : ces vérifications réagissent au lag. Autre constat : `plugins-coupes` de
+KS_MondeTest coupe les commandes de KS_AntiCheat, pas ses détections ; le soir même, chaque kit_test jeté à un testeur
+a donné une alerte « Revente ? » (une quarantaine).
+
+- **Monde de test** (`enTest` : métadonnée `ks_compte` de KS_MondeTest, ou monde `monde-test`, « Kixster Test » par
+  défaut) : aucun signalement GrimAC, aucune macro, aucun x-ray, aucun don ni échange ni récompense compté (et
+  `/echange` pas noté dans `echanges.log`), aucune mort d'entité notée dans `morts.log`. L'expulsion AFK reste.
+- **Vérifications lourdes** comparées sur le **nom exact** ; `Timer` retirée de la liste par défaut et du `config.yml`
+  de Kixster (Timer et TimerLimit restent des alertes légères au bout de 10 signalements en 10 minutes).
+
+**Déployé sur Kixster le 30/10/2026 à 22:20 (LeKiwi06 : « Oui, les deux ») : jar 1.4.0, `config.yml` du serveur
+(ligne `lourdes` seulement) et `suspensions.yml` vidé (suspension de LeKiwi06 levée) ; 1.3.0, ancien `config.yml` et
+ancien `suspensions.yml` dans `_removed-ks_anticheat-1.3.0/`. Actif au redémarrage de Kixster : d'ici là, la
+suspension reste en mémoire. Statut : non testé.**

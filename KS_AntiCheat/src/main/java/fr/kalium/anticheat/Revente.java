@@ -150,7 +150,8 @@ final class Revente implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDrop(PlayerDropItemEvent event) {
         Item entite = event.getItemDrop();
-        if (deValeur(entite.getItemStack())) {
+        // 1.4.0 : les objets jetés dans le monde de test ne comptent pas comme dons.
+        if (deValeur(entite.getItemStack()) && !plugin.enTest(event.getPlayer())) {
             jetes.put(entite.getUniqueId(), new Jete(event.getPlayer().getUniqueId(), event.getPlayer().getName(),
                     System.currentTimeMillis()));
         }
@@ -312,6 +313,10 @@ final class Revente implements Listener {
 
         @EventHandler(priority = EventPriority.MONITOR)
         public void onEchange(fr.kalium.economy.api.EchangeTermineEvent e) {
+            // 1.4.0 : échanges du monde de test (comptes de test) ni comptés ni notés.
+            if (revente.plugin.enTest(e.a()) || revente.plugin.enTest(e.b())) {
+                return;
+            }
             revente.echange(e.a(), e.b(), e.objetsA(), e.objetsB(), e.pointsA(), e.pointsB());
             // 1.3.0 : journal des échanges (fiche d'un joueur, « Économie »).
             revente.plugin.echanges().noter(e.a(), e.b(), e.objetsA(), e.objetsB(), e.pointsA(), e.pointsB());
@@ -328,6 +333,9 @@ final class Revente implements Listener {
 
         @EventHandler(priority = EventPriority.MONITOR)
         public void onRecompense(fr.kalium.rewardsgui.api.RecompenseRecupereeEvent e) {
+            if (revente.plugin.enTest(e.joueur())) {
+                return;
+            }
             revente.recompense(e.joueur(), e.objets());
         }
     }

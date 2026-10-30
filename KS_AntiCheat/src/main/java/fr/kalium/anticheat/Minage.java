@@ -159,7 +159,7 @@ final class Minage implements Listener {
         Player p = event.getPlayer();
         Block bloc = event.getBlock();
         String ici = cle(bloc);
-        if (p.getGameMode() == GameMode.CREATIVE) {
+        if (p.getGameMode() == GameMode.CREATIVE || plugin.enTest(p)) {
             poses.remove(ici);
             return;
         }

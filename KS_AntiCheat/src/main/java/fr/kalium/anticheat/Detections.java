@@ -34,7 +34,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * - GrimAC : ses signalements (FlagEvent, par son propre bus d'événements, branché par réflexion : aucune
  *   dépendance à sa version) deviennent une alerte légère quand une même vérification signale un joueur
  *   grimac.alerte-signalements fois en 10 minutes ; infraction grave (suspension automatique) si la vérification
- *   est dans grimac.lourdes et que son niveau de violation atteint grimac.seuil-suspension.
+ *   est dans grimac.lourdes (nom exact) et que son niveau de violation atteint grimac.seuil-suspension.
+ * - 1.4.0 : GrimAC et macros ignorés dans le monde de test (KSAntiCheat.enTest).
  * - Macros : alerte légère si le joueur répète des actions (casser, pêcher, frapper, utiliser un objet) alors qu'il
  *   ne bouge ni lui ni sa caméra depuis macros.minutes ; alerte seulement.
  * - AFK : expulsion au bout de afk.minutes (60) sans vrai mouvement ni mouvement de caméra (poussé par l'eau, dans un
@@ -120,6 +121,9 @@ final class Detections implements Listener {
     // ------------------------------------------------------------------ macros
 
     private void action(Player p, String quoi) {
+        if (plugin.enTest(p)) {
+            return;
+        }
         long seuil = Math.max(1, plugin.getConfig().getLong("macros.minutes", 5)) * 60_000L;
         long maintenant = System.currentTimeMillis();
         long mouvement = dernierMouvement.getOrDefault(p.getUniqueId(), maintenant);
@@ -233,6 +237,11 @@ final class Detections implements Listener {
 
     /** Signalement GrimAC (fil de GrimAC) : compté ; alerte / suspension sur le fil principal. */
     private void signalement(UUID joueur, String nom, String verification, double vl, String detail) {
+        // 1.4.0 : rien dans le monde de test.
+        Player enLigne = Bukkit.getPlayer(joueur);
+        if (enLigne != null && plugin.enTest(enLigne)) {
+            return;
+        }
         // 1.0.2 (LeKiwi06) : écart minimal par vérification (grimac.ecart-minimum ; Simulation : 0,05 bloc) : les
         // signalements plus petits (lag, recul, glace, mods client...) ne sont pas comptés.
         Double minimum = ecartMinimum(verification);
@@ -257,10 +266,11 @@ final class Detections implements Listener {
         double seuilGrave = plugin.getConfig().getDouble("grimac.seuil-suspension", 100);
         List<String> lourdes = plugin.getConfig().getStringList("grimac.lourdes");
         if (lourdes.isEmpty()) {
-            lourdes = List.of("Reach", "Hitboxes", "FastBreak", "FarBreak", "MultiBreak", "Timer");
+            lourdes = List.of("Reach", "Hitboxes", "FastBreak", "FarBreak", "MultiBreak");
         }
         List<String> verifs = lourdes;
-        boolean lourde = verifs.stream().anyMatch(l -> verification.toLowerCase().startsWith(l.toLowerCase()));
+        // 1.4.0 : nom exact (« Timer » prenait aussi TimerLimit, qui réagit au lag : LeKiwi06 suspendu le 30/10).
+        boolean lourde = verifs.stream().anyMatch(verification::equalsIgnoreCase);
         Bukkit.getScheduler().runTask(plugin, () -> {
             if (lourde && vl >= seuilGrave && !plugin.suspensions().suspendu(joueur)) {
                 plugin.infractionGrave(joueur, nom, "GrimAC " + verification,

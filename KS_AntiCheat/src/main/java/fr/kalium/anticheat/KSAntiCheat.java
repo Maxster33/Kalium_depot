@@ -28,6 +28,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 1.3.0 (LeKiwi06, 09/10/2026) : fiche d'un joueur : économie (KS_Economy 1.4.1, journal des /echange : Echanges),
  * maisons (lit, KS_Teleport 1.0.1), jetons et badges (KS_Jetons), récompenses en attente (KS_RewardsGUI 1.4.1), coffres de mort
  * (KS_CoffreMort 1.0.2) ; téléportation du staff à un claim, une maison ou un coffre de mort.
+ * 1.4.0 (LeKiwi06, 30/10/2026, suspendu à tort pendant un test) : aucune détection dans le monde de test de
+ * KS_MondeTest (enTest) ; vérifications lourdes de GrimAC comparées sur le nom exact, Timer et TimerLimit retirées
+ * (elles réagissent au lag).
  *
  * Permission : ksanticheat.staff (opérateurs par défaut).
  */
@@ -226,6 +229,18 @@ public final class KSAntiCheat extends JavaPlugin {
         if (!suspensions.suspendu(joueur)) {
             suspensions.suspendre(joueur, nom, type + " : " + detail, "automatique");
         }
+    }
+
+    /**
+     * 1.4.0 : joueur dans le monde de test de KS_MondeTest (métadonnée ks_compte, ou monde monde-test) : aucune
+     * détection (GrimAC, macros, x-ray, revente).
+     */
+    boolean enTest(Player joueur) {
+        return joueur.hasMetadata("ks_compte") || mondeTest(joueur.getWorld());
+    }
+
+    boolean mondeTest(org.bukkit.World monde) {
+        return monde != null && monde.getName().equals(getConfig().getString("monde-test", "Kixster Test"));
     }
 
     static boolean staff(Player joueur) {
