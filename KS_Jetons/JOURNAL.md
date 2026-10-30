@@ -187,3 +187,5 @@ spéciaux » (plus tard aussi la bague de relais dimensionnel).
 
 Empilé sur la 2.2.0, jamais testée en jeu (demande de LeKiwi06 : chantier validé). Compilé le 30/10/2026
 (`sortie/KS_Jetons-2.3.0.jar`). **À déployer avec KS_MaleficesNether 1.0.0.** Statut : non déployé, non testé en jeu.
+
+**Déployé sur Kixster le 30/10/2026 à 18:56** (LeKiwi06 : « Oui, déploie » ; jars en place vérifiés identiques à `jars-deployes/` avant l'envoi), avec KS_MaleficesNether 1.0.0, KS_Jetons 2.3.0, KS_Atouts 1.2.0, KS_KaliumGive 1.13.0, KS_Textures 1.2.0 et le didacticiel ; geyser-bedrock 1.10.0 sur le proxy ; à redémarrer, non testé en jeu.
