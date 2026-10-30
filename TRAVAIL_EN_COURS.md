@@ -25,7 +25,6 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_CoffreRenforce, KS_JukeboxBoat — LeKiwi06 — depuis le 2026-10-29 03:55 — aspect enchanté du coffre renforcé, des véhicules avec coffre renforcé et des bateaux à coffre et jukebox
 - KS_Textures (nouveau), geyser-bedrock — LeKiwi06 — depuis le 2026-10-29 04:14 — pack de ressources des objets custom : textures ajoutées aux objets dans ce qui est envoyé aux joueurs, pack proposé aux joueurs Java ; couleur de rareté dans le nom des objets custom (depuis le 2026-10-29, même plugin, affichage seul) ; geyser-bedrock 1.8.0 (mêmes textures sur Bedrock), aussi réservé par le chantier aliments ci-dessus : accord de LeKiwi06 le 29/10
 - KG_BingoGame — LeKiwi06 — depuis le 2026-10-30 13:27 — Halloween : ghast d'Halloween dans chaque monde d'équipe, tué par sa boule renvoyée = un joker (case au choix) ; du 31/10 au 14/11 (cahier local validé le 30/10) ; 0.13.0 déployée sur Serveur Jeux le 30/10 à 18:46, à redémarrer, non testée
-- KS_Atouts — LeKiwi06 — depuis le 2026-10-30 23:10 — 1.3.0 : l'objet ne prend l'apparence de son atout que pendant l'effet (sous l'eau, sur le magma, collé au plafond, dans le Nether, près de la poudreuse)
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-30 13:31 — montée des marches en blocs de piste, réglages par map (paliers, tours, records), plafond du bonus de tour propre (Manoir Hanté)
 
 ## Requis parfois

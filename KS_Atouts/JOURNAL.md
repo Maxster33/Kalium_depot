@@ -119,4 +119,4 @@ Limites :
   le joueur peut traverser la poudreuse avant de recevoir les bottes en cuir. GrimAC peut aussi réagir à ce changement.
 - Bedrock : même rendu attendu (vrai type), à vérifier.
 
-Compilé le 30/10/2026 (`sortie/KS_Atouts-1.3.0.jar`). Statut : non déployé, non testé en jeu.
+Compilé le 30/10/2026 (`sortie/KS_Atouts-1.3.0.jar`). **Déployé sur Kixster le 30/10/2026 à 23:44** (LeKiwi06 : « Oui, déploie »), avec `didacticiel.yml` ; fichiers en place vérifiés identiques au dépôt avant l'envoi, et après. 1.2.0 dans `_removed-ks_atouts-1.2.0/`, ancien didacticiel dans `_removed-ks_didacticiel-yml-2026-10-30-atouts/`. À redémarrer par LeKiwi06. Statut : non testé en jeu.
