@@ -48,6 +48,8 @@ import java.util.UUID;
  * - Alcool neutre comme combustible des fours, fumoirs et hauts fourneaux ({@link Carburant}) ; trains : KS_Trains.
  * - Cocktail Molotov ({@link Molotov}), bandage, torche augmentée ({@link Torches}), à l'établi.
  * - 1.1.0 : rhum ({@link Rhum}) : musique d'un disque autour du buveur (étape 5). Le Shéjiǔ viendra plus tard (étape 6).
+ * - 1.2.0 : une seule fiole à la fois dans l'alambic, case du milieu ({@link Alambic}), barrières affichées sur les
+ *   côtés ({@link CasesFermees}, compilé contre le serveur Paper 26.3) ; alcools à la redstone : 6 min.
  *
  * Autres plugins : alcool(id, variante, jetable), ids(), idAlcool(objet), estAlcoolNeutre(objet), creerMolotov(),
  * creerBandage(), creerTorche(nombre).
@@ -93,6 +95,8 @@ public final class KSAlcools extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new Molotov(this), this);
         getServer().getPluginManager().registerEvents(torches, this);
         getServer().getPluginManager().registerEvents(rhum, this);
+        getServer().getPluginManager().registerEvents(new Alambic(this), this);
+        CasesFermees.installer(this);
         boire.demarrer();
         carburant.demarrer();
         torches.demarrer();
@@ -103,6 +107,7 @@ public final class KSAlcools extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        CasesFermees.desinstaller();
         if (rhum != null) {
             rhum.toutArreter();
         }

@@ -251,8 +251,14 @@ themes:
       alcools:
         nom: "Les alcools"
         icone: HONEY_BOTTLE
-        texte: "Alcool neutre + fleur de cactus : tequila (résistance) ; + patate : vodka (lévitation, en pause quand tu t'accroupis) ; + bouteille de miel : hydromel (célérité) ; + pomme : manzana (bonus de vie) ; + blé : bière (grâce du dauphin) ; + crème de magma : tabascoolisé (ni gel ni poudreuse) ; + canne à sucre : rhum (un disque au hasard joue autour de toi, entendu à 5 blocs). Redstone, glowstone et poudre à canon comme pour les potions. Attention, un alcool peut donner la nausée !"
-        nouveau: "2026-10-29"
+        texte: "Alcool neutre + fleur de cactus : tequila (résistance) ; + patate : vodka (lévitation, en pause quand tu t'accroupis) ; + bouteille de miel : hydromel (célérité) ; + pomme : manzana (bonus de vie) ; + blé : bière (grâce du dauphin) ; + crème de magma : tabascoolisé (ni gel ni poudreuse) ; + canne à sucre : rhum (un disque au hasard joue autour de toi, entendu à 5 blocs). Effets de 3 minutes ; redstone : 6 minutes ; glowstone : niveau II pendant 1 min 30 ; poudre à canon : jetable. Attention, un alcool peut donner la nausée !"
+        nouveau: "2026-10-30"
+      alambic:
+        nom: "Une fiole à la fois"
+        icone: BREWING_STAND
+        texte: "L'alambic ne brasse plus qu'une fiole à la fois, dans la case du milieu, potions comme alcools. Il lui faut toujours de la poudre de blaze : une poudre pour 20 fioles."
+        requiert: "KS_Alcools 1.2.0"
+        nouveau: "2026-10-30"
       molotov:
         nom: "Cocktail Molotov"
         icone: FIRE_CHARGE

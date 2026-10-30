@@ -2,7 +2,7 @@ name: KS_Alcools
 version: '${project.version}'
 main: fr.kalium.alcools.KSAlcools
 api-version: '26.2'
-description: Alcools a l'alambic (alcool neutre, tequila, vodka, hydromel, manzana, biere, tabascoolise), alcool neutre comme combustible, cocktail Molotov, bandage, torche augmentee.
+description: Alambic a une seule fiole (case du milieu), alcools a l'alambic (alcool neutre, tequila, vodka, hydromel, manzana, biere, tabascoolise), alcool neutre comme combustible, cocktail Molotov, bandage, torche augmentee.
 authors: [KaLium]
 depend: [KLM_Menu, KS_Effets]
 softdepend: [SimpleClaimSystem]

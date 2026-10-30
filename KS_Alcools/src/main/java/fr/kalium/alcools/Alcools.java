@@ -32,7 +32,7 @@ import java.util.function.Predicate;
  *
  * Un alcool est une potion sans type de base (aucune recette d'alambic du jeu ne le reconnaît : pas de souffle de
  * dragon, pas de verrue...), marquée « alcool » (id) et « variante » (normal, long, fort). Ses mélanges sont ajoutés
- * par Paper : eau + patate empoisonnée = alcool neutre ; alcool neutre + ingrédient = alcool ; redstone (8 min),
+ * par Paper : eau + patate empoisonnée = alcool neutre ; alcool neutre + ingrédient = alcool (3 min) ; redstone (6 min depuis 1.2.0, 8 avant),
  * glowstone (niveau II, 1 min 30, pas pour la bière ni le tabascoolisé), poudre à canon (jetable). L'alcool neutre n'a
  * aucun mélange de durée ni de version jetable (base des autres, combustible).
  */
@@ -43,9 +43,13 @@ final class Alcools {
     static final String TABASCOOLISE = "tabascoolise";
     static final String RHUM = "rhum";
 
-    /** Durée de base, redstone, glowstone (comme les potions du jeu). */
+    /**
+     * Durée de base, redstone, glowstone. 1.2.0 (LeKiwi06, 30/10/2026) : redstone 6 min au lieu des 8 des potions du
+     * jeu (la célérité de l'hydromel est très forte). Un alcool déjà fabriqué garde les effets du jeu écrits dessus ;
+     * les effets custom (vodka, tabascoolisé, rhum) prennent la nouvelle durée.
+     */
     enum Variante {
-        NORMAL("normal", 180), LONG("long", 480), FORT("fort", 90);
+        NORMAL("normal", 180), LONG("long", 360), FORT("fort", 90);
 
         final String cle;
         final int secondes;

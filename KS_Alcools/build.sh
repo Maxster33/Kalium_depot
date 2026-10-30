@@ -3,9 +3,11 @@
 # Outils : <racine du depot>/outils-build si present (PC local, ignore par git), sinon /tmp/claude-0 (espace cloud).
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 # Compiler d'abord KLM_Menu et KS_Effets (leurs classes servent a compiler).
+# 1.2.0 : compile aussi contre le serveur Paper 26.3 (paquets : barrieres de l'alambic) :
+# <outils>/serveur/versions/26.3/paper-26.3.jar et <outils>/serveur/libraries, produits par telecharger-outils.sh.
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.1.0
+VERSION=1.2.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -21,6 +23,17 @@ esac
 # KLM_Menu (textes) et KS_Effets (effets custom) : depend ; SimpleClaimSystem (libs) : softdepend. Jamais embarques.
 CP="$(win "$TOOLS/classes/KLM_Menu")$SEP$(win "$TOOLS/classes/KS_Effets")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
+SERVER="$TOOLS/serveur/versions/26.3/paper-26.3.jar"
+if [ ! -f "$SERVER" ]; then
+  echo "Serveur Paper 26.3 absent ($SERVER) : lancer sh telecharger-outils.sh a la racine du depot" >&2
+  exit 1
+fi
+CP="$CP$(win "$SERVER")$SEP"
+# (boucle ligne par ligne : le chemin du depot contient des espaces)
+LIBS="$(find "$TOOLS/serveur/libraries" -name '*.jar' ! -name 'paper-api-*')"
+while IFS= read -r j; do CP="$CP$(win "$j")$SEP"; done <<EOF_LIBS
+$LIBS
+EOF_LIBS
 OUT="$TOOLS/classes/KS_Alcools"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"
 java -jar "$(win "$TOOLS/ecj.jar")" -21 -proc:none -nowarn -encoding UTF-8 \

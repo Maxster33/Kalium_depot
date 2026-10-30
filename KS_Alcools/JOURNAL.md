@@ -5,6 +5,50 @@ Serveur Kixster. Alcools à l'alambic, alcool neutre comme combustible, cocktail
 `Atouts_Alcools_Aliments.md`, parties 3.2 et 3.3, à copier ici au déploiement).
 Dépend de KLM_Menu (textes) et de KS_Effets (effets custom) ; SimpleClaimSystem facultatif (claims).
 
+## 1.2.0 - une fiole à la fois, redstone 6 min (30/10/2026)
+
+Demande de LeKiwi06 (30/10/2026) : « que les alambics n'aient que le slot central de disponible, faire les potions
+3 par 3 est bien trop fort » ; durées des alcools : 3 min, 6 min à la redstone, 1 min 30 au niveau II (« le haste est
+super fort »).
+
+**Une fiole à la fois** (`Alambic`, tous les alambics, potions du jeu comme alcools) :
+- cases de gauche et de droite : rien ne s'y pose (clic, glisser, touches 1 à 9, main secondaire ; message en barre
+  d'action) ; on peut encore en retirer ce qui s'y trouvait ;
+- clic avec Maj depuis l'inventaire : le jeu choisit lui-même les fioles acceptées et remplit la case de gauche ; au
+  tick suivant, la fiole passe au milieu s'il est libre, sinon elle revient au joueur ;
+- entonnoir ou distributeur sur le côté : une potion (à boire, jetable, persistante) n'entre que si le milieu est
+  libre, et au milieu (déplacée par le plugin au tick suivant) ;
+- filet de sécurité : au début d'un brassage, une fiole restée sur le côté (posée avant 1.2.0) passe au milieu s'il
+  est libre, sinon elle tombe au-dessus de l'alambic ; au brassage, les côtés ne changent jamais.
+
+**Barrières sur les côtés** (`CasesFermees`, demande de LeKiwi06 du 30/10 : « pour que ce soit plus visuel ») : dans
+l'écran d'un alambic, les cases vides de gauche et de droite montrent une barrière « Case fermée ». Affichage seul,
+comme KS_Textures : un gestionnaire placé dans la connexion de chaque joueur l'ajoute aux paquets du menu d'alambic
+ouvert (contenu et case), l'alambic ne contient rien (pas de vol, rien à la casse, rien par un entonnoir dessous, pas de
+fiole dessinée sur le bloc). Clic sur la barrière : refusé par le serveur, qui renvoie l'écran (elle revient) ; en
+créatif, une barrière copiée depuis l'écran est effacée avant d'arriver au serveur. Une fiole posée avant 1.2.0 sur un
+côté s'affiche telle quelle. **KS_Alcools se compile donc maintenant contre le serveur Paper 26.3** (`build.sh`,
+comme KS_Textures) : à revérifier à chaque mise à jour de Minecraft. Le gestionnaire n'est posé qu'à la connexion :
+redémarrage nécessaire (pas de rechargement à chaud). Clic avec Maj : le jeu Java prévoit la fiole au milieu, le
+serveur la pose à gauche puis la déplace au tick suivant (un tick à gauche à l'écran).
+
+**Poudre de blaze** : déjà exigée, rien à changer. Vérifié dans le code de Paper 26.3
+(`BrewingStandBlockEntity.serverTick`) : un brassage ne démarre que si la réserve de carburant est au-dessus de 0,
+mélanges de Paper (alcools) compris. Une poudre remplit la réserve pour 20 brassages : un alcool brassé sans poudre
+dans la case a utilisé la réserve d'une poudre précédente. Avec une seule fiole, une poudre = 20 fioles (60 avant).
+
+**Durées** : alcools à la redstone 6 min au lieu de 8 (`Variante.LONG`) ; base 3 min et niveau II 1 min 30
+inchangés. Un alcool déjà fabriqué garde les effets du jeu écrits dessus (tequila, hydromel, manzana, bière longs :
+encore 8 min) ; vodka, tabascoolisé et rhum longs passent à 6 min, car leur durée est lue au moment de boire.
+
+Didacticiel : entrée « Les alcools » (durées) et nouvelle entrée « Une fiole à la fois » (`requiert: "KS_Alcools
+1.2.0"`).
+
+À tester en premier : barrières dans l'écran (Java et Bedrock : Geyser reçoit les mêmes paquets), clic sur une
+barrière (elle doit revenir), clic avec Maj d'une potion (passage au milieu), entonnoir sur le côté.
+
+Compilé le 30/10/2026 (`sortie/KS_Alcools-1.2.0.jar`). Non déployé, non testé.
+
 ## 1.1.0 - rhum (29/10/2026)
 
 Étape 5 du chantier (cahier, partie 3.2.2, solution A). Choix de LeKiwi06 du 29/10 : **les 22 disques** du jeu plutôt
