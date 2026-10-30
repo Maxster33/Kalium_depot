@@ -27,6 +27,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_MaleficesNether (nouveau), KS_Jetons, KS_Atouts — LeKiwi06 — depuis le 2026-10-30 13:00 — maléfices du Nether (cahier local validé le 30/10) : compteur et maléfices, amulette mangeuse de mal (rangée « Équipements spéciaux » de /jetons), plastron anti-radiation (atout) ; aussi KS_Textures 1.2.0 et geyser-bedrock 1.10.0 (amulette ; réservés par le chantier des textures, accord de LeKiwi06 le 30/10 : « continue »)
 - KG_BingoGame — LeKiwi06 — depuis le 2026-10-30 13:27 — Halloween : ghast d'Halloween dans chaque monde d'équipe, tué par sa boule renvoyée = un joker (case au choix) ; du 31/10 au 14/11 (cahier local validé le 30/10) ; 0.13.0 déployée sur Serveur Jeux le 30/10 à 18:46, à redémarrer, non testée
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-30 13:31 — montée des marches en blocs de piste, réglages par map (paliers, tours, records), plafond du bonus de tour propre (Manoir Hanté)
+- KS_Economy — LeKiwi06 — depuis le 2026-10-30 19:30 — Halloween : admin shop (/adminshop ouvrir <jours>) et rachats de la semaine à 100 objets pendant l'événement (cahier local validé le 30/10) ; aussi une entrée dans didacticiel.yml (KS_Didacticiel, requis parfois par le chantier des maléfices)
 
 ## Requis parfois
 
