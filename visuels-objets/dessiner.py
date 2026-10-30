@@ -317,6 +317,45 @@ def verrou():
     return peindre(m, n, {"S": rampes_metaux()["fer"], "L": rampes_metaux()["or"]})
 
 
+def amulette():
+    """Amulette mangeuse de mal (KS_MaleficesNether) : collier de chaîne en cuivre, pendentif cerclé de cuivre autour
+    d'un cœur de balise."""
+    m = [".C............C.",
+         "..C..........C..",
+         "..C..........C..",
+         "...C........C...",
+         "....C......C....",
+         "....C......C....",
+         ".....C....C.....",
+         "......CCCC......",
+         ".....FFFFFF.....",
+         "....FffffffF....",
+         "...FfGGGGGGfF...",
+         "...FfGGGGGGfF...",
+         "...FfGGGGGGfF...",
+         "...FfGGGGGGfF...",
+         "....FffffffF....",
+         ".....FFFFFF....."]
+    n = [".7............7.",
+         "..4..........4..",
+         "..7..........7..",
+         "...4........4...",
+         "....7......7....",
+         "....4......4....",
+         ".....7....7.....",
+         "......5775......",
+         ".....000000.....",
+         "....09988770....",
+         "...0898876540...",
+         "...0787665440...",
+         "...0776654330...",
+         "...0665543230...",
+         "....05444330....",
+         ".....000000....."]
+    cuivre = rampes_metaux()["cuivre"]
+    return peindre(m, n, {"C": rampe("item/copper_chain"), "F": cuivre, "f": cuivre, "G": rampe("block/beacon")})
+
+
 # ---------------------------------------------------------------- recettes a partir du vanilla
 
 def potion(couleur, base="item/potion", couleur_bouchon=None):
@@ -674,6 +713,10 @@ def objets():
             ("radeau_jukebox", "Radeau à jukebox (et à coffre et jukebox, enchanté)", "KS_JukeboxBoat", "bamboo_raft"),
             ("wagon_jukebox", "Wagon jukebox", "KS_Trains", "minecart")):
         add(id_, nom, plugin, base, vanilla("item/" + base))
+
+    # KS_MaleficesNether (30/10/2026) : premier jet, à retoucher par LeKiwi06.
+    add("amulette_mangeuse_de_mal", "Amulette mangeuse de mal", "KS_MaleficesNether", "item_model heart_of_the_sea",
+        amulette())
     return o
 
 

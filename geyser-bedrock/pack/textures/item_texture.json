@@ -301,6 +301,11 @@
       "textures": [
         "textures/items/kalium_wagon_jukebox"
       ]
+    },
+    "kalium.amulette_mangeuse_de_mal": {
+      "textures": [
+        "textures/items/kalium_amulette_mangeuse_de_mal"
+      ]
     }
   }
 }

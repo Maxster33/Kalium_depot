@@ -67,6 +67,7 @@ final class Raretes {
         AUTRES.put("ks_jetons:jeton=fly", 30.0); // valeur des récompenses
         AUTRES.put("ks_jetons:jeton=localisation", 1.58); // 8 blocs de cuivre + boussole
         AUTRES.put("ks_meule:cristal", 600.0); // valeur des récompenses
+        AUTRES.put("ks_maleficesnether:amulette", 7_500.0); // valeur fixée par LeKiwi06 (30/10/2026)
         AUTRES.put("ks_coffrerenforce:coffre", 516.0); // coffre + 4 blocs de fer + 4 fragments de spawner (+ véhicule)
         // Recettes estimées, toutes communes
         AUTRES.put("ks_alcools:alcool", 0.22); // 0,07 à 0,22

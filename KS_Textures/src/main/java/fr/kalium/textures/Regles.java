@@ -63,6 +63,7 @@ final class Regles {
         }
         r("cristal_purification", "ks_meule:cristal");
         r("casse_croute_dore", "ks_cassecroute:casse_croute");
+        r("amulette_mangeuse_de_mal", "ks_maleficesnether:amulette"); // 1.2.0 (KS_MaleficesNether)
 
         // KS_Alcools : la version jetable (potion jetable) garde l'image de l'alcool
         for (String a : List.of("neutre", "tequila", "vodka", "hydromel", "manzana", "biere", "tabascoolise")) {

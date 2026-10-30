@@ -194,6 +194,16 @@
         "components": {
           "minecraft:max_stack_size": 64
         }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:heart_of_the_sea",
+        "bedrock_identifier": "kalium:amulette_mangeuse_de_mal",
+        "display_name": "Amulette mangeuse de mal",
+        "bedrock_options": {
+          "icon": "kalium.amulette_mangeuse_de_mal",
+          "allow_offhand": true
+        }
       }
     ],
     "minecraft:pumpkin_pie": [

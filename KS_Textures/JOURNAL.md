@@ -103,3 +103,22 @@ Empilée sur la 1.0.0, déployée le 29/10 mais jamais testée en jeu (demande e
 Compilé le 29/10/2026 (`sortie/KS_Textures-1.1.0.jar`).
 
 **Déployé sur Kixster le 29/10/2026 à 11:04 (Claude de LeKiwi06 ; accord : « Oui, déploie KS_Textures 1.1.0 sur Kixster » ; jar en place vérifié identique à `jars-deployes/KS_Textures-1.0.0.jar` avant l'envoi, 1.0.0 rangée dans `_removed-ks_textures-1.0.0/` ; `config.yml` inchangé, aucune nouvelle clé), actif après redémarrage de Kixster. Statut : non testé en jeu.**
+
+## 1.2.0 - amulette mangeuse de mal (30/10/2026)
+
+Chantier des maléfices du Nether (cahier local `Malefices_Nether.md`, validé par LeKiwi06 le 30/10/2026 ; accord de
+LeKiwi06 pour toucher KS_Textures et geyser-bedrock, réservés par le chantier des textures : « continue »).
+
+- Règle `amulette_mangeuse_de_mal` (marque `ks_maleficesnether:amulette`) ; rareté : 7 500 émeraudes (valeur fixée par
+  LeKiwi06) dans `AUTRES`, entre 1 000 et 10 000.
+- Texture : premier jet de Claude (`visuels-objets/dessiner.py`, `amulette()` : collier de chaîne en cuivre, pendentif
+  cerclé de cuivre autour d'un cœur de balise), à retoucher par LeKiwi06 dans `visuels-objets/png/`.
+- Pack Java **1.1.0** (`visuels-objets/pack.py`, base `heart_of_the_sea`, l'apparence de l'amulette sur le serveur) :
+  `sortie/KaLium-textures-1.1.0.zip`, SHA-1 `ffa12abec13df41fe784170f2b82c4273c99fa3e`, à déposer sur minepack.fr par
+  LeKiwi06 puis adresse et SHA-1 dans `plugins/KS_Textures/config.yml` (à refaire après une retouche de la texture).
+- Bedrock : geyser-bedrock **1.10.0** (correspondance `minecraft:heart_of_the_sea` sur le livre de connaissances,
+  icône `kalium.amulette_mangeuse_de_mal`), `sortie/KaLium-objets-1.10.0.mcpack`, à envoyer sur le proxy (laisser
+  l'ancien pack en place jusqu'au redémarrage).
+
+Empilé sur la 1.1.0, jamais testée en jeu. Compilé le 30/10/2026 (`sortie/KS_Textures-1.2.0.jar`). **À déployer avec
+KS_MaleficesNether 1.0.0.** Statut : non déployé, non testé en jeu.

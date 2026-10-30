@@ -15,7 +15,7 @@ import re
 import sys
 import zipfile
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 DIR = os.path.dirname(os.path.abspath(__file__))
 PNG_DIR = os.path.join(DIR, "png")
 SORTIE = os.path.join(DIR, "..", "sortie")
@@ -41,6 +41,7 @@ BASES = {
     "sandwich": ["bread"], "brunch": ["cooked_porkchop"], "ble_souffle": ["wheat"], "bol_cereales": ["mushroom_stew"],
     "bloc_charbon_de_bois": ["coal_block"], "fiole_experience": ["experience_bottle"],
     "fiole_experience_mort": ["experience_bottle"], "radeau_jukebox": ["bamboo_raft", "bamboo_chest_raft"],
+    "amulette_mangeuse_de_mal": ["heart_of_the_sea"],
 }
 # Textures de face de bloc : affichees en cube, comme le bloc vanilla
 BLOCS = {"bloc_charbon_de_bois"} | {f"emeraude_compressee_{t}" for t in range(1, 7)}
