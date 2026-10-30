@@ -902,4 +902,4 @@ valide, code »). Événement de 15 jours à partir du 31/10.
 - Monde de test : achats payés avec le compte de test, coffres déposés au compte de test de /rewards.
 - Didacticiel : entrées « Admin shop » (Économie) et « /adminshop » (commandes) dans `didacticiel.yml`.
 
-Compilé le 30/10/2026 (`sortie/KS_Economy-1.13.0.jar`). Non déployé, non testé.
+Compilé le 30/10/2026 (`sortie/KS_Economy-1.13.0.jar`). **Déployé sur Kixster le 30/10/2026 à 20:15** (LeKiwi06 : « Oui, déploie »), avec `didacticiel.yml` (celui du serveur était identique à celui du déploiement de 18:56, seules les 11 lignes de l'admin shop changent) ; 1.12.2 dans `_removed-ks_economy-1.12.2/`, ancien `didacticiel.yml` dans `_removed-ks_didacticiel-yml-2026-10-30-adminshop/`. À redémarrer par LeKiwi06. Statut : non testé en jeu. Admin shop fermé tant que le staff ne lance pas `/adminshop ouvrir 15`.

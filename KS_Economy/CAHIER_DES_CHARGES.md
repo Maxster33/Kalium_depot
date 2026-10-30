@@ -239,3 +239,153 @@ n'est jamais proposé, même si la dimension est fermée après le tirage (il es
 ## Autres cahiers modifiés
 
 - Catégorie 1 (`1_Contenu_survie.md`) : l'Élixir de Fortune demande un bloc compressé **tier 3** (au lieu du bloc à 900).
+
+# Admin shop d'Halloween et rachats à 100 objets (KS_Economy 1.13.0, LeKiwi06, 30/10/2026)
+
+Publié au déploiement (30/10/2026). Cahier local `Halloween_AdminShop.md`, recopié tel quel.
+
+Demande du 30/10/2026. État : **en cours de rédaction** (questions de la partie 4 à trancher avant tout code ; cahier **validé le 30/10** (« Je valide, code ») ; codé : KS_Economy 1.13.0, commit 386df7e, non déployé).
+Dépend du cahier des maléfices (`Malefices_Nether.md`) pour l'amulette mangeuse de mal.
+
+## 1. Demande (LeKiwi06, 30/10/2026), recopiée telle quelle
+
+> Chantier Halloween (Kixster) : admin shop et boutiques étendues, dans KS_Economy. Extrait de mon annonce :
+> « L'admin Shop ouvre pendant la durée de l'événement : livres mending, badges, jetons, coffres de récompenses,
+> l'amulette mangeuse de mal, ... Ce shop s'ouvre très rarement. Le shop classique s'étend également à 100 items au
+> lieu de 10 pendant cet événement. »
+> À cadrer avant de coder (cahier local) : ouverture et fermeture par le staff, liste des objets, prix tirés du barème
+> avec des ancrages (jamais par formule seule, livré en .xlsx), ce que deviennent les boutiques en trop à la fin de
+> l'événement (réglage boutiques: 10 du config.yml), et la durée de l'événement (semaine ou 15 jours).
+> Dépend de la discussion des maléfices pour l'amulette.
+
+## 2. Ce qui existe aujourd'hui (KS_Economy 1.12.2, lu le 30/10)
+
+- **Aucun shop où le joueur achète au serveur.** Le serveur ne fait que racheter : rachats de la semaine (`/rachat`,
+  10 objets tirés le lundi, `rachats.objets: 10`) et marchand ambulant (10 objets). Le reste, ce sont les boutiques
+  des joueurs.
+- `/shop` est un alias de `/magasins` : le catalogue des magasins des joueurs **et** les rachats de la semaine.
+- Magasins : `magasins.boutiques: 10` = boutiques d'un magasin à sa création (tier 1) ; agrandissements +2, +3, +5
+  (tier 4 = 20 boutiques).
+- Le menu des rachats a 10 cases fixes (2 rangées de 5) : 100 objets demandent des pages.
+- Valeurs déjà validées des objets cités (rewards du 09/10 et barème) :
+
+  | Objet | Valeur validée | Remarque |
+  |---|---|---|
+  | Livre Raccommodage | 1 500 | barème du 04/10 (« prix de départ, à réévaluer ») |
+  | Badges niveau 1 | fly 450, mort 3 600, TP 600, localisation 750 | niveau N = 2 badges N-1 + XP de fusion |
+  | Jetons | fly 30, mort 300, claim 1 000, TP 20 | **`rachats.csv` a encore mort 150, claim 5 000, emplacement 250** (avant le 09/10) |
+  | Coffres de récompense | valeur moyenne du niveau : 1 / 5 / 10 / 100 / 1 000 (× 2 en permanent) | contenu tiré à l'ouverture |
+  | Amulette mangeuse de mal | 7 500 | KS_MaleficesNether **pas encore codé** |
+
+## 3. Réponses de LeKiwi06
+
+| Question | Réponse (30/10/2026) |
+|---|---|
+| 1. « Le shop classique » à 100 items | **Les rachats de la semaine** (lecture A) : le serveur rachète 100 objets au lieu de 10 pendant l'événement. Les boutiques des magasins ne changent pas, donc la question 6 tombe |
+| 2. Durée | **15 jours**, à partir du 31/10 (donc jusqu'au 14/11, heure exacte de début et de fin à fixer à l'ouverture) |
+| 3. Ouverture | **`/adminshop ouvrir <durée en jours>`** (au lieu d'une date de fin) ; le reste de la proposition n'a pas été contesté |
+| 4. Liste des objets | **Les objets custom qui n'ont pas de craft** (« cristal de purification, etc. »), plus ce que cite l'annonce |
+| 4. Coffres de récompense | Valeurs **10, 100 et 1 000**, à **1,5 × leur valeur théorique** : **15, 150 et 1 500 points** |
+| 4. Amulette mangeuse de mal | **Vendue par exception** (elle a un craft) : 7 500 × 1,5 = **11 250** ; seulement si KS_MaleficesNether est déployé |
+| 4. Cœur de Spawner | **Vendu à 15 353** (10 235 × 1,5), en sachant qu'avec 7 fragments et une tête il donne un spawner |
+| 4. Jeton de téléportation | **Retiré de l'admin shop** (déjà vendu 20 dans /jetons) |
+| 5. Limites d'achat | **Aucune limite à l'admin shop** ; les limites restent seulement sur les rachats de la semaine (quotas actuels par objet et par jour, inchangés) |
+| 7. Prix | **× 1,5 partout** : chaque objet vaut 1,5 × sa valeur validée (colonne « Prix à × 1,5 » de 5.1) |
+
+## 4. Questions
+
+1. **[Réglé : lecture A, rachats de la semaine]** **« Le shop classique » à 100 items**, deux lectures possibles :
+   - **A. Les rachats de la semaine** (le serveur rachète 100 objets au lieu de 10) : c'est le seul « shop » du
+     serveur qui compte en « items » et qui en a 10, et `/shop` l'ouvre. Fin de l'événement : le tirage suivant
+     revient à 10, rien à ranger. Risque : 10 fois plus de façons de gagner des points (les quotas restent).
+   - **B. Les boutiques d'un magasin** (`magasins.boutiques: 10` passe à 100) : lecture de ta note. Il faut alors
+     décider du sort des boutiques en trop (question 6).
+2. **[Réglé : 15 jours]** **Dates** : Halloween est demain (31/10). Début (le 31/10 ?) et durée : **une semaine** (jusqu'au 07/11) ou
+   **15 jours** (jusqu'au 14/11) ? Proposition : l'admin shop dure ce que dure l'événement, et la fin est automatique.
+3. **[Réglé : durée en jours]** **Ouverture et fermeture** (proposition) : `/adminshop ouvrir <date de fin>` et `/adminshop fermer` (permission
+   `kseconomy.staff`, comme les signalements) ; fermeture automatique à la date de fin ; message à tous à l'ouverture,
+   à la veille de la fin et à la fermeture ; bouton « Admin shop » dans le menu Économie, visible seulement quand il
+   est ouvert ; les deux réglages (admin shop + shop étendu) s'ouvrent et se ferment ensemble. D'accord, ou le shop
+   étendu doit-il avoir ses propres dates ?
+4. **[Réglé : objets custom sans craft + Raccommodage + amulette, coffres 10 / 100 / 1 000 ; détail en 5.1]** **Liste des objets** : que met-on derrière « ... » ? Candidats (à cocher) :
+   - livre Raccommodage ; badges niveau 1 (les 4) ; jetons fly, mort, TP, claim ;
+   - coffres de récompense : lesquels ? (proposition : moyenne 10, grosse 100, exceptionnelle 1 000) ;
+   - amulette mangeuse de mal **seulement si KS_MaleficesNether est déployé à temps** (sinon retirée de la liste) ;
+   - autres possibles : livres de trésor (Raccommodage mis à part), Élixir de Fortune, fragment / Cœur de Spawner,
+     spawners, têtes de boss, badges de niveau 2+ ?
+5. **[Réglé : aucune limite à l'admin shop, quotas des rachats inchangés]** **Limites d'achat** : sans limite, un riche achète 50 Raccommodage d'un coup. Proposition : un nombre maximal par
+   joueur et par événement pour chaque objet (ex. Raccommodage 2, badges 1 de chaque, coffre exceptionnel 1), pas de
+   stock commun. Paiement en points seulement (ou aussi en blocs compressés ?).
+6. **[Sans objet : lecture A retenue]** **Fin de l'événement, boutiques en trop** (lecture B seulement) :
+   - **A. Fermées** : les boutiques au-delà de la limite passent « Fermée » (plus d'achat), le propriétaire garde
+     leur gestion à distance pour vider le stock et récupérer ses points ; elles rouvrent au prochain événement ou
+     quand il libère des places. **Recommandée** : rien ne se perd.
+   - **B. Gardées** : elles restent ouvertes, mais aucune création tant que le magasin est au-dessus de sa limite.
+   - **C. Supprimées** : panneau rendu, le contenu reste dans le contenant (plus de boutique).
+   Et : 100 pour tous les magasins, ou + 90 par rapport à leur tier ?
+7. **[Réglé : × 1,5 partout]** **Prix** : proposition d'ancrage par famille, à corriger avant le .xlsx :
+   - objets à valeur fixe (Raccommodage, badges, jetons, amulette) : **valeur validée × 1,5** (rare, mais l'admin
+     shop crée des objets à partir de points : il doit coûter plus cher que de les obtenir en jeu) ;
+   - coffres de récompense : **valeur moyenne × 1,5** (le contenu est revendable en partie aux rachats) ;
+   - le jeton de claim et le jeton de la mort : prendre les valeurs du 09/10 (1 000 et 300), pas celles de
+     `rachats.csv` (à corriger dans le barème au passage ?).
+   Le .xlsx (objet, valeur validée, source, coefficient, prix, limite) est livré une fois la liste fixée.
+
+## 5. Choix d'interprétation (proposés, à valider)
+
+- **Admin shop** : menu en coffre (objets, pas de boutons ; textes sans défilement, nouvelles clés de texte) :
+  une case par objet, survol : prix, date de fermeture ; clic : quantité puis confirmation (paiement en
+  points) ; refus si solde insuffisant ou inventaire plein ; aucune limite d'achat. Les objets sont créés par les
+  plugins qui les possèdent (KS_Jetons, KS_RewardsGUI, KS_MaleficesNether), comme KS_KaliumGive.
+- Liste et prix dans un fichier `adminshop.yml` (modifiable sans recompiler) ; chaque achat écrit dans la
+  console (joueur, objet, prix), comme les rachats.
+- Monde de test « Kixster Test » : l'admin shop y marche avec le solde de test (`CompteTest.de`), jamais avec le
+  vrai solde.
+- **Rachats à 100 objets** (question 1) : le menu des rachats passe à plusieurs pages (10 objets par page, mêmes
+  cases qu'aujourd'hui). À l'ouverture de l'événement, le tirage de la semaine en cours est complété jusqu'à 100 (les
+  10 offres déjà là gardent leur prix) ; à la fermeture, on revient à 10 en gardant les 10 premières offres, sans
+  attendre lundi. Mêmes règles qu'en temps normal : familles (une famille ne revient que s'il n'en reste pas d'autre),
+  ± 25 %, lots, dimensions fermées exclues, quotas par objet et par jour inchangés. Le marchand ambulant reste à 10.
+- Risque signalé : 100 objets, c'est environ 10 fois plus de points gagnables en vendant au serveur. Le quota par
+  objet (0,5 % du total gagné au-dessus de 2 500) limite chaque objet, pas le total.
+- Didacticiel (`didacticiel.yml`) : une entrée « Admin shop » (visible seulement pendant un événement ?).
+
+### 5.1 Objets custom sans craft (relevé du 30/10 dans le dépôt)
+
+Liste et prix validés : `C:\Users\xelin\lk6_remi\Depot git kalium\sortie\halloween\adminshop-prix-proposition.xlsx`
+(hors git). Coefficient 1,5 partout (validé par LeKiwi06 le 30/10).
+
+| Objet | Plugin | Valeur validée | Source de la valeur | Prix à × 1,5 |
+|---|---|---|---|---|
+| Cristal de purification | KS_Meule | 600 | LeKiwi06, 11/10 (pools des rewards) | 900 |
+| Estomac du gardien | KS_EstomacGardien | 155,4 | barème (contenu moyen) | 233 |
+| Fragment de Spawner | KS_ItemSimple | 128 | LeKiwi06 (32 diamants) | 192 |
+| Cœur de Spawner | KS_ItemSimple | 10 235 | **provisoire**, jamais fixé ; « récompense d'événement uniquement » | 15 353 |
+| Jeton de fly | KS_Jetons | 30 | rewards, 09/10 | 45 |
+| Jeton de la mort | KS_Jetons | 300 | rewards, 09/10 | 450 |
+| Jeton de claim | KS_Jetons | 1 000 | rewards, 09/10 | 1 500 |
+| Badge de fly niveau 1 | KS_Jetons | 450 | rewards, 09/10 | 675 |
+| Badge de téléportation niveau 1 | KS_Jetons | 600 | rewards, 09/10 | 900 |
+| Badge de localisation niveau 1 | KS_Jetons | 750 | rewards, 09/10 | 1 125 |
+| Badge de la mort niveau 1 | KS_Jetons | 3 600 | rewards, 09/10 | 5 400 |
+| Coffres de récompense 10 / 100 / 1 000 | KS_RewardsGUI | valeur moyenne | **validé : 15 / 150 / 1 500** | 15 / 150 / 1 500 |
+| Livre Raccommodage (vanilla, cité dans l'annonce) | - | 1 500 | barème, 04/10 | 2 250 |
+
+Écartés (choix de Claude, à confirmer) :
+- **Jeton de téléportation** : retiré par LeKiwi06 le 30/10 (déjà vendu 20 dans /jetons).
+- **Avec un craft** : Clé de l'End, Bedrock Breaker, spawners, Changeur de Biome, élixirs, jeton de localisation,
+  verrou de véhicule, aliments, alcools, trains, torche augmentée, bandage, Casse-croûte doré.
+- **Amulette mangeuse de mal** : elle a un craft (jambières de chaînes en cuivre + balise), mais l'annonce la cite :
+  **gardée par exception** (LeKiwi06, 30/10), 11 250, seulement si KS_MaleficesNether est déployé à temps (sinon
+  absente de l'admin shop ; elle s'ajoute à `adminshop.yml` dès que le plugin est là).
+- **Sans craft mais pas des objets à vendre** : blocs d'émeraude compressés (c'est de la monnaie), fioles
+  d'expérience (butin des mobs, valeur = l'XP contenue), fiole du coffre de mort.
+- **Cœur de Spawner** : **vendu à 15 353** (LeKiwi06, 30/10), alors qu'il était prévu comme récompense d'événement
+  uniquement : un spawner s'achète donc environ 15 353 + 7 × 192 = 16 697 points (+ la tête) pendant l'événement.
+  Sa valeur de 10 235 reste provisoire dans le barème.
+
+## 6. Plugins
+
+- Modifié : **KS_Economy** (admin shop, shop étendu, commandes staff).
+- Touchés : KS_Jetons et KS_RewardsGUI (création des objets vendus), KS_MaleficesNether (amulette, si prêt),
+  KS_Didacticiel (`didacticiel.yml`), éventuellement `rachats.csv` (jetons).
