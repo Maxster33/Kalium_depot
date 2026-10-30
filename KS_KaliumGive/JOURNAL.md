@@ -139,3 +139,33 @@ Compilé le 13/10/2026 (`sortie/KS_KaliumGive-1.11.0.jar`). **Statut : non dépl
 **Déployé sur Kixster le 13/10/2026 à 14:07 (LeKiwi06 : « tu peux déployer sur kixster » ; envoi groupé avec KS_JukeboxBoat 1.1.2 et KS_Crafts 1.14.1 ; 1.10.0 dans `_removed-ks_kaliumgive-1.10.0/` ; jar en place vérifié identique à la référence avant l'envoi), actif après redémarrage de Kixster. Event n'est pas touché (il reste en 1.10.0). Statut : non testé en jeu.**
 
 Actif sur Kixster depuis son redémarrage du 13/10/2026 à 14:11 (journal lu : 1.11.0 chargée et activée sans erreur). Statut : non testé en jeu sur Kixster.
+
+## 1.12.0 - kit de test (30/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « créer moi des kits de test avec la commande /kalium give, il faut que ça me donne un coffre dans
+lequel il y a des shulker, ces shulker doivent être renommés par le nom du plugin (trains, alcool, etc.) pour que je
+puisse tout tester efficacement : il me faut les items finis, et de quoi faire leurs crafts ».
+
+- **`/kaliumgive <pseudo> kit_test <nombre>`** (nouvelle classe `KitTest`) : un coffre « Kit de test » plein de boîtes
+  de shulker nommées par le plugin sans « KS_ » (Trains, Alcools, Cuisine, Atouts, Crafts...). Dans chaque boîte : les
+  objets finis du plugin, puis les ingrédients d'une fois chacune de ses recettes. Coffre et boîtes gardent leur contenu
+  quand on les pose. Plus de 27 piles : « Alcools (1/2) », « Alcools (2/2) » ; plus de 27 boîtes : un 2e coffre.
+- Contenu lu au moment de la commande, pas recopié (une recette ajoutée plus tard suit d'elle-même) :
+  - objets finis : les id_custom de `/kaliumgive` par plugin (sans les 332 têtes, toujours par `tete_<tête>`), une fiole
+    d'expérience de 30 niveaux, et le résultat de chaque recette qui porte une marque d'un plugin KS_ ; l'objet va dans
+    la boîte du plugin de sa marque (la locomotive, recette de KS_Crafts, dans « Trains ») ;
+  - ingrédients : chaque recette du serveur (établi, four, fumoir, haut fourneau, tailleuse, forge) dont le résultat
+    porte la marque d'un plugin KS_ ou dont la clé est celle d'un plugin KS_. Une case qui accepte plusieurs objets
+    donne le premier (un seul bois, une seule pièce d'armure pour un atout, une seule tête de la créature) ; les
+    quantités de plusieurs recettes s'additionnent ;
+  - résultat sans marque (objet du jeu, aperçu d'un atout) : seulement ses ingrédients (les atouts se posent au craft).
+- **Alambic de KS_Alcools** : l'API de Paper ne liste pas les mélanges d'alambic, donc écrit dans `KitTest.alcools()` :
+  chaque alcool dans chaque variante (normal, long, fort ; à boire et jetable), 3 fioles d'eau, l'ingrédient de chaque
+  alcool, redstone, glowstone, poudre à canon, poudre de blaze. **À tenir à jour avec `Alcools.java` de KS_Alcools**
+  (nouvel alcool, Shéjiǔ de l'étape 6). `softdepend` et `build.sh` : KS_Alcools (et KS_Effets, KLM_Menu pour compiler).
+- `kit_test` n'est pas un id_custom : `creer()` (récompenses de KS_RewardsGUI) ne le connaît pas.
+
+Limites : un seul exemplaire des ingrédients par recette ; aucun établi, four ni alambic dans le kit ; le coffre est un
+gros objet (centaines d'objets décrits) : non essayé avec un joueur Bedrock.
+
+Compilé le 30/10/2026 (`sortie/KS_KaliumGive-1.12.0.jar`). **Statut : non déployé, non testé en jeu.**

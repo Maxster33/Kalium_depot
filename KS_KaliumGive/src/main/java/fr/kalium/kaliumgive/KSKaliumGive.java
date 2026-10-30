@@ -93,6 +93,12 @@ public final class KSKaliumGive extends JavaPlugin {
     private static final String JUKEBOX = "jukebox_";
 
     /**
+     * 1.12.0 (LeKiwi06) : kit de test ({@link KitTest}) : un coffre de boîtes de shulker, une par plugin, avec ses objets
+     * finis et les ingrédients de ses crafts. Pas un objet custom : ni dans OBJETS, ni pour creer() (récompenses).
+     */
+    private static final String KIT_TEST = "kit_test";
+
+    /**
      * 1.7.0 (catégorie 4 « Récompenses ») : un objet custom par son id_custom (comme /kaliumgive), ou null si l'id est
      * inconnu ou si son plugin n'est pas activé. Utilisé par KS_RewardsGUI.
      */
@@ -140,12 +146,15 @@ public final class KSKaliumGive extends JavaPlugin {
             sender.sendMessage(Component.text("Joueur introuvable : " + args[0], NamedTextColor.RED));
             return true;
         }
+        if (args[1].equalsIgnoreCase(KIT_TEST)) {
+            return donnerKit(sender, cible, args[2]);
+        }
         ObjetCustom objet = trouver(args[1].toLowerCase());
         if (objet == null) {
             List<String> liste = new ArrayList<>(OBJETS.keySet());
             liste.removeIf(id -> id.startsWith(TETE) || id.startsWith(BADGE) || id.startsWith(JUKEBOX));
             sender.sendMessage(Component.text("id_custom inconnu : " + args[1] + ". Liste : "
-                    + String.join(", ", liste) + ", fiole_exp(<niveaux>), " + BADGE + "<type>_<niveau> (complétion), "
+                    + String.join(", ", liste) + ", " + KIT_TEST + ", fiole_exp(<niveaux>), " + BADGE + "<type>_<niveau> (complétion), "
                     + JUKEBOX + "<bateau> (complétion), "
                     + TETE + "<tête> (liste : /tetes ou complétion)", NamedTextColor.RED));
             return true;
@@ -154,14 +163,8 @@ public final class KSKaliumGive extends JavaPlugin {
             sender.sendMessage(Component.text("Le plugin " + objet.plugin() + " n'est pas activé.", NamedTextColor.RED));
             return true;
         }
-        int nombre;
-        try {
-            nombre = Integer.parseInt(args[2]);
-        } catch (NumberFormatException e) {
-            nombre = 0;
-        }
-        if (nombre < 1 || nombre > 64) {
-            sender.sendMessage(Component.text("Le nombre doit être entre 1 et 64.", NamedTextColor.RED));
+        int nombre = nombre(sender, args[2]);
+        if (nombre == 0) {
             return true;
         }
         // Un objet à la fois (certains ne s'empilent pas) ; inventaire plein : le reste tombe au sol.
@@ -175,6 +178,53 @@ public final class KSKaliumGive extends JavaPlugin {
         return true;
     }
 
+    /** Nombre de 1 à 64, ou 0 (message déjà envoyé). */
+    private static int nombre(CommandSender sender, String texte) {
+        int nombre;
+        try {
+            nombre = Integer.parseInt(texte);
+        } catch (NumberFormatException e) {
+            nombre = 0;
+        }
+        if (nombre < 1 || nombre > 64) {
+            sender.sendMessage(Component.text("Le nombre doit être entre 1 et 64.", NamedTextColor.RED));
+            return 0;
+        }
+        return nombre;
+    }
+
+    /**
+     * 1.12.0 : kit_test : les coffres du kit, nombre fois. Objets finis : les id_custom de chaque plugin activé, sauf les
+     * têtes (332 ; /kaliumgive tete_<tête>), plus une fiole d'expérience de 30 niveaux.
+     */
+    private boolean donnerKit(CommandSender sender, Player cible, String texte) {
+        int nombre = nombre(sender, texte);
+        if (nombre == 0) {
+            return true;
+        }
+        Map<String, List<ItemStack>> objets = new LinkedHashMap<>();
+        OBJETS.forEach((id, objet) -> {
+            if (!id.startsWith(TETE) && getServer().getPluginManager().isPluginEnabled(objet.plugin())) {
+                objets.computeIfAbsent(objet.plugin(), p -> new ArrayList<>()).add(objet.fabrique().get());
+            }
+        });
+        if (getServer().getPluginManager().isPluginEnabled("KS_FioleExp")) {
+            objets.computeIfAbsent("KS_FioleExp", p -> new ArrayList<>())
+                    .add(fr.kalium.fioleexp.KSFioleExp.creerFioleNiveaux(30));
+        }
+        List<ItemStack> coffres = KitTest.coffres(objets);
+        for (int i = 0; i < nombre; i++) {
+            for (ItemStack coffre : coffres) {
+                for (ItemStack reste : cible.getInventory().addItem(coffre.clone()).values()) {
+                    cible.getWorld().dropItemNaturally(cible.getLocation(), reste);
+                }
+            }
+        }
+        sender.sendMessage(Component.text(nombre + " x " + KIT_TEST + " (" + coffres.size() + " coffre(s)) donné(s) à "
+                + cible.getName() + ".", NamedTextColor.GREEN));
+        return true;
+    }
+
     /** Complétion : pseudos en ligne, puis id_custom. */
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
@@ -184,6 +234,7 @@ public final class KSKaliumGive extends JavaPlugin {
         } else if (args.length == 2) {
             choix.addAll(OBJETS.keySet());
             choix.add("fiole_exp(");
+            choix.add(KIT_TEST);
         } else {
             return List.of();
         }

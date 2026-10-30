@@ -96,6 +96,10 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
+- **KS_KaliumGive 1.12.0** (LeKiwi06, 30/10/2026) : `/kaliumgive <pseudo> kit_test 1` donne un coffre de boîtes de
+  shulker, une par plugin KS_ (Trains, Alcools...), avec ses objets finis et les ingrédients de ses crafts (lus dans les
+  recettes du serveur). Seul, sur Kixster (dépend de KS_Alcools en softdepend). Détail : `KS_KaliumGive/JOURNAL.md`.
+  Statut : non déployé, non testé en jeu.
 - **KG_HideAndSeek 0.3.0** (LeKiwi06, 26/10/2026) : composteur et blocs creux utilisables en solide, solide debout sur
   une barrière, plus de solide à travers une fleur ou une trappe, objet « Orienter le bloc » (orientation, posture du
   golem de cuivre), évasions cumulables tous les 5 points, chaque son du soundboard compté, tableau de droite « Blocs en
