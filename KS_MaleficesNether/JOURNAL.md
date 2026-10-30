@@ -48,8 +48,11 @@ Limites, à faire avant ou au déploiement :
 - **Apparence provisoire** de l'amulette (cœur de la mer, Java) en attendant la texture de LeKiwi06 ; sur Bedrock, un
   livre tant que geyser-bedrock n'a pas son entrée. Texture, entrée Bedrock et rareté (prix 7 500 dans `Raretes.java`
   de KS_Textures) à faire ensemble : KS_Textures et geyser-bedrock sont réservés par un autre chantier.
-- Butin des récompenses : `sortie/rewards/pools.py` a l'amulette (2 % du Légendaire) ; `butin.yml` et `fusion.yml` ne
-  sont pas régénérés (la régénération apporterait aussi tous les changements de prix depuis le 11/10).
+- Butin des récompenses : amulette dans `sortie/rewards/pools.py` (2 % du Légendaire) ; `butin.yml` (KG_Rewards,
+  KV_Rewards) et `fusion.yml` (KS_RewardsGUI) régénérés le 30/10 **avec les prix actuels** (LeKiwi06 : « Oui, prix
+  actuels » ; ils dataient du 11/10), vérifiés sans erreur (`verifier_butin.py`, `verifier_fusion.py`). Hors git, à
+  envoyer sur Kal-Games, Kanvas et Kixster **après** KS_MaleficesNether et KS_KaliumGive 1.13.0 (sinon une récompense
+  avec l'amulette reste bloquée). Pas de filtre de dimension dans les fichiers de butin (comme la Clé de l'End).
 - Écrit sans serveur de test. Pour tester sans attendre 20 minutes par jour : `jour-secondes: 60` dans le
   `config.yml` du serveur (un jour par minute ; chaque effet du jour tient alors toute la minute).
 
