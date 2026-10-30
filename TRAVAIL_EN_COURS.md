@@ -26,11 +26,10 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_Textures (nouveau), geyser-bedrock — LeKiwi06 — depuis le 2026-10-29 04:14 — pack de ressources des objets custom : textures ajoutées aux objets dans ce qui est envoyé aux joueurs, pack proposé aux joueurs Java ; couleur de rareté dans le nom des objets custom (depuis le 2026-10-29, même plugin, affichage seul) ; geyser-bedrock 1.8.0 (mêmes textures sur Bedrock), aussi réservé par le chantier aliments ci-dessus : accord de LeKiwi06 le 29/10
 - KS_MaleficesNether (nouveau), KS_Jetons, KS_Atouts — LeKiwi06 — depuis le 2026-10-30 13:00 — maléfices du Nether (cahier local validé le 30/10) : compteur et maléfices, amulette mangeuse de mal (rangée « Équipements spéciaux » de /jetons), plastron anti-radiation (atout)
 - KG_BingoGame — LeKiwi06 — depuis le 2026-10-30 13:27 — Halloween : ghast d'Halloween dans chaque monde d'équipe, tué par sa boule renvoyée = un joker (case au choix) ; du 31/10 au 14/11 (cahier local validé le 30/10)
-
+- KG_BoatRace — LeKiwi06 — depuis le 2026-10-30 13:31 — montée des marches en blocs de piste, réglages par map (paliers, tours, records), plafond du bonus de tour propre (Manoir Hanté)
 
 ## Requis parfois
 
-- KG_BoatRace — LeKiwi06 — depuis le 2026-10-08 23:53 — équité Java / Bedrock : bateau calculé par le serveur pour les joueurs Bedrock (essai, réglage désactivé par défaut) (passé en « requis parfois » le 2026-10-20 13:30 : compilation de KG_Bingo / KG_BuildBattle, petites retouches)
 - KalGames — LeKiwi06 — depuis le 2026-10-20 12:03 — menus en coffre (réglage coffres / fenêtres), accueil Créer / Rejoindre / Parties en cours, parties publiques masquées, relance en salle d'attente après 15 s (passé en « requis parfois » le 2026-10-20 13:30 : compilation de KG_Bingo / KG_BuildBattle, petites retouches)
 - KG_Menu — LeKiwi06 — depuis le 2026-10-20 12:03 — Paramètres › Affichage (coffres / fenêtres, affichages masquables), nouvel accueil de Kal-Games en coffre (passé en « requis parfois » le 2026-10-20 13:30 : compilation de KG_Bingo / KG_BuildBattle, petites retouches)
 - KS_VerrouVehicule — LeKiwi06 — depuis le 2026-10-16 20:05 — déploiement sur Event (tests) ; petite retouche pour KS_Trains étape 3 (wagon verrouillé dans un train non ancré)
