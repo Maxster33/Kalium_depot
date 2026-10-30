@@ -352,7 +352,7 @@ Dépend du cahier des maléfices (`Malefices_Nether.md`) pour l'amulette mangeus
 
 ### 5.1 Objets custom sans craft (relevé du 30/10 dans le dépôt)
 
-Liste et prix validés : `C:\Users\xelin\lk6_remi\Depot git kalium\sortie\halloween\adminshop-prix-proposition.xlsx`
+Liste et prix validés : `sortie/halloween/adminshop-prix-proposition.xlsx`
 (hors git). Coefficient 1,5 partout (validé par LeKiwi06 le 30/10).
 
 | Objet | Plugin | Valeur validée | Source de la valeur | Prix à × 1,5 |
