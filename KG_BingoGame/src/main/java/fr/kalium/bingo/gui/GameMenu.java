@@ -55,14 +55,49 @@ public final class GameMenu {
     public static final int ABANDON_SLOT = SIZE - 1 - 9;  // juste au-dessus de CLOSE_SLOT
     /** 0.3.0 : proposer une nulle (voir DrawVoteService), juste au-dessus d'ABANDON_SLOT. */
     public static final int DRAW_SLOT = SIZE - 1 - 18;
+    /** 0.13.0 : joker du ghast d'Halloween (voir HalloweenGhastService), bas a gauche, seulement si l'equipe en a. */
+    public static final int JOKER_SLOT = SIZE - 9;
 
     private final GameManager gameManager;
+    private fr.kalium.bingo.game.HalloweenGhastService ghast;
 
     public GameMenu(JavaPlugin plugin, GameManager gameManager) {
         this.gameManager = gameManager;
     }
 
+    public void setGhast(fr.kalium.bingo.game.HalloweenGhastService ghast) {
+        this.ghast = ghast;
+    }
+
     public void open(Player player) {
+        open(player, false);
+    }
+
+    /**
+     * 0.13.0 : grille du joker du ghast d'Halloween - meme grille, titre « Choisir une case » ; un clic sur une case
+     * non validee l'utilise (HalloweenGhastService.onMenuClick) ; la porte (a la place de « Fermer ») revient au
+     * papier Objectifs ; Echap ferme, le joker reste.
+     */
+    public void openJoker(Player player) {
+        open(player, true);
+    }
+
+    /** Case de la grille sous cet emplacement du menu, ou -1. */
+    public int cellAt(Player player, int slot) {
+        Optional<BingoGame> gameOpt = gameManager.findGameOf(player.getUniqueId());
+        if (gameOpt.isEmpty() || gameOpt.get().getGrid() == null || slot < 0 || slot >= SIZE) {
+            return -1;
+        }
+        int size = gameOpt.get().getGrid().getSize();
+        int row = slot / 9;
+        int col = slot % 9 - GRID_COL_OFFSET;
+        if (row >= size || row >= ROWS - 1 || col < 0 || col >= size) {
+            return -1;
+        }
+        return row * size + col;
+    }
+
+    private void open(Player player, boolean joker) {
         Optional<BingoGame> gameOpt = gameManager.findGameOf(player.getUniqueId());
         if (gameOpt.isEmpty()) {
             player.sendMessage("§cAucune partie Bingo en cours pour vous.");
@@ -78,7 +113,13 @@ public final class GameMenu {
         int myTeam = instanceOpt.get().getTeam().getTeamNumber();
         int size = grid.getSize();
 
-        Inventory inv = Bukkit.createInventory(new GameMenuHolder(), SIZE, Component.text("Objectifs Bingo"));
+        int jokers = ghast == null ? 0 : ghast.jokers(instanceOpt.get());
+        if (joker && jokers <= 0) {
+            joker = false; // joker deja utilise (par un coequipier) : simple papier Objectifs
+        }
+        Inventory inv = joker
+                ? Bukkit.createInventory(new JokerMenuHolder(), SIZE, Component.text("Choisir une case"))
+                : Bukkit.createInventory(new GameMenuHolder(), SIZE, Component.text("Objectifs Bingo"));
 
         List<GridCell> cells = grid.getCells();
         for (int row = 0; row < size && row < ROWS - 1; row++) {
@@ -103,11 +144,43 @@ public final class GameMenu {
             headRow++;
         }
 
-        inv.setItem(CLOSE_SLOT, closeItem());
-        inv.setItem(ABANDON_SLOT, abandonItem());
-        inv.setItem(DRAW_SLOT, drawItem());
+        if (joker) {
+            inv.setItem(CLOSE_SLOT, backItem());
+            inv.setItem(JOKER_SLOT, jokerItem(jokers, true));
+        } else {
+            inv.setItem(CLOSE_SLOT, closeItem());
+            inv.setItem(ABANDON_SLOT, abandonItem());
+            inv.setItem(DRAW_SLOT, drawItem());
+            if (jokers > 0) {
+                inv.setItem(JOKER_SLOT, jokerItem(jokers, false));
+            }
+        }
 
         player.openInventory(inv);
+    }
+
+    /** 0.13.0 : joker du ghast d'Halloween (boule de feu). */
+    private ItemStack jokerItem(int jokers, boolean choosing) {
+        ItemStack item = new ItemStack(Material.FIRE_CHARGE, Math.max(1, Math.min(64, jokers)));
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(plain(Component.text("Joker du ghast", NamedTextColor.LIGHT_PURPLE)));
+        meta.lore(choosing
+                ? List.of(plain(Component.text("Cliquez sur une case non validée :", NamedTextColor.GRAY)),
+                        plain(Component.text("elle est validée pour votre équipe.", NamedTextColor.GRAY)),
+                        plain(Component.text("Échap : plus tard, le joker reste.", NamedTextColor.DARK_GRAY)))
+                : List.of(plain(Component.text("Valide la case de votre choix.", NamedTextColor.GRAY)),
+                        plain(Component.text("Jokers : " + jokers, NamedTextColor.WHITE)),
+                        plain(Component.text("Perdu à la fin de la partie.", NamedTextColor.DARK_GRAY))));
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private ItemStack backItem() {
+        ItemStack item = new ItemStack(Material.OAK_DOOR);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(plain(Component.text("Retour", NamedTextColor.WHITE)));
+        item.setItemMeta(meta);
+        return item;
     }
 
     /**
@@ -278,6 +351,14 @@ public final class GameMenu {
     /** Marqueur pour reconnaitre cet inventaire dans GameMenuListener - jamais interroge par ce
      *  plugin lui-meme, uniquement via instanceof (meme principe que d'autres marqueurs Bukkit). */
     public static final class GameMenuHolder implements InventoryHolder {
+        @Override
+        public Inventory getInventory() {
+            return null;
+        }
+    }
+
+    /** 0.13.0 : grille du joker (voir openJoker), clics geres par HalloweenGhastService. */
+    public static final class JokerMenuHolder implements InventoryHolder {
         @Override
         public Inventory getInventory() {
             return null;

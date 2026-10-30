@@ -161,3 +161,13 @@ lobby:
   # (plus bas = plus lent mais moins de charge pour le serveur).
   # 0.6.0 : 10000 par defaut (au lieu de 30000), 500 minimum.
   blocks-per-tick: 10000
+
+# 0.13.0 : ghast d'Halloween (voir HalloweenGhastService). Un ghast par equipe, pose au lancement de la partie au
+# hasard dans un rayon de "rayon" blocs autour du point de depart ; tue par sa boule renvoyee = un joker (case au
+# choix). Seulement pour les parties lancees entre "debut" et "fin" inclus (aaaa-mm-jj, heure de Paris).
+# Cles a ajouter a la main dans le config.yml du serveur pour les changer (valeurs ci-dessous par defaut dans le code).
+halloween:
+  ghast:
+    debut: "2026-10-31"
+    fin: "2026-11-14"
+    rayon: 500

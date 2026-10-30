@@ -79,30 +79,44 @@ public final class ObjectiveValidationTask {
                     if (holder == null) {
                         continue;
                     }
-                    var result = game.markValidated(team, i, holder.getUniqueId());
-                    if (result != null) {
-                        announce(game, team, holder, objective, result);
-                        if (game.getSettings().isChrono()) {
-                            // 0.8.5 : contre la montre, temps gagne par objectif valide ; 0.8.7 : selon sa difficulte
-                            // (demandes de Maxster33).
-                            java.time.Duration bonus = BingoSettings.chronoBonus(objective.difficulty());
-                            game.extend(bonus);
-                            broadcast(game, Component.text("+" + BingoSettings.formatChrono(bonus) + " au chrono !",
-                                    NamedTextColor.AQUA));
-                        }
-                        // Sauvegarde la progression AVANT de verifier la victoire (voir GamePersistence) :
-                        // si checkWin termine la partie a l'instant, GameEndService supprimera de toute
-                        // facon ce fichier juste apres (scheduleCleanup) - sauvegarder d'abord est sans
-                        // consequence et couvre le cas (bien plus frequent) ou la partie continue.
-                        gamePersistence.save(game);
-                        gameEndService.checkWin(game, team);
-                        if (game.getState() != GameState.IN_PROGRESS) {
-                            break outer; // partie terminee (victoire) - inutile de continuer a valider
-                        }
+                    validate(game, team, i, holder, false);
+                    if (game.getState() != GameState.IN_PROGRESS) {
+                        break outer; // partie terminee (victoire) - inutile de continuer a valider
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Valide une case pour l'equipe : points, annonce, temps gagne en contre la montre, sauvegarde, victoire.
+     * 0.13.0 : sortie de tick() pour le joker du ghast d'Halloween (HalloweenGhastService), qui valide la case
+     * choisie par le joueur exactement comme un objet trouve ({@code joker} ne change que l'annonce).
+     *
+     * @return false si la case etait deja validee (rien n'est fait)
+     */
+    public boolean validate(BingoGame game, int team, int cellIndex, Player holder, boolean joker) {
+        Objective objective = game.getGrid().getCells().get(cellIndex).getObjective();
+        var result = game.markValidated(team, cellIndex, holder.getUniqueId());
+        if (result == null) {
+            return false;
+        }
+        announce(game, team, holder, objective, result, joker);
+        if (game.getSettings().isChrono()) {
+            // 0.8.5 : contre la montre, temps gagne par objectif valide ; 0.8.7 : selon sa difficulte
+            // (demandes de Maxster33).
+            java.time.Duration bonus = BingoSettings.chronoBonus(objective.difficulty());
+            game.extend(bonus);
+            broadcast(game, Component.text("+" + BingoSettings.formatChrono(bonus) + " au chrono !",
+                    NamedTextColor.AQUA));
+        }
+        // Sauvegarde la progression AVANT de verifier la victoire (voir GamePersistence) :
+        // si checkWin termine la partie a l'instant, GameEndService supprimera de toute
+        // facon ce fichier juste apres (scheduleCleanup) - sauvegarder d'abord est sans
+        // consequence et couvre le cas (bien plus frequent) ou la partie continue.
+        gamePersistence.save(game);
+        gameEndService.checkWin(game, team);
+        return true;
     }
 
     /** Membre CONNECTE (et n'ayant pas abandonne, voir AbandonService) de l'equipe qui possede, a lui seul,
@@ -137,7 +151,7 @@ public final class ObjectiveValidationTask {
      * 24/09/2026 : "equipe X valide cet item en 1er (pseudo du joueur) + X points !", "equipe X valide un
      * bingo (tous les participants) + X points !").
      */
-    private void announce(BingoGame game, int team, Player holder, Objective objective, ScoreEngine.Result result) {
+    private void announce(BingoGame game, int team, Player holder, Objective objective, ScoreEngine.Result result, boolean joker) {
         Component item = Component.translatable(objective.material().translationKey())
                 .color(NamedTextColor.WHITE);
         if (objective.quantity() > 1) {
@@ -145,6 +159,7 @@ public final class ObjectiveValidationTask {
         }
         Component line = TeamStyle.name(team).append(Component.text(" valide ", NamedTextColor.GREEN))
                 .append(item)
+                .append(Component.text(joker ? " avec le joker" : "", NamedTextColor.LIGHT_PURPLE))
                 .append(Component.text(result.first() ? " en 1er" : "", NamedTextColor.GOLD))
                 // Joueur seul dans son equipe : pas de pseudo (precision de LeKiwi06 : "pas besoin d'afficher de
                 // pseudo, comme il est seul").

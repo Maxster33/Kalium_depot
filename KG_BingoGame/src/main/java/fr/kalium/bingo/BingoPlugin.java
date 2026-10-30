@@ -233,6 +233,14 @@ public class BingoPlugin extends JavaPlugin {
         ObjectiveValidationTask objectiveValidationTask = new ObjectiveValidationTask(gameManager, gameEndService, gamePersistence, gameItems);
         getServer().getScheduler().runTaskTimer(this, objectiveValidationTask::tick, 20L, 20L);
 
+        // 0.13.0 : ghast d'Halloween, un par equipe ; tue par sa boule renvoyee = un joker (voir HalloweenGhastService).
+        fr.kalium.bingo.game.HalloweenGhastService halloweenGhast =
+                new fr.kalium.bingo.game.HalloweenGhastService(this, gameManager, objectiveValidationTask);
+        gameMenu.setGhast(halloweenGhast);
+        halloweenGhast.setGameMenu(gameMenu);
+        getServer().getPluginManager().registerEvents(halloweenGhast, this);
+        getServer().getScheduler().runTaskTimer(this, halloweenGhast::tick, 20L, 20L);
+
         // Fin par temps ecoule/abandon (GameEndService.tick, independant de la validation des
         // objectifs) et expulsion automatique de la salle d'attente post-partie (10 min par defaut) -
         // meme cadence que la validation des objectifs, pas besoin de plus de precision.

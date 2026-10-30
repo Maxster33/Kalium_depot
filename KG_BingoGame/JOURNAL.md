@@ -1918,3 +1918,37 @@ dernière case est sur une diagonale (elle achève alors 3 bingos d'un coup).
 Rien à changer sur Kal-Games (l'aide de KG_Bingo dit seulement « bonus selon le temps restant »).
 
 **Compilé le 14/10/2026. Déployé sur Serveur Jeux le 14/10/2026 à 16:06 (LeKiwi06 ; 0.11.0 dans `_removed-kg_bingogame-0.11.0/`), actif après redémarrage. Statut : non testé en jeu** (la 0.11.0 non plus).
+
+## 0.13.0 - ghast d'Halloween : un joker pour la grille (30/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** (extrait de son annonce de l'événement d'Halloween) : « Un ghast est présent dans chaque
+partie ; si vous le tuez en lui renvoyant sa boule, cela valide une case de votre grille. » Réponses du 30/10 :
+joker au choix du joueur, avec le bonus « en 1er » ; apparition au hasard dans un rayon de 500 blocs autour du spawn,
+sans pouvoir disparaître ; seul ce ghast compte (pas ceux du Nether) ; du 31/10 au 14/11 inclus.
+
+- **Un ghast par équipe** (chaque équipe a son monde) : posé au lancement de la partie au hasard dans un rayon de
+  500 blocs autour du point de départ, 20 blocs au-dessus du sol (chunk chargé sans bloquer le serveur), nom
+  « Ghast d'Halloween » visible, persistant (ne disparaît jamais). Message à l'équipe à son apparition.
+- **Ne meurt que de sa boule renvoyée** par un joueur de l'équipe : au coup ou avec un projectile (le jeu 26.3 donne
+  la boule au joueur qui la frappe, `Projectile.deflect`, ou au tireur du projectile, `Projectile.onHit` + tag
+  `redirectable_projectile`). Tout autre dégât est annulé (`/kill` reste possible). Une fois tué, il ne revient pas.
+  **Pas de butin** (choix de Claude, à confirmer : la larme de ghast et la poudre à canon sont des objectifs de la
+  grille, le ghast les aurait données en plus du joker dans l'Overworld).
+- **Joker** : annonce à toute la partie (« Équipe X tue le ghast d'Halloween (pseudo) : un joker ! »), son de défi.
+  Dans le papier Objectifs, l'objet « Joker du ghast » (boule de feu, en bas à gauche, seulement si l'équipe en a)
+  ouvre la grille « Choisir une case » : un clic sur une case non validée la valide pour l'équipe exactement comme
+  un objet trouvé (points, bonus « en 1er », bingos, temps gagné en contre la montre, victoire), annonce « valide …
+  avec le joker ». La porte revient au papier Objectifs ; Échap = plus tard, le joker reste. Perdu à la fin de la
+  partie.
+- **Barre de boss** « Ghast d'Halloween » pour les joueurs à moins de 96 blocs du ghast vivant (pas de surbrillance,
+  invisible sur Bedrock).
+- État gardé dans les données du monde de l'équipe (ghast posé, jokers restants) : survit à un redémarrage.
+- `ObjectiveValidationTask.validate` : validation d'une case sortie de `tick()` pour être partagée avec le joker.
+- `config.yml` : `halloween.ghast.debut` / `fin` (aaaa-mm-jj, inclus, date de lancement de la partie, heure de Paris)
+  et `rayon`. Valeurs par défaut dans le code (31/10, 14/11, 500) : rien à ajouter sur le serveur sauf pour les changer.
+
+Limites : si le chunk tiré ne se charge pas, le ghast n'est pas reposé (message dans le journal du serveur) ; en
+difficulté paisible le jeu retire les ghasts (avertissement dans le journal) ; le ghast peut s'éloigner de sa zone en
+volant (rien ne le ramène).
+
+**Compilé le 30/10/2026, non déployé. Statut : non testé en jeu.**
