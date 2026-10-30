@@ -11,6 +11,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+import org.bukkit.World;
 import org.bukkit.block.Crafter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -61,6 +62,9 @@ import java.util.UUID;
  *   ventouse = la tête qui touche un plafond (bloc solide, hors de l'eau et de la lave, pas en sneakant) y reste
  *   collée par une lévitation invisible ; le joueur glisse au plafond, retombe en sneakant ou en sortant de dessous.
  * - Temps restant : dans la description de l'objet (mise à jour chaque minute) et dans /effects (KS_Effets).
+ * - 1.2.0 (maléfices du Nether, cahier Malefices_Nether.md, LeKiwi06, 30/10/2026) : plastron anti-radiation, 8 blocs
+ *   d'or autour d'un plastron ; apparence plastron en or ; 20 minutes par craft, décomptées seulement quand il est
+ *   porté dans le Nether ; KS_MaleficesNether divise alors par 2 la durée de ses maléfices ({@link #porteAtout}).
  */
 public final class KSAtouts extends JavaPlugin implements Listener {
 
@@ -123,6 +127,7 @@ public final class KSAtouts extends JavaPlugin implements Listener {
     private void recettes() {
         List<Material> bottes = new ArrayList<>(Tag.ITEMS_FOOT_ARMOR.getValues());
         List<Material> casques = new ArrayList<>(Tag.ITEMS_HEAD_ARMOR.getValues());
+        List<Material> plastrons = new ArrayList<>(Tag.ITEMS_CHEST_ARMOR.getValues());
         // Un casque déjà sous atout est une tête ou un bloc de miel : accepté, puis vérifié par ses marques.
         casques.add(Material.PLAYER_HEAD);
         casques.add(Material.HONEY_BLOCK);
@@ -131,7 +136,11 @@ public final class KSAtouts extends JavaPlugin implements Listener {
             ShapedRecipe r = new ShapedRecipe(cle, apercu(a));
             r.shape("RRR", "RER", "RRR");
             r.setIngredient('R', new RecipeChoice.MaterialChoice(a.ressource()));
-            r.setIngredient('E', new RecipeChoice.MaterialChoice(a.emplacement() == EquipmentSlot.FEET ? bottes : casques));
+            r.setIngredient('E', new RecipeChoice.MaterialChoice(switch (a.emplacement()) {
+                case FEET -> bottes;
+                case CHEST -> plastrons;
+                default -> casques;
+            }));
             Bukkit.addRecipe(r);
             recettes.put(cle, a);
         }
@@ -142,8 +151,8 @@ public final class KSAtouts extends JavaPlugin implements Listener {
         ItemStack item = new ItemStack(a.apparence());
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text(a.nom(), NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false));
-        meta.lore(List.of(Component.text("Ajoute 1 h d'atout à ton équipement", NamedTextColor.GRAY)
-                .decoration(TextDecoration.ITALIC, false)));
+        meta.lore(List.of(Component.text(a.nether() ? "Ajoute " + a.parCraft() / 60 + " min d'atout, comptées dans le Nether"
+                : "Ajoute 1 h d'atout à ton équipement", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)));
         item.setItemMeta(meta);
         return item;
     }
@@ -201,8 +210,30 @@ public final class KSAtouts extends JavaPlugin implements Listener {
     /** Pièce portée à l'emplacement de l'atout, si elle porte cet atout. */
     private static ItemStack porte(Player joueur, Atouts.Atout a) {
         PlayerInventory inv = joueur.getInventory();
-        ItemStack item = a.emplacement() == EquipmentSlot.FEET ? inv.getBoots() : inv.getHelmet();
+        ItemStack item = switch (a.emplacement()) {
+            case FEET -> inv.getBoots();
+            case CHEST -> inv.getChestplate();
+            default -> inv.getHelmet();
+        };
         return Atouts.atout(item) == a ? item : null;
+    }
+
+    /** Case du temps porté d'un emplacement (bottes, casque, plastron). */
+    private static int indice(EquipmentSlot emplacement) {
+        return switch (emplacement) {
+            case FEET -> 0;
+            case CHEST -> 2;
+            default -> 1;
+        };
+    }
+
+    /**
+     * 1.2.0 (KS_MaleficesNether) : le joueur porte-t-il une pièce avec cet atout (« anti_radiation »...) ? Un atout
+     * porté a toujours du temps (il se retire à la fin de son temps).
+     */
+    public static boolean porteAtout(Player joueur, String id) {
+        Atouts.Atout a = Atouts.ATOUTS.get(id);
+        return a != null && porte(joueur, a) != null;
     }
 
     private int restantPorte(Player joueur, Atouts.Atout a) {
@@ -211,7 +242,7 @@ public final class KSAtouts extends JavaPlugin implements Listener {
             return 0;
         }
         int[] s = portees.get(joueur.getUniqueId());
-        int deja = s == null ? 0 : s[a.emplacement() == EquipmentSlot.FEET ? 0 : 1];
+        int deja = s == null ? 0 : s[indice(a.emplacement())];
         return Math.max(1, Atouts.restant(item) - deja);
     }
 
@@ -221,10 +252,11 @@ public final class KSAtouts extends JavaPlugin implements Listener {
      */
     private void seconde() {
         for (Player joueur : Bukkit.getOnlinePlayers()) {
-            int[] s = portees.computeIfAbsent(joueur.getUniqueId(), u -> new int[2]);
+            int[] s = portees.computeIfAbsent(joueur.getUniqueId(), u -> new int[3]);
             PlayerInventory inv = joueur.getInventory();
             compter(joueur, inv.getBoots(), s, 0, EquipmentSlot.FEET);
             compter(joueur, inv.getHelmet(), s, 1, EquipmentSlot.HEAD);
+            compter(joueur, inv.getChestplate(), s, 2, EquipmentSlot.CHEST);
             if (colles.contains(joueur.getUniqueId()) && leviteVentouse(joueur)) {
                 joueur.addPotionEffect(levitation());
             }
@@ -247,6 +279,10 @@ public final class KSAtouts extends JavaPlugin implements Listener {
             s[i] = 0;
             return;
         }
+        // 1.2.0 : le plastron anti-radiation ne s'use que dans le Nether.
+        if (a.nether() && joueur.getWorld().getEnvironment() != World.Environment.NETHER) {
+            return;
+        }
         if (++s[i] < 60 && s[i] < Atouts.restant(item)) {
             return;
         }
@@ -255,10 +291,10 @@ public final class KSAtouts extends JavaPlugin implements Listener {
         // L'objet porté est modifié sur place (pas de nouveau son d'équipement).
         if (!Atouts.decompter(item, secondes)) {
             ItemStack fini = Atouts.retirer(item);
-            if (emplacement == EquipmentSlot.FEET) {
-                joueur.getInventory().setBoots(fini);
-            } else {
-                joueur.getInventory().setHelmet(fini);
+            switch (emplacement) {
+                case FEET -> joueur.getInventory().setBoots(fini);
+                case CHEST -> joueur.getInventory().setChestplate(fini);
+                default -> joueur.getInventory().setHelmet(fini);
             }
             joueur.sendActionBar(t("atout.fin", "<gray>L'atout <aqua><nom></aqua> est terminé.", "nom", a.nom()));
         }
@@ -276,6 +312,10 @@ public final class KSAtouts extends JavaPlugin implements Listener {
         }
         if (s[1] > 0 && Atouts.atout(inv.getHelmet()) != null && !Atouts.decompter(inv.getHelmet(), s[1])) {
             inv.setHelmet(Atouts.retirer(inv.getHelmet()));
+        }
+        if (s.length > 2 && s[2] > 0 && Atouts.atout(inv.getChestplate()) != null
+                && !Atouts.decompter(inv.getChestplate(), s[2])) {
+            inv.setChestplate(Atouts.retirer(inv.getChestplate()));
         }
     }
 

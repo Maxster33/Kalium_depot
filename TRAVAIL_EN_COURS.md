@@ -35,7 +35,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_VerrouVehicule — LeKiwi06 — depuis le 2026-10-16 20:05 — déploiement sur Event (tests) ; petite retouche pour KS_Trains étape 3 (wagon verrouillé dans un train non ancré)
 - KS_LaisseBateau — LeKiwi06 — depuis le 2026-10-14 20:32 — compilé, en attente du déploiement sur Kixster (passé en « requis parfois » le 2026-10-16)
 - KS_Crafts — LeKiwi06 — depuis le 2026-10-16 18:59 — recette de la locomotive (KS_Trains)
-- KS_Economy, KS_KaliumGive, KS_Didacticiel — LeKiwi06 — depuis le 2026-10-30 13:00 — maléfices du Nether : prix de l'amulette (7 500), id de l'amulette pour le butin, entrée du didacticiel au déploiement
+- KS_KaliumGive, KS_Didacticiel — LeKiwi06 — depuis le 2026-10-30 13:00 — maléfices du Nether : id de l'amulette pour le butin (1.13.0 compilée), entrée du didacticiel au déploiement
 
 
 

@@ -171,3 +171,12 @@ gros objet (centaines d'objets décrits) : non essayé avec un joueur Bedrock.
 Compilé le 30/10/2026 (`sortie/KS_KaliumGive-1.12.0.jar`).
 
 **Déployé sur Kixster le 30/10/2026 à 11:39 (LeKiwi06 : « Oui, déploie » ; jar en place vérifié identique à la référence avant l'envoi ; 1.11.0 dans `_removed-ks_kaliumgive-1.11.0/` ; supprimables par l'humain, 3 versions derrière ou plus : `_removed-ks_kaliumgive-1.8.0/`, `1.9.0/`), actif après redémarrage de Kixster. Statut : non testé en jeu.**
+
+## 1.13.0 - amulette mangeuse de mal (30/10/2026)
+
+Chantier des maléfices du Nether (cahier local `Malefices_Nether.md`, validé par LeKiwi06 le 30/10/2026) : id
+`amulette_mangeuse_de_mal` (KS_MaleficesNether, softdepend), pour `/kalium give` et le butin des récompenses (2 % des
+tirages Légendaires, choix de LeKiwi06).
+
+Compilé le 30/10/2026 (`sortie/KS_KaliumGive-1.13.0.jar`). **À déployer avec KS_MaleficesNether 1.0.0.** Statut : non
+déployé, non testé en jeu.

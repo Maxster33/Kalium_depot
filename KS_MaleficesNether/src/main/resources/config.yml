@@ -1,0 +1,33 @@
+# KS_MaleficesNether - malefices du Nether (cahier des charges valide par LeKiwi06 le 30/10/2026).
+# Nouvelle cle ajoutee plus tard : elle a sa valeur par defaut dans le code, a ajouter ici a la main pour la changer.
+
+# Un jour = ce nombre de secondes reellement passees dans le Nether (connecte, en survie ou en aventure), jamais les
+# jours du jeu. Le jour N, chaque effet s'active N fois (N minutes differentes tirees au hasard dans le jour).
+jour-secondes: 1200
+# Hors du Nether, sans mourir : secondes effacees du compteur par seconde dehors (2 = un jour efface en 10 minutes).
+# La mort remet le compteur a zero.
+descente-par-seconde: 2
+# Pendant un malefice, l'effet est remis toutes les N secondes (le lait ne soulage que quelques secondes).
+rafraichissement-secondes: 5
+# Amulette mangeuse de mal (rangee dans les equipements speciaux de /jetons) : points d'XP pris au joueur par seconde
+# et par niveau d'effet retire.
+amulette-points: 5
+# Plastron anti-radiation (atout de KS_Atouts) : duree de chaque activation divisee par ce nombre.
+plastron-diviseur: 2
+
+# Effets, dans l'ordre d'arrivee (jour 1, jour 2...). Apres le dernier, une montee par jour, dans le meme ordre :
+#   monte: niveau  -> un niveau de plus (jusqu'a niveau-max)
+#   monte: duree   -> duree-pas secondes de plus par activation (60 au plus)
+#   monte: non     -> jamais (effet saute)
+# effet : nom de l'effet dans le jeu ; nom : nom affiche ; duree : secondes par activation (60 au plus).
+effets:
+  - {effet: hunger, nom: "Faim", duree: 60, monte: niveau}
+  - {effet: weakness, nom: "Faiblesse", duree: 60, monte: niveau}
+  - {effet: mining_fatigue, nom: "Fatigue de minage", duree: 60, monte: niveau, niveau-max: 3}
+  - {effet: poison, nom: "Poison", duree: 60, monte: niveau}
+  - {effet: slowness, nom: "Lenteur", duree: 60, monte: niveau}
+  - {effet: darkness, nom: "Obscurité", duree: 10, monte: duree, duree-pas: 10}
+  - {effet: infested, nom: "Infestation", duree: 60, monte: non}
+  - {effet: wither, nom: "Wither", duree: 60, monte: niveau}
+  - {effet: levitation, nom: "Lévitation", duree: 10, monte: duree, duree-pas: 10}
+  - {effet: nausea, nom: "Nausée", duree: 10, monte: duree, duree-pas: 10}

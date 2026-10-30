@@ -47,12 +47,14 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * KS_Jetons (cahier des charges : catégorie 7 « Déplacements, jetons, coffres de mort », LeKiwi06, 03/10/2026 ; ajouts
@@ -71,6 +73,9 @@ import java.util.function.Consumer;
  * - Les autres plugins (KS_Teleport, KS_CoffreMort, KS_Fly, KS_Claim) lisent l'inventaire spécial : nombre(),
  *   consommer(), ajouter(), prix(), niveauBadge(), valeurBadge(), localisations(). Les délais des badges sont tenus par
  *   ces plugins, par joueur (et non par badge).
+ * - 2.3.0 (maléfices du Nether, LeKiwi06, 30/10/2026 : « une 3e catégorie : équipements spéciaux ») : rangée « Tes
+ *   équipements spéciaux » (coffre de 5 rangées). Les plugins y déclarent leurs équipements (declarerEquipement) ;
+ *   un équipement est porté tant qu'il y est rangé (porteEquipement, equipement).
  */
 public final class KSJetons extends JavaPlugin implements Listener {
 
@@ -186,11 +191,17 @@ public final class KSJetons extends JavaPlugin implements Listener {
         final Map<Integer, Long> liberees = new HashMap<>();
         /** Objets à rendre au joueur (reprise de la 2.0) : à sa connexion ou à l'ouverture de l'inventaire spécial. */
         final List<ItemStack> aRendre = new ArrayList<>();
+        /** 2.3.0 : équipements spéciaux rangés : id de l'équipement -> objet (un seul ; porté tant qu'il y est). */
+        final Map<String, ItemStack> equipements = new LinkedHashMap<>();
 
         boolean vide() {
             return badges.isEmpty() && jetons.isEmpty() && localisations.isEmpty() && liberees.isEmpty()
-                    && aRendre.isEmpty();
+                    && aRendre.isEmpty() && equipements.isEmpty();
         }
+    }
+
+    /** 2.3.0 : un équipement spécial déclaré par un autre plugin (KS_MaleficesNether : amulette mangeuse de mal). */
+    private record Equipement(String id, String nom, Predicate<ItemStack> reconnait) {
     }
 
     /** Fusion possible de deux badges : badge et niveau obtenus, coût en niveaux. */
@@ -204,16 +215,22 @@ public final class KSJetons extends JavaPlugin implements Listener {
     private static final List<Integer> FUSION_DEFAUT = List.of(30, 50, 70, 90, 110, 130);
     private static final int PAS_FUSION = 20;
 
-    /** 2.1.0 : le coffre de l'inventaire spécial : 3 rangées (badges, jetons, localisations) et la barre d'actions. */
-    private static final int TAILLE = 36;
+    /**
+     * 2.1.0 : le coffre de l'inventaire spécial : 3 rangées (badges, jetons, localisations) et la barre d'actions.
+     * 2.3.0 : une 4e rangée, les équipements spéciaux, avant la barre d'actions.
+     */
+    private static final int TAILLE = 45;
     private static final int LIGNE_BADGES = 0;
     private static final int LIGNE_JETONS = 9;
     private static final int LIGNE_LOCALISATIONS = 18;
-    private static final int CASE_AIDE = 30;
-    private static final int CASE_ACHAT = 31;
-    private static final int CASE_FERMER = 32;
+    private static final int LIGNE_EQUIPEMENTS = 27;
+    private static final int CASE_AIDE = 39;
+    private static final int CASE_ACHAT = 40;
+    private static final int CASE_FERMER = 41;
     /** Cases de localisation au plus (une rangée, après son étiquette). */
     private static final int LOCALISATIONS_MAX = 8;
+    /** 2.3.0 : équipements spéciaux au plus (une rangée, après son étiquette). */
+    private static final int EQUIPEMENTS_MAX = 8;
     /** Les jetons qui ont leur case, dans l'ordre (le jeton de localisation a sa propre rangée). */
     private static final List<Type> JETONS_RANGES = Arrays.stream(Type.values())
             .filter(t -> t != Type.LOCALISATION).toList();
@@ -234,6 +251,8 @@ public final class KSJetons extends JavaPlugin implements Listener {
     private BiFunction<Player, ItemStack, Component> validateur;
     /** 2.1.0 : prévenus quand les jetons de localisation d'un joueur changent (KS_Teleport : magnétites protégées). */
     private final List<Consumer<UUID>> ecouteurs = new ArrayList<>();
+    /** 2.3.0 : équipements spéciaux déclarés, dans l'ordre de leurs cases. */
+    private final Map<String, Equipement> equipementsDeclares = new LinkedHashMap<>();
 
     @Override
     public void onEnable() {
@@ -523,6 +542,57 @@ public final class KSJetons extends JavaPlugin implements Listener {
         instance.ouvrir(joueur);
     }
 
+    /**
+     * 2.3.0 : déclare un équipement spécial (à l'activation du plugin qui le possède) : il a sa case dans la rangée
+     * « Tes équipements spéciaux » (8 au plus, dans l'ordre des déclarations) et il est porté tant qu'il y est rangé.
+     *
+     * @param id        identifiant, ex. « amulette »
+     * @param nom       nom affiché sur la case vide
+     * @param reconnait vrai pour un objet de cet équipement
+     */
+    public static void declarerEquipement(String id, String nom, Predicate<ItemStack> reconnait) {
+        if (instance == null || id == null || reconnait == null) {
+            return;
+        }
+        if (!instance.equipementsDeclares.containsKey(id) && instance.equipementsDeclares.size() >= EQUIPEMENTS_MAX) {
+            instance.getLogger().warning("Équipement spécial refusé (" + EQUIPEMENTS_MAX + " au plus) : " + id);
+            return;
+        }
+        instance.equipementsDeclares.put(id, new Equipement(id, nom, reconnait));
+    }
+
+    /** 2.3.0 : l'équipement spécial rangé par le joueur (copie), ou null. */
+    public static ItemStack equipement(UUID joueur, String id) {
+        Fiche f = instance.fiches.get(CompteTest.de(joueur));
+        ItemStack objet = f == null ? null : f.equipements.get(id);
+        return objet == null ? null : objet.clone();
+    }
+
+    /** 2.3.0 : le joueur porte-t-il cet équipement spécial (rangé dans son inventaire spécial) ? */
+    public static boolean porteEquipement(UUID joueur, String id) {
+        Fiche f = instance.fiches.get(CompteTest.de(joueur));
+        return f != null && f.equipements.containsKey(id);
+    }
+
+    /** 2.3.0 : l'équipement spécial déclaré que cet objet représente, ou null. */
+    private Equipement equipementDe(ItemStack objet) {
+        if (objet == null || objet.isEmpty()) {
+            return null;
+        }
+        for (Equipement e : equipementsDeclares.values()) {
+            if (e.reconnait().test(objet)) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    private Equipement equipementDeCase(int place) {
+        int i = place - LIGNE_EQUIPEMENTS - 1;
+        List<Equipement> liste = new ArrayList<>(equipementsDeclares.values());
+        return place > LIGNE_EQUIPEMENTS && place < LIGNE_EQUIPEMENTS + 9 && i < liste.size() ? liste.get(i) : null;
+    }
+
     private long delaiLocalisation() {
         return Math.max(0, getConfig().getLong("localisation-delai-heures", 24)) * 3_600_000L;
     }
@@ -663,6 +733,18 @@ public final class KSJetons extends JavaPlugin implements Listener {
             }
             inv.setItem(LIGNE_LOCALISATIONS + 1 + k, vue);
         }
+        inv.setItem(LIGNE_EQUIPEMENTS, fixe(Material.PURPLE_STAINED_GLASS_PANE, t("coffre.ligne-equipements",
+                        "<light_purple>Tes équipements spéciaux"),
+                t("coffre.ligne-equipements-1", "<gray>Un équipement par type, porté"),
+                t("coffre.ligne-equipements-2", "<gray>tant qu'il est rangé ici.")));
+        int e = 0;
+        for (Equipement eq : equipementsDeclares.values()) {
+            ItemStack objet = f.equipements.get(eq.id());
+            inv.setItem(LIGNE_EQUIPEMENTS + 1 + e, objet != null ? objet.clone()
+                    : fixe(Material.LIGHT_GRAY_STAINED_GLASS_PANE, t("coffre.equipement-vide", "<gray><nom> : aucun",
+                    "nom", eq.nom()), t("coffre.equipement-poser", "<dark_gray>Pose cet équipement ici")));
+            e++;
+        }
         inv.setItem(CASE_AIDE, fixe(Material.BOOK, t("coffre.aide", "<gold>Comment ça marche"),
                 t("coffre.aide-1", "<gray>Clic sur un objet de ton inventaire"),
                 t("coffre.aide-2", "<gray>avec Maj : il va dans sa case."),
@@ -677,7 +759,7 @@ public final class KSJetons extends JavaPlugin implements Listener {
         inv.setItem(CASE_FERMER, fixe(Material.BARRIER, t("coffre.fermer", "<red>Fermer")));
     }
 
-    /** Inventaire spécial : un coffre de 4 rangées (badges, jetons, localisations, barre d'actions). */
+    /** Inventaire spécial : un coffre de 5 rangées (badges, jetons, localisations, équipements, barre d'actions). */
     public void ouvrir(Player joueur) {
         donnerARendre(joueur);
         Inventory inv = Bukkit.createInventory(new Special(joueur.getUniqueId()), TAILLE, titre());
@@ -763,6 +845,36 @@ public final class KSJetons extends JavaPlugin implements Listener {
         Badge badge = badgeDeCase(place);
         Type type = jetonDeCase(place);
         int k = localisationDeCase(place);
+        Equipement eq = equipementDeCase(place);
+        if (eq != null) {
+            ItemStack range = f.equipements.get(eq.id());
+            if (vide || maj) {
+                if (range != null) {
+                    f.equipements.remove(eq.id());
+                    reprendre(joueur, range, maj || !vide);
+                }
+                return false;
+            }
+            if (!eq.reconnait().test(curseur)) {
+                refuser(joueur, t("coffre.refus-equipement", "<red>Seul l'équipement « <nom> » va dans cette case.",
+                        "nom", eq.nom()));
+                return false;
+            }
+            ItemStack un = curseur.clone();
+            un.setAmount(1);
+            f.equipements.put(eq.id(), un);
+            curseur.setAmount(curseur.getAmount() - 1);
+            if (range == null) {
+                joueur.setItemOnCursor(curseur.getAmount() > 0 ? curseur : null);
+            } else if (curseur.getAmount() > 0) {
+                joueur.setItemOnCursor(curseur);
+                donner(joueur, range);
+            } else {
+                // Échange : l'équipement déjà rangé passe sur le curseur.
+                joueur.setItemOnCursor(range);
+            }
+            return false;
+        }
         if (badge != null) {
             Integer niveau = f.badges.get(badge);
             if (vide || maj) {
@@ -889,7 +1001,23 @@ public final class KSJetons extends JavaPlugin implements Listener {
             inventaire.setItem(caseBas, null);
             return false;
         }
-        refuser(joueur, t("coffre.refus-objet", "<red>Seuls les jetons et les badges vont dans l'inventaire spécial."));
+        Equipement eq = equipementDe(objet);
+        if (eq != null) {
+            if (f.equipements.containsKey(eq.id())) {
+                refuser(joueur, t("coffre.refus-equipement-double", "<red>Tu portes déjà : <nom>. Reprends-le d'abord.",
+                        "nom", eq.nom()));
+                return false;
+            }
+            ItemStack un = objet.clone();
+            un.setAmount(1);
+            f.equipements.put(eq.id(), un);
+            objet.setAmount(objet.getAmount() - 1);
+            inventaire.setItem(caseBas, objet.getAmount() > 0 ? objet : null);
+            return false;
+        }
+        // 2.3.0 : nouvelle clé (texte changé : les équipements spéciaux aussi).
+        refuser(joueur, t("coffre.refus-objet-2",
+                "<red>Seuls les jetons, les badges et les équipements spéciaux vont dans l'inventaire spécial."));
         return false;
     }
 
@@ -1248,6 +1376,16 @@ public final class KSJetons extends JavaPlugin implements Listener {
                     f.aRendre.add(objet);
                 }
             }
+            // 2.3.0 : gardés même si leur plugin n'est pas là (ils n'ont alors pas de case).
+            ConfigurationSection equipements = s.getConfigurationSection("equipements");
+            if (equipements != null) {
+                for (String e : equipements.getKeys(false)) {
+                    ItemStack objet = objetDe(equipements.getString(e), cle + ".equipements." + e);
+                    if (objet != null) {
+                        f.equipements.put(e, objet);
+                    }
+                }
+            }
             fiches.put(id, f);
         }
     }
@@ -1373,6 +1511,7 @@ public final class KSJetons extends JavaPlugin implements Listener {
             if (!f.aRendre.isEmpty()) {
                 yaml.set(chemin + "a-rendre", f.aRendre.stream().map(KSJetons::b64).toList());
             }
+            f.equipements.forEach((e, objet) -> yaml.set(chemin + "equipements." + e, b64(objet)));
         });
         try {
             getDataFolder().mkdirs();

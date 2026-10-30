@@ -63,6 +63,9 @@ public final class KSKaliumGive extends JavaPlugin {
                     () -> fr.kalium.elixir.KSElixir.creerElixir(elixir)));
         }
         // 1.8.0 (catégorie 7) : jetons de KS_Jetons ; 1.9.0 : jetons et badges ajoutés au démarrage (voir onEnable).
+        // 1.13.0 (maléfices du Nether) : amulette mangeuse de mal de KS_MaleficesNether (aussi au butin des récompenses).
+        OBJETS.put("amulette_mangeuse_de_mal", new ObjetCustom("KS_MaleficesNether",
+                () -> fr.kalium.malefices.KSMaleficesNether.creerAmulette()));
     }
 
     /** Fiole d'experience de KS_FioleExp, avec son nombre de niveaux (1.4.0 ; points avant) : fiole_exp(50). */

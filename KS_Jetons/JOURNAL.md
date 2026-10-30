@@ -166,3 +166,24 @@ Principe (KS_MondeTest 1.1.0) : dans le monde de test, le joueur porte la métad
 - `toutesLocalisations()` rend les jetons de chaque fiche (comptes de test compris) sans les recalculer par joueur.
 
 **À déployer ensemble sur Kixster** : KS_MondeTest 1.1.0, KS_Economy 1.11.0 (avec KS_BiomeChanger 1.2.0, exigé par KS_Economy 1.10.1), KS_Jetons 2.2.0, KS_Teleport 1.5.0, KS_RewardsGUI 1.10.0, KS_FairPlay 1.1.0, KS_Fly 1.1.0, KS_Tableau 1.1.0, KS_Menu 1.3.0, KS_Parrainage 1.2.0, KLM_Statistiques 1.2.0 ; nouveau `config.yml` de KS_MondeTest et clé `espaces-interfaces` de KLM_Menu à changer (voir le JOURNAL de KS_MondeTest). **Déployé sur Kixster le 25/10/2026 à 12:10 (accord de LeKiwi06 : « oui, déploie les 11 plugins du moi de test et KS_BiomeChanger 1.2.0 sur Kixster, avec le nouveau config.yml de KS_MondeTest et espaces-interfaces de KLM_Menu ») ; ancien jar dans `_removed-<plugin>-<version>/` ; actif après redémarrage (fait par LeKiwi06), non testé en jeu.**
+
+## 2.3.0 - équipements spéciaux (30/10/2026, LeKiwi06)
+
+Chantier des maléfices du Nether (cahier local `Malefices_Nether.md`, validé le 30/10/2026). LeKiwi06 : « l'amulette
+peut être stockée dans le même emplacement que les jetons et badges, il suffit d'une 3e catégorie : équipements
+spéciaux » (plus tard aussi la bague de relais dimensionnel).
+
+- **Coffre de 5 rangées** : nouvelle rangée « Tes équipements spéciaux » (étiquette violette) entre les localisations et
+  la barre d'actions (aide, achat, fermer : une rangée plus bas).
+- Un équipement est déclaré par son plugin (`declarerEquipement(id, nom, reconnaissance)`, 8 au plus) : une case par
+  équipement, un seul de chaque, **porté tant qu'il y est rangé**. Mêmes gestes que les badges : clic avec l'objet
+  sur sa case (échange si la case est prise), clic sur la case pour le reprendre, Maj + clic dans son inventaire.
+- API : `declarerEquipement`, `porteEquipement`, `equipement`. Premier équipement : l'amulette mangeuse de mal
+  (KS_MaleficesNether 1.0.0).
+- `jetons.yml` : `joueurs.<compte>.equipements.<id>` (objet entier) ; un équipement dont le plugin manque est gardé
+  (sans case). Moi de test : par `CompteTest.de` comme le reste de la fiche.
+- Texte de refus changé (« Seuls les jetons, les badges et les équipements spéciaux... ») : nouvelle clé
+  `coffre.refus-objet-2`.
+
+Empilé sur la 2.2.0, jamais testée en jeu (demande de LeKiwi06 : chantier validé). Compilé le 30/10/2026
+(`sortie/KS_Jetons-2.3.0.jar`). **À déployer avec KS_MaleficesNether 1.0.0.** Statut : non déployé, non testé en jeu.

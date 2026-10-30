@@ -65,3 +65,24 @@ Limites :
 - Didacticiel et `/kaliumgive` : à faire au déploiement.
 
 Compilé le 28/10/2026 (`sortie/KS_Atouts-1.0.0.jar`, après KLM_Menu et KS_Effets). **Déployé sur Kixster le 29/10/2026 à 11:17** (LeKiwi06 : « Oui, déploie KS_Cuisine 1.0.0, KS_Atouts 1.0.0, KS_Decapitator 1.4.0 et KS_Economy 1.12.2 sur Kixster, et geyser-bedrock 1.7.0 sur le proxy, avec les entrées du didacticiel »), avec `didacticiel.yml` ; fichiers en place vérifiés identiques au dépôt avant l'envoi. À redémarrer par LeKiwi06. Statut : non testé en jeu. Didacticiel : thème « Atouts d'équipement » (4 nouveautés).
+
+## 1.2.0 - plastron anti-radiation (30/10/2026)
+
+Chantier des maléfices du Nether (cahier local `Malefices_Nether.md`, partie 3.3, validé par LeKiwi06 le 30/10/2026).
+LeKiwi06 : « un plastron anti-radiation, avec des blocs d'or autour du plastron : chaque craft protège pour 1 jour
+passé dans le nether » ; « il prend l'apparence d'un plastron en or (le side effect est qu'ils ne sont pas aggro par
+les piglins, je le sais, c'est volontaire) » ; « le plastron divise le temps d'action des effets par 2 ».
+
+| Atout | Craft (à l'établi) | Apparence pendant l'atout | Effet |
+|---|---|---|---|
+| Plastron anti-radiation | 8 blocs d'or autour d'un plastron | plastron en or | durée des maléfices du Nether divisée par 2 (KS_MaleficesNether) |
+
+- Tous les plastrons du jeu. **20 minutes par craft** (un jour du Nether), décomptées **seulement quand il est porté
+  dans le Nether** ; cumulable, mêmes règles que les autres atouts (autre atout = temps perdu, ni posé ni dans un autre
+  craft). Ligne de l'objet : « Atout : Plastron anti-radiation (20 min dans le Nether) ».
+- Les atouts gèrent maintenant l'emplacement du plastron (temps porté, fin de l'atout, recette).
+- API : `KSAtouts.porteAtout(joueur, id)` (KS_MaleficesNether : `anti_radiation`).
+- Les piglins ne l'attaquent pas (vrai plastron en or) : voulu.
+
+Empilé sur la 1.1.0, jamais testée en jeu (chantier validé par LeKiwi06). Compilé le 30/10/2026
+(`sortie/KS_Atouts-1.2.0.jar`). **À déployer avec KS_MaleficesNether 1.0.0.** Statut : non déployé, non testé en jeu.

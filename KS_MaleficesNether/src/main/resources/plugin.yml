@@ -1,0 +1,8 @@
+name: KS_MaleficesNether
+version: '${project.version}'
+main: fr.kalium.malefices.KSMaleficesNether
+api-version: '26.2'
+description: Malefices du Nether de Kixster (effets qui montent avec le temps passe d'affilee dans le Nether) et amulette mangeuse de mal.
+authors: [KaLium]
+depend: [KLM_Menu, KS_Effets, KS_Jetons]
+softdepend: [KS_Atouts]

@@ -42,30 +42,41 @@ import java.util.UUID;
  */
 final class Atouts {
 
-    /** Un atout : nom, ressource, emplacement, apparence. */
-    record Atout(String id, String nom, Material ressource, EquipmentSlot emplacement, Material apparence) {
+    /**
+     * Un atout : nom, ressource, emplacement, apparence, secondes ajoutées par craft, décompte seulement dans le Nether
+     * (1.2.0).
+     */
+    record Atout(String id, String nom, Material ressource, EquipmentSlot emplacement, Material apparence, int parCraft,
+                 boolean nether) {
     }
 
     static final String SKI = "ski";
     static final String POISCAILLE = "poiscaille";
     static final String COUPE_FEU = "coupe_feu";
     static final String VENTOUSE = "ventouse";
+    static final String ANTI_RADIATION = "anti_radiation";
+
+    /** Une heure par craft (choix de LeKiwi06), cumulable sans plafond. */
+    static final int HEURE = 3600;
+    /** 1.2.0 : plastron anti-radiation, un jour du Nether (20 minutes) par craft (LeKiwi06, 30/10). */
+    static final int JOUR_NETHER = 1200;
 
     static final Map<String, Atout> ATOUTS = new LinkedHashMap<>();
 
     static {
-        ATOUTS.put(SKI, new Atout(SKI, "Bottes de ski", Material.RABBIT_FOOT, EquipmentSlot.FEET, Material.LEATHER_BOOTS));
+        ATOUTS.put(SKI, new Atout(SKI, "Bottes de ski", Material.RABBIT_FOOT, EquipmentSlot.FEET, Material.LEATHER_BOOTS,
+                HEURE, false));
         ATOUTS.put(POISCAILLE, new Atout(POISCAILLE, "Casque poiscaille", Material.PUFFERFISH, EquipmentSlot.HEAD,
-                Material.PLAYER_HEAD));
+                Material.PLAYER_HEAD, HEURE, false));
         ATOUTS.put(COUPE_FEU, new Atout(COUPE_FEU, "Bottes coupe-feu", Material.MAGMA_CREAM, EquipmentSlot.FEET,
-                Material.COPPER_BOOTS));
+                Material.COPPER_BOOTS, HEURE, false));
         // Un bloc de miel porté s'affiche sur la tête (pas d'apparence d'armure : le jeu dessine l'objet).
         ATOUTS.put(VENTOUSE, new Atout(VENTOUSE, "Casque ventouse", Material.HONEY_BLOCK, EquipmentSlot.HEAD,
-                Material.HONEY_BLOCK));
+                Material.HONEY_BLOCK, HEURE, false));
+        // 1.2.0 : un plastron en or (les piglins ne l'attaquent donc pas : voulu par LeKiwi06, 30/10).
+        ATOUTS.put(ANTI_RADIATION, new Atout(ANTI_RADIATION, "Plastron anti-radiation", Material.GOLD_BLOCK,
+                EquipmentSlot.CHEST, Material.GOLDEN_CHESTPLATE, JOUR_NETHER, true));
     }
-
-    /** Une heure par craft (choix de LeKiwi06), cumulable sans plafond. */
-    static final int HEURE = 3600;
 
     /** Texture de la tête de gardien (table de KS_Decapitator). */
     private static final String GARDIEN = "e2ba34416670454b1a20496f80b9398529f49003fc613eb930248ea9b5d1a391";
@@ -129,17 +140,21 @@ final class Atouts {
             return false;
         }
         Material m = origine(item);
-        return a.emplacement() == EquipmentSlot.FEET ? org.bukkit.Tag.ITEMS_FOOT_ARMOR.isTagged(m)
-                : org.bukkit.Tag.ITEMS_HEAD_ARMOR.isTagged(m);
+        return switch (a.emplacement()) {
+            case FEET -> org.bukkit.Tag.ITEMS_FOOT_ARMOR.isTagged(m);
+            case CHEST -> org.bukkit.Tag.ITEMS_CHEST_ARMOR.isTagged(m);
+            default -> org.bukkit.Tag.ITEMS_HEAD_ARMOR.isTagged(m);
+        };
     }
 
     // ------------------------------------------------------------------ pose
 
     /**
-     * L'équipement avec cet atout : même atout déjà posé, une heure de plus ; autre atout, il est perdu (et son temps).
+     * L'équipement avec cet atout : même atout déjà posé, une heure de plus (plastron : 20 minutes) ; autre atout, il est
+     * perdu (et son temps).
      */
     static ItemStack poser(ItemStack equipement, Atout a) {
-        int restant = HEURE;
+        int restant = a.parCraft();
         ItemStack base = equipement.clone();
         Atout actuel = atout(base);
         if (actuel != null) {
@@ -261,7 +276,8 @@ final class Atouts {
     }
 
     private static Component ligne(Atout a, int secondes) {
-        return Component.text("Atout : " + a.nom() + " (" + duree(secondes) + ")", NamedTextColor.AQUA)
+        return Component.text("Atout : " + a.nom() + " (" + duree(secondes) + (a.nether() ? " dans le Nether" : "") + ")",
+                        NamedTextColor.AQUA)
                 .decoration(TextDecoration.ITALIC, false);
     }
 
