@@ -36,8 +36,6 @@ un atout (plastron anti-radiation) et une « amulette mangeuse de mal » qui con
 ## Reste à faire
 
 - Redémarrer Kixster, Kanvas et le proxy (ranger `KaLium-objets-1.9.0.mcpack` pendant l'arrêt du proxy).
-- Déposer `sortie/KaLium-textures-1.1.0.zip` sur minepack.fr et mettre l'adresse et le SHA-1 dans
-  `plugins/KS_Textures/config.yml`.
 - Retoucher la texture de l'amulette si besoin (puis refaire les deux packs).
 - Le Nether est fermé sur Kixster : les maléfices n'agiront qu'à son ouverture ; mettre alors à jour l'entrée
   « Nether et End fermés » du didacticiel.

@@ -124,3 +124,5 @@ Empilé sur la 1.1.0, jamais testée en jeu. Compilé le 30/10/2026 (`sortie/KS_
 KS_MaleficesNether 1.0.0.** Statut : non déployé, non testé en jeu.
 
 **Déployé sur Kixster le 30/10/2026 à 18:56** (LeKiwi06 : « Oui, déploie » ; jars en place vérifiés identiques à `jars-deployes/` avant l'envoi), avec KS_MaleficesNether 1.0.0, KS_Jetons 2.3.0, KS_Atouts 1.2.0, KS_KaliumGive 1.13.0, KS_Textures 1.2.0 et le didacticiel ; geyser-bedrock 1.10.0 sur le proxy ; à redémarrer, non testé en jeu.
+
+Pack Java 1.1.0 déposé sur minepack.fr par LeKiwi06 (`https://cdn.minepack.fr/pack/d2af4497-482d-4d81-847e-733846cea676`, même taille que le zip local, 100 037 octets) ; adresse et SHA-1 mis dans `plugins/KS_Textures/config.yml` sur Kixster le 30/10/2026 à 20:17 (ancien config dans `_removed-ks_textures-config-2026-10-30/`) ; actif au redémarrage.
