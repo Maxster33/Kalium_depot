@@ -47,7 +47,7 @@ Didacticiel : entrée « Les alcools » (durées) et nouvelle entrée « Une fio
 À tester en premier : barrières dans l'écran (Java et Bedrock : Geyser reçoit les mêmes paquets), clic sur une
 barrière (elle doit revenir), clic avec Maj d'une potion (passage au milieu), entonnoir sur le côté.
 
-Compilé le 30/10/2026 (`sortie/KS_Alcools-1.2.0.jar`). Non déployé, non testé.
+Compilé le 30/10/2026 (`sortie/KS_Alcools-1.2.0.jar`). **Déployé sur Kixster le 30/10/2026 à 11:54** (LeKiwi06 : « Oui, déploie »), avec `didacticiel.yml` (ancien dans `_removed-ks_didacticiel-yml-2026-10-30-alambic/`) ; fichiers en place vérifiés identiques au dépôt avant l'envoi, et après. 1.1.0 dans `_removed-ks_alcools-1.1.0/`. À redémarrer par LeKiwi06 (les barrières ne s'affichent qu'après un redémarrage). Statut : non testé en jeu.
 
 ## 1.1.0 - rhum (29/10/2026)
 
