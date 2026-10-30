@@ -22,23 +22,25 @@ import org.bukkit.persistence.PersistentDataType;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
  * Les atouts et leur pose sur un équipement (cahier, partie 3.5).
  *
- * Pendant l'atout, l'objet change vraiment de type (bottes en cuir, tête de gardien, bottes en cuivre, bloc de miel) en
- * gardant ses caractéristiques : le type d'origine, ses modificateurs d'attributs (armure, robustesse, résistance au
+ * Pendant l'effet de l'atout (1.3.0 : seulement pendant l'effet, voir KSAtouts), l'objet change vraiment de type
+ * (bottes en cuir, tête de gardien, bottes en cuivre, bloc de miel, plastron en or) en gardant ses caractéristiques : le type d'origine, ses modificateurs d'attributs (armure, robustesse, résistance au
  * recul), sa durabilité, sa réparation, sa résistance au feu (netherite), son enchantabilité, sa pile de 1 et son nom
  * de base sont recopiés comme valeurs explicites ; son apparence portée vient du nouveau type. Les enchantements, le nom
- * donné, la garniture et l'usure suivent d'eux-mêmes. Fin de l'atout : il reprend son type, et les valeurs recopiées
+ * donné, la garniture et l'usure suivent d'eux-mêmes. Fin de l'effet : il reprend son type, et les valeurs recopiées
  * qui venaient de son type d'origine sont retirées (l'usure reste).
  *
- * Marques sur l'objet : atout, origine (type d'origine), restant (secondes), ajouts (composants recopiés à retirer),
- * lignes (nombre de lignes de description d'origine).
+ * Marques sur l'objet : atout, origine (type d'origine), restant (secondes), ajouts (composants recopiés à retirer,
+ * seulement pendant l'effet), lignes (nombre de lignes de description d'origine).
  */
 final class Atouts {
 
@@ -76,6 +78,13 @@ final class Atouts {
         // 1.2.0 : un plastron en or (les piglins ne l'attaquent donc pas : voulu par LeKiwi06, 30/10).
         ATOUTS.put(ANTI_RADIATION, new Atout(ANTI_RADIATION, "Plastron anti-radiation", Material.GOLD_BLOCK,
                 EquipmentSlot.CHEST, Material.GOLDEN_CHESTPLATE, JOUR_NETHER, true));
+    }
+
+    /** 1.3.0 : types que prend un objet pendant l'effet de son atout (test rapide avant de lire ses marques). */
+    private static final Set<Material> APPARENCES = EnumSet.noneOf(Material.class);
+
+    static {
+        ATOUTS.values().forEach(a -> APPARENCES.add(a.apparence()));
     }
 
     /** Texture de la tête de gardien (table de KS_Decapitator). */
@@ -151,21 +160,52 @@ final class Atouts {
 
     /**
      * L'équipement avec cet atout : même atout déjà posé, une heure de plus (plastron : 20 minutes) ; autre atout, il est
-     * perdu (et son temps).
+     * perdu (et son temps). 1.3.0 : l'objet garde son type ; il ne prend l'apparence de l'atout que pendant l'effet
+     * ({@link #activer}).
      */
     static ItemStack poser(ItemStack equipement, Atout a) {
         int restant = a.parCraft();
-        ItemStack base = equipement.clone();
-        Atout actuel = atout(base);
+        ItemStack r = equipement.clone();
+        Atout actuel = atout(r);
         if (actuel != null) {
             if (actuel == a) {
-                restant += restant(base);
+                restant += restant(r);
             }
-            base = retirer(base);
+            r = retirer(r);
+        }
+        ItemMeta meta = r.getItemMeta();
+        List<Component> lignes = meta.hasLore() ? new ArrayList<>(meta.lore()) : new ArrayList<>();
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        pdc.set(cleAtout, PersistentDataType.STRING, a.id());
+        pdc.set(cleOrigine, PersistentDataType.STRING, r.getType().getKey().toString());
+        pdc.set(cleRestant, PersistentDataType.INTEGER, restant);
+        pdc.set(cleLignes, PersistentDataType.INTEGER, lignes.size());
+        lignes.add(ligne(a, restant));
+        meta.lore(lignes);
+        r.setItemMeta(meta);
+        return r;
+    }
+
+    /** 1.3.0 : l'objet a-t-il en ce moment l'apparence de son atout (type changé) ? */
+    static boolean actif(ItemStack item) {
+        if (item == null || !APPARENCES.contains(item.getType())) {
+            return false;
+        }
+        return atout(item) != null && item.getType() != origine(item);
+    }
+
+    /**
+     * 1.3.0 : l'objet sous atout avec l'apparence de son atout (vrai type), en gardant ses caractéristiques. Déjà de ce
+     * type (bottes en cuir de ski...), il est rendu tel quel.
+     */
+    static ItemStack activer(ItemStack base) {
+        Atout a = atout(base);
+        if (a == null || base.getType() == a.apparence()) {
+            return base;
         }
         ItemStack r = base.withType(a.apparence());
         Equippable original = base.getData(DataComponentTypes.EQUIPPABLE);
-        // Composants recopiés qui venaient du type d'origine : retirés à la fin de l'atout.
+        // Composants recopiés qui venaient du type d'origine : retirés quand l'effet s'arrête.
         List<String> ajouts = new ArrayList<>();
         for (DataComponentType.Valued<?> type : COPIES) {
             if ((base.hasData(type) || r.hasData(type)) && !base.isDataOverridden(type)) {
@@ -175,7 +215,7 @@ final class Atouts {
         if (original != null && !base.isDataOverridden(DataComponentTypes.EQUIPPABLE)) {
             ajouts.add(DataComponentTypes.EQUIPPABLE.key().asString());
         }
-        // D'abord la description, les marques et la tête (objet relu), puis les valeurs recopiées.
+        // D'abord la marque et la tête (objet relu), puis les valeurs recopiées.
         ItemMeta meta = r.getItemMeta();
         if (meta instanceof SkullMeta crane) {
             PlayerProfile profil = Bukkit.createProfile(UUID.nameUUIDFromBytes("ks_atouts:gardien".getBytes(
@@ -186,20 +226,12 @@ final class Atouts {
             crane.setPlayerProfile(profil);
             ajouts.add(DataComponentTypes.PROFILE.key().asString());
         }
-        List<Component> lignes = meta.hasLore() ? new ArrayList<>(meta.lore()) : new ArrayList<>();
-        PersistentDataContainer pdc = meta.getPersistentDataContainer();
-        pdc.set(cleAtout, PersistentDataType.STRING, a.id());
-        pdc.set(cleOrigine, PersistentDataType.STRING, base.getType().getKey().toString());
-        pdc.set(cleRestant, PersistentDataType.INTEGER, restant);
-        pdc.set(cleAjouts, PersistentDataType.LIST.strings(), ajouts);
-        pdc.set(cleLignes, PersistentDataType.INTEGER, lignes.size());
-        lignes.add(ligne(a, restant));
-        meta.lore(lignes);
+        meta.getPersistentDataContainer().set(cleAjouts, PersistentDataType.LIST.strings(), ajouts);
         r.setItemMeta(meta);
         for (DataComponentType.Valued<?> type : COPIES) {
             copier(base, r, type);
         }
-        // Usure : gardée telle quelle (et à la fin de l'atout).
+        // Usure : gardée telle quelle (et quand l'effet s'arrête).
         Integer usure = base.getData(DataComponentTypes.DAMAGE);
         if (usure != null) {
             r.setData(DataComponentTypes.DAMAGE, usure);
@@ -223,15 +255,16 @@ final class Atouts {
         }
     }
 
-    /** L'objet sans atout : type d'origine, valeurs recopiées retirées, description d'origine. */
-    static ItemStack retirer(ItemStack item) {
-        if (atout(item) == null) {
+    /**
+     * 1.3.0 : l'objet sous atout avec son aspect d'origine (type d'origine, valeurs recopiées retirées) ; l'atout, son
+     * temps et sa ligne de description restent.
+     */
+    static ItemStack desactiver(ItemStack item) {
+        if (!actif(item)) {
             return item;
         }
-        ItemMeta ancienne = item.getItemMeta();
-        PersistentDataContainer pdc = ancienne.getPersistentDataContainer();
-        List<String> ajouts = pdc.getOrDefault(cleAjouts, PersistentDataType.LIST.strings(), List.of());
-        int nombre = pdc.getOrDefault(cleLignes, PersistentDataType.INTEGER, 0);
+        List<String> ajouts = item.getItemMeta().getPersistentDataContainer()
+                .getOrDefault(cleAjouts, PersistentDataType.LIST.strings(), List.of());
         ItemStack r = item.withType(origine(item));
         for (String cle : ajouts) {
             NamespacedKey k = NamespacedKey.fromString(cle);
@@ -241,9 +274,22 @@ final class Atouts {
             }
         }
         ItemMeta meta = r.getItemMeta();
+        meta.getPersistentDataContainer().remove(cleAjouts);
+        r.setItemMeta(meta);
+        return r;
+    }
+
+    /** L'objet sans atout : aspect d'origine, description d'origine, marques retirées. */
+    static ItemStack retirer(ItemStack item) {
+        if (atout(item) == null) {
+            return item;
+        }
+        ItemStack r = desactiver(item);
+        ItemMeta meta = r.getItemMeta();
+        PersistentDataContainer marques = meta.getPersistentDataContainer();
+        int nombre = marques.getOrDefault(cleLignes, PersistentDataType.INTEGER, 0);
         List<Component> lignes = meta.hasLore() ? meta.lore() : List.of();
         meta.lore(nombre == 0 || lignes == null ? null : new ArrayList<>(lignes.subList(0, Math.min(nombre, lignes.size()))));
-        PersistentDataContainer marques = meta.getPersistentDataContainer();
         for (NamespacedKey k : List.of(cleAtout, cleOrigine, cleRestant, cleAjouts, cleLignes)) {
             marques.remove(k);
         }

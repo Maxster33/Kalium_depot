@@ -88,3 +88,35 @@ Empilé sur la 1.1.0, jamais testée en jeu (chantier validé par LeKiwi06). Com
 (`sortie/KS_Atouts-1.2.0.jar`). **À déployer avec KS_MaleficesNether 1.0.0.** Statut : non déployé, non testé en jeu.
 
 **Déployé sur Kixster le 30/10/2026 à 18:56** (LeKiwi06 : « Oui, déploie » ; jars en place vérifiés identiques à `jars-deployes/` avant l'envoi), avec KS_MaleficesNether 1.0.0, KS_Jetons 2.3.0, KS_Atouts 1.2.0, KS_KaliumGive 1.13.0, KS_Textures 1.2.0 et le didacticiel ; geyser-bedrock 1.10.0 sur le proxy ; à redémarrer, non testé en jeu.
+
+## 1.3.0 - apparence seulement pendant l'effet (30/10/2026)
+
+Demande de LeKiwi06 du 30/10 : « les atouts doivent swap d'apparence que quand l'atout s'active » ; activation =
+pendant l'effet (son choix, plutôt que « quand l'objet est porté »).
+
+| Atout | Apparence prise seulement… |
+|---|---|
+| Bottes de ski | près de la poudreuse : dans un rayon de 2 blocs sur les côtés et 3 en dessous (12 en chute), pour que les vraies bottes en cuir arrivent avant le pas (le client ne marche dessus qu'avec elles) |
+| Casque poiscaille | la tête sous l'eau |
+| Bottes coupe-feu | debout sur un bloc de magma |
+| Casque ventouse | collé au plafond |
+| Plastron anti-radiation | dans le Nether |
+
+- Le craft ne change plus le type : l'objet garde son aspect, avec l'atout, son temps et sa ligne de description.
+  Vérifié chaque tick sur l'armure portée ; l'apparence reste **1 s** après la fin de l'effet (pas de clignotement au
+  bord de l'eau ou du magma). Échange **sans son d'équipement**. Le temps se décompte comme avant (porté ; plastron :
+  dans le Nether).
+- Un objet qui n'est plus porté reprend son aspect : retiré à la souris ou mis dans un coffre (tick suivant), passé en
+  main, lâché, tombé à la mort, déconnexion, arrêt du serveur ; vérification de secours chaque seconde (inventaire,
+  main secondaire, curseur, conteneur ouvert).
+- Objets faits avant la 1.3.0 (déjà changés de type) : remis à leur aspect dès qu'ils sont dans l'inventaire d'un
+  joueur connecté. La tête et le bloc de miel ne sont plus acceptés au centre de la recette.
+- Didacticiel : règle et plastron reformulés (dates « nouveau » gardées : Kixster n'a pas encore redémarré avec les
+  atouts).
+
+Limites :
+- Bottes de ski : le changement suit la position vue par le serveur ; avec beaucoup de latence ou en tombant très vite,
+  le joueur peut traverser la poudreuse avant de recevoir les bottes en cuir. GrimAC peut aussi réagir à ce changement.
+- Bedrock : même rendu attendu (vrai type), à vérifier.
+
+Compilé le 30/10/2026 (`sortie/KS_Atouts-1.3.0.jar`). Statut : non déployé, non testé en jeu.

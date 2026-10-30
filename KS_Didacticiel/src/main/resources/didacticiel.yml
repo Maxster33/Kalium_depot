@@ -329,7 +329,7 @@ themes:
       regles:
         nom: "Comment ça marche"
         icone: CRAFTING_TABLE
-        texte: "Entoure une pièce d'équipement de 8 ressources à l'établi : elle gagne un atout pour 1 heure, qui ne s'écoule que quand tu la portes. Refais le craft pour ajouter une heure ; un autre atout remplace le premier. L'objet change d'apparence mais garde sa protection, ses enchantements et son usure. Temps restant : dans sa description et dans /effects. Tant qu'elle a un atout, la pièce ne se pose pas et ne sert dans aucun autre craft."
+        texte: "Entoure une pièce d'équipement de 8 ressources à l'établi : elle gagne un atout pour 1 heure, qui ne s'écoule que quand tu la portes. Refais le craft pour ajouter une heure ; un autre atout remplace le premier. Pendant l'effet (sous l'eau, sur le magma, collé au plafond, dans le Nether, près de la poudreuse), la pièce portée change d'apparence mais garde sa protection, ses enchantements et son usure ; le reste du temps, elle garde son aspect. Temps restant : dans sa description et dans /effects. Tant qu'elle a un atout, la pièce ne se pose pas et ne sert dans aucun autre craft."
         nouveau: "2026-10-29"
       ski:
         nom: "Bottes de ski"
@@ -362,7 +362,7 @@ themes:
       anti-radiation:
         nom: "Plastron anti-radiation"
         icone: GOLD_BLOCK
-        texte: "8 blocs d'or autour d'un plastron : il prend l'apparence d'un plastron en or et divise par 2 la durée des maléfices du Nether. 20 minutes par craft, qui ne s'écoulent que dans le Nether."
+        texte: "8 blocs d'or autour d'un plastron : dans le Nether, il prend l'apparence d'un plastron en or et divise par 2 la durée des maléfices du Nether. 20 minutes par craft, qui ne s'écoulent que dans le Nether."
         recettes:
           - "ks_atouts:anti_radiation"
         requiert: "KS_Atouts 1.2.0"
