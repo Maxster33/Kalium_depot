@@ -323,7 +323,7 @@ themes:
   atouts:
     nom: "Atouts d'équipement"
     icone: LEATHER_BOOTS
-    resume: "Un pouvoir temporaire pour tes bottes et ton casque."
+    resume: "Un pouvoir temporaire pour tes bottes, ton casque et ton plastron."
     requiert: "KS_Atouts"
     nouveautes:
       regles:
@@ -359,6 +359,35 @@ themes:
         recettes:
           - "ks_atouts:ventouse"
         nouveau: "2026-10-29"
+      anti-radiation:
+        nom: "Plastron anti-radiation"
+        icone: GOLD_BLOCK
+        texte: "8 blocs d'or autour d'un plastron : il prend l'apparence d'un plastron en or et divise par 2 la durée des maléfices du Nether. 20 minutes par craft, qui ne s'écoulent que dans le Nether."
+        recettes:
+          - "ks_atouts:anti_radiation"
+        requiert: "KS_Atouts 1.2.0"
+        nouveau: "2026-10-30"
+
+  nether:
+    nom: "Maléfices du Nether"
+    icone: CRYING_OBSIDIAN
+    resume: "Le Nether use ceux qui y restent trop longtemps."
+    requiert: "KS_MaleficesNether"
+    nouveautes:
+      regles:
+        nom: "Comment ça marche"
+        icone: CLOCK
+        texte: "Chaque tranche de 20 minutes passées dans le Nether est un jour de plus. Chaque jour amène un maléfice (faim, faiblesse... et pire), puis les rend plus forts et plus fréquents. Ils tombent au hasard dans la journée : une barre de boss rouge te les montre, et /effects ton jour en cours. Dehors, un jour s'efface toutes les 10 minutes ; la mort remet tout à zéro."
+        commande: "/effects"
+        nouveau: "2026-10-30"
+      amulette:
+        nom: "Amulette mangeuse de mal"
+        icone: BEACON
+        texte: "7 chaînes en cuivre en forme de jambières, une balise en bas au milieu. Rangée dans tes équipements spéciaux (/jetons), elle absorbe les maléfices du Nether en prenant 5 points d'XP par seconde et par niveau d'effet. Sans assez d'XP, le maléfice passe."
+        commande: "/jetons"
+        recettes:
+          - "ks_maleficesnether:amulette"
+        nouveau: "2026-10-30"
 
   enclume:
     nom: "Enclume, meule, expérience"
@@ -503,9 +532,9 @@ themes:
       jetons:
         nom: "Jetons et badges"
         icone: NETHERITE_INGOT
-        texte: "Un seul coffre : une case par badge, une case par jeton (autant que tu veux) et tes cases de localisation. Maj + clic sur un jeton ou un badge de ton inventaire pour le ranger. Deux badges identiques fusionnent à l'enclume."
+        texte: "Un seul coffre : une case par badge, une case par jeton (autant que tu veux), tes cases de localisation et tes équipements spéciaux (portés tant qu'ils y sont rangés). Maj + clic sur un objet de ton inventaire pour le ranger. Deux badges identiques fusionnent à l'enclume."
         commande: "/jetons (ou /jeton, /badges, /badge)"
-        nouveau: "2026-10-18b"
+        nouveau: "2026-10-30"
 
   recompenses:
     nom: "Mort et récompenses"
@@ -878,8 +907,8 @@ themes:
       jetons:
         nom: "/jetons (/jeton, /badges, /badge)"
         icone: NETHERITE_INGOT
-        texte: "Ton inventaire spécial : badges, jetons, localisations."
-        nouveau: "2026-10-18c"
+        texte: "Ton inventaire spécial : badges, jetons, localisations, équipements spéciaux."
+        nouveau: "2026-10-30"
       fly:
         nom: "/fly"
         icone: FEATHER

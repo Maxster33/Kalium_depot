@@ -53,6 +53,9 @@ Limites, à faire avant ou au déploiement :
   actuels » ; ils dataient du 11/10), vérifiés sans erreur (`verifier_butin.py`, `verifier_fusion.py`). Hors git, à
   envoyer sur Kal-Games, Kanvas et Kixster **après** KS_MaleficesNether et KS_KaliumGive 1.13.0 (sinon une récompense
   avec l'amulette reste bloquée). Pas de filtre de dimension dans les fichiers de butin (comme la Clé de l'End).
+- Didacticiel préparé le 30/10 (`didacticiel.yml`, pas encore envoyé) : thème « Maléfices du Nether » (requiert
+  KS_MaleficesNether), entrée « Plastron anti-radiation » (requiert KS_Atouts 1.2.0), entrées /jetons complétées
+  (équipements spéciaux). À envoyer avec les plugins.
 - Écrit sans serveur de test. Pour tester sans attendre 20 minutes par jour : `jour-secondes: 60` dans le
   `config.yml` du serveur (un jour par minute ; chaque effet du jour tient alors toute la minute).
 
