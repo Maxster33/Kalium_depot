@@ -168,4 +168,6 @@ puisse tout tester efficacement : il me faut les items finis, et de quoi faire l
 Limites : un seul exemplaire des ingrédients par recette ; aucun établi, four ni alambic dans le kit ; le coffre est un
 gros objet (centaines d'objets décrits) : non essayé avec un joueur Bedrock.
 
-Compilé le 30/10/2026 (`sortie/KS_KaliumGive-1.12.0.jar`). **Statut : non déployé, non testé en jeu.**
+Compilé le 30/10/2026 (`sortie/KS_KaliumGive-1.12.0.jar`).
+
+**Déployé sur Kixster le 30/10/2026 à 11:39 (LeKiwi06 : « Oui, déploie » ; jar en place vérifié identique à la référence avant l'envoi ; 1.11.0 dans `_removed-ks_kaliumgive-1.11.0/` ; supprimables par l'humain, 3 versions derrière ou plus : `_removed-ks_kaliumgive-1.8.0/`, `1.9.0/`), actif après redémarrage de Kixster. Statut : non testé en jeu.**
