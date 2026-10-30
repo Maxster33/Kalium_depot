@@ -1951,4 +1951,4 @@ Limites : si le chunk tiré ne se charge pas, le ghast n'est pas reposé (messag
 difficulté paisible le jeu retire les ghasts (avertissement dans le journal) ; le ghast peut s'éloigner de sa zone en
 volant (rien ne le ramène).
 
-**Compilé le 30/10/2026, non déployé. Statut : non testé en jeu.**
+**Compilé le 30/10/2026. Déployé sur Serveur Jeux (session « Event [new] ») le 30/10/2026 à 18:46 (LeKiwi06 ; 0.12.0 dans `_removed-kg_bingogame-0.12.0/`), actif après redémarrage. Statut : non testé en jeu.** Cahier publié dans `CAHIER_DES_CHARGES.md`.
