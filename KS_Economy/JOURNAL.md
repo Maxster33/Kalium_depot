@@ -933,3 +933,5 @@ Proposition de Claude validée par LeKiwi06 (« Oui, applique ») ; règles dans
 - **Azalée et azalée fleurie 0,01** au lieu de 0,051 (une pousse, moitié de la bûche de chêne).
 
 Les offres de la semaine dont le prix a changé sont remplacées par un nouveau tirage au démarrage (depuis la 1.8.0).
+
+Compilé le 31/10/2026 (`sortie/KS_Economy-1.13.2.jar`). **Déployé sur Kixster le 31/10/2026 à 21:19** (LeKiwi06 : « Oui, déploie ») ; jar en place de la même taille que celui du dépôt ; 1.13.1 dans `_removed-ks_economy-1.13.1/`. À redémarrer par LeKiwi06. Statut : non testé en jeu.
