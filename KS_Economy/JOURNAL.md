@@ -903,3 +903,13 @@ valide, code »). Événement de 15 jours à partir du 31/10.
 - Didacticiel : entrées « Admin shop » (Économie) et « /adminshop » (commandes) dans `didacticiel.yml`.
 
 Compilé le 30/10/2026 (`sortie/KS_Economy-1.13.0.jar`). **Déployé sur Kixster le 30/10/2026 à 20:15** (LeKiwi06 : « Oui, déploie »), avec `didacticiel.yml` (celui du serveur était identique à celui du déploiement de 18:56, seules les 11 lignes de l'admin shop changent) ; 1.12.2 dans `_removed-ks_economy-1.12.2/`, ancien `didacticiel.yml` dans `_removed-ks_didacticiel-yml-2026-10-30-adminshop/`. À redémarrer par LeKiwi06. Statut : non testé en jeu. Admin shop fermé tant que le staff ne lance pas `/adminshop ouvrir 15`.
+
+## 1.13.1 - plugin.yml illisible en 1.13.0 (31/10/2026, LeKiwi06)
+
+Bug signalé le 31/10 : plus de `/eco`, `/market`, `/rachat`. Journal de Kixster (démarrages du 30/10 à 20:32 et
+20:37) : Paper refuse le jar 1.13.0 (« mapping values are not allowed here », `plugin.yml` ligne 28) : la description
+de `/adminshop` contenait « staff : ouvrir », lu comme une clé YAML. KS_Economy n'était donc pas chargé du tout, et
+KS_Claim et KS_Contrats non plus (dépendance manquante) ; pas d'économie Vault ; recettes de l'Élixir de Fortune et
+« réactiver » de la tête de wither squelette ignorées (KS_Elixir, KS_Crafts).
+
+- Description mise entre guillemets. Code inchangé. Les autres `plugin.yml` du dépôt se lisent (vérifié).
