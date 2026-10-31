@@ -13,6 +13,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Crafter;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 /**
  * KS_Atouts (cahier des charges : Atouts_Alcools_Aliments.md, LeKiwi06, 28/10/2026, partie 3.5) : serveur Kixster,
@@ -381,23 +384,33 @@ public final class KSAtouts extends JavaPlugin implements Listener {
     }
 
     /**
-     * L'effet de l'atout a-t-il lieu : bottes de ski près de la poudreuse (avant le pas), casque poiscaille la tête sous
+     * L'effet de l'atout a-t-il lieu : bottes de ski près de la poudreuse (avant le pas), casque poiscaille près de
      * l'eau, bottes coupe-feu sur un bloc de magma, casque ventouse collé au plafond, plastron dans le Nether.
      */
     private boolean enEffet(Player joueur, Atouts.Atout a) {
         return switch (a.id()) {
-            case Atouts.SKI -> pres(joueur, Material.POWDER_SNOW, SKI_COTE,
+            case Atouts.SKI -> pres(joueur, d -> d.getMaterial() == Material.POWDER_SNOW, SKI_COTE,
                     joueur.getFallDistance() > 1 ? SKI_CHUTE : SKI_DESSOUS);
-            case Atouts.POISCAILLE -> joueur.isUnderWater();
-            case Atouts.COUPE_FEU -> pres(joueur, Material.MAGMA_BLOCK, 0, 0.2);
+            // 1.4.0 : près de l'eau, comme les bottes de ski (la vision nocturne reste sous l'eau).
+            case Atouts.POISCAILLE -> joueur.isUnderWater() || pres(joueur, KSAtouts::eau, SKI_COTE,
+                    joueur.getFallDistance() > 1 ? SKI_CHUTE : SKI_DESSOUS);
+            case Atouts.COUPE_FEU -> pres(joueur, d -> d.getMaterial() == Material.MAGMA_BLOCK, 0, 0.2);
             case Atouts.VENTOUSE -> colles.contains(joueur.getUniqueId());
             case Atouts.ANTI_RADIATION -> joueur.getWorld().getEnvironment() == World.Environment.NETHER;
             default -> false;
         };
     }
 
-    /** Un bloc de ce type dans la boîte du joueur élargie sur les côtés et vers le bas ? */
-    private static boolean pres(Player joueur, Material type, double cote, double dessous) {
+    /** Bloc d'eau : eau, colonne de bulles, plantes aquatiques, bloc immergé (dalle, escalier, barrière...). */
+    private static boolean eau(BlockData d) {
+        return switch (d.getMaterial()) {
+            case WATER, BUBBLE_COLUMN, KELP, KELP_PLANT, SEAGRASS, TALL_SEAGRASS -> true;
+            default -> d instanceof Waterlogged w && w.isWaterlogged();
+        };
+    }
+
+    /** Un bloc voulu dans la boîte du joueur élargie sur les côtés et vers le bas ? */
+    private static boolean pres(Player joueur, Predicate<BlockData> voulu, double cote, double dessous) {
         World monde = joueur.getWorld();
         BoundingBox b = joueur.getBoundingBox();
         int x1 = (int) Math.floor(b.getMinX() - cote);
@@ -409,7 +422,7 @@ public final class KSAtouts extends JavaPlugin implements Listener {
         for (int x = x1; x <= x2; x++) {
             for (int z = z1; z <= z2; z++) {
                 for (int y = y1; y <= y2; y++) {
-                    if (monde.getType(x, y, z) == type) {
+                    if (voulu.test(monde.getBlockData(x, y, z))) {
                         return true;
                     }
                 }
