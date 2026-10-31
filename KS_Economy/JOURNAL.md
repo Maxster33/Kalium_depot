@@ -913,3 +913,5 @@ KS_Claim et KS_Contrats non plus (dépendance manquante) ; pas d'économie Vault
 « réactiver » de la tête de wither squelette ignorées (KS_Elixir, KS_Crafts).
 
 - Description mise entre guillemets. Code inchangé. Les autres `plugin.yml` du dépôt se lisent (vérifié).
+
+Compilé le 31/10/2026 (`sortie/KS_Economy-1.13.1.jar`). **Déployé sur Kixster le 31/10/2026 à 09:59** (LeKiwi06 : « Oui, déploie ») ; jar en place vérifié identique (SHA-1) ; 1.13.0 dans `_removed-ks_economy-1.13.0/`. À redémarrer par LeKiwi06 (KS_Economy, KS_Claim et KS_Contrats se rechargent alors). Statut : non testé en jeu.
