@@ -290,3 +290,5 @@ mourant quand la lave a recouvert son dernier point de contrôle.
 - Le « Temps limite de la course » (global, 0 par défaut) s'applique toujours s'il est réglé.
 
 **Compilé, non déployé. Statut : non testé en jeu.**
+
+**Déployé sur Kanvas (espace Kal-Games) le 31/10/2026 à 18:00, serveur en marche ; jar de la même taille que celui du dépôt (50 363 octets), la 1.8.0 dans `_removed-kg_parkour-1.8.0/`. Actif au redémarrage. Statut : non testé en jeu.**
