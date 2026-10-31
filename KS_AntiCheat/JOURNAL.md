@@ -253,6 +253,8 @@ a donné une alerte « Revente ? » (une quarantaine).
 ancien `suspensions.yml` dans `_removed-ks_anticheat-1.3.0/`. Actif au redémarrage de Kixster : d'ici là, la
 suspension reste en mémoire. Statut : non testé.**
 
+**Journal de Kixster lu après le redémarrage du 31/10 à 10:26 : 1.4.0 chargée, signalements de GrimAC repris, `suspensions.yml` vide ; LeKiwi06 reconnecté à 10:27 (suspension levée). Les alertes « récompense jamais récupérée » de joueurs jamais revenus portent le nom « ? ».**
+
 ## 1.4.1 - x-ray en alertes seulement (31/10/2026, LeKiwi06)
 
 LeKiwi06 : « pour les suspicions de revente etc, ne jamais suspendre la personne, simplement alerter les admins ». La
@@ -264,4 +266,4 @@ extrêmes viennent surtout de joueurs Bedrock (.PatientLime2170 à 2 sur 3). LeK
 - Seule suspension automatique restante : GrimAC lourd (Reach, Hitboxes, FastBreak, FarBreak, MultiBreak, niveau
   100). GrimAC ne vérifie pas les joueurs Bedrock (base de Kixster : 8 joueurs Bedrock, aucune violation).
 
-Statut : compilé, non déployé, non testé.
+**Déployée sur Kixster le 31/10/2026 à 10:39 (LeKiwi06 : « Oui, envoie-la ») ; 1.4.0 dans `_removed-ks_anticheat-1.4.0/` ; `config.yml` et `suspensions.yml` inchangés. Active au redémarrage de Kixster. Statut : non testée.**
