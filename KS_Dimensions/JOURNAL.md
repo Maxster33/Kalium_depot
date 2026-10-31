@@ -24,7 +24,7 @@ avec joueur bloqués (mobs et objets seuls passent).
 - Restent ouverts (non demandés) : téléportations de KS_Teleport vers un point dans le Nether (payées comme une
   téléportation) et réapparition à une ancre de réapparition du Nether.
 
-Compilé, **non déployé, non testé**. Le Nether est encore fermé sur Kixster (`nether-portals-enabled: false`).
+Compilé ; **déployé sur Kixster le 31/10/2026 à 18:21** (jar de 9 170 octets, même taille que celui du dépôt ; 1.0.0 dans `/plugins/_removed-ks_dimensions-1.0.0/`), **à redémarrer, non testé**. Le Nether est encore fermé sur Kixster (`nether-portals-enabled: false`).
 
 ## 1.0.0 - menu des portails du Nether et de l'End (25/09/2026)
 
