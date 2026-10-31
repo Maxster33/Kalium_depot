@@ -11,6 +11,10 @@ nether-portals-enabled: true
 # Le portail de sortie de l'End reste utilisable.
 end-portals-enabled: true
 
+# 1.1.0 (LeKiwi06, 31/10/2026) : points a payer pour ALLER dans le Nether par un portail depuis le monde normal
+# (menu de confirmation dans le portail ; le retour est gratuit). 0 : gratuit.
+nether-entree-prix: 20
+
 # Largeur des boutons du menu (100 a 400).
 gui:
   button-width: 240

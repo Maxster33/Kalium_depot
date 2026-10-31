@@ -2,6 +2,30 @@
 
 Plugin du serveur Event (`event`, machine 7021, préfixe `KS_`). Dépend de KLM_Menu (boîte à outils des menus).
 
+## 1.1.0 - entrée du Nether payante (31/10/2026)
+
+**Demande (LeKiwi06, 31/10/2026, Kixster)** : faire payer 20 points pour entrer dans le Nether, « comme une
+téléportation » ; les perles de l'Ender ne doivent plus passer par les portails, etc. Choix de LeKiwi06 : 20 points à
+chaque fois (pas de téléportation gratuite ni de jeton), retour gratuit, menu de confirmation, perles et véhicules
+avec joueur bloqués (mobs et objets seuls passent).
+
+- Portail du Nether pris depuis le monde normal : menu « Entrer dans le Nether coûte 20 points » (Confirmer /
+  Annuler), rouvert au plus toutes les 10 s tant que le joueur reste dans le portail. Confirmé : 20 points débités
+  (KS_Economy, `debiter`), le passage est gardé (`plugins/KS_Dimensions/passes.yml`, survit au redémarrage) ; le
+  joueur part dès que le portail se redéclenche (il y reste, ou y revient plus tard). Pas assez de points : message,
+  rien n'est débité. KS_Economy absent : entrée refusée.
+- Prix dans `config.yml` : `nether-entree-prix` (20 par défaut, 0 = gratuit) ; absent du config du serveur = 20.
+- Retour du Nether vers le monde normal : gratuit, comme avant.
+- Perles de l'Ender : une perle qui passe un portail du Nether depuis le monde normal est arrêtée, et une
+  téléportation par perle du monde normal vers le Nether (perle restée là-bas) est annulée.
+- Véhicule ou monture qui porte un joueur (même en passager de passager) : ne passe plus le portail vers le Nether ;
+  message « Descends pour passer le portail du Nether ».
+- Console : « <pseudo> paie 20 points pour entrer dans le Nether. », « <pseudo> entre dans le Nether (passage payé). »
+- Restent ouverts (non demandés) : téléportations de KS_Teleport vers un point dans le Nether (payées comme une
+  téléportation) et réapparition à une ancre de réapparition du Nether.
+
+Compilé, **non déployé, non testé**. Le Nether est encore fermé sur Kixster (`nether-portals-enabled: false`).
+
 ## 1.0.0 - menu des portails du Nether et de l'End (25/09/2026)
 
 **Demande (Maxster33, 25/09/2026)** : « créer un plug in KS-Dimensions qui s'ouvrira en jeu par un /dimensions

@@ -2,9 +2,10 @@ name: KS_Dimensions
 version: '${project.version}'
 main: fr.kalium.dimensions.KSDimensions
 api-version: '26.2'
-description: Serveur Event - menu des operateurs pour activer / desactiver les portails du Nether et de l'End.
+description: Kixster - menu des operateurs pour activer / desactiver les portails du Nether et de l'End ; entree du Nether payante.
 authors: [KaLium]
 depend: [KLM_Menu]
+softdepend: [KS_Economy]
 
 commands:
   dimensions:

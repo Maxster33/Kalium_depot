@@ -5,7 +5,7 @@
 # Depend de KLM_Menu : KLM_Menu est compile d abord et ses classes servent seulement a compiler (jamais embarquees).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.0.0
+VERSION=1.1.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -19,7 +19,9 @@ case "$(uname -s)" in
   *) SEP=':'; win() { printf '%s' "$1"; } ;;
 esac
 sh "$DIR/../KLM_Menu/build.sh" > /dev/null
-CP="$(win "$TOOLS/classes/KLM_Menu")$SEP"
+# 1.1.0 : KS_Economy (debit du peage du Nether), classes deja compilees par son build.sh, jamais embarquees.
+[ -d "$TOOLS/classes/KS_Economy" ] || sh "$DIR/../KS_Economy/build.sh" > /dev/null
+CP="$(win "$TOOLS/classes/KLM_Menu")$SEP$(win "$TOOLS/classes/KS_Economy")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
 OUT="$TOOLS/classes/KS_Dimensions"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"
