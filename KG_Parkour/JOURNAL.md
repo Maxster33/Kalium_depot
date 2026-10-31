@@ -306,3 +306,5 @@ mourant quand la lave a recouvert son dernier point de contrôle.
   le début de la couche, comme avant. La couche suivante attend que la précédente soit finie.
 
 **Compilé, non déployé. Statut : non testé en jeu.**
+
+**Déployé sur Kanvas (espace Kal-Games) le 31/10/2026 à 20:11, serveur en marche ; jar de la même taille que celui du dépôt (50 700 octets), la 1.8.1 dans `_removed-kg_parkour-1.8.1/`. Actif au redémarrage. Statut : non testé en jeu.**
