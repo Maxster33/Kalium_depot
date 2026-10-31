@@ -49,6 +49,12 @@ import java.util.UUID;
  * « Départ de la lave », la lave commence a cette hauteur 30 s apres le depart puis monte d'un bloc toutes les 3 s
  * (reglages du jeu). Toucher la lave ramene au dernier point de controle, sauf si la lave l'a deja recouvert : le
  * joueur est alors elimine (spectateur). Jamais en entrainement.
+ *
+ * 1.7.0 (demande de LeKiwi06, 31/10/2026, map « Ascension vers l'enfer ») : masse (Wind Burst I) pretee d'un point de
+ * controle au suivant (reglage du point) pour frapper les « Cibles de la masse » (mobs immobiles poses par le jeu, qui
+ * ne meurent pas ; voir Masse) ; plateformes bonus (or +1, diamant +3, emeraude +5) a prendre seulement dans leur
+ * section, ajoutees aux points de base de la section puis multipliees ; arrivee par bouton quand le point « Arrivée »
+ * est sur un bouton ; vision nocturne pour tous sur les maps qui ont le point « Vision nocturne ».
  */
 public final class ParkourInstance extends GameInstance {
 
@@ -59,6 +65,13 @@ public final class ParkourInstance extends GameInstance {
     private static final double LAVA_SURFACE = 0.8;
     /** 1.2.0 : points de base des sections selon leur position dans le parcours (au-dela : comme la derniere). */
     private static final int[] BASE_POINTS = {1, 1, 3, 3, 3, 5, 5, 7, 7, 7, 10};
+    /** 1.7.0 : points des bonus selon leur rarete (1 or, 2 diamant, 3 emeraude). */
+    private static final int[] BONUS_POINTS = {1, 3, 5};
+    private static final String[] BONUS_NAMES = {"or", "diamant", "émeraude"};
+    /** 1.7.0 : vie des cibles de la masse (maximum du jeu), remise au maximum a chaque passage de la boucle. */
+    private static final double TARGET_HEALTH = 1024;
+    /** 1.7.0 : apres un coup de masse, le souffle de Wind Burst peut projeter le joueur pendant ce temps. */
+    private static final long BLAST_WINDOW_MILLIS = 1000;
 
     private static final class Racer {
         int next;
@@ -88,6 +101,12 @@ public final class ParkourInstance extends GameInstance {
         int from;
         /** 1.5.0 : elimine par la lave (sinon, « out » = tombe au temps). */
         boolean lava;
+        /** 1.7.0 : bonus deja pris sur ce tour (index dans la liste « bonus »). */
+        final java.util.BitSet bonusTaken = new java.util.BitSet();
+        /** 1.7.0 : points de bonus de la section en cours, ajoutes a sa base quand elle est validee. */
+        int bonus;
+        /** 1.7.0 : dernier coup de masse sur une cible (souffle de Wind Burst autorise juste apres). */
+        long maceHitMillis;
     }
 
     /** Parcours en partie privee : sans limite de temps, sans points ni classement. */
@@ -114,6 +133,10 @@ public final class ParkourInstance extends GameInstance {
     private int lavaY = NO_LAVA;
     /** 1.5.0 : instant de la prochaine couche de lave. */
     private long lavaNextMillis;
+    /** 1.7.0 : cibles de la masse en jeu (index du point -> mob), vide hors course. */
+    private final Map<Integer, org.bukkit.entity.LivingEntity> targets = new java.util.HashMap<>();
+    /** 1.7.0 : boutons du point « Arrivée » (vide = arrivee par zone) ; null = pas encore cherches. */
+    private List<Block> finishButtons;
 
     public ParkourInstance(KalGames plugin, String id, Minigame minigame, Arena arena, Template template,
                            boolean publicGame, Map<String, Object> options, int slot) {
@@ -257,6 +280,7 @@ public final class ParkourInstance extends GameInstance {
             racer.segmentStart = startMillis;
             racer.deadline = chrono > 0 ? startMillis + chrono : 0L;
         }
+        spawnTargets();
         title(participants, t("race.go-title", "<green><bold>Partez !"), Component.empty(), 0, 20, 10);
         for (UUID uuid : participants) {
             Player player = Bukkit.getPlayer(uuid);
@@ -340,6 +364,226 @@ public final class ParkourInstance extends GameInstance {
         eliminate(player, racer);
     }
 
+    // ------------------------------------------------------------------ vision nocturne (1.7.0)
+
+    /** Map avec le point « Vision nocturne » : tous les joueurs de la partie la gardent. */
+    private void nightVision() {
+        if (arena().point("night-vision") == null) {
+            return;
+        }
+        for (Player player : onlineMembers()) {
+            nightVision(player);
+        }
+    }
+
+    private void nightVision(Player player) {
+        if (arena().point("night-vision") == null || player.getWorld() != world
+                || player.hasPotionEffect(org.bukkit.potion.PotionEffectType.NIGHT_VISION)) {
+            return;
+        }
+        player.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.NIGHT_VISION,
+                org.bukkit.potion.PotionEffect.INFINITE_DURATION, 0, false, false, false));
+    }
+
+    // ------------------------------------------------------------------ masse et cibles (1.7.0)
+
+    /** La section qui suit ce nombre de points de controle atteints se fait-elle a la masse ? */
+    private boolean maceSection(int reached) {
+        return reached > 0 && Boolean.TRUE.equals(arena().pointSetting("checkpoints", reached - 1, "mace"));
+    }
+
+    /** Masse en main dans une section a la masse, reprise ailleurs. */
+    private void syncMace(Player player, Racer racer) {
+        KGParkour.get().masse().set(player, !racer.finished && !racer.out && maceSection(racer.next));
+    }
+
+    /** Coup de masse d'un coureur : compte seulement sur une cible, dans une section a la masse. */
+    public boolean maceHit(Player player, org.bukkit.entity.Entity entity) {
+        Racer racer = racers.get(player.getUniqueId());
+        if (racer == null || !racing(player.getUniqueId()) || !maceSection(racer.next)
+                || !(entity instanceof org.bukkit.entity.LivingEntity living) || !targets.containsValue(living)) {
+            return false;
+        }
+        racer.maceHitMillis = System.currentTimeMillis();
+        return true;
+    }
+
+    /** Un souffle (Wind Burst d'un autre coureur) ne projette que celui qui vient de frapper une cible. */
+    public boolean shieldedFromBlast(Player player) {
+        Racer racer = racers.get(player.getUniqueId());
+        return racer != null && System.currentTimeMillis() - racer.maceHitMillis > BLAST_WINDOW_MILLIS;
+    }
+
+    private org.bukkit.entity.EntityType targetType(int index) {
+        Object name = arena().pointSetting("mace-targets", index, "mob");
+        org.bukkit.entity.EntityType type = name == null ? null : org.bukkit.Registry.ENTITY_TYPE.get(
+                org.bukkit.NamespacedKey.minecraft(name.toString().trim().toLowerCase(Locale.ROOT).replace(' ', '_')));
+        return type != null && type.isAlive() && type.isSpawnable() && type.getEntityClass() != null
+                ? type : org.bukkit.entity.EntityType.HUSK;
+    }
+
+    /** Fait apparaitre les cibles de la masse (debut de la course, ou de l'entrainement). */
+    private void spawnTargets() {
+        removeTargets();
+        List<Pos> spots = arena().list("mace-targets");
+        for (int i = 0; i < spots.size(); i++) {
+            spawnTarget(i, loc(spots.get(i)));
+        }
+    }
+
+    private void spawnTarget(int index, Location spot) {
+        org.bukkit.entity.Entity entity = world.spawn(spot, targetType(index).getEntityClass(), spawned -> {
+            spawned.setPersistent(true);
+            spawned.setSilent(true);
+            spawned.setGravity(false);
+            if (spawned instanceof org.bukkit.entity.LivingEntity living) {
+                living.setAI(false);
+                living.setCollidable(false);
+                living.setRemoveWhenFarAway(false);
+                living.setCanPickupItems(false);
+                if (living.getEquipment() != null) {
+                    living.getEquipment().clear();
+                }
+                org.bukkit.attribute.AttributeInstance health = living.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH);
+                if (health != null) {
+                    health.setBaseValue(TARGET_HEALTH);
+                }
+                living.setHealth(health != null ? health.getValue() : living.getHealth());
+            }
+        });
+        if (entity instanceof org.bukkit.entity.LivingEntity living) {
+            targets.put(index, living);
+        } else {
+            entity.remove();
+        }
+    }
+
+    /** Cibles soignees, remises a leur place (souffle, coups), refaites si elles ont disparu. */
+    private void keepTargets() {
+        List<Pos> spots = arena().list("mace-targets");
+        for (int i = 0; i < spots.size(); i++) {
+            Location spot = loc(spots.get(i));
+            if (!world.isChunkLoaded(spot.getBlockX() >> 4, spot.getBlockZ() >> 4)) {
+                continue;
+            }
+            org.bukkit.entity.LivingEntity target = targets.get(i);
+            if (target == null || target.isDead() || !target.isValid()) {
+                if (target != null) {
+                    target.remove();
+                }
+                spawnTarget(i, spot);
+                continue;
+            }
+            org.bukkit.attribute.AttributeInstance health = target.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH);
+            if (health != null) {
+                target.setHealth(health.getValue());
+            }
+            target.setFireTicks(0);
+            if (target.getLocation().distanceSquared(spot) > 0.04) {
+                target.teleport(spot);
+            }
+            target.setVelocity(new Vector());
+        }
+    }
+
+    private void removeTargets() {
+        for (org.bukkit.entity.LivingEntity target : targets.values()) {
+            target.remove();
+        }
+        targets.clear();
+    }
+
+    // ------------------------------------------------------------------ bonus (1.7.0)
+
+    private int bonusRarity(int index) {
+        Object value = arena().pointSetting("bonus", index, "rarity");
+        int rarity = value instanceof Number number ? number.intValue() : 1;
+        return Math.max(1, Math.min(BONUS_POINTS.length, rarity));
+    }
+
+    private int bonusCheckpoint(int index) {
+        Object value = arena().pointSetting("bonus", index, "checkpoint");
+        return value instanceof Number number ? Math.max(0, number.intValue()) : 1;
+    }
+
+    /**
+     * Plateforme bonus atteinte (meme rayon qu'un point de controle) : prise une fois par tour, seulement entre son
+     * point de controle et le suivant ; ses points s'ajoutent a la base de la section en cours.
+     */
+    private void checkBonus(Player player, Racer racer, Location current, int radius, long now) {
+        List<Pos> spots = arena().list("bonus");
+        for (int i = 0; i < spots.size(); i++) {
+            if (racer.bonusTaken.get(i) || distanceToSegment(racer.previous, current, loc(spots.get(i))) > radius) {
+                continue;
+            }
+            int rarity = bonusRarity(i);
+            String name = BONUS_NAMES[rarity - 1];
+            int checkpoint = bonusCheckpoint(i);
+            if (checkpoint != racer.next) {
+                if (now >= racer.noticeUntil) {
+                    racer.noticeUntil = now + 1500;
+                    player.sendActionBar(checkpoint == 0
+                            ? t("race.bonus-wrong-start", "<gray>Bonus <name> : seulement entre le départ et le premier point de contrôle.", "name", name)
+                            : t("race.bonus-wrong", "<gray>Bonus <name> : seulement après le point de contrôle <white><n></white>.", "name", name, "n", checkpoint));
+                }
+                continue;
+            }
+            racer.bonusTaken.set(i);
+            int points = BONUS_POINTS[rarity - 1];
+            racer.noticeUntil = now + 2000;
+            if (training) {
+                player.sendActionBar(t("race.bonus-training", "<green>Bonus <name> !", "name", name));
+            } else {
+                racer.bonus += points;
+                player.sendActionBar(t("race.bonus", "<green>Bonus <name> <gold>+<points> pts <gray>(au prochain point de contrôle)",
+                        "name", name, "points", points));
+            }
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.7f, 1.6f);
+        }
+    }
+
+    // ------------------------------------------------------------------ arrivee par bouton (1.7.0)
+
+    /** Boutons sur le point « Arrivée » ou juste a cote (1 bloc) ; aucun = arrivee par zone, comme avant. */
+    private List<Block> finishButtons() {
+        if (finishButtons != null) {
+            return finishButtons;
+        }
+        List<Block> found = new ArrayList<>();
+        Pos finish = arena().point("finish");
+        if (finish != null) {
+            Block center = loc(finish).getBlock();
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    for (int dz = -1; dz <= 1; dz++) {
+                        Block block = center.getRelative(dx, dy, dz);
+                        if (org.bukkit.Tag.BUTTONS.isTagged(block.getType())) {
+                            found.add(block);
+                        }
+                    }
+                }
+            }
+        }
+        finishButtons = found;
+        return found;
+    }
+
+    /** Clic droit sur un bouton : arrivee si c'est celui de l'arrivee et que tous les points de controle sont passes. */
+    public void pressButton(Player player, Block block) {
+        Racer racer = racers.get(player.getUniqueId());
+        if (racer == null || !racing(player.getUniqueId()) || !finishButtons().contains(block)) {
+            return;
+        }
+        int total = arena().list("checkpoints").size();
+        if (racer.next < total) {
+            racer.noticeUntil = System.currentTimeMillis() + 2000;
+            player.sendActionBar(t("race.button-early", "<red>Passe d'abord tous les points de contrôle <gray>(<white><n>/<total></white>)",
+                    "n", racer.next, "total", total));
+            return;
+        }
+        reached(player, racer);
+    }
+
     // ------------------------------------------------------------------ boucle
 
     private Location target(Racer racer) {
@@ -353,12 +597,14 @@ public final class ParkourInstance extends GameInstance {
 
     @Override
     protected void matchTick() {
+        nightVision();
         if (phase == Phase.COUNTDOWN || phase == Phase.RUNNING) {
             tickGhosts();
         }
         if (phase != Phase.RUNNING) {
             return;
         }
+        keepTargets();
         int radius = minigame().getInt("checkpoint-radius", 3);
         int configuredVoid = minigame().getInt("void-y", -64);
         int voidY = configuredVoid <= -64 ? minY - 5 : configuredVoid;
@@ -386,8 +632,13 @@ public final class ParkourInstance extends GameInstance {
                 continue;
             }
             Location target = target(racer);
-            if (target != null && distanceToSegment(racer.previous, current, target) <= radius) {
+            // 1.7.0 : arrivee par bouton, la zone d'arrivee ne compte pas.
+            boolean button = racer.next >= arena().list("checkpoints").size() && !finishButtons().isEmpty();
+            if (target != null && !button && distanceToSegment(racer.previous, current, target) <= radius) {
                 reached(player, racer);
+            }
+            if (!racer.finished && !racer.out) {
+                checkBonus(player, racer, current, radius, now);
             }
             racer.previous = current;
             if (!racer.finished && !racer.out && now >= racer.noticeUntil) {
@@ -498,6 +749,7 @@ public final class ParkourInstance extends GameInstance {
             }
             player.sendActionBar(notice);
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 1.4f);
+            syncMace(player, racer);
             return;
         }
         if (training) {
@@ -584,6 +836,9 @@ public final class ParkourInstance extends GameInstance {
         racer.runStart = now;
         racer.segmentStart = now;
         racer.fell = false;
+        racer.bonus = 0;
+        racer.bonusTaken.clear();
+        syncMace(player, racer);
         released.add(player.getUniqueId());
         player.leaveVehicle();
         player.teleport(spot);
@@ -649,6 +904,7 @@ public final class ParkourInstance extends GameInstance {
         fresh.bestRun = racer.bestRun;
         fresh.runs = racer.runs;
         racers.put(player.getUniqueId(), fresh);
+        syncMace(player, fresh);
         released.add(player.getUniqueId());
         player.teleport(spot);
         released.remove(player.getUniqueId());
@@ -660,18 +916,21 @@ public final class ParkourInstance extends GameInstance {
     public void arriveInStands(Player player) {
         if (!training) {
             super.arriveInStands(player);
+            nightVision(player);
             return;
         }
         if (phase == Phase.WAITING) {
             phase = Phase.RUNNING;
             startMillis = System.currentTimeMillis();
             elapsed = 0;
+            spawnTargets();
         }
         if (phase == Phase.RUNNING) {
             startTraining(player);
         } else {
             super.arriveInStands(player);
         }
+        nightVision(player);
     }
 
     private void racerFinished(Player player, Racer racer) {
@@ -744,7 +1003,7 @@ public final class ParkourInstance extends GameInstance {
 
     /** 1.2.0 : points d'une section (du point precedent a ce point de controle, ou a l'arrivee) et leur detail. */
     private record SectionScore(double points, int base, double multiplier, boolean first, boolean clean,
-                                double timeCoefficient, long millis) {
+                                double timeCoefficient, long millis, int bonus) {
     }
 
     /** Coefficient d'un reglage en dixiemes ou en centiemes (unit = 10 ou 100), jamais sous x1. */
@@ -783,7 +1042,10 @@ public final class ParkourInstance extends GameInstance {
      */
     private SectionScore scoreSection(Racer racer, int section, long millis) {
         int checkpoints = arena().list("checkpoints").size();
-        int base = basePoints(section, checkpoints);
+        // 1.7.0 : bonus pris dans la section, ajoutes a sa base (donc multiplies).
+        int bonus = racer.bonus;
+        racer.bonus = 0;
+        int base = basePoints(section, checkpoints) + bonus;
         boolean first = !training && racers.size() > 1 && !sectionsTaken.get(section);
         sectionsTaken.set(section);
         boolean clean = !racer.fell;
@@ -800,13 +1062,17 @@ public final class ParkourInstance extends GameInstance {
                 + (clean ? coefficient("clean-coef-x10", 15, 10) - 1 : 0) + (timeCoefficient - 1);
         multiplier = Math.round(multiplier * 100) / 100.0;
         double points = Math.round(base * multiplier * 100) / 100.0;
-        return new SectionScore(points, base, multiplier, first, clean, timeCoefficient, millis);
+        return new SectionScore(points, base, multiplier, first, clean, timeCoefficient, millis, bonus);
     }
 
-    /** Detail des multiplicateurs d'une section, ex. « x2,25 : 1er, sans chute, temps x1,25 » (vide si x1). */
+    /**
+     * Detail des multiplicateurs d'une section, ex. « x2,25 : 1er, sans chute, temps x1,25 » (vide si x1), puis le
+     * bonus pris dans la section (1.7.0), ex. « bonus +5 ».
+     */
     private static String detail(SectionScore score) {
+        String bonus = score.bonus() > 0 ? "bonus +" + score.bonus() : "";
         if (score.multiplier() <= 1) {
-            return "";
+            return bonus;
         }
         List<String> why = new ArrayList<>();
         if (score.first()) {
@@ -818,7 +1084,7 @@ public final class ParkourInstance extends GameInstance {
         if (score.timeCoefficient() > 1) {
             why.add("temps x" + fmt(score.timeCoefficient()));
         }
-        return "x" + fmt(score.multiplier()) + " : " + String.join(", ", why);
+        return "x" + fmt(score.multiplier()) + " : " + String.join(", ", why) + (bonus.isEmpty() ? "" : " ; " + bonus);
     }
 
     /** Detail du bareme d'une section pour le journal de KG_ScoreBoards (section : 1 = premiere). */
@@ -831,6 +1097,7 @@ public final class ParkourInstance extends GameInstance {
         fields.put("first", score.first());
         fields.put("clean", score.clean());
         fields.put("timeCoefficient", score.timeCoefficient());
+        fields.put("bonus", score.bonus());
         return fields;
     }
 
@@ -1090,6 +1357,8 @@ public final class ParkourInstance extends GameInstance {
 
     @Override
     protected void onMatchReset() {
+        removeTargets();
+        finishButtons = null;
         ghosts.clear();
         racers.clear();
         finishOrder.clear();
@@ -1098,6 +1367,18 @@ public final class ParkourInstance extends GameInstance {
         graceLeft = -1;
         lava = false;
         lavaY = NO_LAVA;
+    }
+
+    @Override
+    protected void onClose() {
+        removeTargets();
+    }
+
+    /** 1.7.0 : au passage en spectateur (arrivee, elimination), les effets sont retires : vision nocturne remise. */
+    @Override
+    protected void becomeMatchSpectator(Player player) {
+        super.becomeMatchSpectator(player);
+        nightVision(player);
     }
 
     @Override

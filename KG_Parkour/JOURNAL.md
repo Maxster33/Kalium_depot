@@ -218,3 +218,44 @@ de `recompenses.yml` de KS_RewardsGUI sur Kixster (arrêté), original dans `_re
 Redémarrage du 28/10 à 15:14 : `KG_Parkour v1.6.0` et `KG_Rewards v1.5.0` actifs, aucune erreur ; coffre de .LupoSaint
 envoyé à 15:14:17 (16 éléments, valeur 1 000), reçu par KS_RewardsGUI sur Kixster, en attente de récupération ; plus
 de coffre d'émeraudes. Émeraudes des suivants pas encore vues en jeu.
+
+## 1.7.0 — masse, bonus, arrivée par bouton, vision nocturne (31/10/2026)
+
+**Demande de LeKiwi06**, pour la map « Ascension vers l'enfer » (caverne) : une section se fait avec une masse,
+prêtée le temps de ce point de contrôle, sans que les joueurs puissent se taper ; des bonus or +1, diamant +3,
+émeraude +5, chacun à prendre seulement à son point de contrôle ; l'arrivée est un bouton à cliquer ; vision nocturne.
+Ses réponses : on frappe des mobs pour rebondir ; Wind Burst I ; bonus = plateformes de la taille d'un point de
+contrôle, rareté choisie dans l'interface (certaines en blocs invisibles) ; points des bonus multipliés comme ceux de
+la section.
+
+Tout se règle dans l'éditeur d'arène, rien ne change sur les maps qui n'ont pas ces réglages :
+- **Masse** : réglage « Masse jusqu'au point suivant » de chaque point de contrôle. Après ce point, masse Wind Burst I
+  incassable en case 3, mise en main ; reprise au point suivant (et en partant en spectateur). Aussi en entraînement.
+- **Cibles de la masse** (liste de points, réglage « Mob », nom anglais, `husk` par défaut) : les mobs posés dans la
+  map de construction ne sont PAS copiés dans les arènes (les modèles ne gardent que les blocs), le jeu fait donc
+  apparaître un mob immobile par point au départ (sans IA, silencieux, sans gravité, sans collision, sans
+  équipement, 1 024 PV, soigné et remis en place à chaque passage de la boucle, refait s'il disparaît ; retiré à la
+  fin). KalGames annule tout coup dans une arène et Wind Burst ne part que si le coup touche (lu dans `Player.attack`
+  du jeu 26.3) : `Masse` rétablit (HIGHEST) le coup d'un coureur, masse en main, sur une cible, dans une section à la
+  masse. Entre joueurs rien ne change (`canFight` faux). Le souffle d'un Wind Burst ne projette que celui qui vient de
+  frapper une cible (1 s) : les autres coureurs ne peuvent pas être poussés (`EntityKnockbackEvent`, cause EXPLOSION).
+- **Bonus** (liste de points) : réglages « Rareté » (1 or +1, 2 diamant +3, 3 émeraude +5) et « Point de contrôle
+  du bonus » (0 = avant le premier). Pris en passant dans le rayon des points de contrôle, une fois par tour,
+  seulement entre son point et le suivant (sinon message gris). Points ajoutés à la base de la section en cours,
+  donc multipliés à sa validation ; détail « bonus +N » dans le message et `bonus` dans le journal des points. En
+  entraînement : message seulement.
+- **Arrivée par bouton** : si un bouton est sur le point « Arrivée » ou à 1 bloc, la zone d'arrivée ne compte plus :
+  clic droit sur le bouton après tous les points de contrôle (sinon « Passe d'abord tous les points de contrôle »).
+- **Vision nocturne** (point facultatif, posé n'importe où) : vision nocturne sans particules pour tous les joueurs
+  de la partie (gradins, course, spectateurs).
+
+Nouvelles clés (textes par défaut dans le code) : `race.mace-item-name`, `race.mace-item-lore`, `race.bonus`,
+`race.bonus-training`, `race.bonus-wrong`, `race.bonus-wrong-start`, `race.button-early`.
+
+Limites : une autre protection du serveur (WorldGuard…) qui annulerait aussi les coups sur les mobs empêcherait le
+rebond ; que le souffle de Wind Burst sur celui qui frappe passe bien par `EntityKnockbackEvent` reste à voir en jeu
+(sinon il ne serait pas bloqué non plus, rien ne casse).
+
+**Compilé, non déployé. Statut : non testé en jeu.** À faire dans l'éditeur d'arène de la map : cocher la masse sur
+le point de contrôle qui précède la section, poser les cibles, les bonus (rareté, point de contrôle), le point
+« Vision nocturne », et le point « Arrivée » sur le bouton.

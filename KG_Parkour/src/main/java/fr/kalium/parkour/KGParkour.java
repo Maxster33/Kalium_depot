@@ -9,6 +9,7 @@ import static fr.kalium.games.model.PointSpec.list;
 import static fr.kalium.games.model.PointSpec.single;
 import static fr.kalium.games.model.SettingSpec.bool;
 import static fr.kalium.games.model.SettingSpec.integer;
+import static fr.kalium.games.model.SettingSpec.text;
 
 /**
  * KG_Parkour : le Parcours de Kal-Games, sorti de KalGames (REGLES.md, regle 2.2 ; cahier des charges dans
@@ -25,6 +26,8 @@ public final class KGParkour extends JavaPlugin {
     private ChoixCheckpoint choix;
     /** 1.4.0 : premier joueur a finir chaque map (recompense en emeraudes). */
     private PremiersArrives premiers;
+    /** 1.7.0 : masse pretee le temps d'une section, cibles, arrivee par bouton. */
+    private Masse masse;
 
     static KGParkour get() {
         return getPlugin(KGParkour.class);
@@ -36,6 +39,10 @@ public final class KGParkour extends JavaPlugin {
 
     PremiersArrives premiers() {
         return premiers;
+    }
+
+    Masse masse() {
+        return masse;
     }
 
     @Override
@@ -95,11 +102,29 @@ public final class KGParkour extends JavaPlugin {
                                         integer("points", "Points de base", 0, 0, 50,
                                                 "Avant les multiplicateurs. 0 = selon la position du point : 1, 1, 3, 3, 3, 5, 5, 7, 7, 7, 10 (10 ensuite)."),
                                         integer("time-seconds", "Temps du bonus (s)", 0, 0, 3600,
-                                                "Temps depuis le point précédent (ou le départ). Juste en dessous : x1,25 ; à la moitié de ce temps ou moins : x1,75. 0 = pas de bonus de temps."))),
-                        single("finish", "Arrivée", true, "Zone d'arrivée."),
+                                                "Temps depuis le point précédent (ou le départ). Juste en dessous : x1,25 ; à la moitié de ce temps ou moins : x1,75. 0 = pas de bonus de temps."),
+                                        // 1.7.0 : masse pretee de ce point de controle au suivant.
+                                        bool("mace", "Masse jusqu'au point suivant", false,
+                                                "Après ce point de contrôle, le joueur reçoit une masse (Wind Burst I), reprise au point suivant. Elle ne frappe que les cibles de la masse."))),
+                        single("finish", "Arrivée", true, "Zone d'arrivée. 1.7.0 : posé sur un bouton (ou juste à côté), il faut cliquer sur le bouton pour finir."),
                         // 1.5.0 : facultatif ; sa hauteur est la premiere couche de lave.
                         single("lava", "Départ de la lave", false,
-                                "Facultatif (jump vertical) : la lave monte à partir de cette hauteur. Sans ce point, pas de lave.")))
+                                "Facultatif (jump vertical) : la lave monte à partir de cette hauteur. Sans ce point, pas de lave."),
+                        // 1.7.0 : bonus a ramasser, cibles de la masse, vision nocturne (map « Ascension vers l'enfer »).
+                        list("bonus", "Bonus (or, diamant, émeraude)", false,
+                                "Facultatif : plateformes bonus, de la même taille qu'un point de contrôle. Chaque bonus ne se prend qu'entre son point de contrôle et le suivant.")
+                                .withPointSettings(List.of(
+                                        integer("rarity", "Rareté : 1 or, 2 diamant, 3 émeraude", 1, 1, 3,
+                                                "Or : +1 point, diamant : +3, émeraude : +5. Ajoutés aux points de base de la section, puis multipliés comme eux."),
+                                        integer("checkpoint", "Point de contrôle du bonus", 1, 0, 200,
+                                                "Le bonus ne se prend qu'après ce point de contrôle et avant le suivant. 0 = entre le départ et le premier point."))),
+                        list("mace-targets", "Cibles de la masse", false,
+                                "Facultatif : un mob immobile apparaît sur chaque point pendant la course, à frapper avec la masse pour rebondir. Il ne meurt pas.")
+                                .withPointSettings(List.of(
+                                        text("mob", "Mob (nom anglais)", "husk",
+                                                "Ex. husk, zombie, slime, skeleton. Nom inconnu : husk."))),
+                        single("night-vision", "Vision nocturne", false,
+                                "Facultatif (caverne) : posé n'importe où, il donne la vision nocturne à tous les joueurs de la map.")))
                 .engine(ParkourInstance::new)
                 .ranking(fr.kalium.scoreboards.Category.Kind.TIME)
                 .createToggle(new MinigameType.CreateToggle("training",
@@ -108,6 +133,8 @@ public final class KGParkour extends JavaPlugin {
         MinigameType.register(type);
         choix = new ChoixCheckpoint(this, (fr.kalium.games.KalGames) getServer().getPluginManager().getPlugin("KalGames"));
         getServer().getPluginManager().registerEvents(choix, this);
+        masse = new Masse(this, (fr.kalium.games.KalGames) getServer().getPluginManager().getPlugin("KalGames"));
+        getServer().getPluginManager().registerEvents(masse, this);
         premiers = new PremiersArrives(this);
         // Une fois tous les plugins actives (KG_Rewards) : recompenses restees en attente.
         getServer().getScheduler().runTask(this, premiers::envoyerEnAttente);
