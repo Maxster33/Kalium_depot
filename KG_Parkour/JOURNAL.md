@@ -256,6 +256,7 @@ Limites : une autre protection du serveur (WorldGuard…) qui annulerait aussi l
 rebond ; que le souffle de Wind Burst sur celui qui frappe passe bien par `EntityKnockbackEvent` reste à voir en jeu
 (sinon il ne serait pas bloqué non plus, rien ne casse).
 
-**Compilé, non déployé. Statut : non testé en jeu.** À faire dans l'éditeur d'arène de la map : cocher la masse sur
+**Déployé sur Kanvas (espace Kal-Games) le 31/10/2026 à 11:54, serveur en marche (1.6.0 dans
+`_removed-kg_parkour-1.6.0/`), actif au redémarrage. Statut : non testé en jeu.** À faire dans l'éditeur d'arène de la map : cocher la masse sur
 le point de contrôle qui précède la section, poser les cibles, les bonus (rareté, point de contrôle), le point
 « Vision nocturne », et le point « Arrivée » sur le bouton.
