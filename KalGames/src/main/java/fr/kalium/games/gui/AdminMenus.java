@@ -917,6 +917,10 @@ public final class AdminMenus {
                 // 1.12.2 - demande explicite : les copies deja generees de l'ancien modele sont supprimees ; une copie
                 // utilisee par une partie en cours n'est supprimee qu'a la fin de cette partie (voir ArenaPool.release).
                 plugin.instances().retireArenaCopies(arena.id());
+                // 1.29.0 : les plugins de jeu relevent ce que le modele ne garde pas (ex. cibles de la masse du Parcours).
+                Bukkit.getPluginManager().callEvent(new fr.kalium.games.event.ArenaCapturedEvent(arena, world,
+                        new org.bukkit.util.BoundingBox(Math.min(c1.x(), c2.x()), Math.min(c1.y(), c2.y()), Math.min(c1.z(), c2.z()),
+                                Math.max(c1.x(), c2.x()) + 1, Math.max(c1.y(), c2.y()) + 1, Math.max(c1.z(), c2.z()) + 1), online));
                 if (online != null) {
                     say(online, "admin.capture-done", "<green>Zone capturée (<n> blocs non vides).", "n", result.blocks());
                     openArena(online, arena);

@@ -1057,3 +1057,13 @@ une seule fois, à la création de la partie.
 **Compilé, non déployé, non testé en jeu.**
 
 **Déployé sur Kanvas (Kal-Games) le 23/10/2026 à 16:27 (déploiement groupé) ; 1.27.0 dans `_removed-kalgames-1.27.0/` ; actif après redémarrage, non testé en jeu.**
+
+## 1.29.0 - événement « arène capturée » (31/10/2026, LeKiwi06)
+
+Pour KG_Parkour 1.8.0 (demande de LeKiwi06 : les golems de la map « Ascension vers l'enfer » doivent se placer à la
+capture). Ajout seulement : après une capture réussie (modèle enregistré, anciennes copies retirées),
+`fr.kalium.games.event.ArenaCapturedEvent` (arène, monde de construction, zone, modérateur ou null) est lancé sur le
+thread principal. Les plugins de jeu y relèvent ce que le modèle ne garde pas (le modèle ne contient que des blocs) et
+enregistrent eux-mêmes l'arène. Aucun autre changement.
+
+**Compilé, non déployé, non testé en jeu.** À déployer avec KG_Parkour 1.8.0 (qui en a besoin).

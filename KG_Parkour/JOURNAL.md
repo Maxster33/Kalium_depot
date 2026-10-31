@@ -260,3 +260,19 @@ rebond ; que le souffle de Wind Burst sur celui qui frappe passe bien par `Entit
 `_removed-kg_parkour-1.6.0/`), actif au redémarrage. Statut : non testé en jeu.** À faire dans l'éditeur d'arène de la map : cocher la masse sur
 le point de contrôle qui précède la section, poser les cibles, les bonus (rareté, point de contrôle), le point
 « Vision nocturne », et le point « Arrivée » sur le bouton.
+
+## 1.8.0 — cibles de la masse relevées à la capture (31/10/2026)
+
+**Demande de LeKiwi06** : les golems de fer de la map de construction (invoqués avec `NoAI:1b`) doivent se placer
+d'eux-mêmes quand il capture la map à nouveau.
+
+- À chaque capture d'une arène du Parcours (KalGames 1.29.0, `ArenaCapturedEvent`), tous les mobs **sans IA** de la
+  zone deviennent les « Cibles de la masse » de l'arène : même place, même orientation, réglage « Mob » = leur
+  espèce (`iron_golem`…), triés de bas en haut. La liste des cibles est remplacée ; si la zone n'a aucun mob sans
+  IA, les cibles déjà posées restent. Message au modérateur « Cibles de la masse relevées : N mob(s) sans IA de la
+  zone. » (nouvelle clé `race.capture-targets`) et ligne dans la console.
+- En course, ce sont toujours des copies faites par le jeu (sans IA, 1 024 PV soignés, sans effet de potion : les
+  effets sur les mobs font planter Bedrock) ; la Résistance de la commande d'origine n'est pas reprise.
+- Les chunks de la zone sont chargés pour lire leurs entités (déjà chargés par la capture, en principe).
+
+**Compilé, non déployé. Statut : non testé en jeu.** Exige KalGames 1.29.0 (sinon KG_Parkour ne démarre pas).

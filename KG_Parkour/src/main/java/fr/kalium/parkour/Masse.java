@@ -106,6 +106,51 @@ final class Masse implements Listener {
         }
     }
 
+    /**
+     * 1.8.0 (demande de LeKiwi06, 31/10/2026) : à la capture d'une map du Parcours, les mobs sans IA de la zone (golems
+     * invoqués avec NoAI dans la map de construction) deviennent ses « Cibles de la masse » : même place, même
+     * orientation, même espèce. Le modèle ne garde que les blocs ; les cibles sont refaites par le jeu à chaque course.
+     * Aucun mob sans IA : les cibles déjà posées restent.
+     */
+    @EventHandler
+    public void onCapture(fr.kalium.games.event.ArenaCapturedEvent event) {
+        fr.kalium.games.model.Arena arena = event.arena();
+        fr.kalium.games.model.Minigame minigame = games.repository().minigame(arena.minigameId());
+        if (minigame == null || minigame.type() == null || !"PARKOUR".equals(minigame.type().name())) {
+            return;
+        }
+        org.bukkit.util.BoundingBox zone = event.zone();
+        List<org.bukkit.entity.LivingEntity> found = new java.util.ArrayList<>();
+        for (int cx = (int) Math.floor(zone.getMinX()) >> 4; cx <= ((int) Math.ceil(zone.getMaxX()) - 1) >> 4; cx++) {
+            for (int cz = (int) Math.floor(zone.getMinZ()) >> 4; cz <= ((int) Math.ceil(zone.getMaxZ()) - 1) >> 4; cz++) {
+                for (org.bukkit.entity.Entity entity : event.world().getChunkAt(cx, cz).getEntities()) {
+                    if (entity instanceof org.bukkit.entity.LivingEntity living && !(entity instanceof Player)
+                            && !living.hasAI() && zone.contains(entity.getLocation().toVector())) {
+                        found.add(living);
+                    }
+                }
+            }
+        }
+        if (found.isEmpty()) {
+            return;
+        }
+        // Ordre stable (bas en haut) : l'éditeur liste les cibles dans l'ordre de la montée.
+        found.sort(java.util.Comparator.comparingDouble((org.bukkit.entity.LivingEntity e) -> e.getLocation().getY())
+                .thenComparingDouble(e -> e.getLocation().getX()).thenComparingDouble(e -> e.getLocation().getZ()));
+        arena.clearPoints("mace-targets");
+        for (int i = 0; i < found.size(); i++) {
+            org.bukkit.entity.LivingEntity living = found.get(i);
+            arena.insertPoint("mace-targets", i, fr.kalium.games.model.Pos.of(living.getLocation()));
+            arena.pointSettings("mace-targets", i).put("mob", living.getType().getKey().getKey());
+        }
+        games.repository().save();
+        if (event.player() != null) {
+            event.player().sendMessage(games.prefix().append(games.t("race.capture-targets",
+                    "<green>Cibles de la masse relevées : <white><n></white> mob(s) sans IA de la zone.", "n", found.size())));
+        }
+        games.getLogger().info("Capture de l'arène " + arena.id() + " : " + found.size() + " cible(s) de la masse relevée(s).");
+    }
+
     /** Arrivée par bouton : clic droit sur le bouton posé au point « Arrivée ». */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onButton(PlayerInteractEvent event) {
