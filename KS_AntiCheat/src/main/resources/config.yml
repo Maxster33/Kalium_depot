@@ -18,7 +18,7 @@ grimac:
     Simulation: 0.05
 
 # X-ray (1.1.0 : compte par minerai) : minerais rares caches (diamant, emeraude, debris antiques) par heure, et taux
-# pour 1 000 blocs de roche mines. Suspension : N heures extremes sur les X dernieres heures.
+# pour 1 000 blocs de roche mines. Alerte grave (1.4.1 : sans suspension) : N heures extremes sur les X dernieres heures.
 xray:
   alerte-minerais: 15
   alerte-taux-minerais: 12

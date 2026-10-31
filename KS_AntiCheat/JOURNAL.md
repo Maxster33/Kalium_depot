@@ -252,3 +252,16 @@ a donné une alerte « Revente ? » (une quarantaine).
 (ligne `lourdes` seulement) et `suspensions.yml` vidé (suspension de LeKiwi06 levée) ; 1.3.0, ancien `config.yml` et
 ancien `suspensions.yml` dans `_removed-ks_anticheat-1.3.0/`. Actif au redémarrage de Kixster : d'ici là, la
 suspension reste en mémoire. Statut : non testé.**
+
+## 1.4.1 - x-ray en alertes seulement (31/10/2026, LeKiwi06)
+
+LeKiwi06 : « pour les suspicions de revente etc, ne jamais suspendre la personne, simplement alerter les admins ». La
+revente et les macros n'ont jamais suspendu. Le x-ray suspendait à 3 heures extrêmes sur 6 ; sur Kixster, les heures
+extrêmes viennent surtout de joueurs Bedrock (.PatientLime2170 à 2 sur 3). LeKiwi06 a choisi « alertes seulement ».
+
+- **X-ray** : 3 heures extrêmes sur 6 donnent une **alerte grave** (rouge, au staff connecté et dans l'historique),
+  plus de suspension automatique.
+- Seule suspension automatique restante : GrimAC lourd (Reach, Hitboxes, FastBreak, FarBreak, MultiBreak, niveau
+  100). GrimAC ne vérifie pas les joueurs Bedrock (base de Kixster : 8 joueurs Bedrock, aucune violation).
+
+Statut : compilé, non déployé, non testé.

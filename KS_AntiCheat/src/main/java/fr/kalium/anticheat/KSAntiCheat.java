@@ -31,6 +31,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 1.4.0 (LeKiwi06, 30/10/2026, suspendu à tort pendant un test) : aucune détection dans le monde de test de
  * KS_MondeTest (enTest) ; vérifications lourdes de GrimAC comparées sur le nom exact, Timer et TimerLimit retirées
  * (elles réagissent au lag).
+ * 1.4.1 (LeKiwi06, 31/10/2026) : x-ray extrême en alerte grave seulement ; seul GrimAC lourd suspend encore.
  *
  * Permission : ksanticheat.staff (opérateurs par défaut).
  */

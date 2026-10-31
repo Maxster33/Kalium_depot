@@ -42,7 +42,8 @@ import java.util.UUID;
  *   vu dans une grotte reste « visible »). Avant (1.0.x) : un filon par 30 s et au plus 1 face d'air : compte faux.
  * - Minerais posés par un joueur : ignorés.
  * - Alertes : sur les minerais rares cachés (diamant, émeraude, débris antiques), par heure : alerte légère, heure
- *   extrême, infraction grave si plusieurs heures extrêmes (seuils xray.*). Onglet « Minage » : 24 dernières heures.
+ *   extrême, alerte grave si plusieurs heures extrêmes (seuils xray.* ; 1.4.1 : plus de suspension automatique).
+ *   Onglet « Minage » : 24 dernières heures.
  */
 final class Minage implements Listener {
 
@@ -238,8 +239,9 @@ final class Minage implements Listener {
                     extremes++;
                 }
             }
-            if (extremes >= requis && !plugin.suspensions().suspendu(u)) {
-                plugin.infractionGrave(u, nom, "X-ray", extremes + " heures extrêmes sur les " + fenetre
+            // 1.4.1 (LeKiwi06, 31/10/2026) : alerte grave seulement, jamais de suspension automatique.
+            if (extremes >= requis) {
+                plugin.alertes().ajouter(u, nom, "X-ray", Gravite.GRAVE, extremes + " heures extrêmes sur les " + fenetre
                         + " dernières (cette heure : " + rares + " minerais rares cachés, " + String.format("%.1f", t)
                         + " pour 1 000 blocs de roche)");
             } else {

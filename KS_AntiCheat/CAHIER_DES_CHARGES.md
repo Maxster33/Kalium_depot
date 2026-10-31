@@ -67,7 +67,7 @@ le 30/09/2026** (session 6).
 | Suspension | **Automatique**, réservée aux **infractions graves** (limiter les dégâts) ; joueur clean : suspension levée ; sinon : **banni de tout KaLium**. Infraction légère : simple alerte, le staff vérifie lui-même. Message au joueur suspendu : « Une erreur inhabituelle est survenue, contacte le staff. » (évite qu'il efface des preuves, il vient directement au staff) |
 | Macros | Alerte seulement quand des actions se répètent sans mouvement du joueur ni de sa caméra depuis X minutes : d'accord |
 | Duplication dans Paper | Tout désactiver **sauf le duplicateur de TNT** (à la place : baisser le taux de drop des TNT pour limiter l'efficacité des fermes, sans les rendre impossibles) |
-| Infractions graves | Duplication détectée, alerte GrimAC de triche lourde au-delà d'un seuil, proportion de minerais rares extrême : validé, **attention à ne pas suspendre ceux qui minent simplement en grotte** |
+| Infractions graves | Duplication détectée, alerte GrimAC de triche lourde au-delà d'un seuil, proportion de minerais rares extrême : validé, **attention à ne pas suspendre ceux qui minent simplement en grotte** ; **31/10/2026 (LeKiwi06) : x-ray et suspicions (revente, macros) en alertes seulement, jamais de suspension ; seul GrimAC lourd suspend encore** |
 | Bannissement réseau | Aucun outil aujourd'hui (aucun joueur banni jusqu'ici) |
 | Duplication par pistons | **Laisser les 3 activées** (TNT, tapis, rails) |
 | Fermes à TNT | Oui, les blocs cassés par la TNT ; **diviser par 10** l'efficacité des fermes concernées |
