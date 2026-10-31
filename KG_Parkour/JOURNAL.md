@@ -292,3 +292,17 @@ mourant quand la lave a recouvert son dernier point de contrôle.
 **Compilé, non déployé. Statut : non testé en jeu.**
 
 **Déployé sur Kanvas (espace Kal-Games) le 31/10/2026 à 18:00, serveur en marche ; jar de la même taille que celui du dépôt (50 363 octets), la 1.8.0 dans `_removed-kg_parkour-1.8.0/`. Actif au redémarrage. Statut : non testé en jeu.**
+
+## 1.8.2 — lave posée petit à petit (31/10/2026)
+
+**Demande de LeKiwi06** : la lave fait des pics de lag quand une couche se pose.
+
+- Avant, toute la couche (toutes les cases d'air de la hauteur, dans toute l'arène) était posée d'un coup, dans un
+  seul tick. Elle est maintenant posée petit à petit : au plus « Lave : blocs posés par tick » blocs par tick du
+  serveur (nouveau réglage `lava-blocks-per-tick`, 150 par défaut, soit 3 000 blocs par seconde), et le nombre de
+  cases parcourues par tick est limité aussi. Moins de travail d'un coup pour le serveur, les clients Java et
+  Geyser (un bloc changé = un paquet pour Bedrock).
+- La hauteur de la lave qui compte pour les joueurs (retour au point de contrôle, élimination, action bar) monte dès
+  le début de la couche, comme avant. La couche suivante attend que la précédente soit finie.
+
+**Compilé, non déployé. Statut : non testé en jeu.**

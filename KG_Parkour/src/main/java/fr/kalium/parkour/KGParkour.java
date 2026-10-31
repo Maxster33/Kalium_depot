@@ -86,6 +86,9 @@ public final class KGParkour extends JavaPlugin {
                                 "Maps avec le point « Départ de la lave » : la lave commence à monter ce temps après le départ. Jamais en entraînement."),
                         integer("lava-rise-seconds", "Lave : 1 bloc toutes les (s)", 3, 1, 60,
                                 "Toucher la lave : retour au dernier point de contrôle, ou éliminé si la lave l'a recouvert."),
+                        // 1.8.2 : la couche est posee en plusieurs fois (pics de lag).
+                        integer("lava-blocks-per-tick", "Lave : blocs posés par tick", 150, 20, 5000,
+                                "Chaque couche est posée petit à petit, au plus ce nombre de blocs par tick (20 par seconde). Plus bas = moins de lag, couche plus lente à apparaître."),
                         integer("void-y", "Hauteur de chute (Y absolu)", 1, -64, 320, "Sous cette hauteur : retour au dernier point de contrôle. -64 = automatique (juste sous l'arène)."),
                         integer("time-limit-seconds", "Temps limite de la course (s)", 0, 0, 7200, "Fin de la course pour tout le monde. 0 = pas de limite globale."),
                         integer("countdown-seconds", "Compte à rebours (s)", 5, 0, 15, "Avant le départ."),

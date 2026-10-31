@@ -133,6 +133,10 @@ public final class ParkourInstance extends GameInstance {
     private int lavaY = NO_LAVA;
     /** 1.5.0 : instant de la prochaine couche de lave. */
     private long lavaNextMillis;
+    /** 1.8.2 : couche en cours de pose (Y absolu), NO_LAVA quand aucune ; lavaCursor = prochaine case de la couche. */
+    private int lavaFillY = NO_LAVA;
+    private int lavaCursor;
+    private static final org.bukkit.block.data.BlockData LAVA_BLOCK = org.bukkit.Material.LAVA.createBlockData();
     /** 1.7.0 : cibles de la masse en jeu (index du point -> mob), vide hors course. */
     private final Map<Integer, org.bukkit.entity.LivingEntity> targets = new java.util.HashMap<>();
     /** 1.7.0 : boutons du point « Arrivée » (vide = arrivee par zone) ; null = pas encore cherches. */
@@ -236,6 +240,7 @@ public final class ParkourInstance extends GameInstance {
         elapsed = 0;
         lava = false;
         lavaY = NO_LAVA;
+        lavaFillY = NO_LAVA;
         phase = Phase.COUNTDOWN;
         secondsLeft = Math.max(0, minigame().getInt("countdown-seconds", 5));
 
@@ -293,6 +298,7 @@ public final class ParkourInstance extends GameInstance {
         // 1.5.0 : lave qui monte (map avec le point « Départ de la lave »), jamais en entrainement.
         lava = !training && lavaPoint != null;
         lavaY = NO_LAVA;
+        lavaFillY = NO_LAVA;
         if (lava) {
             int delay = Math.max(0, minigame().getInt("lava-delay-seconds", 30));
             lavaStartY = Math.max(minY, loc(lavaPoint).getBlockY());
@@ -303,9 +309,19 @@ public final class ParkourInstance extends GameInstance {
 
     // ------------------------------------------------------------------ lave qui monte (1.5.0)
 
-    /** Une couche de plus quand c'est l'heure : toutes les cases vides de la hauteur suivante, dans toute l'arene. */
+    /**
+     * Une couche de plus quand c'est l'heure : toutes les cases vides de la hauteur suivante, dans toute l'arene.
+     * 1.8.2 : la couche est posee en plusieurs fois (lava-blocks-per-tick), plus d'un coup ; la hauteur qui compte pour
+     * les joueurs (lavaY) monte des le debut de la couche. La couche suivante attend que celle-ci soit finie.
+     */
     private void riseLava(long now) {
-        if (!lava || now < lavaNextMillis) {
+        if (!lava) {
+            return;
+        }
+        if (lavaFillY != NO_LAVA) {
+            fillLava();
+        }
+        if (now < lavaNextMillis || lavaFillY != NO_LAVA) {
             return;
         }
         int y = lavaY == NO_LAVA ? lavaStartY : lavaY + 1;
@@ -313,25 +329,9 @@ public final class ParkourInstance extends GameInstance {
             return;
         }
         lavaNextMillis += Math.max(1, minigame().getInt("lava-rise-seconds", 3)) * 1000L;
-        org.bukkit.block.data.BlockData lavaBlock = org.bukkit.Material.LAVA.createBlockData();
-        // Chunks non charges (aucun joueur a proximite) laisses de cote : pas de chargement force a chaque couche.
-        for (int cx = minX >> 4; cx <= maxX >> 4; cx++) {
-            for (int cz = minZ >> 4; cz <= maxZ >> 4; cz++) {
-                if (!world.isChunkLoaded(cx, cz)) {
-                    continue;
-                }
-                for (int x = Math.max(minX, cx << 4); x <= Math.min(maxX, (cx << 4) + 15); x++) {
-                    for (int z = Math.max(minZ, cz << 4); z <= Math.min(maxZ, (cz << 4) + 15); z++) {
-                        Block block = world.getBlockAt(x, y, z);
-                        if (block.getType().isAir()) {
-                            // Case remise a l'air a la fin de la partie (restoreBlocks de KalGames).
-                            track(block);
-                            block.setBlockData(lavaBlock, false);
-                        }
-                    }
-                }
-            }
-        }
+        lavaFillY = y;
+        lavaCursor = 0;
+        fillLava();
         boolean first = lavaY == NO_LAVA;
         lavaY = y;
         if (first) {
@@ -342,6 +342,37 @@ public final class ParkourInstance extends GameInstance {
                     player.playSound(player.getLocation(), Sound.ITEM_BUCKET_EMPTY_LAVA, 1f, 0.8f);
                 }
             }
+        }
+    }
+
+    /**
+     * 1.8.2 : pose la suite de la couche lavaFillY, au plus lava-blocks-per-tick blocs par tick du serveur (cases
+     * parcourues limitees aussi). Chunks non charges (aucun joueur a proximite) laisses de cote : pas de chargement force.
+     */
+    private void fillLava() {
+        int width = maxX - minX + 1;
+        int total = width * (maxZ - minZ + 1);
+        int budget = Math.max(1, minigame().getInt("lava-blocks-per-tick", 150)) * TICK_INTERVAL;
+        int placed = 0;
+        int checked = 0;
+        while (lavaCursor < total && placed < budget && checked < budget * 8) {
+            int x = minX + lavaCursor % width;
+            int z = minZ + lavaCursor / width;
+            lavaCursor++;
+            checked++;
+            if (!world.isChunkLoaded(x >> 4, z >> 4)) {
+                continue;
+            }
+            Block block = world.getBlockAt(x, lavaFillY, z);
+            if (block.getType().isAir()) {
+                // Case remise a l'air a la fin de la partie (restoreBlocks de KalGames).
+                track(block);
+                block.setBlockData(LAVA_BLOCK, false);
+                placed++;
+            }
+        }
+        if (lavaCursor >= total) {
+            lavaFillY = NO_LAVA;
         }
     }
 
@@ -1368,6 +1399,7 @@ public final class ParkourInstance extends GameInstance {
         graceLeft = -1;
         lava = false;
         lavaY = NO_LAVA;
+        lavaFillY = NO_LAVA;
     }
 
     @Override
