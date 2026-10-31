@@ -53,7 +53,7 @@ public final class KGParkour extends JavaPlugin {
                         integer("prewarm-arenas", "Arènes préchargées", 0, 0, 10, "Copies de chaque arène, collées dès le démarrage du serveur et gardées de côté : aucune arène à charger au lancement d'une partie (0 = aucune)."),
                         integer("max-private-games", "Parties privées simultanées maximum", 0, 0, 40, "0 = pas de limite."),
                         integer("chrono-start-seconds", "Chrono de départ (s)", 30, 0, 3600,
-                                "Temps au départ ; chaque point de contrôle en ajoute. À zéro, le joueur tombe au temps (spectateur). 0 = pas de chrono."),
+                                "Temps au départ ; chaque point de contrôle en ajoute. À zéro, le joueur tombe au temps (spectateur). 0 = pas de chrono. Jamais sur une map avec lave (la lave élimine)."),
                         integer("chrono-add-seconds", "Temps par point de contrôle (s)", 30, 0, 3600,
                                 "Ajouté au chrono à chaque point de contrôle avant le palier ci-dessous."),
                         integer("chrono-late-from-checkpoint", "Point de contrôle du 2e palier", 7, 1, 200,

@@ -278,3 +278,15 @@ d'eux-mêmes quand il capture la map à nouveau.
 **Compilé, non déployé. Statut : non testé en jeu.** Exige KalGames 1.29.0 (sinon KG_Parkour ne démarre pas).
 
 **Déployé sur Kanvas (espace Kal-Games) le 31/10/2026 à 12:14 avec KalGames 1.29.0, serveur en marche ; la 1.7.0 (envoyée à 11:54, jamais active) dans `_removed-kg_parkour-1.7.0/`. Actif au redémarrage. Statut : non testé en jeu.**
+
+## 1.8.1 — pas de chrono sur les maps avec lave (31/10/2026)
+
+**Demande de LeKiwi06** : sur « Ascension vers l'enfer », on ne doit pas tomber au temps ; on perd seulement en
+mourant quand la lave a recouvert son dernier point de contrôle.
+
+- Sur une map qui a le point « Départ de la lave », le chrono par joueur (« Chrono de départ » et temps ajouté aux
+  points de contrôle) n'est plus appliqué : plus de « Temps écoulé », plus de « Chrono » dans l'action bar. La lave
+  reste la seule élimination. Les autres maps gardent le chrono.
+- Le « Temps limite de la course » (global, 0 par défaut) s'applique toujours s'il est réglé.
+
+**Compilé, non déployé. Statut : non testé en jeu.**

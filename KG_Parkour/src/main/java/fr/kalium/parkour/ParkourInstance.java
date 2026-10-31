@@ -274,7 +274,9 @@ public final class ParkourInstance extends GameInstance {
         phase = Phase.RUNNING;
         startMillis = System.currentTimeMillis();
         elapsed = 0;
-        long chrono = training ? 0L : Math.max(0, minigame().getInt("chrono-start-seconds", 30)) * 1000L;
+        // 1.8.1 : sur une map avec lave, c'est la lave qui elimine (dernier point de controle recouvert), pas le chrono.
+        Pos lavaPoint = arena().point("lava");
+        long chrono = training || lavaPoint != null ? 0L : Math.max(0, minigame().getInt("chrono-start-seconds", 30)) * 1000L;
         for (Racer racer : racers.values()) {
             racer.runStart = startMillis;
             racer.segmentStart = startMillis;
@@ -289,7 +291,6 @@ public final class ParkourInstance extends GameInstance {
             }
         }
         // 1.5.0 : lave qui monte (map avec le point « Départ de la lave »), jamais en entrainement.
-        Pos lavaPoint = arena().point("lava");
         lava = !training && lavaPoint != null;
         lavaY = NO_LAVA;
         if (lava) {
