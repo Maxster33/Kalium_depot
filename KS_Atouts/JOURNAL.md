@@ -120,3 +120,14 @@ Limites :
 - Bedrock : même rendu attendu (vrai type), à vérifier.
 
 Compilé le 30/10/2026 (`sortie/KS_Atouts-1.3.0.jar`). **Déployé sur Kixster le 30/10/2026 à 23:44** (LeKiwi06 : « Oui, déploie »), avec `didacticiel.yml` ; fichiers en place vérifiés identiques au dépôt avant l'envoi, et après. 1.2.0 dans `_removed-ks_atouts-1.2.0/`, ancien didacticiel dans `_removed-ks_didacticiel-yml-2026-10-30-atouts/`. À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.3.1 - nom du casque poiscaille (31/10/2026)
+
+Signalé par LeKiwi06 en jeu (capture) : casque poiscaille actif affiché « 's Head » au lieu du nom de l'équipement.
+Cause (code du client 26.3 lu) : une tête de joueur dont le profil a un nom, même vide, est nommée « <nom>'s Head »
+par le jeu, qui passe alors devant le nom recopié ; `Bukkit.createProfile(uuid, null)` donnait un nom vide. Le
+profil est maintenant posé par le composant de Paper, sans nom (vérifié dans Paper 26.3 : profil statique, nom
+absent) : le jeu reprend le nom de l'équipement (« Casque en diamant »). Les casques déjà actifs gardent l'ancien
+profil jusqu'à la fin de l'effet (sortie de l'eau).
+
+Compilé le 31/10/2026 (`sortie/KS_Atouts-1.3.1.jar`). Statut : non déployé, non testé en jeu.

@@ -1,21 +1,19 @@
 package fr.kalium.atouts;
 
-import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import io.papermc.paper.datacomponent.DataComponentType;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Equippable;
+import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -215,19 +213,24 @@ final class Atouts {
         if (original != null && !base.isDataOverridden(DataComponentTypes.EQUIPPABLE)) {
             ajouts.add(DataComponentTypes.EQUIPPABLE.key().asString());
         }
-        // D'abord la marque et la tête (objet relu), puis les valeurs recopiées.
-        ItemMeta meta = r.getItemMeta();
-        if (meta instanceof SkullMeta crane) {
-            PlayerProfile profil = Bukkit.createProfile(UUID.nameUUIDFromBytes("ks_atouts:gardien".getBytes(
-                    StandardCharsets.UTF_8)), null);
-            String textures = "{\"textures\":{\"SKIN\":{\"url\":\"http://textures.minecraft.net/texture/" + GARDIEN + "\"}}}";
-            profil.setProperty(new ProfileProperty("textures",
-                    Base64.getEncoder().encodeToString(textures.getBytes(StandardCharsets.UTF_8))));
-            crane.setPlayerProfile(profil);
+        boolean tete = r.getType() == Material.PLAYER_HEAD;
+        if (tete) {
             ajouts.add(DataComponentTypes.PROFILE.key().asString());
         }
+        // D'abord la marque (objet relu), puis la tête et les valeurs recopiées.
+        ItemMeta meta = r.getItemMeta();
         meta.getPersistentDataContainer().set(cleAjouts, PersistentDataType.LIST.strings(), ajouts);
         r.setItemMeta(meta);
+        if (tete) {
+            // 1.3.1 : profil SANS nom. Avec un nom (même vide, ce que donnait Bukkit.createProfile), le jeu affiche
+            // « <nom>'s Head » à la place du nom de l'équipement.
+            String textures = "{\"textures\":{\"SKIN\":{\"url\":\"http://textures.minecraft.net/texture/" + GARDIEN + "\"}}}";
+            r.setData(DataComponentTypes.PROFILE, ResolvableProfile.resolvableProfile()
+                    .uuid(UUID.nameUUIDFromBytes("ks_atouts:gardien".getBytes(StandardCharsets.UTF_8)))
+                    .addProperty(new ProfileProperty("textures",
+                            Base64.getEncoder().encodeToString(textures.getBytes(StandardCharsets.UTF_8))))
+                    .build());
+        }
         for (DataComponentType.Valued<?> type : COPIES) {
             copier(base, r, type);
         }
