@@ -915,3 +915,21 @@ KS_Claim et KS_Contrats non plus (dépendance manquante) ; pas d'économie Vault
 - Description mise entre guillemets. Code inchangé. Les autres `plugin.yml` du dépôt se lisent (vérifié).
 
 Compilé le 31/10/2026 (`sortie/KS_Economy-1.13.1.jar`). **Déployé sur Kixster le 31/10/2026 à 09:59** (LeKiwi06 : « Oui, déploie ») ; jar en place vérifié identique (SHA-1) ; 1.13.0 dans `_removed-ks_economy-1.13.0/`. À redémarrer par LeKiwi06 (KS_Economy, KS_Claim et KS_Contrats se rechargent alors). Statut : non testé en jeu.
+
+## 1.13.2 - barème : laine, bambou, grandes fleurs, œuf de renifleur, azalées (31/10/2026, LeKiwi06)
+
+Prix anormaux signalés dans `/rachats` (trappe en bambou, lilas, œuf de renifleur, objets en laine, azalées).
+Proposition de Claude validée par LeKiwi06 (« Oui, applique ») ; règles dans `sortie/bareme/faire_moteur.py`
+(série 15), 149 prix changés dans `rachats.csv` :
+
+- **Laine teinte = laine blanche** (0,0125) : un mouton teint une fois se tond à l'infini ; la recette comptait un
+  colorant par laine. Tapis, lits (0,0525), bannières (0,0775, au lieu de 0,21 à 0,38), harnais, coussins, escaliers et
+  dalles de laine suivent.
+- **Bambou 0,0025** au lieu de 0,0125 (9 par bloc : la planche valait 11 planches de chêne) : bloc 0,0225, planche
+  0,011 (bois rare), trappe 0,034 au lieu de 0,169 ; échafaudage 0,008.
+- **Tournesol, lilas, rosier, pivoine 0,015** au lieu de 0,037 (la poudre d'os en donne un de plus).
+- **Œuf de renifleur 0,3** au lieu de 9,99 (deux renifleurs pondent toutes les 5 min ; œuf de tortue 0,15) ; le
+  changeur de biome passe de 522,7 à 513.
+- **Azalée et azalée fleurie 0,01** au lieu de 0,051 (une pousse, moitié de la bûche de chêne).
+
+Les offres de la semaine dont le prix a changé sont remplacées par un nouveau tirage au démarrage (depuis la 1.8.0).
