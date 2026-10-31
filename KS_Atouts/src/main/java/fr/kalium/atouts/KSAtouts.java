@@ -45,6 +45,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -95,7 +96,10 @@ public final class KSAtouts extends JavaPlugin implements Listener {
     private static final int SKI_COTE = 2;
     private static final int SKI_DESSOUS = 3;
     private static final int SKI_CHUTE = 12;
-    private static final EquipmentSlot[] EMPLACEMENTS = {EquipmentSlot.FEET, EquipmentSlot.HEAD, EquipmentSlot.CHEST};
+    /** 1.4.0 : blocs d'eau du casque poiscaille (en plus des blocs immergés). */
+    private static final Set<Material> EAU = EnumSet.of(Material.WATER, Material.BUBBLE_COLUMN, Material.KELP,
+            Material.KELP_PLANT, Material.SEAGRASS, Material.TALL_SEAGRASS);
+    private static final EquipmentSlot[] EMPLACEMENTS ={EquipmentSlot.FEET, EquipmentSlot.HEAD, EquipmentSlot.CHEST};
 
     private Lang lang;
 
@@ -403,10 +407,7 @@ public final class KSAtouts extends JavaPlugin implements Listener {
 
     /** Bloc d'eau : eau, colonne de bulles, plantes aquatiques, bloc immergé (dalle, escalier, barrière...). */
     private static boolean eau(BlockData d) {
-        return switch (d.getMaterial()) {
-            case WATER, BUBBLE_COLUMN, KELP, KELP_PLANT, SEAGRASS, TALL_SEAGRASS -> true;
-            default -> d instanceof Waterlogged w && w.isWaterlogged();
-        };
+        return EAU.contains(d.getMaterial()) || d instanceof Waterlogged w && w.isWaterlogged();
     }
 
     /** Un bloc voulu dans la boîte du joueur élargie sur les côtés et vers le bas ? */

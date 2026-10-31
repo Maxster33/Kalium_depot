@@ -142,4 +142,4 @@ pour les bottes de ski ».
   marines, et tout bloc immergé (dalle, escalier, barrière...). Toujours actif la tête sous l'eau.
 - La **vision nocturne** reste donnée seulement la tête sous l'eau (inchangé ; didacticiel inchangé).
 
-Compilé le 31/10/2026 (`sortie/KS_Atouts-1.4.0.jar`). Statut : non déployé, non testé en jeu.
+Compilé le 31/10/2026 (`sortie/KS_Atouts-1.4.0.jar` ; eau cherchée par un `EnumSet` : un `switch` sur `Material` faisait générer à ECJ une table de tous les matériaux, classe de 148 Ko). **Déployé sur Kixster le 31/10/2026 à 15:57** (LeKiwi06 : « Oui, déploie ») ; jar en place vérifié identique à `jars-deployes/` avant l'envoi, et le nouveau après (20 870 octets). 1.3.1 dans `_removed-ks_atouts-1.3.1/`. À redémarrer par LeKiwi06. Statut : non testé en jeu.
