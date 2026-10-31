@@ -1067,3 +1067,5 @@ thread principal. Les plugins de jeu y relèvent ce que le modèle ne garde pas 
 enregistrent eux-mêmes l'arène. Aucun autre changement.
 
 **Compilé, non déployé, non testé en jeu.** À déployer avec KG_Parkour 1.8.0 (qui en a besoin).
+
+**Déployé sur Kanvas (Kal-Games) le 31/10/2026 à 12:14 avec KG_Parkour 1.8.0 ; 1.28.0 dans `_removed-kalgames-1.28.0/` ; actif après redémarrage, non testé en jeu.**

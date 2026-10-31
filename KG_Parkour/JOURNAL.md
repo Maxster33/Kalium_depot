@@ -276,3 +276,5 @@ d'eux-mêmes quand il capture la map à nouveau.
 - Les chunks de la zone sont chargés pour lire leurs entités (déjà chargés par la capture, en principe).
 
 **Compilé, non déployé. Statut : non testé en jeu.** Exige KalGames 1.29.0 (sinon KG_Parkour ne démarre pas).
+
+**Déployé sur Kanvas (espace Kal-Games) le 31/10/2026 à 12:14 avec KalGames 1.29.0, serveur en marche ; la 1.7.0 (envoyée à 11:54, jamais active) dans `_removed-kg_parkour-1.7.0/`. Actif au redémarrage. Statut : non testé en jeu.**
