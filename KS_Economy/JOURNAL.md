@@ -942,7 +942,9 @@ Compilé le 31/10/2026 (`sortie/KS_Economy-1.13.2.jar`). **Déployé sur Kixster
 
 Compilé le 01/11/2026 (`sortie/KS_Economy-1.13.3.jar`). **Déployé sur Kixster le 01/11/2026 à 18:30** avec KS_Textures 1.2.1 (LeKiwi06 : « Oui, déploie ») ; jar en place de la même taille que celui du dépôt ; 1.13.2 dans `_removed-ks_economy-1.13.2/`. À redémarrer par LeKiwi06. Statut : non testé en jeu.
 
-## 1.13.3 - barème : point d'expérience à 0,01 (01/11/2026, LeKiwi06)
+## 1.13.4 - barème : point d'expérience à 0,01 (01/11/2026, LeKiwi06)
+
+Même code que la 1.13.3 (textures dans /rachat, solidité pleine exigée), seul `rachats.csv` change.
 
 Demande de LeKiwi06 : le point d'XP (5 / 315 ≈ 0,016, d'après la fiole de 15 niveaux à 5) est « un peu trop » :
 **0,01**. Règle dans `sortie/bareme/faire_moteur.py` ; 22 prix changés dans `rachats.csv` :
@@ -952,3 +954,5 @@ Demande de LeKiwi06 : le point d'XP (5 / 315 ≈ 0,016, d'après la fiole de 15 
 - Minerais (butin + XP) : quartz du Nether 0,065 au lieu de 0,086, charbon 0,085, les autres −0 à −3 %.
 - Tête de wither squelette rénovée (4 fioles de 15 niveaux) 4 361 au lieu de 4 368 ; étoile du Nether, balise, clé de
   l'End, élixir fantôme, estomac du gardien baissent de moins de 2 %.
+
+Compilé le 01/11/2026 (`sortie/KS_Economy-1.13.4.jar`). **Déployé sur Kixster le 01/11/2026 à 18:49** (LeKiwi06 : « Oui, déploie ») ; jar en place de la même taille que celui du dépôt ; dans `_removed-ks_economy-1.13.3/`, un jar 1.13.3 compilé avec ce barème (envoyé à 18:48 par-dessus la 1.13.3 de 18:30 avant d'être renommé en 1.13.4). À redémarrer par LeKiwi06. Statut : non testé en jeu.
