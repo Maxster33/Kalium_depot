@@ -215,7 +215,8 @@ final class Rachats implements CommandExecutor {
         if (!marques.isEmpty() || meta.hasEnchants()) {
             return false;
         }
-        if (meta instanceof Damageable usure && usure.hasDamage()) {
+        // Solidité pleine exigée ; la pénalité d'enclume (coût de réparation) ne compte pas (LeKiwi06, 01/11/2026).
+        if (meta instanceof Damageable usure && usure.hasDamage() && usure.getDamage() > 0) {
             return false;
         }
         if (meta instanceof BundleMeta sac && sac.hasItems()) {
