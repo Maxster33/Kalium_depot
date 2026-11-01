@@ -935,3 +935,9 @@ Proposition de Claude validée par LeKiwi06 (« Oui, applique ») ; règles dans
 Les offres de la semaine dont le prix a changé sont remplacées par un nouveau tirage au démarrage (depuis la 1.8.0).
 
 Compilé le 31/10/2026 (`sortie/KS_Economy-1.13.2.jar`). **Déployé sur Kixster le 31/10/2026 à 21:19** (LeKiwi06 : « Oui, déploie ») ; jar en place de la même taille que celui du dépôt ; 1.13.1 dans `_removed-ks_economy-1.13.1/`. À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.13.3 (01/11/2026)
+
+/rachat et admin shop : les objets custom s'affichent avec leur texture (appel de `KSTextures.apparence`, KS_Textures 1.2.1, avant d'effacer les marques du plugin de l'objet ; bloc de charbon de bois compris). Rachats : un objet réparable intact (trident, lance, épée, armure...) compte de nouveau malgré la marque `ks_enclume:ligne_reparation` ; solidité pleine exigée (usure > 0 refusée), coût de réparation ignoré (LeKiwi06).
+
+Compilé le 01/11/2026 (`sortie/KS_Economy-1.13.3.jar`). **Déployé sur Kixster le 01/11/2026 à 18:30** avec KS_Textures 1.2.1 (LeKiwi06 : « Oui, déploie ») ; jar en place de la même taille que celui du dépôt ; 1.13.2 dans `_removed-ks_economy-1.13.2/`. À redémarrer par LeKiwi06. Statut : non testé en jeu.
