@@ -94,6 +94,19 @@ public final class KSTextures extends JavaPlugin implements Listener {
                 .build();
     }
 
+    /**
+     * 1.2.1 (pour KS_Economy : objets custom affichés dans /rachat et l'admin shop) : l'objet tel qu'un joueur le voit
+     * (texture et couleur de rareté), dans une copie. Les menus qui effacent les marques des plugins pour n'en faire
+     * qu'une image l'appellent avant : sans marque, plus rien ne permet de retrouver la texture. Appel par réflexion.
+     */
+    public static org.bukkit.inventory.ItemStack apparence(org.bukkit.inventory.ItemStack objet) {
+        if (objet == null || objet.isEmpty()) {
+            return objet;
+        }
+        return org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(
+                Regles.marquer(org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(objet)));
+    }
+
     @EventHandler
     public void onArrivee(PlayerJoinEvent event) {
         Player joueur = event.getPlayer();

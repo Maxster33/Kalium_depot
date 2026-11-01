@@ -61,6 +61,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * - 1.13.0 (LeKiwi06, 30/10/2026, Halloween) : pendant un événement (AdminShop), 100 objets au lieu de 10
  *   (evenement.rachats-objets) : le tirage en cours est complété, puis ramené aux 10 premiers à la fermeture ; menu par
  *   pages de 10. Quotas inchangés.
+ * - 1.13.3 (LeKiwi06, 01/11/2026) : objets custom du menu avec leur texture (KS_Textures 1.2.1) ; un objet réparable
+ *   intact compte à nouveau malgré la ligne « Réparation » de KS_Enclume (tridents, lances...).
  */
 final class Rachats implements CommandExecutor {
 
@@ -195,13 +197,22 @@ final class Rachats implements CommandExecutor {
 
     // ------------------------------------------------------------------ reconnaître un objet
 
+    /**
+     * Marque que KS_Enclume pose sur tout objet réparable de l'inventaire, même intact, avec sa ligne « Réparation : ... »
+     * dans la description : elle ne fait pas d'un objet vanilla un objet de plugin (1.13.3 : tridents, lances, épées,
+     * armures... n'étaient plus jamais rachetés).
+     */
+    private static final NamespacedKey LIGNE_REPARATION = new NamespacedKey("ks_enclume", "ligne_reparation");
+
     /** Objet vanilla « nu » : ni marque de plugin, ni enchantement, ni usure, ni contenu. */
     private static boolean nu(ItemStack objet) {
         if (!objet.hasItemMeta()) {
             return true;
         }
         ItemMeta meta = objet.getItemMeta();
-        if (!meta.getPersistentDataContainer().getKeys().isEmpty() || meta.hasEnchants()) {
+        Set<NamespacedKey> marques = new HashSet<>(meta.getPersistentDataContainer().getKeys());
+        marques.remove(LIGNE_REPARATION);
+        if (!marques.isEmpty() || meta.hasEnchants()) {
             return false;
         }
         if (meta instanceof Damageable usure && usure.hasDamage()) {
@@ -581,19 +592,17 @@ final class Rachats implements CommandExecutor {
                 plugin.getLogger().warning("Rachats : objet custom " + e.id() + " non créé : " + erreur);
             }
         }
+        if (objet == null && e.id().equals("bloc_charbon_de_bois")) {
+            // Le bloc de charbon de bois (KS_Crafts, inconnu de KS_KaliumGive) est un bloc de charbon marqué : sa
+            // marque, le temps que KS_Textures lui donne sa texture (1.13.3).
+            objet = new ItemStack(Material.COAL_BLOCK);
+            objet.editPersistentDataContainer(marques -> marques.set(new NamespacedKey("ks_crafts",
+                    "bloc_charbon_de_bois"), PersistentDataType.BYTE, (byte) 1));
+        }
         if (objet == null) {
-            // Le bloc de charbon de bois (KS_Crafts, inconnu de KS_KaliumGive) est un bloc de charbon marqué.
-            return new ItemStack(e.id().equals("bloc_charbon_de_bois") ? Material.COAL_BLOCK : Material.NETHER_STAR);
+            return new ItemStack(Material.NETHER_STAR);
         }
-        ItemMeta meta = objet.getItemMeta();
-        if (meta != null) {
-            PersistentDataContainer marques = meta.getPersistentDataContainer();
-            for (NamespacedKey cle : new ArrayList<>(marques.getKeys())) {
-                marques.remove(cle);
-            }
-            objet.setItemMeta(meta);
-        }
-        return objet;
+        return Menus.image(objet);
     }
 
     /**

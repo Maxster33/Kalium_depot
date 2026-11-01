@@ -5,9 +5,13 @@ import fr.kalium.menu.api.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +95,35 @@ final class Menus {
     static ItemStack telQuel(ItemStack modele, int nombre) {
         ItemStack objet = modele.clone();
         objet.setAmount(Math.max(1, Math.min(nombre, objet.getMaxStackSize())));
+        return objet;
+    }
+
+    /**
+     * 1.13.3 : l'image d'un objet custom dans un menu (/rachat, admin shop), sans les marques de son plugin. KS_Textures
+     * reconnaît un objet custom à ces marques : sa texture (et la couleur de sa rareté) est donc posée avant de les
+     * effacer, par KSTextures.apparence (réflexion : KS_Textures est facultatif). Avant, l'objet gardait l'image de
+     * l'objet vanilla dont il est fait.
+     */
+    static ItemStack image(ItemStack objet) {
+        Plugin textures = Bukkit.getPluginManager().getPlugin("KS_Textures");
+        if (textures != null && textures.isEnabled()) {
+            try {
+                Object avecTexture = textures.getClass().getMethod("apparence", ItemStack.class).invoke(null, objet);
+                if (avecTexture instanceof ItemStack copie) {
+                    objet = copie;
+                }
+            } catch (ReflectiveOperationException | RuntimeException | LinkageError erreur) {
+                // KS_Textures d'avant la 1.2.1, ou autre version du serveur : l'image vanilla
+            }
+        }
+        ItemMeta meta = objet.getItemMeta();
+        if (meta != null) {
+            PersistentDataContainer marques = meta.getPersistentDataContainer();
+            for (NamespacedKey cle : new ArrayList<>(marques.getKeys())) {
+                marques.remove(cle);
+            }
+            objet.setItemMeta(meta);
+        }
         return objet;
     }
 

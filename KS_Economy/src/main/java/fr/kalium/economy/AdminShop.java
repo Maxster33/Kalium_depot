@@ -286,15 +286,7 @@ final class AdminShop implements TabExecutor {
         if (objet == null) {
             return new ItemStack(Material.BARRIER);
         }
-        ItemMeta meta = objet.getItemMeta();
-        if (meta != null) {
-            PersistentDataContainer marques = meta.getPersistentDataContainer();
-            for (NamespacedKey cle : new ArrayList<>(marques.getKeys())) {
-                marques.remove(cle);
-            }
-            objet.setItemMeta(meta);
-        }
-        return objet;
+        return Menus.image(objet);
     }
 
     private Component nom(Article a) {
