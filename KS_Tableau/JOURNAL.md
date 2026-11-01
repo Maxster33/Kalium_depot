@@ -53,4 +53,4 @@ terralith) ».
 - Tâche toutes les 5 ticks (au lieu de 20) : seule la ligne du biome qui défile change entre deux secondes ; les autres
   lignes restent mises à jour chaque seconde, les claims toutes les 30 s.
 
-**Compilé (`sortie/KS_Tableau-1.2.0.jar`), non déployé, non testé.**
+**Déployé sur Kixster le 01/11/2026 à 18:15 (accord de LeKiwi06 : « Oui, déploie ») ; jar de la même taille que celui du dépôt ; 1.1.0 dans `_removed-ks_tableau-1.1.0/` ; actif après redémarrage de Kixster. Statut : non testé en jeu.**
