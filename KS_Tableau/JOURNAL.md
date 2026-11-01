@@ -37,3 +37,20 @@ Principe (KS_MondeTest 1.1.0) : dans le monde de test, le joueur porte la métad
 - Score et exploration : lus dans KS_Economy 1.11.0 et KS_FairPlay 1.1.0, ils sont ceux du compte de test dans le monde de test. Ligne des claims masquée dans le monde de test (aucun claim n'y existe).
 
 **À déployer ensemble sur Kixster** : KS_MondeTest 1.1.0, KS_Economy 1.11.0 (avec KS_BiomeChanger 1.2.0, exigé par KS_Economy 1.10.1), KS_Jetons 2.2.0, KS_Teleport 1.5.0, KS_RewardsGUI 1.10.0, KS_FairPlay 1.1.0, KS_Fly 1.1.0, KS_Tableau 1.1.0, KS_Menu 1.3.0, KS_Parrainage 1.2.0, KLM_Statistiques 1.2.0 ; nouveau `config.yml` de KS_MondeTest et clé `espaces-interfaces` de KLM_Menu à changer (voir le JOURNAL de KS_MondeTest). **Déployé sur Kixster le 25/10/2026 à 12:10 (accord de LeKiwi06 : « oui, déploie les 11 plugins du moi de test et KS_BiomeChanger 1.2.0 sur Kixster, avec le nouveau config.yml de KS_MondeTest et espaces-interfaces de KLM_Menu ») ; ancien jar dans `_removed-<plugin>-<version>/` ; actif après redémarrage (fait par LeKiwi06), non testé en jeu.**
+
+## 1.2.0 - noms de biomes qui défilent (01/11/2026, LeKiwi06)
+
+Demande de LeKiwi06 : « certains noms de biomes sont trop long dans /tableau, les rendre déroulants (biomes vanilla et
+terralith) ».
+
+- Le nom du biome n'est plus traduit par le jeu du joueur : le serveur le lit dans `biomes.yml` (dans le jar) pour
+  connaître sa longueur. Vanilla : noms du `fr_fr.json` du jeu 26.x ; Terralith : traduction KaLium des 11 biomes
+  gardés (le datapack n'a pas de traduction : les joueurs voyaient la clé `biome.terralith...`). Biome absent du
+  fichier : nom tiré de son identifiant (« Warm river »).
+- Nom de plus de 14 lettres (« Biome : » + 14, la largeur de la ligne des coordonnées) : fenêtre de 14 lettres qui
+  défile en boucle, 4 lettres par seconde, pause de 1,5 s au début du nom ; repart du début quand le biome change.
+  Les noms courts ne bougent pas.
+- Tâche toutes les 5 ticks (au lieu de 20) : seule la ligne du biome qui défile change entre deux secondes ; les autres
+  lignes restent mises à jour chaque seconde, les claims toutes les 30 s.
+
+**Compilé (`sortie/KS_Tableau-1.2.0.jar`), non déployé, non testé.**

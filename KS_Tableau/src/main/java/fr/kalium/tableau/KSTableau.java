@@ -2,8 +2,10 @@ package fr.kalium.tableau;
 
 import fr.kalium.menu.api.Lang;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.block.Biome;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,6 +22,8 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -35,7 +39,7 @@ import java.util.UUID;
  * (tableau.yml).
  *
  * Lignes : score (KS_Economy), exploration journalière (KS_FairPlay), claims (SimpleClaimSystem), coordonnées, biome
- * (nom traduit par le jeu du joueur). Mis à jour chaque seconde ; une ligne dont le plugin manque n'est pas affichée.
+ * (nom français de biomes.yml, qui défile s'il est trop long). Mis à jour chaque seconde ; une ligne dont le plugin manque n'est pas affichée.
  */
 public final class KSTableau extends JavaPlugin implements Listener {
 
@@ -46,10 +50,19 @@ public final class KSTableau extends JavaPlugin implements Listener {
     /** Nombre de claims par joueur, relu toutes les 30 s (la base de SimpleClaimSystem n'est pas interrogée chaque seconde). */
     private final Map<UUID, Integer> claims = new HashMap<>();
     private int tick;
+    /** Au-delà, le nom du biome défile (« Biome : » + 14 lettres, comme la ligne des coordonnées). */
+    private static final int LARGEUR_BIOME = 14;
+    private static final String SEPARATEUR = "   ";
+    /** Pas (5 ticks chacun) d'arrêt au début du nom avant qu'il défile. */
+    private static final int PAUSE_BIOME = 6;
+    private final Map<UUID, Defilement> defilements = new HashMap<>();
+    private YamlConfiguration biomes;
 
     @Override
     public void onEnable() {
         lang = new Lang(this);
+        biomes = YamlConfiguration.loadConfiguration(new InputStreamReader(getResource("biomes.yml"),
+                StandardCharsets.UTF_8));
         fichier = new File(getDataFolder(), "tableau.yml");
         for (String s : YamlConfiguration.loadConfiguration(fichier).getStringList("actifs")) {
             try {
@@ -60,7 +73,7 @@ public final class KSTableau extends JavaPlugin implements Listener {
         }
         getServer().getPluginManager().registerEvents(this, this);
         getCommand("tableau").setExecutor(this);
-        getServer().getScheduler().runTaskTimer(this, this::actualiser, 20L, 20L);
+        getServer().getScheduler().runTaskTimer(this, this::actualiser, 5L, 5L);
         getServer().getOnlinePlayers().forEach(this::afficherSiActif);
         lang.saveIfNeeded();
     }
@@ -117,6 +130,7 @@ public final class KSTableau extends JavaPlugin implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         tableaux.remove(event.getPlayer().getUniqueId());
         claims.remove(event.getPlayer().getUniqueId());
+        defilements.remove(event.getPlayer().getUniqueId());
     }
 
     private void afficherSiActif(Player joueur) {
@@ -143,7 +157,10 @@ public final class KSTableau extends JavaPlugin implements Listener {
         }
     }
 
-    /** Chaque seconde : lignes à jour ; toutes les 30 s : nombre de claims relu. */
+    /**
+     * Tous les 5 ticks : le nom du biome trop long avance d'une lettre ; chaque seconde : lignes à jour ; toutes les
+     * 30 s : nombre de claims relu.
+     */
     private void actualiser() {
         tick++;
         for (Map.Entry<UUID, Scoreboard> e : tableaux.entrySet()) {
@@ -151,10 +168,60 @@ public final class KSTableau extends JavaPlugin implements Listener {
             if (p == null) {
                 continue;
             }
-            if (tick % 30 == 0) {
+            if (tick % 4 != 0) {
+                Defilement d = defilements.get(e.getKey());
+                Objective obj = e.getValue().getObjective("ks_tableau");
+                if (d != null && obj != null && d.nom.length() > LARGEUR_BIOME) {
+                    obj.getScore("l" + d.ligne).customName(ligneBiome(d));
+                }
+                continue;
+            }
+            if (tick % 120 == 0) {
                 lireClaims(p);
             }
             remplir(p, e.getValue());
+        }
+    }
+
+    /**
+     * 1.2.0 (LeKiwi06 : « certains noms de biomes sont trop long dans /tableau, les rendre déroulants ») : nom de plus
+     * de {@link #LARGEUR_BIOME} lettres affiché dans une fenêtre qui défile (4 lettres par seconde, pause au début).
+     */
+    private Component ligneBiome(Defilement d) {
+        String texte = d.nom;
+        if (texte.length() > LARGEUR_BIOME) {
+            String boucle = d.nom + SEPARATEUR + d.nom;
+            int cycle = d.nom.length() + SEPARATEUR.length();
+            int debut = Math.max(0, d.pas % (cycle + PAUSE_BIOME) - PAUSE_BIOME);
+            d.pas++;
+            texte = boucle.substring(debut, debut + LARGEUR_BIOME);
+        }
+        return lang.c("ligne-biome", "<gray>Biome : ").append(Component.text(texte,
+                net.kyori.adventure.text.format.NamedTextColor.WHITE));
+    }
+
+    /**
+     * Nom français du biome (biomes.yml : vanilla et Terralith) : le serveur doit connaître le texte pour le faire
+     * défiler (avant la 1.2.0, il était traduit par le jeu du joueur ; Terralith n'a pas de traduction).
+     */
+    private String nomBiome(Biome biome) {
+        Key cle = biome.key();
+        String nom = biomes.getString(cle.namespace() + "." + cle.value());
+        if (nom != null) {
+            return nom;
+        }
+        String brut = cle.value().replace('_', ' ');
+        return Character.toUpperCase(brut.charAt(0)) + brut.substring(1);
+    }
+
+    /** Défilement du nom du biome d'un joueur : repart du début quand le biome change. */
+    private static final class Defilement {
+        final String nom;
+        int pas;
+        int ligne;
+
+        Defilement(String nom) {
+            this.nom = nom;
         }
     }
 
@@ -182,8 +249,14 @@ public final class KSTableau extends JavaPlugin implements Listener {
         Location l = joueur.getLocation();
         lignes.add(lang.c("ligne-position", "<gray>X <white><x></white> Y <white><y></white> Z <white><z>", "x",
                 l.getBlockX(), "y", l.getBlockY(), "z", l.getBlockZ()));
-        lignes.add(lang.c("ligne-biome", "<gray>Biome : ").append(Component.translatable(
-                l.getBlock().getBiome()).color(net.kyori.adventure.text.format.NamedTextColor.WHITE)));
+        Defilement d = defilements.get(joueur.getUniqueId());
+        String nom = nomBiome(l.getBlock().getBiome());
+        if (d == null || !d.nom.equals(nom)) {
+            d = new Defilement(nom);
+            defilements.put(joueur.getUniqueId(), d);
+        }
+        d.ligne = lignes.size();
+        lignes.add(ligneBiome(d));
         // Lignes « l0 », « l1 »... : score décroissant pour garder l'ordre ; texte affiché à la place du nom.
         for (int i = 0; i < lignes.size(); i++) {
             var s = obj.getScore("l" + i);
