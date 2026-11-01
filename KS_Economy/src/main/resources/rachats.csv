@@ -66,7 +66,7 @@ bamboo_stairs;bambou;0.01688;m;;;
 bamboo_trapdoor;bambou;0.03375;m;;;
 barrel;barrel;0.035;m;;;
 basalt;basalte;0.01;m;;;nether
-beacon;étoile du Nether;13120;m;;;nether
+beacon;étoile du Nether;13098;m;;;nether
 bee_nest;miel;0.2202;m;;;
 beef;viande;0.03;m;;;
 beehive;miel;0.12;m;;;
@@ -270,7 +270,7 @@ clock;clock;1.7;m;;;
 closed_eyeblossom;fleur;0.04;m;;;
 coal;charbon;0.05;m;;;
 coal_block;charbon;0.45;m;;;
-coal_ore;charbon;0.09087;m;;;
+coal_ore;charbon;0.085;m;;;
 coarse_dirt;terres;0.01;m;;;
 coast_armor_trim_smithing_template;modèle de forge;30;m;Modèle de forge (coast);;
 cobbled_deepslate;ardoise;0.01;m;;;
@@ -429,12 +429,12 @@ deepslate_brick_wall;ardoise;0.01;m;;;
 deepslate_bricks;ardoise;0.01;m;;;
 deepslate_coal_ore;charbon;2.531;m;;;
 deepslate_copper_ore;cuivre;0.06;m;;;
-deepslate_diamond_ore;diamant;6.079;m;;;
+deepslate_diamond_ore;diamant;6.05;m;;;
 deepslate_emerald_ore;émeraude;1339;m;;;
 deepslate_gold_ore;or;1.17;m;;;
 deepslate_iron_ore;fer;0.27;m;;;
-deepslate_lapis_ore;lapis;1.106;m;;;
-deepslate_redstone_ore;redstone;0.5476;m;;;
+deepslate_lapis_ore;lapis;1.085;m;;;
+deepslate_redstone_ore;redstone;0.53;m;;;
 deepslate_tile_slab;ardoise;0.005;m;;;
 deepslate_tile_stairs;ardoise;0.01;m;;;
 deepslate_tile_wall;ardoise;0.01;m;;;
@@ -452,7 +452,7 @@ diamond_hoe;diamant;8.005;m;;;
 diamond_horse_armor;diamant;10.96;m;;;
 diamond_leggings;diamant;28;m;;;
 diamond_nautilus_armor;diamant;22.8;m;;;
-diamond_ore;diamant;6.079;m;;;
+diamond_ore;diamant;6.05;m;;;
 diamond_pickaxe;diamant;12.01;m;;;
 diamond_shovel;diamant;4.005;m;;;
 diamond_spear;diamant;4.005;m;;;
@@ -478,7 +478,7 @@ egg;œuf;0.01;m;;;
 elytra;elytra;480;m;;;end
 emerald;émeraude;1;-;;;
 emerald_block;émeraude;9;-;;;
-emerald_ore;émeraude;1.579;m;;;
+emerald_ore;émeraude;1.55;m;;;
 enchanted_book;livre enchanté;6;-;;;
 enchanted_book(tresor);livre enchanté;45;-;Livre enchanté (enchantement de trésor);;
 enchanted_golden_apple;pomme;334.1;m;;;
@@ -493,7 +493,7 @@ end_stone_bricks;pierre de l'End;0.01;m;;;end
 ender_chest;ender;1.45;m;;;nether
 ender_eye;ender;0.65;m;;;nether
 ender_pearl;ender;0.5;m;;;
-experience_bottle;expérience;0.1111;m;;;
+experience_bottle;expérience;0.07;m;;;
 explorer_pottery_sherd;tesson de poterie;16.46;m;;;
 exposed_chiseled_copper;cuivre;0.05875;m;;;
 exposed_copper;cuivre;0.235;m;;;
@@ -686,7 +686,7 @@ ladder;ladder;0.005833;m;;;
 lantern;torche;0.102;m;;;
 lapis_block;lapis;1.35;m;;;
 lapis_lazuli;lapis;0.15;m;;;
-lapis_ore;lapis;1.106;m;;;
+lapis_ore;lapis;1.085;m;;;
 large_amethyst_bud;améthyste;0.15;m;;;
 large_fern;herbes et lianes;0.02254;m;;;
 lava_bucket;seau;0.32;m;;;
@@ -872,9 +872,9 @@ nether_brick_stairs;briques du Nether;0.072;m;;;nether
 nether_brick_wall;briques du Nether;0.072;m;;;nether
 nether_bricks;briques du Nether;0.072;m;;;nether
 nether_gold_ore;or;0.4;m;;;nether
-nether_quartz_ore;quartz;0.08556;m;;;nether
+nether_quartz_ore;quartz;0.065;m;;;nether
 nether_sprouts;herbes et lianes;0.015;m;;;nether
-nether_star;étoile du Nether;13119;m;;;nether
+nether_star;étoile du Nether;13097;m;;;nether
 nether_wart;verrue;0.07266;m;;;nether
 nether_wart_block;verrue;0.015;m;;;nether
 netherite_axe;netherite;201.7;m;;;nether
@@ -1194,7 +1194,7 @@ red_wool_stairs;laine;0.0125;m;;;
 redstone;redstone;0.1;m;;;
 redstone_block;redstone;0.9;m;;;
 redstone_lamp;redstone;0.48;m;;;nether
-redstone_ore;redstone;0.5476;m;;;
+redstone_ore;redstone;0.53;m;;;
 redstone_torch;redstone;0.1025;m;;;
 reinforced_deepslate;ardoise;0.217;m;;;
 repeater;redstone;0.365;m;;;
@@ -1243,7 +1243,7 @@ shulker_box;shulker;17.45;m;;;nether+end
 shulker_shell;shulker;8;m;;;end
 silence_armor_trim_smithing_template;modèle de forge;60;m;Modèle de forge (silence);;
 skeleton_skull;tête;10;m;;;
-skull_banner_pattern;motif de bannière;4368;m;Motif de bannière (skull);;nether
+skull_banner_pattern;motif de bannière;4361;m;Motif de bannière (skull);;nether
 skull_pottery_sherd;tesson de poterie;16.46;m;;;
 slime_ball;slime;0.0685;m;;;
 slime_block;slime;0.6165;m;;;
@@ -1527,7 +1527,7 @@ wild_armor_trim_smithing_template;modèle de forge;30;m;Modèle de forge (wild);
 wildflowers;fleur;0.05986;m;;;
 wind_charge;breeze;0.075;m;;;
 wither_rose;fleur;2.531;m;;;nether
-wither_skeleton_skull;tête;4368;m;;;nether
+wither_skeleton_skull;tête;4361;m;;;nether
 wolf_armor;tatou;0.18;m;;;
 wooden_axe;outils en bois;0.02;m;;;
 wooden_hoe;outils en bois;0.015;m;;;
@@ -1560,10 +1560,10 @@ yellow_wool;laine;0.0125;m;;;
 yellow_wool_slab;laine;0.00625;m;;;
 yellow_wool_stairs;laine;0.0125;m;;;
 zombie_head;tête;10;m;;;
-estomac_gardien;estomac_gardien;155.4;pdc:ks_estomacgardien:estomac:b;Estomac du gardien;1;
+estomac_gardien;estomac_gardien;154.9;pdc:ks_estomacgardien:estomac:b;Estomac du gardien;1;
 fragment_spawner;spawner;128;pdc:ks_itemsimple:objet:s:fragment_spawner;Fragment de Spawner;1;
 coeur_spawner;spawner;10235;pdc:ks_itemsimple:objet:s:coeur_spawner;Cœur de Spawner;1;
-cle_de_l_end;cle_de_l_end;5071;pdc:ks_ec_extension:cle_de_l_end:b;Clé de l'End;1;nether
+cle_de_l_end;cle_de_l_end;5064;pdc:ks_ec_extension:cle_de_l_end:b;Clé de l'End;1;nether
 bedrock_breaker;bedrock_breaker;7.008;pdc:ks_bedrockbreaker:bedrock_breaker:b;Bedrock Breaker;1;nether
 changeur_biome;changeur_biome;513;pdc:ks_biomechanger:changeur_biome:b;Changeur de Biome;1;
 tete_allay;tête;50;pdc:ks_decapitator:tete:s:allay;Tête d'allay;64;
@@ -1911,7 +1911,7 @@ elixir_anguille;élixir;31.78;pdc:ks_elixir:elixir:s:anguille;Élixir d'anguille
 elixir_ignifugation;élixir;74.66;pdc:ks_elixir:elixir:s:ignifugation;Élixir d'ignifugation;1;nether
 elixir_plume;élixir;31;pdc:ks_elixir:elixir:s:plume;Élixir de Plume;1;end
 elixir_phenix;élixir;76.37;pdc:ks_elixir:elixir:s:phenix;Élixir de Phénix;1;nether
-elixir_fantome;élixir;64.17;pdc:ks_elixir:elixir:s:fantome;Élixir du Fantôme;1;
+elixir_fantome;élixir;63;pdc:ks_elixir:elixir:s:fantome;Élixir du Fantôme;1;
 elixir_titan;élixir;78.6;pdc:ks_elixir:elixir:s:titan;Élixir de Titan;1;nether
 elixir_vent;élixir;73.59;pdc:ks_elixir:elixir:s:vent;Élixir du Vent;1;
 elixir_rebond;élixir;61.77;pdc:ks_elixir:elixir:s:rebond;Élixir de Rebond;1;
@@ -1920,11 +1920,11 @@ jeton_tp;jeton;16;-;Jeton de téléportation;;
 jeton_emplacement;jeton;250;-;Jeton d'emplacement;;
 jeton_claim;jeton;5000;-;Jeton de claim;;
 jeton_mort;jeton;150;-;Jeton de la mort;;
-fiole_exp(10);expérience;2.54;pdc:ks_fioleexp:points:i:160;Fiole d'expérience (10 niveaux);64;
-fiole_exp(15);expérience;5;pdc:ks_fioleexp:points:i:315;Fiole d'expérience (15 niveaux);64;
-fiole_exp(20);expérience;8.73;pdc:ks_fioleexp:points:i:550;Fiole d'expérience (20 niveaux);64;
-fiole_exp(30);expérience;22.14;pdc:ks_fioleexp:points:i:1395;Fiole d'expérience (30 niveaux);64;
-fiole_exp(40);expérience;46.35;pdc:ks_fioleexp:points:i:2920;Fiole d'expérience (40 niveaux);64;
+fiole_exp(10);expérience;1.6;pdc:ks_fioleexp:points:i:160;Fiole d'expérience (10 niveaux);64;
+fiole_exp(15);expérience;3.15;pdc:ks_fioleexp:points:i:315;Fiole d'expérience (15 niveaux);64;
+fiole_exp(20);expérience;5.5;pdc:ks_fioleexp:points:i:550;Fiole d'expérience (20 niveaux);64;
+fiole_exp(30);expérience;13.95;pdc:ks_fioleexp:points:i:1395;Fiole d'expérience (30 niveaux);64;
+fiole_exp(40);expérience;29.2;pdc:ks_fioleexp:points:i:2920;Fiole d'expérience (40 niveaux);64;
 bloc_emeraude_compresse_tier_1;émeraude;90;-;Bloc d'émeraude compressé (tier 1);;
 bloc_emeraude_compresse_tier_2;émeraude;900;-;Bloc d'émeraude compressé (tier 2);;
 bloc_emeraude_compresse_tier_3;émeraude;9000;-;Bloc d'émeraude compressé (tier 3);;

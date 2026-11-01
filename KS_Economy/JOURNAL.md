@@ -941,3 +941,14 @@ Compilé le 31/10/2026 (`sortie/KS_Economy-1.13.2.jar`). **Déployé sur Kixster
 /rachat et admin shop : les objets custom s'affichent avec leur texture (appel de `KSTextures.apparence`, KS_Textures 1.2.1, avant d'effacer les marques du plugin de l'objet ; bloc de charbon de bois compris). Rachats : un objet réparable intact (trident, lance, épée, armure...) compte de nouveau malgré la marque `ks_enclume:ligne_reparation` ; solidité pleine exigée (usure > 0 refusée), coût de réparation ignoré (LeKiwi06).
 
 Compilé le 01/11/2026 (`sortie/KS_Economy-1.13.3.jar`). **Déployé sur Kixster le 01/11/2026 à 18:30** avec KS_Textures 1.2.1 (LeKiwi06 : « Oui, déploie ») ; jar en place de la même taille que celui du dépôt ; 1.13.2 dans `_removed-ks_economy-1.13.2/`. À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.13.3 - barème : point d'expérience à 0,01 (01/11/2026, LeKiwi06)
+
+Demande de LeKiwi06 : le point d'XP (5 / 315 ≈ 0,016, d'après la fiole de 15 niveaux à 5) est « un peu trop » :
+**0,01**. Règle dans `sortie/bareme/faire_moteur.py` ; 22 prix changés dans `rachats.csv` :
+
+- Fiole d'expérience vanilla 0,07 au lieu de 0,111 ; fioles de KS_FioleExp −37 % (15 niveaux 3,15 au lieu de 5 ;
+  40 niveaux 29,2 au lieu de 46,35).
+- Minerais (butin + XP) : quartz du Nether 0,065 au lieu de 0,086, charbon 0,085, les autres −0 à −3 %.
+- Tête de wither squelette rénovée (4 fioles de 15 niveaux) 4 361 au lieu de 4 368 ; étoile du Nether, balise, clé de
+  l'End, élixir fantôme, estomac du gardien baissent de moins de 2 %.
