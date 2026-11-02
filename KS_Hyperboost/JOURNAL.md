@@ -46,8 +46,8 @@ Limites connues :
 
 À ajouter aux plugins communs (pas fait ici, plugins partagés) :
 - **KS_Economy** (barème, à valider) : fusée de niveau 3 = (papier 0,015625 + 3 poudres 0,0635) / 3 = 0,068708 ;
-  Hyperboost (1.1.0) = diamant 4 + TNT 0,3575 + 7 × 0,068708 = **4,838** (1.0.0 : 8 fusées + TNT = 0,9072, jugé trop
-  bas). (Le barème ne connaît que la fusée de niveau 1 : 0,026375.)
+  Hyperboost (1.1.0) = cristal de l'End 2,4375 + 2 × TNT 0,3575 + 6 × 0,068708 = **3,565** (1.0.0 : 8 fusées + TNT =
+  0,9072, jugé trop bas). (Le barème ne connaît que la fusée de niveau 1 : 0,026375.)
 - **KS_Didacticiel** : entrée « Fusée Hyperboost » (recette, clic droit en conduisant une monture sellée, 40 blocs/s
   pendant 10 s, chameau sans saut pendant la poussée).
 - **Texture** (choix de LeKiwi06 le 02/11 : fusée jaune et noire au lieu de rouge et blanche) : PNG prêt dans
@@ -76,8 +76,9 @@ bugguer » ; « j'aimerais que le nautile et l'arpenteur soient pris en compte �
   Refusé pendant une accélération du champignon ; le champignon est sans effet pendant la poussée (il la multiplierait
   jusqu'à × 2,15).
 
-- **Recette plus chère** (LeKiwi06 : 0,91 « trop peu cher pour un tel pouvoir », « je visais plutôt un prix autour de
-  5 ») : TNT au centre, **1 diamant au-dessus**, 7 fusées de niveau 3 autour. Prix proposé pour KS_Economy :
-  diamant 4 + TNT 0,3575 + 7 × 0,068708 = **4,838**.
+- **Recette plus chère** (LeKiwi06 : 0,91 « trop peu cher pour un tel pouvoir », prix visé autour de 5, pas de minerai
+  sans raison, thème fusée ou explosifs ; choix : « 6 fusées, 2 TNT et un cristal ») : **cristal de l'End** au centre,
+  TNT au-dessus et au-dessous, 6 fusées de niveau 3 sur les côtés. Prix proposé pour KS_Economy : cristal 2,4375 +
+  2 × TNT 0,3575 + 6 × 0,068708 = **3,565**.
 
 **Compilé, non déployé. Statut : non testé en jeu.**
