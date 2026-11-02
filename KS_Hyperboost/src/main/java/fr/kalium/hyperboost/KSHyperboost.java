@@ -48,7 +48,8 @@ import java.util.UUID;
  * KS_Hyperboost (demande de LeKiwi06, 01-02/11/2026, cahier local Blocs_Cultures_Objets.md, partie 5) : la fusée
  * Hyperboost.
  *
- * - Recette : 1 TNT au centre, 8 fusées de feu d'artifice de niveau 3 autour (niveau vérifié à la préparation ;
+ * - Recette (1.1.0, prix visé ~5 par LeKiwi06) : 1 TNT au centre, 1 diamant au-dessus, 7 fusées de feu d'artifice de
+ *   niveau 3 autour (niveau vérifié à la préparation ;
  *   recette refusée à l'automate de craft, qui ne permet pas cette vérification).
  * - Utilisation (clic droit) : seulement en conduisant une monture (cheval, âne, mule, cheval squelette ou zombie,
  *   chameau, chameau momifié, happy ghast, nautile et nautile zombie, arpenteur) ; pas en élytres. Consommée. Pendant 10 s, la monture va à 40 blocs/s
@@ -84,9 +85,10 @@ public final class KSHyperboost extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
 
         ShapedRecipe recette = new ShapedRecipe(cleRecette, creerHyperboost());
-        recette.shape("FFF", "FTF", "FFF");
+        recette.shape("FDF", "FTF", "FFF");
         recette.setIngredient('F', new RecipeChoice.MaterialChoice(Material.FIREWORK_ROCKET));
         recette.setIngredient('T', Material.TNT);
+        recette.setIngredient('D', Material.DIAMOND);
         Bukkit.addRecipe(recette);
         Bukkit.getOnlinePlayers().forEach(this::livreDeRecettes);
         lang.saveIfNeeded();
