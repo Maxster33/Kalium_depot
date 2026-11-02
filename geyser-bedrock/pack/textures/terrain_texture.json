@@ -4,6 +4,51 @@
   "padding": 8,
   "num_mip_levels": 4,
   "texture_data": {
+    "kalium_boite_aux_lettres_cote": {
+      "textures": "textures/blocks/kalium_boite_aux_lettres_cote"
+    },
+    "kalium_boite_aux_lettres_dessus": {
+      "textures": "textures/blocks/kalium_boite_aux_lettres_dessus"
+    },
+    "kalium_boite_aux_lettres_face": {
+      "textures": "textures/blocks/kalium_boite_aux_lettres_face"
+    },
+    "kalium_culture_aubergine": {
+      "textures": "textures/blocks/kalium_culture_aubergine"
+    },
+    "kalium_culture_fleur": {
+      "textures": "textures/blocks/kalium_culture_fleur"
+    },
+    "kalium_culture_jeune": {
+      "textures": "textures/blocks/kalium_culture_jeune"
+    },
+    "kalium_culture_kiwi": {
+      "textures": "textures/blocks/kalium_culture_kiwi"
+    },
+    "kalium_culture_kiwi_fruits": {
+      "textures": "textures/blocks/kalium_culture_kiwi_fruits"
+    },
+    "kalium_culture_mais_bas": {
+      "textures": "textures/blocks/kalium_culture_mais_bas"
+    },
+    "kalium_culture_mais_haut": {
+      "textures": "textures/blocks/kalium_culture_mais_haut"
+    },
+    "kalium_culture_oignon": {
+      "textures": "textures/blocks/kalium_culture_oignon"
+    },
+    "kalium_culture_poivron": {
+      "textures": "textures/blocks/kalium_culture_poivron"
+    },
+    "kalium_culture_pousse": {
+      "textures": "textures/blocks/kalium_culture_pousse"
+    },
+    "kalium_culture_salade": {
+      "textures": "textures/blocks/kalium_culture_salade"
+    },
+    "kalium_culture_tomate": {
+      "textures": "textures/blocks/kalium_culture_tomate"
+    },
     "kalium_jack_o_lantern_bleue": {
       "textures": "textures/blocks/kalium_jack_o_lantern_bleue"
     },
@@ -15,6 +60,24 @@
     },
     "kalium_pumpkin_top": {
       "textures": "textures/blocks/kalium_pumpkin_top"
+    },
+    "kalium_repeteur_wifi_emetteur": {
+      "textures": "textures/blocks/kalium_repeteur_wifi_emetteur"
+    },
+    "kalium_repeteur_wifi_recepteur": {
+      "textures": "textures/blocks/kalium_repeteur_wifi_recepteur"
+    },
+    "kalium_repeteur_wifi_recepteur_allume": {
+      "textures": "textures/blocks/kalium_repeteur_wifi_recepteur_allume"
+    },
+    "kalium_riz_jeune": {
+      "textures": "textures/blocks/kalium_riz_jeune"
+    },
+    "kalium_riz_mur": {
+      "textures": "textures/blocks/kalium_riz_mur"
+    },
+    "kalium_riz_pousse": {
+      "textures": "textures/blocks/kalium_riz_pousse"
     }
   }
 }

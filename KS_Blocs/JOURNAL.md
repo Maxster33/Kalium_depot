@@ -14,6 +14,14 @@ des cultures sont des blocs custom sur la canne à sucre (cultures sur terre) et
   aubergine, oignon, salade, mais_bas, mais_haut, kiwi, kiwi_fruits ; âges 13 à 15 libres) et
   `ks_cultures_eau` (varech, âges 1 à 3 : pousse, jeune, riz ; âges 4 à 25 libres). Plusieurs types peuvent partager une
   apparence (chaque végétal de KS_Cultures est un type, tous sur ks_cultures_terre).
+- `apparences.json` (demande de la session principale, 02/11) : apparences du répéteur wifi (KS_RepeteurWifi :
+  `repeteur_wifi_emetteur`, `repeteur_wifi_recepteur`, `repeteur_wifi_recepteur_allume`, cubes, bloc musical bit notes
+  1 à 3, variante `defaut`) et de la boîte aux lettres (KS_Courrier : `boite_aux_lettres`, orientable, flûte notes 1 à
+  4). Textures provisoires (cible, lampe à redstone éteinte / allumée ; tonneau). Sans elles, ces deux plugins ne
+  démarrent pas (types refusés).
+- `blocs.py` lancé le 02/11 : `geyser-bedrock/custom_mappings/kalium_blocs.json` et `pack/textures/terrain_texture.json`
+  régénérés (30 états réservés) ; la version du pack Bedrock (`sh geyser-bedrock/build.sh`) reste à monter au
+  déploiement.
 - Nouveau : `textures_variantes` (facultatif) dans une apparence, pour une texture par variante (un modèle par stade).
 - `Plantes` (nouveau) : un bloc custom à base de canne à sucre ou de varech ne vit plus selon les règles vanilla :
   - règle de survie de la base (canne à sucre sans eau à côté, appui retiré...) : `BlockDestroyEvent` de Paper annulé,

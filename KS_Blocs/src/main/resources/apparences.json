@@ -79,5 +79,40 @@
       "jeune": "age=2",
       "riz": "age=3"
     }
+  },
+  "repeteur_wifi_emetteur": {
+    "bloc": "note_block",
+    "modele": "cube",
+    "textures": {"all": "repeteur_wifi_emetteur"},
+    "variantes": {
+      "defaut": "instrument=bit,note=1,powered=false"
+    }
+  },
+  "repeteur_wifi_recepteur": {
+    "bloc": "note_block",
+    "modele": "cube",
+    "textures": {"all": "repeteur_wifi_recepteur"},
+    "variantes": {
+      "defaut": "instrument=bit,note=2,powered=false"
+    }
+  },
+  "repeteur_wifi_recepteur_allume": {
+    "bloc": "note_block",
+    "modele": "cube",
+    "textures": {"all": "repeteur_wifi_recepteur_allume"},
+    "variantes": {
+      "defaut": "instrument=bit,note=3,powered=false"
+    }
+  },
+  "boite_aux_lettres": {
+    "bloc": "note_block",
+    "modele": "orientable",
+    "textures": {"front": "boite_aux_lettres_face", "side": "boite_aux_lettres_cote", "top": "boite_aux_lettres_dessus"},
+    "variantes": {
+      "north": "instrument=flute,note=1,powered=false",
+      "east": "instrument=flute,note=2,powered=false",
+      "south": "instrument=flute,note=3,powered=false",
+      "west": "instrument=flute,note=4,powered=false"
+    }
   }
 }

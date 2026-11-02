@@ -75,6 +75,13 @@ PROVISOIRES = {
     "riz_pousse": ("block/wheat_stage2", None),
     "riz_jeune": ("block/wheat_stage4", None),
     "riz_mur": ("block/wheat_stage7", None),
+    # 0.2.0 : répéteur wifi (KS_RepeteurWifi) et boîte aux lettres (KS_Courrier)
+    "repeteur_wifi_emetteur": ("block/target_side", None),
+    "repeteur_wifi_recepteur": ("block/redstone_lamp", None),
+    "repeteur_wifi_recepteur_allume": ("block/redstone_lamp_on", None),
+    "boite_aux_lettres_face": ("block/barrel_top", None),
+    "boite_aux_lettres_cote": ("block/barrel_side", None),
+    "boite_aux_lettres_dessus": ("block/barrel_bottom", None),
 }
 
 

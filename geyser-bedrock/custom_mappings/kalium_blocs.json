@@ -167,6 +167,298 @@
               "render_method": "opaque"
             }
           }
+        },
+        "instrument=bit,note=1,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_repeteur_wifi_emetteur",
+              "render_method": "opaque"
+            }
+          }
+        },
+        "instrument=bit,note=2,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_repeteur_wifi_recepteur",
+              "render_method": "opaque"
+            }
+          }
+        },
+        "instrument=bit,note=3,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_repeteur_wifi_recepteur_allume",
+              "render_method": "opaque"
+            }
+          }
+        },
+        "instrument=flute,note=1,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_boite_aux_lettres_cote",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "kalium_boite_aux_lettres_dessus",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "kalium_boite_aux_lettres_dessus",
+              "render_method": "opaque"
+            },
+            "north": {
+              "texture": "kalium_boite_aux_lettres_face",
+              "render_method": "opaque"
+            }
+          }
+        },
+        "instrument=flute,note=2,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_boite_aux_lettres_cote",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "kalium_boite_aux_lettres_dessus",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "kalium_boite_aux_lettres_dessus",
+              "render_method": "opaque"
+            },
+            "east": {
+              "texture": "kalium_boite_aux_lettres_face",
+              "render_method": "opaque"
+            }
+          }
+        },
+        "instrument=flute,note=3,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_boite_aux_lettres_cote",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "kalium_boite_aux_lettres_dessus",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "kalium_boite_aux_lettres_dessus",
+              "render_method": "opaque"
+            },
+            "south": {
+              "texture": "kalium_boite_aux_lettres_face",
+              "render_method": "opaque"
+            }
+          }
+        },
+        "instrument=flute,note=4,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_boite_aux_lettres_cote",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "kalium_boite_aux_lettres_dessus",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "kalium_boite_aux_lettres_dessus",
+              "render_method": "opaque"
+            },
+            "west": {
+              "texture": "kalium_boite_aux_lettres_face",
+              "render_method": "opaque"
+            }
+          }
+        }
+      }
+    },
+    "minecraft:sugar_cane": {
+      "name": "kalium_sugar_cane",
+      "only_override_states": true,
+      "place_air": true,
+      "geometry": "minecraft:geometry.cross",
+      "destructible_by_mining": 0,
+      "light_dampening": 0,
+      "collision_box": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          0,
+          0,
+          0
+        ]
+      },
+      "selection_box": {
+        "origin": [
+          -6,
+          0,
+          -6
+        ],
+        "size": [
+          12,
+          16,
+          12
+        ]
+      },
+      "state_overrides": {
+        "age=1": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_culture_pousse",
+              "render_method": "alpha_test"
+            }
+          }
+        },
+        "age=2": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_culture_jeune",
+              "render_method": "alpha_test"
+            }
+          }
+        },
+        "age=3": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_culture_fleur",
+              "render_method": "alpha_test"
+            }
+          }
+        },
+        "age=4": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_culture_tomate",
+              "render_method": "alpha_test"
+            }
+          }
+        },
+        "age=5": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_culture_poivron",
+              "render_method": "alpha_test"
+            }
+          }
+        },
+        "age=6": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_culture_aubergine",
+              "render_method": "alpha_test"
+            }
+          }
+        },
+        "age=7": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_culture_oignon",
+              "render_method": "alpha_test"
+            }
+          }
+        },
+        "age=8": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_culture_salade",
+              "render_method": "alpha_test"
+            }
+          }
+        },
+        "age=9": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_culture_mais_bas",
+              "render_method": "alpha_test"
+            }
+          }
+        },
+        "age=10": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_culture_mais_haut",
+              "render_method": "alpha_test"
+            }
+          }
+        },
+        "age=11": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_culture_kiwi",
+              "render_method": "alpha_test"
+            }
+          }
+        },
+        "age=12": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_culture_kiwi_fruits",
+              "render_method": "alpha_test"
+            }
+          }
+        }
+      }
+    },
+    "minecraft:kelp": {
+      "name": "kalium_kelp",
+      "only_override_states": true,
+      "place_air": true,
+      "geometry": "minecraft:geometry.cross",
+      "destructible_by_mining": 0,
+      "light_dampening": 0,
+      "collision_box": {
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "size": [
+          0,
+          0,
+          0
+        ]
+      },
+      "selection_box": {
+        "origin": [
+          -6,
+          0,
+          -6
+        ],
+        "size": [
+          12,
+          16,
+          12
+        ]
+      },
+      "state_overrides": {
+        "age=1": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_riz_pousse",
+              "render_method": "alpha_test"
+            }
+          }
+        },
+        "age=2": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_riz_jeune",
+              "render_method": "alpha_test"
+            }
+          }
+        },
+        "age=3": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_riz_mur",
+              "render_method": "alpha_test"
+            }
+          }
         }
       }
     }
