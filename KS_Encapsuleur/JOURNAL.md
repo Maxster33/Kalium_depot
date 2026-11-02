@@ -39,6 +39,9 @@ bloc visé, face avant vers le joueur.
   redémarrage.
 - Journal du serveur : chaque encapsulage et chaque pose (joueur, id, monde, position).
 
+**Prix** : 1 036,75 (8 shulkers améliorées + 1 crafter), validé par LeKiwi06 le 02/11/2026, dans le barème de
+KS_Economy 1.13.6 (arrondi à 1 037).
+
 **Limites**
 - Une grande zone (500 000 blocs) se lit et s'enregistre d'un coup à l'encapsulage : petit arrêt du serveur possible.
 - Les blocs voisins de la zone ne sont pas mis à jour au retrait (une torche fixée sur un bloc emporté reste en l'air

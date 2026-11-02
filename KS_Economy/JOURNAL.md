@@ -991,9 +991,13 @@ Chantier « Blocs, cultures et objets » (cahier local), section 4 : KS_ShulkerA
   liste de LeKiwi06), cible `pdc:ks_shulkeramelioree:shulker:b` dans `exporter_rachats.py`, ligne dans
   `ids-26.3-et-custom.csv` ; chaîne relancée : `rachats.csv` gagne exactement cette ligne (comparé avant / après,
   chaîne d'abord relancée sans changement : fichier identique). Dimensions : nether + end (gabarit, carapaces).
+- **Prix de l'encapsuleur** (KS_Encapsuleur 1.0.0) : 8 shulkers améliorées + 1 crafter = 1 036,75, **validé par
+  LeKiwi06 le 02/11/2026** (« Oui, valide ») ; arrondi à 1 037. Ajouté de la même façon (cible
+  `pdc:ks_encapsuleur:objet:s:encapsuleur` : seul l'encapsuleur neuf, jamais une construction encapsulée) ; chaîne
+  relancée : `rachats.csv` gagne exactement cette ligne.
 - **Rachats** : une shulker améliorée n'est rachetée que vide (sinon son contenu serait perdu).
 - **Boutiques** : une shulker améliorée posée n'est pas un contenant de boutique (la boutique ne verrait que les
   27 cases de son tampon). Une boîte de shulker ordinaire reste acceptée.
 
-Compilé le 02/11/2026. **À déployer avec KS_ShulkerAmelioree 1.0.0** (sans lui, la ligne du barème ne correspond à
+Compilé le 02/11/2026. **À déployer avec KS_ShulkerAmelioree 1.0.0 et KS_Encapsuleur 1.0.0** (sans eux, la ligne du barème ne correspond à
 aucun objet ; rien ne casse). Statut : non testé en jeu, non déployé.

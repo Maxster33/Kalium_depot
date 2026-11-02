@@ -136,7 +136,7 @@ Pack Java 1.1.0 déposé sur minepack.fr par LeKiwi06 (`https://cdn.minepack.fr/
 ## 1.2.2 - rareté de la shulker améliorée (02/11/2026, LeKiwi06)
 
 Recompilé seulement, aucun changement de code : le barème copié de KS_Economy 1.13.6 contient la shulker améliorée
-(KS_ShulkerAmelioree 1.0.0, prix 129,5 validé par LeKiwi06 le 02/11/2026) : son nom passe en Rare (bleu clair).
+(KS_ShulkerAmelioree 1.0.0, prix 129,5 validé par LeKiwi06 le 02/11/2026) : son nom passe en Rare (bleu clair) ; et l'encapsuleur (KS_Encapsuleur 1.0.0, 1 037 validé le 02/11) : Épique (violet clair).
 Aucune texture : c'est une boîte de shulker du jeu à l'aspect enchanté (rien non plus dans geyser-bedrock).
 LeKiwi06 : « fait les 2 » (ajouts aux plugins communs de la shulker améliorée).
 
