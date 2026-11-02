@@ -49,7 +49,30 @@ Limites connues :
   Hyperboost = 8 × 0,068708 + TNT 0,3575 = **0,9072**. (Le barème ne connaît que la fusée de niveau 1 : 0,026375.)
 - **KS_Didacticiel** : entrée « Fusée Hyperboost » (recette, clic droit en conduisant une monture sellée, 40 blocs/s
   pendant 10 s, chameau sans saut pendant la poussée).
-- **KS_Textures** : rien d'obligatoire (l'objet porte déjà `item_model` = fusée) ; couleur de rareté d'après le prix.
-- **geyser-bedrock** : apparence Bedrock de l'objet (sinon les joueurs Bedrock voient une étoile de feu d'artifice).
+- **Texture** (choix de LeKiwi06 le 02/11 : fusée jaune et noire au lieu de rouge et blanche) : PNG prêt dans
+  `visuels-objets/png/fusee_hyperboost.png` (hors dépôt ; fusée du jeu 26.3 recolorée : rouge → jaune, blanc → noir).
+  Reste : ligne dans `KS_Textures/.../Regles.java` (`fusee_hyperboost` → `ks_hyperboost:hyperboost`), base étoile de
+  feu d'artifice dans `pack.py`, couleur de rareté d'après le prix (`Raretes.java`).
+- **geyser-bedrock** : même PNG en apparence Bedrock (sinon les joueurs Bedrock voient une étoile de feu d'artifice).
+
+**Compilé, non déployé (remplacé par la 1.1.0). Statut : non testé en jeu.**
+
+## 1.1.0 - nautiles, arpenteur, pas de mort de chute (02/11/2026, LeKiwi06)
+
+Retours de LeKiwi06 sur la 1.0.0 : « le cheval qui saute n'est pas gênant, tant qu'il ne meurt pas de chute en
+retombant » ; happy ghast au-dessus de 40 blocs/s en montant : « ce n'est pas grave, je vais vérifier que ça fasse pas
+bugguer » ; « j'aimerais que le nautile et l'arpenteur soient pris en compte ».
+
+- **Chute** : la monture poussée et ses passagers (le conducteur compris, même s'il descend en l'air) ne prennent
+  aucun dégât de chute pendant la poussée et 5 s après.
+- **Nautile et nautile zombie** (sellés) : dans l'eau, vitesse = 0,0325 × `movement_speed`, entrée ramenée à 1,
+  freinage 0,9 → `movement_speed` porté à 6,154 (40 blocs/s). Hors de l'eau : lent (0,02 × l'attribut).
+  **Limite** : l'élan du nautile (touche de saut) vaut 1,2 × `movement_speed` dans la direction du regard, calculé par
+  le client et lié à aucun autre attribut : pendant la poussée, un élan donne une pointe d'environ 7 blocs/tick
+  (~150 blocs/s) qui retombe en une seconde (freinage 0,9 par tick, un élan toutes les 2 s). Pas pu être coupé.
+- **Arpenteur** (sellé, champignon biscornu sur un bâton dans l'autre main) : vitesse = `movement_speed` × 0,55 (0,35
+  hors de la lave) × accélération du champignon ; calcul au sol comme les chevaux → 1,6287 (40 blocs/s sur la lave).
+  Refusé pendant une accélération du champignon ; le champignon est sans effet pendant la poussée (il la multiplierait
+  jusqu'à × 2,15).
 
 **Compilé, non déployé. Statut : non testé en jeu.**

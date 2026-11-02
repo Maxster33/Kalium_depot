@@ -10,16 +10,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.AbstractNautilus;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HappyGhast;
 import org.bukkit.entity.Llama;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Strider;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.CrafterCraftEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -48,7 +51,7 @@ import java.util.UUID;
  * - Recette : 1 TNT au centre, 8 fusées de feu d'artifice de niveau 3 autour (niveau vérifié à la préparation ;
  *   recette refusée à l'automate de craft, qui ne permet pas cette vérification).
  * - Utilisation (clic droit) : seulement en conduisant une monture (cheval, âne, mule, cheval squelette ou zombie,
- *   chameau, chameau momifié, happy ghast) ; pas en élytres. Consommée. Pendant 10 s, la monture va à 40 blocs/s
+ *   chameau, chameau momifié, happy ghast, nautile et nautile zombie, arpenteur) ; pas en élytres. Consommée. Pendant 10 s, la monture va à 40 blocs/s
  *   au plus (Poussee : calcul d'après le code du jeu 26.3).
  * - La vitesse est montée par des modificateurs d'attributs temporaires (jamais enregistrés avec l'entité), retirés
  *   à la fin, quand le joueur descend ou se déconnecte, et à l'arrêt du plugin : la monture revient exactement à
@@ -59,6 +62,9 @@ import java.util.UUID;
  * - Base de l'objet : étoile de feu d'artifice (ni posée, ni lancée, ni chargée dans une arbalète) avec l'apparence
  *   d'une fusée (item_model) et l'aspect enchanté ; apparence Bedrock : geyser-bedrock.
  *
+ * - 1.1.0 : nautiles et arpenteur ; pas de dégâts de chute pour la monture et ses passagers pendant la poussée et
+ *   5 s après ; champignon biscornu sur un bâton sans effet pendant la poussée de l'arpenteur.
+ *
  * Autres plugins : creerHyperboost(), estHyperboost(objet).
  */
 public final class KSHyperboost extends JavaPlugin implements Listener {
@@ -67,6 +73,8 @@ public final class KSHyperboost extends JavaPlugin implements Listener {
     private NamespacedKey cleRecette;
     private Lang lang;
     private final Map<UUID, Poussee> poussees = new HashMap<>();
+    /** 1.1.0 : entités sans dégâts de chute jusqu'à cette date (ms). */
+    private final Map<UUID, Long> protegesChute = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -156,6 +164,28 @@ public final class KSHyperboost extends JavaPlugin implements Listener {
             lang.saveIfNeeded();
             return;
         }
+        if (monture instanceof AbstractNautilus nautile && estVide(nautile.getInventory().getSaddle())
+                || monture instanceof Strider arpenteur && !arpenteur.hasSaddle()) {
+            joueur.sendActionBar(lang.c("refus.sans-selle", "<red>Ta monture doit être sellée"));
+            lang.saveIfNeeded();
+            return;
+        }
+        if (monture instanceof Strider arpenteur) {
+            if (joueur.getInventory().getItemInMainHand().getType() != Material.WARPED_FUNGUS_ON_A_STICK
+                    && joueur.getInventory().getItemInOffHand().getType() != Material.WARPED_FUNGUS_ON_A_STICK) {
+                joueur.sendActionBar(lang.c("refus.arpenteur-baton",
+                        "<red>Tiens un champignon biscornu sur un bâton dans l'autre main"));
+                lang.saveIfNeeded();
+                return;
+            }
+            // Accélération du champignon en cours : elle s'ajouterait à la poussée (jusqu'à × 2,15).
+            if (arpenteur.getBoostTicks() > 0 && arpenteur.getCurrentBoostTicks() < arpenteur.getBoostTicks()) {
+                joueur.sendActionBar(lang.c("refus.arpenteur-champignon",
+                        "<yellow>Attends la fin de l'accélération du champignon"));
+                lang.saveIfNeeded();
+                return;
+            }
+        }
         if (poussees.containsKey(joueur.getUniqueId())) {
             joueur.sendActionBar(lang.c("refus.deja", "<yellow>Hyperboost déjà en cours"));
             lang.saveIfNeeded();
@@ -178,7 +208,33 @@ public final class KSHyperboost extends JavaPlugin implements Listener {
 
     /** Montures conduites par le joueur dont on sait calculer la vitesse (lamas exclus : ils ne se dirigent pas). */
     static boolean estMonture(Entity e) {
-        return (e instanceof AbstractHorse && !(e instanceof Llama)) || e instanceof HappyGhast;
+        return (e instanceof AbstractHorse && !(e instanceof Llama)) || e instanceof HappyGhast
+                || e instanceof AbstractNautilus || e instanceof Strider;
+    }
+
+    /** 1.1.0 : champignon biscornu sur un bâton sans effet pendant la poussée de l'arpenteur (il la multiplierait). */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onChampignon(PlayerInteractEvent event) {
+        ItemStack item = event.getItem();
+        if (item != null && item.getType() == Material.WARPED_FUNGUS_ON_A_STICK
+                && event.getPlayer().getVehicle() instanceof Strider
+                && poussees.containsKey(event.getPlayer().getUniqueId())) {
+            event.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
+        }
+    }
+
+    /** 1.1.0 : pas de dégâts de chute pour une monture poussée ni pour ses passagers (poussée et marge). */
+    @EventHandler(ignoreCancelled = true)
+    public void onChute(EntityDamageEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.FALL
+                && protegesChute.getOrDefault(event.getEntity().getUniqueId(), 0L) > System.currentTimeMillis()) {
+            event.setCancelled(true);
+        }
+    }
+
+    void protegerChute(Entity e, long jusqua) {
+        protegesChute.merge(e.getUniqueId(), jusqua, Math::max);
+        protegesChute.values().removeIf(fin -> fin < System.currentTimeMillis());
     }
 
     private static boolean estVide(ItemStack item) {

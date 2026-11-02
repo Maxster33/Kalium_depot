@@ -7,10 +7,12 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.entity.AbstractNautilus;
 import org.bukkit.entity.Camel;
 import org.bukkit.entity.HappyGhast;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Strider;
 import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -34,6 +36,12 @@ import java.util.List;
  * - happy ghast : travel = travelFlying(flying_speed × 5/3), freinage 0,91 ; entrée = (côté, haut, avant) ×
  *   3,9 × flying_speed, ramenée à 1 si plus longue. En diagonale l'entrée horizontale mesure √1,5 : plafond calé
  *   sur ce cas (40 blocs/s à l'horizontale) → 0,1504 ; tout droit : 32,7 blocs/s.
+ * - 1.1.0, nautiles (AbstractNautilus) : dans l'eau, vitesse = 0,0325 × movement_speed, entrée (côté, haut, avant)
+ *   ramenée à 1 (toujours au moins 1 en avançant), freinage 0,9 : vitesse limite = 0,325 × movement_speed par tick
+ *   → 6,154. Hors de l'eau : 0,02 × movement_speed (lent). Leur élan (saut) vaut 1,2 × movement_speed dans la
+ *   direction du regard : il est calculé par le client et ne dépend d'aucun autre attribut, il n'a pas pu être coupé.
+ * - 1.1.0, arpenteur : vitesse = movement_speed × 0,55 (0,35 hors de la lave) × accélération du champignon ; même
+ *   calcul au sol que les chevaux → 1,6287 (champignon refusé pendant la poussée).
  */
 final class Poussee {
 
@@ -79,6 +87,10 @@ final class Poussee {
                 fs = max * 0.09 / (5.0 / 3.0);
             }
             porter(Attribute.FLYING_SPEED, fs);
+        } else if (monture instanceof AbstractNautilus) {
+            porter(Attribute.MOVEMENT_SPEED, max / (0.0325 / (1 - 0.9)));
+        } else if (monture instanceof Strider) {
+            porter(Attribute.MOVEMENT_SPEED, max / SOL / 0.55);
         } else {
             double vitesse = max / SOL;
             if (monture instanceof Camel) {
@@ -91,6 +103,7 @@ final class Poussee {
         monture.getWorld().playSound(monture.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1f, 0.8f);
         joueur.sendActionBar(plugin.lang().c("debut", "<light_purple>Hyperboost !"));
         plugin.lang().saveIfNeeded();
+        protegerChute();
         int[] ticks = {0};
         tache = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             ticks[0] += 2;
@@ -102,9 +115,22 @@ final class Poussee {
                 arreter(true);
                 return;
             }
+            if (ticks[0] % 20 == 0) {
+                protegerChute();
+            }
             monture.getWorld().spawnParticle(Particle.FIREWORK, monture.getLocation().add(0, 0.6, 0), 3,
                     0.2, 0.2, 0.2, 0.02);
         }, 2L, 2L);
+    }
+
+    /** Pas de dégâts de chute pour la monture et ses passagers jusqu'à la fin de la marge. */
+    private void protegerChute() {
+        long jusqua = Math.max(finAntiTriche, System.currentTimeMillis() + MARGE_MS);
+        plugin.protegerChute(monture, jusqua);
+        plugin.protegerChute(joueur, jusqua);
+        for (org.bukkit.entity.Entity passager : monture.getPassengers()) {
+            plugin.protegerChute(passager, jusqua);
+        }
     }
 
     /** Monte la valeur finale de l'attribut à cible (jamais plus bas qu'avant). */
@@ -165,6 +191,7 @@ final class Poussee {
         } else {
             finAntiTriche = System.currentTimeMillis() + MARGE_MS;
             joueur.setMetadata(METADONNEE, new FixedMetadataValue(plugin, finAntiTriche));
+            protegerChute();
             Bukkit.getScheduler().runTaskLater(plugin, this::finAntiTriche, MARGE_MS / 50);
         }
     }
