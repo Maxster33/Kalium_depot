@@ -1,0 +1,20 @@
+name: KS_Votes
+version: '${project.version}'
+main: fr.kalium.votes.KSVotes
+api-version: '26.2'
+description: "Votes sur les sites de referencement - un coffre de butin par vote, par site et par jour, valeur selon la serie ; menu /vote ; top du mois."
+authors: [KaLium]
+depend: [KLM_Menu, KS_RewardsGUI]
+softdepend: [Votifier]
+commands:
+  vote:
+    description: Voter pour Kixster sur les sites de referencement.
+    usage: /<command>
+  votes:
+    description: Administration des votes (test, serie, recharger).
+    usage: /<command> test <joueur> <site> | serie <joueur> [jours] | recharger
+    permission: ksvotes.admin
+permissions:
+  ksvotes.admin:
+    description: Simuler un vote, corriger une serie, recharger la configuration (/votes).
+    default: op

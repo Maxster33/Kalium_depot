@@ -1,0 +1,82 @@
+# KS_Votes (Kixster) : votes sur les sites de référencement.
+#
+# Réception des votes :
+# - Votifier : NuVotifier sur le proxy renvoie les votes vers ce serveur (NuVotifier installé ici aussi, réglé pour
+#   recevoir du proxy). Chaque vote arrive avec le nom du site (« service ») : il est rattaché au site dont une des
+#   valeurs de « votifier » est contenue dans ce nom (sans tenir compte des majuscules). Un service inconnu est écrit
+#   dans la console, avec son nom exact, pour le recopier ici.
+# - API : pour un site sans Votifier, ce serveur interroge l'adresse « api.url » pour chaque joueur en ligne qui n'a
+#   pas encore été récompensé ce jour-là sur ce site (toutes les « api-intervalle-secondes » et à l'ouverture de
+#   /vote). Remplacements dans l'adresse : {ip} (adresse du joueur), {pseudo} (sans le point des joueurs Bedrock),
+#   {cle}. Le vote est accepté quand l'expression régulière « api.ok » est trouvée dans la réponse.
+#   Les clés et jetons ne vont JAMAIS dans le dépôt : seulement dans ce fichier, sur le serveur.
+#
+# Un site sans « lien » n'apparaît pas dans /vote.
+
+# Préfixe des pseudos Bedrock (Floodgate).
+prefixe-bedrock: "."
+
+# Un vote par site et par jour ; le jour change à minuit, heure de Paris.
+fuseau: "Europe/Paris"
+
+# Valeur du coffre de butin de chaque vote selon la série (jours de suite avec au moins un vote, celui du vote compris).
+# « jours: valeur » : le plus grand palier atteint compte.
+paliers:
+  1: 5
+  3: 10
+  7: 15
+  14: 20
+
+# Coffres de fin de mois pour les premiers du « Top du mois » (votes récompensés), dans l'ordre.
+top-coffres: [250, 150, 75]
+
+# Votes d'un pseudo jamais venu sur Kixster : gardés ce nombre de jours, donnés à sa première venue.
+attente-jours: 30
+
+# Annonce dans le tchat à chaque vote récompensé.
+annonce: true
+
+# Vérification des sites à API pour les joueurs en ligne.
+api-intervalle-secondes: 300
+
+sites:
+  serveur-prive:
+    nom: "serveur-prive.net"
+    lien: ""
+    votifier: ["serveur-prive"]
+    api:
+      url: ""
+      cle: ""
+      ok: ""
+  serveurs-minecraft:
+    nom: "serveurs-minecraft.org"
+    lien: ""
+    votifier: ["serveurs-minecraft"]
+    api:
+      url: ""
+      cle: ""
+      ok: ""
+  top-serveurs:
+    nom: "top-serveurs.net"
+    lien: ""
+    votifier: ["top-serveurs"]
+    api:
+      url: ""
+      cle: ""
+      ok: ""
+  serveur-minecraft-vote:
+    nom: "serveur-minecraft-vote.fr"
+    lien: ""
+    votifier: ["serveur-minecraft-vote"]
+    api:
+      url: ""
+      cle: ""
+      ok: ""
+  minecraft-mp:
+    nom: "minecraft-mp.com"
+    lien: ""
+    votifier: ["minecraft-mp"]
+    api:
+      url: ""
+      cle: ""
+      ok: ""
