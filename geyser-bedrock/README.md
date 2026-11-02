@@ -167,3 +167,12 @@ alcool a deux objets Bedrock (potion et potion jetable), un bateau à jukebox un
   son code). Pack `KaLium-objets-1.9.0.mcpack` construit. **Envoyé sur le proxy le 29/10/2026 à 23:35** (LeKiwi06 : « Oui, déploie ») dans `packs/` ; le 1.8.0 (même identifiant), vérifié identique à celui construit, dans `/plugins/Geyser-Velocity/_removed-kalium-objets-1.8.0-2026-10-29/` ; `kalium_objets.json` inchangé. Actif après redémarrage du proxy. **Non testé.** À vérifier sur
   Bedrock : que le pack peut utiliser les fichiers de Bedrock lui-même, et que le son est bien sans position.
 
+- **1.11.0 (02/11/2026, LeKiwi06)** : blocs custom de KS_Blocs 0.1.0 (jack o'lanterns bleue et cuivre, prototype du
+  socle des blocs). Nouveau fichier `custom_mappings/kalium_blocs.json` (format 1 de Geyser, blocs) : les états réservés
+  du bloc musical (`instrument=harp,note=1..8,powered=false`, voir `KS_Blocs/src/main/resources/apparences.json`)
+  deviennent des blocs Bedrock custom (cube, textures par face : face avant dans le sens de la variante) ; les autres
+  états restent le bloc musical de Bedrock. Nouveau `pack/textures/terrain_texture.json` et images `textures/blocks/` :
+  prises dans `visuels-objets/png/blocs` (textures provisoires de `KS_Blocs/pack/blocs.py`, qui écrit aussi ces deux
+  fichiers). Pack `KaLium-objets-1.11.0.mcpack` construit. **Non envoyé sur le proxy, non testé.** Mise en place :
+  `kalium_blocs.json` dans `custom_mappings/` et le `.mcpack` dans `packs/`, puis rangement du 1.10.0 proxy arrêté (étapes
+  4 et 5 ci-dessus).

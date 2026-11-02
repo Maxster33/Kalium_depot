@@ -1,0 +1,33 @@
+{
+  "_lisez-moi": [
+    "Registre des etats reserves aux blocs custom (KS_Blocs). Une apparence = un ou plusieurs etats d'un bloc de base",
+    "(note_block, sugar_cane ou kelp), un par variante (orientation, stade de pousse...). Un etat ne sert qu'une fois.",
+    "Jamais l'etat montre aux vrais blocs : note_block[instrument=harp,note=0,powered=false], sugar_cane[age=0], kelp[age=0].",
+    "Bloc musical : note >= 1 seulement (le jeu Java pose ses blocs musicaux en note 0, un etat note 0 clignoterait).",
+    "Lu par le plugin, par KS_Blocs/pack/blocs.py (pack Java) et par la correspondance Bedrock (geyser-bedrock).",
+    "modele : orientable (face avant + cotes + dessus), cube (une seule texture) ou croix (plante) ; textures : nom d'une",
+    "image de visuels-objets/png/blocs (sans .png) ou texture du jeu (minecraft:block/...)."
+  ],
+  "jack_o_lantern_bleue": {
+    "bloc": "note_block",
+    "modele": "orientable",
+    "textures": {"front": "jack_o_lantern_bleue", "side": "pumpkin_side", "top": "pumpkin_top"},
+    "variantes": {
+      "north": "instrument=harp,note=1,powered=false",
+      "east": "instrument=harp,note=2,powered=false",
+      "south": "instrument=harp,note=3,powered=false",
+      "west": "instrument=harp,note=4,powered=false"
+    }
+  },
+  "jack_o_lantern_cuivre": {
+    "bloc": "note_block",
+    "modele": "orientable",
+    "textures": {"front": "jack_o_lantern_cuivre", "side": "pumpkin_side", "top": "pumpkin_top"},
+    "variantes": {
+      "north": "instrument=harp,note=5,powered=false",
+      "east": "instrument=harp,note=6,powered=false",
+      "south": "instrument=harp,note=7,powered=false",
+      "west": "instrument=harp,note=8,powered=false"
+    }
+  }
+}

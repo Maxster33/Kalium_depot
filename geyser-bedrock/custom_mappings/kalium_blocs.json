@@ -1,0 +1,174 @@
+{
+  "format_version": 1,
+  "blocks": {
+    "minecraft:note_block": {
+      "name": "kalium_note_block",
+      "only_override_states": true,
+      "place_air": true,
+      "geometry": "minecraft:geometry.full_block",
+      "destructible_by_mining": 1,
+      "state_overrides": {
+        "instrument=harp,note=1,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_pumpkin_side",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "north": {
+              "texture": "kalium_jack_o_lantern_bleue",
+              "render_method": "opaque"
+            }
+          }
+        },
+        "instrument=harp,note=2,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_pumpkin_side",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "east": {
+              "texture": "kalium_jack_o_lantern_bleue",
+              "render_method": "opaque"
+            }
+          }
+        },
+        "instrument=harp,note=3,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_pumpkin_side",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "south": {
+              "texture": "kalium_jack_o_lantern_bleue",
+              "render_method": "opaque"
+            }
+          }
+        },
+        "instrument=harp,note=4,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_pumpkin_side",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "west": {
+              "texture": "kalium_jack_o_lantern_bleue",
+              "render_method": "opaque"
+            }
+          }
+        },
+        "instrument=harp,note=5,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_pumpkin_side",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "north": {
+              "texture": "kalium_jack_o_lantern_cuivre",
+              "render_method": "opaque"
+            }
+          }
+        },
+        "instrument=harp,note=6,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_pumpkin_side",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "east": {
+              "texture": "kalium_jack_o_lantern_cuivre",
+              "render_method": "opaque"
+            }
+          }
+        },
+        "instrument=harp,note=7,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_pumpkin_side",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "south": {
+              "texture": "kalium_jack_o_lantern_cuivre",
+              "render_method": "opaque"
+            }
+          }
+        },
+        "instrument=harp,note=8,powered=false": {
+          "material_instances": {
+            "*": {
+              "texture": "kalium_pumpkin_side",
+              "render_method": "opaque"
+            },
+            "up": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "down": {
+              "texture": "kalium_pumpkin_top",
+              "render_method": "opaque"
+            },
+            "west": {
+              "texture": "kalium_jack_o_lantern_cuivre",
+              "render_method": "opaque"
+            }
+          }
+        }
+      }
+    }
+  }
+}

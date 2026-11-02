@@ -1,0 +1,7 @@
+name: KS_Blocs
+version: '${project.version}'
+main: fr.kalium.blocs.KSBlocs
+api-version: '26.2'
+description: "Socle des blocs custom de Kixster (remplacement visuel des etats du bloc musical, de la canne a sucre et du varech) et jack o'lanterns bleue et cuivre."
+authors: [KaLium]
+depend: [KLM_Menu]
