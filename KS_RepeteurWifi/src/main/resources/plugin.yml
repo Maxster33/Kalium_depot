@@ -1,0 +1,12 @@
+name: KS_RepeteurWifi
+version: '${project.version}'
+main: fr.kalium.repeteurwifi.KSRepeteurWifi
+api-version: '26.2'
+description: "Kixster - repeteur wifi (bloc custom de KS_Blocs) : un emetteur alimente allume les recepteurs du meme code a 64 blocs ou moins."
+authors: [KaLium]
+depend: [KLM_Menu, KS_Blocs]
+softdepend: [SimpleClaimSystem]
+permissions:
+  ks_repeteurwifi.admin:
+    description: "Regler un repeteur wifi dans le claim d'un autre joueur"
+    default: op

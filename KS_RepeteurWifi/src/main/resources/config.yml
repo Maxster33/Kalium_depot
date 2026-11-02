@@ -1,0 +1,7 @@
+# KS_RepeteurWifi
+# Portee entre un emetteur et un recepteur du meme code (en blocs, distance en ligne droite, meme monde).
+portee: 64
+# Un recepteur change d'etat (allume / eteint) au plus une fois tous les N ticks (20 ticks = 1 s) : une horloge
+# redstone rapide branchee sur un emetteur ne fait pas clignoter les recepteurs plus vite. Une impulsion plus courte
+# n'est pas perdue : le recepteur reste allume N ticks.
+intervalle-minimum-ticks: 10
