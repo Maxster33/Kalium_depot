@@ -1,0 +1,27 @@
+# KS_Cultures (Kixster). Une cle absente garde sa valeur par defaut (dans le code).
+
+pousse:
+  # Duree moyenne d'un stade, en minutes (chunk charge, lumiere >= 9) ; deux fois plus long sur terre labouree seche.
+  # Stades : pousse -> jeune -> mur (2 changements) ; arbuste : pousse -> jeune -> arbuste -> fruits, puis fruits
+  # apres chaque cueillette ; fleur : graine -> fleur (1 changement).
+  minutes-par-stade:
+    defaut: 15
+    mais: 20
+    fleur: 15
+
+herbes:
+  # Chance qu'une herbe (courte ou haute) cassee dans le bon biome donne une graine (vanilla, graines de ble : 1 sur 8),
+  # en plus de la graine de ble vanilla.
+  chance: 0.125
+  # Biomes de chaque vegetal (proposition a valider) : le nom du biome (minecraft:... ou terralith:...) contient l'un
+  # des mots, et aucun des mots precedes de « ! ». Riz : un grain ; cerises, kiwi : un fruit.
+  biomes:
+    tomate: [savanna]
+    poivron: [badlands, shrubland, desert]
+    aubergine: [jungle, "!bamboo"]
+    oignon: [taiga, "!snowy"]
+    salade: [forest, "!dark", "!snowy", "!wintry"]
+    mais: [plains, meadow, "!snowy"]
+    riz: [swamp, river, "!frozen"]
+    cerises: [cherry]
+    kiwi: [bamboo]

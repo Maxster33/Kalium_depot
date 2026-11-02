@@ -4,6 +4,37 @@ Plugin de Kixster (survie). Socle des blocs custom (cahier local `Blocs_Cultures
 bloc : les jack o'lanterns bleue et cuivre (partie 8). Dépend de KLM_Menu (textes). Compilé contre le serveur Paper 26.3
 (paquets réseau, sections de chunk) : à revérifier à chaque mise à jour de Minecraft. Ne pas recharger à chaud.
 
+## 0.2.0 - plantes custom : canne à sucre et varech (02/11/2026, pour KS_Cultures)
+
+**Demande de LeKiwi06** (cultures de Kixster, cahier local, parties 10 à 14, validées le 02/11) : les stades de pousse
+des cultures sont des blocs custom sur la canne à sucre (cultures sur terre) et le varech (riz). L'API reste compatible
+(rien d'enlevé ni de changé pour les jack o'lanterns, le répéteur wifi ou la boîte aux lettres).
+
+- `apparences.json` : `ks_cultures_terre` (canne à sucre, âges 1 à 14 : pousse, jeune, fleur, tomate, poivron,
+  aubergine, oignon, salade, mais_bas, mais_haut, cerisier, cerisier_fruits, kiwi, kiwi_fruits ; âge 15 libre) et
+  `ks_cultures_eau` (varech, âges 1 à 3 : pousse, jeune, riz ; âges 4 à 25 libres). Plusieurs types peuvent partager une
+  apparence (chaque végétal de KS_Cultures est un type, tous sur ks_cultures_terre).
+- Nouveau : `textures_variantes` (facultatif) dans une apparence, pour une texture par variante (un modèle par stade).
+- `Plantes` (nouveau) : un bloc custom à base de canne à sucre ou de varech ne vit plus selon les règles vanilla :
+  - règle de survie de la base (canne à sucre sans eau à côté, appui retiré...) : `BlockDestroyEvent` de Paper annulé,
+    l'écouteur est prévenu (`verifie`) au tick suivant, au plugin du type de décider ;
+  - pas de pousse vanilla (canne à sucre au-dessus, varech qui monte), pas de poudre d'os du jeu (distributeur) ;
+  - pas de vraie canne à sucre ni de vrai varech posés dessus ;
+  - pistons : un piston qui casserait une de ces plantes ne bouge pas (sinon butin vanilla : de la canne à sucre) ;
+  - éponge : elle ne retire pas un varech custom.
+  - L'eau ne casse ni la canne à sucre ni le varech (code du jeu : FlowingFluid) : pas de récolte par l'eau.
+- `KSBlocs.pourChaque(id, action)` devient public (pousse des cultures).
+- `pack/blocs.py` 0.2.0 : textures par variante, croix Bedrock (`minecraft:geometry.cross`, sans collision, cadre de
+  sélection de plante, cassée d'un coup), textures provisoires des cultures (images du jeu), option `--geyser <dossier>`
+  pour un essai sans toucher à geyser-bedrock. **Pas lancé sur geyser-bedrock** (dossier commun) : à lancer avec la
+  mise à jour de geyser-bedrock (essai fait dans un dossier à part : 25 états réservés, sortie correcte).
+
+Limites : rien testé en jeu. Bedrock : la couche d'eau autour du riz (varech custom) est à vérifier en premier dans
+Kixster Test, ainsi que le clic droit sur une plante custom (cueillette des arbustes).
+
+**Compilé le 02/11/2026, non déployé, non testé en jeu.** À déployer avec KS_Cultures 1.0.0 et geyser-bedrock (nouvelle
+version, correspondance régénérée par `blocs.py`).
+
 ## 0.1.1 - lumière de la jack o'lantern cuivre à 13 (02/11/2026)
 
 **Question de LeKiwi06** : « si tu as mis des light 14 autour de la jack o lantern de cuivre ça ne risque pas de poser

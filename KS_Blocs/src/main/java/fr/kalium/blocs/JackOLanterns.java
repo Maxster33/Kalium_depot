@@ -61,7 +61,7 @@ final class JackOLanterns implements Listener {
         // lumière prise ou laissée libre entre-temps (cookie, bloc retiré par un piston...)
         plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             for (Lumiere l : lumieres) {
-                plugin.pourChaque(l.id, l::allumer);
+                KSBlocs.pourChaque(l.id, l::allumer);
             }
         }, 100L, 100L);
     }

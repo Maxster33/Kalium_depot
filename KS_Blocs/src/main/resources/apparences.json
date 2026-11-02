@@ -6,7 +6,9 @@
     "Bloc musical : note >= 1 seulement (le jeu Java pose ses blocs musicaux en note 0, un etat note 0 clignoterait).",
     "Lu par le plugin, par KS_Blocs/pack/blocs.py (pack Java) et par la correspondance Bedrock (geyser-bedrock).",
     "modele : orientable (face avant + cotes + dessus), cube (une seule texture) ou croix (plante) ; textures : nom d'une",
-    "image de visuels-objets/png/blocs (sans .png) ou texture du jeu (minecraft:block/...)."
+    "image de visuels-objets/png/blocs (sans .png) ou texture du jeu (minecraft:block/...).",
+    "0.2.0 : textures_variantes (facultatif) donne a une variante ses propres textures (un modele par variante : stades de",
+    "pousse). Canne a sucre et varech : modele croix seulement (plantes de KS_Cultures)."
   ],
   "jack_o_lantern_bleue": {
     "bloc": "note_block",
@@ -28,6 +30,58 @@
       "east": "instrument=harp,note=6,powered=false",
       "south": "instrument=harp,note=7,powered=false",
       "west": "instrument=harp,note=8,powered=false"
+    }
+  },
+  "ks_cultures_terre": {
+    "bloc": "sugar_cane",
+    "modele": "croix",
+    "textures": {"cross": "culture_pousse"},
+    "textures_variantes": {
+      "pousse": {"cross": "culture_pousse"},
+      "jeune": {"cross": "culture_jeune"},
+      "fleur": {"cross": "culture_fleur"},
+      "tomate": {"cross": "culture_tomate"},
+      "poivron": {"cross": "culture_poivron"},
+      "aubergine": {"cross": "culture_aubergine"},
+      "oignon": {"cross": "culture_oignon"},
+      "salade": {"cross": "culture_salade"},
+      "mais_bas": {"cross": "culture_mais_bas"},
+      "mais_haut": {"cross": "culture_mais_haut"},
+      "cerisier": {"cross": "culture_cerisier"},
+      "cerisier_fruits": {"cross": "culture_cerisier_fruits"},
+      "kiwi": {"cross": "culture_kiwi"},
+      "kiwi_fruits": {"cross": "culture_kiwi_fruits"}
+    },
+    "variantes": {
+      "pousse": "age=1",
+      "jeune": "age=2",
+      "fleur": "age=3",
+      "tomate": "age=4",
+      "poivron": "age=5",
+      "aubergine": "age=6",
+      "oignon": "age=7",
+      "salade": "age=8",
+      "mais_bas": "age=9",
+      "mais_haut": "age=10",
+      "cerisier": "age=11",
+      "cerisier_fruits": "age=12",
+      "kiwi": "age=13",
+      "kiwi_fruits": "age=14"
+    }
+  },
+  "ks_cultures_eau": {
+    "bloc": "kelp",
+    "modele": "croix",
+    "textures": {"cross": "riz_pousse"},
+    "textures_variantes": {
+      "pousse": {"cross": "riz_pousse"},
+      "jeune": {"cross": "riz_jeune"},
+      "riz": {"cross": "riz_mur"}
+    },
+    "variantes": {
+      "pousse": "age=1",
+      "jeune": "age=2",
+      "riz": "age=3"
     }
   }
 }

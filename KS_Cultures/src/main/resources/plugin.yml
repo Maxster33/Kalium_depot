@@ -1,0 +1,7 @@
+name: KS_Cultures
+version: '${project.version}'
+main: fr.kalium.cultures.KSCultures
+api-version: '26.2'
+description: "Cultures de Kixster - graines de fleurs au composteur, nouveaux vegetaux, graines par biome, melange de graines."
+authors: [KaLium]
+depend: [KLM_Menu, KS_Blocs]

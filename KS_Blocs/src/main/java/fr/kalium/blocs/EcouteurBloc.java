@@ -20,7 +20,11 @@ public interface EcouteurBloc {
     default void retire(Block bloc, String variante) {
     }
 
-    /** Un bloc voisin a été posé ou cassé, ou le chunk vient d'être chargé (remettre une lumière, par exemple). */
+    /**
+     * Un bloc voisin a été posé ou cassé, ou le chunk vient d'être chargé (remettre une lumière, par exemple). 0.2.0 :
+     * aussi quand le jeu a voulu casser une plante custom (canne à sucre, varech) par sa règle de survie : KS_Blocs l'en
+     * a empêché, au plugin du type de vérifier son appui et de la retirer s'il le faut.
+     */
     default void verifie(Block bloc, String variante) {
     }
 }

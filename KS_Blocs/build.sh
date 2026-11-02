@@ -7,7 +7,7 @@
 # Compiler d'abord KLM_Menu (textes).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=0.1.1
+VERSION=0.2.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then

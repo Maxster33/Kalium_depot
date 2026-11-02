@@ -7,13 +7,15 @@
 #     correspondance Bedrock (Geyser, sur le proxy) et noms des textures du pack Bedrock (geyser-bedrock/build.sh) ;
 #   - visuels-objets/png/blocs/<nom>.png : textures provisoires, creees seulement si elles manquent (les images de
 #     LeKiwi06 a leur place ne sont jamais ecrasees).
-# Usage : python KS_Blocs/pack/blocs.py [--jar <jar du jeu 26.3>]
+# Usage : python KS_Blocs/pack/blocs.py [--jar <jar du jeu 26.3>] [--geyser <dossier>]
+#   --geyser : ecrire la correspondance Bedrock ailleurs que dans geyser-bedrock (essai, sans toucher au dossier commun ;
+#   le dossier doit contenir custom_mappings/ et pack/textures/).
 import json
 import os
 import sys
 import zipfile
 
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 DIR = os.path.dirname(os.path.abspath(__file__))
 RACINE = os.path.abspath(os.path.join(DIR, "..", ".."))
 APPARENCES = os.path.join(RACINE, "KS_Blocs", "src", "main", "resources", "apparences.json")
@@ -23,6 +25,8 @@ GEYSER = os.path.join(RACINE, "geyser-bedrock")
 JAR = os.path.join(os.environ.get("APPDATA", ""), ".minecraft", "versions", "26.3", "26.3.jar")
 if "--jar" in sys.argv:
     JAR = sys.argv[sys.argv.index("--jar") + 1]
+if "--geyser" in sys.argv:
+    GEYSER = os.path.abspath(sys.argv[sys.argv.index("--geyser") + 1])
 FORMAT = 97  # ressources du jeu 26.3
 
 sys.path.insert(0, os.path.join(RACINE, "visuels-objets"))
@@ -41,7 +45,12 @@ PROPRIETES = {
     "kelp": [("age", [str(n) for n in range(26)])],
 }
 # Durete (secondes de minage pour Geyser) et rendu Bedrock de chaque bloc de base
-BEDROCK = {"note_block": {"destructible_by_mining": 1}}
+# Plantes (0.2.0, KS_Cultures) : forme en croix, sans collision (comme en Java), cassees d'un coup, laissent passer la
+# lumiere ; cadre de selection d'une plante (12 x 16 pixels).
+PLANTE = {"geometry": "minecraft:geometry.cross", "destructible_by_mining": 0, "light_dampening": 0,
+          "collision_box": {"origin": [0, 0, 0], "size": [0, 0, 0]},
+          "selection_box": {"origin": [-6, 0, -6], "size": [12, 16, 12]}}
+BEDROCK = {"note_block": {"destructible_by_mining": 1}, "sugar_cane": PLANTE, "kelp": PLANTE}
 FACES = ["north", "east", "south", "west"]
 
 # Textures provisoires : (texture du jeu, teinte des pixels clairs ou None)
@@ -50,6 +59,24 @@ PROVISOIRES = {
     "pumpkin_top": ("block/pumpkin_top", None),
     "jack_o_lantern_bleue": ("block/jack_o_lantern", 0.55),  # bleu de la flamme des ames
     "jack_o_lantern_cuivre": ("block/jack_o_lantern", 0.36),  # vert de la flamme de la torche de cuivre
+    # 0.2.0 : stades des cultures de KS_Cultures (images du jeu en attendant celles de LeKiwi06)
+    "culture_pousse": ("block/wheat_stage1", None),
+    "culture_jeune": ("block/carrots_stage1", None),
+    "culture_fleur": ("block/torchflower_crop_stage1", None),
+    "culture_tomate": ("block/beetroots_stage3", None),
+    "culture_poivron": ("block/carrots_stage3", None),
+    "culture_aubergine": ("block/potatoes_stage3", None),
+    "culture_oignon": ("block/beetroots_stage2", None),
+    "culture_salade": ("block/potatoes_stage2", None),
+    "culture_mais_bas": ("block/wheat_stage6", None),
+    "culture_mais_haut": ("block/wheat_stage7", None),
+    "culture_cerisier": ("block/sweet_berry_bush_stage1", None),
+    "culture_cerisier_fruits": ("block/sweet_berry_bush_stage3", None),
+    "culture_kiwi": ("block/sweet_berry_bush_stage2", None),
+    "culture_kiwi_fruits": ("block/sweet_berry_bush_stage3", 0.08),  # baies teintees en brun
+    "riz_pousse": ("block/wheat_stage2", None),
+    "riz_jeune": ("block/wheat_stage4", None),
+    "riz_mur": ("block/wheat_stage7", None),
 }
 
 
@@ -75,8 +102,13 @@ def texture_provisoire(nom):
     source, teinte = PROVISOIRES[nom]
     px = dessiner.vanilla(source)
     if teinte is not None:
-        clairs = dessiner.masque(px, lambda c, x, y: dessiner.hsv(c)[2] >= 0.99)  # la lueur du visage
-        dessiner.teinter(px, teinte, clairs, sat=1.1, val=1.05)
+        if nom.startswith("culture_"):  # les baies rouges
+            rouges = dessiner.masque(px, lambda c, x, y: dessiner.hsv(c)[1] > 0.4
+                                     and (dessiner.hsv(c)[0] < 0.05 or dessiner.hsv(c)[0] > 0.9))
+            dessiner.teinter(px, teinte, rouges, sat=0.8, val=0.8)
+        else:
+            clairs = dessiner.masque(px, lambda c, x, y: dessiner.hsv(c)[2] >= 0.99)  # la lueur du visage
+            dessiner.teinter(px, teinte, clairs, sat=1.1, val=1.05)
     os.makedirs(PNG_DIR, exist_ok=True)
     dessiner.ecrire_png(px, chemin)
     print(f"texture provisoire : {chemin}")
@@ -86,7 +118,11 @@ def main():
     with open(APPARENCES, encoding="utf-8") as f:
         registre = {k: v for k, v in json.load(f).items() if not k.startswith("_")}
 
-    textures = sorted({t for a in registre.values() for t in a["textures"].values() if ":" not in t})
+    def textures_de(a, variante):
+        return a.get("textures_variantes", {}).get(variante, a["textures"])
+
+    textures = sorted({t for a in registre.values() for v in [None, *a["variantes"]]
+                       for t in textures_de(a, v).values() if ":" not in t})
     for t in textures:
         texture_provisoire(t)
 
@@ -102,18 +138,20 @@ def main():
     reserve = {}  # bloc -> etat -> modele (et rotation)
     for nom, a in registre.items():
         bloc = a["bloc"]
-        tx = {k: ref_java(v) for k, v in a["textures"].items()}
-        if a["modele"] == "orientable":
-            modele = {"parent": "minecraft:block/orientable", "textures": tx}
-        elif a["modele"] == "cube":
-            modele = {"parent": "minecraft:block/cube_all", "textures": {"all": tx["all"]}}
-        elif a["modele"] == "croix":
-            modele = {"parent": "minecraft:block/cross", "textures": {"cross": tx["cross"]}}
-        else:
-            sys.exit(f"Modele inconnu pour {nom} : {a['modele']}")
-        fichiers[f"assets/kalium/models/block/{nom}.json"] = json.dumps(modele, indent=2)
         for variante, etat in a["variantes"].items():
-            v = {"model": f"kalium:block/{nom}"}
+            # un modele par apparence, ou par variante si elle a ses propres textures (0.2.0)
+            nom_modele = f"{nom}_{variante}" if variante in a.get("textures_variantes", {}) else nom
+            tx = {k: ref_java(v) for k, v in textures_de(a, variante).items()}
+            if a["modele"] == "orientable":
+                modele = {"parent": "minecraft:block/orientable", "textures": tx}
+            elif a["modele"] == "cube":
+                modele = {"parent": "minecraft:block/cube_all", "textures": {"all": tx["all"]}}
+            elif a["modele"] == "croix":
+                modele = {"parent": "minecraft:block/cross", "textures": {"cross": tx["cross"]}}
+            else:
+                sys.exit(f"Modele inconnu pour {nom} : {a['modele']}")
+            fichiers[f"assets/kalium/models/block/{nom_modele}.json"] = json.dumps(modele, indent=2)
+            v = {"model": f"kalium:block/{nom_modele}"}
             if a["modele"] == "orientable" and variante in FACES and FACES.index(variante):
                 v["y"] = 90 * FACES.index(variante)
             reserve.setdefault(bloc, {})[normaliser(bloc, etat)] = v
@@ -148,8 +186,8 @@ def main():
         entree = blocs.setdefault(f"minecraft:{bloc}", {
             "name": f"kalium_{bloc}", "only_override_states": True, "place_air": True,
             "geometry": "minecraft:geometry.full_block", **BEDROCK.get(bloc, {}), "state_overrides": {}})
-        tx = a["textures"]
         for variante, etat in a["variantes"].items():
+            tx = textures_de(a, variante)
             if a["modele"] == "orientable":
                 mi = {"*": {"texture": ref_bedrock(tx["side"]), "render_method": "opaque"},
                       "up": {"texture": ref_bedrock(tx["top"]), "render_method": "opaque"},
@@ -169,7 +207,7 @@ def main():
               newline="\n") as f:
         json.dump(terrain, f, indent=2)
         f.write("\n")
-    print("Correspondance Bedrock : geyser-bedrock/custom_mappings/kalium_blocs.json, pack/textures/terrain_texture.json")
+    print(f"Correspondance Bedrock : {GEYSER}/custom_mappings/kalium_blocs.json, pack/textures/terrain_texture.json")
 
 
 if __name__ == "__main__":

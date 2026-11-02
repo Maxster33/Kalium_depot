@@ -87,8 +87,8 @@ public final class KSCrafts extends JavaPlugin implements Listener {
         shapeless("reinforced_deepslate", new ItemStack(Material.REINFORCED_DEEPSLATE, 1), concat(
                 repeat(new RecipeChoice.MaterialChoice(Material.BONE_BLOCK), 2),
                 repeat(new RecipeChoice.MaterialChoice(Material.DEEPSLATE), 2)));
-        shapeless("pitcher_pod", new ItemStack(Material.PITCHER_POD, 4), repeat(new RecipeChoice.MaterialChoice(Material.PITCHER_PLANT), 2));
-        shapeless("torchflower_seeds", new ItemStack(Material.TORCHFLOWER_SEEDS, 4), repeat(new RecipeChoice.MaterialChoice(Material.TORCHFLOWER), 2));
+        // 1.24.0 (LeKiwi06, 02/11/2026) : plus de recettes « 2 plantes carnivores -> 4 cosses » ni « 2 torchiflores ->
+        // 4 graines » : ces fleurs donnent leurs graines au composteur, comme les autres (KS_Cultures).
         coral("tube", Material.TUBE_CORAL, Material.TUBE_CORAL_BLOCK);
         coral("brain", Material.BRAIN_CORAL, Material.BRAIN_CORAL_BLOCK);
         coral("bubble", Material.BUBBLE_CORAL, Material.BUBBLE_CORAL_BLOCK);

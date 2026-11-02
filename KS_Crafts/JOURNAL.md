@@ -526,3 +526,16 @@ traduit les recettes) ; un bateau ordinaire ne donne rien. Non vérifié en jeu.
 Compilé le 28/10/2026 (`sortie/KS_Crafts-1.23.0.jar`). **Statut : non déployé, non testé en jeu.**
 
 **Déployé sur Kixster le 28/10/2026 à 10:49** (LeKiwi06 : « Oui, déploie KS_Crafts 1.23.0 et KS_CoffreRenforce 1.2.0 sur Kixster avec le didacticiel »), avec `didacticiel.yml` : jars en place vérifiés identiques à `jars-deployes/` avant l'envoi, rangés dans `_removed-ks_crafts-1.22.0/` et `_removed-ks_coffrerenforce-1.1.0/` ; fichiers du serveur vérifiés identiques à ceux compilés. À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.24.0 - plus de graines de torchiflore ni de cosses de plante carnivore par craft (02/11/2026, LeKiwi06)
+
+**Demande de LeKiwi06** (cultures de Kixster, cahier local `Blocs_Cultures_Objets.md`, partie 14, validée le 02/11) :
+le composteur de KS_Cultures donne 1 à 3 graines par fleur, torchiflore et plante carnivore comprises ; leurs crafts
+sont retirés.
+
+- Recettes retirées : `ks_crafts:pitcher_pod` (2 plantes carnivores -> 4 cosses) et `ks_crafts:torchflower_seeds`
+  (2 torchiflores -> 4 graines).
+- **À déployer avec KS_Cultures 1.0.0** (sinon plus aucun moyen de tirer des graines de ces fleurs) et avec un
+  `didacticiel.yml` sans ces deux recettes (fiche « Crafts pratiques » de KS_Didacticiel).
+
+Compilé le 02/11/2026 (`sortie/KS_Crafts-1.24.0.jar`). **Statut : non déployé, non testé en jeu.**

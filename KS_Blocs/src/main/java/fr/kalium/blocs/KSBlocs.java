@@ -40,7 +40,8 @@ import java.util.Set;
  * {@link #retirer}, {@link #deplacer}, {@link #renvoyer}, {@link #verifierAutour}. Le plugin qui déclare un type
  * ajoute « depend: [KS_Blocs] » et déclare ses types dans son onEnable.
  *
- * Premier bloc : les jack o'lanterns bleue et cuivre ({@link JackOLanterns}).
+ * Premier bloc : les jack o'lanterns bleue et cuivre ({@link JackOLanterns}). 0.2.0 : blocs custom à base de canne à
+ * sucre ou de varech (cultures de KS_Cultures, {@link Plantes}).
  *
  * Code du serveur Paper 26.3 (paquets, sections de chunk) : à revérifier à chaque mise à jour de Minecraft. Ne pas
  * recharger le plugin à chaud (/reload).
@@ -84,6 +85,7 @@ public final class KSBlocs extends JavaPlugin {
             }
         });
         getServer().getPluginManager().registerEvents(new Evenements(this, registre, affichage), this);
+        getServer().getPluginManager().registerEvents(new Plantes(this, registre, affichage), this);
         for (World w : Bukkit.getWorlds()) {
             for (Chunk c : w.getLoadedChunks()) {
                 registre.charger(c);
@@ -352,8 +354,11 @@ public final class KSBlocs extends JavaPlugin {
         return instance;
     }
 
-    /** Chaque bloc custom de ce type dans les chunks chargés (bloc, variante). */
-    void pourChaque(String id, java.util.function.BiConsumer<Block, String> action) {
-        registre.pourChaque(id, action);
+    /**
+     * Chaque bloc custom de ce type dans les chunks chargés (bloc, variante), 0.2.0 : public (pousse des cultures).
+     * L'action ne doit pas poser ni retirer de bloc custom pendant le parcours : noter les blocs, puis les traiter.
+     */
+    public static void pourChaque(String id, java.util.function.BiConsumer<Block, String> action) {
+        instance().registre.pourChaque(id, action);
     }
 }
