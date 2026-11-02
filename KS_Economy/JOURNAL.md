@@ -956,3 +956,24 @@ Demande de LeKiwi06 : le point d'XP (5 / 315 ≈ 0,016, d'après la fiole de 15 
   l'End, élixir fantôme, estomac du gardien baissent de moins de 2 %.
 
 Compilé le 01/11/2026 (`sortie/KS_Economy-1.13.4.jar`). **Déployé sur Kixster le 01/11/2026 à 18:49** (LeKiwi06 : « Oui, déploie ») ; jar en place de la même taille que celui du dépôt ; dans `_removed-ks_economy-1.13.3/`, un jar 1.13.3 compilé avec ce barème (envoyé à 18:48 par-dessus la 1.13.3 de 18:30 avant d'être renommé en 1.13.4). À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.13.5 - barème (série 16) et lots des prix de 1 à 10 (02/11/2026, LeKiwi06)
+
+Anomalies des rachats de la semaine S45 relevées par Claude et signalées par LeKiwi06, corrections validées
+(« applique tout ça ») ; règles dans `sortie/bareme/faire_moteur.py` (série 16), 205 prix changés dans `rachats.csv` :
+
+- **Cuisson 0,0025** au lieu de 0,01 (un charbon cuit 8 objets, fours automatisables) : pierre et pierre taillée
+  0,0125 au lieu de 0,02 (le double du cobble), pierre lisse 0,015, verre 0,0125, viandes cuites 0,0325. Les lingots
+  de fer et d'or gardent leur prix (le minerai brut prend 8 % et 2 %).
+- **Motte d'argile 0,0025** (bloc d'argile 0,01, bloc abondant) : brique 0,005, bloc et muret de briques 0,02 au lieu
+  de 0,08.
+- **Chair putréfiée 0,0195** au lieu de 0,039 (oubliée dans la division par 2 du butin des fermes à monstres).
+- **Résine 0,03** au lieu de 0,135 (un cœur de grinceur en produit à chaque coup porté au grinceur) : bloc 0,27,
+  cœur de grinceur 0,37.
+- **Toile d'araignée 0,035** (une ficelle), **boule de neige 0,0025** (bloc 0,01, couche 0,005 ; golem de neige),
+  **silex 0,01** (Fortune III).
+- L'éponge garde son prix (10,73 ; « pas du tout un bloc abondant »).
+- **Lots** (`Rachats.java`) : le prix de la semaine n'est plus arrondi à l'unité avant le calcul du lot, seul le
+  total l'est. Avant : cœur de grinceur à 1,316 vendu 2 l'unité (+52 %), coffre de l'Ender à 1,45 vendu 1 (−31 %). Un
+  objet vendu à l'unité garde un prix entier. Les offres déjà tirées dont le prix du barème n'a pas changé (coffre de
+  l'Ender, jukebox de la S45) gardent leur lot jusqu'au tirage de lundi.

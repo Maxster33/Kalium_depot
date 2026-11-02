@@ -37,14 +37,14 @@ anvil;enclume;3.1;m;;;
 apple;pomme;0.03984;m;;;
 archer_pottery_sherd;tesson de poterie;16.46;m;;;
 armadillo_scute;tatou;0.03;m;;;
-armor_stand;armor_stand;0.03;m;;;
+armor_stand;armor_stand;0.0225;m;;;
 arms_up_pottery_sherd;tesson de poterie;16.46;m;;;
-arrow;flèche;0.01758;m;;;
+arrow;flèche;0.01289;m;;;
 axolotl_bucket;seau;0.6313;m;;;
 azalea;herbes et lianes;0.01;m;;;
 azalea_leaves;herbes et lianes;0.01;m;;;
 azure_bluet;fleur;0.03984;m;;;
-baked_potato;culture;0.0393;m;;;
+baked_potato;culture;0.0318;m;;;
 bamboo;bambou;0.0025;m;;;
 bamboo_block;bambou;0.0225;m;;;
 bamboo_button;bambou;0.01125;m;;;
@@ -66,7 +66,7 @@ bamboo_stairs;bambou;0.01688;m;;;
 bamboo_trapdoor;bambou;0.03375;m;;;
 barrel;barrel;0.035;m;;;
 basalt;basalte;0.01;m;;;nether
-beacon;étoile du Nether;13098;m;;;nether
+beacon;étoile du Nether;13097;m;;;nether
 bee_nest;miel;0.2202;m;;;
 beef;viande;0.03;m;;;
 beehive;miel;0.12;m;;;
@@ -104,11 +104,11 @@ black_concrete_slab;béton;0.01994;m;;;
 black_concrete_stairs;béton;0.03988;m;;;
 black_cushion;coussin;0.01875;m;;;
 black_dye;colorant;0.03907;m;;;
-black_glazed_terracotta;terres cuites;0.02488;m;;;
-black_harness;harnais;0.2597;m;;;
+black_glazed_terracotta;terres cuites;0.01738;m;;;
+black_harness;harnais;0.2447;m;;;
 black_shulker_box;shulker;17.49;m;;;nether+end
-black_stained_glass;verre;0.02488;m;;;
-black_stained_glass_pane;verre;0.009331;m;;;
+black_stained_glass;verre;0.01738;m;;;
+black_stained_glass_pane;verre;0.006519;m;;;
 black_terracotta;terres cuites;0.01488;m;;;
 black_wool;laine;0.0125;m;;;
 black_wool_slab;laine;0.00625;m;;;
@@ -118,7 +118,7 @@ blackstone_slab;pierre noire;0.005;m;;;nether
 blackstone_stairs;pierre noire;0.01;m;;;nether
 blackstone_wall;pierre noire;0.01;m;;;nether
 blade_pottery_sherd;tesson de poterie;16.46;m;;;
-blast_furnace;blast_furnace;0.67;m;;;
+blast_furnace;blast_furnace;0.625;m;;;
 blaze_powder;blaze;0.15;m;;;nether
 blaze_rod;blaze;0.3;m;;;nether
 blue_banner;bannière;0.0775;m;;;
@@ -133,13 +133,13 @@ blue_concrete_stairs;béton;0.0395;m;;;
 blue_cushion;coussin;0.01875;m;;;
 blue_dye;colorant;0.03602;m;;;
 blue_egg;œuf;0.01;m;;;
-blue_glazed_terracotta;terres cuites;0.0245;m;;;
-blue_harness;harnais;0.2597;m;;;
+blue_glazed_terracotta;terres cuites;0.017;m;;;
+blue_harness;harnais;0.2447;m;;;
 blue_ice;glace;0.972;m;;;
 blue_orchid;fleur;0.03984;m;;;
 blue_shulker_box;shulker;17.49;m;;;nether+end
-blue_stained_glass;verre;0.0245;m;;;
-blue_stained_glass_pane;verre;0.009188;m;;;
+blue_stained_glass;verre;0.017;m;;;
+blue_stained_glass_pane;verre;0.006376;m;;;
 blue_terracotta;terres cuites;0.0145;m;;;
 blue_wool;laine;0.0125;m;;;
 blue_wool_slab;laine;0.00625;m;;;
@@ -160,11 +160,11 @@ bread;culture;0.1465;m;;;
 breeze_rod;breeze;0.3;m;;;
 brewer_pottery_sherd;tesson de poterie;16.46;m;;;
 brewing_stand;brewing_stand;0.33;m;;;nether
-brick;briques;0.02;m;;;
-brick_slab;briques;0.04;m;;;
-brick_stairs;briques;0.08;m;;;
-brick_wall;briques;0.08;m;;;
-bricks;briques;0.08;m;;;
+brick;briques;0.005;m;;;
+brick_slab;briques;0.01;m;;;
+brick_stairs;briques;0.02;m;;;
+brick_wall;briques;0.02;m;;;
+bricks;briques;0.02;m;;;
 brown_banner;bannière;0.0775;m;;;
 brown_bed;lit;0.0525;m;;;
 brown_bundle;sac;0.153;m;;;
@@ -177,13 +177,13 @@ brown_concrete_stairs;béton;0.04123;m;;;
 brown_cushion;coussin;0.01875;m;;;
 brown_dye;colorant;0.04988;m;;;
 brown_egg;œuf;0.01;m;;;
-brown_glazed_terracotta;terres cuites;0.02623;m;;;
-brown_harness;harnais;0.2597;m;;;
+brown_glazed_terracotta;terres cuites;0.01873;m;;;
+brown_harness;harnais;0.2447;m;;;
 brown_mushroom;champignon;0.05859;m;;;
 brown_mushroom_block;champignon;0.015;m;;;
 brown_shulker_box;shulker;17.5;m;;;nether+end
-brown_stained_glass;verre;0.02623;m;;;
-brown_stained_glass_pane;verre;0.009838;m;;;
+brown_stained_glass;verre;0.01873;m;;;
+brown_stained_glass_pane;verre;0.007026;m;;;
 brown_terracotta;terres cuites;0.01623;m;;;
 brown_wool;laine;0.0125;m;;;
 brown_wool_slab;laine;0.00625;m;;;
@@ -244,13 +244,13 @@ chiseled_bookshelf;livre;0.0375;m;;;
 chiseled_cinnabar;cinabre;0.01;m;;;
 chiseled_copper;cuivre;0.03375;m;;;
 chiseled_deepslate;ardoise;0.01;m;;;
-chiseled_nether_bricks;briques du Nether;0.072;m;;;nether
+chiseled_nether_bricks;briques du Nether;0.042;m;;;nether
 chiseled_polished_blackstone;pierre noire;0.01;m;;;nether
 chiseled_quartz_block;quartz;0.08;m;;;nether
 chiseled_red_sandstone;grès rouge;0.04;m;;;
-chiseled_resin_bricks;résine;0.5804;m;;;
+chiseled_resin_bricks;résine;0.13;m;;;
 chiseled_sandstone;grès;0.04;m;;;
-chiseled_stone_bricks;pierre;0.02;m;;;
+chiseled_stone_bricks;pierre;0.0125;m;;;
 chiseled_sulfur;soufre;0.01;m;;;
 chiseled_tuff;tuf;0.01;m;;;
 chiseled_tuff_bricks;tuf;0.01;m;;;
@@ -264,8 +264,8 @@ cinnabar_bricks;cinabre;0.01;m;;;
 cinnabar_slab;cinabre;0.005;m;;;
 cinnabar_stairs;cinabre;0.01;m;;;
 cinnabar_wall;cinabre;0.01;m;;;
-clay;argile;0.04;m;;;
-clay_ball;argile;0.01;m;;;
+clay;argile;0.01;m;;;
+clay_ball;argile;0.0025;m;;;
 clock;clock;1.7;m;;;
 closed_eyeblossom;fleur;0.04;m;;;
 coal;charbon;0.05;m;;;
@@ -281,21 +281,21 @@ cobblestone;pierre;0.01;m;;;
 cobblestone_slab;pierre;0.005;m;;;
 cobblestone_stairs;pierre;0.01;m;;;
 cobblestone_wall;pierre;0.01;m;;;
-cobweb;ficelle;0.1466;m;;;
+cobweb;ficelle;0.035;m;;;
 cocoa_beans;culture;0.05859;m;;;
 cod;poisson;0.04322;m;;;
 cod_bucket;seau;0.3313;m;;;
-comparator;redstone;0.3875;m;;;nether
+comparator;redstone;0.365;m;;;nether
 compass;compass;0.5;m;;;
 composter;composter;0.0175;m;;;
 conduit;mer;44.98;m;;;
-cooked_beef;viande;0.04;m;;;
-cooked_chicken;viande;0.04;m;;;
-cooked_cod;poisson;0.05322;m;;;
-cooked_mutton;viande;0.04;m;;;
-cooked_porkchop;viande;0.04;m;;;
-cooked_rabbit;viande;0.04;m;;;
-cooked_salmon;poisson;0.05322;m;;;
+cooked_beef;viande;0.0325;m;;;
+cooked_chicken;viande;0.0325;m;;;
+cooked_cod;poisson;0.04572;m;;;
+cooked_mutton;viande;0.0325;m;;;
+cooked_porkchop;viande;0.0325;m;;;
+cooked_rabbit;viande;0.0325;m;;;
+cooked_salmon;poisson;0.04572;m;;;
 cookie;culture;0.01953;m;;;
 copper_axe;cuivre;0.05;m;;;
 copper_bars;cuivre;0.005625;m;;;
@@ -324,14 +324,14 @@ copper_sword;cuivre;0.0325;m;;;
 copper_torch;cuivre;0.01354;m;;;
 copper_trapdoor;cuivre;0.045;m;;;
 cornflower;fleur;0.03984;m;;;
-cracked_deepslate_bricks;ardoise;0.02;m;;;
-cracked_deepslate_tiles;ardoise;0.02;m;;;
-cracked_nether_bricks;briques du Nether;0.082;m;;;nether
-cracked_polished_blackstone_bricks;pierre noire;0.02;m;;;nether
-cracked_stone_bricks;pierre;0.03;m;;;
+cracked_deepslate_bricks;ardoise;0.0125;m;;;
+cracked_deepslate_tiles;ardoise;0.0125;m;;;
+cracked_nether_bricks;briques du Nether;0.0445;m;;;nether
+cracked_polished_blackstone_bricks;pierre noire;0.0125;m;;;nether
+cracked_stone_bricks;pierre;0.015;m;;;
 crafter;redstone;0.89;m;;;
 crafting_table;crafting_table;0.02;m;;;
-creaking_heart;creaking_heart;1.316;m;;;
+creaking_heart;creaking_heart;0.37;m;;;
 creeper_banner_pattern;motif de bannière;10.02;m;Motif de bannière (creeper);;
 creeper_head;tête;10;m;;;
 crimson_button;carmin;0.006924;m;;;nether
@@ -371,11 +371,11 @@ cyan_concrete_slab;béton;0.01958;m;;;
 cyan_concrete_stairs;béton;0.03915;m;;;
 cyan_cushion;coussin;0.01875;m;;;
 cyan_dye;colorant;0.0332;m;;;
-cyan_glazed_terracotta;terres cuites;0.02415;m;;;
-cyan_harness;harnais;0.2597;m;;;
+cyan_glazed_terracotta;terres cuites;0.01665;m;;;
+cyan_harness;harnais;0.2447;m;;;
 cyan_shulker_box;shulker;17.48;m;;;nether+end
-cyan_stained_glass;verre;0.02415;m;;;
-cyan_stained_glass_pane;verre;0.009056;m;;;
+cyan_stained_glass;verre;0.01665;m;;;
+cyan_stained_glass_pane;verre;0.006244;m;;;
 cyan_terracotta;terres cuites;0.01415;m;;;
 cyan_wool;laine;0.0125;m;;;
 cyan_wool_slab;laine;0.00625;m;;;
@@ -404,7 +404,7 @@ dark_oak_wood;chêne noir;0.02893;m;;;
 dark_prismarine;prismarine;0.1111;m;;;
 dark_prismarine_slab;prismarine;0.05554;m;;;
 dark_prismarine_stairs;prismarine;0.1111;m;;;
-daylight_detector;redstone;0.1275;m;;;nether
+daylight_detector;redstone;0.105;m;;;nether
 dead_brain_coral;corail;0.01;m;;;
 dead_brain_coral_block;corail;0.01;m;;;
 dead_brain_coral_fan;corail;0.01;m;;;
@@ -421,8 +421,8 @@ dead_horn_coral_fan;corail;0.01;m;;;
 dead_tube_coral;corail;0.01;m;;;
 dead_tube_coral_block;corail;0.01;m;;;
 dead_tube_coral_fan;corail;0.01;m;;;
-decorated_pot;poterie;0.08;m;;;
-deepslate;ardoise;0.02;m;;;
+decorated_pot;poterie;0.02;m;;;
+deepslate;ardoise;0.0125;m;;;
 deepslate_brick_slab;ardoise;0.005;m;;;
 deepslate_brick_stairs;ardoise;0.01;m;;;
 deepslate_brick_wall;ardoise;0.01;m;;;
@@ -431,8 +431,8 @@ deepslate_coal_ore;charbon;2.531;m;;;
 deepslate_copper_ore;cuivre;0.06;m;;;
 deepslate_diamond_ore;diamant;6.05;m;;;
 deepslate_emerald_ore;émeraude;1339;m;;;
-deepslate_gold_ore;or;1.17;m;;;
-deepslate_iron_ore;fer;0.27;m;;;
+deepslate_gold_ore;or;1.193;m;;;
+deepslate_iron_ore;fer;0.2925;m;;;
 deepslate_lapis_ore;lapis;1.085;m;;;
 deepslate_redstone_ore;redstone;0.53;m;;;
 deepslate_tile_slab;ardoise;0.005;m;;;
@@ -441,7 +441,7 @@ deepslate_tile_wall;ardoise;0.01;m;;;
 deepslate_tiles;ardoise;0.01;m;;;
 desert_pyramid_map;carte au trésor;10;-;;;
 desert_village_map;carte au trésor;10;-;;;
-detector_rail;rails et wagonnets;0.1233;m;;;
+detector_rail;rails et wagonnets;0.1208;m;;;
 diamond;diamant;4;m;;;
 diamond_axe;diamant;12.01;m;;;
 diamond_block;diamant;36;m;;;
@@ -468,8 +468,8 @@ dragon_breath;dragon_breath;1.2;m;;;end
 dragon_egg;dragon_egg;150000;m;;;end
 dragon_head;tête;148.3;m;;;end
 dried_ghast;ghast;5.713;m;;;nether
-dried_kelp;culture;0.02563;m;;;
-dried_kelp_block;culture;0.2306;m;;;
+dried_kelp;culture;0.01812;m;;;
+dried_kelp_block;culture;0.1631;m;;;
 dripstone_block;spéléothème;0.01;m;;;
 dropper;redstone;0.17;m;;;
 dune_armor_trim_smithing_template;modèle de forge;30;m;Modèle de forge (dune);;
@@ -483,8 +483,8 @@ enchanted_book;livre enchanté;6;-;;;
 enchanted_book(tresor);livre enchanté;45;-;Livre enchanté (enchantement de trésor);;
 enchanted_golden_apple;pomme;334.1;m;;;
 enchanting_table;livre;8.516;m;;;
-end_crystal;ender;2.49;m;;;nether
-end_rod;pierre de l'End;0.0925;m;;;nether+end
+end_crystal;ender;2.438;m;;;nether
+end_rod;pierre de l'End;0.09062;m;;;nether+end
 end_stone;pierre de l'End;0.01;m;;;end
 end_stone_brick_slab;pierre de l'End;0.005;m;;;end
 end_stone_brick_stairs;pierre de l'End;0.01;m;;;end
@@ -514,7 +514,7 @@ eye_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (eye);;
 feather;feather;0.03906;m;;;
 fermented_spider_eye;fermented_spider_eye;0.1232;m;;;
 fern;herbes et lianes;0.02254;m;;;
-field_masoned_banner_pattern;motif de bannière;0.09563;m;Motif de bannière (field masoned);;
+field_masoned_banner_pattern;motif de bannière;0.03563;m;Motif de bannière (field masoned);;
 filled_map;carte;0.1406;-;;;
 fire_charge;poudre à canon;0.08783;m;;;nether
 fire_coral;corail;0.03;m;;;
@@ -524,14 +524,14 @@ firefly_bush;herbes et lianes;0.03;m;;;
 firework_rocket;poudre à canon;0.02637;m;;;
 firework_star;poudre à canon;0.07333;m;;;
 fishing_rod;fishing_rod;0.0755;m;;;
-fletching_table;fletching_table;0.07754;m;;;
-flint;gravier;0.02877;m;;;
-flint_and_steel;flint_and_steel;0.1288;m;;;
+fletching_table;fletching_table;0.04;m;;;
+flint;gravier;0.01;m;;;
+flint_and_steel;flint_and_steel;0.11;m;;;
 flow_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (flow);;
 flow_banner_pattern;motif de bannière;12.9;m;Motif de bannière (flow);;
 flow_pottery_sherd;tesson de poterie;5.713;m;;;
 flower_banner_pattern;motif de bannière;0.05547;m;Motif de bannière (flower);;
-flower_pot;briques;0.06;m;;;
+flower_pot;briques;0.015;m;;;
 flowering_azalea;herbes et lianes;0.01;m;;;
 flowering_azalea_leaves;herbes et lianes;0.01;m;;;
 friend_pottery_sherd;tesson de poterie;16.46;m;;;
@@ -539,9 +539,9 @@ furnace;pierre;0.08;m;;;
 furnace_minecart;rails et wagonnets;0.58;m;;;
 ghast_tear;ghast;1.7;m;;;nether
 gilded_blackstone;pierre noire;8.584;m;;;nether
-glass;verre;0.02;m;;;
-glass_bottle;verre;0.02;m;;;
-glass_pane;verre;0.0075;m;;;
+glass;verre;0.0125;m;;;
+glass_bottle;verre;0.0125;m;;;
+glass_pane;verre;0.004688;m;;;
 glistering_melon_slice;culture;0.3681;m;;;
 glow_berries;culture;0.03;m;;;
 glow_ink_sac;encre;0.07494;m;;;
@@ -553,7 +553,7 @@ goat_horn;corne;3;m;;;
 gold_block;or;3.6;m;;;
 gold_ingot;or;0.4;m;;;
 gold_nugget;or;0.04444;m;;;
-gold_ore;or;1.17;m;;;
+gold_ore;or;1.193;m;;;
 golden_apple;pomme;3.24;m;;;
 golden_axe;or;1.205;m;;;
 golden_boots;or;1.6;m;;;
@@ -586,36 +586,36 @@ gray_concrete_slab;béton;0.01958;m;;;
 gray_concrete_stairs;béton;0.03915;m;;;
 gray_cushion;coussin;0.01875;m;;;
 gray_dye;colorant;0.0332;m;;;
-gray_glazed_terracotta;terres cuites;0.02415;m;;;
-gray_harness;harnais;0.2597;m;;;
+gray_glazed_terracotta;terres cuites;0.01665;m;;;
+gray_harness;harnais;0.2447;m;;;
 gray_shulker_box;shulker;17.48;m;;;nether+end
-gray_stained_glass;verre;0.02415;m;;;
-gray_stained_glass_pane;verre;0.009056;m;;;
+gray_stained_glass;verre;0.01665;m;;;
+gray_stained_glass_pane;verre;0.006244;m;;;
 gray_terracotta;terres cuites;0.01415;m;;;
 gray_wool;laine;0.0125;m;;;
 gray_wool_slab;laine;0.00625;m;;;
 gray_wool_stairs;laine;0.0125;m;;;
 green_banner;bannière;0.0775;m;;;
 green_bed;lit;0.0525;m;;;
-green_bundle;sac;0.1256;m;;;
-green_candle;bougie;0.0865;m;;;
+green_bundle;sac;0.1181;m;;;
+green_candle;bougie;0.079;m;;;
 green_carpet;laine;0.008333;m;;;
-green_concrete;béton;0.03781;m;;;
-green_concrete_powder;béton;0.01281;m;;;
-green_concrete_slab;béton;0.01891;m;;;
-green_concrete_stairs;béton;0.03781;m;;;
+green_concrete;béton;0.03688;m;;;
+green_concrete_powder;béton;0.01188;m;;;
+green_concrete_slab;béton;0.01844;m;;;
+green_concrete_stairs;béton;0.03688;m;;;
 green_cushion;coussin;0.01875;m;;;
-green_dye;colorant;0.0225;m;;;
-green_glazed_terracotta;terres cuites;0.02281;m;;;
-green_harness;harnais;0.2597;m;;;
-green_shulker_box;shulker;17.47;m;;;nether+end
-green_stained_glass;verre;0.02281;m;;;
-green_stained_glass_pane;verre;0.008555;m;;;
-green_terracotta;terres cuites;0.01281;m;;;
+green_dye;colorant;0.015;m;;;
+green_glazed_terracotta;terres cuites;0.01438;m;;;
+green_harness;harnais;0.2447;m;;;
+green_shulker_box;shulker;17.46;m;;;nether+end
+green_stained_glass;verre;0.01438;m;;;
+green_stained_glass_pane;verre;0.005391;m;;;
+green_terracotta;terres cuites;0.01188;m;;;
 green_wool;laine;0.0125;m;;;
 green_wool_slab;laine;0.00625;m;;;
 green_wool_stairs;laine;0.0125;m;;;
-grindstone;grindstone;0.025;m;;;
+grindstone;grindstone;0.02125;m;;;
 gunpowder;poudre à canon;0.0635;m;;;
 guster_banner_pattern;motif de bannière;12.9;m;Motif de bannière (guster);;
 guster_pottery_sherd;tesson de poterie;5.713;m;;;
@@ -627,7 +627,7 @@ heartbreak_pottery_sherd;tesson de poterie;16.46;m;;;
 heavy_core;masse;385.6;m;;;
 heavy_weighted_pressure_plate;redstone;0.2;m;;;
 honey_block;miel;0.12;m;;;
-honey_bottle;miel;0.05;m;;;
+honey_bottle;miel;0.0425;m;;;
 honeycomb;miel;0.03;m;;;
 honeycomb_block;miel;0.12;m;;;
 hopper;redstone;0.54;m;;;
@@ -653,7 +653,7 @@ iron_ingot;fer;0.1;m;;;
 iron_leggings;fer;0.7;m;;;
 iron_nautilus_armor;fer;4.475;m;;;
 iron_nugget;fer;0.01111;m;;;
-iron_ore;fer;0.27;m;;;
+iron_ore;fer;0.2925;m;;;
 iron_pickaxe;fer;0.305;m;;;
 iron_shovel;fer;0.105;m;;;
 iron_spear;fer;0.105;m;;;
@@ -700,7 +700,7 @@ leather_horse_armor;cuir;0.4835;m;;;
 leather_leggings;cuir;0.4835;m;;;
 lectern;livre;0.3879;m;;;
 lever;redstone;0.0125;m;;;
-light;light;0.175;m;;;nether
+light;light;0.1675;m;;;nether
 light_blue_banner;bannière;0.0775;m;;;
 light_blue_bed;lit;0.0525;m;;;
 light_blue_bundle;sac;0.1363;m;;;
@@ -712,11 +712,11 @@ light_blue_concrete_slab;béton;0.01958;m;;;
 light_blue_concrete_stairs;béton;0.03915;m;;;
 light_blue_cushion;coussin;0.01875;m;;;
 light_blue_dye;colorant;0.0332;m;;;
-light_blue_glazed_terracotta;terres cuites;0.02415;m;;;
-light_blue_harness;harnais;0.2597;m;;;
+light_blue_glazed_terracotta;terres cuites;0.01665;m;;;
+light_blue_harness;harnais;0.2447;m;;;
 light_blue_shulker_box;shulker;17.48;m;;;nether+end
-light_blue_stained_glass;verre;0.02415;m;;;
-light_blue_stained_glass_pane;verre;0.009056;m;;;
+light_blue_stained_glass;verre;0.01665;m;;;
+light_blue_stained_glass_pane;verre;0.006244;m;;;
 light_blue_terracotta;terres cuites;0.01415;m;;;
 light_blue_wool;laine;0.0125;m;;;
 light_blue_wool_slab;laine;0.00625;m;;;
@@ -732,11 +732,11 @@ light_gray_concrete_slab;béton;0.01958;m;;;
 light_gray_concrete_stairs;béton;0.03915;m;;;
 light_gray_cushion;coussin;0.01875;m;;;
 light_gray_dye;colorant;0.0332;m;;;
-light_gray_glazed_terracotta;terres cuites;0.02415;m;;;
-light_gray_harness;harnais;0.2597;m;;;
+light_gray_glazed_terracotta;terres cuites;0.01665;m;;;
+light_gray_harness;harnais;0.2447;m;;;
 light_gray_shulker_box;shulker;17.48;m;;;nether+end
-light_gray_stained_glass;verre;0.02415;m;;;
-light_gray_stained_glass_pane;verre;0.009056;m;;;
+light_gray_stained_glass;verre;0.01665;m;;;
+light_gray_stained_glass_pane;verre;0.006244;m;;;
 light_gray_terracotta;terres cuites;0.01415;m;;;
 light_gray_wool;laine;0.0125;m;;;
 light_gray_wool_slab;laine;0.00625;m;;;
@@ -757,17 +757,17 @@ lime_concrete_slab;béton;0.01958;m;;;
 lime_concrete_stairs;béton;0.03915;m;;;
 lime_cushion;coussin;0.01875;m;;;
 lime_dye;colorant;0.0332;m;;;
-lime_glazed_terracotta;terres cuites;0.02415;m;;;
-lime_harness;harnais;0.2597;m;;;
+lime_glazed_terracotta;terres cuites;0.01665;m;;;
+lime_harness;harnais;0.2447;m;;;
 lime_shulker_box;shulker;17.48;m;;;nether+end
-lime_stained_glass;verre;0.02415;m;;;
-lime_stained_glass_pane;verre;0.009056;m;;;
+lime_stained_glass;verre;0.01665;m;;;
+lime_stained_glass_pane;verre;0.006244;m;;;
 lime_terracotta;terres cuites;0.01415;m;;;
 lime_wool;laine;0.0125;m;;;
 lime_wool_slab;laine;0.00625;m;;;
 lime_wool_stairs;laine;0.0125;m;;;
 lingering_potion;potion;0.9212;-;;;nether+end
-lodestone;lodestone;0.26;m;;;
+lodestone;lodestone;0.2;m;;;
 loom;loom;0.078;m;;;
 mace;masse;385.9;m;;;
 magenta_banner;bannière;0.0775;m;;;
@@ -781,11 +781,11 @@ magenta_concrete_slab;béton;0.01958;m;;;
 magenta_concrete_stairs;béton;0.03915;m;;;
 magenta_cushion;coussin;0.01875;m;;;
 magenta_dye;colorant;0.0332;m;;;
-magenta_glazed_terracotta;terres cuites;0.02415;m;;;
-magenta_harness;harnais;0.2597;m;;;
+magenta_glazed_terracotta;terres cuites;0.01665;m;;;
+magenta_harness;harnais;0.2447;m;;;
 magenta_shulker_box;shulker;17.48;m;;;nether+end
-magenta_stained_glass;verre;0.02415;m;;;
-magenta_stained_glass_pane;verre;0.009056;m;;;
+magenta_stained_glass;verre;0.01665;m;;;
+magenta_stained_glass_pane;verre;0.006244;m;;;
 magenta_terracotta;terres cuites;0.01415;m;;;
 magenta_wool;laine;0.0125;m;;;
 magenta_wool_slab;laine;0.00625;m;;;
@@ -826,10 +826,10 @@ mossy_cobblestone;pierre;0.04984;m;;;
 mossy_cobblestone_slab;pierre;0.02492;m;;;
 mossy_cobblestone_stairs;pierre;0.04984;m;;;
 mossy_cobblestone_wall;pierre;0.04984;m;;;
-mossy_stone_brick_slab;pierre;0.02992;m;;;
-mossy_stone_brick_stairs;pierre;0.05984;m;;;
-mossy_stone_brick_wall;pierre;0.05984;m;;;
-mossy_stone_bricks;pierre;0.05984;m;;;
+mossy_stone_brick_slab;pierre;0.02617;m;;;
+mossy_stone_brick_stairs;pierre;0.05234;m;;;
+mossy_stone_brick_wall;pierre;0.05234;m;;;
+mossy_stone_bricks;pierre;0.05234;m;;;
 mourner_pottery_sherd;tesson de poterie;16.46;m;;;
 mud;boue;0.01;m;;;
 mud_brick_slab;boue;0.02941;m;;;
@@ -865,33 +865,33 @@ mutton;viande;0.03;m;;;
 mycelium;terres;0.02;m;;;
 name_tag;name_tag;0.01729;m;;;
 nautilus_shell;mer;0.6221;m;;;
-nether_brick;briques du Nether;0.018;m;;;nether
-nether_brick_fence;briques du Nether;0.054;m;;;nether
-nether_brick_slab;briques du Nether;0.036;m;;;nether
-nether_brick_stairs;briques du Nether;0.072;m;;;nether
-nether_brick_wall;briques du Nether;0.072;m;;;nether
-nether_bricks;briques du Nether;0.072;m;;;nether
+nether_brick;briques du Nether;0.0105;m;;;nether
+nether_brick_fence;briques du Nether;0.0315;m;;;nether
+nether_brick_slab;briques du Nether;0.021;m;;;nether
+nether_brick_stairs;briques du Nether;0.042;m;;;nether
+nether_brick_wall;briques du Nether;0.042;m;;;nether
+nether_bricks;briques du Nether;0.042;m;;;nether
 nether_gold_ore;or;0.4;m;;;nether
 nether_quartz_ore;quartz;0.065;m;;;nether
 nether_sprouts;herbes et lianes;0.015;m;;;nether
 nether_star;étoile du Nether;13097;m;;;nether
 nether_wart;verrue;0.07266;m;;;nether
 nether_wart_block;verrue;0.015;m;;;nether
-netherite_axe;netherite;201.7;m;;;nether
-netherite_block;netherite;1455;m;;;nether
+netherite_axe;netherite;201.6;m;;;nether
+netherite_block;netherite;1454;m;;;nether
 netherite_boots;netherite;205.6;m;;;nether
 netherite_chestplate;netherite;221.6;m;;;nether
 netherite_helmet;netherite;209.6;m;;;nether
-netherite_hoe;netherite;197.7;m;;;nether
+netherite_hoe;netherite;197.6;m;;;nether
 netherite_horse_armor;netherite;200.6;m;;;nether
 netherite_ingot;netherite;161.6;m;;;nether
 netherite_leggings;netherite;217.6;m;;;nether
 netherite_nautilus_armor;netherite;212.4;m;;;nether
-netherite_pickaxe;netherite;201.7;m;;;nether
-netherite_scrap;netherite;40.01;m;;;nether
-netherite_shovel;netherite;193.7;m;;;nether
-netherite_spear;netherite;193.7;m;;;nether
-netherite_sword;netherite;197.7;m;;;nether
+netherite_pickaxe;netherite;201.6;m;;;nether
+netherite_scrap;netherite;40;m;;;nether
+netherite_shovel;netherite;193.6;m;;;nether
+netherite_spear;netherite;193.6;m;;;nether
+netherite_sword;netherite;197.6;m;;;nether
 netherite_upgrade_smithing_template;modèle de forge;28.01;m;Modèle de forge (netherite upgrade);;nether
 netherrack;netherrack;0.008;m;;;nether
 note_block;redstone;0.14;m;;;
@@ -931,12 +931,12 @@ orange_concrete_slab;béton;0.01958;m;;;
 orange_concrete_stairs;béton;0.03915;m;;;
 orange_cushion;coussin;0.01875;m;;;
 orange_dye;colorant;0.0332;m;;;
-orange_glazed_terracotta;terres cuites;0.02415;m;;;
-orange_harness;harnais;0.2597;m;;;
+orange_glazed_terracotta;terres cuites;0.01665;m;;;
+orange_harness;harnais;0.2447;m;;;
 orange_poplar_leaves;peuplier;0.02;m;;;
 orange_shulker_box;shulker;17.48;m;;;nether+end
-orange_stained_glass;verre;0.02415;m;;;
-orange_stained_glass_pane;verre;0.009056;m;;;
+orange_stained_glass;verre;0.01665;m;;;
+orange_stained_glass_pane;verre;0.006244;m;;;
 orange_terracotta;terres cuites;0.01415;m;;;
 orange_tulip;fleur;0.03984;m;;;
 orange_wool;laine;0.0125;m;;;
@@ -999,12 +999,12 @@ pink_concrete_slab;béton;0.01958;m;;;
 pink_concrete_stairs;béton;0.03915;m;;;
 pink_cushion;coussin;0.01875;m;;;
 pink_dye;colorant;0.0332;m;;;
-pink_glazed_terracotta;terres cuites;0.02415;m;;;
-pink_harness;harnais;0.2597;m;;;
+pink_glazed_terracotta;terres cuites;0.01665;m;;;
+pink_harness;harnais;0.2447;m;;;
 pink_petals;fleur;0.05986;m;;;
 pink_shulker_box;shulker;17.48;m;;;nether+end
-pink_stained_glass;verre;0.02415;m;;;
-pink_stained_glass_pane;verre;0.009056;m;;;
+pink_stained_glass;verre;0.01665;m;;;
+pink_stained_glass_pane;verre;0.006244;m;;;
 pink_terracotta;terres cuites;0.01415;m;;;
 pink_tulip;fleur;0.03984;m;;;
 pink_wool;laine;0.0125;m;;;
@@ -1071,7 +1071,7 @@ poplar_slab;peuplier;0.005;m;;;
 poplar_stairs;peuplier;0.015;m;;;
 poplar_trapdoor;peuplier;0.03;m;;;
 poplar_wood;peuplier;0.05333;m;;;
-popped_chorus_fruit;chorus;0.07;m;;;end
+popped_chorus_fruit;chorus;0.0625;m;;;end
 poppy;fleur;0.02037;m;;;
 porkchop;viande;0.03;m;;;
 potato;culture;0.0293;m;;;
@@ -1097,7 +1097,7 @@ potion(degats);potion;6;potion:HARMING;Potion de dégâts;1;nether
 potion(maitre_tortue);potion;6;potion:TURTLE_MASTER;Potion du Maître Tortue;1;nether
 potion(suintement);potion;6;potion:OOZING;Potion de suintement;1;nether
 potion(chance);potion;1337;potion:LUCK;Potion de chance;1;
-powder_snow_bucket;neige;0.5553;m;;;
+powder_snow_bucket;neige;0.34;m;;;
 powered_rail;rails et wagonnets;0.4171;m;;;
 prismarine;prismarine;0.036;m;;;
 prismarine_brick_slab;prismarine;0.0405;m;;;
@@ -1125,19 +1125,19 @@ purple_concrete_slab;béton;0.01958;m;;;
 purple_concrete_stairs;béton;0.03915;m;;;
 purple_cushion;coussin;0.01875;m;;;
 purple_dye;colorant;0.0332;m;;;
-purple_glazed_terracotta;terres cuites;0.02415;m;;;
-purple_harness;harnais;0.2597;m;;;
+purple_glazed_terracotta;terres cuites;0.01665;m;;;
+purple_harness;harnais;0.2447;m;;;
 purple_shulker_box;shulker;17.48;m;;;nether+end
-purple_stained_glass;verre;0.02415;m;;;
-purple_stained_glass_pane;verre;0.009056;m;;;
+purple_stained_glass;verre;0.01665;m;;;
+purple_stained_glass_pane;verre;0.006244;m;;;
 purple_terracotta;terres cuites;0.01415;m;;;
 purple_wool;laine;0.0125;m;;;
 purple_wool_slab;laine;0.00625;m;;;
 purple_wool_stairs;laine;0.0125;m;;;
-purpur_block;purpur;0.07;m;;;end
-purpur_pillar;purpur;0.07;m;;;end
-purpur_slab;purpur;0.035;m;;;end
-purpur_stairs;purpur;0.07;m;;;end
+purpur_block;purpur;0.0625;m;;;end
+purpur_pillar;purpur;0.0625;m;;;end
+purpur_slab;purpur;0.03125;m;;;end
+purpur_stairs;purpur;0.0625;m;;;end
 quartz;quartz;0.02;m;;;nether
 quartz_block;quartz;0.08;m;;;nether
 quartz_bricks;quartz;0.08;m;;;nether
@@ -1147,15 +1147,15 @@ quartz_stairs;quartz;0.08;m;;;nether
 rabbit;viande;0.03;m;;;
 rabbit_foot;rabbit_foot;0.15;m;;;
 rabbit_hide;cuir;0.03984;m;;;
-rabbit_stew;viande;0.1709;m;;;
+rabbit_stew;viande;0.1559;m;;;
 rail;rails et wagonnets;0.03766;m;;;
 raiser_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (raiser);;
 raw_copper;cuivre;0.015;m;;;
 raw_copper_block;cuivre;0.135;m;;;
-raw_gold;or;0.39;m;;;
-raw_gold_block;or;3.51;m;;;
-raw_iron;fer;0.09;m;;;
-raw_iron_block;fer;0.81;m;;;
+raw_gold;or;0.3975;m;;;
+raw_gold_block;or;3.578;m;;;
+raw_iron;fer;0.0975;m;;;
+raw_iron_block;fer;0.8775;m;;;
 recovery_compass;sculk;232.5;m;;;
 red_banner;bannière;0.0775;m;;;
 red_bed;lit;0.0525;m;;;
@@ -1168,14 +1168,14 @@ red_concrete_slab;béton;0.01888;m;;;
 red_concrete_stairs;béton;0.03776;m;;;
 red_cushion;coussin;0.01875;m;;;
 red_dye;colorant;0.0221;m;;;
-red_glazed_terracotta;terres cuites;0.02276;m;;;
-red_harness;harnais;0.2597;m;;;
+red_glazed_terracotta;terres cuites;0.01526;m;;;
+red_harness;harnais;0.2447;m;;;
 red_mushroom;champignon;0.05859;m;;;
 red_mushroom_block;champignon;0.015;m;;;
-red_nether_brick_slab;briques du Nether;0.033;m;;;nether
-red_nether_brick_stairs;briques du Nether;0.066;m;;;nether
-red_nether_brick_wall;briques du Nether;0.066;m;;;nether
-red_nether_bricks;briques du Nether;0.066;m;;;nether
+red_nether_brick_slab;briques du Nether;0.0255;m;;;nether
+red_nether_brick_stairs;briques du Nether;0.051;m;;;nether
+red_nether_brick_wall;briques du Nether;0.051;m;;;nether
+red_nether_bricks;briques du Nether;0.051;m;;;nether
 red_poplar_leaves;peuplier;0.02;m;;;
 red_sand;sable;0.01;m;;;
 red_sandstone;grès rouge;0.04;m;;;
@@ -1184,8 +1184,8 @@ red_sandstone_stairs;grès rouge;0.04;m;;;
 red_sandstone_wall;grès rouge;0.04;m;;;
 red_shrub;herbes et lianes;0.05986;m;;;
 red_shulker_box;shulker;17.47;m;;;nether+end
-red_stained_glass;verre;0.02276;m;;;
-red_stained_glass_pane;verre;0.008536;m;;;
+red_stained_glass;verre;0.01526;m;;;
+red_stained_glass_pane;verre;0.005723;m;;;
 red_terracotta;terres cuites;0.01276;m;;;
 red_tulip;fleur;0.03984;m;;;
 red_wool;laine;0.0125;m;;;
@@ -1196,20 +1196,20 @@ redstone_block;redstone;0.9;m;;;
 redstone_lamp;redstone;0.48;m;;;nether
 redstone_ore;redstone;0.53;m;;;
 redstone_torch;redstone;0.1025;m;;;
-reinforced_deepslate;ardoise;0.217;m;;;
-repeater;redstone;0.365;m;;;
-resin_block;résine;1.216;m;;;
-resin_brick;résine;0.1451;m;;;
-resin_brick_slab;résine;0.2902;m;;;
-resin_brick_stairs;résine;0.5804;m;;;
-resin_brick_wall;résine;0.5804;m;;;
-resin_bricks;résine;0.5804;m;;;
-resin_clump;résine;0.1351;m;;;
+reinforced_deepslate;ardoise;0.202;m;;;
+repeater;redstone;0.3425;m;;;
+resin_block;résine;0.27;m;;;
+resin_brick;résine;0.0325;m;;;
+resin_brick_slab;résine;0.065;m;;;
+resin_brick_stairs;résine;0.13;m;;;
+resin_brick_wall;résine;0.13;m;;;
+resin_bricks;résine;0.13;m;;;
+resin_clump;résine;0.03;m;;;
 respawn_anchor;obsidienne;2.115;m;;;nether
 rib_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (rib);;nether
 rooted_dirt;terres;0.015;m;;;
 rose_bush;fleur;0.015;m;;;
-rotten_flesh;viande;0.03906;m;;;
+rotten_flesh;viande;0.01953;m;;;
 saddle;saddle;0.3072;m;;;
 salmon;poisson;0.04322;m;;;
 salmon_bucket;seau;0.3313;m;;;
@@ -1251,35 +1251,35 @@ small_amethyst_bud;améthyste;0.05;m;;;
 small_dripleaf;herbes et lianes;0.1725;m;;;
 smithing_table;smithing_table;0.22;m;;;
 smoker;smoker;0.16;m;;;
-smooth_basalt;basalte;0.02;m;;;nether
-smooth_quartz;quartz;0.09;m;;;nether
-smooth_quartz_slab;quartz;0.045;m;;;nether
-smooth_quartz_stairs;quartz;0.09;m;;;nether
-smooth_red_sandstone;grès rouge;0.05;m;;;
-smooth_red_sandstone_slab;grès rouge;0.025;m;;;
-smooth_red_sandstone_stairs;grès rouge;0.05;m;;;
-smooth_sandstone;grès;0.05;m;;;
-smooth_sandstone_slab;grès;0.025;m;;;
-smooth_sandstone_stairs;grès;0.05;m;;;
-smooth_stone;pierre;0.03;m;;;
-smooth_stone_slab;pierre;0.015;m;;;
+smooth_basalt;basalte;0.0125;m;;;nether
+smooth_quartz;quartz;0.0825;m;;;nether
+smooth_quartz_slab;quartz;0.04125;m;;;nether
+smooth_quartz_stairs;quartz;0.0825;m;;;nether
+smooth_red_sandstone;grès rouge;0.0425;m;;;
+smooth_red_sandstone_slab;grès rouge;0.02125;m;;;
+smooth_red_sandstone_stairs;grès rouge;0.0425;m;;;
+smooth_sandstone;grès;0.0425;m;;;
+smooth_sandstone_slab;grès;0.02125;m;;;
+smooth_sandstone_stairs;grès;0.0425;m;;;
+smooth_stone;pierre;0.015;m;;;
+smooth_stone_slab;pierre;0.0075;m;;;
 sniffer_egg;sniffer_egg;0.3;m;;;
 snort_pottery_sherd;tesson de poterie;16.46;m;;;
 snout_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (snout);;nether
-snow;neige;0.03192;m;;;
-snow_block;neige;0.06383;m;;;
-snowball;neige;0.01596;m;;;
+snow;neige;0.005;m;;;
+snow_block;neige;0.01;m;;;
+snowball;neige;0.0025;m;;;
 snowy_village_map;carte au trésor;10;-;;;
 soul_campfire;torche;0.0775;m;;;nether
 soul_lantern;torche;0.1045;m;;;nether
 soul_sand;sable;0.01;m;;;nether
 soul_soil;terres;0.01;m;;;nether
 soul_torch;torche;0.01562;m;;;nether
-spectral_arrow;flèche;0.04879;m;;;nether
+spectral_arrow;flèche;0.04645;m;;;nether
 spider_eye;spider_eye;0.049;m;;;
 spire_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (spire);;end
 splash_potion;potion;0.5212;-;;;nether
-sponge;éponge;10.74;m;;;
+sponge;éponge;10.73;m;;;
 spore_blossom;fleur;0.4223;m;;;
 spruce_boat;sapin;0.025;m;;;
 spruce_button;sapin;0.005;m;;;
@@ -1302,22 +1302,22 @@ spruce_wood;sapin;0.02667;m;;;
 spyglass;améthyste;0.08;m;;;
 stick;stick;0.0025;m;;;
 sticky_piston;redstone;0.3235;m;;;
-stone;pierre;0.02;m;;;
+stone;pierre;0.0125;m;;;
 stone_axe;pierre;0.035;m;;;
-stone_brick_slab;pierre;0.01;m;;;
-stone_brick_stairs;pierre;0.02;m;;;
-stone_brick_wall;pierre;0.02;m;;;
-stone_bricks;pierre;0.02;m;;;
-stone_button;pierre;0.02;m;;;
+stone_brick_slab;pierre;0.00625;m;;;
+stone_brick_stairs;pierre;0.0125;m;;;
+stone_brick_wall;pierre;0.0125;m;;;
+stone_bricks;pierre;0.0125;m;;;
+stone_button;pierre;0.0125;m;;;
 stone_hoe;pierre;0.025;m;;;
 stone_pickaxe;pierre;0.035;m;;;
-stone_pressure_plate;pierre;0.04;m;;;
+stone_pressure_plate;pierre;0.025;m;;;
 stone_shovel;pierre;0.015;m;;;
-stone_slab;pierre;0.01;m;;;
+stone_slab;pierre;0.00625;m;;;
 stone_spear;pierre;0.015;m;;;
-stone_stairs;pierre;0.02;m;;;
+stone_stairs;pierre;0.0125;m;;;
 stone_sword;pierre;0.0225;m;;;
-stonecutter;pierre;0.16;m;;;
+stonecutter;pierre;0.1375;m;;;
 straw_bed;lit;0.3296;m;;;
 string;ficelle;0.034;m;;;
 stripped_acacia_log;acacia;0.0297;m;;;
@@ -1368,8 +1368,8 @@ tall_grass;herbes et lianes;0.02254;m;;;
 target;redstone;0.8395;m;;;
 terracotta;terres cuites;0.01;m;;;
 tide_armor_trim_smithing_template;modèle de forge;50;m;Modèle de forge (tide);;
-tinted_glass;verre;0.12;m;;;
-tipped_arrow;potion;0.1327;-;;;nether+end
+tinted_glass;verre;0.1125;m;;;
+tipped_arrow;potion;0.128;-;;;nether+end
 tnt;poudre à canon;0.3575;m;;;
 tnt_minecart;rails et wagonnets;0.8575;m;;;
 torch;torche;0.01313;m;;;
@@ -1397,7 +1397,7 @@ turtle_egg;tortue;0.15;m;;;
 turtle_helmet;tortue;1.654;m;;;
 turtle_scute;tortue;0.3308;m;;;
 twisting_vines;herbes et lianes;0.015;m;;;nether
-verdant_froglight;grenouille;0.02563;m;;;
+verdant_froglight;grenouille;0.02375;m;;;
 vex_armor_trim_smithing_template;modèle de forge;45;m;Modèle de forge (vex);;
 vine;herbes et lianes;0.03984;m;;;
 ward_armor_trim_smithing_template;modèle de forge;50;m;Modèle de forge (ward);;
@@ -1513,11 +1513,11 @@ white_concrete_slab;béton;0.01811;m;;;
 white_concrete_stairs;béton;0.03623;m;;;
 white_cushion;coussin;0.01875;m;;;
 white_dye;colorant;0.009833;m;;;
-white_glazed_terracotta;terres cuites;0.02123;m;;;
-white_harness;harnais;0.2597;m;;;
+white_glazed_terracotta;terres cuites;0.01373;m;;;
+white_harness;harnais;0.2447;m;;;
 white_shulker_box;shulker;17.46;m;;;nether+end
-white_stained_glass;verre;0.02123;m;;;
-white_stained_glass_pane;verre;0.007961;m;;;
+white_stained_glass;verre;0.01373;m;;;
+white_stained_glass_pane;verre;0.005148;m;;;
 white_terracotta;terres cuites;0.01123;m;;;
 white_tulip;fleur;0.03984;m;;;
 white_wool;laine;0.0125;m;;;
@@ -1549,12 +1549,12 @@ yellow_concrete_slab;béton;0.01888;m;;;
 yellow_concrete_stairs;béton;0.03776;m;;;
 yellow_cushion;coussin;0.01875;m;;;
 yellow_dye;colorant;0.0221;m;;;
-yellow_glazed_terracotta;terres cuites;0.02276;m;;;
-yellow_harness;harnais;0.2597;m;;;
+yellow_glazed_terracotta;terres cuites;0.01526;m;;;
+yellow_harness;harnais;0.2447;m;;;
 yellow_poplar_leaves;peuplier;0.02;m;;;
 yellow_shulker_box;shulker;17.47;m;;;nether+end
-yellow_stained_glass;verre;0.02276;m;;;
-yellow_stained_glass_pane;verre;0.008536;m;;;
+yellow_stained_glass;verre;0.01526;m;;;
+yellow_stained_glass_pane;verre;0.005723;m;;;
 yellow_terracotta;terres cuites;0.01276;m;;;
 yellow_wool;laine;0.0125;m;;;
 yellow_wool_slab;laine;0.00625;m;;;
@@ -1563,9 +1563,9 @@ zombie_head;tête;10;m;;;
 estomac_gardien;estomac_gardien;154.9;pdc:ks_estomacgardien:estomac:b;Estomac du gardien;1;
 fragment_spawner;spawner;128;pdc:ks_itemsimple:objet:s:fragment_spawner;Fragment de Spawner;1;
 coeur_spawner;spawner;10235;pdc:ks_itemsimple:objet:s:coeur_spawner;Cœur de Spawner;1;
-cle_de_l_end;cle_de_l_end;5064;pdc:ks_ec_extension:cle_de_l_end:b;Clé de l'End;1;nether
-bedrock_breaker;bedrock_breaker;7.008;pdc:ks_bedrockbreaker:bedrock_breaker:b;Bedrock Breaker;1;nether
-changeur_biome;changeur_biome;513;pdc:ks_biomechanger:changeur_biome:b;Changeur de Biome;1;
+cle_de_l_end;cle_de_l_end;5063;pdc:ks_ec_extension:cle_de_l_end:b;Clé de l'End;1;nether
+bedrock_breaker;bedrock_breaker;6.955;pdc:ks_bedrockbreaker:bedrock_breaker:b;Bedrock Breaker;1;nether
+changeur_biome;changeur_biome;512.7;pdc:ks_biomechanger:changeur_biome:b;Changeur de Biome;1;
 tete_allay;tête;50;pdc:ks_decapitator:tete:s:allay;Tête d'allay;64;
 tete_chauve_souris;tête;10;pdc:ks_decapitator:tete:s:chauve_souris;Tête de chauve-souris;64;
 tete_blaze;tête;10;pdc:ks_decapitator:tete:s:blaze;Tête de blaze;64;nether
@@ -1913,7 +1913,7 @@ elixir_plume;élixir;31;pdc:ks_elixir:elixir:s:plume;Élixir de Plume;1;end
 elixir_phenix;élixir;76.37;pdc:ks_elixir:elixir:s:phenix;Élixir de Phénix;1;nether
 elixir_fantome;élixir;63;pdc:ks_elixir:elixir:s:fantome;Élixir du Fantôme;1;
 elixir_titan;élixir;78.6;pdc:ks_elixir:elixir:s:titan;Élixir de Titan;1;nether
-elixir_vent;élixir;73.59;pdc:ks_elixir:elixir:s:vent;Élixir du Vent;1;
+elixir_vent;élixir;73.57;pdc:ks_elixir:elixir:s:vent;Élixir du Vent;1;
 elixir_rebond;élixir;61.77;pdc:ks_elixir:elixir:s:rebond;Élixir de Rebond;1;
 elixir_fortune;élixir;19699;pdc:ks_elixir:elixir:s:fortune;Élixir de Fortune;1;
 jeton_tp;jeton;16;-;Jeton de téléportation;;

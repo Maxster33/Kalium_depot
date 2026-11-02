@@ -512,13 +512,14 @@ final class Rachats implements CommandExecutor {
     private Offre offre(Entree e, ThreadLocalRandom hasard) {
         double ecart = ecart();
         double brut = e.prix() * (1 + (hasard.nextDouble() * 2 - 1) * ecart);
-        double unite = brut >= 1 ? Math.rint(brut) : brut;
-        int g = gamme(unite);
+        int g = gamme(brut);
         if (g >= LOTS.length || e.pile() <= 1) {
+            double unite = brut >= 1 ? Math.rint(brut) : brut;
             return new Offre(e, unite, 1, Math.max(1, Math.round(unite)), e.prix());
         }
-        int quantite = (int) Math.max(1, Math.floor(LOTS[g] / unite + 1e-9));
-        return new Offre(e, unite, quantite, Math.max(1, Math.round(quantite * unite)), e.prix());
+        // 1.13.5 : lot calculé sur le prix non arrondi (arrondi à l'unité, un prix de 1,3 passait à 1 ou 2 : ± 50 %)
+        int quantite = (int) Math.max(1, Math.floor(LOTS[g] / brut + 1e-9));
+        return new Offre(e, brut, quantite, Math.max(1, Math.round(quantite * brut)), e.prix());
     }
 
     // ------------------------------------------------------------------ quota
