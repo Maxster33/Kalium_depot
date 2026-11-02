@@ -3,6 +3,36 @@
 Plugin de Kixster : `/contrat`, contrats entre joueurs. Cahier des charges : demande de LeKiwi06 du 27/10/2026,
 gardé en local (`Cahiers_KaLium/KS_Contrats.md`), copié dans `CAHIER_DES_CHARGES.md` au déploiement.
 
+## 1.1.0 - demandes publiques (02/11/2026, LeKiwi06)
+
+Demande : partie 9 du cahier local `Blocs_Cultures_Objets.md` (boîte aux lettres), choix de LeKiwi06 du 02/11/2026 :
+« contrat public que n'importe qui peut remplir ; pas de réservation ; validé automatiquement quand on dépose l'objet
+dans la boîte aux lettres ; le premier qui livre est payé » ; récompense bloquée dès la création, rendue si le demandeur
+annule ; livrée en une seule fois ; bouton dans /contrat ; récompense en points ou en objets ; « maximum 3 par joueurs
+actifs, on peut mettre une date d'expiration, mais elle est facultative ».
+
+- Bouton « Demandes publiques » (panneau suspendu) dans « Mes contrats » (barre du bas, case du milieu) : liste des
+  demandes ouvertes (les plus récentes d'abord), « Créer une demande », « Mes demandes (n/3) ».
+- Créer : 1. objets demandés (5 au plus : clic sur un objet de l'inventaire = cet objet précis, usure non comptée ;
+  ou nom écrit = n'importe quel objet de ce type ; quantité), 2. récompense (points, et jusqu'à 5 piles d'objets
+  choisies dans l'inventaire), 3. précision (facultatif), 4. expiration (aucune, 1, 3, 7, 14 ou 30 jours), « Publier »
+  (confirmation). À la publication : points retirés du solde, objets retirés de l'inventaire (vérifiés d'abord).
+  Brouillon gardé en mémoire (perdu au redémarrage, rien n'est retenu avant la publication).
+- Mes demandes : ouvertes (clic : annuler, récompense rendue), livrées, annulées, expirées.
+- Livraison : **seulement depuis une boîte aux lettres** (KS_Courrier 1.0.0, service `DemandesPubliques`) ; tout en une
+  fois ; les objets sont pris dans l'inventaire du livreur et déposés dans la boîte du demandeur ; points crédités au
+  livreur, objets de récompense déposés dans sa boîte (service `Livraison` de KS_Courrier). Pas sa propre demande.
+- Expiration (vérifiée toutes les 30 s) et annulation : points rendus au solde, objets déposés dans la boîte du
+  demandeur ; message (tout de suite ou à la connexion).
+- Monde de test : demandes du moi de test, séparées de la survie.
+- Données : `plugins/KS_Contrats/demandes.yml`, enregistré à chaque changement. Rien n'est effacé.
+- Nouveau paquet `fr.kalium.contrats.api` (`DemandesPubliques`, `Livraison`).
+
+Limites : sans KS_Courrier, on peut créer une demande avec des points, mais personne ne peut la livrer, et une
+récompense en objets est refusée. Pas de recherche de nom pour les objets custom (comme les biens des contrats).
+
+**Compilé le 02/11/2026, non déployé, non testé en jeu.** À déployer avec KS_Courrier 1.0.0.
+
 ## 1.0.0 - contrats, garanties, litiges, livraisons par /echange (27/10/2026, LeKiwi06)
 
 Demande : « peux-tu créer le /contrat sur Kixster (il sert à avoir une trace et qu'un admin puisse trancher en cas de

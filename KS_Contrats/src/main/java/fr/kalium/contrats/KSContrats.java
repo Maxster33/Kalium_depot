@@ -1,5 +1,6 @@
 package fr.kalium.contrats;
 
+import fr.kalium.contrats.api.DemandesPubliques;
 import fr.kalium.economy.api.ContratsEchange;
 import fr.kalium.menu.api.Gui;
 import fr.kalium.menu.api.Lang;
@@ -25,6 +26,7 @@ import java.util.List;
  * - Message à la connexion quand un contrat demande une réponse (et messages reçus hors ligne).
  * - Livraisons par /echange (KS_Economy 1.12.0) : service ContratsEchange.
  * - Monde de test : contrats et garanties du « moi de test » (CompteTest), séparés de la survie.
+ * - 1.1.0 : demandes publiques (Demandes, MenusDemandes), livrées depuis une boîte aux lettres (KS_Courrier).
  */
 public final class KSContrats extends JavaPlugin implements Listener, TabExecutor {
 
@@ -32,6 +34,8 @@ public final class KSContrats extends JavaPlugin implements Listener, TabExecuto
     private Gui gui;
     private Registre registre;
     private Menus menus;
+    private Demandes demandes;
+    private MenusDemandes menusDemandes;
 
     @Override
     public void onEnable() {
@@ -39,9 +43,14 @@ public final class KSContrats extends JavaPlugin implements Listener, TabExecuto
         gui = new Gui(this, lang);
         registre = new Registre(this);
         menus = new Menus(this, registre);
+        demandes = new Demandes(this, registre);
+        menusDemandes = new MenusDemandes(this, demandes);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(menus, this);
+        getServer().getPluginManager().registerEvents(menusDemandes, this);
         getServer().getServicesManager().register(ContratsEchange.class, registre, this, ServicePriority.Normal);
+        // 1.1.0 : demandes publiques, livrées depuis une boîte aux lettres (KS_Courrier).
+        getServer().getServicesManager().register(DemandesPubliques.class, menusDemandes, this, ServicePriority.Normal);
         getCommand("contrat").setExecutor(this);
         getCommand("contrat").setTabCompleter(this);
         if (getServer().getPluginManager().isPluginEnabled("KS_Menu")) {
@@ -52,6 +61,7 @@ public final class KSContrats extends JavaPlugin implements Listener, TabExecuto
         // Périodes, expirations, bilans sans réponse ; messages en attente d'un joueur qui change de monde.
         getServer().getScheduler().runTaskTimer(this, () -> {
             registre.tic();
+            demandes.tic();
             getServer().getOnlinePlayers().forEach(registre::distribuer);
             registre.sauverSiBesoin();
             lang.saveIfNeeded();
@@ -66,6 +76,9 @@ public final class KSContrats extends JavaPlugin implements Listener, TabExecuto
         if (registre != null) {
             registre.sauver();
         }
+        if (demandes != null) {
+            demandes.sauver();
+        }
     }
 
     Lang lang() {
@@ -78,6 +91,10 @@ public final class KSContrats extends JavaPlugin implements Listener, TabExecuto
 
     Menus menus() {
         return menus;
+    }
+
+    MenusDemandes menusDemandes() {
+        return menusDemandes;
     }
 
     @Override

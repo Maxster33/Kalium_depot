@@ -797,9 +797,21 @@ final class Menus {
         lang.saveIfNeeded();
     }
 
-    /** 1.1.0 : un claim qui porte des boutiques (magasin de KS_Economy) ne peut être ni supprimé ni vendu. */
+    /**
+     * 1.1.0 : un claim qui porte des boutiques (magasin de KS_Economy) ne peut être ni supprimé ni vendu.
+     * 1.6.0 : ni celui qu'un autre plugin protège (GardienClaim, ex. la boîte aux lettres de KS_Courrier).
+     */
     private static String refusMagasin(Claim claim) {
-        return KSEconomy.refusClaim(claim.getUUID(), claim.getChunks().iterator().next());
+        Chunk chunk = claim.getChunks().iterator().next();
+        String refus = KSEconomy.refusClaim(claim.getUUID(), chunk);
+        for (org.bukkit.plugin.RegisteredServiceProvider<fr.kalium.claim.api.GardienClaim> r
+                : Bukkit.getServicesManager().getRegistrations(fr.kalium.claim.api.GardienClaim.class)) {
+            if (refus != null) {
+                break;
+            }
+            refus = r.getProvider().refus(claim.getUUID(), chunk);
+        }
+        return refus;
     }
 
     // ------------------------------------------------------------------ vente et achat

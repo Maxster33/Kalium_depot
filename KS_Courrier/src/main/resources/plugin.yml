@@ -1,0 +1,17 @@
+name: KS_Courrier
+version: '${project.version}'
+main: fr.kalium.courrier.KSCourrier
+api-version: '26.2'
+description: "Kixster - boite aux lettres (une par joueur, dans un de ses claims), lettres et colis livres meme hors ligne, demandes publiques de KS_Contrats."
+authors: [KaLium]
+depend: [KLM_Menu, KS_Economy, KS_Blocs, KS_Contrats]
+softdepend: [KS_Claim, SimpleClaimSystem, KS_MondeTest]
+commands:
+  courrier:
+    description: "Admins - historique du courrier d'un joueur (/courrier historique <pseudo>)."
+    usage: /<command> historique <pseudo>
+    permission: kscourrier.admin
+permissions:
+  kscourrier.admin:
+    description: Voir l'historique du courrier d'un joueur et lire ses lettres (moderation).
+    default: op

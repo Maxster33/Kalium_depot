@@ -421,6 +421,10 @@ final class Menus implements Listener {
                 + "cas de non-respect."), t("aide.accueil2", "<gray>Toute demande doit être acceptée par tous les autres "
                 + "joueurs du contrat. Les biens se livrent par /echange en choisissant le contrat."));
         sortie(c, null);
+        // 1.1.0 : demandes publiques (LeKiwi06, 02/11/2026 : bouton dans /contrat).
+        c.poser(c.bas(4), Contenant.objet(Material.OAK_HANGING_SIGN, t("accueil.demandes", "<gold>Demandes publiques"),
+                gris("Demandes que n'importe qui peut remplir ; on les livre depuis sa boîte aux lettres.")),
+                j -> plugin.menusDemandes().liste(j, 0, j2 -> accueil(j2, 0), false));
         c.poser(c.bas(6), Contenant.objet(Material.CHEST, t("accueil.termines", "<gray>Terminés"),
                 gris("Contrats finis, annulés, refusés ou tranchés, avec leur historique.")), j -> termines(j, 0));
         if (p.hasPermission("kscontrats.admin")) {
