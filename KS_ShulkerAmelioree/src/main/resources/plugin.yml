@@ -1,0 +1,7 @@
+name: KS_ShulkerAmelioree
+version: '${project.version}'
+main: fr.kalium.shulkeramelioree.KSShulkerAmelioree
+api-version: '26.2'
+description: "Kixster - shulker amelioree, 54 cases comme un coffre double (contenu garde dans l'objet, entonnoirs, comparateur) ; decraft de la boite de shulker vide."
+authors: [KaLium]
+depend: [KLM_Menu]
