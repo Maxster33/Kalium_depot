@@ -3,6 +3,8 @@ package fr.kalium.cultures;
 import fr.kalium.blocs.KSBlocs;
 import fr.kalium.blocs.TypeBloc;
 import fr.kalium.menu.api.Lang;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.FoodProperties;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
@@ -40,8 +42,8 @@ import java.util.Set;
  *
  * Les stades de pousse sont des blocs custom de KS_Blocs (apparences ks_cultures_terre, sur la canne à sucre, et
  * ks_cultures_eau, sur le varech) ; textures provisoires en attendant celles de LeKiwi06. Objets : livre de
- * connaissances (aucun usage vanilla) à l'image d'un objet du jeu, marqué ks_cultures:objet (règles de KS_Textures à
- * ajouter).
+ * connaissances (aucun usage vanilla) pour les graines et le mélange, tarte à la citrouille pour les fruits (ils se
+ * mangent), à l'image d'un objet du jeu, marqués ks_cultures:objet (règles de KS_Textures à ajouter).
  */
 public final class KSCultures extends JavaPlugin {
 
@@ -134,7 +136,7 @@ public final class KSCultures extends JavaPlugin {
     }
 
     /**
-     * Proposition (à valider par LeKiwi06) : un biome convient si son nom contient l'un des mots, sauf ceux précédés de
+     * Validé par LeKiwi06 le 02/11 : un biome convient si son nom contient l'un des mots, sauf ceux précédés de
      * « ! ». Les biomes de Terralith ont les mêmes mots (savanna, taiga, jungle...).
      */
     static final Map<Vegetal, List<String>> BIOMES_PAR_DEFAUT = Map.of(
@@ -152,7 +154,8 @@ public final class KSCultures extends JavaPlugin {
 
     /** L'id d'un objet de KS_Cultures (tomate, graine_tomate, graine_dandelion, melange...), ou null. */
     static String id(ItemStack objet) {
-        if (instance == null || objet == null || objet.getType() != Material.KNOWLEDGE_BOOK || !objet.hasItemMeta()) {
+        if (instance == null || objet == null || objet.getType() != Material.KNOWLEDGE_BOOK
+                && objet.getType() != Material.PUMPKIN_PIE || !objet.hasItemMeta()) {
             return null;
         }
         return objet.getItemMeta().getPersistentDataContainer().get(instance.cleObjet, PersistentDataType.STRING);
@@ -163,6 +166,7 @@ public final class KSCultures extends JavaPlugin {
         String nom;
         String modele;
         Vegetal v;
+        Vegetal aliment = null;
         if (MELANGE.equals(id)) {
             nom = "Mélange de graines";
             modele = "pitcher_pod";
@@ -175,16 +179,22 @@ public final class KSCultures extends JavaPlugin {
         } else if ((v = Vegetal.parFruit(id)) != null) {
             nom = v.nomFruit;
             modele = v.modeleFruit;
+            aliment = v;
         } else {
             return null;
         }
-        ItemStack o = new ItemStack(Material.KNOWLEDGE_BOOK, n);
+        // fruit : tarte à la citrouille (aliment sans autre usage, comme KS_CasseCroute), sinon livre de connaissances
+        ItemStack o = new ItemStack(aliment != null ? Material.PUMPKIN_PIE : Material.KNOWLEDGE_BOOK, n);
         ItemMeta meta = o.getItemMeta();
         meta.displayName(instance.t("objet." + id, "<white>" + nom).decoration(TextDecoration.ITALIC, false));
         meta.setItemModel(NamespacedKey.minecraft(modele));
         meta.setMaxStackSize(64);
         meta.getPersistentDataContainer().set(instance.cleObjet, PersistentDataType.STRING, id);
         o.setItemMeta(meta);
+        if (aliment != null) {
+            o.setData(DataComponentTypes.FOOD, FoodProperties.food().nutrition(aliment.nourriture)
+                    .saturation(aliment.saturation).build());
+        }
         return o;
     }
 

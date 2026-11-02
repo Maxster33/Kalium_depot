@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * Torchiflore et plante carnivore : leurs graines vanilla (elles poussent déjà en vanilla). Oeilchidées ouverte et
  * fermée : une seule graine, qui donne l'oeilchidée fermée (elle s'ouvre la nuit). Pas de graine pour la rose de
- * wither ni le pissenlit doré (2,53 et 0,38 au barème, absents du tableau validé : question posée à LeKiwi06).
+ * wither ni le pissenlit doré (2,53 et 0,38 au barème, exclusion validée par LeKiwi06 le 02/11).
  */
 final class Fleurs {
 

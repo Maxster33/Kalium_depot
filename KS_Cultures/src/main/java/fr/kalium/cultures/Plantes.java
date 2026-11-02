@@ -269,8 +269,9 @@ final class Plantes implements Listener, EcouteurBloc {
         ItemStack main = event.getItem();
         String id = KSCultures.id(main);
         Action a = event.getAction();
-        if (id != null && (a == Action.RIGHT_CLICK_AIR || a == Action.RIGHT_CLICK_BLOCK)) {
-            // livre de connaissances : jamais son usage vanilla
+        if (id != null && main.getType() == Material.KNOWLEDGE_BOOK
+                && (a == Action.RIGHT_CLICK_AIR || a == Action.RIGHT_CLICK_BLOCK)) {
+            // livre de connaissances : jamais son usage vanilla (un fruit, lui, se mange s'il n'est pas planté)
             event.setUseItemInHand(Event.Result.DENY);
         }
         if (a != Action.RIGHT_CLICK_BLOCK || event.getClickedBlock() == null) {
@@ -304,11 +305,13 @@ final class Plantes implements Listener, EcouteurBloc {
         if (event.getBlockFace() != BlockFace.UP) {
             return;
         }
-        semer(joueur, b, id, main);
+        if (semer(joueur, b, id, main)) {
+            event.setUseItemInHand(Event.Result.DENY);
+        }
     }
 
-    /** Pose d'une graine, d'un grain de riz, de cerises, de kiwi ou d'un mélange sur le bloc cliqué. */
-    private void semer(Player joueur, Block sol, String id, ItemStack main) {
+    /** Pose d'une graine, d'un grain de riz, de cerises, de kiwi ou d'un mélange sur le bloc cliqué. Vrai si posé. */
+    private boolean semer(Player joueur, Block sol, String id, ItemStack main) {
         Block place = sol.getRelative(BlockFace.UP);
         String type;
         if (Fleurs.GRAINES.containsKey(id)) {
@@ -318,7 +321,7 @@ final class Plantes implements Listener, EcouteurBloc {
                     ? Vegetal.duMelange().get(ThreadLocalRandom.current().nextInt(Vegetal.duMelange().size()))
                     : Vegetal.parSemence(id);
             if (v == null) {
-                return;
+                return false;
             }
             boolean ok = switch (v.lieu) {
                 case TERRE -> sol.getType() == Material.FARMLAND && place.getType().isAir();
@@ -328,17 +331,15 @@ final class Plantes implements Listener, EcouteurBloc {
             };
             type = ok ? v.type() : null;
         }
-        if (type == null) {
-            return;
-        }
-        if (!peutConstruire(joueur, place, sol)) {
-            return;
+        if (type == null || !peutConstruire(joueur, place, sol)) {
+            return false;
         }
         KSBlocs.poser(place, KSBlocs.type(type), Fleurs.graineDuType(type) != null ? "fleur" : "pousse");
         place.getWorld().playSound(place.getLocation(), Sound.ITEM_CROP_PLANT, 1f, 1f);
         if (joueur.getGameMode() != GameMode.CREATIVE) {
             main.setAmount(main.getAmount() - 1);
         }
+        return true;
     }
 
     /**

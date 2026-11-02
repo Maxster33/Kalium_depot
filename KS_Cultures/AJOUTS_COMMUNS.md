@@ -17,7 +17,7 @@ Objets marqués `ks_cultures:objet = <id>` (base : livre de connaissances).
 | graine_tomate ... graine_salade, graine_mais | Graines | 0,01953125 | = graines de blé (graine <= fruit ; composteur : 1 fruit -> 1 graine) |
 | graine_dandelion, graine_poppy | Graines de pissenlit / coquelicot | 0,010185943 | fleur (0,020371885) / 2 : 1 fleur donne 2 graines en moyenne |
 | graine_blue_orchid, graine_allium, graine_azure_bluet, graine_red_tulip, graine_orange_tulip, graine_white_tulip, graine_pink_tulip, graine_oxeye_daisy, graine_cornflower, graine_lily_of_the_valley | Graines de petite fleur | 0,019920658 | fleur (0,039841317) / 2 |
-| graine_eyeblossom | Graines d'oeilchidée | 0,02 | oeilchidée (0,04) / 2 (même règle ; pas dans le tableau validé, à confirmer) |
+| graine_eyeblossom | Graines d'oeilchidée | 0,02 | oeilchidée (0,04) / 2 (même règle, validé par LeKiwi06 le 02/11) |
 | graine_sunflower, graine_rose_bush | Graines de tournesol / rosier | 0,022099618 | grande fleur à 2 colorants (2 x 0,022099618) / 2 |
 | graine_lilac, graine_peony | Graines de lilas / pivoine | 0,033201097 | grande fleur à 2 colorants (2 x 0,033201097) / 2 |
 | melange | Mélange de graines | 0,17578125 | validé : 9 graines au prix d'une graine de légume (voir l'alerte ci-dessous) |
@@ -32,7 +32,7 @@ graines en moyenne) : rien à changer.
 **Alerte, contrôle des rapports** : un mélange se fait avec n'importe quelles 9 sortes de graines. Les 9 sortes les
 moins chères (citrouille 0,0031 ; pissenlit, coquelicot 0,0102 ; pastèque 0,0125 ; 5 petites fleurs 0,0199) coûtent
 environ 0,136, moins que le prix du mélange (0,176) : s'il se vend au prix du barème, il rapporte ~0,04 par mélange.
-À trancher par LeKiwi06 : prix du mélange à ~0,136 (sa recette la moins chère), ou mélange non vendable.
+LeKiwi06 (02/11) : « pas gênant comme ça », prix gardé à 0,17578125.
 
 Rareté (KS_Textures, seuils 10 / 100 / 1 000 / 10 000) : tout est sous 10, rareté commune ; recompiler KS_Textures après
 le changement de prix.
@@ -54,7 +54,9 @@ Fait dans cette session (accord du brief) : KS_Crafts 1.24.0 retire `ks_crafts:p
     d'os.
   - « Nouveaux végétaux » : tomate, poivron, aubergine, oignon, salade, maïs (sur la terre labourée), riz (sous l'eau),
     cerises et kiwi (arbustes, clic droit pour cueillir) ; graines trouvées en cassant les herbes de certains biomes
-    (liste des biomes une fois validée) ; récolte à la main seulement.
+    (tomate : savanes ; poivron : badlands, déserts ; aubergine : jungles ; oignon : taïgas ; salade : forêts ; maïs :
+    plaines, prairies ; riz : marais, rivières ; cerises : bosquets de cerisiers ; kiwi : jungles de bambous) ; récolte
+    à la main seulement ; les fruits se mangent ; poudre d'os : un stade de plus.
 
 ## 4. Textures (LeKiwi06) - textures provisoires en place
 
@@ -85,9 +87,10 @@ chacune (nom proposé = id) :
   `graine_rose_bush`, `graine_peony` ;
 - `melange`.
 
+Les fruits sont des tartes à la citrouille (ils se mangent), les graines et le mélange des livres de connaissances.
 En attendant : image d'un objet du jeu (item_model : betterave, carotte, fruit de chorus, pomme de terre, algue séchée,
 blé, graines de citrouille, baies sucrées, baies lumineuses ; graines de blé, de pastèque, de betterave ; cosse de
-plante carnivore pour le mélange). Bedrock voit un livre de connaissances tant que la correspondance n'existe pas.
+plante carnivore pour le mélange). Bedrock voit une tarte à la citrouille ou un livre de connaissances tant que la correspondance n'existe pas.
 
 ## 5. geyser-bedrock
 

@@ -30,8 +30,8 @@ récoltes).
   moyenne (le blé vanilla : ~30 min dans de bonnes conditions).
 - Appui : la culture casse (son butin tombe) si la terre labourée disparaît (piétinement compris : comme en vanilla) ;
   la terre labourée sèche sous une culture ne redevient pas de la terre (comme sous le blé).
-- **Poudre d'os** (non demandé explicitement, comportement des cultures vanilla, à confirmer) : un stade de plus ; la
-  fleur en croissance fleurit. Distributeur de poudre d'os : rien sur ces cultures.
+- **Poudre d'os** (comportement des cultures vanilla, accepté par LeKiwi06 le 02/11) : un stade de plus ; la fleur
+  en croissance fleurit. Distributeur de poudre d'os : rien sur ces cultures.
 - Végétaux découverts : récolter un végétal mûr (casse ou cueillette) l'ajoute à la liste du joueur (données du
   joueur) ; message la première fois pour ceux qui ont des graines au composteur.
 
@@ -45,15 +45,15 @@ récoltes).
   fleur : s'il y a de la place au-dessus). Elle se récolte ensuite comme une fleur ordinaire.
 - **Grandes fleurs** (tournesol, lilas, rosier, pivoine) : plus de duplication à la poudre d'os (clic droit et
   distributeur).
-- Pas de graine pour la rose de wither (2,53 au barème) ni pour le pissenlit doré (0,38) : absents du tableau validé,
-  question posée à LeKiwi06.
+- Pas de graine pour la rose de wither (2,53 au barème) ni pour le pissenlit doré (0,38) : exclusion validée par
+  LeKiwi06 le 02/11.
 
 ### Graines par biome
 
 Une herbe courte ou haute cassée par un joueur (hors créatif, sans cisailles) dans le bon biome donne, une fois sur 8
 (`herbes.chance`), la graine d'un végétal du biome (au hasard s'il y en a plusieurs) ; la graine de blé vanilla reste
-possible en plus. **Table des biomes : proposition à valider** (`herbes.biomes` du `config.yml`, mots cherchés dans le
-nom du biome, Terralith compris) : tomate savanes ; poivron badlands, shrublands, déserts ; aubergine jungles (pas de
+possible en plus. **Table des biomes validée par LeKiwi06 le 02/11** (`herbes.biomes` du `config.yml`, mots cherchés
+dans le nom du biome, Terralith compris) : tomate savanes ; poivron badlands, shrublands, déserts ; aubergine jungles (pas de
 bambous) ; oignon taïgas (pas enneigées) ; salade forêts (ni sombres, ni enneigées) ; maïs plaines et prairies ; riz
 marais et rivières ; cerises bosquets de cerisiers ; kiwi jungles de bambous. Le butin des herbes est fait ici :
 KS_LootBlocs n'est pas modifié.
@@ -74,14 +74,18 @@ KS_LootBlocs n'est pas modifié.
 
 ### Objets
 
-Livre de connaissances (aucun usage vanilla, son clic droit est bloqué), 64 par pile, à l'image d'un objet du jeu
-(item_model provisoire), marqué `ks_cultures:objet = <id>`. Ids : fruits `tomate`, `poivron`, `aubergine`, `oignon`,
+Graines et mélange : livre de connaissances (aucun usage vanilla, son clic droit est bloqué). Fruits : tarte à la
+citrouille (aliment sans autre usage, comme le casse-croûte doré), **ils se mangent** (choix de LeKiwi06 du 02/11 ;
+valeurs de l'aliment vanilla au même prix : légumes et épi de maïs 3 de nourriture et 3,6 de saturation comme la
+carotte ; riz, cerises, kiwi 2 et 0,4 comme les baies sucrées) ; un clic droit qui ne plante pas les mange. 64 par
+pile, à l'image d'un objet du jeu (item_model provisoire), marqués `ks_cultures:objet = <id>`. Ids : fruits `tomate`, `poivron`, `aubergine`, `oignon`,
 `salade`, `mais`, `riz`, `cerises`, `kiwi` ; graines `graine_tomate`, `graine_poivron`, `graine_aubergine`,
 `graine_oignon`, `graine_salade`, `graine_mais` ; graines de fleurs `graine_dandelion`, `graine_poppy`,
 `graine_blue_orchid`, `graine_allium`, `graine_azure_bluet`, `graine_red_tulip`, `graine_orange_tulip`,
 `graine_white_tulip`, `graine_pink_tulip`, `graine_oxeye_daisy`, `graine_cornflower`, `graine_lily_of_the_valley`,
 `graine_eyeblossom`, `graine_sunflower`, `graine_lilac`, `graine_rose_bush`, `graine_peony` ; `melange`. Noms dans
-`lang.yml` (`objet.<id>`). Les fruits ne se mangent pas (rien de demandé : question posée).
+`lang.yml` (`objet.<id>`). Un fruit tenu en main sur un composteur se composte comme en vanilla (le menu s'ouvre main
+vide).
 
 ### Limites
 

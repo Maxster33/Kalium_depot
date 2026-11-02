@@ -12,17 +12,17 @@ import java.util.Locale;
  */
 enum Vegetal {
 
-    TOMATE(Lieu.TERRE, "tomate", 1, 3, 1, 2, "Tomate", "Graines de tomate", "beetroot", "wheat_seeds"),
-    POIVRON(Lieu.TERRE, "poivron", 1, 3, 1, 2, "Poivron", "Graines de poivron", "carrot", "wheat_seeds"),
-    AUBERGINE(Lieu.TERRE, "aubergine", 1, 3, 1, 2, "Aubergine", "Graines d'aubergine", "chorus_fruit", "wheat_seeds"),
-    OIGNON(Lieu.TERRE, "oignon", 1, 3, 1, 2, "Oignon", "Graines d'oignon", "potato", "wheat_seeds"),
-    SALADE(Lieu.TERRE, "salade", 1, 3, 1, 2, "Salade", "Graines de salade", "dried_kelp", "wheat_seeds"),
-    MAIS(Lieu.TERRE, "mais_bas", 1, 2, 1, 2, "Épi de maïs", "Graines de maïs", "wheat", "melon_seeds"),
+    TOMATE(Lieu.TERRE, "tomate", 1, 3, 1, 2, "Tomate", "Graines de tomate", "beetroot", "wheat_seeds", 3, 3.6f),
+    POIVRON(Lieu.TERRE, "poivron", 1, 3, 1, 2, "Poivron", "Graines de poivron", "carrot", "wheat_seeds", 3, 3.6f),
+    AUBERGINE(Lieu.TERRE, "aubergine", 1, 3, 1, 2, "Aubergine", "Graines d'aubergine", "chorus_fruit", "wheat_seeds", 3, 3.6f),
+    OIGNON(Lieu.TERRE, "oignon", 1, 3, 1, 2, "Oignon", "Graines d'oignon", "potato", "wheat_seeds", 3, 3.6f),
+    SALADE(Lieu.TERRE, "salade", 1, 3, 1, 2, "Salade", "Graines de salade", "dried_kelp", "wheat_seeds", 3, 3.6f),
+    MAIS(Lieu.TERRE, "mais_bas", 1, 2, 1, 2, "Épi de maïs", "Graines de maïs", "wheat", "melon_seeds", 3, 3.6f),
     /** Le grain se replante (dans l'eau) : pas d'objet graine séparé. */
-    RIZ(Lieu.EAU, "riz", 1, 4, 0, 0, "Riz", null, "pumpkin_seeds", null),
+    RIZ(Lieu.EAU, "riz", 1, 4, 0, 0, "Riz", null, "pumpkin_seeds", null, 2, 0.4f),
     /** Le fruit se replante, comme les baies sucrées. */
-    CERISES(Lieu.ARBUSTE, "cerisier_fruits", 1, 2, 0, 0, "Cerises", null, "sweet_berries", null),
-    KIWI(Lieu.ARBUSTE, "kiwi_fruits", 1, 2, 0, 0, "Kiwi", null, "glow_berries", null);
+    CERISES(Lieu.ARBUSTE, "cerisier_fruits", 1, 2, 0, 0, "Cerises", null, "sweet_berries", null, 2, 0.4f),
+    KIWI(Lieu.ARBUSTE, "kiwi_fruits", 1, 2, 0, 0, "Kiwi", null, "glow_berries", null, 2, 0.4f);
 
     /** Où il se plante : terre labourée, sous l'eau (riz), terre ou terre labourée (arbustes). */
     enum Lieu { TERRE, EAU, ARBUSTE }
@@ -34,9 +34,15 @@ enum Vegetal {
     final String nomFruit, nomGraine;
     /** Image provisoire (item_model du jeu) en attendant les textures de LeKiwi06 (règles KS_Textures). */
     final String modeleFruit, modeleGraine;
+    /**
+     * Le fruit se mange (choix de LeKiwi06 du 02/11) : nourriture et saturation de l'aliment vanilla au même prix
+     * (légumes et maïs : carotte ; riz, cerises, kiwi : baies sucrées).
+     */
+    final int nourriture;
+    final float saturation;
 
     Vegetal(Lieu lieu, String mur, int fruitsMin, int fruitsMax, int grainesMin, int grainesMax, String nomFruit,
-            String nomGraine, String modeleFruit, String modeleGraine) {
+            String nomGraine, String modeleFruit, String modeleGraine, int nourriture, float saturation) {
         this.lieu = lieu;
         this.mur = mur;
         this.fruitsMin = fruitsMin;
@@ -47,6 +53,8 @@ enum Vegetal {
         this.nomGraine = nomGraine;
         this.modeleFruit = modeleFruit;
         this.modeleGraine = modeleGraine;
+        this.nourriture = nourriture;
+        this.saturation = saturation;
     }
 
     /** Nom court (config.yml, objets, liste des découvertes) : tomate, mais, cerises... */
