@@ -26,6 +26,10 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_Textures (nouveau), geyser-bedrock — LeKiwi06 — depuis le 2026-10-29 04:14 — pack de ressources des objets custom : textures ajoutées aux objets dans ce qui est envoyé aux joueurs, pack proposé aux joueurs Java ; couleur de rareté dans le nom des objets custom (depuis le 2026-10-29, même plugin, affichage seul) ; geyser-bedrock 1.8.0 (mêmes textures sur Bedrock), aussi réservé par le chantier aliments ci-dessus : accord de LeKiwi06 le 29/10
 - KG_BingoGame — LeKiwi06 — depuis le 2026-10-30 13:27 — Halloween : ghast d'Halloween dans chaque monde d'équipe, tué par sa boule renvoyée = un joker (case au choix) ; du 31/10 au 14/11 (cahier local validé le 30/10) ; 0.13.0 déployée sur Serveur Jeux le 30/10 à 18:46, à redémarrer, non testée
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-30 13:31 — montée des marches en blocs de piste, réglages par map (paliers, tours, records), plafond du bonus de tour propre (Manoir Hanté)
+- KS_Votes (nouveau) — LeKiwi06 — depuis le 2026-11-02 11:54 — récompenses des votes sur les sites de référencement (/vote, NuVotifier via le proxy)
+- KS_ShulkerAmelioree (nouveau) — LeKiwi06 — depuis le 2026-11-02 11:48 — shulker améliorée (54 cases, contenu rangé par le plugin, entonnoirs et comparateurs) et décraft de la boîte de shulker vide
+- KS_Blocs (nouveau), geyser-bedrock (correspondance des blocs custom seulement) — LeKiwi06 — depuis le 2026-11-02 11:50 — socle des blocs custom par remplacement visuel (bloc musical, canne à sucre, varech) et prototype : jack o'lanterns bleue et cuivre
+- KS_Hyperboost (nouveau), KS_AntiCheat — LeKiwi06 (session Claude « hyperboost ») — depuis le 2026-11-02 11:52 — fusée Hyperboost (monture à 40 blocs/s pendant 10 s) ; KS_AntiCheat : GrimAC ignoré pendant la poussée
 
 ## Requis parfois
 
