@@ -977,3 +977,5 @@ Anomalies des rachats de la semaine S45 relevées par Claude et signalées par L
   total l'est. Avant : cœur de grinceur à 1,316 vendu 2 l'unité (+52 %), coffre de l'Ender à 1,45 vendu 1 (−31 %). Un
   objet vendu à l'unité garde un prix entier. Les offres déjà tirées dont le prix du barème n'a pas changé (coffre de
   l'Ender, jukebox de la S45) gardent leur lot jusqu'au tirage de lundi.
+
+Compilé le 02/11/2026 (`sortie/KS_Economy-1.13.5.jar`). **Déployé sur Kixster le 02/11/2026 à 08:58** (LeKiwi06 : « Oui, déploie ») ; jar en place de la même taille que celui du dépôt ; 1.13.4 dans `_removed-ks_economy-1.13.4/`. À redémarrer par LeKiwi06. Statut : non testé en jeu.
