@@ -26,3 +26,24 @@ Version : champ `version` de `package.json` et constante `VERSION` de `src/index
   embarquer à l'étape 6 si besoin).
 
 **Statut : non déployé (hébergement à choisir), non testé sur Discord.** Nécessite KG_ScoreBoards 1.7.0 sur kal-games.
+
+## 0.2.0 — wiki KaLium dans un salon (02/11/2026)
+
+**Demande de LeKiwi06 (02/11/2026)** : « un wiki kalium sous forme de channel discord, un channel principal avec un
+sommaire (un message de sommaire par serveur : kixster, kal-games, kanvas), des fiches sous forme de fils dans ce
+salon, le sommaire renvoie aux fils ». Choix : commande `k!wiki setup <id du salon>`, fils verrouillés (staff seul),
+premier jet des fiches rédigé par Claude, liste des fiches à valider avant le texte.
+- `src/wiki-fiches.js` : lecture de `wiki/<NN-serveur>/` (`_sommaire.md` + une fiche par fichier), découpage en
+  messages de 2 000 caractères (entre paragraphes, `---` force une coupure), contrôles (titre, fiche vide, nom de fil
+  ≤ 100, sommaire ≤ 4 096).
+- `src/wiki.js` : `k!wiki setup <id>` / `k!wiki maj` (permission « Gérer le serveur ») ; un fil public par fiche
+  (archivage 7 jours, verrouillé), messages « a commencé un fil » effacés, un embed de sommaire par serveur avec les
+  liens des fils ; mise à jour sur place (fil rouvert s'il est archivé, renommé, messages modifiés / ajoutés /
+  retirés ; tout republié si un message a disparu) ; salon fermé aux joueurs (@everyone : pas de message, pas de fil),
+  dérogation au nom du bot ; fils sans fiche signalés, jamais supprimés. État dans `wiki-etat.json` (ignoré par git).
+- **Écart au cahier des charges § 9** (validé par la demande `k!`) : intentions `GuildMessages` + `MessageContent`
+  (privilégiée, à activer dans le portail) ; le bot ne traite que les messages commençant par `k!` sur le serveur KaLium.
+- `API_URL` / `API_TOKEN` facultatifs : sans eux, `/classement` n'est pas enregistré.
+- Testé sans Discord : lecture et découpage des fiches (ordre numérique, BOM, CRLF, coupure à 2 000, `---`, erreurs).
+
+**Statut : non testé sur Discord ; fiches pas encore rédigées (liste à valider).**
