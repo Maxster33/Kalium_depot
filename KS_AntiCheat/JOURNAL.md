@@ -267,3 +267,16 @@ extrêmes viennent surtout de joueurs Bedrock (.PatientLime2170 à 2 sur 3). LeK
   100). GrimAC ne vérifie pas les joueurs Bedrock (base de Kixster : 8 joueurs Bedrock, aucune violation).
 
 **Déployée sur Kixster le 31/10/2026 à 10:39 (LeKiwi06 : « Oui, envoie-la ») ; 1.4.0 dans `_removed-ks_anticheat-1.4.0/` ; `config.yml` et `suspensions.yml` inchangés. Active au redémarrage de Kixster. Statut : non testée.**
+
+## 1.5.0 - fusée Hyperboost : GrimAC ignoré pendant la poussée (02/11/2026, LeKiwi06)
+
+Demande (chantier Kixster du 01-02/11, fusée Hyperboost) : ne pas sanctionner un joueur dont la monture est poussée à
+40 blocs/s par KS_Hyperboost. Empilée sur la 1.4.1 non testée à la demande du chantier.
+
+- Pendant une poussée et 5 s après (métadonnée `ks_hyperboost` du joueur : date de fin en ms, posée par
+  KS_Hyperboost), chaque signalement de GrimAC est **annulé** (`setCancelled(true)` sur son événement : pas d'alerte de
+  GrimAC, pas de violation comptée, donc pas de renvoi en arrière qui éjecterait les passagers) et **non compté** par
+  KS_AntiCheat (ni alerte, ni suspension).
+- Sans KS_Hyperboost : rien ne change.
+
+**Compilé, non déployé. Statut : non testé en jeu. À déployer avec KS_Hyperboost 1.0.0.**

@@ -32,6 +32,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  * KS_MondeTest (enTest) ; vérifications lourdes de GrimAC comparées sur le nom exact, Timer et TimerLimit retirées
  * (elles réagissent au lag).
  * 1.4.1 (LeKiwi06, 31/10/2026) : x-ray extrême en alerte grave seulement ; seul GrimAC lourd suspend encore.
+ * 1.5.0 (LeKiwi06, 02/11/2026) : signalements GrimAC annulés et ignorés pendant une poussée de la fusée Hyperboost
+ * (KS_Hyperboost).
  *
  * Permission : ksanticheat.staff (opérateurs par défaut).
  */

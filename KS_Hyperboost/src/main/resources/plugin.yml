@@ -1,0 +1,8 @@
+name: KS_Hyperboost
+version: '${project.version}'
+main: fr.kalium.hyperboost.KSHyperboost
+api-version: '26.2'
+description: "Fusee Hyperboost de Kixster (monture a 40 blocs/s pendant 10 s)."
+authors: [KaLium]
+depend: [KLM_Menu]
+softdepend: [GrimAC]

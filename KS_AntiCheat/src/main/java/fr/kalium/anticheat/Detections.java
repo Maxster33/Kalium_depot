@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Method;
@@ -36,6 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *   grimac.alerte-signalements fois en 10 minutes ; infraction grave (suspension automatique) si la vérification
  *   est dans grimac.lourdes (nom exact) et que son niveau de violation atteint grimac.seuil-suspension.
  * - 1.4.0 : GrimAC et macros ignorés dans le monde de test (KSAntiCheat.enTest).
+ * - 1.5.0 : signalements GrimAC annulés et ignorés pendant une poussée Hyperboost (métadonnée ks_hyperboost).
  * - Macros : alerte légère si le joueur répète des actions (casser, pêcher, frapper, utiliser un objet) alors qu'il
  *   ne bouge ni lui ni sa caméra depuis macros.minutes ; alerte seulement.
  * - AFK : expulsion au bout de afk.minutes (60) sans vrai mouvement ni mouvement de caméra (poussé par l'eau, dans un
@@ -208,6 +210,12 @@ final class Detections implements Listener {
                     case "handle" -> {
                         Object ev = args[0];
                         Object u = getUser.invoke(ev);
+                        // 1.5.0 : fusée Hyperboost (KS_Hyperboost) : signalement annulé (pas d'alerte ni de renvoi
+                        // en arrière par GrimAC, qui éjecterait les passagers) et non compté.
+                        if (enPoussee((UUID) getUuid.invoke(u))) {
+                            annuler(ev);
+                            return null;
+                        }
                         String nomCheck = String.valueOf(getCheckName.invoke(getCheck.invoke(ev)));
                         double vl = ((Number) getViolations.invoke(ev)).doubleValue();
                         String detail = String.valueOf(getVerbose.invoke(ev));
@@ -232,6 +240,33 @@ final class Detections implements Listener {
             plugin.getLogger().info("Signalements de GrimAC repris.");
         } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
             plugin.getLogger().warning("Impossible de reprendre les signalements de GrimAC : " + e);
+        }
+    }
+
+    /**
+     * 1.5.0 : vrai si le joueur est en poussée Hyperboost (KS_Hyperboost) ou dans la marge qui la suit : métadonnée
+     * « ks_hyperboost », date de fin en millisecondes.
+     */
+    static boolean enPoussee(UUID joueur) {
+        Player p = Bukkit.getPlayer(joueur);
+        if (p == null) {
+            return false;
+        }
+        long maintenant = System.currentTimeMillis();
+        for (MetadataValue v : p.getMetadata("ks_hyperboost")) {
+            if (v.value() instanceof Long fin && fin > maintenant) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Annule l'événement de GrimAC (setCancelled), s'il le permet. */
+    private static void annuler(Object evenement) {
+        try {
+            evenement.getClass().getMethod("setCancelled", boolean.class).invoke(evenement, true);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            // version de GrimAC sans annulation : le signalement est seulement ignoré
         }
     }
 
