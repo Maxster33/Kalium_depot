@@ -33,6 +33,9 @@ d'ingrédient à l'encapsuleur.
 - API : `estShulkerAmelioree(ItemStack|Block)`, `creerShulker()`, `creerShulker(Material)`, `estVide(ItemStack)`,
   `contenu(ItemStack|Block)`.
 
+**Validé par LeKiwi06 le 02/11/2026** : prix de **129,49** (boîte de shulker 17,45 + 4 gabarits d'amélioration en
+netherite à 28,01 ; à ajouter dans KS_Economy) et craft avec une boîte de shulker **vide** seulement.
+
 **Limites**
 - Shulker presque pleine (53 cases occupées sur 54) : un entonnoir peut rester bloqué pour un objet nouveau (le tampon
   n'a plus de case vide), il passe dès qu'un objet sort.
