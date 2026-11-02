@@ -37,3 +37,36 @@ Limites :
 - Entrée du didacticiel (`/effects`) : à ajouter dans `didacticiel.yml` au déploiement (KS_Didacticiel).
 
 Compilé le 28/10/2026. **Déployé sur Kixster le 28/10/2026 à 18:31** (LeKiwi06 : « Oui, déploie KS_Effets 1.0.0, KS_Alcools 1.0.0 et KS_Trains 1.6.0 sur Kixster, et geyser-bedrock 1.6.0 sur le proxy, avec les entrées du didacticiel »), avec `didacticiel.yml` ; fichiers en place vérifiés identiques au dépôt avant l'envoi. À redémarrer par LeKiwi06. Statut : non testé en jeu. Entrées du didacticiel : Menus › « Tes effets », Commandes › « /effects (/effets) ».
+
+## 1.1.0 - cumul des effets nourriture + boisson (02/11/2026)
+
+Demande de LeKiwi06 (chantier « blocs, cultures et objets », cahier local `Blocs_Cultures_Objets.md`, partie 6) : une
+nourriture et une boisson qui donnent le même effet le font passer au niveau supérieur ; deux nourritures ou deux
+boissons ne se cumulent pas. Décidé le 02/11 : potions vanilla = boissons ; +1 au meilleur niveau, plafonné à III
+(balise II + cumul = III) ; le niveau cumulé dure tant que les deux effets sont actifs, puis on revient au niveau d'avant.
+Réponses de LeKiwi06 du 02/11 : **tous les effets** se cumulent, nocifs compris (« Oui, tous les effets ») ; les potions
+**jetables et persistantes reçues** comptent comme boissons (« Oui, aussi reçues »).
+
+- Nouvelle classe `Cumul`. La source d'un effet est la cause que Paper donne à l'effet (`EntityPotionEffectEvent`) :
+  nourriture = `FOOD` (aliments du jeu, ragoût suspect, Casse-croûte doré) ; boisson = `POTION_DRINK`, `POTION_SPLASH`,
+  `AREA_EFFECT_CLOUD` (potions, alcools, élixirs, bues ou reçues) ; autre = tout le reste (balise, conduit, plugins,
+  commandes...), qui compte seulement pour le « meilleur niveau ».
+- Chaque seconde : si une nourriture et une boisson donnent le même effet, niveau = meilleur des trois sources + 1
+  (plafond III), pour la plus courte des deux durées (et celle de la source « autre » si c'est elle qui donne le
+  meilleur niveau, sinon on pourrait passer 2 s sous une balise et garder III). Le cumul est posé par-dessus l'effet en
+  cours : le jeu garde l'effet plus faible « caché » et le remet à la fin (vérifié dans `MobEffectInstance.update`
+  du client 26.3). Remangé ou rebu : le cumul est prolongé.
+- Pas de cumul pour les effets instantanés ni pour ceux dont le niveau ne change rien : vision nocturne, résistance au
+  feu, respiration aquatique, invisibilité, chute lente, grâce du dauphin, cécité, nausée, surbrillance, obscurité.
+- Un effet retiré (lait, mort, totem, miel, plugin) oublie ses sources. Temps des sources gardés par compte (compte de
+  test à part) dans `cumul.yml`, décomptés seulement en jeu, comme les effets du jeu.
+- Aucun texte nouveau (le niveau s'affiche dans /effects et l'inventaire comme un effet du jeu).
+
+Limites :
+- Repose sur les causes de Paper : à vérifier en jeu que le Casse-croûte doré (composant `consumable` custom) et le
+  ragoût suspect arrivent bien en `FOOD`, et les alcools en `POTION_DRINK`.
+- KS_MondeTest retire et remet les effets en changeant de monde : les sources sont alors oubliées (le cumul en cours
+  reste jusqu'à sa fin, sans revenir ensuite au niveau d'avant si KS_MondeTest ne l'a pas gardé).
+- Construit sur la 1.0.0 jamais testée en jeu, à la demande de LeKiwi06.
+
+Compilé le 02/11/2026. Non déployé. Statut : non testé en jeu.

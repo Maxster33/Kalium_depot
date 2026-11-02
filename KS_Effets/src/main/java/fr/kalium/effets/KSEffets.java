@@ -47,6 +47,7 @@ import java.util.regex.Pattern;
  * - /effects : menu en coffre des effets en cours, du jeu et custom, avec leur temps restant ; suivre un effet en
  *   barre de boss ou en barre d'action, un seul effet par barre ({@link MenuEffets}, {@link Suivi}).
  * - Monde de test (KS_MondeTest) : tout est rangé sous le compte de test du joueur ({@link CompteTest}).
+ * - 1.1.0 : cumul des effets du jeu nourriture + boisson ({@link Cumul}).
  */
 public final class KSEffets extends JavaPlugin implements Listener {
 
@@ -67,6 +68,7 @@ public final class KSEffets extends JavaPlugin implements Listener {
     private Registre registre;
     private Suivi suivi;
     private MenuEffets menu;
+    private Cumul cumul;
     private final Map<String, Type> types = new LinkedHashMap<>();
     private final Map<String, ToIntFunction<Player>> fournisseurs = new LinkedHashMap<>();
 
@@ -79,9 +81,15 @@ public final class KSEffets extends JavaPlugin implements Listener {
         registre.charger();
         suivi = new Suivi(this);
         menu = new MenuEffets(this);
+        cumul = new Cumul(this);
+        cumul.charger();
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(cumul, this);
         getServer().getScheduler().runTaskTimer(this, this::seconde, 20L, 20L);
-        getServer().getScheduler().runTaskTimer(this, () -> registre.enregistrer(false), 1200L, 1200L);
+        getServer().getScheduler().runTaskTimer(this, () -> {
+            registre.enregistrer(false);
+            cumul.enregistrer(false);
+        }, 1200L, 1200L);
         lang.saveIfNeeded();
     }
 
@@ -92,6 +100,9 @@ public final class KSEffets extends JavaPlugin implements Listener {
         }
         if (registre != null) {
             registre.enregistrer(true);
+        }
+        if (cumul != null) {
+            cumul.enregistrer(true);
         }
         instance = null;
     }
@@ -208,6 +219,7 @@ public final class KSEffets extends JavaPlugin implements Listener {
                 finis.forEach(id -> finir(joueur, id, EffetFinEvent.Cause.EXPIRE));
                 registre.modifie();
             }
+            cumul.seconde(joueur);
             suivi.maj(joueur, c);
             menu.rafraichir(joueur);
         }
@@ -250,6 +262,7 @@ public final class KSEffets extends JavaPlugin implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         suivi.cacher(event.getPlayer());
         registre.enregistrer(false);
+        cumul.enregistrer(false);
     }
 
     // ------------------------------------------------------------------ effets en cours (menu, barres)
