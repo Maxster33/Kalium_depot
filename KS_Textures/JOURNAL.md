@@ -140,5 +140,4 @@ Recompilé seulement, aucun changement de code : le barème copié de KS_Economy
 Aucune texture : c'est une boîte de shulker du jeu à l'aspect enchanté (rien non plus dans geyser-bedrock).
 LeKiwi06 : « fait les 2 » (ajouts aux plugins communs de la shulker améliorée).
 
-Compilé le 02/11/2026. À déployer avec KS_Economy 1.13.6 et KS_ShulkerAmelioree 1.0.0. Statut : non testé en jeu,
-non déployé.
+Compilé le 02/11/2026. À déployer avec KS_Economy 1.13.6 et KS_ShulkerAmelioree 1.0.0. **Déployé sur Kixster le 02/11/2026 à 14:28** (LeKiwi06 : « Oui, envoie »), avec KS_ShulkerAmelioree 1.0.0, KS_Encapsuleur 1.0.0, KS_Economy 1.13.6, KS_CoffreRenforce 1.3.1, KS_Textures 1.2.2 et `didacticiel.yml` ; jars de la même taille que ceux du dépôt. À redémarrer par LeKiwi06. Statut : non testé en jeu.

@@ -1000,4 +1000,4 @@ Chantier « Blocs, cultures et objets » (cahier local), section 4 : KS_ShulkerA
   27 cases de son tampon). Une boîte de shulker ordinaire reste acceptée.
 
 Compilé le 02/11/2026. **À déployer avec KS_ShulkerAmelioree 1.0.0 et KS_Encapsuleur 1.0.0** (sans eux, la ligne du barème ne correspond à
-aucun objet ; rien ne casse). Statut : non testé en jeu, non déployé.
+aucun objet ; rien ne casse). **Déployé sur Kixster le 02/11/2026 à 14:28** (LeKiwi06 : « Oui, envoie »), avec KS_ShulkerAmelioree 1.0.0, KS_Encapsuleur 1.0.0, KS_Economy 1.13.6, KS_CoffreRenforce 1.3.1, KS_Textures 1.2.2 et `didacticiel.yml` ; jars de la même taille que ceux du dépôt. À redémarrer par LeKiwi06. Statut : non testé en jeu.

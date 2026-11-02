@@ -1,6 +1,6 @@
 # KS_ShulkerAmelioree — journal
 
-## 1.0.0 — 2026-11-02 — non testé en jeu, non déployé
+## 1.0.0 — 2026-11-02 — déployé sur Kixster le 02/11 à 14:28, à redémarrer, non testé en jeu
 
 **Demande** (LeKiwi06, 01-02/11/2026, cahier local « Blocs, cultures et objets », section 4) : une shulker améliorée
 qui contient autant qu'un coffre double, gérée comme le coffre renforcé (contenu rangé par le plugin, entonnoirs et
@@ -47,3 +47,5 @@ netherite à 28,01 ; à ajouter dans KS_Economy) et craft avec une boîte de shu
 **À déployer ensemble** (02/11/2026) : KS_ShulkerAmelioree 1.0.0, KS_Economy 1.13.6 (prix 129,5 ; rachetée seulement
 vide ; jamais contenant de boutique), KS_CoffreRenforce 1.3.1 (refuse une shulker améliorée pleine), KS_Textures 1.2.2
 (rareté Rare) et `didacticiel.yml` (2 entrées dans « Crafts »).
+
+**Déployé sur Kixster le 02/11/2026 à 14:28** (LeKiwi06 : « Oui, envoie »), avec KS_ShulkerAmelioree 1.0.0, KS_Encapsuleur 1.0.0, KS_Economy 1.13.6, KS_CoffreRenforce 1.3.1, KS_Textures 1.2.2 et `didacticiel.yml` ; jars de la même taille que ceux du dépôt. À redémarrer par LeKiwi06. Statut : non testé en jeu.

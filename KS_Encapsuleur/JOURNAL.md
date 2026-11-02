@@ -1,6 +1,6 @@
 # KS_Encapsuleur — journal
 
-## 1.0.0 — 2026-11-02 — non testé en jeu, non déployé
+## 1.0.0 — 2026-11-02 — déployé sur Kixster le 02/11 à 14:28, à redémarrer, non testé en jeu
 
 **Demande** (LeKiwi06, cahier local « Blocs, cultures et objets », section 3, validé le 02/11/2026 ; « fait les 2 ») :
 un objet à usage unique qui emporte une construction (64 × 64 × 128 au plus) et la repose ailleurs, petit à petit.
@@ -50,3 +50,5 @@ KS_Economy 1.13.6 (arrondi à 1 037).
 - Créatif : un objet copié ne peut pas être posé deux fois (la construction posée n'existe plus).
 - Tests dans « Kixster Test » : il faut un claim SimpleClaimSystem dans ce monde.
 - Rotation et miroir : calculés comme le jeu (miroir puis rotation), à vérifier en jeu sur les escaliers et portes.
+
+**Déployé sur Kixster le 02/11/2026 à 14:28** (LeKiwi06 : « Oui, envoie »), avec KS_ShulkerAmelioree 1.0.0, KS_Encapsuleur 1.0.0, KS_Economy 1.13.6, KS_CoffreRenforce 1.3.1, KS_Textures 1.2.2 et `didacticiel.yml` ; jars de la même taille que ceux du dépôt. À redémarrer par LeKiwi06. Statut : non testé en jeu.
