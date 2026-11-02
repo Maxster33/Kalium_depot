@@ -4,6 +4,23 @@ Plugin de Kixster (survie). Socle des blocs custom (cahier local `Blocs_Cultures
 bloc : les jack o'lanterns bleue et cuivre (partie 8). Dépend de KLM_Menu (textes). Compilé contre le serveur Paper 26.3
 (paquets réseau, sections de chunk) : à revérifier à chaque mise à jour de Minecraft. Ne pas recharger à chaud.
 
+## 0.1.1 - lumière de la jack o'lantern cuivre à 13 (02/11/2026)
+
+**Question de LeKiwi06** : « si tu as mis des light 14 autour de la jack o lantern de cuivre ça ne risque pas de poser
+des problème pour le cookie glowberrie ? » Oui : KS_Cuisine reconnaît ses lumières à leur seul niveau (14). Au
+chargement d'un chunk, il efface toutes les lumières 14 qu'aucun joueur ne porte (et fouille tout le chunk, environ
+100 000 blocs, dès qu'il en contient une) ; un joueur au cookie qui passe devant laissait la jack o'lantern éteinte ; et
+casser une jack o'lantern retirait n'importe quelle lumière devant elle, celle d'un joueur au cookie comprise.
+
+Choix de LeKiwi06 : « Oui, passe à 13 ». Changements :
+
+- jack o'lantern cuivre : lumière 13 au lieu de 14 (bleue inchangée, 10) ; KS_Cuisine n'est pas modifié ;
+- une jack o'lantern ne retire plus que la lumière de son propre niveau ;
+- devant une lumière d'un autre niveau (cookie), elle n'en pose pas ; les jack o'lanterns des chunks chargés revérifient
+  leur lumière toutes les 5 s (place libérée par un cookie, un piston...).
+
+**Compilé le 02/11/2026, non déployé, non testé en jeu.** Remplace la 0.1.0 (jamais déployée).
+
 ## 0.1.0 - socle et jack o'lanterns (02/11/2026, prototype)
 
 **Demande de LeKiwi06** (liste du 01/11, validée le 02/11) : des blocs custom pour Kixster, **sans détourner les blocs
@@ -62,7 +79,7 @@ apparence = une entrée dans `apparences.json` (états libres), puis `python KS_
 
 - Bloc musical à l'image de la jack o'lantern (orientable, 4 variantes) : bleue = harpe notes 1 à 4, cuivre = notes 5 à
   8 (nord, est, sud, ouest).
-- Lumière : un bloc de lumière (10 ou 14) devant la face, seulement dans l'air ou une source d'eau, retiré avec la jack
+- Lumière : un bloc de lumière (10 ou 14, 13 depuis la 0.1.1) devant la face, seulement dans l'air ou une source d'eau, retiré avec la jack
   o'lantern, remis dès que la place se libère (voisin cassé, chunk chargé).
 - Objet : bloc musical à l'image (`item_model`) de la jack o'lantern vanilla, en attendant sa règle KS_Textures.
 

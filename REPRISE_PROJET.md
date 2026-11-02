@@ -96,10 +96,10 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 
 ### Versions compilées, non déployées
 
-- **KS_Blocs 0.1.0** (nouveau, LeKiwi06, 02/11/2026) + **geyser-bedrock 1.11.0** : socle des blocs custom de Kixster par
+- **KS_Blocs 0.1.1** (nouveau, LeKiwi06, 02/11/2026) + **geyser-bedrock 1.11.0** : socle des blocs custom de Kixster par
   remplacement visuel (états réservés du bloc musical, les vrais blocs musicaux restent utilisables ; réécriture des
   paquets par Paper, sans PacketEvents) et prototype : jack o'lanterns bleue et cuivre (citrouille sculptée + torche des
-  âmes / de cuivre, lumière 10 / 14). Textures provisoires ; pack Java d'essai `sortie/KaLium-blocs-0.1.0.zip`
+  âmes / de cuivre, lumière 10 / 13 : 14 ferait effacer la lumière par les cookies à la baie lumineuse). Textures provisoires ; pack Java d'essai `sortie/KaLium-blocs-0.1.0.zip`
   (`python KS_Blocs/pack/blocs.py`). À déployer ensemble : jar sur Kixster, `kalium_blocs.json` + `.mcpack` 1.11.0 sur le
   proxy (proxy arrêté pour ranger le 1.10.0). Détail : `KS_Blocs/JOURNAL.md`. **Non déployé, non testé en jeu.**
 - **KG_HideAndSeek 0.3.0** (LeKiwi06, 26/10/2026) : composteur et blocs creux utilisables en solide, solide debout sur

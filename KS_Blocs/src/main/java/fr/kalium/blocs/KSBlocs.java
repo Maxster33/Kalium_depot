@@ -352,7 +352,8 @@ public final class KSBlocs extends JavaPlugin {
         return instance;
     }
 
-    static KSBlocs plugin() {
-        return instance;
+    /** Chaque bloc custom de ce type dans les chunks chargés (bloc, variante). */
+    void pourChaque(String id, java.util.function.BiConsumer<Block, String> action) {
+        registre.pourChaque(id, action);
     }
 }

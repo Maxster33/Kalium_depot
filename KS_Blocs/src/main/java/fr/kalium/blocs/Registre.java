@@ -89,6 +89,28 @@ final class Registre {
         return c;
     }
 
+    /** Chaque bloc custom de ce type dans les chunks chargés (fil principal) : bloc et variante. */
+    void pourChaque(String type, java.util.function.BiConsumer<Block, String> action) {
+        for (Map.Entry<UUID, Map<Long, Map<Integer, Entree>>> m : mondes.entrySet()) {
+            org.bukkit.World w = org.bukkit.Bukkit.getWorld(m.getKey());
+            if (w == null) {
+                continue;
+            }
+            for (Map.Entry<Long, Map<Integer, Entree>> c : m.getValue().entrySet()) {
+                int cx = (int) (c.getKey() >> 32), cz = (int) (long) c.getKey();
+                if (!w.isChunkLoaded(cx, cz)) {
+                    continue;
+                }
+                for (Map.Entry<Integer, Entree> e : c.getValue().entrySet()) {
+                    if (e.getValue().type().equals(type)) {
+                        int p = e.getKey();
+                        action.accept(w.getBlockAt((cx << 4) + x(p), y(p), (cz << 4) + z(p)), e.getValue().variante());
+                    }
+                }
+            }
+        }
+    }
+
     void decharger(Chunk chunk) {
         Map<Long, Map<Integer, Entree>> m = mondes.get(chunk.getWorld().getUID());
         if (m != null) {
