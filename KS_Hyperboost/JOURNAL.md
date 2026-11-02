@@ -78,7 +78,7 @@ bugguer » ; « j'aimerais que le nautile et l'arpenteur soient pris en compte �
 
 - **Recette plus chère** (LeKiwi06 : 0,91 « trop peu cher pour un tel pouvoir », prix visé autour de 5, pas de minerai
   sans raison, thème fusée ou explosifs ; choix : « 6 fusées, 2 TNT et un cristal ») : **cristal de l'End** au centre,
-  TNT au-dessus et au-dessous, 6 fusées de niveau 3 sur les côtés. Prix proposé pour KS_Economy : cristal 2,4375 +
+  TNT au-dessus et au-dessous, 6 fusées de niveau 3 sur les côtés. Prix **validé par LeKiwi06** le 02/11 (« ça fait très super fusée ») pour KS_Economy : cristal 2,4375 +
   2 × TNT 0,3575 + 6 × 0,068708 = **3,565**.
 
 **Compilé, non déployé. Statut : non testé en jeu.**
