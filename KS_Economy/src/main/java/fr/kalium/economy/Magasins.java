@@ -44,6 +44,19 @@ final class Magasins {
                 || type.name().endsWith("SHULKER_BOX") || type.name().endsWith("COPPER_CHEST");
     }
 
+    /** 1.13.6 : marque d'une shulker améliorée posée (KS_ShulkerAmelioree). */
+    private static final org.bukkit.NamespacedKey SHULKER_AMELIOREE =
+            new org.bukkit.NamespacedKey("ks_shulkeramelioree", "shulker");
+
+    /**
+     * 1.13.6 : contenant accepté, sauf une shulker améliorée (KS_ShulkerAmelioree) : la boutique ne verrait que les 27
+     * cases du tampon, pas ses 54 cases.
+     */
+    static boolean contenantAccepte(Block bloc) {
+        return contenantAccepte(bloc.getType()) && !(bloc.getState(false) instanceof org.bukkit.block.ShulkerBox s
+                && s.getPersistentDataContainer().has(SHULKER_AMELIOREE));
+    }
+
     /** 1.1.2 : longueur maximale du nom d'une boutique. */
     static final int NOM_MAX = 20;
 
@@ -276,7 +289,7 @@ final class Magasins {
         Block support = panneau.getBlockData() instanceof WallSign mural
                 ? panneau.getRelative(mural.getFacing().getOppositeFace())
                 : panneau.getRelative(0, -1, 0);
-        return contenantAccepte(support.getType()) ? support : null;
+        return contenantAccepte(support) ? support : null;
     }
 
     /** Inventaire du contenant (coffre double compris), ou null. */

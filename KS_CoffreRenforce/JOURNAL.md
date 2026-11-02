@@ -145,3 +145,14 @@ Compilé le 29/10/2026 (`sortie/KS_CoffreRenforce-1.3.0.jar`).
 **Déployé sur Kixster le 29/10/2026 à 10:43 (Claude de LeKiwi06 ; accord : « Oui, déploie KS_Textures, KS_CoffreRenforce et KS_JukeboxBoat sur Kixster et geyser-bedrock 1.8.0 sur le proxy » ; 1.2.0 dans `/plugins/_removed-textures-2026-10-29/`), actif après redémarrage de Kixster. Statut : non testé en jeu.**
 
 Actif sur Kixster depuis son redémarrage du 29/10/2026 à 10:47 (journal lu : chargé et activé sans erreur). Statut : non testé en jeu.
+
+## 1.3.1 - shulker améliorée pleine refusée (02/11/2026, LeKiwi06)
+
+KS_ShulkerAmelioree 1.0.0 garde le contenu d'une shulker améliorée dans ses données, pas dans le contenu de boîte du
+jeu : le coffre renforcé l'acceptait donc pleine (jusqu'à 1 000 shulkers de 54 stacks dans un bloc). Elle est
+maintenant refusée tant qu'elle contient quelque chose, comme une boîte de shulker ordinaire pleine (menu, entonnoirs,
+API). LeKiwi06 : « fait les 2 » (ajouts aux plugins communs de la shulker améliorée). Une shulker améliorée vide reste
+acceptée.
+
+Compilé le 02/11/2026. À déployer avec KS_ShulkerAmelioree 1.0.0 (sans lui, rien ne change). Statut : non testé en
+jeu, non déployé.

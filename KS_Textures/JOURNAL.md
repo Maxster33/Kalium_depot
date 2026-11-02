@@ -132,3 +132,13 @@ Pack Java 1.1.0 déposé sur minepack.fr par LeKiwi06 (`https://cdn.minepack.fr/
 `KSTextures.apparence(ItemStack)` : l'objet tel qu'un joueur le voit (texture, couleur de rareté), pour les menus de KS_Economy qui effacent les marques des plugins. Barème embarqué : celui de KS_Economy 1.13.2/1.13.3.
 
 **Déployé sur Kixster le 01/11/2026 à 18:30** avec KS_Economy 1.13.3 (LeKiwi06 : « Oui, déploie ») ; jar en place de la même taille que celui du dépôt ; 1.2.0 dans `_removed-ks_textures-1.2.0/`. À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.2.2 - rareté de la shulker améliorée (02/11/2026, LeKiwi06)
+
+Recompilé seulement, aucun changement de code : le barème copié de KS_Economy 1.13.6 contient la shulker améliorée
+(KS_ShulkerAmelioree 1.0.0, prix 129,5 validé par LeKiwi06 le 02/11/2026) : son nom passe en Rare (bleu clair).
+Aucune texture : c'est une boîte de shulker du jeu à l'aspect enchanté (rien non plus dans geyser-bedrock).
+LeKiwi06 : « fait les 2 » (ajouts aux plugins communs de la shulker améliorée).
+
+Compilé le 02/11/2026. À déployer avec KS_Economy 1.13.6 et KS_ShulkerAmelioree 1.0.0. Statut : non testé en jeu,
+non déployé.

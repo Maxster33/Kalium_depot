@@ -43,3 +43,7 @@ netherite à 28,01 ; à ajouter dans KS_Economy) et craft avec une boîte de shu
 - Un plugin qui casse le bloc sans événement (`breakNaturally`) ne lâcherait que le tampon.
 - Le coffre renforcé (KS_CoffreRenforce) accepte une shulker améliorée pleine (il ne voit que le contenu de boîte du
   jeu) : à lui faire refuser via `estVide`.
+
+**À déployer ensemble** (02/11/2026) : KS_ShulkerAmelioree 1.0.0, KS_Economy 1.13.6 (prix 129,5 ; rachetée seulement
+vide ; jamais contenant de boutique), KS_CoffreRenforce 1.3.1 (refuse une shulker améliorée pleine), KS_Textures 1.2.2
+(rareté Rare) et `didacticiel.yml` (2 entrées dans « Crafts »).

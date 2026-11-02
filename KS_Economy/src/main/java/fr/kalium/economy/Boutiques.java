@@ -774,7 +774,7 @@ final class Boutiques implements Listener {
     @EventHandler
     public void onCloseContenant(InventoryCloseEvent event) {
         Location lieu = event.getInventory().getLocation();
-        if (lieu == null || !Magasins.contenantAccepte(lieu.getBlock().getType())) {
+        if (lieu == null || !Magasins.contenantAccepte(lieu.getBlock())) {
             return;
         }
         Block bloc = lieu.getBlock();
@@ -1092,7 +1092,7 @@ final class Boutiques implements Listener {
         Boutique duPanneau = magasins.boutiqueDuPanneau(bloc);
         if (duPanneau != null) {
             touchees.add(duPanneau);
-        } else if (Magasins.contenantAccepte(bloc.getType())) {
+        } else if (Magasins.contenantAccepte(bloc)) {
             touchees.addAll(magasins.boutiquesDuContenant(bloc));
         }
         if (touchees.isEmpty()) {
@@ -1158,7 +1158,7 @@ final class Boutiques implements Listener {
 
     private boolean estBoutique(Block bloc) {
         return magasins.boutiqueDuPanneau(bloc) != null
-                || (Magasins.contenantAccepte(bloc.getType()) && !magasins.boutiquesDuContenant(bloc).isEmpty());
+                || (Magasins.contenantAccepte(bloc) && !magasins.boutiquesDuContenant(bloc).isEmpty());
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -1198,7 +1198,7 @@ final class Boutiques implements Listener {
             return false;
         }
         Block bloc = inv.getLocation().getBlock();
-        return Magasins.contenantAccepte(bloc.getType()) && !magasins.boutiquesDuContenant(bloc).isEmpty();
+        return Magasins.contenantAccepte(bloc) && !magasins.boutiquesDuContenant(bloc).isEmpty();
     }
 
     /** Contenant verrouillé (gestion à distance en cours) : personne ne l'ouvre sur place. */
@@ -1209,7 +1209,7 @@ final class Boutiques implements Listener {
             return;
         }
         Block bloc = inv.getLocation().getBlock();
-        if (!Magasins.contenantAccepte(bloc.getType())) {
+        if (!Magasins.contenantAccepte(bloc)) {
             return;
         }
         for (Boutique b : magasins.boutiquesDuContenant(bloc)) {

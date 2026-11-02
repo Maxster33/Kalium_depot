@@ -84,6 +84,8 @@ final class Rachats implements CommandExecutor {
     /** Utilisations restantes d'un Changeur de Biome (KS_BiomeChanger 1.2.0) et celles d'un neuf. */
     private static final NamespacedKey UTILISATIONS_CHANGEUR = new NamespacedKey("ks_biomechanger", "utilisations");
     private static final int UTILISATIONS_CHANGEUR_NEUF = 10;
+    /** 1.13.6 : contenu d'une shulker améliorée (KS_ShulkerAmelioree), absent quand elle est vide. */
+    private static final NamespacedKey CONTENU_SHULKER = new NamespacedKey("ks_shulkeramelioree", "contenu");
 
     private final KSEconomy plugin;
     private final Lang lang;
@@ -250,6 +252,10 @@ final class Rachats implements CommandExecutor {
             // 1.10.1 : un Changeur de Biome entamé n'est pas racheté (sans compteur : neuf, comme dans KS_BiomeChanger).
             Integer utilisations = marques.get(UTILISATIONS_CHANGEUR, PersistentDataType.INTEGER);
             if (utilisations != null && utilisations < UTILISATIONS_CHANGEUR_NEUF) {
+                return false;
+            }
+            // 1.13.6 : une shulker améliorée n'est rachetée que vide (son contenu serait perdu).
+            if (marques.has(CONTENU_SHULKER)) {
                 return false;
             }
             String[] c = cible.split(":", 5);

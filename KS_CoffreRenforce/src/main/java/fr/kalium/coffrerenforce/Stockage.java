@@ -37,6 +37,8 @@ final class Stockage {
     /** Capacité : 1 000 stacks de l'objet stocké. */
     static final int STACKS = 1000;
     private static final int CASES = 27;
+    /** 1.3.1 : contenu d'une shulker améliorée (KS_ShulkerAmelioree), absent quand elle est vide. */
+    private static final NamespacedKey CONTENU_SHULKER = new NamespacedKey("ks_shulkeramelioree", "contenu");
 
     private final NamespacedKey cle;
     private final NamespacedKey cleObjet;
@@ -168,6 +170,10 @@ final class Stockage {
             return true;
         }
         if (objet.getItemMeta() instanceof BundleMeta sac && sac.hasItems()) {
+            return false;
+        }
+        // 1.3.1 : shulker améliorée (KS_ShulkerAmelioree) pleine : son contenu est dans ses données, pas dans la boîte.
+        if (objet.getItemMeta().getPersistentDataContainer().has(CONTENU_SHULKER)) {
             return false;
         }
         return !(objet.getItemMeta() instanceof BlockStateMeta meta && meta.hasBlockState()

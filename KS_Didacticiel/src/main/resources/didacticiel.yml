@@ -236,6 +236,20 @@ themes:
           - "ks_crafts:coffre_renforce"
         requiert: "KS_CoffreRenforce"
         nouveau: "2026-10-25"
+      shulker_amelioree:
+        nom: "Shulker améliorée"
+        icone: SHULKER_BOX
+        texte: "Une boîte de shulker vide entourée de 4 modèles de forge en netherite (en +). Elle contient 54 cases, comme un coffre double, et garde tout son contenu quand on la casse. Les entonnoirs la remplissent et la vident, un comparateur donne son remplissage. Aucune boîte de shulker ne rentre dedans, même vide."
+        recettes:
+          - "ks_shulkeramelioree:shulker_amelioree"
+        requiert: "KS_ShulkerAmelioree"
+        nouveau: "2026-11-02"
+      decraft_shulker:
+        nom: "Décrafter une boîte de shulker"
+        icone: SHULKER_SHELL
+        texte: "Seule dans l'établi, une boîte de shulker vide redonne 2 carapaces de shulker, et le coffre de l'Ender reste dans la grille. La shulker améliorée ne se décrafte pas."
+        requiert: "KS_ShulkerAmelioree"
+        nouveau: "2026-11-02"
 
   alcools:
     nom: "Alcools et alambic"

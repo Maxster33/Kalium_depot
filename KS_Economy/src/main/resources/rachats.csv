@@ -1997,3 +1997,4 @@ tete_shulker_vert;tête;50;pdc:ks_decapitator:tete:s:shulker_vert;Tête de shulk
 tete_shulker_vert_clair;tête;50;pdc:ks_decapitator:tete:s:shulker_vert_clair;Tête de shulker vert clair;64;end
 tete_shulker_violet;tête;50;pdc:ks_decapitator:tete:s:shulker_violet;Tête de shulker violet;64;end
 tete_slime_moyen;tête;10;pdc:ks_decapitator:tete:s:slime_moyen;Tête de slime moyen;64;
+shulker_amelioree;shulker_amelioree;129.5;pdc:ks_shulkeramelioree:shulker:b;Shulker améliorée;1;nether+end

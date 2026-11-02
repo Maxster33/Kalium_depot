@@ -979,3 +979,21 @@ Anomalies des rachats de la semaine S45 relevées par Claude et signalées par L
   l'Ender, jukebox de la S45) gardent leur lot jusqu'au tirage de lundi.
 
 Compilé le 02/11/2026 (`sortie/KS_Economy-1.13.5.jar`). **Déployé sur Kixster le 02/11/2026 à 08:58** (LeKiwi06 : « Oui, déploie ») ; jar en place de la même taille que celui du dépôt ; 1.13.4 dans `_removed-ks_economy-1.13.4/`. À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.13.6 - shulker améliorée (02/11/2026, LeKiwi06)
+
+Chantier « Blocs, cultures et objets » (cahier local), section 4 : KS_ShulkerAmelioree 1.0.0. LeKiwi06 : « fait les 2 »
+(ajouts aux plugins communs, puis l'encapsuleur).
+
+- **Prix** : `shulker_amelioree` = boîte de shulker + 4 gabarits d'amélioration en netherite (17,45 + 4 × 28,01),
+  **validé par LeKiwi06 le 02/11/2026** ; le barème donne 129,482, arrondi à 129,5 comme les autres prix (3 chiffres).
+  Barème : `custom(...)` dans `sortie/bareme/bareme.py`, note dans `remplir.py` (avec les objets ajoutés après la
+  liste de LeKiwi06), cible `pdc:ks_shulkeramelioree:shulker:b` dans `exporter_rachats.py`, ligne dans
+  `ids-26.3-et-custom.csv` ; chaîne relancée : `rachats.csv` gagne exactement cette ligne (comparé avant / après,
+  chaîne d'abord relancée sans changement : fichier identique). Dimensions : nether + end (gabarit, carapaces).
+- **Rachats** : une shulker améliorée n'est rachetée que vide (sinon son contenu serait perdu).
+- **Boutiques** : une shulker améliorée posée n'est pas un contenant de boutique (la boutique ne verrait que les
+  27 cases de son tampon). Une boîte de shulker ordinaire reste acceptée.
+
+Compilé le 02/11/2026. **À déployer avec KS_ShulkerAmelioree 1.0.0** (sans lui, la ligne du barème ne correspond à
+aucun objet ; rien ne casse). Statut : non testé en jeu, non déployé.
