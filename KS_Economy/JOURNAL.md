@@ -960,7 +960,7 @@ Compilé le 01/11/2026 (`sortie/KS_Economy-1.13.4.jar`). **Déployé sur Kixster
 ## 1.13.5 - barème (série 16) et lots des prix de 1 à 10 (02/11/2026, LeKiwi06)
 
 Anomalies des rachats de la semaine S45 relevées par Claude et signalées par LeKiwi06, corrections validées
-(« applique tout ça ») ; règles dans `sortie/bareme/faire_moteur.py` (série 16), 205 prix changés dans `rachats.csv` :
+(« applique tout ça ») ; règles dans `sortie/bareme/faire_moteur.py` (série 16), 204 prix changés dans `rachats.csv` :
 
 - **Cuisson 0,0025** au lieu de 0,01 (un charbon cuit 8 objets, fours automatisables) : pierre et pierre taillée
   0,0125 au lieu de 0,02 (le double du cobble), pierre lisse 0,015, verre 0,0125, viandes cuites 0,0325. Les lingots
