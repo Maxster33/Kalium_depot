@@ -12,7 +12,8 @@ Objets marqués `ks_cultures:objet = <id>` (base : livre de connaissances).
 |---|---|---|---|
 | tomate, poivron, aubergine, oignon, salade | Tomate... | 0,029296875 | = carotte (légume d'une culture simple) |
 | riz | Riz | 0,029296875 | = carotte (le grain est aussi la semence) |
-| cerises, kiwi | Cerises, Kiwi | 0,029296875 | = baies sucrées (arbuste, le fruit se replante) |
+| kiwi | Kiwi | 0,029296875 | = baies sucrées (arbuste, le fruit se replante) |
+| cerises | Cerises | 0,039841317 | = pomme (LeKiwi06, 02/11 : « équivalent aux pommes », feuilles de cerisier au taux des pommes) |
 | mais | Épi de maïs | 0,048828125 | = blé (2 blocs de haut, plus lent) |
 | graine_tomate ... graine_salade, graine_mais | Graines | 0,01953125 | = graines de blé (graine <= fruit ; composteur : 1 fruit -> 1 graine) |
 | graine_dandelion, graine_poppy | Graines de pissenlit / coquelicot | 0,010185943 | fleur (0,020371885) / 2 : 1 fleur donne 2 graines en moyenne |
@@ -53,21 +54,21 @@ Fait dans cette session (accord du brief) : KS_Crafts 1.24.0 retire `ks_crafts:p
   - « Fleurs » : graine sur la terre labourée, la fleur pousse ; les grandes fleurs ne se dupliquent plus à la poudre
     d'os.
   - « Nouveaux végétaux » : tomate, poivron, aubergine, oignon, salade, maïs (sur la terre labourée), riz (sous l'eau),
-    cerises et kiwi (arbustes, clic droit pour cueillir) ; graines trouvées en cassant les herbes de certains biomes
+    kiwi (arbuste, clic droit pour cueillir) ; cerises dans les feuilles de cerisier, comme les pommes ; graines trouvées en cassant les herbes de certains biomes
     (tomate : savanes ; poivron : badlands, déserts ; aubergine : jungles ; oignon : taïgas ; salade : forêts ; maïs :
-    plaines, prairies ; riz : marais, rivières ; cerises : bosquets de cerisiers ; kiwi : jungles de bambous) ; récolte
+    plaines, prairies ; riz : marais, rivières ; kiwi : jungles de bambous) ; récolte
     à la main seulement ; les fruits se mangent ; poudre d'os : un stade de plus.
 
 ## 4. Textures (LeKiwi06) - textures provisoires en place
 
 ### Blocs (stades de pousse) : `visuels-objets/png/blocs/<nom>.png`, 16 x 16, plante en croix
 
-Une même image sert à Java (modèle `cross`) et à Bedrock (`minecraft:geometry.cross`). 17 fichiers, provisoires créés
+Une même image sert à Java (modèle `cross`) et à Bedrock (`minecraft:geometry.cross`). 15 fichiers, provisoires créés
 par `python KS_Blocs/pack/blocs.py` (images du jeu) :
 
 `culture_pousse`, `culture_jeune` (stades communs à tous les végétaux de terre), `culture_fleur` (graine de fleur en
 croissance), `culture_tomate`, `culture_poivron`, `culture_aubergine`, `culture_oignon`, `culture_salade`,
-`culture_mais_bas`, `culture_mais_haut`, `culture_cerisier`, `culture_cerisier_fruits`, `culture_kiwi`,
+`culture_mais_bas`, `culture_mais_haut`, `culture_kiwi`,
 `culture_kiwi_fruits`, `riz_pousse`, `riz_jeune`, `riz_mur`.
 
 Ensuite : `python KS_Blocs/pack/blocs.py` (pack Java `sortie/KaLium-blocs-0.2.0.zip` + `geyser-bedrock/custom_mappings/
@@ -94,6 +95,6 @@ plante carnivore pour le mélange). Bedrock voit une tarte à la citrouille ou u
 
 ## 5. geyser-bedrock
 
-- Blocs : correspondance régénérée par `blocs.py` (ci-dessus) ; essai fait dans un dossier à part le 02/11 (14 états
+- Blocs : correspondance régénérée par `blocs.py` (ci-dessus) ; essai fait dans un dossier à part le 02/11 (12 états
   de canne à sucre, 3 de varech, croix sans collision).
 - Objets : les 33 correspondances d'objets ci-dessus (même marque que KS_Textures).

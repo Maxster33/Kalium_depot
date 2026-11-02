@@ -47,8 +47,6 @@
       "salade": {"cross": "culture_salade"},
       "mais_bas": {"cross": "culture_mais_bas"},
       "mais_haut": {"cross": "culture_mais_haut"},
-      "cerisier": {"cross": "culture_cerisier"},
-      "cerisier_fruits": {"cross": "culture_cerisier_fruits"},
       "kiwi": {"cross": "culture_kiwi"},
       "kiwi_fruits": {"cross": "culture_kiwi_fruits"}
     },
@@ -63,10 +61,8 @@
       "salade": "age=8",
       "mais_bas": "age=9",
       "mais_haut": "age=10",
-      "cerisier": "age=11",
-      "cerisier_fruits": "age=12",
-      "kiwi": "age=13",
-      "kiwi_fruits": "age=14"
+      "kiwi": "age=11",
+      "kiwi_fruits": "age=12"
     }
   },
   "ks_cultures_eau": {

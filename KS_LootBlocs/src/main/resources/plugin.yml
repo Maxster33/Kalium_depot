@@ -3,5 +3,5 @@ version: '${project.version}'
 main: fr.kalium.lootblocs.KSLootBlocs
 api-version: '26.2'
 description: Loots des blocs du serveur Event (minerais, feuilles, verrue du Nether, fragments des spawners).
-softdepend: [KS_ItemSimple]
+softdepend: [KS_ItemSimple, KS_Cultures]
 authors: [KaLium]

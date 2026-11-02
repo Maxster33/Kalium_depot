@@ -10,8 +10,8 @@ bloc : les jack o'lanterns bleue et cuivre (partie 8). Dépend de KLM_Menu (text
 des cultures sont des blocs custom sur la canne à sucre (cultures sur terre) et le varech (riz). L'API reste compatible
 (rien d'enlevé ni de changé pour les jack o'lanterns, le répéteur wifi ou la boîte aux lettres).
 
-- `apparences.json` : `ks_cultures_terre` (canne à sucre, âges 1 à 14 : pousse, jeune, fleur, tomate, poivron,
-  aubergine, oignon, salade, mais_bas, mais_haut, cerisier, cerisier_fruits, kiwi, kiwi_fruits ; âge 15 libre) et
+- `apparences.json` : `ks_cultures_terre` (canne à sucre, âges 1 à 12 : pousse, jeune, fleur, tomate, poivron,
+  aubergine, oignon, salade, mais_bas, mais_haut, kiwi, kiwi_fruits ; âges 13 à 15 libres) et
   `ks_cultures_eau` (varech, âges 1 à 3 : pousse, jeune, riz ; âges 4 à 25 libres). Plusieurs types peuvent partager une
   apparence (chaque végétal de KS_Cultures est un type, tous sur ks_cultures_terre).
 - Nouveau : `textures_variantes` (facultatif) dans une apparence, pour une texture par variante (un modèle par stade).

@@ -7,7 +7,7 @@ import java.util.Locale;
  * Les nouveaux végétaux (cahier local Blocs_Cultures_Objets.md, parties 12 et 14, prix et récoltes validés le 02/11).
  *
  * Stades (variantes de l'apparence ks_cultures_terre ou ks_cultures_eau de KS_Blocs) : « pousse », « jeune », puis la
- * variante mûre. Maïs : deux blocs de haut une fois mûr (mais_bas, mais_haut). Cerises et kiwi : arbuste sans fruits,
+ * variante mûre. Maïs : deux blocs de haut une fois mûr (mais_bas, mais_haut). Kiwi : arbuste sans fruits,
  * puis avec fruits ; la récolte (clic droit) le ramène sans fruits.
  */
 enum Vegetal {
@@ -21,7 +21,6 @@ enum Vegetal {
     /** Le grain se replante (dans l'eau) : pas d'objet graine séparé. */
     RIZ(Lieu.EAU, "riz", 1, 4, 0, 0, "Riz", null, "pumpkin_seeds", null, 2, 0.4f),
     /** Le fruit se replante, comme les baies sucrées. */
-    CERISES(Lieu.ARBUSTE, "cerisier_fruits", 1, 2, 0, 0, "Cerises", null, "sweet_berries", null, 2, 0.4f),
     KIWI(Lieu.ARBUSTE, "kiwi_fruits", 1, 2, 0, 0, "Kiwi", null, "glow_berries", null, 2, 0.4f);
 
     /** Où il se plante : terre labourée, sous l'eau (riz), terre ou terre labourée (arbustes). */
@@ -36,7 +35,7 @@ enum Vegetal {
     final String modeleFruit, modeleGraine;
     /**
      * Le fruit se mange (choix de LeKiwi06 du 02/11) : nourriture et saturation de l'aliment vanilla au même prix
-     * (légumes et maïs : carotte ; riz, cerises, kiwi : baies sucrées).
+     * (légumes et maïs : carotte ; riz, kiwi : baies sucrées).
      */
     final int nourriture;
     final float saturation;
@@ -57,7 +56,7 @@ enum Vegetal {
         this.saturation = saturation;
     }
 
-    /** Nom court (config.yml, objets, liste des découvertes) : tomate, mais, cerises... */
+    /** Nom court (config.yml, objets, liste des découvertes) : tomate, mais, kiwi... */
     String cle() {
         return name().toLowerCase(Locale.ROOT);
     }
@@ -94,7 +93,7 @@ enum Vegetal {
 
     /** Végétaux qu'un mélange de graines peut faire pousser (sur la terre labourée : tous sauf le riz). */
     static List<Vegetal> duMelange() {
-        return List.of(TOMATE, POIVRON, AUBERGINE, OIGNON, SALADE, MAIS, CERISES, KIWI);
+        return List.of(TOMATE, POIVRON, AUBERGINE, OIGNON, SALADE, MAIS, KIWI);
     }
 
     static Vegetal parCle(String cle) {
@@ -118,7 +117,7 @@ enum Vegetal {
         return id != null && id.startsWith("graine_") ? parCle(id.substring("graine_".length())) : null;
     }
 
-    /** Le végétal que plante cet objet (graine, grain de riz, cerises, kiwi), ou null. */
+    /** Le végétal que plante cet objet (graine, grain de riz, kiwi), ou null. */
     static Vegetal parSemence(String id) {
         for (Vegetal v : values()) {
             if (v.semence().equals(id)) {

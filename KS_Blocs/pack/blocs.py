@@ -70,8 +70,6 @@ PROVISOIRES = {
     "culture_salade": ("block/potatoes_stage2", None),
     "culture_mais_bas": ("block/wheat_stage6", None),
     "culture_mais_haut": ("block/wheat_stage7", None),
-    "culture_cerisier": ("block/sweet_berry_bush_stage1", None),
-    "culture_cerisier_fruits": ("block/sweet_berry_bush_stage3", None),
     "culture_kiwi": ("block/sweet_berry_bush_stage2", None),
     "culture_kiwi_fruits": ("block/sweet_berry_bush_stage3", 0.08),  # baies teintees en brun
     "riz_pousse": ("block/wheat_stage2", None),

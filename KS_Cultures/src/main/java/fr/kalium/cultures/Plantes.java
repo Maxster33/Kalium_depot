@@ -310,7 +310,7 @@ final class Plantes implements Listener, EcouteurBloc {
         }
     }
 
-    /** Pose d'une graine, d'un grain de riz, de cerises, de kiwi ou d'un mélange sur le bloc cliqué. Vrai si posé. */
+    /** Pose d'une graine, d'un grain de riz, de kiwi ou d'un mélange sur le bloc cliqué. Vrai si posé. */
     private boolean semer(Player joueur, Block sol, String id, ItemStack main) {
         Block place = sol.getRelative(BlockFace.UP);
         String type;

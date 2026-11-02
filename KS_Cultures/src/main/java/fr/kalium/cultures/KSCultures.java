@@ -31,7 +31,8 @@ import java.util.Set;
  *   <li>Fleurs : au composteur, 1 fleur -> 1 à 3 graines ; la graine posée sur la terre labourée pousse, puis la vraie
  *       fleur est posée. Les grandes fleurs ne se dupliquent plus à la poudre d'os ({@link Fleurs}).</li>
  *   <li>Nouveaux végétaux ({@link Vegetal}) : maïs (2 blocs de haut), tomate, poivron, salade, oignon, aubergine, riz
- *       (dans l'eau), cerises et kiwi (arbustes récoltés d'un clic droit). Récolte à la main seulement : ni l'eau ni
+ *       (dans l'eau), kiwi (arbuste récolté d'un clic droit). Les cerises ne se cultivent pas : elles tombent des
+ *       feuilles de cerisier comme les pommes (KS_LootBlocs). Récolte à la main seulement : ni l'eau ni
  *       les villageois fermiers ne les récoltent (canne à sucre et varech, voir KS_Blocs).</li>
  *   <li>Graines par biome : une herbe cassée dans le bon biome (Terralith compris, config.yml) donne la graine du
  *       végétal une fois sur 8, en plus de la graine de blé vanilla. Une fois le végétal récolté mûr, le composteur en
@@ -48,6 +49,7 @@ import java.util.Set;
 public final class KSCultures extends JavaPlugin {
 
     static final String MELANGE = "melange";
+    static final String CERISES = "cerises";
 
     private static KSCultures instance;
 
@@ -147,7 +149,6 @@ public final class KSCultures extends JavaPlugin {
             Vegetal.SALADE, List.of("forest", "!dark", "!snowy", "!wintry"),
             Vegetal.MAIS, List.of("plains", "meadow", "!snowy"),
             Vegetal.RIZ, List.of("swamp", "river", "!frozen"),
-            Vegetal.CERISES, List.of("cherry"),
             Vegetal.KIWI, List.of("bamboo"));
 
     // ------------------------------------------------------------------ objets
@@ -170,6 +171,8 @@ public final class KSCultures extends JavaPlugin {
         if (MELANGE.equals(id)) {
             nom = "Mélange de graines";
             modele = "pitcher_pod";
+        } else if (CERISES.equals(id)) {
+            return cerises(n);
         } else if (Fleurs.NOMS.containsKey(id)) {
             nom = Fleurs.NOMS.get(id);
             modele = "beetroot_seeds";
@@ -195,6 +198,26 @@ public final class KSCultures extends JavaPlugin {
             o.setData(DataComponentTypes.FOOD, FoodProperties.food().nutrition(aliment.nourriture)
                     .saturation(aliment.saturation).build());
         }
+        return o;
+    }
+
+    /**
+     * n cerises (LeKiwi06, 02/11 : « les cerises doivent drop des cerisiers, ce n'est pas une plante cultivable,
+     * seulement un item équivalent aux pommes ») : lâchées par les feuilles de cerisier au taux des pommes (KS_LootBlocs
+     * 1.4.0), elles se mangent comme une pomme (4 de nourriture, 2,4 de saturation). Null si le plugin n'est pas actif.
+     */
+    public static ItemStack cerises(int n) {
+        if (instance == null) {
+            return null;
+        }
+        ItemStack o = new ItemStack(Material.PUMPKIN_PIE, n);
+        ItemMeta meta = o.getItemMeta();
+        meta.displayName(instance.t("objet." + CERISES, "<white>Cerises").decoration(TextDecoration.ITALIC, false));
+        meta.setItemModel(NamespacedKey.minecraft("sweet_berries"));
+        meta.setMaxStackSize(64);
+        meta.getPersistentDataContainer().set(instance.cleObjet, PersistentDataType.STRING, CERISES);
+        o.setItemMeta(meta);
+        o.setData(DataComponentTypes.FOOD, FoodProperties.food().nutrition(4).saturation(2.4f).build());
         return o;
     }
 

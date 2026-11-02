@@ -16,9 +16,9 @@ récoltes).
 | Tomate, poivron, aubergine, oignon, salade | terre labourée | pousse, jeune, mûr | 1 à 3 fruits + 1 à 2 graines |
 | Maïs | terre labourée | pousse, jeune, mûr sur 2 blocs (s'il y a de la place) | 1 à 2 épis + 1 à 2 graines |
 | Riz | sous l'eau (source), sur terre, terre labourée, boue, argile, sable, gravier | pousse, jeune, mûr | 1 à 4 grains (le grain se replante) |
-| Cerises, kiwi | terre ou terre labourée (le fruit se replante) | pousse, jeune, arbuste, arbuste avec fruits | clic droit : 1 à 2 fruits, l'arbuste repousse ses fruits |
+| Kiwi | terre ou terre labourée (le fruit se replante) | pousse, jeune, arbuste, arbuste avec fruits | clic droit : 1 à 2 fruits, l'arbuste repousse ses fruits |
 
-- Semis : clic droit sur le dessus du sol avec la graine (le grain de riz, les cerises, le kiwi). Les protections
+- Semis : clic droit sur le dessus du sol avec la graine (le grain de riz, le kiwi). Les protections
   (claims) sont respectées : un essai de pose leur demande si le joueur peut construire là.
 - Casse d'une culture pas mûre : sa graine revient (un arbuste rend son fruit, plus ses fruits s'il en porte). Les
   deux blocs du maïs partent ensemble, une seule récolte.
@@ -55,7 +55,7 @@ Une herbe courte ou haute cassée par un joueur (hors créatif, sans cisailles) 
 possible en plus. **Table des biomes validée par LeKiwi06 le 02/11** (`herbes.biomes` du `config.yml`, mots cherchés
 dans le nom du biome, Terralith compris) : tomate savanes ; poivron badlands, shrublands, déserts ; aubergine jungles (pas de
 bambous) ; oignon taïgas (pas enneigées) ; salade forêts (ni sombres, ni enneigées) ; maïs plaines et prairies ; riz
-marais et rivières ; cerises bosquets de cerisiers ; kiwi jungles de bambous. Le butin des herbes est fait ici :
+marais et rivières ; kiwi jungles de bambous. Le butin des herbes est fait ici :
 KS_LootBlocs n'est pas modifié.
 
 ### Composteur (`Composteur`)
@@ -70,14 +70,21 @@ KS_LootBlocs n'est pas modifié.
 - Stockage propre à chaque composteur (données du chunk) ; il tombe au sol si le composteur est cassé, explosé ou
   brûlé ; un piston ne pousse pas un composteur qui stocke des graines.
 - Mélange de graines : sur la terre labourée, un végétal au hasard parmi tomate, poivron, aubergine, oignon, salade,
-  maïs, cerises, kiwi (pas le riz, qui pousse sous l'eau).
+  maïs, kiwi (pas le riz, qui pousse sous l'eau).
+
+### Cerises
+
+Choix de LeKiwi06 du 02/11 : « les cerises doivent drop des cerisiers, ce n'est pas une plante cultivable, seulement un
+item équivalent aux pommes ». Pas d'arbuste cerisier : les feuilles de cerisier donnent des cerises à la place des
+pommes, au taux des pommes (KS_LootBlocs 1.4.0, qui appelle `KSCultures.cerises(n)`), sans pomme dorée. Elles se
+mangent comme une pomme et valent son prix au barème.
 
 ### Objets
 
 Graines et mélange : livre de connaissances (aucun usage vanilla, son clic droit est bloqué). Fruits : tarte à la
 citrouille (aliment sans autre usage, comme le casse-croûte doré), **ils se mangent** (choix de LeKiwi06 du 02/11 ;
 valeurs de l'aliment vanilla au même prix : légumes et épi de maïs 3 de nourriture et 3,6 de saturation comme la
-carotte ; riz, cerises, kiwi 2 et 0,4 comme les baies sucrées) ; un clic droit qui ne plante pas les mange. 64 par
+carotte ; riz, kiwi 2 et 0,4 comme les baies sucrées ; cerises 4 et 2,4 comme la pomme) ; un clic droit qui ne plante pas les mange. 64 par
 pile, à l'image d'un objet du jeu (item_model provisoire), marqués `ks_cultures:objet = <id>`. Ids : fruits `tomate`, `poivron`, `aubergine`, `oignon`,
 `salade`, `mais`, `riz`, `cerises`, `kiwi` ; graines `graine_tomate`, `graine_poivron`, `graine_aubergine`,
 `graine_oignon`, `graine_salade`, `graine_mais` ; graines de fleurs `graine_dandelion`, `graine_poppy`,
@@ -95,5 +102,5 @@ vide).
 - L'essai de pose (protections) passe par un faux `BlockPlaceEvent` : un plugin qui journalise les poses le verrait.
 - Créatif : la pioche (clic molette) sur une culture donne de la canne à sucre ou du varech.
 
-**Compilé le 02/11/2026, non déployé, non testé en jeu.** À déployer avec KS_Blocs 0.2.0, KS_Crafts 1.24.0, geyser-bedrock
+**Compilé le 02/11/2026, non déployé, non testé en jeu.** À déployer avec KS_Blocs 0.2.0, KS_Crafts 1.24.0, KS_LootBlocs 1.4.0, geyser-bedrock
 (correspondance régénérée par `python KS_Blocs/pack/blocs.py`) et les ajouts aux plugins communs (`AJOUTS_COMMUNS.md`).

@@ -14,7 +14,7 @@ herbes:
   # en plus de la graine de ble vanilla.
   chance: 0.125
   # Biomes de chaque vegetal (valides par LeKiwi06 le 02/11) : le nom du biome (minecraft:... ou terralith:...) contient l'un
-  # des mots, et aucun des mots precedes de « ! ». Riz : un grain ; cerises, kiwi : un fruit.
+  # des mots, et aucun des mots precedes de « ! ». Riz : un grain ; kiwi : un fruit.
   biomes:
     tomate: [savanna]
     poivron: [badlands, shrubland, desert]
@@ -23,5 +23,4 @@ herbes:
     salade: [forest, "!dark", "!snowy", "!wintry"]
     mais: [plains, meadow, "!snowy"]
     riz: [swamp, river, "!frozen"]
-    cerises: [cherry]
     kiwi: [bamboo]

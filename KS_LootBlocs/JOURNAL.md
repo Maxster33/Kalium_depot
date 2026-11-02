@@ -54,3 +54,17 @@ rien.
 - **À déployer avec KS_Crafts 1.10.0 et KS_LootPotions 1.1.2.**
 
 **Déployé sur Event le 04/10/2026 à 06:52 (LeKiwi06 ; 1.2.0 dans `_removed-ks_lootblocs-1.2.0/`), actif après redémarrage d'Event. Statut : non testé en jeu.**
+
+## 1.4.0 - cerises dans les feuilles de cerisier (02/11/2026, LeKiwi06)
+
+**Demande de LeKiwi06** (cultures de Kixster) : « les cerises doivent drop des cerisiers, ce n'est pas une plante
+cultivable, seulement un item équivalent aux pommes ».
+
+- Feuilles de cerisier (cassées ou dégradées) : la pomme ajoutée depuis la 1.0.0 devient des cerises de KS_Cultures,
+  au même taux (1/200, Fortune comme en vanilla), sans tirage de pomme dorée. Cisailles / Toucher de soie : rien,
+  comme avant. Les autres feuilles : inchangées.
+- `softdepend` KS_Cultures ; `build.sh` : compiler KS_Cultures d'abord. Sans KS_Cultures activé : la pomme, comme avant.
+- **À déployer avec KS_Cultures 1.0.0.**
+
+Compilé le 02/11/2026 (`sortie/KS_LootBlocs-1.4.0.jar`). **Statut : non déployé, non testé en jeu.**
+

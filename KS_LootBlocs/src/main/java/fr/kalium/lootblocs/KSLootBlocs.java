@@ -1,5 +1,6 @@
 package fr.kalium.lootblocs;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,7 +32,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * - minerais de fer et d'or : minerai brut vanilla x2 (2, Fortune comme en vanilla ; 1.2.0, avant : 2 à 5 comme le cuivre) ;
  * - autres minerais : 1 % de chance que le drop soit remplacé par 2 blocs du minerai cassé (jamais avec Toucher de soie) ;
  * - feuilles (cassées ou dégradées) : pousses ×2 sur chêne noir, chêne pâle et acacia ; pommes sur toutes les feuilles
- *   (taux vanilla), chaque pomme : 1 % pomme dorée, 0,01 % pomme dorée enchantée ;
+ *   (taux vanilla), chaque pomme : 1 % pomme dorée, 0,01 % pomme dorée enchantée ; feuilles de cerisier : des cerises
+ *   (KS_Cultures) à la place des pommes (1.4.0) ;
  * - verrue du Nether : drop vanilla depuis la 1.3.0 (1.0.0 à 1.2.0 : plus aucun drop) ;
  * - spawners naturels (1.1.0) : 1 Fragment de Spawner + 5 % de chance d'un 2e.
  * Les potions (émeraude deepslate, chorus, verrue) sont dans KS_LootPotions.
@@ -129,8 +131,19 @@ public final class KSLootBlocs extends JavaPlugin implements Listener {
         }
         if (leaves != Material.OAK_LEAVES && leaves != Material.DARK_OAK_LEAVES
                 && random().nextDouble() < APPLE_CHANCE[fortune]) {
-            extra.addAll(appleRoll(new ItemStack(Material.APPLE)));
+            ItemStack cerises = leaves == Material.CHERRY_LEAVES ? cerises() : null;
+            extra.addAll(cerises != null ? List.of(cerises) : appleRoll(new ItemStack(Material.APPLE)));
         }
+    }
+
+    /**
+     * 1.4.0 (LeKiwi06, 02/11/2026 : « les cerises doivent drop des cerisiers, ce n'est pas une plante cultivable,
+     * seulement un item équivalent aux pommes ») : les feuilles de cerisier donnent des cerises (KS_Cultures) à la place
+     * des pommes, au même taux, sans pomme dorée. Sans KS_Cultures activé : la pomme, comme avant.
+     */
+    private static ItemStack cerises() {
+        return Bukkit.getPluginManager().isPluginEnabled("KS_Cultures")
+                ? fr.kalium.cultures.KSCultures.cerises(1) : null;
     }
 
     /** Chaque pomme : 0,01 % pomme doree enchantee, 1 % pomme doree, sinon pomme. Renvoie au moins une pile. */
