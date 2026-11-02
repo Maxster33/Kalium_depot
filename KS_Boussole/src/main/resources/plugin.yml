@@ -1,0 +1,7 @@
+name: KS_Boussole
+version: '${project.version}'
+main: fr.kalium.boussole.KSBoussole
+api-version: '26.2'
+description: "Boussole du voyageur (Kixster) - cherche un biome autour du joueur et pointe vers lui."
+authors: [KaLium]
+depend: [KLM_Menu, KS_BiomeChanger]

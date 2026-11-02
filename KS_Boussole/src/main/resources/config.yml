@@ -1,0 +1,5 @@
+# KS_Boussole : boussole du voyageur.
+# Rayon de la recherche autour du joueur, en blocs (2000 par défaut).
+rayon: 2000
+# Temps de recharge entre deux recherches réussies d'un même joueur, en minutes (15 par défaut, 0 = aucun).
+recharge-minutes: 15
