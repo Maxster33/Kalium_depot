@@ -250,6 +250,14 @@ themes:
         texte: "Seule dans l'établi, une boîte de shulker vide redonne 2 carapaces de shulker, et le coffre de l'Ender reste dans la grille. La shulker améliorée ne se décrafte pas."
         requiert: "KS_ShulkerAmelioree"
         nouveau: "2026-11-02"
+      encapsuleur:
+        nom: "Encapsuleur"
+        icone: STRUCTURE_BLOCK
+        texte: "Un crafter entouré de 8 shulkers améliorées vides. Dans tes claims, clic gauche puis clic droit sur deux coins (64 x 128 x 64 au plus), accroupi + clic droit pour encapsuler : la construction part dans l'objet. Les contenants pleins et les créatures restent sur place. Clic droit ailleurs pour la reposer : aperçu, rotation, miroir. Usage unique."
+        recettes:
+          - "ks_encapsuleur:encapsuleur"
+        requiert: "KS_Encapsuleur"
+        nouveau: "2026-11-02"
 
   alcools:
     nom: "Alcools et alambic"

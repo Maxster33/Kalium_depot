@@ -1,0 +1,8 @@
+name: KS_Encapsuleur
+version: '${project.version}'
+main: fr.kalium.encapsuleur.KSEncapsuleur
+api-version: '26.2'
+description: "Kixster - encapsuleur de constructions (64 x 64 x 128 au plus), usage unique, dans ses claims ; pose avec apercu, rotation et miroir."
+authors: [KaLium]
+depend: [KLM_Menu, KS_ShulkerAmelioree]
+softdepend: [KS_Blocs, SimpleClaimSystem]
