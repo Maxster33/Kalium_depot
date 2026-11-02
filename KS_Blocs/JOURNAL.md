@@ -19,7 +19,7 @@ Choix de LeKiwi06 : « Oui, passe à 13 ». Changements :
 - devant une lumière d'un autre niveau (cookie), elle n'en pose pas ; les jack o'lanterns des chunks chargés revérifient
   leur lumière toutes les 5 s (place libérée par un cookie, un piston...).
 
-**Compilé le 02/11/2026, non déployé, non testé en jeu.** Remplace la 0.1.0 (jamais déployée).
+**Compilé le 02/11/2026. Déployé sur Kixster le 02/11/2026 à 13:44 (LeKiwi06 : « Oui, déploie »), avec geyser-bedrock 1.11.0 sur le proxy ; à redémarrer, non testé en jeu.** Remplace la 0.1.0 (jamais déployée).
 
 ## 0.1.0 - socle et jack o'lanterns (02/11/2026, prototype)
 

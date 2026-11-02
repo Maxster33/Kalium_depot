@@ -173,6 +173,6 @@ alcool a deux objets Bedrock (potion et potion jetable), un bateau à jukebox un
   deviennent des blocs Bedrock custom (cube, textures par face : face avant dans le sens de la variante) ; les autres
   états restent le bloc musical de Bedrock. Nouveau `pack/textures/terrain_texture.json` et images `textures/blocks/` :
   prises dans `visuels-objets/png/blocs` (textures provisoires de `KS_Blocs/pack/blocs.py`, qui écrit aussi ces deux
-  fichiers). Pack `KaLium-objets-1.11.0.mcpack` construit. **Non envoyé sur le proxy, non testé.** Mise en place :
+  fichiers). Pack `KaLium-objets-1.11.0.mcpack` construit. **Envoyé sur le proxy le 02/11/2026 à 13:44 (LeKiwi06 : « Oui, déploie ») avec `kalium_blocs.json` ; le 1.10.0 laissé dans `packs/`, à ranger proxy arrêté. Non testé.** Mise en place :
   `kalium_blocs.json` dans `custom_mappings/` et le `.mcpack` dans `packs/`, puis rangement du 1.10.0 proxy arrêté (étapes
   4 et 5 ci-dessus).
