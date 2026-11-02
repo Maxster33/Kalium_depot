@@ -41,4 +41,4 @@ utilisable dans l'overworld, le Nether et l'End.
 Limites : un joueur dans une autre dimension que celle du point visé voit l'aiguille tourner (comme en vanilla). Le
 point trouvé est une cellule de biome à la hauteur où la recherche l'a trouvé (biomes de grottes : sous terre).
 
-Compilé, **non déployé, non testé en jeu**. Prix validé par LeKiwi06 le 02/11 : **513,2** (boussole 0,5 + Changeur de Biome 512,7), à ajouter dans `rachats.csv` de KS_Economy (ligne `boussole_voyageur;boussole_voyageur;513.2;pdc:ks_boussole:boussole_voyageur:b;Boussole du voyageur;1;`). Restent à ajouter : entrée du didacticiel (KS_Didacticiel).
+Compilé ; **déployé sur Kixster le 02/11/2026 à 13:19** (jar de 14 511 octets, même taille que celui du dépôt ; nouveau plugin, rien rangé), **à redémarrer, non testé en jeu**. Prix validé par LeKiwi06 le 02/11 : **513,2** (boussole 0,5 + Changeur de Biome 512,7), à ajouter dans `rachats.csv` de KS_Economy (ligne `boussole_voyageur;boussole_voyageur;513.2;pdc:ks_boussole:boussole_voyageur:b;Boussole du voyageur;1;`). Restent à ajouter : entrée du didacticiel (KS_Didacticiel).
