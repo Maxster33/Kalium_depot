@@ -99,9 +99,9 @@ Confirmé par l'utilisateur le 23/09/2026, avant le Rush : « tout fonctionne tr
 - **KS_Courrier 1.0.0** (nouveau) + **KS_Contrats 1.1.0** + **KS_Claim 1.6.0** (LeKiwi06, 02/11/2026) : boîte aux
   lettres de Kixster (une par joueur, dans un de ses claims, claim ni supprimé ni vendu), lettres et colis livrés même
   hors ligne (frais : 1 point par 1 000 blocs entre les boîtes), historique, aucune duplication (contenu gardé par le
-  serveur) ; demandes publiques dans /contrat, livrées depuis la boîte. **Il manque l'apparence `boite_aux_lettres` dans
-  `apparences.json` de KS_Blocs** (entrée proposée dans `KS_Courrier/JOURNAL.md`) ; prix, didacticiel et textures à
-  ajouter. À déployer ensemble. Compilés, non déployés, non testés en jeu.
+  serveur) ; demandes publiques dans /contrat, livrées depuis la boîte. Apparence `boite_aux_lettres` ajoutée à KS_Blocs 0.2.0
+  (5c545ba) ; prix, didacticiel et textures à
+  ajouter. À déployer ensemble (avec KS_Blocs 0.2.0). Compilés, non déployés, non testés en jeu.
 - **KS_Blocs 0.1.1** (nouveau, LeKiwi06, 02/11/2026) + **geyser-bedrock 1.11.0** : socle des blocs custom de Kixster par
   remplacement visuel (états réservés du bloc musical, les vrais blocs musicaux restent utilisables ; réécriture des
   paquets par Paper, sans PacketEvents) et prototype : jack o'lanterns bleue et cuivre (citrouille sculptée + torche des

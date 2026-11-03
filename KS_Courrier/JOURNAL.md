@@ -63,16 +63,14 @@ aucune recette de l'établi.
 **Monde de test** : courrier du « moi de test » (CompteTest), séparé de la survie.
 
 Limites :
-- **L'apparence `boite_aux_lettres` manque dans `apparences.json` de KS_Blocs** (que seule la session des cultures
-  modifie) : sans elle, la boîte est désactivée (message dans la console) ; lettres et colis restent fabricables mais
-  ne peuvent pas être envoyés. Entrée proposée ci-dessous.
+- Apparence `boite_aux_lettres` : ajoutée à `apparences.json` par la session des cultures (KS_Blocs 0.2.0, commit
+  5c545ba, états ci-dessous, textures provisoires). Sans elle, la boîte se désactiverait au démarrage.
 - Pas de « boîte du staff », pas de Père Noël, pas de journal hebdomadaire (choix ci-dessus).
 - Recettes enregistrées par le plugin (pas KS_Crafts) ; prix KS_Economy, didacticiel, textures : à ajouter (liste dans
   le compte rendu de la session).
 - Crafter (bloc fabricant) : la garde des recettes ne couvre que l'établi.
 
-Entrée proposée pour `KS_Blocs/src/main/resources/apparences.json` (états libres à vérifier ; jack o'lanterns : harp
-1-8, répéteur proposé : bit 1-3) :
+Entrée de `KS_Blocs/src/main/resources/apparences.json` (KS_Blocs 0.2.0 ; jack o'lanterns : harp 1-8, répéteur : bit 1-3) :
 
 ```json
 "boite_aux_lettres": {
@@ -89,4 +87,4 @@ Entrée proposée pour `KS_Blocs/src/main/resources/apparences.json` (états lib
 ```
 
 **Compilé le 02/11/2026, non déployé, non testé en jeu.** À déployer ensemble sur Kixster : KS_Courrier 1.0.0,
-KS_Contrats 1.1.0, KS_Claim 1.6.0, KS_Blocs (avec l'apparence ci-dessus) et geyser-bedrock (correspondance régénérée).
+KS_Contrats 1.1.0, KS_Claim 1.6.0, KS_Blocs 0.2.0 (avec l'apparence ci-dessus) et geyser-bedrock (correspondance régénérée).
