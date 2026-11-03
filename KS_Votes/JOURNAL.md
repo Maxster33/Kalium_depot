@@ -4,7 +4,7 @@ Plugin Paper de **Kixster** : récompenser les votes sur les sites de référenc
 Cahiers (locaux, hors dépôt) : `KS_Votes.md` (sites, réception, Bedrock) et `Blocs_Cultures_Objets.md`, section 1
 « /vote », qui remplace les montants et les paliers de `KS_Votes.md`.
 
-## 1.0.0 — 02/11/2026 (Claude de LeKiwi06) — non déployée, non testée en jeu
+## 1.0.0 — 02/11/2026 (Claude de LeKiwi06) — déployée sur Kixster le 03/11/2026 à 14:37, à redémarrer, non testée en jeu
 
 **Demande** (LeKiwi06, 31/10 et 02/11/2026) : un coffre de butin par vote, par site et par jour ; valeur selon la
 série ; menu `/vote` en coffre.
@@ -58,3 +58,11 @@ donné). Textes : `lang.yml`.
 
 **À ajouter ailleurs (fichiers communs, non modifiés ici)** : étape `/vote` dans `didacticiel.yml` (KS_Didacticiel).
 Aucun objet custom, aucune recette, aucun prix.
+
+**Déploiement du 03/11/2026** (accord de LeKiwi06) :
+- 14:34 : NuVotifier (AzuVotifier 3.3.6, Modrinth, empreintes vérifiées) sur le proxy (`/plugins/nuvotifier/`, port 40312
+  en TCP, même numéro que Geyser en UDP ; `pluginMessaging`, cache fichier, `onlySendToJoinedServer = false`) et sur
+  Kixster (`/plugins/Votifier/`, `port: -1`, `pluginMessaging`). Clés RSA générées en local puis la privée effacée du PC ;
+  la clé publique à donner aux sites est dans `sortie/votes/public.key` (hors dépôt).
+- 14:37 : `KS_Votes-1.0.0.jar` sur Kixster (nouveau plugin, rien à ranger). Proxy et Kixster à redémarrer.
+- Les liens et noms de service des sites (`config.yml`) restent vides : à remplir à l'inscription sur chaque site.
