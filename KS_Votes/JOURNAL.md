@@ -66,3 +66,7 @@ Aucun objet custom, aucune recette, aucun prix.
   la clé publique à donner aux sites est dans `sortie/votes/public.key` (hors dépôt).
 - 14:37 : `KS_Votes-1.0.0.jar` sur Kixster (nouveau plugin, rien à ranger). Proxy et Kixster à redémarrer.
 - Les liens et noms de service des sites (`config.yml`) restent vides : à remplir à l'inscription sur chaque site.
+- 14:54 : port de NuVotifier sur le proxy passé de 40312 à **44270** (`config.toml`, ancien dans
+  `_removed-config-40312-2026-11-03/`). Au redémarrage de 14:44, NuVotifier occupait le port TCP 40312 de la
+  signalisation NetherNet de Geyser : plus aucune connexion par l'onglet Amis (Kalium6733). 44270 est le port
+  « nuvotifier » réservé dans le panneau. Proxy à redémarrer ; sites de vote à régler sur `91.197.6.68:44270`.
