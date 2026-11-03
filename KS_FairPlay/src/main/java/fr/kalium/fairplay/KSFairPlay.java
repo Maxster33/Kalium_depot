@@ -60,7 +60,7 @@ import java.util.UUID;
  *   d'entités coupés ; carte de surface et points de repère gardés). JourneyMap : son plugin serveur ; Legacy
  *   Freecam : son plugin serveur (tout ce qui est « déloyal » interdit par défaut).
  * - Limite globale de 10 par jour (remise à zéro à minuit, heure de Paris) : ouvrir un contenant au butin non généré
- *   (coffres, tonneaux, wagonnets de mineshaft, distributeurs des temples ; pas les pots ni les coffres forts),
+ *   (coffres, coffres en cuivre, tonneaux, wagonnets de mineshaft, distributeurs des temples ; pas les pots ni les coffres forts),
  *   casser un spawner naturel (pas ceux posés par KS_Spawners), brosser un bloc suspect. Limite atteinte : refus, bloc
  *   intact, « Limite atteinte, reviens demain ».
  * - Protection tant que le butin n'est pas généré (spawner naturel : tant qu'il n'est pas cassé) : incassable par un
@@ -292,7 +292,9 @@ public final class KSFairPlay extends JavaPlugin implements Listener {
         }
         if (!(suspect(type) || type == Material.CHEST || type == Material.TRAPPED_CHEST || type == Material.BARREL
                 || type == Material.DISPENSER || type == Material.DROPPER || type == Material.HOPPER
-                || type.name().endsWith("SHULKER_BOX"))) {
+                || type.name().endsWith("SHULKER_BOX")
+                // 1.1.1 (LeKiwi06 : coffres en cuivre des camps abandonnés non comptés) : toutes oxydations, cirés compris.
+                || type.name().endsWith("COPPER_CHEST"))) {
             return false;
         }
         return nonGenere(bloc.getState(false));
