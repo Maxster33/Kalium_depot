@@ -82,6 +82,9 @@ final class Cumul implements Listener {
     private boolean pose;
     private boolean modifie;
 
+    /** Cle de deploiement (KS_MondeTest 1.2.0) : cumul dans le monde de test seulement jusqu'a sa validation. */
+    static final String PHASE = "KS_Effets:cumul";
+
     Cumul(KSEffets plugin) {
         this.plugin = plugin;
         this.fichier = new File(plugin.getDataFolder(), "cumul.yml");
@@ -102,7 +105,7 @@ final class Cumul implements Listener {
         switch (event.getAction()) {
             case ADDED, CHANGED -> {
                 PotionEffect effet = event.getNewEffect();
-                if (effet == null || cause == EntityPotionEffectEvent.Cause.EXPIRATION) {
+                if (effet == null || cause == EntityPotionEffectEvent.Cause.EXPIRATION || !PhaseTest.ouvert(PHASE, joueur)) {
                     return;
                 }
                 Etat etat = comptes.computeIfAbsent(plugin.compteDe(joueur), c -> new LinkedHashMap<>())

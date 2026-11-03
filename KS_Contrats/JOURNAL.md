@@ -96,3 +96,9 @@ cuivre taillé), puis `didacticiel.yml` (thème « Contrats », `requiert: KS_Co
 l'humain pour les admins non op : `kscontrats.admin`.
 
 **Déployé sur Kixster le 27/10/2026 à 03:49 (accord de LeKiwi06 : « Oui, déploie KS_Contrats 1.0.0 et KS_Economy 1.12.0 sur Kixster avec le didacticiel.yml ») avec KS_Economy 1.12.0 et `didacticiel.yml` (ancien dans `_removed-ks_didacticiel-didacticiel-2026-10-27/`) ; actif après redémarrage, non testé en jeu.**
+
+### 1.1.0 - clé de déploiement (03/11/2026)
+
+Demandes publiques derrière la clé `KS_Contrats:demandes` (KS_MondeTest 1.2.0) : en survie, tant qu'elle n'est pas
+validée, bouton « Demandes publiques » absent de /contrat et menu refusé (aussi depuis la boîte aux lettres). Dans le
+monde de test : tout marche. À ouvrir par `/mondetest valider KS_Contrats:demandes`.

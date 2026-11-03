@@ -5,6 +5,7 @@ api-version: '26.2'
 description: Didacticiel des changements de Kixster, dans le comparateur Informations (contenu dans didacticiel.yml).
 authors: [KaLium]
 depend: [KLM_Menu]
+softdepend: [KS_MondeTest]
 commands:
   didacticiel:
     description: Ouvre le didacticiel de Kixster ; /didacticiel recharger relit didacticiel.yml (staff).

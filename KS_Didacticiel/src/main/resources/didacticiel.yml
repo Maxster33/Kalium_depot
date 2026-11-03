@@ -14,7 +14,9 @@
 # - recettes : liste de clés de recettes du serveur ("ks_crafts:red_sand") ; une clé finie par * prend toutes celles
 #   qui commencent ainsi. La nouveauté devient cliquable et montre ces recettes, une par page.
 # - requiert : un plugin ("KS_Trains") ou un plugin et sa version minimale ("KS_Decapitator 1.3.0") : sans lui, le
-#   thème ou la nouveauté n'est pas montré (utile pour préparer une nouveauté avant son plugin).
+#   thème ou la nouveauté n'est pas montré (utile pour préparer une nouveauté avant son plugin). Depuis la 1.5.0, aussi
+#   une clé de nouveauté ("KS_Contrats:demandes") ; un plugin ou une clé encore en test (KS_MondeTest, /mondetest
+#   phases) n'est montré que dans le monde de test, et apparaît en survie à sa validation.
 # - nouveau : toujours ENTRE GUILLEMETS. La nouveauté porte « Nouveau » pour chaque joueur qui n'a pas encore ouvert
 #   son thème depuis que cette valeur a changé. Mettre la date du jour sur une nouveauté ajoutée ou modifiée ;
 #   laisser l'ancienne valeur pour une simple correction de texte ; "" = jamais « Nouveau ». Un deuxième changement le

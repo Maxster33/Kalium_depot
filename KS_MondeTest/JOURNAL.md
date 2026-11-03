@@ -137,3 +137,47 @@ identifiant de test ; les magasins de Kixster ne sont pas testables depuis le mo
 réels) ; l'écran des statistiques montre celles de Kixster.
 
 **Déployé sur Kixster le 25/10/2026 à 12:10 (accord de LeKiwi06 : « oui, déploie les 11 plugins du moi de test et KS_BiomeChanger 1.2.0 sur Kixster, avec le nouveau config.yml de KS_MondeTest et espaces-interfaces de KLM_Menu ») ; ancien jar dans `_removed-<plugin>-<version>/` ; actif après redémarrage (fait par LeKiwi06), non testé en jeu.** Nouveau `config.yml` envoyé (ancien dans `_removed-ks_mondetest-1.0.0/`) ; `config.yml` de KLM_Menu : `espaces-interfaces` réduit à KS_CoffreMort, KS_Claim, KS_Parrainage, KS_AntiCheat (ancien dans `_removed-klm_menu-config-2026-10-25/`).
+
+## 1.2.0 - déploiement en deux temps : monde de test, puis survie (03/11/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « le 1er déploiement ne les rend effectif qu'en monde test, et une fois validé, on les rend
+accessible sur le monde survie, sinon des versions work in progress pourraient être utilisées ou annoncées trop tôt
+alors qu'elles sont encore bugguées ». Choix du 03/11/2026 : clés par nouveauté pour les mises à jour de plugins déjà
+ouverts (Paper ne charge qu'une version d'un plugin par serveur).
+
+- **`phases.yml`** (classe `Phases`) : `en-test` et `valides`, chacun `nom: date`. Un nom est un plugin
+  (`KS_Courrier`) ou une clé de nouveauté (`"KS_Contrats:demandes"`).
+- **Plugin en test (quarantaine, sans toucher à son code)**, hors du monde de test : ses commandes sont refusées
+  (« Pas encore disponible sur Kixster ») ; ses écouteurs ne reçoivent pas les événements qui ont lieu dans un autre
+  monde (joueur, bloc, entité, inventaire, véhicule, monde, météo) : ils sont enveloppés (`Enveloppe`), et la pose
+  est refaite à chaque plugin activé, au démarrage, à chaque validation et toutes les 10 s ; ses recettes ne se
+  fabriquent pas (établi, forge, fours) et sont retirées du livre de recettes ; ses coffres ne s'ouvrent pas.
+  Passent quand même : les événements sans monde (démarrage, serveur), la déconnexion et le départ du monde de test
+  (nettoyage du plugin).
+- **Clé** (mise à jour d'un plugin déjà ouvert) : le plugin demande lui-même par sa classe `PhaseTest` (copiée dans
+  chaque plugin, appel par réflexion de la méthode publique `phaseOuverte(String, World)`). Toujours ouvert dans le
+  monde de test ; en survie, seulement une fois validé. **Une clé jamais vue est mise en test à la première
+  question** : on ne peut pas l'oublier. Sans KS_MondeTest, `PhaseTest` répond « fermé ».
+- **Plugin nouveau** (nom commençant par un des `prefixes-auto` : `KS_`, `KLM_`, absent des deux listes) : mis en test
+  tout seul, avertissement dans la console et `journal.log`. Premier démarrage de la 1.2.0 (pas de `phases.yml`) :
+  tous les plugins présents sont validés, sauf `premiers-en-test` (KS_Courrier, KS_Hyperboost, KS_Cultures, KS_Votes,
+  KS_RepeteurWifi : compilés, pas encore déployés).
+- **Commandes** (permission `ksmondetest.admin` ou console) : `/mondetest phases` (ce qui est en test, avec la date),
+  `/mondetest valider <nom>` (ouvert en survie tout de suite, sans redémarrage), `/mondetest retester <nom>` (de
+  nouveau monde de test seulement). Chaque changement va dans `journal.log`.
+- Au démarrage, la console liste ce qui est en test.
+
+**Clés posées le 03/11/2026** (plugins pas encore déployés dans cette version) : `KS_Contrats:demandes` (KS_Contrats
+1.1.0 : bouton « Demandes publiques » caché et menu refusé), `KS_Effets:cumul` (KS_Effets 1.1.0 : pas de cumul),
+et KS_LootBlocs 1.4.0 ne fait tomber des cerises que si `KS_Cultures` est ouvert. KS_Didacticiel 1.5.0 : un
+`requiert` en test n'est montré que dans le monde de test.
+
+**Limites** :
+- Les **tâches répétées** d'un plugin en quarantaine (code lancé toutes les X secondes sur tous les joueurs) ne sont
+  pas filtrées : un tel plugin doit demander `PhaseTest.ouvert("<Plugin>", monde)` lui-même.
+- Un plugin en quarantaine ne voit pas la **connexion** d'un joueur arrivé en survie : pour tester ce qui se passe à
+  la connexion, se déconnecter et se reconnecter depuis le monde de test (on revient au même endroit).
+- Une mise à jour qui **corrige un bug** passe directement : seules les nouveautés portent une clé.
+- Dépôt de `phases.yml` à la main : seulement serveur arrêté (le plugin le réécrit).
+
+**Statut : compilé, non déployé, non testé.**

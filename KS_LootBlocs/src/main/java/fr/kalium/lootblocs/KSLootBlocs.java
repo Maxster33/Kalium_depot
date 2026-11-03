@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
@@ -95,7 +96,7 @@ public final class KSLootBlocs extends JavaPlugin implements Listener {
             items.subList(1, items.size()).clear();
         } else if (Tag.LEAVES.isTagged(type)) {
             List<ItemStack> extra = new ArrayList<>();
-            leafExtras(type, fortune, containsLeafBlock(items, type), extra);
+            leafExtras(type, fortune, containsLeafBlock(items, type), extra, event.getBlock().getWorld());
             for (Item item : items) {
                 List<ItemStack> rolled = appleRoll(item.getItemStack());
                 item.setItemStack(rolled.get(0));
@@ -121,7 +122,8 @@ public final class KSLootBlocs extends JavaPlugin implements Listener {
     }
 
     /** Pousse supplementaire (x2) et pomme sur les feuilles qui n'en donnent pas en vanilla. */
-    private static void leafExtras(Material leaves, int fortune, boolean leafBlockDropped, List<ItemStack> extra) {
+    private static void leafExtras(Material leaves, int fortune, boolean leafBlockDropped, List<ItemStack> extra,
+                                   World monde) {
         if (leafBlockDropped) {
             return; // cisailles / Toucher de soie : pas de pousse ni de pomme, comme en vanilla
         }
@@ -131,7 +133,7 @@ public final class KSLootBlocs extends JavaPlugin implements Listener {
         }
         if (leaves != Material.OAK_LEAVES && leaves != Material.DARK_OAK_LEAVES
                 && random().nextDouble() < APPLE_CHANCE[fortune]) {
-            ItemStack cerises = leaves == Material.CHERRY_LEAVES ? cerises() : null;
+            ItemStack cerises = leaves == Material.CHERRY_LEAVES ? cerises(monde) : null;
             extra.addAll(cerises != null ? List.of(cerises) : appleRoll(new ItemStack(Material.APPLE)));
         }
     }
@@ -139,11 +141,15 @@ public final class KSLootBlocs extends JavaPlugin implements Listener {
     /**
      * 1.4.0 (LeKiwi06, 02/11/2026 : « les cerises doivent drop des cerisiers, ce n'est pas une plante cultivable,
      * seulement un item équivalent aux pommes ») : les feuilles de cerisier donnent des cerises (KS_Cultures) à la place
-     * des pommes, au même taux, sans pomme dorée. Sans KS_Cultures activé : la pomme, comme avant.
+     * des pommes, au même taux, sans pomme dorée. Sans KS_Cultures activé : la pomme, comme avant. Déploiement en deux
+     * temps (KS_MondeTest 1.2.0) : tant que KS_Cultures est en test, les cerises ne tombent que dans le monde de test.
      */
-    private static ItemStack cerises() {
-        return Bukkit.getPluginManager().isPluginEnabled("KS_Cultures")
-                ? fr.kalium.cultures.KSCultures.cerises(1) : null;
+    private static ItemStack cerises(World monde) {
+        if (!Bukkit.getPluginManager().isPluginEnabled("KS_Cultures")
+                || (Bukkit.getPluginManager().isPluginEnabled("KS_MondeTest") && !PhaseTest.ouvert("KS_Cultures", monde))) {
+            return null;
+        }
+        return fr.kalium.cultures.KSCultures.cerises(1);
     }
 
     /** Chaque pomme : 0,01 % pomme doree enchantee, 1 % pomme doree, sinon pomme. Renvoie au moins une pile. */
@@ -194,7 +200,7 @@ public final class KSLootBlocs extends JavaPlugin implements Listener {
         for (ItemStack stack : block.getDrops()) {
             drops.addAll(appleRoll(stack));
         }
-        leafExtras(type, 0, false, drops);
+        leafExtras(type, 0, false, drops, block.getWorld());
         event.setCancelled(true);
         block.setType(Material.AIR, true);
         drop(block.getLocation(), drops);

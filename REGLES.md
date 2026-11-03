@@ -135,7 +135,16 @@ mot de passe : sessions enregistrées, ou mot de passe tapé par l'humain.
 4. Ne jamais taper d'accents dans l'éditeur intégré de WinSCP (texte corrompu) : un texte accentué se change
    dans le code source, puis on recompile.
 5. Claude ne redémarre jamais un serveur : c'est l'humain qui le fait.
-6. Dans le même push, juste après le déploiement : copie du nouveau jar dans `jars-deployes/` (ancien jar
+6. **Kixster : déploiement en deux temps** (LeKiwi06, 03/11/2026, KS_MondeTest 1.2.0). Un plugin nouveau ou une
+   nouveauté ne marche d'abord que dans le monde de test (« Kixster Test ») ; LeKiwi06 l'ouvre en survie après ses
+   tests par `/mondetest valider <nom>`. Un plugin nouveau (`KS_`, `KLM_`) est mis en test tout seul ; dans une mise
+   à jour d'un plugin déjà ouvert, chaque nouveauté porte une clé `"<Plugin>:<nouveauté>"`
+   (`PhaseTest.ouvert(cle, monde)`, classe copiée de KS_Contrats) ; une correction de bug n'en a pas besoin. Une
+   entrée du didacticiel prête d'avance porte `requiert: "<Plugin>"` ou la clé : elle apparaît à la validation.
+   Rien n'est annoncé aux joueurs (Discord, didacticiel) avant la validation.
+
+   Pourquoi : des versions encore buggées ont déjà été utilisées ou annoncées trop tôt.
+7. Dans le même push, juste après le déploiement : copie du nouveau jar dans `jars-deployes/` (ancien jar
    retiré de ce dossier) et mise à jour du tableau des versions de `REPRISE_PROJET.md`.
 
    Pourquoi : `jars-deployes/` et `REPRISE_PROJET.md` sont la seule façon pour l'autre équipe de savoir ce qui

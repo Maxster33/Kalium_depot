@@ -91,6 +91,10 @@ import java.util.function.Consumer;
  * ses donnees (solde, jetons, maisons, recompenses, exploration, vol), son compte de Kixster n'est jamais touche ;
  * KLM_Statistiques et KS_Parrainage n'y comptent pas le temps de jeu. Progres, recettes et statistiques vanilla
  * n'avancent pas dans le monde de test.
+ *
+ * 1.2.0 (LeKiwi06, 03/11/2026) : deploiement en deux temps (classe Phases, phases.yml). Un plugin nouveau ou une
+ * nouveaute (cle « Plugin:nouveaute ») ne marche d'abord que dans le monde de test ; /mondetest valider l'ouvre en
+ * survie.
  */
 public final class KsMondeTest extends JavaPlugin implements Listener {
 
@@ -118,6 +122,7 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
     /** Moyen du prochain changement de cote, pour le journal. */
     private final Map<UUID, String> moyens = new ConcurrentHashMap<>();
     private YamlConfiguration registre;
+    private Phases phases;
     private File fichierRegistre;
     private File fichierAcces;
 
@@ -133,7 +138,11 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
         chargerAcces();
         registre = YamlConfiguration.loadConfiguration(fichierRegistre);
         creerMonde();
+        phases = new Phases(this);
+        phases.charger();
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(phases, this);
+        phases.demarrer();
         declarerBoutons();
         verifierKlmMenu();
         for (Player joueur : getServer().getOnlinePlayers()) { // rechargement a chaud (deconseille)
@@ -187,6 +196,16 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
                     + "survie restent visibles dans /menu depuis le monde de test (KLM_Menu 2.12.0 et sa cle "
                     + "espaces-interfaces sont necessaires, voir le JOURNAL de KS_MondeTest).");
         }
+    }
+
+    // ------------------------------------------------------------------ phases (1.2.0)
+
+    /**
+     * Pour les autres plugins (classe PhaseTest copiee, appel par reflexion) : la nouveaute ou le plugin « nom » est-il
+     * ouvert dans ce monde ? Toujours dans le monde de test ; en survie, seulement une fois valide.
+     */
+    public boolean phaseOuverte(String nom, World monde) {
+        return phases == null || phases.ouvert(nom, monde);
     }
 
     // ------------------------------------------------------------------ cotes
@@ -607,7 +626,7 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
     /** Coffres des plugins coupes (depot d'emeraudes, inventaire de jetons, recompenses, invsee...). */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onOpen(InventoryOpenEvent event) {
-        if (!(event.getPlayer() instanceof Player joueur) || !enTest(joueur)) {
+        if (!(event.getPlayer() instanceof Player joueur)) {
             return;
         }
         InventoryHolder holder = event.getInventory().getHolder(false);
@@ -620,9 +639,13 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
         } catch (RuntimeException e) {
             return; // coffre vanilla
         }
-        if (pluginCoupe(plugin)) {
+        if (enTest(joueur) ? pluginCoupe(plugin) : phases.pluginEnTest(plugin)) {
             event.setCancelled(true);
-            refuser(joueur, plugin);
+            if (enTest(joueur)) {
+                refuser(joueur, plugin);
+            } else {
+                refuserEnTest(joueur, plugin);
+            }
         }
     }
 
@@ -663,6 +686,12 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
             }
         }
         return false;
+    }
+
+    /** 1.2.0 : plugin pas encore valide, utilise en survie. */
+    private void refuserEnTest(Player joueur, String quoi) {
+        joueur.sendMessage(lang.c("pas-encore-ouvert", "<red>Pas encore disponible sur Kixster : <white><quoi>",
+                "quoi", quoi));
     }
 
     private void refuser(Player joueur, String quoi) {
@@ -714,6 +743,10 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
                 refuser(joueur, raison);
                 return;
             }
+        } else if (commande instanceof PluginIdentifiableCommand pic && phases.pluginEnTest(pic.getPlugin().getName())) {
+            event.setCancelled(true);
+            refuserEnTest(joueur, "/" + nom);
+            return;
         }
         for (int i = 1; i < mots.length; i++) {
             OfflinePlayer cible = Bukkit.getPlayerExact(mots[i]);
@@ -787,7 +820,8 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
             if (!(sender instanceof Player joueur)) {
-                sender.sendMessage("/mondetest ajouter <joueur> [op] | retirer <joueur> | liste");
+                sender.sendMessage("/mondetest ajouter <joueur> [op] | retirer <joueur> | liste | phases | valider <nom>"
+                        + " | retester <nom>");
                 return true;
             }
             if (enTest(joueur)) {
@@ -809,8 +843,30 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
                     "noms", noms.isEmpty() ? "-" : String.join(", ", noms)));
             return true;
         }
+        if (action.equals("phases")) {
+            List<String> l = phases.lignesEnTest();
+            sender.sendMessage(lang.c("phases", "<gold>En test, monde de test seulement (<count>) : <white><noms>",
+                    "count", l.size(), "noms", l.isEmpty() ? "-" : String.join(", ", l)));
+            return true;
+        }
+        if ((action.equals("valider") || action.equals("retester")) && args.length >= 2) {
+            boolean valider = action.equals("valider");
+            String nom = valider ? phases.valider(args[1], sender.getName()) : phases.retester(args[1], sender.getName());
+            if (nom == null) {
+                sender.sendMessage(lang.c(valider ? "deja-valide" : "deja-en-test",
+                        valider ? "<yellow><nom> est déjà ouvert en survie." : "<yellow><nom> est déjà en test.",
+                        "nom", args[1]));
+                return true;
+            }
+            sender.sendMessage(valider
+                    ? lang.c("valide", "<green><nom> est ouvert en survie.", "nom", nom)
+                    : lang.c("remis-en-test", "<green><nom> ne marche plus que dans le monde de test.", "nom", nom));
+            getLogger().info(sender.getName() + " : " + nom + (valider ? " valide (ouvert en survie)" : " remis en test"));
+            return true;
+        }
         if ((!action.equals("ajouter") && !action.equals("retirer")) || args.length < 2) {
-            sender.sendMessage(lang.c("usage", "<gray>/mondetest ajouter <joueur> [op] | retirer <joueur> | liste"));
+            sender.sendMessage(lang.c("usage-1-2", "<gray>/mondetest ajouter <joueur> [op] | retirer <joueur> | liste | "
+                    + "phases | valider <nom> | retester <nom>"));
             return true;
         }
         OfflinePlayer cible = Bukkit.getPlayerExact(args[1]);
@@ -857,9 +913,15 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
             return List.of();
         }
         if (args.length == 1) {
-            return List.of("ajouter", "retirer", "liste");
+            return List.of("ajouter", "retirer", "liste", "phases", "valider", "retester");
         }
-        if (args.length == 2 && !args[0].equalsIgnoreCase("liste")) {
+        if (args.length == 2 && args[0].equalsIgnoreCase("valider")) {
+            return phases.nomsEnTest();
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("retester")) {
+            return phases.nomsValides();
+        }
+        if (args.length == 2 && !args[0].equalsIgnoreCase("liste") && !args[0].equalsIgnoreCase("phases")) {
             List<String> noms = new ArrayList<>();
             if (args[0].equalsIgnoreCase("retirer")) {
                 acces.values().forEach(a -> noms.add(a.pseudo()));
@@ -913,8 +975,8 @@ public final class KsMondeTest extends JavaPlugin implements Listener {
         journalTexte(joueur.getName() + " | " + quoi);
     }
 
-    /** journal.log : entrees, sorties (et par quel moyen), refus, acces donnes ou retires. */
-    private void journalTexte(String ligne) {
+    /** journal.log : entrees, sorties (et par quel moyen), refus, acces donnes ou retires, phases (1.2.0). */
+    void journalTexte(String ligne) {
         File f = new File(getDataFolder(), "journal.log");
         f.getParentFile().mkdirs();
         try (PrintWriter out = new PrintWriter(new FileWriter(f, StandardCharsets.UTF_8, true))) {

@@ -59,6 +59,10 @@ import java.util.function.Consumer;
  * 1.4.0 (LeKiwi06, 25/10/2026 : « un message comme celui des rewards en attente [...] tant qu'ils n'ont pas fait
  * /didacticiel à nouveau ») : à la connexion, « n nouveautés disponibles dans le /didacticiel ! » s'il reste une
  * nouveauté non lue que le joueur n'a pas encore vue annoncée dans la liste des thèmes (vus.yml, section annonces).
+ *
+ * 1.5.0 (LeKiwi06, 03/11/2026 : déploiement en deux temps, KS_MondeTest 1.2.0) : un « requiert » encore en test
+ * (plugin, ou clé « KS_Contrats:demandes ») n'est montré que dans le monde de test ; en survie, la nouveauté apparaît
+ * d'elle-même à la validation (/mondetest valider), avec sa marque « Nouveau » et l'annonce à la connexion.
  */
 public final class KSDidacticiel extends JavaPlugin implements Listener {
 
@@ -230,17 +234,26 @@ public final class KSDidacticiel extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------ plugins demandés (1.2.0)
 
-    /** « requiert » : vide = toujours ; « Plugin » = activé ; « Plugin 1.3.0 » = activé, en 1.3.0 ou plus. */
-    private boolean requis(String exigence) {
+    /**
+     * « requiert » : vide = toujours ; « Plugin » = activé ; « Plugin 1.3.0 » = activé, en 1.3.0 ou plus ; 1.5.0 :
+     * « Plugin:nouveaute » = le plugin activé et cette nouveauté ouverte. Plugin ou clé encore en test (KS_MondeTest) :
+     * seulement dans le monde de test.
+     */
+    private boolean requis(Player joueur, String exigence) {
         if (exigence == null || exigence.isBlank()) {
             return true;
         }
         String[] parties = exigence.trim().split("\\s+");
-        Plugin plugin = getServer().getPluginManager().getPlugin(parties[0]);
+        int deuxPoints = parties[0].indexOf(':');
+        Plugin plugin = getServer().getPluginManager().getPlugin(deuxPoints > 0 ? parties[0].substring(0, deuxPoints)
+                : parties[0]);
         if (plugin == null || !plugin.isEnabled()) {
             return false;
         }
-        return parties.length < 2 || comparer(plugin.getPluginMeta().getVersion(), parties[1]) >= 0;
+        if (parties.length >= 2 && comparer(plugin.getPluginMeta().getVersion(), parties[1]) < 0) {
+            return false;
+        }
+        return getServer().getPluginManager().getPlugin("KS_MondeTest") == null || PhaseTest.ouvert(parties[0], joueur);
     }
 
     private static int comparer(String a, String b) {
@@ -263,14 +276,14 @@ public final class KSDidacticiel extends JavaPlugin implements Listener {
         }
     }
 
-    /** Nouveautés montrées sur ce serveur (celles dont le plugin demandé est là). */
-    private List<Nouveaute> visibles(Theme theme) {
-        return theme.nouveautes().stream().filter(n -> requis(n.requiert())).toList();
+    /** Nouveautés montrées à ce joueur (plugin demandé là et, 1.5.0, ouvert là où il se trouve). */
+    private List<Nouveaute> visibles(Player joueur, Theme theme) {
+        return theme.nouveautes().stream().filter(n -> requis(joueur, n.requiert())).toList();
     }
 
     /** Thèmes montrés : plugin demandé présent et au moins une nouveauté montrée. */
-    private List<Theme> themesVisibles() {
-        return themes.stream().filter(t -> requis(t.requiert()) && !visibles(t).isEmpty()).toList();
+    private List<Theme> themesVisibles(Player joueur) {
+        return themes.stream().filter(t -> requis(joueur, t.requiert()) && !visibles(joueur, t).isEmpty()).toList();
     }
 
     // ------------------------------------------------------------------ « Nouveau » (vus.yml)
@@ -281,13 +294,13 @@ public final class KSDidacticiel extends JavaPlugin implements Listener {
     }
 
     private int nonLues(Player joueur, Theme theme) {
-        return (int) visibles(theme).stream().filter(n -> nonLue(joueur, theme, n)).count();
+        return (int) visibles(joueur, theme).stream().filter(n -> nonLue(joueur, theme, n)).count();
     }
 
     /** Le joueur a ouvert ce thème : toutes ses nouveautés sont vues, dans leur état actuel. */
     private void marquerLues(Player joueur, Theme theme) {
         boolean change = false;
-        for (Nouveaute n : visibles(theme)) {
+        for (Nouveaute n : visibles(joueur, theme)) {
             if (nonLue(joueur, theme, n)) {
                 vus.set(joueur.getUniqueId() + "." + theme.id() + "." + n.id(), n.nouveau());
                 change = true;
@@ -321,7 +334,7 @@ public final class KSDidacticiel extends JavaPlugin implements Listener {
     private void marquerAnnoncees(Player joueur, List<Theme> themes) {
         boolean change = false;
         for (Theme theme : themes) {
-            for (Nouveaute n : visibles(theme)) {
+            for (Nouveaute n : visibles(joueur, theme)) {
                 if (nonAnnoncee(joueur, theme, n)) {
                     vus.set(cleAnnonce(joueur, theme, n), n.nouveau());
                     change = true;
@@ -346,8 +359,8 @@ public final class KSDidacticiel extends JavaPlugin implements Listener {
             }
             int nonLues = 0;
             boolean aAnnoncer = false;
-            for (Theme theme : themesVisibles()) {
-                for (Nouveaute n : visibles(theme)) {
+            for (Theme theme : themesVisibles(joueur)) {
+                for (Nouveaute n : visibles(joueur, theme)) {
                     if (nonLue(joueur, theme, n)) {
                         nonLues++;
                         aAnnoncer |= nonAnnoncee(joueur, theme, n);
@@ -377,7 +390,7 @@ public final class KSDidacticiel extends JavaPlugin implements Listener {
 
     /** Écran 1 : un objet par thème. {@code retour} : vers « Informations » (null si ouvert par /didacticiel). */
     private void ouvrirThemes(Player joueur, Consumer<Player> retour) {
-        List<Theme> themes = themesVisibles();
+        List<Theme> themes = themesVisibles(joueur);
         int rangees = Math.max(1, (themes.size() + 8) / 9) + 1;
         Contenant menu = Contenant.pour(joueur, rangees, Component.text(titre, NamedTextColor.DARK_GRAY), MARQUE_THEMES);
         if (themes.isEmpty()) {
@@ -388,7 +401,7 @@ public final class KSDidacticiel extends JavaPlugin implements Listener {
             Theme theme = themes.get(i);
             int nouvelles = nonLues(joueur, theme);
             List<Component> lignes = new ArrayList<>(Contenant.lignes(theme.resume(), NamedTextColor.GRAY));
-            lignes.add(lang.c("theme.compte", "<gray><n> nouveauté(s)", "n", visibles(theme).size()));
+            lignes.add(lang.c("theme.compte", "<gray><n> nouveauté(s)", "n", visibles(joueur, theme).size()));
             if (nouvelles > 0) {
                 lignes.add(lang.c("theme.nouveau", "<green><bold>Nouveau : <n> à découvrir", "n", nouvelles));
             }
@@ -426,7 +439,7 @@ public final class KSDidacticiel extends JavaPlugin implements Listener {
             ouvrirThemes(joueur, retour);
             return;
         }
-        List<Nouveaute> nouveautes = visibles(theme);
+        List<Nouveaute> nouveautes = visibles(joueur, theme);
         int rangees = Math.max(1, (nouveautes.size() + 8) / 9) + 1;
         Contenant menu = Contenant.pour(joueur, rangees, Component.text(theme.nom(), NamedTextColor.DARK_GRAY),
                 "ks_didacticiel:theme:" + theme.id());

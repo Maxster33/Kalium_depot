@@ -70,3 +70,8 @@ Limites :
 - Construit sur la 1.0.0 jamais testée en jeu, à la demande de LeKiwi06.
 
 Compilé le 02/11/2026. Non déployé. Statut : non testé en jeu.
+
+### 1.1.0 - clé de déploiement (03/11/2026)
+
+Cumul derrière la clé `KS_Effets:cumul` (KS_MondeTest 1.2.0) : en survie, pas de cumul tant qu'elle n'est pas validée
+(les effets marchent comme en 1.0.0). À ouvrir par `/mondetest valider KS_Effets:cumul`.

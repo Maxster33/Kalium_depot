@@ -68,3 +68,8 @@ cultivable, seulement un item équivalent aux pommes ».
 
 Compilé le 02/11/2026 (`sortie/KS_LootBlocs-1.4.0.jar`). **Statut : non déployé, non testé en jeu.**
 
+
+### 1.4.0 - cerises et déploiement en deux temps (03/11/2026)
+
+Les cerises ne tombent des feuilles de cerisier que là où KS_Cultures est ouvert (KS_MondeTest 1.2.0) : tant que
+KS_Cultures est en test, la survie garde la pomme. `softdepend` KS_MondeTest ajouté.

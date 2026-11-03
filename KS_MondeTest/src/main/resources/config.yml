@@ -5,7 +5,10 @@
 #  les inventaires sont echanges a chaque changement de monde).
 #  Testeurs : /mondetest ajouter <joueur> [op] | retirer <joueur> | liste (console ou permission ksmondetest.admin),
 #  enregistres dans acces.yml. « op » : operateur dans le monde de test seulement.
-#  Journal : journal.log (entrees, sorties, refus).
+#  Journal : journal.log (entrees, sorties, refus, phases).
+#  1.2.0 - Phases de deploiement (phases.yml) : un plugin nouveau ou une nouveaute (cle « Plugin:nouveaute ») ne
+#  marche d'abord que dans le monde de test. /mondetest phases (ce qui est en test), /mondetest valider <nom> (ouvert
+#  en survie, tout de suite), /mondetest retester <nom> (de nouveau monde de test seulement).
 # ============================================================
 
 # Nom du monde de test (cree plat au premier demarrage).
@@ -61,3 +64,17 @@ commandes-coupees:
 commandes-libres:
   - mondetest
   - global
+
+# 1.2.0 - Plugins mis en test tout seuls a leur arrivee (nom commencant ainsi, absent de phases.yml).
+prefixes-auto:
+  - KS_
+  - KLM_
+
+# 1.2.0 - Premier demarrage seulement (phases.yml absent) : tous les plugins presents sont valides, sauf ceux-ci
+# (compiles mais pas encore deployes le 03/11/2026, au cas ou ils arrivent en meme temps que la 1.2.0).
+premiers-en-test:
+  - KS_Courrier
+  - KS_Hyperboost
+  - KS_Cultures
+  - KS_Votes
+  - KS_RepeteurWifi

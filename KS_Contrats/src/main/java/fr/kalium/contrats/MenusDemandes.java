@@ -51,6 +51,12 @@ final class MenusDemandes implements Listener, DemandesPubliques {
     /** Écran ouvert qui réagit à un clic sur un objet de l'inventaire du joueur. */
     private final Map<UUID, Map.Entry<Object, Consumer<ItemStack>>> clicsInventaire = new HashMap<>();
 
+    /**
+     * Cle de deploiement (KS_MondeTest 1.2.0, LeKiwi06 03/11/2026) : demandes publiques dans le monde de test seulement
+     * jusqu'a /mondetest valider KS_Contrats:demandes.
+     */
+    static final String PHASE = "KS_Contrats:demandes";
+
     MenusDemandes(KSContrats plugin, Demandes demandes) {
         this.plugin = plugin;
         this.lang = plugin.lang();
@@ -207,6 +213,11 @@ final class MenusDemandes implements Listener, DemandesPubliques {
 
     /** Demandes ouvertes ; depuisBoite : bouton « Livrer » (le joueur est à sa boîte aux lettres). */
     void liste(Player p, int page, Consumer<Player> retour, boolean depuisBoite) {
+        if (!PhaseTest.ouvert(PHASE, p)) {
+            p.closeInventory();
+            p.sendMessage(t("demandes.pas-encore", "<red>Les demandes publiques ne sont pas encore disponibles."));
+            return;
+        }
         UUID compte = Registre.compte(p);
         origines.put(p.getUniqueId(), j -> liste(j, 0, retour, depuisBoite));
         List<Demande> liste = demandes.ouvertes(compte);
