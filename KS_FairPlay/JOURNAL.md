@@ -86,4 +86,4 @@ Principe (KS_MondeTest 1.1.0) : dans le monde de test, le joueur porte la métad
 
 **Signalé par LeKiwi06 (03/11/2026)** : « dans les camps abandonnés sous les tentes les coffres en cuivre ne comptent pas comme des coffres d'exploration ». La liste des contenants protégés n'avait que coffres, coffres piégés, tonneaux, distributeurs, droppers, entonnoirs et shulkers. Ajout de tous les coffres en cuivre (`*COPPER_CHEST` : 4 oxydations, cirés compris ; leur état est un `Chest`, avec table de butin). Ils comptent à l'ouverture et à la casse, sont refusés limite atteinte et protégés (explosions, feu, pistons, entonnoirs) comme les autres coffres de structure. Un coffre en cuivre posé par un joueur n'a pas de table de butin : non concerné.
 
-**Compilé, non déployé, non testé.**
+Compilé le 03/11/2026. **Déployé sur Kixster le 03/11/2026 à 09:34** (LeKiwi06 : « Oui, déploie ») ; jar de la même taille que celui du dépôt ; ancien dans `_removed-ks_fairplay-1.1.0/`. À redémarrer par LeKiwi06. Statut : non testé en jeu.
