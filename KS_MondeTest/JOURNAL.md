@@ -181,3 +181,5 @@ et KS_LootBlocs 1.4.0 ne fait tomber des cerises que si `KS_Cultures` est ouvert
 - Dépôt de `phases.yml` à la main : seulement serveur arrêté (le plugin le réécrit).
 
 **Statut : compilé, non déployé, non testé.**
+
+**Déployé sur Kixster le 03/11/2026 à 14:31 (LeKiwi06 : « Oui, déploie ») avec KS_Didacticiel 1.5.0 ; jar en place (1.1.0) vérifié de la même taille que `jars-deployes/`, rangé dans `_removed-ks_mondetest-1.1.0/` ; actif après redémarrage de Kixster ; `config.yml` du serveur gardé (les nouvelles clés `prefixes-auto` et `premiers-en-test` viennent des valeurs par défaut du jar). Statut : non testé en jeu.**

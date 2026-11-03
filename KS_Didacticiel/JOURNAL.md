@@ -282,3 +282,5 @@ l'entrée apparaît d'elle-même à `/mondetest valider`, avec « Nouveau » et 
 (copiée), `softdepend: [KS_MondeTest]` ; sans KS_MondeTest, rien ne change.
 
 **Statut : compilé, non déployé, non testé.**
+
+**Déployé sur Kixster le 03/11/2026 à 14:31 (LeKiwi06 : « Oui, déploie ») avec KS_MondeTest 1.2.0 ; jar en place (1.4.0) vérifié de la même taille que `jars-deployes/`, rangé dans `_removed-ks_didacticiel-1.4.0/` ; actif après redémarrage. Statut : non testé en jeu.**
