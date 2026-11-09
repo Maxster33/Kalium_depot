@@ -6,7 +6,7 @@ Cahier des charges : `CAHIER_DES_CHARGES.md` · historique des versions : `JOURN
 
 ## Lancer le bot (PC ou hébergement)
 
-1. Node.js 22 ou plus.
+1. Node.js 20 ou plus.
 2. Dans ce dossier : `npm install`
 3. Copier `.env.example` en `.env` et le remplir (jeton du bot, identifiant du serveur Discord, jeton de l'API).
    **Le fichier `.env` ne doit jamais être commité** (il est dans `.gitignore`).

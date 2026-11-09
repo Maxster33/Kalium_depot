@@ -5,10 +5,10 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": ">=20"
   },
   "scripts": {
-    "start": "node --env-file=.env src/index.js",
+    "start": "node index.js",
     "apercu": "node scripts/apercu.js"
   },
   "dependencies": {

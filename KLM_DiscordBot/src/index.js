@@ -1,5 +1,5 @@
 // KLM_DiscordBot : bot Discord du reseau KaLium (cahier des charges : CAHIER_DES_CHARGES.md).
-// Lancement : npm start (lit le fichier .env, voir .env.example).
+// Lancement : npm start ou node index.js (le lanceur lit le fichier .env, voir .env.example).
 // Commandes slash (/classement) et commandes texte du staff (k!wiki, voir src/wiki.js).
 
 import { Client, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
