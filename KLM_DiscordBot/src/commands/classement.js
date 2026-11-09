@@ -19,12 +19,12 @@ export async function autocomplete(interaction, api) {
   const typed = focused.value.toLowerCase();
   try {
     if (focused.name === 'jeu') {
-      const status = await api.status();
+      const status = await api.status({ maxAge: 60_000 });
       const games = status.data.games.filter((g) => g.name.toLowerCase().includes(typed) || g.id.includes(typed));
       return interaction.respond(games.slice(0, 25).map((g) => ({ name: g.name, value: g.id })));
     }
     if (focused.name === 'mois') {
-      const archives = await api.archives();
+      const archives = await api.archives({ maxAge: 60_000 });
       const list = archives.data.filter((a) => a.label.toLowerCase().includes(typed) || a.id.includes(typed));
       return interaction.respond(list.slice(0, 25).map((a) => ({ name: a.label, value: a.id })));
     }

@@ -26,3 +26,7 @@ api:
   # Jeton partage avec le bot (en-tete Authorization: Bearer ...). A remplir UNIQUEMENT sur le serveur, jamais
   # dans le depot. Une longue chaine aleatoire (40 caracteres ou plus).
   token: ''
+  # 1.10.0 : la meme API par la boite aux lettres de KaliumRelay (le bot ne peut pas joindre ce serveur). Vides = les
+  # valeurs relay-url / relay-token de KLM_Contacts sur ce serveur. Jeton A REMPLIR UNIQUEMENT sur le serveur.
+  relay-url: ''
+  relay-token: ''

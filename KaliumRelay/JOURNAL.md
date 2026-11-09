@@ -478,3 +478,17 @@ Limite (inchangée) : une demande en attente d'un joueur ajouté à la main à l
 **Compilé, non déployé, non testé en jeu.** Empilé sur la 1.10.1 (parrainage testé par LeKiwi06 le 24/10/2026, demandes de whitelist jamais testées), à sa demande. À déployer avec KLM_Contacts 1.5.2 (tous les serveurs Paper) ; sans lui, le bouton « Demandes traitées » ne reçoit rien.
 
 **Déployé le 26/10/2026 à 01:11 sur le proxy (accord de LeKiwi06) ; 1.10.1 dans `_removed-kaliumrelay-1.10.1/` ; actif après redémarrage, non testé en jeu.**
+
+## 1.11.0 - jeton du bot Discord (09/11/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (09/11/2026)** : étape 1 du cahier complet du bot Discord (KLM_DiscordBot 0.3.0) : joindre
+KG_ScoreBoards sur Kanvas par la boîte aux lettres du relais (le proxy ne peut pas joindre Kanvas en direct, et le
+bot sur Dishost non plus).
+- Nouvelle clé `bot-token` dans `relay.properties`, générée au premier démarrage si absente, à recopier dans le `.env`
+  du bot (`RELAIS_TOKEN`). Différente du jeton des serveurs (`token`).
+- Avec ce jeton, `/mail/` seulement : déposer et retirer dans `scoreboards`, lire et confirmer dans `bot` ; toute autre
+  boîte : 403 ; `/contacts`, `/ban`, `/assignment`, `/active-game` : 401. Le jeton des serveurs garde tous ses droits.
+- Testé en local (serveur HTTP du relais lancé seul) : chaque droit et chaque refus ci-dessus vérifiés.
+
+**Compilé, non déployé.** À déployer avec KG_ScoreBoards 1.10.0 (Kanvas) et KLM_DiscordBot 0.3.0 ; redémarrage du
+proxy nécessaire.

@@ -40,6 +40,8 @@ public final class KGScoreBoards extends JavaPlugin {
     private fr.kalium.scoreboards.data.GameLog gameLog;
     /** 1.7.0 : API HTTP en lecture pour le bot Discord (voir StatsApi). */
     private fr.kalium.scoreboards.api.StatsApi api;
+    /** 1.10.0 : la meme API, par la boite aux lettres de KaliumRelay (voir RelaisBot). */
+    private fr.kalium.scoreboards.api.RelaisBot relaisBot;
     private BoardService boards;
     private Gui gui;
     private RankingMenus rankings;
@@ -146,6 +148,8 @@ public final class KGScoreBoards extends JavaPlugin {
         // 1.7.0 : API du bot Discord (desactivee tant que api.port et api.token ne sont pas regles).
         api = new fr.kalium.scoreboards.api.StatsApi(this);
         api.start();
+        relaisBot = new fr.kalium.scoreboards.api.RelaisBot(this, api);
+        relaisBot.start();
         getLogger().info("KG_ScoreBoards actif.");
     }
 
@@ -240,6 +244,9 @@ public final class KGScoreBoards extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (relaisBot != null) {
+            relaisBot.stop();
+        }
         if (api != null) {
             api.stop();
         }

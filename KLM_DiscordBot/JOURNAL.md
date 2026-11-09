@@ -47,3 +47,20 @@ premier jet des fiches rédigé par Claude, liste des fiches à valider avant le
 - Testé sans Discord : lecture et découpage des fiches (ordre numérique, BOM, CRLF, coupure à 2 000, `---`, erreurs).
 
 **Statut : non testé sur Discord ; fiches pas encore rédigées (liste à valider).**
+
+## 0.3.0 — étape 1 du cahier complet : API par le relais, base locale, /config (09/11/2026)
+
+**Demande de LeKiwi06 (09/11/2026)** : étape 1 du cahier complet (validé le 09/11, gardé en local). Le bot tourne
+chez Dishost (Node 20.20) depuis le 09/11.
+- `/classement` passe par KaliumRelay 1.11.0 (`RELAIS_URL` / `RELAIS_TOKEN`, jeton `bot-token` du relais) :
+  demande déposée dans la boîte `scoreboards`, relevée par KG_ScoreBoards 1.10.0 sur Kanvas, réponse lue dans la
+  boîte `bot` (toutes les 0,4 s, 10 s au plus, demande retirée si abandonnée). `API_URL` / `API_TOKEN` restent possibles
+  en direct. Autocomplétion : jeux et mois archivés gardés 60 s (Discord n'attend que 3 s), chargés au démarrage.
+- Base locale `bot.sqlite` (`better-sqlite3` 12.11.1, dernière version pour Node 20 ; script d'installation autorisé
+  dans `package.json`). Si elle ne se charge pas, le bot démarre quand même, sans `/config`.
+- `/config salon <type> [salon]` (vide = retirer) et `/config salons` : permission « Gérer le serveur », 13 types du
+  cahier (§ 3). Les fonctions de ces salons arrivent aux étapes suivantes.
+- Testé en local : transport par le relais contre KaliumRelay 1.11.0 et KG_ScoreBoards 1.10.0 réels (Paper 26.3) ;
+  base (choisir, remplacer, retirer). Non testé sur Discord.
+
+**Statut : non déployé.** À déployer avec KaliumRelay 1.11.0 et KG_ScoreBoards 1.10.0 ; `.env` à compléter.

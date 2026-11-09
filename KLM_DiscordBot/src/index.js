@@ -1,13 +1,15 @@
 // KLM_DiscordBot : bot Discord du reseau KaLium (cahier des charges : CAHIER_DES_CHARGES.md).
 // Lancement : npm start ou node index.js (le lanceur lit le fichier .env, voir .env.example).
-// Commandes slash (/classement) et commandes texte du staff (k!wiki, voir src/wiki.js).
+// Commandes slash (/classement, /config) et commandes texte du staff (k!wiki, voir src/wiki.js).
 
 import { Client, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
-import { ApiError, ScoreApi } from './api.js';
+import { ApiError, HttpTransport, RelaisTransport, ScoreApi } from './api.js';
 import * as classement from './commands/classement.js';
+import * as configCommande from './commands/config.js';
+import { ouvrir } from './db.js';
 import * as wiki from './wiki.js';
 
-const VERSION = '0.2.0';
+const VERSION = '0.3.0';
 const PREFIXE = 'k!';
 
 const config = {
@@ -15,6 +17,8 @@ const config = {
   guildId: process.env.DISCORD_GUILD_ID,
   apiUrl: process.env.API_URL,
   apiToken: process.env.API_TOKEN,
+  relaisUrl: process.env.RELAIS_URL,
+  relaisToken: process.env.RELAIS_TOKEN,
 };
 const missing = Object.entries({ DISCORD_TOKEN: config.token, DISCORD_GUILD_ID: config.guildId })
   .filter(([, value]) => !value)
@@ -24,9 +28,22 @@ if (missing.length) {
   process.exit(1);
 }
 
-// Sans API_URL / API_TOKEN, le bot tourne quand même (wiki) mais sans /classement.
-const api = config.apiUrl && config.apiToken ? new ScoreApi(config.apiUrl, config.apiToken) : null;
-const commands = new Map(api ? [[classement.data.name, classement]] : []);
+// API de KG_ScoreBoards : par le relais (RELAIS_URL / RELAIS_TOKEN) de preference, sinon en direct (API_URL /
+// API_TOKEN). Sans l'un ni l'autre, le bot tourne quand meme (wiki, /config) mais sans /classement.
+const api = config.relaisUrl && config.relaisToken
+  ? new ScoreApi(new RelaisTransport(config.relaisUrl, config.relaisToken))
+  : config.apiUrl && config.apiToken ? new ScoreApi(new HttpTransport(config.apiUrl, config.apiToken)) : null;
+const db = await ouvrir();
+// Chaque commande slash : sa definition, et ses fonctions avec ce dont elle a besoin.
+const commands = new Map();
+if (api) {
+  commands.set(classement.data.name, {
+    data: classement.data,
+    execute: (interaction) => classement.execute(interaction, api),
+    autocomplete: (interaction) => classement.autocomplete(interaction, api),
+  });
+}
+commands.set(configCommande.data.name, { data: configCommande.data, execute: (interaction) => configCommande.execute(interaction, { db }) });
 const textCommands = new Map([['wiki', wiki.commande]]);
 
 // Guilds : commandes slash. GuildMessages + MessageContent (intention privilegiee, a activer dans le portail
@@ -39,14 +56,17 @@ client.once(Events.ClientReady, async (ready) => {
   await guild.commands.set([...commands.values()].map((c) => c.data.toJSON()));
   console.log(`KLM_DiscordBot ${VERSION} connecté en tant que ${ready.user.tag} ; commandes enregistrées sur « ${guild.name} ».`);
   if (!api) {
-    console.warn('API_URL ou API_TOKEN vide dans .env : /classement désactivé.');
+    console.warn('RELAIS_URL / RELAIS_TOKEN (ou API_URL / API_TOKEN) vides dans .env : /classement désactivé.');
     return;
   }
+  const chemin = config.relaisUrl && config.relaisToken ? 'par le relais' : 'en direct';
   try {
+    // Aussi pour remplir le cache de l'autocompletion (jeux, mois archives).
     const status = await api.status();
-    console.log(`API de KG_ScoreBoards ${status.data.version} joignable : ${status.data.games.length} jeu(x).`);
+    await api.archives().catch(() => {});
+    console.log(`API de KG_ScoreBoards ${status.data.version} joignable ${chemin} : ${status.data.games.length} jeu(x).`);
   } catch (error) {
-    console.warn(`API de KG_ScoreBoards injoignable au démarrage : ${error.message}`);
+    console.warn(`API de KG_ScoreBoards injoignable ${chemin} au démarrage : ${error.message}`);
   }
 });
 
@@ -54,12 +74,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
   const command = commands.get(interaction.commandName);
   if (!command) return;
   if (interaction.isAutocomplete()) {
-    await command.autocomplete?.(interaction, api).catch(() => {});
+    await command.autocomplete?.(interaction).catch(() => {});
     return;
   }
   if (!interaction.isChatInputCommand()) return;
   try {
-    await command.execute(interaction, api);
+    await command.execute(interaction);
   } catch (error) {
     const text = error instanceof ApiError && error.status === 401
       ? "Le bot n'est pas autorisé par le serveur de jeu (jeton de l'API à vérifier)."

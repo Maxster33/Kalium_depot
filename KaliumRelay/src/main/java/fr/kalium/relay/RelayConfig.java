@@ -93,6 +93,13 @@ final class RelayConfig {
         return token;
     }
 
+    /** 1.11.0 (KLM_DiscordBot) : jeton du bot Discord, limite aux boites du bot (voir RelayHttpServer.handleMail). */
+    private String botToken = "";
+
+    String botToken() {
+        return botToken;
+    }
+
     static RelayConfig loadOrCreate(Path dataDirectory, Logger logger) {
         try {
             Files.createDirectories(dataDirectory);
@@ -129,6 +136,10 @@ final class RelayConfig {
                 props.setProperty("parrainage-serveur", "kixster"); // 1.10.0
                 changed = true;
             }
+            if (props.getProperty("bot-token", "").isBlank()) {
+                props.setProperty("bot-token", UUID.randomUUID().toString()); // 1.11.0, recopie dans le .env du bot
+                changed = true;
+            }
             boolean generated = false;
             if (props.getProperty("token", "").isBlank()) {
                 props.setProperty("token", UUID.randomUUID().toString());
@@ -161,6 +172,7 @@ final class RelayConfig {
                 config.maxGroup = 8;
             }
             config.parrainageServeur = props.getProperty("parrainage-serveur", "kixster").trim();
+            config.botToken = props.getProperty("bot-token", "").trim();
             return config;
         } catch (IOException e) {
             logger.error("[KaliumRelay] Impossible de charger/creer relay.properties, valeurs par defaut utilisees.", e);

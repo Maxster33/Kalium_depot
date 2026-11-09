@@ -161,3 +161,23 @@ Catégorie 4 « Récompenses » (cahier validé le 30/09/2026) :
 À noter : la 1.8.0 (déployée le 03/10/2026 à 01:05) n'est pas encore testée en jeu ; cette version s'ajoute par-dessus
 à la demande de Maxster33. **Déployé le 03/10/2026 à 09:44 sur Kal-Games (Maxster33 ; 1.8.0 dans `_removed-kg_scoreboards-1.8.0/`), avec KG_Bingo 1.7.0. Actif après redémarrage. Statut : non testé
 en jeu.**
+
+
+## 1.10.0 - API du bot Discord par le relais (09/11/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (09/11/2026)** : étape 1 du cahier complet du bot Discord. Constat du 09/11 : depuis la fin de
+Kal-Games, KG_ScoreBoards tourne sur Kanvas (`91.197.6.215`) ; son API écoute sur le port 45347 (port de l'ancien
+Kal-Games), que Kanvas n'accepte pas de l'extérieur. Choix de LeKiwi06 : passer par la boîte aux lettres du relais
+plutôt que demander un port.
+- Nouveau `RelaisBot` : chaque seconde (hors du fil principal), relève les demandes du bot dans la boîte `scoreboards`
+  de KaliumRelay (1.11.0), y répond avec les mêmes réponses que l'API HTTP, dépose chaque réponse dans la boîte `bot`
+  (« id », « code », JSON) puis retire la demande. Réponse de plus de 250 Ko : erreur 413. Relais injoignable : un seul
+  avertissement, puis un message quand il revient.
+- `StatsApi.repondre(chemin, requête)` : traitement commun à l'API HTTP et au relais (aucun changement des réponses).
+- Nouvelles clés `api.relay-url` / `api.relay-token` (à ajouter à la main dans le `config.yml` du serveur) ; vides =
+  `relay-url` / `relay-token` de KLM_Contacts sur le même serveur. L'API HTTP (`api.port`) reste possible.
+- Testé en local (Paper 26.3, stats de Kanvas, relais 1.11.0 lancé seul) : `status`, `archives`, joueur inconnu (404),
+  `events`, trois demandes en parallèle (~1,2 s), boîtes vides après coup. Classements non testés (aucun jeu chargé
+  en local).
+
+**Compilé, non déployé.** À déployer avec KaliumRelay 1.11.0 (proxy) et KLM_DiscordBot 0.3.0.

@@ -173,7 +173,9 @@ final class RelayHttpServer {
     private void handleMail(HttpExchange exchange) {
         try {
             String token = exchange.getRequestHeaders().getFirst("X-Kalium-Relay-Token");
-            if (token == null || config.token().isBlank() || !token.equals(config.token())) {
+            boolean reseau = token != null && !config.token().isBlank() && token.equals(config.token());
+            boolean bot = !reseau && token != null && !config.botToken().isBlank() && token.equals(config.botToken());
+            if (!reseau && !bot) {
                 respond(exchange, 401, "");
                 return;
             }
@@ -181,6 +183,10 @@ final class RelayHttpServer {
             String boite = parties.length > 0 ? parties[0] : "";
             if (!MailStore.nomValide(boite)) {
                 respond(exchange, 400, "");
+                return;
+            }
+            if (bot && !accesBot(boite, exchange.getRequestMethod())) {
+                respond(exchange, 403, "");
                 return;
             }
             switch (exchange.getRequestMethod()) {
@@ -207,6 +213,19 @@ final class RelayHttpServer {
             logger.warn("[KaliumRelay] Erreur sur une requete relais (mail) : " + e.getMessage());
             respond(exchange, 500, "");
         }
+    }
+
+    /**
+     * 1.11.0 (KLM_DiscordBot) : ce que le jeton du bot peut faire. Il depose ses demandes dans « scoreboards » (lues
+     * par KG_ScoreBoards sur Kanvas, que le proxy ne peut pas joindre) et peut les retirer s'il abandonne ; il lit et
+     * confirme les reponses dans « bot ». Rien d'autre : les boites des serveurs lui sont fermees.
+     */
+    private static boolean accesBot(String boite, String methode) {
+        return switch (boite) {
+            case "scoreboards" -> "POST".equals(methode) || "DELETE".equals(methode);
+            case "bot" -> "GET".equals(methode) || "DELETE".equals(methode);
+            default -> false;
+        };
     }
 
     /**

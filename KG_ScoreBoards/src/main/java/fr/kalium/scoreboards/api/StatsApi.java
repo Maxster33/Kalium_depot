@@ -110,6 +110,9 @@ public final class StatsApi {
 
     // ------------------------------------------------------------------ requetes
 
+    /** 1.10.0 : reponse d'une requete, par HTTP ou par la boite aux lettres du relais (voir RelaisBot). */
+    public record Reponse(int code, String json) { }
+
     private void handle(HttpExchange exchange) throws IOException {
         try (exchange) {
             if (!allowed(exchange)) {
@@ -124,25 +127,40 @@ public final class StatsApi {
                 send(exchange, 405, Map.of("error", "méthode non autorisée"));
                 return;
             }
-            String path = exchange.getRequestURI().getRawPath().substring("/api/v1/".length());
+            Reponse reponse = repondre(exchange.getRequestURI().getRawPath(), exchange.getRequestURI().getRawQuery());
+            byte[] bytes = reponse.json().getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
+            exchange.sendResponseHeaders(reponse.code(), bytes.length);
+            try (OutputStream out = exchange.getResponseBody()) {
+                out.write(bytes);
+            }
+        }
+    }
+
+    /**
+     * Traite une requete GET : chemin brut (« /api/v1/... ») et requete brute (apres « ? », peut etre null). Ne
+     * verifie ni le jeton ni la limite de requetes (faits par l'appelant). Hors du fil principal.
+     */
+    public Reponse repondre(String rawPath, String rawQuery) {
+        try {
+            if (rawPath == null || !rawPath.startsWith("/api/v1/")) {
+                return new Reponse(404, gson.toJson(Map.of("error", "introuvable")));
+            }
             List<String> parts = new ArrayList<>();
-            for (String part : path.split("/")) {
+            for (String part : rawPath.substring("/api/v1/".length()).split("/")) {
                 if (!part.isEmpty()) {
                     parts.add(URLDecoder.decode(part, StandardCharsets.UTF_8));
                 }
             }
-            Map<String, String> query = query(exchange.getRequestURI().getRawQuery());
-            Object body = route(parts, query);
-            if (body == null) {
-                send(exchange, 404, Map.of("error", "introuvable"));
-            } else {
-                send(exchange, 200, body);
-            }
+            Object body = route(parts, query(rawQuery));
+            return body == null
+                    ? new Reponse(404, gson.toJson(Map.of("error", "introuvable")))
+                    : new Reponse(200, gson.toJson(body));
         } catch (java.util.concurrent.TimeoutException e) {
-            send(exchange, 503, Map.of("error", "serveur occupé, réessayer"));
+            return new Reponse(503, gson.toJson(Map.of("error", "serveur occupé, réessayer")));
         } catch (Exception e) {
-            plugin.getLogger().warning("API du bot Discord : erreur sur " + exchange.getRequestURI().getPath() + " : " + e);
-            send(exchange, 500, Map.of("error", "erreur interne"));
+            plugin.getLogger().warning("API du bot Discord : erreur sur " + rawPath + " : " + e);
+            return new Reponse(500, gson.toJson(Map.of("error", "erreur interne")));
         }
     }
 
