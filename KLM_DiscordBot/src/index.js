@@ -1,15 +1,16 @@
 // KLM_DiscordBot : bot Discord du reseau KaLium (cahier des charges : CAHIER_DES_CHARGES.md).
 // Lancement : npm start ou node index.js (le lanceur lit le fichier .env, voir .env.example).
-// Commandes slash (/classement, /config) et commandes texte du staff (k!wiki, voir src/wiki.js).
+// Commandes slash (/classement, /config) et commandes texte du staff (k!wiki, voir src/wiki.js ; k!rules, voir src/reglement.js).
 
 import { Client, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
 import { ApiError, HttpTransport, RelaisTransport, ScoreApi } from './api.js';
 import * as classement from './commands/classement.js';
 import * as configCommande from './commands/config.js';
 import { ouvrir } from './db.js';
+import * as reglement from './reglement.js';
 import * as wiki from './wiki.js';
 
-const VERSION = '0.3.0';
+const VERSION = '0.4.0';
 const PREFIXE = 'k!';
 
 const config = {
@@ -44,7 +45,7 @@ if (api) {
   });
 }
 commands.set(configCommande.data.name, { data: configCommande.data, execute: (interaction) => configCommande.execute(interaction, { db }) });
-const textCommands = new Map([['wiki', wiki.commande]]);
+const textCommands = new Map([['wiki', wiki.commande], ['rules', reglement.commande]]);
 
 // Guilds : commandes slash. GuildMessages + MessageContent (intention privilegiee, a activer dans le portail
 // developpeur) : lire les commandes texte k!… du staff ; le bot ignore tous les autres messages.

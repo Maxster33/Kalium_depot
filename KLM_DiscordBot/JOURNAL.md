@@ -64,3 +64,19 @@ chez Dishost (Node 20.20) depuis le 09/11.
   base (choisir, remplacer, retirer). Non testé sur Discord.
 
 **Statut : non déployé.** À déployer avec KaliumRelay 1.11.0 et KG_ScoreBoards 1.10.0 ; `.env` à compléter.
+
+## 0.4.0 — règlement en fils (`k!rules set`) (09/11/2026)
+
+**Demande de LeKiwi06 (09/11/2026)** : le règlement du salon d'informations publié par le bot, « chaque partie du
+règlement dans un fil isolé », un lien « Revenir au sommaire » à la fin de chaque fil, commande `k!rules set <channel
+id>` réservée au rôle « Le fameux fruit » (deux comptes).
+- `src/reglement.js` : présentation + sommaire dans un embed du salon, une partie par fil public verrouillé (embed),
+  terminée par `↩️ [Revenir au sommaire](lien du message du sommaire)`. Sommaire publié d'abord (les fils ont besoin
+  de son lien), complété avec les liens des fils à la fin. Relancer la commande met tout à jour sur place.
+- Textes dans `reglement/` (`_sommaire.md` + une partie par fichier, ordre alphabétique), relus à chaque commande.
+- Autorisation : rôle dont le nom contient « le fameux fruit » (majuscules ignorées) ; les autres membres n'ont
+  aucune réponse. Salon fermé aux membres comme le wiki (fonctions communes exportées de `src/wiki.js`).
+- État dans `reglement-etat.json` (ignoré par git).
+- Testé sans Discord : lecture des textes, longueurs (sommaire 1 011 caractères, parties ≤ 754, limite 4 096).
+
+**Statut : non déployé, non testé sur Discord.**

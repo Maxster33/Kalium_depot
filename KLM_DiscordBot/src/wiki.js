@@ -14,7 +14,7 @@ const DOSSIER_WIKI = fileURLToPath(new URL('../wiki/', import.meta.url));
 const FICHIER_ETAT = fileURLToPath(new URL('../wiki-etat.json', import.meta.url));
 
 /** Permissions du bot dans le salon du wiki, sans lesquelles la publication échoue. */
-const PERMISSIONS_BOT = {
+export const PERMISSIONS_BOT = {
   ViewChannel: 'voir le salon',
   SendMessages: 'envoyer des messages',
   SendMessagesInThreads: 'envoyer des messages dans les fils',
@@ -122,7 +122,7 @@ async function publier(guild, salonId, etat) {
 }
 
 /** Seul le staff écrit dans le salon et ses fils ; le bot garde ses droits (dérogation à son nom). */
-async function verrouillerSalon(salon, moi) {
+export async function verrouillerSalon(salon, moi) {
   await salon.permissionOverwrites.edit(moi.id, {
     ViewChannel: true, SendMessages: true, SendMessagesInThreads: true, CreatePublicThreads: true,
     ManageThreads: true, ManageMessages: true, EmbedLinks: true, ReadMessageHistory: true,
@@ -194,7 +194,7 @@ function envoyer(fil, texte) {
 }
 
 /** Retire du salon les messages « … a commencé un fil » laissés par le bot : le salon ne garde que les sommaires. */
-async function effacerAnnoncesDeFils(salon, botId) {
+export async function effacerAnnoncesDeFils(salon, botId) {
   const messages = await salon.messages.fetch({ limit: 100 });
   for (const m of messages.values()) {
     if (m.type === MessageType.ThreadCreated && m.author.id === botId) await m.delete().catch(() => {});

@@ -46,3 +46,12 @@ Les textes sont dans `wiki/` (format : `wiki/LISEZMOI.md`).
 
 Les identifiants Discord publiés sont gardés dans `wiki-etat.json` (jamais commité) : lancer le bot toujours depuis
 la même machine, sinon le wiki est republié en double. `API_URL` / `API_TOKEN` vides : le wiki marche, sans `/classement`.
+
+## Règlement (`k!rules`)
+
+Présentation et sommaire dans le salon, une partie du règlement par fil verrouillé, chaque fil finissant par
+« Revenir au sommaire ». Textes dans `reglement/` (`_sommaire.md` puis une partie par fichier).
+
+- `k!rules set <id du salon>` : publie le règlement, ou le met à jour sur place s'il y est déjà (après une
+  modification de `reglement/`). Réservé au rôle **Le fameux fruit** ; mêmes permissions du bot que le wiki.
+- Identifiants publiés gardés dans `reglement-etat.json` (jamais commité).
