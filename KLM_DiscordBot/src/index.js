@@ -10,7 +10,7 @@ import { ouvrir } from './db.js';
 import * as reglement from './reglement.js';
 import * as wiki from './wiki.js';
 
-const VERSION = '0.4.0';
+const VERSION = '0.5.0';
 const PREFIXE = 'k!';
 
 const config = {
@@ -72,6 +72,16 @@ client.once(Events.ClientReady, async (ready) => {
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
+  // Menu et formulaires de k!rules edit.
+  if ((interaction.isMessageComponent() || interaction.isModalSubmit()) && interaction.customId.startsWith('rules:')) {
+    await reglement.interaction(interaction).catch(async (error) => {
+      console.error('k!rules edit :', error);
+      const text = `Erreur : ${error.message}`;
+      await (interaction.deferred || interaction.replied ? interaction.editReply(text)
+        : interaction.reply({ content: text, flags: MessageFlags.Ephemeral })).catch(() => {});
+    });
+    return;
+  }
   const command = commands.get(interaction.commandName);
   if (!command) return;
   if (interaction.isAutocomplete()) {

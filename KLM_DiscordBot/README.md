@@ -54,4 +54,7 @@ Présentation et sommaire dans le salon, une partie du règlement par fil verrou
 
 - `k!rules set <id du salon>` : publie le règlement, ou le met à jour sur place s'il y est déjà (après une
   modification de `reglement/`). Réservé au rôle **Le fameux fruit** ; mêmes permissions du bot que le wiki.
+- `k!rules edit` : menu des encadrés, puis formulaire prérempli (titre, couleur, texte) ; à l'envoi, le fichier de
+  `reglement/` est réécrit et tous les salons publiés sont mis à jour. Ces modifications sont faites **sur
+  l'hébergement** : récupérer `reglement/` de Dishost avant d'y renvoyer celui du dépôt.
 - Identifiants publiés gardés dans `reglement-etat.json` (jamais commité).

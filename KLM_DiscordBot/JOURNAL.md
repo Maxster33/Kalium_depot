@@ -80,3 +80,21 @@ id>` réservée au rôle « Le fameux fruit » (deux comptes).
 - Testé sans Discord : lecture des textes, longueurs (sommaire 1 011 caractères, parties ≤ 754, limite 4 096).
 
 **Statut : non déployé, non testé sur Discord.**
+
+## 0.5.0 — `k!rules edit`, better-sqlite3 retiré (10/11/2026)
+
+**Demandes de LeKiwi06 (10/11/2026)** : « un k!rules edit qui me permet de facilement modifier l'embed » ; « désactive
+la partie du code qui cause le problème de démarrage pour le moment ».
+- `k!rules edit` (rôle « Le fameux fruit ») : menu déroulant des encadrés (présentation et sommaire, puis chaque
+  partie) ; le choix ouvre un formulaire Discord prérempli (titre, couleur, texte, et pour la présentation le texte
+  sous le sommaire). À l'envoi : fichier de `reglement/` réécrit, longueurs vérifiées (ancien fichier remis sinon),
+  tous les salons où le règlement est publié mis à jour ; un salon supprimé (salon de test) est oublié.
+- **Les textes modifiés par `k!rules edit` vivent sur l'hébergement** : récupérer `reglement/` de Dishost avant d'y
+  renvoyer celui du dépôt, et le recopier dans le dépôt.
+- `better-sqlite3` retiré de `package.json` : chez Dishost, pas de binaire tout prêt et la compilation est tuée faute de
+  mémoire (`Killed signal terminated program cc1`), ce qui ajoutait ~3 min à chaque démarrage. `src/db.js` gardé :
+  sans le module, le bot démarre sans `/config` (comme avant). À remplacer par une base sans compilation (sql.js).
+- Testé hors Discord : menu et formulaires (limites de Discord respectées), aller-retour des fichiers identique,
+  couleur / titre vides / ligne « --- » refusés.
+
+**Statut : non déployé, non testé sur Discord.**

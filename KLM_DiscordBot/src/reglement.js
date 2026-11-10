@@ -1,17 +1,24 @@
 // Règlement de KaLium dans un salon Discord : la présentation et le sommaire (embed) dans le salon, une partie par
 // fil verrouillé (embed), chaque fil finissant par un lien « Revenir au sommaire ».
-// Commande texte réservée au rôle « Le fameux fruit » :
-//   k!rules set <id du salon>  publie le règlement dans ce salon, ou le met à jour sur place s'il y est déjà.
+// Commandes texte réservées au rôle « Le fameux fruit » :
+//   k!rules set <id du salon>  publie le règlement dans ce salon, ou le met à jour sur place s'il y est déjà ;
+//   k!rules edit               menu des encadrés (présentation, parties) ; chacun s'ouvre dans un formulaire Discord
+//                              (titre, couleur, texte) ; à l'envoi, le fichier de reglement/ est réécrit et tous les
+//                              salons où le règlement est publié sont mis à jour.
 // Les textes sont dans reglement/ (relus à chaque commande, pas besoin de redémarrer le bot) :
 //   _sommaire.md : « # Titre », ligne « couleur: #rrggbb » facultative, la présentation, puis après une ligne « --- »
 //                  le texte placé sous le sommaire ;
 //   une partie par fichier (ordre alphabétique : a-…, b-…), « # Titre » = nom du fil, puis le texte.
+// k!rules edit réécrit ces fichiers SUR L'HÉBERGEMENT : les récupérer avant d'y renvoyer reglement/ depuis le dépôt.
 // Les identifiants Discord (salon, fils, messages) sont gardés dans reglement-etat.json, jamais commité.
 
 import { readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ChannelType, PermissionFlagsBits, ThreadAutoArchiveDuration } from 'discord.js';
+import {
+  ActionRowBuilder, ChannelType, MessageFlags, ModalBuilder, PermissionFlagsBits, StringSelectMenuBuilder,
+  TextInputBuilder, TextInputStyle, ThreadAutoArchiveDuration,
+} from 'discord.js';
 import { PERMISSIONS_BOT, effacerAnnoncesDeFils, verrouillerSalon } from './wiki.js';
 
 const DOSSIER = fileURLToPath(new URL('../reglement/', import.meta.url));
@@ -21,19 +28,32 @@ const FICHIER_ETAT = fileURLToPath(new URL('../reglement-etat.json', import.meta
 const ROLE_AUTORISE = 'le fameux fruit';
 const MAX_DESCRIPTION = 4096;
 const MAX_NOM_FIL = 100;
+/** Limite d'un champ de formulaire Discord. */
+const MAX_CHAMP = 4000;
 const COULEUR_DEFAUT = 0x09add3;
 const SANS_PING = { parse: [] };
+const SOMMAIRE = '_sommaire';
 
 let enCours = false;
 
+function aLeRole(member) {
+  return Boolean(member?.roles?.cache?.some((r) => r.name.toLowerCase().includes(ROLE_AUTORISE)));
+}
+
 export async function commande(message, args) {
   if (!message.inGuild()) return;
-  const autorise = message.member?.roles.cache.some((r) => r.name.toLowerCase().includes(ROLE_AUTORISE));
-  if (!autorise) return; // silence : la commande n'existe pas pour les autres
+  if (!aLeRole(message.member)) return; // silence : la commande n'existe pas pour les autres
   const [action, idSalon] = args;
+  if (action?.toLowerCase() === 'edit') {
+    await message.reply({ content: 'Quel encadré du règlement modifier ?', components: [menuEncadres()], allowedMentions: SANS_PING });
+    return;
+  }
   const salonId = idSalon?.replace(/^<#(\d+)>$/, '$1');
   if (action?.toLowerCase() !== 'set' || !/^\d{17,20}$/.test(salonId ?? '')) {
-    await message.reply({ content: "Usage : `k!rules set <id du salon>` (clic droit sur le salon > Copier l'identifiant).", allowedMentions: SANS_PING });
+    await message.reply({
+      content: "`k!rules set <id du salon>` publie le règlement (clic droit sur le salon > Copier l'identifiant) ; `k!rules edit` modifie un encadré.",
+      allowedMentions: SANS_PING,
+    });
     return;
   }
   if (enCours) {
@@ -64,10 +84,10 @@ export function lireReglement(dossier = DOSSIER) {
       const p = lireFichier(readFileSync(join(dossier, f), 'utf8'), f);
       if (!p.texte) throw new Error(`${f} : partie vide`);
       if (p.titre.length > MAX_NOM_FIL) throw new Error(`${f} : titre trop long pour un nom de fil (${p.titre.length} > ${MAX_NOM_FIL})`);
-      return { cle: f.replace(/\.md$/, ''), ...p, couleur: p.couleur ?? s.couleur ?? COULEUR_DEFAUT };
+      return { cle: f.replace(/\.md$/, ''), ...p, couleurPropre: p.couleur, couleur: p.couleur ?? s.couleur ?? COULEUR_DEFAUT };
     });
   if (!parties.length) throw new Error('aucune partie dans reglement/');
-  return { titre: s.titre, couleur: s.couleur ?? COULEUR_DEFAUT, intro, conclusion, parties };
+  return { titre: s.titre, couleur: s.couleur ?? COULEUR_DEFAUT, couleurPropre: s.couleur, intro, conclusion, parties };
 }
 
 function lireFichier(brut, origine) {
@@ -206,4 +226,153 @@ function lireEtat() {
 
 function ecrireEtat(etat) {
   writeFileSync(FICHIER_ETAT, JSON.stringify(etat, null, 2) + '\n');
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// k!rules edit : menu des encadrés -> formulaire Discord -> fichier réécrit -> salons publiés mis à jour.
+
+/** Menu déroulant : la présentation puis chaque partie. */
+export function menuEncadres() {
+  const reglement = lireReglement();
+  const menu = new StringSelectMenuBuilder()
+    .setCustomId('rules:choix')
+    .setPlaceholder('Choisir un encadré')
+    .addOptions(
+      { label: 'Présentation et sommaire', value: SOMMAIRE, emoji: '🏠' },
+      ...reglement.parties.map((p) => ({ label: p.titre.slice(0, 100), value: p.cle, emoji: '📖' })),
+    );
+  return new ActionRowBuilder().addComponents(menu);
+}
+
+const hex = (couleur) => (couleur == null ? '' : `#${couleur.toString(16).padStart(6, '0')}`);
+
+function champ(id, label, style, valeur, { requis = true, max = MAX_CHAMP, placeholder } = {}) {
+  const input = new TextInputBuilder().setCustomId(id).setLabel(label).setStyle(style).setRequired(requis).setMaxLength(max);
+  if (valeur) input.setValue(valeur.slice(0, max));
+  if (placeholder) input.setPlaceholder(placeholder);
+  return new ActionRowBuilder().addComponents(input);
+}
+
+/** Formulaire prérempli avec le texte actuel de l'encadré. */
+export function formulaire(cle) {
+  const reglement = lireReglement();
+  const modal = new ModalBuilder().setCustomId(`rules:modal:${cle}`);
+  if (cle === SOMMAIRE) {
+    return modal.setTitle('Présentation et sommaire').addComponents(
+      champ('titre', 'Titre', TextInputStyle.Short, reglement.titre, { max: 256 }),
+      champ('couleur', 'Couleur (#rrggbb)', TextInputStyle.Short, hex(reglement.couleurPropre),
+        { requis: false, max: 7, placeholder: '#09add3 (aussi celle des parties sans couleur)' }),
+      champ('texte', 'Présentation (au-dessus du sommaire)', TextInputStyle.Paragraph, reglement.intro, { max: 3000 }),
+      champ('conclusion', 'Texte sous le sommaire (facultatif)', TextInputStyle.Paragraph, reglement.conclusion,
+        { requis: false, max: 800 }),
+    );
+  }
+  const partie = reglement.parties.find((p) => p.cle === cle);
+  if (!partie) return null;
+  return modal.setTitle(partie.titre.slice(0, 45)).addComponents(
+    champ('titre', 'Titre (nom du fil)', TextInputStyle.Short, partie.titre, { max: MAX_NOM_FIL }),
+    champ('couleur', 'Couleur (#rrggbb, facultatif)', TextInputStyle.Short, hex(partie.couleurPropre),
+      { requis: false, max: 7, placeholder: `vide = celle de la présentation (${hex(reglement.couleur)})` }),
+    champ('texte', 'Texte', TextInputStyle.Paragraph, partie.texte,
+      { max: 3900, placeholder: 'Le lien « Revenir au sommaire » est ajouté tout seul à la fin.' }),
+  );
+}
+
+/** Contenu d'un fichier de reglement/ à partir des champs du formulaire (sans l'écrire). */
+export function contenuFichier(cle, { titre, couleur, texte, conclusion }) {
+  titre = titre.replace(/\s+/g, ' ').trim();
+  if (!titre) throw new Error('titre vide');
+  couleur = couleur?.trim() ?? '';
+  if (couleur && !couleur.startsWith('#')) couleur = `#${couleur}`;
+  if (couleur && !/^#[0-9a-f]{6}$/i.test(couleur)) throw new Error(`couleur « ${couleur} » invalide (format #rrggbb, par exemple #09add3)`);
+  texte = texte.replace(/\r\n?/g, '\n').trim();
+  if (!texte) throw new Error('texte vide');
+  // Une ligne « --- » seule sépare présentation et conclusion : interdite dans les textes eux-mêmes.
+  if (/^-{3,}$/m.test(texte) || /^-{3,}$/m.test(conclusion ?? '')) throw new Error('une ligne « --- » seule est réservée, retire-la');
+  const lignes = [`# ${titre}`];
+  if (couleur) lignes.push(`couleur: ${couleur.toLowerCase()}`);
+  lignes.push('', texte);
+  if (cle === SOMMAIRE && conclusion?.trim()) lignes.push('', '---', '', conclusion.replace(/\r\n?/g, '\n').trim());
+  return `${lignes.join('\n')}\n`;
+}
+
+/** Clics du menu et envois de formulaire dont l'identifiant commence par « rules: ». */
+export async function interaction(inter) {
+  if (!inter.inGuild()) return;
+  const member = aLeRole(inter.member) ? inter.member : await inter.guild.members.fetch(inter.user.id).catch(() => null);
+  if (!aLeRole(member)) {
+    await inter.reply({ content: 'Réservé au rôle Le fameux fruit.', flags: MessageFlags.Ephemeral });
+    return;
+  }
+
+  if (inter.isStringSelectMenu() && inter.customId === 'rules:choix') {
+    const modal = formulaire(inter.values[0]);
+    if (!modal) {
+      await inter.reply({ content: "Cet encadré n'existe plus : relance `k!rules edit`.", flags: MessageFlags.Ephemeral });
+      return;
+    }
+    await inter.showModal(modal);
+    return;
+  }
+
+  if (!inter.isModalSubmit() || !inter.customId.startsWith('rules:modal:')) return;
+  const cle = inter.customId.slice('rules:modal:'.length);
+  const reglement = lireReglement();
+  if (cle !== SOMMAIRE && !reglement.parties.some((p) => p.cle === cle)) {
+    await inter.reply({ content: "Cet encadré n'existe plus : relance `k!rules edit`.", flags: MessageFlags.Ephemeral });
+    return;
+  }
+  await inter.deferReply({ flags: MessageFlags.Ephemeral });
+  const valeur = (id) => {
+    try { return inter.fields.getTextInputValue(id); } catch { return ''; }
+  };
+
+  const fichier = join(DOSSIER, `${cle}.md`);
+  const ancien = readFileSync(fichier, 'utf8');
+  try {
+    writeFileSync(fichier, contenuFichier(cle, {
+      titre: valeur('titre'), couleur: valeur('couleur'), texte: valeur('texte'), conclusion: valeur('conclusion'),
+    }));
+    verifierLongueurs(lireReglement());
+  } catch (error) {
+    writeFileSync(fichier, ancien);
+    await inter.editReply(`Modification refusée : ${error.message}. Rien n'a changé.`);
+    return;
+  }
+
+  const salons = Object.keys(lireEtat().salons);
+  if (!salons.length) {
+    await inter.editReply('Texte enregistré. Le règlement n\'est publié nulle part : `k!rules set <id du salon>` pour le publier.');
+    return;
+  }
+  if (enCours) {
+    await inter.editReply('Texte enregistré, mais une publication est déjà en cours : relance `k!rules set` sur le salon dans un instant.');
+    return;
+  }
+  enCours = true;
+  const rapports = [];
+  try {
+    for (const salonId of salons) {
+      const salon = await inter.guild.channels.fetch(salonId).catch(() => null);
+      if (!salon) {
+        // Salon supprimé (par exemple le salon de test) : on l'oublie.
+        const etat = lireEtat();
+        delete etat.salons[salonId];
+        ecrireEtat(etat);
+        continue;
+      }
+      rapports.push(await publier(inter.guild, salonId).catch((error) => `<#${salonId}> : non mis à jour (${error.message})`));
+    }
+  } finally {
+    enCours = false;
+  }
+  await inter.editReply(`Texte enregistré.\n${rapports.join('\n')}`.slice(0, 2000));
+}
+
+/** Les textes tiennent-ils dans un embed, avec des identifiants et un lien de la plus grande taille possible ? */
+function verifierLongueurs(reglement) {
+  const ids = Object.fromEntries(reglement.parties.map((p) => [p.cle, '9'.repeat(20)]));
+  texteSommaire(reglement, ids);
+  const lien = `https://discord.com/channels/${'9'.repeat(20)}/${'9'.repeat(20)}/${'9'.repeat(20)}`;
+  for (const p of reglement.parties) textePartie(p, lien);
 }
