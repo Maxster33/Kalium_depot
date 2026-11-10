@@ -83,6 +83,7 @@ export function lireReglement(dossier = DOSSIER) {
     .map((f) => {
       const p = lireFichier(readFileSync(join(dossier, f), 'utf8'), f);
       if (!p.texte) throw new Error(`${f} : partie vide`);
+      if (!p.titre) throw new Error(`${f} : titre vide (c'est le nom du fil)`);
       if (p.titre.length > MAX_NOM_FIL) throw new Error(`${f} : titre trop long pour un nom de fil (${p.titre.length} > ${MAX_NOM_FIL})`);
       return { cle: f.replace(/\.md$/, ''), ...p, couleurPropre: p.couleur, couleur: p.couleur ?? s.couleur ?? COULEUR_DEFAUT };
     });
@@ -93,14 +94,15 @@ export function lireReglement(dossier = DOSSIER) {
 function lireFichier(brut, origine) {
   const lignes = brut.replace(/^﻿/, '').replace(/\r\n?/g, '\n').split('\n');
   const premiere = lignes.shift() ?? '';
-  if (!/^#\s+\S/.test(premiere)) throw new Error(`${origine} : la première ligne doit être « # Titre »`);
+  // « # » seul : pas de titre (permis pour la présentation seulement, voir lireReglement).
+  if (!/^#(\s.*)?$/.test(premiere)) throw new Error(`${origine} : la première ligne doit être « # Titre » (ou « # » seul)`);
   let couleur = null;
   if (/^couleur\s*:/i.test(lignes[0] ?? '')) {
     const valeur = lignes.shift().replace(/^couleur\s*:\s*/i, '').trim();
     if (!/^#[0-9a-f]{6}$/i.test(valeur)) throw new Error(`${origine} : couleur « ${valeur} » invalide (format #rrggbb)`);
     couleur = parseInt(valeur.slice(1), 16);
   }
-  return { titre: premiere.replace(/^#\s+/, '').trim(), couleur, texte: lignes.join('\n').trim() };
+  return { titre: premiere.replace(/^#/, '').trim(), couleur, texte: lignes.join('\n').trim() };
 }
 
 /** Description de l'embed du sommaire : présentation, liens des fils, conclusion. */
@@ -140,7 +142,7 @@ async function publier(guild, salonId) {
   });
 
   // 1. Le sommaire d'abord : les fils ont besoin de son lien. Publié sans liens, complété à la fin.
-  const embedSommaire = (ids) => ({ title: reglement.titre, color: reglement.couleur, description: texteSommaire(reglement, ids) });
+  const embedSommaire = (ids) => ({ title: reglement.titre || undefined, color: reglement.couleur, description: texteSommaire(reglement, ids) });
   let sommaire = memo.sommaire ? await salon.messages.fetch(memo.sommaire).catch(() => null) : null;
   const nouveauSommaire = !sommaire;
   if (!sommaire) {
@@ -177,7 +179,8 @@ async function publier(guild, salonId) {
 
 /** Crée ou met à jour le fil d'une partie. Renvoie « crees », « modifies » ou « inchanges ». */
 async function synchroniserFil(salon, partie, lienSommaire, memo) {
-  const embed = { title: partie.titre, color: partie.couleur, description: textePartie(partie, lienSommaire) };
+  // Un texte qui commence par un titre Markdown (« # … ») remplace le titre de l'encadré (plus gros).
+  const embed = { title: /^#{1,3}\s/.test(partie.texte) ? undefined : partie.titre, color: partie.couleur, description: textePartie(partie, lienSommaire) };
   const connu = memo.fils[partie.cle];
   let fil = connu ? await salon.threads.fetch(connu.id).catch(() => null) : null;
   if (fil && fil.parentId !== salon.id) fil = null;
@@ -208,7 +211,7 @@ async function synchroniserFil(salon, partie, lienSommaire, memo) {
     modifie = true;
   } else {
     const e = ancien.embeds[0];
-    if (e?.title !== embed.title || e?.description !== embed.description || e?.color !== embed.color) {
+    if ((e?.title ?? undefined) !== embed.title || e?.description !== embed.description || e?.color !== embed.color) {
       await ancien.edit({ embeds: [embed], allowedMentions: SANS_PING });
       modifie = true;
     }
@@ -259,7 +262,8 @@ export function formulaire(cle) {
   const modal = new ModalBuilder().setCustomId(`rules:modal:${cle}`);
   if (cle === SOMMAIRE) {
     return modal.setTitle('Présentation et sommaire').addComponents(
-      champ('titre', 'Titre', TextInputStyle.Short, reglement.titre, { max: 256 }),
+      champ('titre', 'Titre (facultatif)', TextInputStyle.Short, reglement.titre,
+        { requis: false, max: 256, placeholder: 'Vide = pas de titre (tu peux écrire « # Titre » dans le texte)' }),
       champ('couleur', 'Couleur (#rrggbb)', TextInputStyle.Short, hex(reglement.couleurPropre),
         { requis: false, max: 7, placeholder: '#09add3 (aussi celle des parties sans couleur)' }),
       champ('texte', 'Présentation (au-dessus du sommaire)', TextInputStyle.Paragraph, reglement.intro, { max: 3000 }),
@@ -270,7 +274,8 @@ export function formulaire(cle) {
   const partie = reglement.parties.find((p) => p.cle === cle);
   if (!partie) return null;
   return modal.setTitle(partie.titre.slice(0, 45)).addComponents(
-    champ('titre', 'Titre (nom du fil)', TextInputStyle.Short, partie.titre, { max: MAX_NOM_FIL }),
+    champ('titre', 'Nom du fil', TextInputStyle.Short, partie.titre,
+      { max: MAX_NOM_FIL, placeholder: "Aussi le titre de l'encadré, sauf si le texte commence par « # »" }),
     champ('couleur', 'Couleur (#rrggbb, facultatif)', TextInputStyle.Short, hex(partie.couleurPropre),
       { requis: false, max: 7, placeholder: `vide = celle de la présentation (${hex(reglement.couleur)})` }),
     champ('texte', 'Texte', TextInputStyle.Paragraph, partie.texte,
@@ -281,7 +286,7 @@ export function formulaire(cle) {
 /** Contenu d'un fichier de reglement/ à partir des champs du formulaire (sans l'écrire). */
 export function contenuFichier(cle, { titre, couleur, texte, conclusion }) {
   titre = titre.replace(/\s+/g, ' ').trim();
-  if (!titre) throw new Error('titre vide');
+  if (!titre && cle !== SOMMAIRE) throw new Error('nom du fil vide');
   couleur = couleur?.trim() ?? '';
   if (couleur && !couleur.startsWith('#')) couleur = `#${couleur}`;
   if (couleur && !/^#[0-9a-f]{6}$/i.test(couleur)) throw new Error(`couleur « ${couleur} » invalide (format #rrggbb, par exemple #09add3)`);
@@ -289,7 +294,7 @@ export function contenuFichier(cle, { titre, couleur, texte, conclusion }) {
   if (!texte) throw new Error('texte vide');
   // Une ligne « --- » seule sépare présentation et conclusion : interdite dans les textes eux-mêmes.
   if (/^-{3,}$/m.test(texte) || /^-{3,}$/m.test(conclusion ?? '')) throw new Error('une ligne « --- » seule est réservée, retire-la');
-  const lignes = [`# ${titre}`];
+  const lignes = [titre ? `# ${titre}` : '#'];
   if (couleur) lignes.push(`couleur: ${couleur.toLowerCase()}`);
   lignes.push('', texte);
   if (cle === SOMMAIRE && conclusion?.trim()) lignes.push('', '---', '', conclusion.replace(/\r\n?/g, '\n').trim());

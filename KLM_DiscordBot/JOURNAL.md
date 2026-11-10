@@ -98,3 +98,11 @@ la partie du code qui cause le problème de démarrage pour le moment ».
   couleur / titre vides / ligne « --- » refusés.
 
 **Statut : non déployé, non testé sur Discord.**
+
+### 0.5.1 — titre facultatif (10/11/2026)
+
+**Demande de LeKiwi06** : titre plus gros en écrivant « # Titre » dans le texte, mais le formulaire exigeait un titre.
+- Présentation : titre facultatif (fichier : `#` seul sur la première ligne = encadré sans titre).
+- Parties : le titre reste obligatoire (c'est le nom du fil), mais l'encadré ne l'affiche plus quand le texte
+  commence par un titre Markdown (`#`, `##` ou `###`).
+- Testé hors Discord (copie des textes). **Statut : non déployé.**
