@@ -106,3 +106,23 @@ la partie du code qui cause le problème de démarrage pour le moment ».
 - Parties : le titre reste obligatoire (c'est le nom du fil), mais l'encadré ne l'affiche plus quand le texte
   commence par un titre Markdown (`#`, `##` ou `###`).
 - Testé hors Discord (copie des textes). **Statut : non déployé.**
+
+## 0.6.0 — salon d'informations en sections (10/11/2026)
+
+**Demande de LeKiwi06 (10/11/2026)** : salon d'informations = image de séparation, gros titre « Bienvenue sur Kalium
+SMC », description, image, « L'objectif du serveur », concept, image, « Sommaire des règles », sommaire, image,
+« Sommaire des concepts », sommaire, image. Choix : barre animée violet-vert qui défile (couleurs de KaLium), image seule
+(sans encadré), concepts en fils comme les règles, textes de description, d'objectif et de concepts proposés par Claude
+(à valider).
+- `reglement/` : une section par fichier `NN-<section>.md` (`# Gros titre` ou `#` seul, `couleur:`, `groupe:` facultatifs ;
+  `---` sépare le texte avant / après la liste des fils) ; fils dans `reglement/<groupe>/` ; image `_separation.gif`.
+  Règles déplacées dans `reglement/regles/`, concepts dans `reglement/concepts/`, `_sommaire.md` retiré.
+- Publication : [image] [gros titre + texte] … [image], un message par image et par section ; modifiée sur place si
+  la mise en page n'a pas changé, sinon tout est republié dans l'ordre (les fils restent). Chaque fil renvoie à la
+  section qui le liste. État de la 0.5 repris (ancien message de sommaire supprimé, fils `regles/…`).
+- `k!rules edit` : menu des sections et des fils ; formulaire de section = gros titre (facultatif), couleur, texte (et
+  texte après la liste pour une section à fils).
+- Permission « joindre des fichiers » exigée en plus pour l'image.
+- Testé hors Discord : lecture, longueurs, menu (12 encadrés), formulaires, aller-retour des fichiers identique.
+
+**Statut : non déployé, non testé sur Discord ; textes à valider par LeKiwi06.**

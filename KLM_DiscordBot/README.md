@@ -47,14 +47,15 @@ Les textes sont dans `wiki/` (format : `wiki/LISEZMOI.md`).
 Les identifiants Discord publiés sont gardés dans `wiki-etat.json` (jamais commité) : lancer le bot toujours depuis
 la même machine, sinon le wiki est republié en double. `API_URL` / `API_TOKEN` vides : le wiki marche, sans `/classement`.
 
-## Règlement (`k!rules`)
+## Salon d'informations (`k!rules`)
 
-Présentation et sommaire dans le salon, une partie du règlement par fil verrouillé, chaque fil finissant par
-« Revenir au sommaire ». Textes dans `reglement/` (`_sommaire.md` puis une partie par fichier).
+Des sections séparées par une barre animée (`reglement/_separation.gif`) : gros titre + texte. Une section peut lister
+un groupe de fils verrouillés (règles, concepts), chacun finissant par « Revenir au sommaire ». Format des fichiers :
+en-tête de `src/reglement.js`.
 
-- `k!rules set <id du salon>` : publie le règlement, ou le met à jour sur place s'il y est déjà (après une
-  modification de `reglement/`). Réservé au rôle **Le fameux fruit** ; mêmes permissions du bot que le wiki.
-- `k!rules edit` : menu des encadrés, puis formulaire prérempli (titre, couleur, texte) ; à l'envoi, le fichier de
-  `reglement/` est réécrit et tous les salons publiés sont mis à jour. Ces modifications sont faites **sur
-  l'hébergement** : récupérer `reglement/` de Dishost avant d'y renvoyer celui du dépôt.
+- `k!rules set <id du salon>` : publie le salon, ou le met à jour sur place s'il y est déjà. Réservé au rôle
+  **Le fameux fruit** ; mêmes permissions du bot que le wiki, plus « joindre des fichiers ».
+- `k!rules edit` : menu des encadrés, puis formulaire prérempli ; à l'envoi, le fichier de `reglement/` est réécrit et
+  tous les salons publiés sont mis à jour. Ces modifications sont faites **sur l'hébergement** : récupérer
+  `reglement/` de Dishost avant d'y renvoyer celui du dépôt.
 - Identifiants publiés gardés dans `reglement-etat.json` (jamais commité).

@@ -1,18 +1,23 @@
-// Règlement de KaLium dans un salon Discord : la présentation et le sommaire (embed) dans le salon, une partie par
-// fil verrouillé (embed), chaque fil finissant par un lien « Revenir au sommaire ».
+// Salon d'informations de KaLium : des sections séparées par une image (barre animée), chacune = un gros titre
+// (embed) + un texte (embed). Une section peut porter un groupe de fils (les règles, les concepts) : son texte se
+// termine par les liens des fils, et chaque fil (verrouillé, un embed) finit par « Revenir au sommaire ».
+//
+//   [image] [Bienvenue | description] [image] [Objectif | texte] [image] [Règles | liens] [image] [Concepts | liens] [image]
+//
 // Commandes texte réservées au rôle « Le fameux fruit » :
-//   k!rules set <id du salon>  publie le règlement dans ce salon, ou le met à jour sur place s'il y est déjà ;
-//   k!rules edit               menu des encadrés (présentation, parties) ; chacun s'ouvre dans un formulaire Discord
-//                              (titre, couleur, texte) ; à l'envoi, le fichier de reglement/ est réécrit et tous les
-//                              salons où le règlement est publié sont mis à jour.
-// Les textes sont dans reglement/ (relus à chaque commande, pas besoin de redémarrer le bot) :
-//   _sommaire.md : « # Titre », ligne « couleur: #rrggbb » facultative, la présentation, puis après une ligne « --- »
-//                  le texte placé sous le sommaire ;
-//   une partie par fichier (ordre alphabétique : a-…, b-…), « # Titre » = nom du fil, puis le texte.
+//   k!rules set <id du salon>  publie le salon, ou le met à jour sur place s'il y est déjà ;
+//   k!rules edit               menu des encadrés (sections, fils) ; chacun s'ouvre dans un formulaire Discord ; à l'envoi
+//                              le fichier de reglement/ est réécrit et tous les salons publiés sont mis à jour.
+// Textes dans reglement/ (relus à chaque commande, pas besoin de redémarrer le bot) :
+//   NN-<section>.md : « # Gros titre » (ou « # » seul : pas de titre), lignes facultatives « couleur: #rrggbb » et
+//                     « groupe: <dossier> », puis le texte ; avec un groupe, une ligne « --- » sépare le texte placé
+//                     avant les liens des fils de celui placé après ;
+//   <dossier>/<fiche>.md : un fil par fichier (ordre alphabétique), « # Nom du fil », « couleur: » facultative, texte ;
+//   _separation.gif (ou .png) : l'image entre les sections.
 // k!rules edit réécrit ces fichiers SUR L'HÉBERGEMENT : les récupérer avant d'y renvoyer reglement/ depuis le dépôt.
-// Les identifiants Discord (salon, fils, messages) sont gardés dans reglement-etat.json, jamais commité.
+// Les identifiants Discord (salon, messages, fils) sont gardés dans reglement-etat.json, jamais commité.
 
-import { readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readdirSync, readFileSync, writeFileSync, existsSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -28,11 +33,10 @@ const FICHIER_ETAT = fileURLToPath(new URL('../reglement-etat.json', import.meta
 const ROLE_AUTORISE = 'le fameux fruit';
 const MAX_DESCRIPTION = 4096;
 const MAX_NOM_FIL = 100;
-/** Limite d'un champ de formulaire Discord. */
 const MAX_CHAMP = 4000;
-const COULEUR_DEFAUT = 0x09add3;
+const COULEUR_DEFAUT = 0x8b3dff;
 const SANS_PING = { parse: [] };
-const SOMMAIRE = '_sommaire';
+const META = /^(couleur|groupe)\s*:\s*(.*)$/i;
 
 let enCours = false;
 
@@ -45,19 +49,19 @@ export async function commande(message, args) {
   if (!aLeRole(message.member)) return; // silence : la commande n'existe pas pour les autres
   const [action, idSalon] = args;
   if (action?.toLowerCase() === 'edit') {
-    await message.reply({ content: 'Quel encadré du règlement modifier ?', components: [menuEncadres()], allowedMentions: SANS_PING });
+    await message.reply({ content: 'Quel encadré modifier ?', components: [menuEncadres()], allowedMentions: SANS_PING });
     return;
   }
   const salonId = idSalon?.replace(/^<#(\d+)>$/, '$1');
   if (action?.toLowerCase() !== 'set' || !/^\d{17,20}$/.test(salonId ?? '')) {
     await message.reply({
-      content: "`k!rules set <id du salon>` publie le règlement (clic droit sur le salon > Copier l'identifiant) ; `k!rules edit` modifie un encadré.",
+      content: "`k!rules set <id du salon>` publie le salon d'informations (clic droit sur le salon > Copier l'identifiant) ; `k!rules edit` modifie un encadré.",
       allowedMentions: SANS_PING,
     });
     return;
   }
   if (enCours) {
-    await message.reply({ content: 'Une publication du règlement est déjà en cours.', allowedMentions: SANS_PING });
+    await message.reply({ content: 'Une publication est déjà en cours.', allowedMentions: SANS_PING });
     return;
   }
   enCours = true;
@@ -66,143 +70,222 @@ export async function commande(message, args) {
     await message.reply({ content: rapport, allowedMentions: SANS_PING });
   } catch (error) {
     console.error('k!rules :', error);
-    await message.reply({ content: `Règlement non publié : ${error.message}`, allowedMentions: SANS_PING }).catch(() => {});
+    await message.reply({ content: `Rien de publié : ${error.message}`, allowedMentions: SANS_PING }).catch(() => {});
   } finally {
     enCours = false;
   }
 }
 
-/** Lit reglement/ : la présentation et les parties, dans l'ordre des fichiers. */
-export function lireReglement(dossier = DOSSIER) {
-  if (!existsSync(join(dossier, '_sommaire.md'))) throw new Error(`reglement/_sommaire.md introuvable`);
-  const s = lireFichier(readFileSync(join(dossier, '_sommaire.md'), 'utf8'), '_sommaire.md');
-  const [intro, conclusion = ''] = s.texte.split(/\n-{3,}\n/).map((t) => t.trim());
-  const parties = readdirSync(dossier)
-    .filter((f) => f.endsWith('.md') && !f.startsWith('_'))
-    .sort((a, b) => a.localeCompare(b, 'fr', { numeric: true }))
-    .map((f) => {
-      const p = lireFichier(readFileSync(join(dossier, f), 'utf8'), f);
-      if (!p.texte) throw new Error(`${f} : partie vide`);
-      if (!p.titre) throw new Error(`${f} : titre vide (c'est le nom du fil)`);
-      if (p.titre.length > MAX_NOM_FIL) throw new Error(`${f} : titre trop long pour un nom de fil (${p.titre.length} > ${MAX_NOM_FIL})`);
-      return { cle: f.replace(/\.md$/, ''), ...p, couleurPropre: p.couleur, couleur: p.couleur ?? s.couleur ?? COULEUR_DEFAUT };
-    });
-  if (!parties.length) throw new Error('aucune partie dans reglement/');
-  return { titre: s.titre, couleur: s.couleur ?? COULEUR_DEFAUT, couleurPropre: s.couleur, intro, conclusion, parties };
+// ---------------------------------------------------------------------------------------------------------------
+// Lecture des textes.
+
+/** Lit reglement/ : les sections dans l'ordre des fichiers, les fils de leurs groupes, l'image de séparation. */
+export function lireSalon(dossier = DOSSIER) {
+  if (!existsSync(dossier)) throw new Error('dossier reglement/ introuvable');
+  const md = (d) => readdirSync(d).filter((f) => f.endsWith('.md') && !f.startsWith('_'))
+    .sort((a, b) => a.localeCompare(b, 'fr', { numeric: true }));
+  const sections = md(dossier).map((f) => {
+    const s = lireFichier(readFileSync(join(dossier, f), 'utf8'), f);
+    const [avant, apres = ''] = s.texte.split(/\n-{3,}\n/).map((t) => t.trim());
+    const section = {
+      cle: f.replace(/\.md$/, ''), titre: s.titre, couleurPropre: s.couleur, couleur: s.couleur ?? COULEUR_DEFAUT,
+      groupe: s.groupe, avant, apres, fils: [],
+    };
+    if (!section.titre && !avant && !s.groupe) throw new Error(`${f} : section vide`);
+    if (s.groupe) {
+      if (!/^[a-z0-9-]+$/.test(s.groupe)) throw new Error(`${f} : groupe « ${s.groupe} » invalide (minuscules, chiffres, tirets)`);
+      const d = join(dossier, s.groupe);
+      if (!existsSync(d) || !statSync(d).isDirectory()) throw new Error(`${f} : dossier reglement/${s.groupe}/ introuvable`);
+      section.fils = md(d).map((g) => {
+        const p = lireFichier(readFileSync(join(d, g), 'utf8'), `${s.groupe}/${g}`);
+        if (!p.titre) throw new Error(`${s.groupe}/${g} : nom du fil vide`);
+        if (p.titre.length > MAX_NOM_FIL) throw new Error(`${s.groupe}/${g} : nom du fil trop long (${p.titre.length} > ${MAX_NOM_FIL})`);
+        if (!p.texte) throw new Error(`${s.groupe}/${g} : texte vide`);
+        return { cle: `${s.groupe}/${g.replace(/\.md$/, '')}`, titre: p.titre, couleurPropre: p.couleur, couleur: p.couleur ?? section.couleur, texte: p.texte };
+      });
+      if (!section.fils.length) throw new Error(`reglement/${s.groupe}/ : aucun fil`);
+    }
+    return section;
+  });
+  if (!sections.length) throw new Error('aucune section dans reglement/');
+  const image = ['_separation.gif', '_separation.png'].map((f) => join(dossier, f)).find(existsSync) ?? null;
+  return { sections, image };
 }
 
 function lireFichier(brut, origine) {
   const lignes = brut.replace(/^﻿/, '').replace(/\r\n?/g, '\n').split('\n');
   const premiere = lignes.shift() ?? '';
-  // « # » seul : pas de titre (permis pour la présentation seulement, voir lireReglement).
   if (!/^#(\s.*)?$/.test(premiere)) throw new Error(`${origine} : la première ligne doit être « # Titre » (ou « # » seul)`);
   let couleur = null;
-  if (/^couleur\s*:/i.test(lignes[0] ?? '')) {
-    const valeur = lignes.shift().replace(/^couleur\s*:\s*/i, '').trim();
-    if (!/^#[0-9a-f]{6}$/i.test(valeur)) throw new Error(`${origine} : couleur « ${valeur} » invalide (format #rrggbb)`);
-    couleur = parseInt(valeur.slice(1), 16);
+  let groupe = null;
+  while (META.test(lignes[0] ?? '')) {
+    const [, cle, valeurBrute] = lignes.shift().match(META);
+    const valeur = valeurBrute.trim();
+    if (cle.toLowerCase() === 'groupe') {
+      groupe = valeur;
+    } else {
+      if (!/^#[0-9a-f]{6}$/i.test(valeur)) throw new Error(`${origine} : couleur « ${valeur} » invalide (format #rrggbb)`);
+      couleur = parseInt(valeur.slice(1), 16);
+    }
   }
-  return { titre: premiere.replace(/^#/, '').trim(), couleur, texte: lignes.join('\n').trim() };
+  return { titre: premiere.replace(/^#/, '').trim(), couleur, groupe, texte: lignes.join('\n').trim() };
 }
 
-/** Description de l'embed du sommaire : présentation, liens des fils, conclusion. */
-export function texteSommaire(reglement, idsFils) {
-  const liens = reglement.parties.map((p) => `📖 ${idsFils[p.cle] ? `<#${idsFils[p.cle]}>` : `**${p.titre}**`}`);
-  const texte = [reglement.intro, `## Sommaire\n${liens.join('\n')}`, reglement.conclusion].filter(Boolean).join('\n\n');
-  if (texte.length > MAX_DESCRIPTION) throw new Error(`présentation trop longue (${texte.length} > ${MAX_DESCRIPTION} caractères)`);
-  return texte;
+// ---------------------------------------------------------------------------------------------------------------
+// Encadrés.
+
+/** Les embeds d'une section : le gros titre (s'il y en a un) puis le texte (avec les liens de ses fils). */
+export function embedsSection(section, idsFils) {
+  const embeds = [];
+  if (section.titre) embeds.push({ color: section.couleur, description: `# ${section.titre}` });
+  const liens = section.fils.map((f) => `📖 ${idsFils[f.cle] ? `<#${idsFils[f.cle]}>` : `**${f.titre}**`}`).join('\n');
+  const texte = [section.avant, liens, section.apres].filter(Boolean).join('\n\n');
+  if (texte.length > MAX_DESCRIPTION) throw new Error(`${section.cle} : texte trop long (${texte.length} > ${MAX_DESCRIPTION} caractères)`);
+  if (texte) embeds.push({ color: section.couleur, description: texte });
+  return embeds;
 }
 
-/** Description de l'embed d'une partie, terminée par le lien de retour au sommaire. */
-export function textePartie(partie, lienSommaire) {
-  const texte = `${partie.texte}\n\n↩️ [Revenir au sommaire](${lienSommaire})`;
-  if (texte.length > MAX_DESCRIPTION) throw new Error(`${partie.titre} : texte trop long (${texte.length} > ${MAX_DESCRIPTION} caractères)`);
-  return texte;
+/** L'embed d'un fil, terminé par le lien de retour vers la section qui le liste. */
+export function embedFil(fil, lienSection) {
+  const texte = `${fil.texte}\n\n↩️ [Revenir au sommaire](${lienSection})`;
+  if (texte.length > MAX_DESCRIPTION) throw new Error(`${fil.titre} : texte trop long (${texte.length} > ${MAX_DESCRIPTION} caractères)`);
+  // Un texte qui commence par un titre Markdown (« # … ») remplace le titre de l'encadré (plus gros).
+  return { title: /^#{1,3}\s/.test(fil.texte) ? undefined : fil.titre, color: fil.couleur, description: texte };
 }
+
+// ---------------------------------------------------------------------------------------------------------------
+// Publication.
 
 async function publier(guild, salonId) {
-  const reglement = lireReglement();
+  const { sections, image } = lireSalon();
 
   const salon = await guild.channels.fetch(salonId).catch(() => null);
   if (!salon) throw new Error(`salon ${salonId} introuvable sur ce serveur Discord`);
   if (salon.type !== ChannelType.GuildText) throw new Error(`#${salon.name} n'est pas un salon textuel`);
   const moi = guild.members.me;
-  const manquantes = Object.entries(PERMISSIONS_BOT)
+  const permissions = { ...PERMISSIONS_BOT, ...(image ? { AttachFiles: 'joindre des fichiers' } : {}) };
+  const manquantes = Object.entries(permissions)
     .filter(([cle]) => !salon.permissionsFor(moi).has(PermissionFlagsBits[cle]))
     .map(([, nom]) => nom);
   if (manquantes.length) throw new Error(`il manque au bot, dans #${salon.name} : ${manquantes.join(', ')}`);
 
   const etat = lireEtat();
-  etat.salons[salonId] ??= { sommaire: null, fils: {} };
+  etat.salons[salonId] ??= { messages: [], fils: {} };
   const memo = etat.salons[salonId];
+  migrer(memo);
 
   const avertissements = [];
   await verrouillerSalon(salon, moi).catch((error) => {
     avertissements.push(`salon non verrouillé pour les membres (${error.message}) : retire-leur « Envoyer des messages » et « … dans les fils » à la main`);
   });
 
-  // 1. Le sommaire d'abord : les fils ont besoin de son lien. Publié sans liens, complété à la fin.
-  const embedSommaire = (ids) => ({ title: reglement.titre || undefined, color: reglement.couleur, description: texteSommaire(reglement, ids) });
-  let sommaire = memo.sommaire ? await salon.messages.fetch(memo.sommaire).catch(() => null) : null;
-  const nouveauSommaire = !sommaire;
-  if (!sommaire) {
-    sommaire = await salon.send({ embeds: [embedSommaire({})], allowedMentions: SANS_PING });
-    memo.sommaire = sommaire.id;
-    ecrireEtat(etat);
+  // 1. La mise en page : [image] section [image] section … [image]. Si elle a changé (sections ajoutées, retirées,
+  //    message disparu, image ajoutée ou retirée), tout est republié dans l'ordre ; sinon les sections sont modifiées
+  //    sur place. Les sections sont d'abord publiées sans les liens des fils (pas encore créés).
+  const plan = [];
+  for (const s of sections) {
+    if (image) plan.push({ type: 'image' });
+    plan.push({ type: 'section', cle: s.cle });
   }
-  const lienSommaire = sommaire.url;
+  if (image) plan.push({ type: 'image' });
+  const memePlan = memo.messages.length === plan.length
+    && plan.every((p, i) => memo.messages[i].type === p.type && memo.messages[i].cle === p.cle);
+  let messages = memePlan ? await Promise.all(memo.messages.map((m) => salon.messages.fetch(m.id).catch(() => null))) : [];
+  const republie = !memePlan || messages.some((m) => !m);
+  if (republie) {
+    for (const m of memo.messages) await salon.messages.delete(m.id).catch(() => {});
+    memo.messages = [];
+    messages = [];
+    for (const p of plan) {
+      const m = p.type === 'image'
+        ? await salon.send({ files: [{ attachment: image, name: `separation.${image.split('.').pop()}` }] })
+        : await salon.send({ embeds: embedsSection(sections.find((s) => s.cle === p.cle), {}), allowedMentions: SANS_PING });
+      memo.messages.push({ ...p, id: m.id });
+      messages.push(m);
+      ecrireEtat(etat);
+    }
+  }
+  const messageDe = (cle) => messages[plan.findIndex((p) => p.cle === cle)];
 
-  // 2. Un fil par partie.
+  // 2. Les fils de chaque groupe, avec le lien de leur section.
   const compte = { crees: 0, modifies: 0, inchanges: 0 };
   const idsFils = {};
-  for (const partie of reglement.parties) {
-    compte[await synchroniserFil(salon, partie, lienSommaire, memo)]++;
-    idsFils[partie.cle] = memo.fils[partie.cle].id;
-    ecrireEtat(etat);
+  for (const s of sections) {
+    for (const f of s.fils) {
+      compte[await synchroniserFil(salon, f, messageDe(s.cle).url, memo)]++;
+      idsFils[f.cle] = memo.fils[f.cle].id;
+      ecrireEtat(etat);
+    }
   }
   await effacerAnnoncesDeFils(salon, moi.id);
 
-  // 3. Le sommaire avec les liens des fils.
-  await sommaire.edit({ embeds: [embedSommaire(idsFils)], allowedMentions: SANS_PING });
+  // 3. Les sections avec les liens des fils.
+  let sectionsModifiees = 0;
+  for (const s of sections) {
+    const m = messageDe(s.cle);
+    const embeds = embedsSection(s, idsFils);
+    const pareil = m.embeds.length === embeds.length
+      && embeds.every((e, i) => m.embeds[i].description === e.description && m.embeds[i].color === e.color);
+    if (!pareil) {
+      await m.edit({ embeds, allowedMentions: SANS_PING });
+      sectionsModifiees++;
+    }
+  }
 
-  const cles = new Set(reglement.parties.map((p) => p.cle));
+  const cles = new Set(sections.flatMap((s) => s.fils.map((f) => f.cle)));
   const orphelins = Object.entries(memo.fils).filter(([cle]) => !cles.has(cle));
   if (orphelins.length) {
-    avertissements.push(`fils sans partie (gardés, à supprimer à la main) : ${orphelins.map(([, f]) => `<#${f.id}>`).join(', ')}`);
+    avertissements.push(`fils qui ne sont plus dans reglement/ (gardés, à supprimer à la main) : ${orphelins.map(([, f]) => `<#${f.id}>`).join(', ')}`);
   }
+  if (!image) avertissements.push('pas d\'image de séparation (reglement/_separation.gif) : sections publiées sans');
   return [
-    `Règlement ${nouveauSommaire ? 'publié' : 'mis à jour'} dans <#${salonId}> : ${compte.crees} fil(s) créé(s), `
-      + `${compte.modifies} mis à jour, ${compte.inchanges} inchangé(s).`,
+    `Salon <#${salonId}> ${republie ? 'publié' : `mis à jour (${sectionsModifiees} section(s) modifiée(s))`} : `
+      + `${compte.crees} fil(s) créé(s), ${compte.modifies} mis à jour, ${compte.inchanges} inchangé(s).`,
     ...avertissements.map((a) => `⚠️ ${a}`),
   ].join('\n').slice(0, 2000);
 }
 
-/** Crée ou met à jour le fil d'une partie. Renvoie « crees », « modifies » ou « inchanges ». */
-async function synchroniserFil(salon, partie, lienSommaire, memo) {
-  // Un texte qui commence par un titre Markdown (« # … ») remplace le titre de l'encadré (plus gros).
-  const embed = { title: /^#{1,3}\s/.test(partie.texte) ? undefined : partie.titre, color: partie.couleur, description: textePartie(partie, lienSommaire) };
-  const connu = memo.fils[partie.cle];
+/** État de la 0.5 (un seul message de sommaire, fils « a-respect »…) -> état par sections, fils « regles/a-respect ». */
+function migrer(memo) {
+  memo.messages ??= [];
+  memo.fils ??= {};
+  if (memo.sommaire) {
+    memo.messages = [{ type: 'ancien', id: memo.sommaire }]; // supprimé à la republication
+    delete memo.sommaire;
+  }
+  for (const cle of Object.keys(memo.fils)) {
+    if (!cle.includes('/')) {
+      memo.fils[`regles/${cle}`] ??= memo.fils[cle];
+      delete memo.fils[cle];
+    }
+  }
+}
+
+/** Crée ou met à jour un fil. Renvoie « crees », « modifies » ou « inchanges ». */
+async function synchroniserFil(salon, def, lienSection, memo) {
+  const embed = embedFil(def, lienSection);
+  const connu = memo.fils[def.cle];
   let fil = connu ? await salon.threads.fetch(connu.id).catch(() => null) : null;
   if (fil && fil.parentId !== salon.id) fil = null;
 
   if (!fil) {
     fil = await salon.threads.create({
-      name: partie.titre,
+      name: def.titre,
       type: ChannelType.PublicThread,
       autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
-      reason: 'Règlement KaLium',
+      reason: "Salon d'informations KaLium",
     });
     const m = await fil.send({ embeds: [embed], allowedMentions: SANS_PING });
-    await fil.setLocked(true, 'Règlement KaLium : lecture seule');
-    memo.fils[partie.cle] = { id: fil.id, message: m.id };
+    await fil.setLocked(true, 'Lecture seule');
+    memo.fils[def.cle] = { id: fil.id, message: m.id };
     return 'crees';
   }
 
   let modifie = false;
   // Un fil archivé (une semaine sans message) ne se modifie pas : on le rouvre, il reste verrouillé.
-  if (fil.archived) await fil.setArchived(false, 'Règlement KaLium : mise à jour');
-  if (fil.name !== partie.titre) {
-    await fil.setName(partie.titre);
+  if (fil.archived) await fil.setArchived(false, 'Mise à jour');
+  if (fil.name !== def.titre) {
+    await fil.setName(def.titre);
     modifie = true;
   }
   const ancien = await fil.messages.fetch(connu.message).catch(() => null);
@@ -216,7 +299,7 @@ async function synchroniserFil(salon, partie, lienSommaire, memo) {
       modifie = true;
     }
   }
-  if (!fil.locked) await fil.setLocked(true, 'Règlement KaLium : lecture seule');
+  if (!fil.locked) await fil.setLocked(true, 'Lecture seule');
   return modifie ? 'modifies' : 'inchanges';
 }
 
@@ -233,17 +316,17 @@ function ecrireEtat(etat) {
 
 // ---------------------------------------------------------------------------------------------------------------
 // k!rules edit : menu des encadrés -> formulaire Discord -> fichier réécrit -> salons publiés mis à jour.
+// Valeurs du menu : « s:<section> » ou « f:<groupe>/<fil> ».
 
-/** Menu déroulant : la présentation puis chaque partie. */
-export function menuEncadres() {
-  const reglement = lireReglement();
-  const menu = new StringSelectMenuBuilder()
-    .setCustomId('rules:choix')
-    .setPlaceholder('Choisir un encadré')
-    .addOptions(
-      { label: 'Présentation et sommaire', value: SOMMAIRE, emoji: '🏠' },
-      ...reglement.parties.map((p) => ({ label: p.titre.slice(0, 100), value: p.cle, emoji: '📖' })),
-    );
+export function menuEncadres(dossier = DOSSIER) {
+  const { sections } = lireSalon(dossier);
+  const options = [];
+  for (const s of sections) {
+    options.push({ label: (s.titre || s.cle).slice(0, 100), value: `s:${s.cle}`, emoji: '📌', description: 'Section du salon' });
+    for (const f of s.fils) options.push({ label: f.titre.slice(0, 100), value: `f:${f.cle}`, emoji: '📖', description: `Fil · ${(s.titre || s.cle).slice(0, 90)}` });
+  }
+  const menu = new StringSelectMenuBuilder().setCustomId('rules:choix').setPlaceholder('Choisir un encadré')
+    .addOptions(options.slice(0, 25));
   return new ActionRowBuilder().addComponents(menu);
 }
 
@@ -256,49 +339,73 @@ function champ(id, label, style, valeur, { requis = true, max = MAX_CHAMP, place
   return new ActionRowBuilder().addComponents(input);
 }
 
-/** Formulaire prérempli avec le texte actuel de l'encadré. */
-export function formulaire(cle) {
-  const reglement = lireReglement();
-  const modal = new ModalBuilder().setCustomId(`rules:modal:${cle}`);
-  if (cle === SOMMAIRE) {
-    return modal.setTitle('Présentation et sommaire').addComponents(
-      champ('titre', 'Titre (facultatif)', TextInputStyle.Short, reglement.titre,
-        { requis: false, max: 256, placeholder: 'Vide = pas de titre (tu peux écrire « # Titre » dans le texte)' }),
-      champ('couleur', 'Couleur (#rrggbb)', TextInputStyle.Short, hex(reglement.couleurPropre),
-        { requis: false, max: 7, placeholder: '#09add3 (aussi celle des parties sans couleur)' }),
-      champ('texte', 'Présentation (au-dessus du sommaire)', TextInputStyle.Paragraph, reglement.intro, { max: 3000 }),
-      champ('conclusion', 'Texte sous le sommaire (facultatif)', TextInputStyle.Paragraph, reglement.conclusion,
-        { requis: false, max: 800 }),
-    );
+/** Retrouve l'encadré d'une valeur du menu : { section } ou { section, fil }, ou null. */
+function trouver(valeur, dossier = DOSSIER) {
+  const { sections } = lireSalon(dossier);
+  if (valeur.startsWith('s:')) {
+    const section = sections.find((s) => s.cle === valeur.slice(2));
+    return section ? { section } : null;
   }
-  const partie = reglement.parties.find((p) => p.cle === cle);
-  if (!partie) return null;
-  return modal.setTitle(partie.titre.slice(0, 45)).addComponents(
-    champ('titre', 'Nom du fil', TextInputStyle.Short, partie.titre,
+  for (const section of sections) {
+    const fil = section.fils.find((f) => f.cle === valeur.slice(2));
+    if (fil) return { section, fil };
+  }
+  return null;
+}
+
+/** Formulaire prérempli avec le texte actuel de l'encadré. */
+export function formulaire(valeur, dossier = DOSSIER) {
+  const trouve = trouver(valeur, dossier);
+  if (!trouve) return null;
+  const modal = new ModalBuilder().setCustomId(`rules:modal:${valeur}`);
+  const { section, fil } = trouve;
+  if (!fil) {
+    const rows = [
+      champ('titre', 'Gros titre (facultatif)', TextInputStyle.Short, section.titre, { requis: false, max: 256 }),
+      champ('couleur', 'Couleur (#rrggbb)', TextInputStyle.Short, hex(section.couleurPropre),
+        { requis: false, max: 7, placeholder: `vide = ${hex(COULEUR_DEFAUT)} ; aussi celle de ses fils sans couleur` }),
+      champ('texte', section.groupe ? 'Texte avant la liste des fils' : 'Texte', TextInputStyle.Paragraph, section.avant,
+        { requis: !section.groupe, max: 3500 }),
+    ];
+    if (section.groupe) {
+      rows.push(champ('apres', 'Texte après la liste des fils (facultatif)', TextInputStyle.Paragraph, section.apres,
+        { requis: false, max: 1000 }));
+    }
+    return modal.setTitle((section.titre || 'Section').slice(0, 45)).addComponents(...rows);
+  }
+  return modal.setTitle(fil.titre.slice(0, 45)).addComponents(
+    champ('titre', 'Nom du fil', TextInputStyle.Short, fil.titre,
       { max: MAX_NOM_FIL, placeholder: "Aussi le titre de l'encadré, sauf si le texte commence par « # »" }),
-    champ('couleur', 'Couleur (#rrggbb, facultatif)', TextInputStyle.Short, hex(partie.couleurPropre),
-      { requis: false, max: 7, placeholder: `vide = celle de la présentation (${hex(reglement.couleur)})` }),
-    champ('texte', 'Texte', TextInputStyle.Paragraph, partie.texte,
+    champ('couleur', 'Couleur (#rrggbb, facultatif)', TextInputStyle.Short, hex(fil.couleurPropre),
+      { requis: false, max: 7, placeholder: `vide = celle de la section (${hex(section.couleur)})` }),
+    champ('texte', 'Texte', TextInputStyle.Paragraph, fil.texte,
       { max: 3900, placeholder: 'Le lien « Revenir au sommaire » est ajouté tout seul à la fin.' }),
   );
 }
 
 /** Contenu d'un fichier de reglement/ à partir des champs du formulaire (sans l'écrire). */
-export function contenuFichier(cle, { titre, couleur, texte, conclusion }) {
-  titre = titre.replace(/\s+/g, ' ').trim();
-  if (!titre && cle !== SOMMAIRE) throw new Error('nom du fil vide');
+export function contenuFichier({ estFil, groupe, titre, couleur, texte, apres }) {
+  titre = (titre ?? '').replace(/\s+/g, ' ').trim();
+  if (!titre && estFil) throw new Error('nom du fil vide');
   couleur = couleur?.trim() ?? '';
   if (couleur && !couleur.startsWith('#')) couleur = `#${couleur}`;
-  if (couleur && !/^#[0-9a-f]{6}$/i.test(couleur)) throw new Error(`couleur « ${couleur} » invalide (format #rrggbb, par exemple #09add3)`);
-  texte = texte.replace(/\r\n?/g, '\n').trim();
-  if (!texte) throw new Error('texte vide');
-  // Une ligne « --- » seule sépare présentation et conclusion : interdite dans les textes eux-mêmes.
-  if (/^-{3,}$/m.test(texte) || /^-{3,}$/m.test(conclusion ?? '')) throw new Error('une ligne « --- » seule est réservée, retire-la');
+  if (couleur && !/^#[0-9a-f]{6}$/i.test(couleur)) throw new Error(`couleur « ${couleur} » invalide (format #rrggbb, par exemple #8b3dff)`);
+  const net = (t) => (t ?? '').replace(/\r\n?/g, '\n').trim();
+  texte = net(texte);
+  apres = net(apres);
+  if (estFil && !texte) throw new Error('texte vide');
+  if (!estFil && !titre && !texte && !groupe) throw new Error('section vide');
+  // Une ligne « --- » seule sépare les deux textes d'une section : interdite dans les textes eux-mêmes.
+  if (/^-{3,}$/m.test(texte) || /^-{3,}$/m.test(apres)) throw new Error('une ligne « --- » seule est réservée, retire-la');
+  // Une première ligne « couleur: » ou « groupe: » serait prise pour un réglage.
+  if (META.test(texte.split('\n')[0])) throw new Error('le texte ne peut pas commencer par « couleur: » ou « groupe: »');
   const lignes = [titre ? `# ${titre}` : '#'];
   if (couleur) lignes.push(`couleur: ${couleur.toLowerCase()}`);
-  lignes.push('', texte);
-  if (cle === SOMMAIRE && conclusion?.trim()) lignes.push('', '---', '', conclusion.replace(/\r\n?/g, '\n').trim());
-  return `${lignes.join('\n')}\n`;
+  if (!estFil && groupe) lignes.push(`groupe: ${groupe}`);
+  lignes.push('');
+  if (texte) lignes.push(texte);
+  if (!estFil && groupe && apres) lignes.push('', '---', '', apres);
+  return `${lignes.join('\n').trimEnd()}\n`;
 }
 
 /** Clics du menu et envois de formulaire dont l'identifiant commence par « rules: ». */
@@ -321,24 +428,26 @@ export async function interaction(inter) {
   }
 
   if (!inter.isModalSubmit() || !inter.customId.startsWith('rules:modal:')) return;
-  const cle = inter.customId.slice('rules:modal:'.length);
-  const reglement = lireReglement();
-  if (cle !== SOMMAIRE && !reglement.parties.some((p) => p.cle === cle)) {
+  const valeur = inter.customId.slice('rules:modal:'.length);
+  const trouve = trouver(valeur);
+  if (!trouve) {
     await inter.reply({ content: "Cet encadré n'existe plus : relance `k!rules edit`.", flags: MessageFlags.Ephemeral });
     return;
   }
   await inter.deferReply({ flags: MessageFlags.Ephemeral });
-  const valeur = (id) => {
+  const champTexte = (id) => {
     try { return inter.fields.getTextInputValue(id); } catch { return ''; }
   };
 
-  const fichier = join(DOSSIER, `${cle}.md`);
+  const { section, fil } = trouve;
+  const fichier = fil ? join(DOSSIER, `${fil.cle}.md`) : join(DOSSIER, `${section.cle}.md`);
   const ancien = readFileSync(fichier, 'utf8');
   try {
-    writeFileSync(fichier, contenuFichier(cle, {
-      titre: valeur('titre'), couleur: valeur('couleur'), texte: valeur('texte'), conclusion: valeur('conclusion'),
+    writeFileSync(fichier, contenuFichier({
+      estFil: Boolean(fil), groupe: section.groupe,
+      titre: champTexte('titre'), couleur: champTexte('couleur'), texte: champTexte('texte'), apres: champTexte('apres'),
     }));
-    verifierLongueurs(lireReglement());
+    verifierLongueurs(lireSalon());
   } catch (error) {
     writeFileSync(fichier, ancien);
     await inter.editReply(`Modification refusée : ${error.message}. Rien n'a changé.`);
@@ -346,10 +455,6 @@ export async function interaction(inter) {
   }
 
   const salons = Object.keys(lireEtat().salons);
-  if (!salons.length) {
-    await inter.editReply('Texte enregistré. Le règlement n\'est publié nulle part : `k!rules set <id du salon>` pour le publier.');
-    return;
-  }
   if (enCours) {
     await inter.editReply('Texte enregistré, mais une publication est déjà en cours : relance `k!rules set` sur le salon dans un instant.');
     return;
@@ -371,13 +476,18 @@ export async function interaction(inter) {
   } finally {
     enCours = false;
   }
-  await inter.editReply(`Texte enregistré.\n${rapports.join('\n')}`.slice(0, 2000));
+  await inter.editReply((rapports.length ? `Texte enregistré.\n${rapports.join('\n')}`
+    : "Texte enregistré. Le salon n'est publié nulle part : `k!rules set <id du salon>` pour le publier.").slice(0, 2000));
 }
 
 /** Les textes tiennent-ils dans un embed, avec des identifiants et un lien de la plus grande taille possible ? */
-function verifierLongueurs(reglement) {
-  const ids = Object.fromEntries(reglement.parties.map((p) => [p.cle, '9'.repeat(20)]));
-  texteSommaire(reglement, ids);
-  const lien = `https://discord.com/channels/${'9'.repeat(20)}/${'9'.repeat(20)}/${'9'.repeat(20)}`;
-  for (const p of reglement.parties) textePartie(p, lien);
+export function verifierLongueurs({ sections }) {
+  const id = '9'.repeat(20);
+  const lien = `https://discord.com/channels/${id}/${id}/${id}`;
+  for (const s of sections) {
+    const embeds = embedsSection(s, Object.fromEntries(s.fils.map((f) => [f.cle, id])));
+    const total = embeds.reduce((n, e) => n + e.description.length, 0);
+    if (total > 6000) throw new Error(`${s.cle} : textes trop longs pour un message (${total} > 6000 caractères)`);
+    for (const f of s.fils) embedFil(f, lien);
+  }
 }
