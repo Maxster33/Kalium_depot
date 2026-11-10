@@ -6,4 +6,4 @@ Chaque partie du règlement a son fil : cliquez pour la lire.
 
 ---
 
-*En restant sur KaLium, vous acceptez ce règlement.*
+***En restant sur KaLium, vous acceptez ce règlement.***

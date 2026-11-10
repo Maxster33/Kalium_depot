@@ -6,4 +6,4 @@ Découvrez ce qui vous attend sur KaLium : un fil par univers.
 
 ---
 
-*Bon séjour parmi nous* 💚
+***Bon séjour parmi nous*** 💚
