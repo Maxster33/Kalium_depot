@@ -8,17 +8,22 @@
 //   k!rules set <id du salon>  publie le salon ; relancée, republie seulement ce qui a changé (rien n'est modifié sur
 //                              place : Discord afficherait « (modifié) ») ;
 //   k!rules edit               menu des encadrés (sections, fils) ; chacun s'ouvre dans un formulaire Discord ; à l'envoi
-//                              le fichier de reglement/ est réécrit et tous les salons publiés sont mis à jour.
+//                              le fichier de reglement/ est réécrit et tous les salons publiés sont mis à jour ;
+//   k!rules images             même menu ; formulaire « image » (en bas de l'encadré) et « miniature » (en haut à
+//                              droite) : un lien est téléchargé et gardé dans reglement/images/ (les liens d'images
+//                              Discord expirent), un nom de fichier déjà présent est gardé, un champ vide retire l'image.
 // Textes dans reglement/ (relus à chaque commande, pas besoin de redémarrer le bot) :
 //   NN-<section>.md : « # Gros titre » (ou « # » seul : pas de titre), lignes facultatives « couleur: #rrggbb » et
 //                     « groupe: <dossier> », puis le texte ; avec un groupe, une ligne « --- » sépare le texte placé
 //                     avant les liens des fils de celui placé après ;
 //   <dossier>/<fiche>.md : un fil par fichier (ordre alphabétique), « # Nom du fil », « couleur: » facultative, texte ;
+//   dans les deux, lignes facultatives « image: <fichier> » et « miniature: <fichier> » (fichiers de reglement/images/) ;
 //   _separation.gif (ou .png) : l'image entre les sections.
 // k!rules edit réécrit ces fichiers SUR L'HÉBERGEMENT : les récupérer avant d'y renvoyer reglement/ depuis le dépôt.
 // Les identifiants Discord (salon, messages, fils) sont gardés dans reglement-etat.json, jamais commité.
 
-import { readdirSync, readFileSync, writeFileSync, existsSync, statSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { readdirSync, readFileSync, writeFileSync, existsSync, statSync, mkdirSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -37,7 +42,11 @@ const MAX_NOM_FIL = 100;
 const MAX_CHAMP = 4000;
 const COULEUR_DEFAUT = 0x8b3dff;
 const SANS_PING = { parse: [] };
-const META = /^(couleur|groupe)\s*:\s*(.*)$/i;
+const META = /^(couleur|groupe|image|miniature)\s*:\s*(.*)$/i;
+const IMAGES = 'images';
+/** Taille maximale d'une image téléchargée (un bot envoie 10 Mo au plus par message). */
+const MAX_IMAGE = 8 * 1024 * 1024;
+const TYPES_IMAGE = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp' };
 
 let enCours = false;
 
@@ -49,14 +58,18 @@ export async function commande(message, args) {
   if (!message.inGuild()) return;
   if (!aLeRole(message.member)) return; // silence : la commande n'existe pas pour les autres
   const [action, idSalon] = args;
-  if (action?.toLowerCase() === 'edit') {
-    await message.reply({ content: 'Quel encadré modifier ?', components: [menuEncadres()], allowedMentions: SANS_PING });
+  if (action?.toLowerCase() === 'edit' || action?.toLowerCase() === 'images') {
+    const images = action.toLowerCase() === 'images';
+    await message.reply({
+      content: images ? 'Les images de quel encadré ?' : 'Quel encadré modifier ?',
+      components: [menuEncadres(DOSSIER, images)], allowedMentions: SANS_PING,
+    });
     return;
   }
   const salonId = idSalon?.replace(/^<#(\d+)>$/, '$1');
   if (action?.toLowerCase() !== 'set' || !/^\d{17,20}$/.test(salonId ?? '')) {
     await message.reply({
-      content: "`k!rules set <id du salon>` publie le salon d'informations (clic droit sur le salon > Copier l'identifiant) ; `k!rules edit` modifie un encadré.",
+      content: "`k!rules set <id du salon>` publie le salon d'informations (clic droit sur le salon > Copier l'identifiant) ; `k!rules edit` modifie un encadré ; `k!rules images` change ses images.",
       allowedMentions: SANS_PING,
     });
     return;
@@ -90,8 +103,9 @@ export function lireSalon(dossier = DOSSIER) {
     const [avant, apres = ''] = s.texte.split(/\n-{3,}\n/).map((t) => t.trim());
     const section = {
       cle: f.replace(/\.md$/, ''), titre: s.titre, couleurPropre: s.couleur, couleur: s.couleur ?? COULEUR_DEFAUT,
-      groupe: s.groupe, avant, apres, fils: [],
+      groupe: s.groupe, avant, apres, fils: [], image: s.image, miniature: s.miniature,
     };
+    verifierImages(dossier, s, f);
     if (!section.titre && !avant && !s.groupe) throw new Error(`${f} : section vide`);
     if (s.groupe) {
       if (!/^[a-z0-9-]+$/.test(s.groupe)) throw new Error(`${f} : groupe « ${s.groupe} » invalide (minuscules, chiffres, tirets)`);
@@ -102,7 +116,11 @@ export function lireSalon(dossier = DOSSIER) {
         if (!p.titre) throw new Error(`${s.groupe}/${g} : nom du fil vide`);
         if (p.titre.length > MAX_NOM_FIL) throw new Error(`${s.groupe}/${g} : nom du fil trop long (${p.titre.length} > ${MAX_NOM_FIL})`);
         if (!p.texte) throw new Error(`${s.groupe}/${g} : texte vide`);
-        return { cle: `${s.groupe}/${g.replace(/\.md$/, '')}`, titre: p.titre, couleurPropre: p.couleur, couleur: p.couleur ?? section.couleur, texte: p.texte };
+        verifierImages(dossier, p, `${s.groupe}/${g}`);
+        return {
+          cle: `${s.groupe}/${g.replace(/\.md$/, '')}`, titre: p.titre, couleurPropre: p.couleur, couleur: p.couleur ?? section.couleur,
+          texte: p.texte, image: p.image, miniature: p.miniature,
+        };
       });
       if (!section.fils.length) throw new Error(`reglement/${s.groupe}/ : aucun fil`);
     }
@@ -113,23 +131,35 @@ export function lireSalon(dossier = DOSSIER) {
   return { sections, image };
 }
 
+function verifierImages(dossier, lu, origine) {
+  for (const nom of [lu.image, lu.miniature].filter(Boolean)) {
+    if (!/^[\w.-]+$/.test(nom) || !existsSync(join(dossier, IMAGES, nom))) throw new Error(`${origine} : image reglement/${IMAGES}/${nom} introuvable`);
+  }
+}
+
 function lireFichier(brut, origine) {
   const lignes = brut.replace(/^﻿/, '').replace(/\r\n?/g, '\n').split('\n');
   const premiere = lignes.shift() ?? '';
   if (!/^#(\s.*)?$/.test(premiere)) throw new Error(`${origine} : la première ligne doit être « # Titre » (ou « # » seul)`);
   let couleur = null;
   let groupe = null;
+  let image = null;
+  let miniature = null;
   while (META.test(lignes[0] ?? '')) {
     const [, cle, valeurBrute] = lignes.shift().match(META);
     const valeur = valeurBrute.trim();
     if (cle.toLowerCase() === 'groupe') {
       groupe = valeur;
+    } else if (cle.toLowerCase() === 'image') {
+      image = valeur || null;
+    } else if (cle.toLowerCase() === 'miniature') {
+      miniature = valeur || null;
     } else {
       if (!/^#[0-9a-f]{6}$/i.test(valeur)) throw new Error(`${origine} : couleur « ${valeur} » invalide (format #rrggbb)`);
       couleur = parseInt(valeur.slice(1), 16);
     }
   }
-  return { titre: premiere.replace(/^#/, '').trim(), couleur, groupe, texte: lignes.join('\n').trim() };
+  return { titre: premiere.replace(/^#/, '').trim(), couleur, groupe, image, miniature, texte: lignes.join('\n').trim() };
 }
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -143,7 +173,22 @@ export function embedsSection(section, idsFils) {
   const texte = [section.avant, liens, section.apres].filter(Boolean).join('\n\n');
   if (texte.length > MAX_DESCRIPTION) throw new Error(`${section.cle} : texte trop long (${texte.length} > ${MAX_DESCRIPTION} caractères)`);
   if (texte) embeds.push({ color: section.couleur, description: texte });
+  avecImages(embeds[embeds.length - 1], section);
   return embeds;
+}
+
+/** Image (en bas) et miniature (en haut à droite) d'un encadré : fichiers joints au message (attachment://). */
+function avecImages(embed, { image, miniature }) {
+  if (image) embed.image = { url: `attachment://${image}` };
+  if (miniature) embed.thumbnail = { url: `attachment://${miniature}` };
+  return embed;
+}
+
+/** Les fichiers à joindre à un message pour ses embeds. */
+function fichiersDe(embeds) {
+  const noms = new Set(embeds.flatMap((e) => [e.image?.url, e.thumbnail?.url]).filter(Boolean)
+    .map((u) => u.replace('attachment://', '')));
+  return [...noms].map((nom) => ({ attachment: join(DOSSIER, IMAGES, nom), name: nom }));
 }
 
 /** L'embed d'un fil, terminé par le lien de retour vers la section qui le liste. */
@@ -151,7 +196,7 @@ export function embedFil(fil, lienSection) {
   const texte = `${fil.texte}\n\n↩️ [Revenir au sommaire](${lienSection})`;
   if (texte.length > MAX_DESCRIPTION) throw new Error(`${fil.titre} : texte trop long (${texte.length} > ${MAX_DESCRIPTION} caractères)`);
   // Un texte qui commence par un titre Markdown (« # … ») remplace le titre de l'encadré (plus gros).
-  return { title: /^#{1,3}\s/.test(fil.texte) ? undefined : fil.titre, color: fil.couleur, description: texte };
+  return avecImages({ title: /^#{1,3}\s/.test(fil.texte) ? undefined : fil.titre, color: fil.couleur, description: texte }, fil);
 }
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -164,7 +209,8 @@ export async function publier(guild, salonId) {
   if (!salon) throw new Error(`salon ${salonId} introuvable sur ce serveur Discord`);
   if (salon.type !== ChannelType.GuildText) throw new Error(`#${salon.name} n'est pas un salon textuel`);
   const moi = guild.members.me;
-  const permissions = { ...PERMISSIONS_BOT, ...(image ? { AttachFiles: 'joindre des fichiers' } : {}) };
+  const avecFichiers = image || sections.some((s) => s.image || s.miniature || s.fils.some((f) => f.image || f.miniature));
+  const permissions = { ...PERMISSIONS_BOT, ...(avecFichiers ? { AttachFiles: 'joindre des fichiers' } : {}) };
   const manquantes = Object.entries(permissions)
     .filter(([cle]) => !salon.permissionsFor(moi).has(PermissionFlagsBits[cle]))
     .map(([, nom]) => nom);
@@ -231,7 +277,7 @@ export async function publier(guild, salonId) {
     for (const p of plan) {
       const m = p.type === 'image'
         ? await salon.send({ files: [{ attachment: image, name: `separation.${image.split('.').pop()}` }] })
-        : await salon.send({ embeds: p.embeds, allowedMentions: SANS_PING });
+        : await salon.send({ embeds: p.embeds, files: fichiersDe(p.embeds), allowedMentions: SANS_PING });
       memo.messages.push({ type: p.type, cle: p.cle, id: m.id });
       messages.push(m);
       ecrireEtat(etat);
@@ -251,7 +297,7 @@ export async function publier(guild, salonId) {
       } else {
         compte[ancien || connu.message ? 'republies' : 'crees']++;
         await ancien?.delete().catch(() => {});
-        connu.message = (await fil.send({ embeds: [embed], allowedMentions: SANS_PING })).id;
+        connu.message = (await fil.send({ embeds: [embed], files: fichiersDe([embed]), allowedMentions: SANS_PING })).id;
         ecrireEtat(etat);
       }
       if (!fil.locked) await fil.setLocked(true, 'Lecture seule');
@@ -271,11 +317,16 @@ export async function publier(guild, salonId) {
   ].join('\n').slice(0, 2000);
 }
 
-/** Le message publié a-t-il les embeds voulus (titre, texte, couleur), sans mention « (modifié) » ? */
+/** Le message publié a-t-il les embeds voulus (titre, texte, couleur, images), sans mention « (modifié) » ? */
 function pareil(message, voulus) {
   const publies = message.embeds;
+  // Une image jointe est servie à une adresse qui finit par son nom de fichier (qui contient l'empreinte de l'image).
+  const memeImage = (publiee, voulue) => (voulue
+    ? Boolean(publiee?.url?.split('?')[0].endsWith(`/${voulue.url.replace('attachment://', '')}`))
+    : !publiee);
   return !message.editedTimestamp && publies.length === voulus.length && voulus.every((e, i) => (publies[i].title ?? undefined) === e.title
-    && publies[i].description === e.description && publies[i].color === e.color);
+    && publies[i].description === e.description && publies[i].color === e.color
+    && memeImage(publies[i].image, e.image) && memeImage(publies[i].thumbnail, e.thumbnail));
 }
 
 /** État de la 0.5 (un seul message de sommaire, fils « a-respect »…) -> état par sections, fils « regles/a-respect ». */
@@ -309,14 +360,14 @@ function ecrireEtat(etat) {
 // k!rules edit : menu des encadrés -> formulaire Discord -> fichier réécrit -> salons publiés mis à jour.
 // Valeurs du menu : « s:<section> » ou « f:<groupe>/<fil> ».
 
-export function menuEncadres(dossier = DOSSIER) {
+export function menuEncadres(dossier = DOSSIER, images = false) {
   const { sections } = lireSalon(dossier);
   const options = [];
   for (const s of sections) {
     options.push({ label: (s.titre || s.cle).slice(0, 100), value: `s:${s.cle}`, emoji: '📌', description: 'Section du salon' });
     for (const f of s.fils) options.push({ label: f.titre.slice(0, 100), value: `f:${f.cle}`, emoji: '📖', description: `Fil · ${(s.titre || s.cle).slice(0, 90)}` });
   }
-  const menu = new StringSelectMenuBuilder().setCustomId('rules:choix').setPlaceholder('Choisir un encadré')
+  const menu = new StringSelectMenuBuilder().setCustomId(images ? 'rules:choixImages' : 'rules:choix').setPlaceholder('Choisir un encadré')
     .addOptions(options.slice(0, 25));
   return new ActionRowBuilder().addComponents(menu);
 }
@@ -374,8 +425,56 @@ export function formulaire(valeur, dossier = DOSSIER) {
   );
 }
 
+/** Formulaire des images d'un encadré, prérempli avec les noms des fichiers actuels. */
+export function formulaireImages(valeur, dossier = DOSSIER) {
+  const trouve = trouver(valeur, dossier);
+  if (!trouve) return null;
+  const e = trouve.fil ?? trouve.section;
+  const conseil = "Lien d'image (https://…) ; vide = pas d'image";
+  return new ModalBuilder().setCustomId(`rules:img:${valeur}`)
+    .setTitle(`Images · ${e.titre || e.cle}`.slice(0, 45))
+    .addComponents(
+      champ('image', "Image (en bas de l'encadré)", TextInputStyle.Short, e.image, { requis: false, max: 1000, placeholder: conseil }),
+      champ('miniature', 'Miniature (en haut à droite)', TextInputStyle.Short, e.miniature, { requis: false, max: 1000, placeholder: conseil }),
+    );
+}
+
+/**
+ * Valeur d'un champ d'image : vide = pas d'image ; le nom actuel = inchangé ; un lien = image téléchargée dans
+ * reglement/images/, nommée d'après l'encadré et l'empreinte de son contenu. Renvoie le nom du fichier, ou null.
+ */
+export async function imageDuChamp(valeur, actuel, base, dossier = DOSSIER) {
+  valeur = (valeur ?? '').trim();
+  if (!valeur) return null;
+  if (valeur === actuel) return actuel;
+  if (!/^https?:\/\//i.test(valeur)) throw new Error(`« ${valeur.slice(0, 80)} » n'est pas un lien d'image (https://…)`);
+  const reponse = await fetch(valeur, { signal: AbortSignal.timeout(15000) }).catch((error) => {
+    throw new Error(`image injoignable (${error.message})`);
+  });
+  if (!reponse.ok) throw new Error(`image injoignable (HTTP ${reponse.status})`);
+  const extension = TYPES_IMAGE[(reponse.headers.get('content-type') ?? '').split(';')[0].trim().toLowerCase()];
+  if (!extension) throw new Error("ce lien ne mène pas à une image PNG, JPEG, GIF ou WebP (sur Discord : clic droit sur l'image > Copier le lien)");
+  const octets = Buffer.from(await reponse.arrayBuffer());
+  if (octets.length > MAX_IMAGE) throw new Error(`image trop lourde (${(octets.length / 1048576).toFixed(1)} Mo, 8 Mo au plus)`);
+  const nom = `${base}-${createHash('sha1').update(octets).digest('hex').slice(0, 10)}.${extension}`;
+  mkdirSync(join(dossier, IMAGES), { recursive: true });
+  writeFileSync(join(dossier, IMAGES, nom), octets);
+  return nom;
+}
+
+/** Retire de reglement/images/ les fichiers qu'aucun encadré n'utilise plus. */
+function nettoyerImages(dossier = DOSSIER) {
+  const d = join(dossier, IMAGES);
+  if (!existsSync(d)) return;
+  const { sections } = lireSalon(dossier);
+  const utilisees = new Set(sections.flatMap((s) => [s.image, s.miniature, ...s.fils.flatMap((f) => [f.image, f.miniature])]).filter(Boolean));
+  for (const nom of readdirSync(d)) {
+    if (!utilisees.has(nom) && /\.(png|jpe?g|gif|webp)$/i.test(nom)) unlinkSync(join(d, nom));
+  }
+}
+
 /** Contenu d'un fichier de reglement/ à partir des champs du formulaire (sans l'écrire). */
-export function contenuFichier({ estFil, groupe, titre, couleur, texte, apres }) {
+export function contenuFichier({ estFil, groupe, titre, couleur, texte, apres, image, miniature }) {
   titre = (titre ?? '').replace(/\s+/g, ' ').trim();
   if (!titre && estFil) throw new Error('nom du fil vide');
   couleur = couleur?.trim() ?? '';
@@ -388,11 +487,13 @@ export function contenuFichier({ estFil, groupe, titre, couleur, texte, apres })
   if (!estFil && !titre && !texte && !groupe) throw new Error('section vide');
   // Une ligne « --- » seule sépare les deux textes d'une section : interdite dans les textes eux-mêmes.
   if (/^-{3,}$/m.test(texte) || /^-{3,}$/m.test(apres)) throw new Error('une ligne « --- » seule est réservée, retire-la');
-  // Une première ligne « couleur: » ou « groupe: » serait prise pour un réglage.
-  if (META.test(texte.split('\n')[0])) throw new Error('le texte ne peut pas commencer par « couleur: » ou « groupe: »');
+  // Une première ligne « couleur: », « image: »… serait prise pour un réglage.
+  if (META.test(texte.split('\n')[0])) throw new Error('le texte ne peut pas commencer par « couleur: », « groupe: », « image: » ou « miniature: »');
   const lignes = [titre ? `# ${titre}` : '#'];
   if (couleur) lignes.push(`couleur: ${couleur.toLowerCase()}`);
   if (!estFil && groupe) lignes.push(`groupe: ${groupe}`);
+  if (image) lignes.push(`image: ${image}`);
+  if (miniature) lignes.push(`miniature: ${miniature}`);
   lignes.push('');
   if (texte) lignes.push(texte);
   if (!estFil && groupe && apres) lignes.push('', '---', '', apres);
@@ -408,8 +509,8 @@ export async function interaction(inter) {
     return;
   }
 
-  if (inter.isStringSelectMenu() && inter.customId === 'rules:choix') {
-    const modal = formulaire(inter.values[0]);
+  if (inter.isStringSelectMenu() && (inter.customId === 'rules:choix' || inter.customId === 'rules:choixImages')) {
+    const modal = inter.customId === 'rules:choix' ? formulaire(inter.values[0]) : formulaireImages(inter.values[0]);
     if (!modal) {
       await inter.reply({ content: "Cet encadré n'existe plus : relance `k!rules edit`.", flags: MessageFlags.Ephemeral });
       return;
@@ -418,8 +519,10 @@ export async function interaction(inter) {
     return;
   }
 
-  if (!inter.isModalSubmit() || !inter.customId.startsWith('rules:modal:')) return;
-  const valeur = inter.customId.slice('rules:modal:'.length);
+  if (!inter.isModalSubmit()) return;
+  const [, genre, ...reste] = inter.customId.split(':');
+  if (genre !== 'modal' && genre !== 'img') return;
+  const valeur = reste.join(':');
   const trouve = trouver(valeur);
   if (!trouve) {
     await inter.reply({ content: "Cet encadré n'existe plus : relance `k!rules edit`.", flags: MessageFlags.Ephemeral });
@@ -431,23 +534,31 @@ export async function interaction(inter) {
   };
 
   const { section, fil } = trouve;
-  const fichier = fil ? join(DOSSIER, `${fil.cle}.md`) : join(DOSSIER, `${section.cle}.md`);
+  const e = fil ?? section;
+  const fichier = join(DOSSIER, `${e.cle}.md`);
   const ancien = readFileSync(fichier, 'utf8');
   try {
-    writeFileSync(fichier, contenuFichier({
-      estFil: Boolean(fil), groupe: section.groupe,
-      titre: champTexte('titre'), couleur: champTexte('couleur'), texte: champTexte('texte'), apres: champTexte('apres'),
-    }));
+    // Les champs du formulaire, et les valeurs actuelles pour ce que ce formulaire ne montre pas.
+    const base = e.cle.replace(/[^a-z0-9-]/gi, '-');
+    const champs = genre === 'modal'
+      ? { titre: champTexte('titre'), couleur: champTexte('couleur'), texte: champTexte('texte'), apres: champTexte('apres'), image: e.image, miniature: e.miniature }
+      : {
+        titre: e.titre, couleur: hex(e.couleurPropre), texte: fil ? fil.texte : section.avant, apres: fil ? '' : section.apres,
+        image: await imageDuChamp(champTexte('image'), e.image, `${base}-image`),
+        miniature: await imageDuChamp(champTexte('miniature'), e.miniature, `${base}-miniature`),
+      };
+    writeFileSync(fichier, contenuFichier({ estFil: Boolean(fil), groupe: section.groupe, ...champs }));
     verifierLongueurs(lireSalon());
   } catch (error) {
     writeFileSync(fichier, ancien);
     await inter.editReply(`Modification refusée : ${error.message}. Rien n'a changé.`);
     return;
   }
+  try { nettoyerImages(); } catch { /* au pire, un fichier inutile reste dans reglement/images/ */ }
 
   const salons = Object.keys(lireEtat().salons);
   if (enCours) {
-    await inter.editReply('Texte enregistré, mais une publication est déjà en cours : relance `k!rules set` sur le salon dans un instant.');
+    await inter.editReply('Enregistré, mais une publication est déjà en cours : relance `k!rules set` sur le salon dans un instant.');
     return;
   }
   enCours = true;
@@ -467,8 +578,9 @@ export async function interaction(inter) {
   } finally {
     enCours = false;
   }
-  await inter.editReply((rapports.length ? `Texte enregistré.\n${rapports.join('\n')}`
-    : "Texte enregistré. Le salon n'est publié nulle part : `k!rules set <id du salon>` pour le publier.").slice(0, 2000));
+  const fait = genre === 'img' ? 'Images enregistrées.' : 'Texte enregistré.';
+  await inter.editReply((rapports.length ? `${fait}\n${rapports.join('\n')}`
+    : `${fait} Le salon n'est publié nulle part : \`k!rules set <id du salon>\` pour le publier.`).slice(0, 2000));
 }
 
 /** Les textes tiennent-ils dans un embed, avec des identifiants et un lien de la plus grande taille possible ? */

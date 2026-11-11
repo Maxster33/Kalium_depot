@@ -137,3 +137,20 @@ ils ont la mention modifié dessous ».
 - Un message déjà marqué « (modifié) » (publié par la 0.6.0) est republié même si son texte est le bon.
 - Testé contre un faux Discord : ordre des appels, aucune modification, 2e publication sans aucun appel.
 **Statut : non déployé.**
+
+## 0.7.0 — images et miniatures (11/11/2026)
+
+**Demande de LeKiwi06 (11/11/2026)** : « fait en sorte qu'on puisse mettre des images et thumbnail aussi ».
+- Chaque section et chaque fil peut avoir une image (en bas de l'encadré) et une miniature (en haut à droite) :
+  lignes `image: <fichier>` / `miniature: <fichier>` dans le `.md`, fichiers dans `reglement/images/`, joints au message
+  (`attachment://`). Pour une section, sur l'encadré du texte (celui du gros titre s'il n'y a pas de texte).
+- `k!rules images` : même menu que `k!rules edit`, formulaire « Image » + « Miniature ». Un lien est téléchargé (PNG,
+  JPEG, GIF, WebP, 8 Mo au plus) et gardé sous `<encadré>-image-<empreinte>.<ext>` : les liens d'images Discord
+  expirent. Nom actuel = inchangé, champ vide = image retirée ; fichiers plus utilisés supprimés.
+- Comparaison des messages publiés : image reconnue à la fin de son adresse (le nom contient l'empreinte), donc une
+  image changée republie son message, sans « (modifié) ».
+- `k!rules edit` garde les images (lignes conservées).
+- Testé hors Discord (serveur web local + faux Discord) : téléchargement, refus (page HTML, 404, texte), fichiers .md,
+  images jointes, 2e publication sans appel, miniature retirée = seul le fil republié.
+
+**Statut : non déployé (avec la 0.6.1 et les nouveaux textes des concepts).** `reglement/images/` vit sur Dishost.

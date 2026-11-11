@@ -58,4 +58,7 @@ en-tête de `src/reglement.js`.
 - `k!rules edit` : menu des encadrés, puis formulaire prérempli ; à l'envoi, le fichier de `reglement/` est réécrit et
   tous les salons publiés sont mis à jour. Ces modifications sont faites **sur l'hébergement** : récupérer
   `reglement/` de Dishost avant d'y renvoyer celui du dépôt.
+- `k!rules images` : même menu ; formulaire « Image » (en bas de l'encadré) et « Miniature » (en haut à droite).
+  Coller un lien d'image : le bot la télécharge dans `reglement/images/` (sur Discord : clic droit sur l'image >
+  Copier le lien). Champ vidé = image retirée.
 - Identifiants publiés gardés dans `reglement-etat.json` (jamais commité).
