@@ -1,5 +1,13 @@
 # Java et Bedrock
 
-KaLium est ouvert à tous : **Java** sur PC, et **Bedrock** sur PC, consoles et mobiles.
+## 🤝 Tout le monde joue ensemble
 
-Tout le monde joue ensemble, sur les mêmes serveurs. Sur Bedrock, ajoutez le compte **Kalium6733** en ami Xbox pour voir KaLium dans l'onglet Amis.
+> Votre pote joue sur Switch, vous sur PC, votre petite sœur sur téléphone ? Aucun problème : sur KaLium, tout le monde se retrouve sur les mêmes serveurs.
+
+**💻 Java** : sur PC, Mac ou Linux.
+
+**🎮 Bedrock** : sur PC Windows, Xbox, PlayStation, Switch, Android et iPhone.
+
+**📱 Astuce Bedrock** : ajoutez le compte Xbox **Kalium6733** en ami, et KaLium apparaît directement dans votre onglet **Amis**. Un clic, et vous êtes dedans.
+
+***Peu importe la plateforme : ici, on joue ensemble.***
