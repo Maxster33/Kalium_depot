@@ -5,7 +5,8 @@
 //   [image] [Bienvenue | description] [image] [Objectif | texte] [image] [Règles | liens] [image] [Concepts | liens] [image]
 //
 // Commandes texte réservées au rôle « Le fameux fruit » :
-//   k!rules set <id du salon>  publie le salon, ou le met à jour sur place s'il y est déjà ;
+//   k!rules set <id du salon>  publie le salon ; relancée, republie seulement ce qui a changé (rien n'est modifié sur
+//                              place : Discord afficherait « (modifié) ») ;
 //   k!rules edit               menu des encadrés (sections, fils) ; chacun s'ouvre dans un formulaire Discord ; à l'envoi
 //                              le fichier de reglement/ est réécrit et tous les salons publiés sont mis à jour.
 // Textes dans reglement/ (relus à chaque commande, pas besoin de redémarrer le bot) :
@@ -156,7 +157,7 @@ export function embedFil(fil, lienSection) {
 // ---------------------------------------------------------------------------------------------------------------
 // Publication.
 
-async function publier(guild, salonId) {
+export async function publier(guild, salonId) {
   const { sections, image } = lireSalon();
 
   const salon = await guild.channels.fetch(salonId).catch(() => null);
@@ -179,56 +180,81 @@ async function publier(guild, salonId) {
     avertissements.push(`salon non verrouillé pour les membres (${error.message}) : retire-leur « Envoyer des messages » et « … dans les fils » à la main`);
   });
 
-  // 1. La mise en page : [image] section [image] section … [image]. Si elle a changé (sections ajoutées, retirées,
-  //    message disparu, image ajoutée ou retirée), tout est republié dans l'ordre ; sinon les sections sont modifiées
-  //    sur place. Les sections sont d'abord publiées sans les liens des fils (pas encore créés).
+  // Aucun message n'est jamais modifié (Discord afficherait « (modifié) ») : ce qui change est supprimé et republié.
+  // Ordre : 1. les fils (vides) pour connaître leurs identifiants ; 2. la mise en page, sections avec les liens des
+  // fils ; 3. le texte de chaque fil, avec le lien de sa section.
+
+  // 1. Les fils de chaque groupe, créés vides au besoin.
+  const compte = { crees: 0, republies: 0, inchanges: 0 };
+  const fils = {};
+  for (const s of sections) {
+    for (const f of s.fils) {
+      const connu = memo.fils[f.cle];
+      let fil = connu ? await salon.threads.fetch(connu.id).catch(() => null) : null;
+      if (fil && fil.parentId !== salon.id) fil = null;
+      if (!fil) {
+        fil = await salon.threads.create({
+          name: f.titre,
+          type: ChannelType.PublicThread,
+          autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
+          reason: "Salon d'informations KaLium",
+        });
+        memo.fils[f.cle] = { id: fil.id, message: null };
+        ecrireEtat(etat);
+      } else {
+        // Un fil archivé (une semaine sans message) ne se modifie pas : on le rouvre, il reste verrouillé.
+        if (fil.archived) await fil.setArchived(false, 'Mise à jour');
+        if (fil.name !== f.titre) await fil.setName(f.titre);
+      }
+      fils[f.cle] = fil;
+    }
+  }
+  await effacerAnnoncesDeFils(salon, moi.id);
+  const idsFils = Object.fromEntries(Object.entries(fils).map(([cle, fil]) => [cle, fil.id]));
+
+  // 2. La mise en page : [image] section [image] section … [image]. Republiée en entier dès qu'un texte, l'ordre ou
+  //    l'image change, ou qu'un message a disparu.
   const plan = [];
   for (const s of sections) {
     if (image) plan.push({ type: 'image' });
-    plan.push({ type: 'section', cle: s.cle });
+    plan.push({ type: 'section', cle: s.cle, embeds: embedsSection(s, idsFils) });
   }
   if (image) plan.push({ type: 'image' });
   const memePlan = memo.messages.length === plan.length
     && plan.every((p, i) => memo.messages[i].type === p.type && memo.messages[i].cle === p.cle);
   let messages = memePlan ? await Promise.all(memo.messages.map((m) => salon.messages.fetch(m.id).catch(() => null))) : [];
-  const republie = !memePlan || messages.some((m) => !m);
-  if (republie) {
+  const identique = memePlan && messages.every(Boolean) && plan.every((p, i) => p.type === 'image' || pareil(messages[i].embeds, p.embeds));
+  if (!identique) {
     for (const m of memo.messages) await salon.messages.delete(m.id).catch(() => {});
     memo.messages = [];
     messages = [];
     for (const p of plan) {
       const m = p.type === 'image'
         ? await salon.send({ files: [{ attachment: image, name: `separation.${image.split('.').pop()}` }] })
-        : await salon.send({ embeds: embedsSection(sections.find((s) => s.cle === p.cle), {}), allowedMentions: SANS_PING });
-      memo.messages.push({ ...p, id: m.id });
+        : await salon.send({ embeds: p.embeds, allowedMentions: SANS_PING });
+      memo.messages.push({ type: p.type, cle: p.cle, id: m.id });
       messages.push(m);
       ecrireEtat(etat);
     }
   }
-  const messageDe = (cle) => messages[plan.findIndex((p) => p.cle === cle)];
+  const lienDe = (cle) => messages[plan.findIndex((p) => p.cle === cle)].url;
 
-  // 2. Les fils de chaque groupe, avec le lien de leur section.
-  const compte = { crees: 0, modifies: 0, inchanges: 0 };
-  const idsFils = {};
+  // 3. Le texte de chaque fil, republié s'il a changé (ou si le lien de sa section a changé).
   for (const s of sections) {
     for (const f of s.fils) {
-      compte[await synchroniserFil(salon, f, messageDe(s.cle).url, memo)]++;
-      idsFils[f.cle] = memo.fils[f.cle].id;
-      ecrireEtat(etat);
-    }
-  }
-  await effacerAnnoncesDeFils(salon, moi.id);
-
-  // 3. Les sections avec les liens des fils.
-  let sectionsModifiees = 0;
-  for (const s of sections) {
-    const m = messageDe(s.cle);
-    const embeds = embedsSection(s, idsFils);
-    const pareil = m.embeds.length === embeds.length
-      && embeds.every((e, i) => m.embeds[i].description === e.description && m.embeds[i].color === e.color);
-    if (!pareil) {
-      await m.edit({ embeds, allowedMentions: SANS_PING });
-      sectionsModifiees++;
+      const fil = fils[f.cle];
+      const connu = memo.fils[f.cle];
+      const embed = embedFil(f, lienDe(s.cle));
+      const ancien = connu.message ? await fil.messages.fetch(connu.message).catch(() => null) : null;
+      if (ancien && pareil(ancien.embeds, [embed])) {
+        compte.inchanges++;
+      } else {
+        compte[ancien || connu.message ? 'republies' : 'crees']++;
+        await ancien?.delete().catch(() => {});
+        connu.message = (await fil.send({ embeds: [embed], allowedMentions: SANS_PING })).id;
+        ecrireEtat(etat);
+      }
+      if (!fil.locked) await fil.setLocked(true, 'Lecture seule');
     }
   }
 
@@ -239,10 +265,16 @@ async function publier(guild, salonId) {
   }
   if (!image) avertissements.push('pas d\'image de séparation (reglement/_separation.gif) : sections publiées sans');
   return [
-    `Salon <#${salonId}> ${republie ? 'publié' : `mis à jour (${sectionsModifiees} section(s) modifiée(s))`} : `
-      + `${compte.crees} fil(s) créé(s), ${compte.modifies} mis à jour, ${compte.inchanges} inchangé(s).`,
+    `Salon <#${salonId}> ${identique ? 'inchangé' : 'republié'} ; fils : ${compte.crees} nouveau(x), `
+      + `${compte.republies} republié(s), ${compte.inchanges} inchangé(s).`,
     ...avertissements.map((a) => `⚠️ ${a}`),
   ].join('\n').slice(0, 2000);
+}
+
+/** Les embeds publiés sont-ils ceux voulus (titre, texte, couleur) ? */
+function pareil(publies, voulus) {
+  return publies.length === voulus.length && voulus.every((e, i) => (publies[i].title ?? undefined) === e.title
+    && publies[i].description === e.description && publies[i].color === e.color);
 }
 
 /** État de la 0.5 (un seul message de sommaire, fils « a-respect »…) -> état par sections, fils « regles/a-respect ». */
@@ -259,48 +291,6 @@ function migrer(memo) {
       delete memo.fils[cle];
     }
   }
-}
-
-/** Crée ou met à jour un fil. Renvoie « crees », « modifies » ou « inchanges ». */
-async function synchroniserFil(salon, def, lienSection, memo) {
-  const embed = embedFil(def, lienSection);
-  const connu = memo.fils[def.cle];
-  let fil = connu ? await salon.threads.fetch(connu.id).catch(() => null) : null;
-  if (fil && fil.parentId !== salon.id) fil = null;
-
-  if (!fil) {
-    fil = await salon.threads.create({
-      name: def.titre,
-      type: ChannelType.PublicThread,
-      autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
-      reason: "Salon d'informations KaLium",
-    });
-    const m = await fil.send({ embeds: [embed], allowedMentions: SANS_PING });
-    await fil.setLocked(true, 'Lecture seule');
-    memo.fils[def.cle] = { id: fil.id, message: m.id };
-    return 'crees';
-  }
-
-  let modifie = false;
-  // Un fil archivé (une semaine sans message) ne se modifie pas : on le rouvre, il reste verrouillé.
-  if (fil.archived) await fil.setArchived(false, 'Mise à jour');
-  if (fil.name !== def.titre) {
-    await fil.setName(def.titre);
-    modifie = true;
-  }
-  const ancien = await fil.messages.fetch(connu.message).catch(() => null);
-  if (!ancien) {
-    connu.message = (await fil.send({ embeds: [embed], allowedMentions: SANS_PING })).id;
-    modifie = true;
-  } else {
-    const e = ancien.embeds[0];
-    if ((e?.title ?? undefined) !== embed.title || e?.description !== embed.description || e?.color !== embed.color) {
-      await ancien.edit({ embeds: [embed], allowedMentions: SANS_PING });
-      modifie = true;
-    }
-  }
-  if (!fil.locked) await fil.setLocked(true, 'Lecture seule');
-  return modifie ? 'modifies' : 'inchanges';
 }
 
 function lireEtat() {

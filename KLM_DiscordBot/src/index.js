@@ -10,7 +10,7 @@ import { ouvrir } from './db.js';
 import * as reglement from './reglement.js';
 import * as wiki from './wiki.js';
 
-const VERSION = '0.6.0';
+const VERSION = '0.6.1';
 const PREFIXE = 'k!';
 
 const config = {

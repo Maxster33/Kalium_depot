@@ -126,3 +126,13 @@ SMC », description, image, « L'objectif du serveur », concept, image, « Somm
 - Testé hors Discord : lecture, longueurs, menu (12 encadrés), formulaires, aller-retour des fichiers identique.
 
 **Statut : non déployé, non testé sur Discord ; textes à valider par LeKiwi06.**
+
+### 0.6.1 — plus aucun « (modifié) » (11/11/2026)
+
+**Demande de LeKiwi06** : « il faut créer les fils avant de publier l'embed pour les intégrer avant de publier, sinon
+ils ont la mention modifié dessous ».
+- Ordre : fils créés vides d'abord (identifiants connus), puis la mise en page avec les liens, puis le texte de chaque
+  fil avec le lien de sa section. Aucun message n'est jamais modifié : un texte qui change est supprimé et republié
+  (toute la mise en page si une section change, le seul message du fil si un fil change).
+- Testé contre un faux Discord : ordre des appels, aucune modification, 2e publication sans aucun appel.
+**Statut : non déployé.**
