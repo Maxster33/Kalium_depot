@@ -142,6 +142,7 @@ ils ont la mention modifié dessous ».
 
 **Demande de LeKiwi06 (11/11/2026)** : « fait en sorte qu'on puisse mettre des images et thumbnail aussi ».
 - Chaque section et chaque fil peut avoir une image (en bas de l'encadré) et une miniature (en haut à droite) :
+  (0.7.1 : pour une section, la miniature va sur l'encadré du gros titre, l'image en bas de celui du texte)
   lignes `image: <fichier>` / `miniature: <fichier>` dans le `.md`, fichiers dans `reglement/images/`, joints au message
   (`attachment://`). Pour une section, sur l'encadré du texte (celui du gros titre s'il n'y a pas de texte).
 - `k!rules images` : même menu que `k!rules edit`, formulaire « Image » + « Miniature ». Un lien est téléchargé (PNG,

@@ -173,7 +173,9 @@ export function embedsSection(section, idsFils) {
   const texte = [section.avant, liens, section.apres].filter(Boolean).join('\n\n');
   if (texte.length > MAX_DESCRIPTION) throw new Error(`${section.cle} : texte trop long (${texte.length} > ${MAX_DESCRIPTION} caractères)`);
   if (texte) embeds.push({ color: section.couleur, description: texte });
-  avecImages(embeds[embeds.length - 1], section);
+  // Miniature sur l'encadré du gros titre, image en bas de celui du texte (un seul encadré : les deux dessus).
+  avecImages(embeds[0], { miniature: section.miniature });
+  avecImages(embeds[embeds.length - 1], { image: section.image });
   return embeds;
 }
 
