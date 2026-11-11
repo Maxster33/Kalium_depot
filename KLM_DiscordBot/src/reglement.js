@@ -223,7 +223,7 @@ export async function publier(guild, salonId) {
   const memePlan = memo.messages.length === plan.length
     && plan.every((p, i) => memo.messages[i].type === p.type && memo.messages[i].cle === p.cle);
   let messages = memePlan ? await Promise.all(memo.messages.map((m) => salon.messages.fetch(m.id).catch(() => null))) : [];
-  const identique = memePlan && messages.every(Boolean) && plan.every((p, i) => p.type === 'image' || pareil(messages[i].embeds, p.embeds));
+  const identique = memePlan && messages.every(Boolean) && plan.every((p, i) => p.type === 'image' || pareil(messages[i], p.embeds));
   if (!identique) {
     for (const m of memo.messages) await salon.messages.delete(m.id).catch(() => {});
     memo.messages = [];
@@ -246,7 +246,7 @@ export async function publier(guild, salonId) {
       const connu = memo.fils[f.cle];
       const embed = embedFil(f, lienDe(s.cle));
       const ancien = connu.message ? await fil.messages.fetch(connu.message).catch(() => null) : null;
-      if (ancien && pareil(ancien.embeds, [embed])) {
+      if (ancien && pareil(ancien, [embed])) {
         compte.inchanges++;
       } else {
         compte[ancien || connu.message ? 'republies' : 'crees']++;
@@ -271,9 +271,10 @@ export async function publier(guild, salonId) {
   ].join('\n').slice(0, 2000);
 }
 
-/** Les embeds publiés sont-ils ceux voulus (titre, texte, couleur) ? */
-function pareil(publies, voulus) {
-  return publies.length === voulus.length && voulus.every((e, i) => (publies[i].title ?? undefined) === e.title
+/** Le message publié a-t-il les embeds voulus (titre, texte, couleur), sans mention « (modifié) » ? */
+function pareil(message, voulus) {
+  const publies = message.embeds;
+  return !message.editedTimestamp && publies.length === voulus.length && voulus.every((e, i) => (publies[i].title ?? undefined) === e.title
     && publies[i].description === e.description && publies[i].color === e.color);
 }
 

@@ -134,5 +134,6 @@ ils ont la mention modifié dessous ».
 - Ordre : fils créés vides d'abord (identifiants connus), puis la mise en page avec les liens, puis le texte de chaque
   fil avec le lien de sa section. Aucun message n'est jamais modifié : un texte qui change est supprimé et republié
   (toute la mise en page si une section change, le seul message du fil si un fil change).
+- Un message déjà marqué « (modifié) » (publié par la 0.6.0) est republié même si son texte est le bon.
 - Testé contre un faux Discord : ordre des appels, aucune modification, 2e publication sans aucun appel.
 **Statut : non déployé.**
