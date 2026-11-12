@@ -1,5 +1,8 @@
 # Wiki KaLium (salon Discord)
 
+**Depuis le 12/11/2026, le wiki se publie avec `k!rules set <id du salon> wiki` : ses fiches sont dans
+`salons/wiki/` (même format que les autres salons d'informations). Ce dossier et `k!wiki` ne servent plus.**
+
 Publié par le bot avec `k!wiki setup <id du salon>`, puis mis à jour avec `k!wiki maj` après chaque modification de ce
 dossier (le bot relit les fichiers, pas besoin de le redémarrer). Textes pour les joueurs : pas de détail technique.
 
