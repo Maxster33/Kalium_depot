@@ -10,6 +10,6 @@
 
 **📱 Astuce Bedrock** : ajoutez le compte Xbox **Kalium6733** en ami, et KaLium apparaît directement dans votre onglet **Amis**. Un clic, et vous êtes dedans.
 
-🛟 **Kalium6733 ne répond pas ?** Toutes les autres façons de rejoindre KaLium, plateforme par plateforme, sont dans <#1514097812348866671>.
+🛟 **Kalium6733 ne répond pas ?** Toutes les autres façons de rejoindre KaLium, plateforme par plateforme, sont dans {salon:guide-acces}.
 
 ***Peu importe la plateforme : ici, on joue ensemble.***

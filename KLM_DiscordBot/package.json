@@ -1,6 +1,6 @@
 {
   "name": "klm-discordbot",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "Bot Discord du réseau KaLium : classements, statistiques et graphiques tirés de KG_ScoreBoards, wiki du réseau.",
   "private": true,
   "type": "module",

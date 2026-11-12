@@ -47,18 +47,22 @@ Les textes sont dans `wiki/` (format : `wiki/LISEZMOI.md`).
 Les identifiants Discord publiés sont gardés dans `wiki-etat.json` (jamais commité) : lancer le bot toujours depuis
 la même machine, sinon le wiki est republié en double. `API_URL` / `API_TOKEN` vides : le wiki marche, sans `/classement`.
 
-## Salon d'informations (`k!rules`)
+## Salons d'informations (`k!rules`)
 
-Des sections séparées par une barre animée (`reglement/_separation.gif`) : gros titre + texte. Une section peut lister
-un groupe de fils verrouillés (règles, concepts), chacun finissant par « Revenir au sommaire ». Format des fichiers :
-en-tête de `src/reglement.js`.
+Des sections séparées par une barre animée (`_separation.gif`) : gros titre + texte. Une section peut lister un
+groupe de fils verrouillés (règles, concepts), chacun finissant par « Revenir au sommaire ». Un salon = un dossier :
+`informations` = `reglement/`, les autres = `salons/<nom>/` (`guide-acces`, `infos-concepts`). Format des fichiers
+(dont `liste: non`, `retour:`, les fils en plusieurs encadrés séparés par `---` et les liens `{salon:<nom>}`,
+`{fil:<salon>/<groupe>/<fiche>}`) : en-tête de `src/reglement.js`.
 
-- `k!rules set <id du salon>` : publie le salon, ou le met à jour sur place s'il y est déjà. Réservé au rôle
+- `k!rules set <id du salon> [nom]` : publie le dossier `nom` dans ce salon (par défaut celui qu'il publie déjà, sinon
+  `informations`), ou le met à jour ; puis remet à jour les autres salons publiés (liens). Réservé au rôle
   **Le fameux fruit** ; mêmes permissions du bot que le wiki, plus « joindre des fichiers ».
-- `k!rules edit` : menu des encadrés, puis formulaire prérempli ; à l'envoi, le fichier de `reglement/` est réécrit et
-  tous les salons publiés sont mis à jour. Ces modifications sont faites **sur l'hébergement** : récupérer
-  `reglement/` de Dishost avant d'y renvoyer celui du dépôt.
-- `k!rules images` : même menu ; formulaire « Image » (en bas de l'encadré) et « Miniature » (en haut à droite).
-  Coller un lien d'image : le bot la télécharge dans `reglement/images/` (sur Discord : clic droit sur l'image >
+- `k!rules edit [nom]` : menu des salons, des sections (au-delà de 25 encadrés) puis des encadrés, puis formulaire
+  prérempli (un fil : jusqu'à 3 encadrés) ; à l'envoi, le fichier est réécrit et tous les salons publiés sont mis à
+  jour. Ces modifications sont faites **sur l'hébergement** : récupérer `reglement/` et `salons/` de Dishost avant
+  d'y renvoyer ceux du dépôt.
+- `k!rules images [nom]` : même menu ; formulaire « Image » (en bas de l'encadré) et « Miniature » (en haut à droite).
+  Coller un lien d'image : le bot la télécharge dans `<dossier>/images/` (sur Discord : clic droit sur l'image >
   Copier le lien). Champ vidé = image retirée.
 - Identifiants publiés gardés dans `reglement-etat.json` (jamais commité).

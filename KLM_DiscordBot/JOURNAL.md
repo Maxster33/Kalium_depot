@@ -155,3 +155,28 @@ ils ont la mention modifié dessous ».
   images jointes, 2e publication sans appel, miniature retirée = seul le fil republié.
 
 **Statut : non déployé (avec la 0.6.1 et les nouveaux textes des concepts).** `reglement/images/` vit sur Dishost.
+
+## 0.8.0 — plusieurs salons : #guide-accès et #infos-concepts (12/11/2026)
+
+**Demande de LeKiwi06 (12/11/2026)** : « j'aimerai que tu rework tout ça » (#guide-accès et #infos-concepts) ; choix :
+publiés par le bot, Verdikt repris et corrigé (règles inchangées), les 3 fils d'aide de #bugs déplacés dans
+#guide-accès, Kaleïdos à repenser (proposition à valider, pas encore dans les textes).
+- Un salon = un dossier : `informations` = `reglement/`, les autres = `salons/<nom>/`. `k!rules set <id> [nom]`
+  (le nom est mémorisé, un salon ne change pas de dossier) ; ensuite les autres salons publiés sont remis à jour.
+- Liens dans les textes : `{salon:<nom>}`, `{fil:<groupe>/<fiche>}`, `{fil:<salon>/<groupe>/<fiche>}` ; pas encore
+  publié = nom en gras ; lien vers un fil ou un salon inexistant = erreur (vérifiée à chaque modification).
+- Fils en plusieurs encadrés (lignes `---`), découpés en plusieurs messages au-delà de 6 000 caractères ou 10
+  encadrés ; `liste: non` (fil absent de la liste de sa section : rôles de Verdikt) ; `retour: <fiche>` (« Revenir »
+  mène à ce fil : le fil des rôles). État : `fils.<clé>.messages` (liste), l'ancien `message` est repris.
+- `k!rules edit|images [nom]` : menu des salons, puis des sections si plus de 25 encadrés, puis des encadrés ; un fil
+  s'édite en 3 encadrés au plus (au-delà : modifier le fichier).
+- Textes : `salons/guide-acces/` (adresses, Kalium6733 d'abord, 6 plateformes avec 3 méthodes pour les consoles et
+  les DNS de BedrockConnect propres à chacune : 104.238.130.180 Xbox/Switch, 45.55.68.52 PlayStation, d'après le
+  dépôt GitHub de BedrockConnect du 12/11 ; aide : problèmes, conseils consoles, liens) ; `salons/infos-concepts/`
+  (Kixster : règles + changements, Kal-Games : règles + jeux, Kanvas : règles + plots, Verdikt : règlement en 3
+  encadrés, rôles et factions, 17 fils de rôles) ; liens des concepts de `reglement/` passés en `{fil:…}`.
+- Testé contre un faux Discord à 3 salons : liens résolus entre salons, rôles hors liste, retour vers le fil des
+  rôles, 2e publication sans appel, lien cassé refusé, menus et formulaires.
+
+**Statut : non déployé.** Anciens messages et fils de #guide-accès, #infos-concepts et des 3 fils de #bugs à
+supprimer au déploiement (sauvegarde brute faite le 12/11, hors dépôt).

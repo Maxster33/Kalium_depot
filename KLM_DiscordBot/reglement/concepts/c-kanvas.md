@@ -12,4 +12,6 @@
 
 **👀 Inspirez-vous.** Baladez-vous de plot en plot : chaque visite donne une nouvelle idée.
 
+📚 **Pour aller plus loin** : {fil:infos-concepts/kanvas/a-regles}
+
 ***Votre chef-d'œuvre commence par un premier bloc.***

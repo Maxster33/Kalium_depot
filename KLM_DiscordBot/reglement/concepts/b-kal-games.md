@@ -16,6 +16,6 @@
 
 **🏆 Chaque partie compte.** Gagnez des points, grimpez dans les classements du mois et décrochez les récompenses réservées aux meilleurs.
 
-📚 **Pour aller plus loin** : <#1514141136099479552>
+📚 **Pour aller plus loin** : {fil:infos-concepts/kal-games/a-regles}
 
 ***Alors, qui sera numéro 1 ce mois-ci ?***
