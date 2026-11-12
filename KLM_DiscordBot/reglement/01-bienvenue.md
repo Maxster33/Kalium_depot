@@ -1,5 +1,6 @@
 # Bienvenue sur KaLium SMC
 couleur: #8b3dff
+miniature: 01-bienvenue-miniature-e61ca54e3f.png
 
 > KaLium SMC, c'est un réseau de serveurs Minecraft ouvert à **Java et Bedrock** (PC, consoles, mobiles), et surtout une bande d'amis.
 
