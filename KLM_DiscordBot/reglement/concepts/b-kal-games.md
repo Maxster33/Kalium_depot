@@ -16,4 +16,6 @@
 
 **🏆 Chaque partie compte.** Gagnez des points, grimpez dans les classements du mois et décrochez les récompenses réservées aux meilleurs.
 
+📚 **Pour aller plus loin** : <#1514141136099479552>
+
 ***Alors, qui sera numéro 1 ce mois-ci ?***

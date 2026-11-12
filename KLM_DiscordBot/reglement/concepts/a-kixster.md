@@ -14,4 +14,6 @@
 
 **🎃 Un monde qui vit.** Événements de saison, boutiques éphémères, récompenses pour ceux qui votent pour le serveur.
 
+📚 **Pour aller plus loin** : <#1550086034916773959>
+
 ***Le monde est prêt. Il ne manque plus que vous.***
