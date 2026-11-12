@@ -127,7 +127,7 @@ export async function commande(message, args) {
   }
   enCours = true;
   try {
-    const rapport = await publier(message.guild, salonId, nomDemande?.toLowerCase());
+    const rapport = await publier(message.guild, salonId, nomDemande?.toLowerCase(), { cible: true });
     const autres = await publierTout(message.guild, salonId);
     await message.reply({ content: [rapport, ...autres].join('\n').slice(0, 2000), allowedMentions: SANS_PING });
   } catch (error) {
@@ -349,7 +349,9 @@ async function publierTout(guild, sauf = null) {
   return rapports;
 }
 
-export async function publier(guild, salonId, nomDemande) {
+// cible : le salon devient celui que visent les liens {salon:…}/{fil:…} vers son dossier (k!rules set). Si plusieurs
+// salons publient le même dossier (un salon de test par exemple), les liens visent le dernier passé à k!rules set.
+export async function publier(guild, salonId, nomDemande, { cible = false } = {}) {
   const etat = lireEtat();
   const dejaPublie = etat.salons[salonId]?.dossier ?? (etat.salons[salonId] ? PRINCIPAL : null);
   if (nomDemande && dejaPublie && nomDemande !== dejaPublie) {
@@ -371,6 +373,12 @@ export async function publier(guild, salonId, nomDemande) {
   if (manquantes.length) throw new Error(`il manque au bot, dans #${salon.name} : ${manquantes.join(', ')}`);
 
   etat.salons[salonId] ??= { messages: [], fils: {} };
+  if (cible) {
+    // Placé en dernier : c'est lui que trouvent les liens (findLast plus bas).
+    const garde = etat.salons[salonId];
+    delete etat.salons[salonId];
+    etat.salons[salonId] = garde;
+  }
   const memo = etat.salons[salonId];
   memo.dossier = nom;
   migrer(memo);
@@ -414,7 +422,7 @@ export async function publier(guild, salonId, nomDemande) {
   const idsFils = Object.fromEntries(Object.entries(fils).map(([cle, fil]) => [cle, fil.id]));
 
   // Les liens : fils de ce salon (créés ci-dessus), fils et salons des autres salons publiés.
-  const salonDe = (n) => Object.entries(etat.salons).find(([, m]) => (m.dossier ?? PRINCIPAL) === n);
+  const salonDe = (n) => Object.entries(etat.salons).findLast(([, m]) => (m.dossier ?? PRINCIPAL) === n);
   const resoudre = resolveur(nom, {
     ids: (n, cle) => (n === nom ? idsFils[cle] : salonDe(n)?.[1].fils?.[cle]?.id) ?? null,
     idSalon: (n) => (n === nom ? salonId : salonDe(n)?.[0]) ?? null,

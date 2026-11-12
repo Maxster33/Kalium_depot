@@ -180,3 +180,11 @@ publiés par le bot, Verdikt repris et corrigé (règles inchangées), les 3 fil
 
 **Statut : non déployé.** Anciens messages et fils de #guide-accès, #infos-concepts et des 3 fils de #bugs à
 supprimer au déploiement (sauvegarde brute faite le 12/11, hors dépôt).
+
+## 0.8.1 — liens vers le bon salon (12/11/2026)
+
+**Signalé par LeKiwi06 (12/11/2026)** : dans #infos-concepts, `{salon:informations}` menait à #écriture, un ancien
+salon de test qui publie aussi le dossier `informations`. Les liens visaient le premier salon trouvé.
+- Si plusieurs salons publient le même dossier, les liens visent le dernier passé à `k!rules set` (placé en dernier
+  dans `reglement-etat.json`).
+- Testé hors Discord (salon de test publié avant le vrai, puis repassé par `k!rules set`) ; non testé sur Discord.
