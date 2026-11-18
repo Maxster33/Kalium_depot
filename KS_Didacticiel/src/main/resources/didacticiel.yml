@@ -43,10 +43,10 @@ themes:
         texte: "Le monde va de -20 000 à +20 000 en X et en Z. Il est déjà entièrement généré."
         nouveau: "2026-10-18"
       dimensions:
-        nom: "Nether et End fermés"
+        nom: "Nether ouvert, End fermé"
         icone: OBSIDIAN
-        texte: "Les portails du Nether et de l'End ne mènent nulle part pour l'instant."
-        nouveau: "2026-10-18"
+        texte: "Le Nether est ouvert : y entrer coûte 20 points (une confirmation te le demande), le retour est gratuit. Les perles de l'Ender et les véhicules ne passent pas le portail. Le portail de l'End ne mène nulle part pour l'instant."
+        nouveau: "2026-11-18"
       sommeil:
         nom: "Passer la nuit"
         icone: WHITE_BED

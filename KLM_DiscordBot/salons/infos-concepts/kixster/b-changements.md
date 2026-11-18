@@ -7,7 +7,8 @@ couleur: #5ee38a
 - **Version** : 26.3
 - **Difficulté** : difficile
 - **Carte** : de -20 000 à +20 000 en X et en Z, déjà entièrement générée
-- **Nether et End** : fermés pour l'instant
+- **Nether** : ouvert, 20 points pour y entrer (retour gratuit)
+- **End** : fermé pour l'instant
 - **Nuit** : il suffit que 25 % des joueurs connectés dorment
 - **Wagonnets** : jusqu'à 5 fois plus rapides
 
