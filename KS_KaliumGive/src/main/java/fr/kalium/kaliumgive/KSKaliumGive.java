@@ -66,6 +66,21 @@ public final class KSKaliumGive extends JavaPlugin {
         // 1.13.0 (maléfices du Nether) : amulette mangeuse de mal de KS_MaleficesNether (aussi au butin des récompenses).
         OBJETS.put("amulette_mangeuse_de_mal", new ObjetCustom("KS_MaleficesNether",
                 () -> fr.kalium.malefices.KSMaleficesNether.creerAmulette()));
+        // 1.14.0 (marteau) : objets de KS_Marteau, plugin Paper dont les classes ne sont pas visibles d'ici : appel par
+        // réflexion de KSMarteau.creer(id).
+        for (String id : List.of("coeur_de_marteau", "marteau", "marteau_netherite")) {
+            OBJETS.put(id, new ObjetCustom("KS_Marteau", () -> parReflexion("KS_Marteau", id)));
+        }
+    }
+
+    /** Objet d'un plugin Paper par sa méthode publique statique creer(String) ; null si elle échoue. */
+    private static ItemStack parReflexion(String plugin, String id) {
+        try {
+            Object p = Bukkit.getPluginManager().getPlugin(plugin);
+            return p == null ? null : (ItemStack) p.getClass().getMethod("creer", String.class).invoke(null, id);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return null;
+        }
     }
 
     /** Fiole d'experience de KS_FioleExp, avec son nombre de niveaux (1.4.0 ; points avant) : fiole_exp(50). */
@@ -170,6 +185,12 @@ public final class KSKaliumGive extends JavaPlugin {
         if (nombre == 0) {
             return true;
         }
+        // 1.14.0 : un objet créé par réflexion (plugin Paper) peut manquer si le plugin a changé.
+        if (objet.fabrique().get() == null) {
+            sender.sendMessage(Component.text("Le plugin " + objet.plugin() + " n'a pas pu créer " + args[1] + ".",
+                    NamedTextColor.RED));
+            return true;
+        }
         // Un objet à la fois (certains ne s'empilent pas) ; inventaire plein : le reste tombe au sol.
         for (int i = 0; i < nombre; i++) {
             for (ItemStack reste : cible.getInventory().addItem(objet.fabrique().get()).values()) {
@@ -208,7 +229,10 @@ public final class KSKaliumGive extends JavaPlugin {
         Map<String, List<ItemStack>> objets = new LinkedHashMap<>();
         OBJETS.forEach((id, objet) -> {
             if (!id.startsWith(TETE) && getServer().getPluginManager().isPluginEnabled(objet.plugin())) {
-                objets.computeIfAbsent(objet.plugin(), p -> new ArrayList<>()).add(objet.fabrique().get());
+                ItemStack fini = objet.fabrique().get();
+                if (fini != null) {
+                    objets.computeIfAbsent(objet.plugin(), p -> new ArrayList<>()).add(fini);
+                }
             }
         });
         if (getServer().getPluginManager().isPluginEnabled("KS_FioleExp")) {

@@ -1001,3 +1001,20 @@ Chantier « Blocs, cultures et objets » (cahier local), section 4 : KS_ShulkerA
 
 Compilé le 02/11/2026. **À déployer avec KS_ShulkerAmelioree 1.0.0 et KS_Encapsuleur 1.0.0** (sans eux, la ligne du barème ne correspond à
 aucun objet ; rien ne casse). **Déployé sur Kixster le 02/11/2026 à 14:28** (LeKiwi06 : « Oui, envoie »), avec KS_ShulkerAmelioree 1.0.0, KS_Encapsuleur 1.0.0, KS_Economy 1.13.6, KS_CoffreRenforce 1.3.1, KS_Textures 1.2.2 et `didacticiel.yml` ; jars de la même taille que ceux du dépôt. À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.13.7 - marteau (20/11/2026, LeKiwi06)
+
+Chantier du marteau (cahier local `Marteau.md`, validé le 20/11) : KS_Marteau 1.0.0.
+
+- **Prix** : somme des ingrédients, **validée par LeKiwi06 le 20/11/2026** (« le cumul des prix d'item me parait
+  juste ») : `coeur_de_marteau` 673,6 (noyau lourd 385,6 + 8 blocs de diamant), `marteau` 745,6 (2 blocs de diamant +
+  Cœur + 2 bâtons), `marteau_netherite` 2 228 (marteau + modèle de netherite 28,01 + bloc de netherite 1 454 ; 2 227,6
+  arrondi par la chaîne). Cibles `pdc:ks_marteau:coeur_de_marteau:b`, `pdc:ks_marteau:marteau:s:diamant`,
+  `pdc:ks_marteau:marteau:s:netherite`. Barème : `custom(...)` dans `sortie/bareme/bareme.py`, notes et liste des
+  objets ajoutés dans `remplir.py`, cibles dans `exporter_rachats.py`, lignes dans `ids-26.3-et-custom.csv` ; chaîne
+  relancée (d'abord sans changement : fichier identique) : `rachats.csv` gagne exactement ces 3 lignes. Le livre de
+  Magnétisme reste un livre enchanté (6, jamais tiré), comme validé.
+- **Rachats** : un objet custom usé n'est plus racheté (même règle que les objets du jeu depuis le 01/11) : un marteau
+  doit avoir toute sa solidité.
+
+Statut : compilé, non déployé, non testé. À déployer avec KS_Marteau 1.0.0 et KS_Textures 1.2.3 (rareté).

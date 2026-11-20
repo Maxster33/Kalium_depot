@@ -191,6 +191,19 @@ public final class KSMarteau extends JavaPlugin implements Listener {
         return item;
     }
 
+    /**
+     * Objet par son identifiant (KS_KaliumGive, récompenses) : coeur_de_marteau, marteau, marteau_netherite ; null si
+     * inconnu. Appelé par réflexion (plugin Paper : ses classes ne sont pas visibles des plugins Bukkit).
+     */
+    public static ItemStack creer(String id) {
+        return switch (id) {
+            case "coeur_de_marteau" -> creerCoeur();
+            case "marteau" -> creerMarteau(Niveau.DIAMANT);
+            case "marteau_netherite" -> creerMarteau(Niveau.NETHERITE);
+            default -> null;
+        };
+    }
+
     /** Niveau du marteau, ou null si l'objet n'en est pas un. */
     public static Niveau niveau(ItemStack item) {
         if (item == null || item.getType() != Material.MACE || !item.hasItemMeta()) {

@@ -1999,3 +1999,6 @@ tete_shulker_violet;tête;50;pdc:ks_decapitator:tete:s:shulker_violet;Tête de s
 tete_slime_moyen;tête;10;pdc:ks_decapitator:tete:s:slime_moyen;Tête de slime moyen;64;
 shulker_amelioree;shulker_amelioree;129.5;pdc:ks_shulkeramelioree:shulker:b;Shulker améliorée;1;nether+end
 encapsuleur;encapsuleur;1037;pdc:ks_encapsuleur:objet:s:encapsuleur;Encapsuleur;1;nether+end
+coeur_de_marteau;coeur_de_marteau;673.6;pdc:ks_marteau:coeur_de_marteau:b;Cœur de Marteau;1;
+marteau;marteau;745.6;pdc:ks_marteau:marteau:s:diamant;Marteau;1;
+marteau_netherite;netherite;2228;pdc:ks_marteau:marteau:s:netherite;Marteau en netherite;1;nether

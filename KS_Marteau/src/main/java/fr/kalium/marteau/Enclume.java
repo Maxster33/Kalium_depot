@@ -49,7 +49,11 @@ final class Enclume implements Listener {
         this.recetteNetherite = recetteNetherite;
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    /**
+     * Priorité LOW : avant KS_Enclume (NORMAL), qui réduit le coût au-delà de 50 niveaux, puis l'affiche (HIGHEST).
+     * L'enclume en coffre de KS_Enclume passe aussi par ce calcul (fenêtre d'enclume virtuelle).
+     */
+    @EventHandler(priority = EventPriority.LOW)
     public void onEnclume(PrepareAnvilEvent event) {
         AnvilInventory inv = event.getInventory();
         ItemStack gauche = inv.getFirstItem();

@@ -30,6 +30,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 
 ## Requis parfois
 
+- KS_Economy, KS_KaliumGive, KS_Didacticiel (didacticiel.yml) — LeKiwi06 — depuis le 2026-11-20 12:00 — marteau : prix, id de /kaliumgive, entrées du didacticiel (KS_Economy 1.13.7, KS_KaliumGive 1.14.0 compilés), à déployer avec KS_Marteau ; KS_Textures 1.2.3 recompilé (déjà réservé ci-dessus, rareté)
 - KalGames — LeKiwi06 — depuis le 2026-10-20 12:03 — menus en coffre (réglage coffres / fenêtres), accueil Créer / Rejoindre / Parties en cours, parties publiques masquées, relance en salle d'attente après 15 s (passé en « requis parfois » le 2026-10-20 13:30 : compilation de KG_Bingo / KG_BuildBattle, petites retouches)
 - KG_Menu — LeKiwi06 — depuis le 2026-10-20 12:03 — Paramètres › Affichage (coffres / fenêtres, affichages masquables), nouvel accueil de Kal-Games en coffre (passé en « requis parfois » le 2026-10-20 13:30 : compilation de KG_Bingo / KG_BuildBattle, petites retouches)
 - KS_VerrouVehicule — LeKiwi06 — depuis le 2026-10-16 20:05 — déploiement sur Event (tests) ; petite retouche pour KS_Trains étape 3 (wagon verrouillé dans un train non ancré)

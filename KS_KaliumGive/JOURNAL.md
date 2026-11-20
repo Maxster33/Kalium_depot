@@ -182,3 +182,13 @@ Compilé le 30/10/2026 (`sortie/KS_KaliumGive-1.13.0.jar`). **À déployer avec 
 déployé, non testé en jeu.
 
 **Déployé sur Kixster le 30/10/2026 à 18:56** (LeKiwi06 : « Oui, déploie » ; jars en place vérifiés identiques à `jars-deployes/` avant l'envoi), avec KS_MaleficesNether 1.0.0, KS_Jetons 2.3.0, KS_Atouts 1.2.0, KS_KaliumGive 1.13.0, KS_Textures 1.2.0 et le didacticiel ; geyser-bedrock 1.10.0 sur le proxy ; à redémarrer, non testé en jeu.
+
+## 1.14.0 - marteau (20/11/2026, LeKiwi06)
+
+- Nouveaux id_custom : `coeur_de_marteau`, `marteau`, `marteau_netherite` (KS_Marteau 1.0.0). KS_Marteau est un
+  **plugin Paper** (paper-plugin.yml) : ses classes ne sont pas visibles d'un plugin Bukkit, l'objet est donc créé par
+  réflexion (`KSMarteau.creer(id)` sur l'instance du plugin). Pas d'ajout au softdepend (l'appel a lieu à la commande).
+- Un id dont le plugin n'est pas activé reste refusé, comme avant.
+
+Statut : compilé, non déployé, non testé. À déployer avec KS_Marteau 1.0.0.
+

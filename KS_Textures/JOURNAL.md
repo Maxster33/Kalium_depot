@@ -141,3 +141,13 @@ Aucune texture : c'est une boîte de shulker du jeu à l'aspect enchanté (rien 
 LeKiwi06 : « fait les 2 » (ajouts aux plugins communs de la shulker améliorée).
 
 Compilé le 02/11/2026. À déployer avec KS_Economy 1.13.6 et KS_ShulkerAmelioree 1.0.0. **Déployé sur Kixster le 02/11/2026 à 14:28** (LeKiwi06 : « Oui, envoie »), avec KS_ShulkerAmelioree 1.0.0, KS_Encapsuleur 1.0.0, KS_Economy 1.13.6, KS_CoffreRenforce 1.3.1, KS_Textures 1.2.2 et `didacticiel.yml` ; jars de la même taille que ceux du dépôt. À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.2.3 - rareté du marteau (20/11/2026, LeKiwi06)
+
+Recompilé seulement, aucun changement de code : le barème copié de KS_Economy 1.13.7 contient le Cœur de Marteau
+(673,6), le Marteau (745,6) et le Marteau en netherite (2 228) de KS_Marteau 1.0.0 (prix validés par LeKiwi06 le
+20/11/2026). Le plancher du jeu les met tous en **Épique** (violet clair) : la masse et le noyau lourd sont déjà
+épiques dans le jeu. Aucune texture pour l'instant (masse et noyau lourd du jeu ; rien dans geyser-bedrock).
+
+Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.7 et KS_Marteau 1.0.0.
+

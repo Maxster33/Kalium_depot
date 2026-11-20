@@ -41,7 +41,8 @@ publié dans `CAHIER_DES_CHARGES.md` au déploiement.
   65 + 9 par niveau, enclume 4). Marteau tenu en main (ou dans l'autre main) : les objets au sol dans un rayon de
   3 / 5 / 7 blocs sont attirés vers le joueur (tous les 4 ticks), sauf les orbes d'XP, les objets d'un claim où il n'a
   pas les droits et les objets qu'il ne peut pas encore ramasser. Hors de tout tag du jeu : seul ce plugin le propose.
-- **Enclume** (`Enclume`) : marteau à gauche, résultat calculé par le plugin à la manière du jeu : livre enchanté ou
+- **Enclume** (`Enclume`, priorité LOW : avant la réduction de coût de KS_Enclume ; l'enclume en coffre de KS_Enclume
+  passe aussi par ce calcul) : marteau à gauche, résultat calculé par le plugin à la manière du jeu : livre enchanté ou
   marteau du même niveau ou noyau lourd à droite ; enchantements permis = ceux de la table + Raccommodage + malédiction de
   disparition ; Toucher de soie et Aura de feu incompatibles ; coûts et pénalité de travaux du jeu. Masse ordinaire :
   ni Magnétisme, ni marteau sacrifié.
@@ -59,5 +60,12 @@ Points à vérifier en premier, dans Kixster Test :
 - recette de forge sur Bedrock ;
 - alertes de KS_AntiCheat (x-ray en alertes) quand 9 minerais tombent d'un coup.
 
-Reste à faire : prix dans KS_Economy (Cœur 673,6, Marteau 745,6, Marteau en netherite 2 227,6, livre de Magnétisme 6),
-rareté KS_Textures, apparence Bedrock (geyser-bedrock) et texture Java, id KS_KaliumGive, entrée du didacticiel.
+- `KSMarteau.creer(id)` : `coeur_de_marteau`, `marteau`, `marteau_netherite` (pour KS_KaliumGive, par réflexion).
+
+Plugins communs (20/11, à déployer ensemble) : KS_Economy 1.13.7 (prix : Cœur 673,6, Marteau 745,6, Marteau en
+netherite 2 228 ; livre de Magnétisme = livre enchanté, 6 ; un marteau usé n'est pas racheté), KS_Textures 1.2.3
+(rareté : Épique, plancher du jeu), KS_KaliumGive 1.14.0 (`coeur_de_marteau`, `marteau`, `marteau_netherite`),
+`didacticiel.yml` (crafts > marteau, enclume > magnetisme ; `requiert: "KS_Marteau"` : visibles à la validation).
+
+Reste à faire : texture Java et apparence Bedrock (geyser-bedrock) ; pour l'instant, une masse et un noyau lourd du
+jeu (le Cœur avec l'aspect enchanté).

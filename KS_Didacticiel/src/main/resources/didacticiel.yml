@@ -260,6 +260,15 @@ themes:
           - "ks_encapsuleur:encapsuleur"
         requiert: "KS_Encapsuleur"
         nouveau: "2026-11-02"
+      marteau:
+        nom: "Marteau"
+        icone: MACE
+        texte: "Un noyau lourd entouré de 8 blocs de diamant donne le Cœur de Marteau ; avec 2 blocs de diamant et 2 bâtons, le Marteau. Il mine en 3 × 3 ce qu'une pioche mine (pas les blocs plus durs que celui frappé), accroupi un seul bloc, et frappe comme une masse. Table de forge : modèle de netherite + bloc de netherite pour le Marteau en netherite. Un noyau lourd à l'enclume le remet à neuf."
+        recettes:
+          - "ks_marteau:coeur_de_marteau"
+          - "ks_marteau:marteau"
+        requiert: "KS_Marteau"
+        nouveau: "2026-11-20"
 
   alcools:
     nom: "Alcools et alambic"
@@ -449,6 +458,12 @@ themes:
         icone: GRINDSTONE
         texte: "Accroupi, main vide, clic droit sur une meule, puis choisis un objet maudit. Chaque malédiction coûte 1 Cristal de purification (coffres de récompense)."
         nouveau: "2026-10-18"
+      magnetisme:
+        nom: "Magnétisme"
+        icone: ENCHANTED_BOOK
+        texte: "Nouvel enchantement du Marteau, à la table d'enchantement (sur le marteau ou un livre). Marteau en main, les objets au sol sont attirés vers toi : 3, 5 ou 7 blocs selon le niveau. Pas l'expérience, ni les objets d'un claim où tu n'as pas les droits."
+        requiert: "KS_Marteau"
+        nouveau: "2026-11-20"
 
   economie:
     nom: "Économie"
