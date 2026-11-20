@@ -64,9 +64,10 @@ final class Regles {
         r("cristal_purification", "ks_meule:cristal");
         r("casse_croute_dore", "ks_cassecroute:casse_croute");
         r("amulette_mangeuse_de_mal", "ks_maleficesnether:amulette"); // 1.2.0 (KS_MaleficesNether)
-        // 1.2.3 (KS_Marteau) : marteau en diamant et en netherite (le Cœur de Marteau garde l'image du noyau lourd)
-        r("marteau", "ks_marteau:marteau", "diamant");
-        r("marteau_netherite", "ks_marteau:marteau", "netherite");
+        // 1.2.3 (KS_SuperTool) : machines dessinées (le Cœur de machine garde l'image du noyau lourd ; les machines sans
+        // image gardent celle de l'outil du jeu)
+        r("foreuse", "ks_supertool:outil", "foreuse");
+        r("foreuse_netherite", "ks_supertool:outil", "foreuse_netherite");
 
         // KS_Alcools : la version jetable (potion jetable) garde l'image de l'alcool
         for (String a : List.of("neutre", "tequila", "vodka", "hydromel", "manzana", "biere", "tabascoolise")) {

@@ -1,4 +1,4 @@
-package fr.kalium.marteau;
+package fr.kalium.supertool;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;

@@ -181,9 +181,9 @@ alcool a deux objets Bedrock (potion et potion jetable), un bateau à jukebox un
   fichiers). Pack `KaLium-objets-1.11.0.mcpack` construit. **Envoyé sur le proxy le 02/11/2026 à 13:44 (LeKiwi06 : « Oui, déploie ») avec `kalium_blocs.json` ; le 1.10.0 laissé dans `packs/`, à ranger proxy arrêté. Non testé.** Mise en place :
   `kalium_blocs.json` dans `custom_mappings/` et le `.mcpack` dans `packs/`, puis rangement du 1.10.0 proxy arrêté (étapes
   4 et 5 ci-dessus).
-- **1.12.0 (20/11/2026, LeKiwi06)** : marteau et marteau en netherite de KS_Marteau 1.0.0 (base : masse ;
-  `custom_model_data` `marteau` / `marteau_netherite` posé par KS_Textures 1.2.3 ; tenus comme un outil,
+- **1.12.0 (20/11/2026, LeKiwi06)** : Foreuse et Foreuse en netherite de KS_SuperTool 1.0.0 (base : masse ;
+  `custom_model_data` `foreuse` / `foreuse_netherite` posé par KS_Textures 1.2.3 ; tenues comme un outil,
   `display_handheld`). Textures dessinées par LeKiwi06, couleurs du jeu par Claude (`visuels-objets/png`). Le Cœur de
-  Marteau garde l'image du noyau lourd. Pack `KaLium-objets-1.12.0.mcpack` construit, **non envoyé, non testé**.
+  machine garde l'image du noyau lourd ; Abatteuse, Excavatrice, Laboureuse : pas encore d'image. Pack `KaLium-objets-1.12.0.mcpack` construit, **non envoyé, non testé**.
   Mise en place : `kalium_objets.json` dans `custom_mappings/` et le `.mcpack` dans `packs/`, puis rangement du 1.11.0
   proxy arrêté (étapes 4 et 5 ci-dessus).

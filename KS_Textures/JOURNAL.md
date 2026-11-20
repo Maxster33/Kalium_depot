@@ -142,19 +142,19 @@ LeKiwi06 : « fait les 2 » (ajouts aux plugins communs de la shulker amélioré
 
 Compilé le 02/11/2026. À déployer avec KS_Economy 1.13.6 et KS_ShulkerAmelioree 1.0.0. **Déployé sur Kixster le 02/11/2026 à 14:28** (LeKiwi06 : « Oui, envoie »), avec KS_ShulkerAmelioree 1.0.0, KS_Encapsuleur 1.0.0, KS_Economy 1.13.6, KS_CoffreRenforce 1.3.1, KS_Textures 1.2.2 et `didacticiel.yml` ; jars de la même taille que ceux du dépôt. À redémarrer par LeKiwi06. Statut : non testé en jeu.
 
-## 1.2.3 - rareté du marteau (20/11/2026, LeKiwi06)
+## 1.2.3 - rareté et textures des machines de KS_SuperTool (20/11/2026, LeKiwi06)
 
-Recompilé seulement, aucun changement de code : le barème copié de KS_Economy 1.13.7 contient le Cœur de Marteau
-(673,6), le Marteau (745,6) et le Marteau en netherite (2 228) de KS_Marteau 1.0.0 (prix validés par LeKiwi06 le
-20/11/2026). Le plancher du jeu les met tous en **Épique** (violet clair) : la masse et le noyau lourd sont déjà
-épiques dans le jeu.
+Barème copié de KS_Economy 1.13.7 : Cœur de machine (673,6), Foreuse et Abatteuse (745,6), Excavatrice (673,6),
+Laboureuse (709,6) et leurs versions netherite (2 156 à 2 228), prix validés par LeKiwi06 le 20/11/2026. Couleurs :
+le Cœur et la Foreuse en **Épique** (violet clair) par le plancher du jeu (noyau lourd et masse sont épiques) ;
+l'Abatteuse, l'Excavatrice et la Laboureuse en diamant en **Rare** (bleu clair, entre 100 et 1 000) ; toutes les
+versions netherite en **Épique** (au-dessus de 1 000).
 
-Textures (même version, 20/11) : règles `marteau` (`ks_marteau:marteau` = `diamant`) et `marteau_netherite`
-(= `netherite`) dans `Regles.java` ; images dessinées par LeKiwi06, couleurs du jeu par Claude
-(`visuels-objets/png`). Pack Java **1.5.0** (`visuels-objets/pack.py` : base `mace`, tenu comme la masse avec
-`item/handheld_mace`, inclut la liane du Shéjiǔ de la 1.4.0), SHA-1 `0a0cdfc41bc4ca18094a8b948696bab2537350b6`, à
-déposer sur minepack.fr par LeKiwi06 puis à recopier dans `relay.properties` du proxy (KaliumRelay : pack-url,
-pack-sha1). Bedrock : geyser-bedrock 1.12.0. Le Cœur de Marteau garde l'image du noyau lourd (aspect enchanté).
+Textures : règles `foreuse` et `foreuse_netherite` (`ks_supertool:outil`) dans `Regles.java` ; images dessinées par
+LeKiwi06, couleurs du jeu par Claude (`visuels-objets/png`). Pack Java **1.5.0** (`visuels-objets/pack.py` : base
+`mace`, tenue comme la masse avec `item/handheld_mace`, inclut la liane du Shéjiǔ de la 1.4.0), à déposer sur
+minepack.fr par LeKiwi06 puis à recopier dans `relay.properties` du proxy (KaliumRelay : pack-url, pack-sha1).
+Bedrock : geyser-bedrock 1.12.0. Abatteuse, Excavatrice, Laboureuse : pas encore d'image (outils en diamant et en
+netherite du jeu). Le Cœur de machine garde l'image du noyau lourd (aspect enchanté).
 
-Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.7 et KS_Marteau 1.0.0.
-
+Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.7 et KS_SuperTool 1.0.0.

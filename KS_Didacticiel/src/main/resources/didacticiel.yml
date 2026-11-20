@@ -260,14 +260,23 @@ themes:
           - "ks_encapsuleur:encapsuleur"
         requiert: "KS_Encapsuleur"
         nouveau: "2026-11-02"
-      marteau:
-        nom: "Marteau"
+      machines:
+        nom: "Machines"
         icone: MACE
-        texte: "Un noyau lourd entouré de 8 blocs de diamant donne le Cœur de Marteau ; avec 2 blocs de diamant et 2 bâtons, le Marteau. Il mine en 3 × 3 ce qu'une pioche mine (pas les blocs plus durs que celui frappé), accroupi un seul bloc, et frappe comme une masse. Table de forge : modèle de netherite + bloc de netherite pour le Marteau en netherite. Un noyau lourd à l'enclume le remet à neuf."
+        texte: "Un noyau lourd entouré de 8 blocs de diamant donne le Cœur de machine. Dans la forme de l'outil, le Cœur au-dessus de 2 bâtons et des blocs de diamant : la Foreuse (masse, mine en 3 × 3, pas plus dur que le bloc frappé), l'Abatteuse (hache), l'Excavatrice (pelle) et la Laboureuse (houe) travaillent en 3 × 3 ; accroupi, un seul bloc. Table de forge : modèle + bloc de netherite. Un noyau lourd à l'enclume les remet à neuf."
         recettes:
-          - "ks_marteau:coeur_de_marteau"
-          - "ks_marteau:marteau"
-        requiert: "KS_Marteau"
+          - "ks_supertool:coeur_de_machine"
+          - "ks_supertool:foreuse"
+          - "ks_supertool:abatteuse"
+          - "ks_supertool:excavatrice"
+          - "ks_supertool:laboureuse"
+        requiert: "KS_SuperTool"
+        nouveau: "2026-11-20"
+      machines-clic:
+        nom: "Machines au clic droit"
+        icone: DIAMOND_HOE
+        texte: "En 3 × 3 : la Laboureuse laboure (podzol et mycélium compris, sans passer par le chemin) et, en cassant une culture mûre, récolte et replante celles autour ; l'Excavatrice fait des chemins ; l'Abatteuse écorce, gratte le cuivre et retire la cire."
+        requiert: "KS_SuperTool"
         nouveau: "2026-11-20"
 
   alcools:
@@ -461,8 +470,8 @@ themes:
       magnetisme:
         nom: "Magnétisme"
         icone: ENCHANTED_BOOK
-        texte: "Nouvel enchantement du Marteau, à la table d'enchantement (sur le marteau ou un livre). Marteau en main, les objets au sol sont attirés vers toi : 3, 5 ou 7 blocs selon le niveau. Pas l'expérience, ni les objets d'un claim où tu n'as pas les droits."
-        requiert: "KS_Marteau"
+        texte: "Nouvel enchantement des machines, à la table d'enchantement (sur une machine ou un livre). Machine en main, les objets au sol sont attirés vers toi : 3, 5 ou 7 blocs selon le niveau. Pas l'expérience, ni les objets d'un claim où tu n'as pas les droits."
+        requiert: "KS_SuperTool"
         nouveau: "2026-11-20"
 
   economie:

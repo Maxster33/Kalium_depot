@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.kalium</groupId>
-    <artifactId>KS_Marteau</artifactId>
+    <artifactId>KS_SuperTool</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>KS_Marteau</name>
+    <name>KS_SuperTool</name>
 
     <properties>
         <!-- Paper 26.x requires Java 25 -->

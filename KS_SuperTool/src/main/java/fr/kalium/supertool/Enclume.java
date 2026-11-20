@@ -1,6 +1,5 @@
-package fr.kalium.marteau;
+package fr.kalium.supertool;
 
-import fr.kalium.marteau.KSMarteau.Niveau;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -13,6 +12,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.inventory.PrepareGrindstoneEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
@@ -26,20 +27,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Enclume et table de forge (cahier § 3).
+ * Enclume, table de forge et protections (cahiers § 3, 6 et 8).
  *
- * Enclume, marteau à gauche : KS_Marteau calcule le résultat lui-même, à la manière du jeu (AnvilMenu.createResult),
- * parce que le jeu traite le marteau comme une masse (il accepterait Densité, Brèche, Charge de vent, Châtiment et
- * refuserait Efficacité, Toucher de soie et Magnétisme d'un livre) :
- * - à droite : un livre enchanté, un marteau du même niveau, ou un noyau lourd ordinaire qui remet le marteau à neuf
+ * Enclume, machine à gauche : KS_SuperTool calcule le résultat lui-même, à la manière du jeu (AnvilMenu.createResult),
+ * parce que le jeu accepterait des enchantements interdits (Fortune, Densité...) et refuserait Magnétisme :
+ * - à droite : un livre enchanté, la même machine (même niveau), ou un noyau lourd ordinaire qui la remet à neuf
  *   (« renouveler le noyau », réponse de LeKiwi06 du 20/11) ; rien d'autre (ni diamant, ni baguette de breeze) ;
- * - seuls les enchantements permis passent ; un enchantement incompatible coûte 1 et n'est pas ajouté ; deux niveaux
- *   égaux donnent le niveau suivant (au plus le maximum) ;
- * - coût : celui du jeu (coût d'enclume × niveau, divisé par 2 pour un livre ; 2 pour une réparation par un autre
- *   marteau ; 1 pour un renommage ; plus les pénalités de travaux précédents), pénalité du résultat doublée + 1.
- * Masse ordinaire à gauche : ni Magnétisme, ni marteau à droite (un marteau ne sert pas à réparer une masse).
- *
- * Forge : seul un marteau en diamant (usé et enchanté compris) devient un marteau en netherite.
+ * - seuls les enchantements permis (Table.permis) passent ; un enchantement incompatible coûte 1 et n'est pas ajouté ;
+ *   deux niveaux égaux donnent le niveau suivant (au plus le maximum) ;
+ * - coût : celui du jeu (coût d'enclume × niveau, divisé par 2 pour un livre ; 2 pour une réparation par une autre
+ *   machine ; 1 pour un renommage ; plus les pénalités de travaux précédents), pénalité du résultat doublée + 1.
+ * Outil ordinaire à gauche : ni Magnétisme, ni machine à droite (une machine ne sert pas à réparer un outil).
+ * Forge : seule une machine en diamant (usée et enchantée comprise) devient la même machine en netherite, avec un bloc
+ * de netherite ; la recette du jeu (lingot) est refusée pour une machine.
+ * Établi et meule : une machine ne se combine pas avec un autre objet (la réparation du jeu perdrait la machine).
  */
 final class Enclume implements Listener {
 
@@ -58,21 +59,21 @@ final class Enclume implements Listener {
         AnvilInventory inv = event.getInventory();
         ItemStack gauche = inv.getFirstItem();
         ItemStack droite = inv.getSecondItem();
-        Niveau niveau = KSMarteau.niveau(gauche);
-        if (niveau == null) {
+        Outil outil = KSSuperTool.outil(gauche);
+        if (outil == null) {
             proteger(event, gauche, droite);
             return;
         }
         if (droite == null || droite.getType().isAir()) {
-            return; // renommage seul : le résultat du jeu garde tous les composants du marteau
+            return; // renommage seul : le résultat du jeu garde tous les composants de la machine
         }
-        if (droite.getType() == Material.HEAVY_CORE && !KSMarteau.estCoeur(droite)) {
+        if (droite.getType() == Material.HEAVY_CORE && !KSSuperTool.estCoeur(droite)) {
             renouvelerNoyau(event, gauche, droite);
             return;
         }
         boolean livre = droite.getType() == Material.ENCHANTED_BOOK;
-        Niveau autre = KSMarteau.niveau(droite);
-        if (!livre && autre != niveau) {
+        Outil autre = KSSuperTool.outil(droite);
+        if (!livre && !outil.equals(autre)) {
             event.setResult(null);
             return;
         }
@@ -84,7 +85,7 @@ final class Enclume implements Listener {
         if (autre != null) {
             Damageable mg = (Damageable) gauche.getItemMeta();
             Damageable md = (Damageable) droite.getItemMeta();
-            int max = niveau.solidite;
+            int max = outil.niveau().solidite;
             int reste = (max - mg.getDamage()) + (max - md.getDamage()) + max * 12 / 100;
             int usure = Math.max(0, max - reste);
             if (usure < mg.getDamage()) {
@@ -102,7 +103,7 @@ final class Enclume implements Listener {
         boolean ajoute = false;
         for (Map.Entry<Enchantment, Integer> e : source.entrySet()) {
             Enchantment ench = e.getKey();
-            if (!Table.permis(ench)) {
+            if (!Table.permis(outil, ench)) {
                 continue;
             }
             boolean compatible = true;
@@ -145,8 +146,8 @@ final class Enclume implements Listener {
     }
 
     /**
-     * Renouveler le noyau (réponse de LeKiwi06 du 20/11) : un marteau usé + un noyau lourd ordinaire (pas un Cœur de
-     * Marteau) = le marteau remis à neuf, un seul noyau consommé. Coût comme une réparation par matériau du jeu :
+     * Renouveler le noyau (réponse de LeKiwi06 du 20/11) : une machine usée + un noyau lourd ordinaire (pas un Cœur de
+     * machine) = la machine remise à neuf, un seul noyau consommé. Coût comme une réparation par matériau du jeu :
      * 1 niveau, plus les pénalités de travaux précédents (doublées ensuite).
      */
     private static void renouvelerNoyau(PrepareAnvilEvent event, ItemStack gauche, ItemStack droite) {
@@ -186,17 +187,17 @@ final class Enclume implements Listener {
         return 1;
     }
 
-    /** Masse ordinaire (ou autre objet) à gauche : pas de Magnétisme, pas de marteau sacrifié pour une masse. */
+    /** Outil ordinaire (ou autre objet) à gauche : pas de Magnétisme, pas de machine sacrifiée pour un outil. */
     private static void proteger(PrepareAnvilEvent event, ItemStack gauche, ItemStack droite) {
         if (gauche == null || gauche.getType() == Material.BOOK || gauche.getType() == Material.ENCHANTED_BOOK) {
             return; // livre + livre : Magnétisme se combine comme les autres enchantements
         }
-        if (KSMarteau.niveau(droite) != null) {
+        if (KSSuperTool.outil(droite) != null) {
             event.setResult(null);
             return;
         }
         ItemStack resultat = event.getResult();
-        Enchantment m = KSMarteau.magnetisme();
+        Enchantment m = KSSuperTool.magnetisme();
         if (resultat != null && m != null && resultat.containsEnchantment(m)) {
             event.setResult(null);
         }
@@ -210,14 +211,41 @@ final class Enclume implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onForge(PrepareSmithingEvent event) {
         Recipe recette = event.getInventory().getRecipe();
-        if (!(recette instanceof Keyed k) || !k.getKey().equals(recetteNetherite)) {
+        ItemStack base = event.getInventory().getInputEquipment();
+        Outil outil = KSSuperTool.outil(base);
+        boolean notre = recette instanceof Keyed k && k.getKey().equals(recetteNetherite);
+        if (!notre) {
+            if (outil != null) {
+                event.setResult(null); // recette du jeu (lingot de netherite, garnitures...) : pas sur une machine
+            }
             return;
         }
-        ItemStack base = event.getInventory().getInputEquipment();
-        if (KSMarteau.niveau(base) != Niveau.DIAMANT) {
+        if (outil == null || outil.niveau() != Outil.Niveau.DIAMANT) {
             event.setResult(null);
             return;
         }
-        event.setResult(KSMarteau.ameliorer(base));
+        event.setResult(KSSuperTool.ameliorer(base, outil));
+    }
+
+    /** Établi : la réparation du jeu (deux outils pareils) ou toute recette qui prendrait une machine. */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onEtabli(PrepareItemCraftEvent event) {
+        for (ItemStack objet : event.getInventory().getMatrix()) {
+            if (KSSuperTool.outil(objet) != null) {
+                event.getInventory().setResult(null);
+                return;
+            }
+        }
+    }
+
+    /** Meule : une machine seule perd ses enchantements comme dans le jeu ; avec un autre objet, rien. */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onMeule(PrepareGrindstoneEvent event) {
+        ItemStack haut = event.getInventory().getUpperItem();
+        ItemStack bas = event.getInventory().getLowerItem();
+        boolean deux = haut != null && !haut.getType().isAir() && bas != null && !bas.getType().isAir();
+        if (deux && (KSSuperTool.outil(haut) != null || KSSuperTool.outil(bas) != null)) {
+            event.setResult(null);
+        }
     }
 }

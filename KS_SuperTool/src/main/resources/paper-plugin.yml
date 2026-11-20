@@ -1,0 +1,13 @@
+name: KS_SuperTool
+version: '${project.version}'
+main: fr.kalium.supertool.KSSuperTool
+bootstrapper: fr.kalium.supertool.Demarrage
+api-version: '26.2'
+description: "Machines de Kixster - Foreuse, Abatteuse, Excavatrice, Laboureuse : outils en 3 x 3, enchantement Magnetisme, versions netherite."
+authors: [KaLium]
+dependencies:
+  server:
+    SimpleClaimSystem:
+      load: BEFORE
+      required: false
+      join-classpath: true

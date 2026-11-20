@@ -1,4 +1,4 @@
-package fr.kalium.marteau;
+package fr.kalium.supertool;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -13,7 +13,7 @@ import org.bukkit.util.Vector;
 import java.util.UUID;
 
 /**
- * Magnétisme (cahier § 3 et 6) : un marteau tenu en main (ou dans l'autre main) avec Magnétisme attire vers le joueur
+ * Magnétisme (cahiers § 3 et 6) : une machine tenue en main (ou dans l'autre main) avec Magnétisme attire vers le joueur
  * les objets au sol dans un rayon de 3 / 5 / 7 blocs (niveaux I à III). Pas les orbes d'XP ; pas les objets situés
  * dans un claim où le joueur n'a pas les droits ; pas les objets qu'il ne peut pas encore ramasser (délai du jeu après
  * un lancer, objet réservé à un autre joueur).
@@ -42,7 +42,7 @@ final class Magnetisme {
     }
 
     private void attirer() {
-        Enchantment m = KSMarteau.magnetisme();
+        Enchantment m = KSSuperTool.magnetisme();
         if (m == null) {
             return;
         }
@@ -52,7 +52,7 @@ final class Magnetisme {
             }
             int niveau = Math.max(niveau(joueur.getInventory().getItemInMainHand(), m),
                     niveau(joueur.getInventory().getItemInOffHand(), m));
-            if (niveau <= 0 || !PhaseTest.ouvert("KS_Marteau", joueur.getWorld())) {
+            if (niveau <= 0 || !PhaseTest.ouvert("KS_SuperTool", joueur.getWorld())) {
                 continue;
             }
             int r = rayon(niveau);
@@ -81,6 +81,6 @@ final class Magnetisme {
     }
 
     private static int niveau(ItemStack objet, Enchantment m) {
-        return KSMarteau.niveau(objet) != null ? objet.getEnchantmentLevel(m) : 0;
+        return KSSuperTool.outil(objet) != null ? objet.getEnchantmentLevel(m) : 0;
     }
 }

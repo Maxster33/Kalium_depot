@@ -1,5 +1,5 @@
 #!/bin/sh
-# Compile KS_Marteau (ECJ, cible Java 21 : tourne sur Java 21+ / 25) et assemble le .jar (plugin Paper : paper-plugin.yml)
+# Compile KS_SuperTool (ECJ, cible Java 21 : tourne sur Java 21+ / 25) et assemble le .jar (plugin Paper : paper-plugin.yml)
 # Outils : <racine du depot>/outils-build si present (PC local, ignore par git), sinon /tmp/claude-0 (espace cloud).
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
@@ -19,10 +19,10 @@ case "$(uname -s)" in
 esac
 CP="$(win "$TOOLS/classes/KLM_Menu")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
-OUT="$TOOLS/classes/KS_Marteau"
+OUT="$TOOLS/classes/KS_SuperTool"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"
 java -jar "$(win "$TOOLS/ecj.jar")" -21 -proc:none -nowarn -encoding UTF-8 \
   -cp "$CP" -d "$(win "$OUT")" src/main/java
 sed "s/\${project.version}/$VERSION/" src/main/resources/paper-plugin.yml > "$OUT/paper-plugin.yml"
-jar cf "$DEST/KS_Marteau-$VERSION.jar" -C "$OUT" .
-echo "OK -> $DEST/KS_Marteau-$VERSION.jar"
+jar cf "$DEST/KS_SuperTool-$VERSION.jar" -C "$OUT" .
+echo "OK -> $DEST/KS_SuperTool-$VERSION.jar"

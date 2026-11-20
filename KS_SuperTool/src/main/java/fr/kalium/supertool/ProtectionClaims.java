@@ -1,4 +1,4 @@
-package fr.kalium.marteau;
+package fr.kalium.supertool;
 
 import fr.xyness.SCS.API.SimpleClaimSystemAPI_Provider;
 import fr.xyness.SCS.Types.Claim;

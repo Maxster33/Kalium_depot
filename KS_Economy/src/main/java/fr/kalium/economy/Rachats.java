@@ -258,7 +258,7 @@ final class Rachats implements CommandExecutor {
             if (marques.has(CONTENU_SHULKER)) {
                 return false;
             }
-            // 1.13.7 : un objet custom usé (marteau de KS_Marteau) n'est pas racheté, comme un objet du jeu.
+            // 1.13.7 : un objet custom usé (machine de KS_SuperTool) n'est pas racheté, comme un objet du jeu.
             if (meta instanceof Damageable usure && usure.hasDamage() && usure.getDamage() > 0) {
                 return false;
             }

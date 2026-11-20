@@ -307,14 +307,14 @@
         "textures/items/kalium_amulette_mangeuse_de_mal"
       ]
     },
-    "kalium.marteau": {
+    "kalium.foreuse": {
       "textures": [
-        "textures/items/kalium_marteau"
+        "textures/items/kalium_foreuse"
       ]
     },
-    "kalium.marteau_netherite": {
+    "kalium.foreuse_netherite": {
       "textures": [
-        "textures/items/kalium_marteau_netherite"
+        "textures/items/kalium_foreuse_netherite"
       ]
     }
   }

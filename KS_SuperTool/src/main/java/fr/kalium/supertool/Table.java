@@ -1,9 +1,10 @@
-package fr.kalium.marteau;
+package fr.kalium.supertool;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Enchantable;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
+import io.papermc.paper.registry.TypedKey;
 import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -15,6 +16,7 @@ import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,35 +28,73 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Table d'enchantement (cahier § 3) : pour un marteau et pour un livre, KS_Marteau tire lui-même les enchantements,
- * avec l'algorithme du jeu (EnchantmentHelper.selectEnchantment : niveau modifié par l'enchantabilité, tirage pondéré,
- * enchantements suivants avec 1 chance sur 50 par niveau, un enchantement retiré d'un livre qui en a plusieurs).
- * Les coûts en niveaux restent ceux du jeu (bibliothèques).
- * - Marteau : Efficacité, Toucher de soie, Solidité, Aura de feu et Magnétisme ; ni Brèche, ni Densité, ni Charge de
- *   vent, ni Châtiment, ni Fléau des arthropodes (réponse de LeKiwi06 du 20/11), ni Fortune.
+ * Table d'enchantement (cahiers § 3) : pour une machine et pour un livre, KS_SuperTool tire lui-même les
+ * enchantements, avec l'algorithme du jeu (EnchantmentHelper.selectEnchantment : niveau modifié par l'enchantabilité,
+ * tirage pondéré, enchantements suivants avec 1 chance sur 50 par niveau, un enchantement retiré d'un livre qui en a
+ * plusieurs). Les coûts en niveaux restent ceux du jeu (bibliothèques).
+ * - Foreuse : Efficacité, Toucher de soie, Solidité, Aura de feu et Magnétisme ; ni Brèche, ni Densité, ni Charge de
+ *   vent, ni Châtiment, ni Fléau des arthropodes, ni Fortune (réponses de LeKiwi06 du 20/11).
+ * - Abatteuse, Excavatrice, Laboureuse : ceux que la table du jeu donne à l'outil, sans Fortune, plus Magnétisme.
  * - Livre : les enchantements du jeu (tag in_enchanting_table) et Magnétisme, aussi fréquent que Fortune.
- * Seul ce tirage propose Magnétisme : dans un monde où KS_Marteau est en test, ses écouteurs ne sont pas appelés et la
- * table reste celle du jeu.
+ * Seul ce tirage propose Magnétisme : dans un monde où KS_SuperTool est en test, ses écouteurs ne sont pas appelés et
+ * la table reste celle du jeu.
  */
 final class Table implements Listener {
 
-    /** Enchantements du marteau à la table (ordre sans importance). */
-    static List<Enchantment> enchantementsMarteau() {
+    /** Enchantements de la Foreuse à la table. */
+    private static List<Enchantment> enchantementsForeuse() {
         List<Enchantment> l = new ArrayList<>(List.of(Enchantment.EFFICIENCY, Enchantment.SILK_TOUCH,
                 Enchantment.UNBREAKING, Enchantment.FIRE_ASPECT));
-        if (KSMarteau.magnetisme() != null) {
-            l.add(KSMarteau.magnetisme());
+        if (KSSuperTool.magnetisme() != null) {
+            l.add(KSSuperTool.magnetisme());
         }
         return l;
     }
 
-    /** Enchantements permis sur le marteau (table + enclume) : ceux de la table, plus Raccommodage et la malédiction. */
-    static boolean permis(Enchantment e) {
-        return enchantementsMarteau().contains(e) || e.equals(Enchantment.MENDING)
-                || e.equals(Enchantment.VANISHING_CURSE);
+    private static List<Enchantment> table;
+
+    /** Enchantements de la table du jeu (tag in_enchanting_table). */
+    private static List<Enchantment> enchantementsTable() {
+        if (table == null) {
+            table = new ArrayList<>(RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT)
+                    .getTagValues(EnchantmentTagKeys.IN_ENCHANTING_TABLE));
+        }
+        return table;
     }
 
-    /** Incompatibles sur le marteau : règles du jeu, plus Toucher de soie et Aura de feu (cahier). */
+    /** Enchantements d'une machine à la table. */
+    static List<Enchantment> enchantements(Outil outil) {
+        if (outil.machine() == Outil.Machine.FOREUSE) {
+            return enchantementsForeuse();
+        }
+        TypedKey<ItemType> base = TypedKey.create(RegistryKey.ITEM, outil.base().getKey());
+        List<Enchantment> l = new ArrayList<>();
+        for (Enchantment e : enchantementsTable()) {
+            // Objets principaux (ceux de la table) ; absents : ceux de l'enclume, comme le jeu.
+            var principaux = e.getPrimaryItems() != null ? e.getPrimaryItems() : e.getSupportedItems();
+            if (!e.equals(Enchantment.FORTUNE) && principaux.contains(base)) {
+                l.add(e);
+            }
+        }
+        if (KSSuperTool.magnetisme() != null) {
+            l.add(KSSuperTool.magnetisme());
+        }
+        return l;
+    }
+
+    /** Enchantements permis sur une machine (table + enclume). */
+    static boolean permis(Outil outil, Enchantment e) {
+        if (e.equals(KSSuperTool.magnetisme())) {
+            return true;
+        }
+        if (outil.machine() == Outil.Machine.FOREUSE) {
+            return enchantementsForeuse().contains(e) || e.equals(Enchantment.MENDING)
+                    || e.equals(Enchantment.VANISHING_CURSE);
+        }
+        return !e.equals(Enchantment.FORTUNE) && e.canEnchantItem(new ItemStack(outil.base()));
+    }
+
+    /** Incompatibles : règles du jeu, plus Toucher de soie et Aura de feu (Foreuse, cahier). */
     static boolean incompatibles(Enchantment a, Enchantment b) {
         if (a.equals(b)) {
             return true;
@@ -72,10 +112,9 @@ final class Table implements Listener {
 
     private List<Enchantment> enchantementsLivres() {
         if (livres == null) {
-            List<Enchantment> l = new ArrayList<>(RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT)
-                    .getTagValues(EnchantmentTagKeys.IN_ENCHANTING_TABLE));
-            if (KSMarteau.magnetisme() != null && !l.contains(KSMarteau.magnetisme())) {
-                l.add(KSMarteau.magnetisme());
+            List<Enchantment> l = new ArrayList<>(enchantementsTable());
+            if (KSSuperTool.magnetisme() != null && !l.contains(KSSuperTool.magnetisme())) {
+                l.add(KSSuperTool.magnetisme());
             }
             livres = l;
         }
@@ -86,13 +125,14 @@ final class Table implements Listener {
     public void onPrepare(PrepareItemEnchantEvent event) {
         ItemStack objet = event.getItem();
         boolean livre = objet.getType() == Material.BOOK;
-        if (!livre && KSMarteau.niveau(objet) == null) {
+        Outil outil = KSSuperTool.outil(objet);
+        if (!livre && outil == null) {
             return;
         }
-        if (livre && KSMarteau.magnetisme() == null) {
+        if (livre && KSSuperTool.magnetisme() == null) {
             return; // rien à ajouter au tirage du jeu
         }
-        List<Enchantment> liste = livre ? enchantementsLivres() : enchantementsMarteau();
+        List<Enchantment> liste = livre ? enchantementsLivres() : enchantements(outil);
         int enchantabilite = livre ? 1 : enchantabilite(objet);
         int graine = event.getEnchanter().getEnchantmentSeed();
         int[] couts = event.getExpLevelCostsOffered();
@@ -125,10 +165,10 @@ final class Table implements Listener {
     public void onEnchant(EnchantItemEvent event) {
         ItemStack objet = event.getItem();
         boolean livre = objet.getType() == Material.BOOK;
-        if (!livre && KSMarteau.niveau(objet) == null) {
+        if (!livre && KSSuperTool.outil(objet) == null) {
             return;
         }
-        if (livre && KSMarteau.magnetisme() == null) {
+        if (livre && KSSuperTool.magnetisme() == null) {
             return;
         }
         List<Map<Enchantment, Integer>> tirages = proposes.get(event.getEnchanter().getUniqueId());
@@ -156,7 +196,7 @@ final class Table implements Listener {
     record Choix(Enchantment e, int niveau) {
     }
 
-    /** EnchantmentHelper.selectEnchantment (Minecraft 26.x), avec la liste et les incompatibilités du marteau. */
+    /** EnchantmentHelper.selectEnchantment (Minecraft 26.x), avec la liste et les incompatibilités des machines. */
     static List<Choix> choisir(Random hasard, List<Enchantment> liste, int cout, int enchantabilite) {
         List<Choix> resultat = new ArrayList<>();
         if (enchantabilite <= 0) {

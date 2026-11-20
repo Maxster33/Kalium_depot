@@ -66,11 +66,15 @@ public final class KSKaliumGive extends JavaPlugin {
         // 1.13.0 (maléfices du Nether) : amulette mangeuse de mal de KS_MaleficesNether (aussi au butin des récompenses).
         OBJETS.put("amulette_mangeuse_de_mal", new ObjetCustom("KS_MaleficesNether",
                 () -> fr.kalium.malefices.KSMaleficesNether.creerAmulette()));
-        // 1.14.0 (marteau) : objets de KS_Marteau, plugin Paper dont les classes ne sont pas visibles d'ici : appel par
-        // réflexion de KSMarteau.creer(id).
-        for (String id : List.of("coeur_de_marteau", "marteau", "marteau_netherite")) {
-            OBJETS.put(id, new ObjetCustom("KS_Marteau", () -> parReflexion("KS_Marteau", id)));
+        // 1.14.0 (machines) : objets de KS_SuperTool, plugin Paper dont les classes ne sont pas visibles d'ici : appel par
+        // réflexion de KSSuperTool.creer(id).
+        for (String machine : List.of("foreuse", "abatteuse", "excavatrice", "laboureuse")) {
+            for (String id : List.of(machine, machine + "_netherite")) {
+                OBJETS.put(id, new ObjetCustom("KS_SuperTool", () -> parReflexion("KS_SuperTool", id)));
+            }
         }
+        OBJETS.put("coeur_de_machine", new ObjetCustom("KS_SuperTool", () -> parReflexion("KS_SuperTool",
+                "coeur_de_machine")));
     }
 
     /** Objet d'un plugin Paper par sa méthode publique statique creer(String) ; null si elle échoue. */
