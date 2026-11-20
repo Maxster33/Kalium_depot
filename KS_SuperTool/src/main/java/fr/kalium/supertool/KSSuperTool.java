@@ -72,13 +72,31 @@ public final class KSSuperTool extends JavaPlugin implements Listener {
         }
         boolean claims = getServer().getPluginManager().isPluginEnabled("SimpleClaimSystem");
         getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new Minage(this), this);
+        boolean cultures = culturesDisponibles();
+        getServer().getPluginManager().registerEvents(new Minage(this, cultures), this);
         getServer().getPluginManager().registerEvents(new Clic(claims), this);
         getServer().getPluginManager().registerEvents(new Table(), this);
         getServer().getPluginManager().registerEvents(new Enclume(recetteNetherite), this);
         new Magnetisme(this, claims).demarrer();
         ajouterRecettes();
-        getLogger().info("Machines prêtes (claims " + (claims ? "SimpleClaimSystem" : "absents") + ").");
+        getLogger().info("Machines prêtes (claims " + (claims ? "SimpleClaimSystem" : "absents") + ", cultures "
+                + (cultures ? "KS_Cultures" : "du jeu seulement") + ").");
+    }
+
+    /** KS_Cultures 1.1.0 ou plus (API de récolte) est activé. */
+    private boolean culturesDisponibles() {
+        if (!getServer().getPluginManager().isPluginEnabled("KS_Cultures")) {
+            return false;
+        }
+        try {
+            Class.forName("fr.kalium.cultures.KSCultures").getMethod("recolter", org.bukkit.entity.Player.class,
+                    org.bukkit.block.Block.class);
+            return true;
+        } catch (ReflectiveOperationException | LinkageError e) {
+            getLogger().warning("KS_Cultures trop ancien (1.1.0 requise) : la Laboureuse ne récolte que les cultures "
+                    + "du jeu.");
+            return false;
+        }
     }
 
     @Override

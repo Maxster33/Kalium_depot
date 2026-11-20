@@ -92,6 +92,19 @@ public final class KSCultures extends JavaPlugin {
         return instance;
     }
 
+    /** 1.1.0 (KS_SuperTool, Laboureuse) : culture custom mûre qu'on récolte en la cassant ? */
+    public static boolean cultureMure(org.bukkit.block.Block bloc) {
+        return instance != null && Plantes.mure(bloc);
+    }
+
+    /**
+     * 1.1.0 (KS_SuperTool, Laboureuse) : récolte une culture custom mûre au nom du joueur et la replante (une semence
+     * reprise dans la récolte ; un kiwi est cueilli). Vrai si récoltée.
+     */
+    public static boolean recolter(org.bukkit.entity.Player joueur, org.bukkit.block.Block bloc) {
+        return instance != null && instance.plantes.recolter(joueur, bloc);
+    }
+
     Component t(String cle, String defaut, Object... paires) {
         Component c = lang.c(cle, defaut, paires);
         lang.saveIfNeeded();

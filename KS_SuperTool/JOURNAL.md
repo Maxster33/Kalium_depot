@@ -36,7 +36,10 @@ Ancien nom : KS_Marteau (jamais déployé, renommé le 20/11 à la demande de Le
   Solidité passent par le jeu et les autres plugins).
 - **Laboureuse, récolte** : casser une culture mûre (blé, carottes, pommes de terre, betteraves, verrues du Nether)
   récolte les cultures mûres en 3 × 3 à la même hauteur et les replante au tick suivant, une semence reprise dans le
-  butin de chacune ; accroupi : seulement celle-ci.
+  butin de chacune ; accroupi : seulement celle-ci. Cultures de **KS_Cultures** (légumes, maïs, riz, kiwi) : avec
+  KS_Cultures 1.1.0 (API `cultureMure` / `recolter`, dépendance facultative `join-classpath`, classe `Cultures`), la
+  casse est annulée et KS_Cultures les récolte et les remet au stade « pousse » (kiwi : cueilli, l'arbuste reste) ;
+  mélangées aux cultures du jeu dans la même zone 3 × 3.
 - **3 × 3 au clic droit** (`Clic`, accroupi : seulement le bloc visé, transformé par le jeu) : Laboureuse = labour
   (terre, herbe, chemin ; terre grossière -> terre ; podzol et mycélium -> terre labourée directement, aussi le bloc
   visé) ; Excavatrice = chemins ; à l'horizontale, air au-dessus, jamais par-dessous ; Abatteuse = écorce, gratte le
@@ -59,7 +62,8 @@ Ancien nom : KS_Marteau (jamais déployé, renommé le 20/11 à la demande de Le
 - `KSSuperTool.creer(id)` et `ids()` : pour KS_KaliumGive, par réflexion.
 
 Plugins communs (20/11, à déployer ensemble) : KS_Economy 1.13.7 (prix, une machine usée n'est pas rachetée),
-KS_Textures 1.2.3 (rareté, textures de la Foreuse), KS_KaliumGive 1.14.0, `didacticiel.yml` (crafts > machines,
+KS_Textures 1.2.3 (rareté, textures de la Foreuse), KS_KaliumGive 1.14.0, KS_Cultures 1.1.0 (facultatif : récolte de
+ses cultures), `didacticiel.yml` (crafts > machines,
 machines-clic ; enclume > magnetisme ; `requiert: "KS_SuperTool"`), pack Java 1.5.0, geyser-bedrock 1.12.0.
 
 Points à vérifier en premier, dans Kixster Test :
@@ -70,6 +74,4 @@ Points à vérifier en premier, dans Kixster Test :
 - alertes de KS_AntiCheat (x-ray en alertes) quand 9 minerais tombent d'un coup.
 
 Reste à faire :
-- **cultures de KS_Cultures** (tomate, maïs, riz...) dans la récolte de la Laboureuse : il faut une API dans KS_Cultures
-  (culture mûre, replanter), ses cultures sont des blocs custom de KS_Blocs ;
 - textures de l'Abatteuse, de l'Excavatrice et de la Laboureuse (en attendant : outils du jeu).

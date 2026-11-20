@@ -104,3 +104,18 @@ vide).
 
 **Compilé le 02/11/2026, non déployé, non testé en jeu.** À déployer avec KS_Blocs 0.2.0, KS_Crafts 1.24.0, KS_LootBlocs 1.4.0, geyser-bedrock
 (correspondance régénérée par `python KS_Blocs/pack/blocs.py`) et les ajouts aux plugins communs (`AJOUTS_COMMUNS.md`).
+
+## 1.1.0 - récolte par la Laboureuse (20/11/2026, LeKiwi06)
+
+Cahier local `Outils_3x3.md` (validé le 20/11) : la Laboureuse de KS_SuperTool récolte et replante aussi les cultures
+de KS_Cultures (réponse de LeKiwi06 : « oui pour les 3 questions »).
+
+- API publique : `KSCultures.cultureMure(bloc)` (légume, maïs bas ou haut, riz mûrs ; kiwi avec fruits) et
+  `KSCultures.recolter(joueur, bloc)` : même essai de claims que le semis (faux événement de pose), butin de la
+  culture mûre (découverte comprise), une semence reprise (graine, ou grain de riz), la culture repart au stade
+  « pousse » ; le maïs perd son haut et son bas est reposé ; un kiwi est cueilli comme au clic droit (l'arbuste reste).
+- Rien d'autre ne change.
+
+Statut : compilé, non déployé, non testé. À déployer avec KS_Blocs 0.2.0, KS_Crafts 1.24.0, KS_LootBlocs 1.4.0
+(la 1.0.0 n'a jamais été déployée) et KS_SuperTool 1.0.0.
+

@@ -365,6 +365,70 @@ final class Plantes implements Listener, EcouteurBloc {
         plugin.decouvrir(joueur, v);
     }
 
+    // ------------------------------------------------------------------ 1.1.0 : récolte par la Laboureuse (KS_SuperTool)
+
+    /** Culture mûre que la Laboureuse récolte : légume, maïs (bas ou haut), riz, kiwi avec fruits. */
+    static boolean mure(Block b) {
+        TypeBloc t = KSBlocs.type(b);
+        Vegetal v = t == null ? null : Vegetal.parType(t.id());
+        String variante = KSBlocs.variante(b);
+        return v != null && variante != null
+                && (variante.equals(v.mur) || (v == Vegetal.MAIS && variante.equals("mais_haut")));
+    }
+
+    /**
+     * Récolte une culture mûre au nom du joueur (claims : même essai que le semis) et la replante au stade « pousse »,
+     * une semence reprise dans le butin (graine, ou grain de riz) ; le maïs perd son haut. Un kiwi est cueilli (clic
+     * droit) : l'arbuste reste. Vrai si la culture a été récoltée.
+     */
+    boolean recolter(Player joueur, Block b) {
+        if (!mure(b) || !peutConstruire(joueur, b, b)) {
+            return false;
+        }
+        TypeBloc t = KSBlocs.type(b);
+        Vegetal v = Vegetal.parType(t.id());
+        if (v.lieu == Vegetal.Lieu.ARBUSTE) {
+            cueillir(joueur, b, t);
+            return true;
+        }
+        Block bas = v == Vegetal.MAIS && "mais_haut".equals(KSBlocs.variante(b)) ? b.getRelative(BlockFace.DOWN) : b;
+        String variante = KSBlocs.variante(bas);
+        if (variante == null) {
+            return false;
+        }
+        List<ItemStack> recolte = new ArrayList<>(butin(new TypeBloc.Casse(joueur,
+                joueur.getInventory().getItemInMainHand(), bas, variante)));
+        boolean semence = reprendre(recolte, v.semence());
+        if (v == Vegetal.MAIS) {
+            // le haut parti, retire() enlève aussi le bas : on le repose au stade « pousse »
+            KSBlocs.retirer(bas.getRelative(BlockFace.UP), true);
+            if (KSBlocs.type(bas) != null) {
+                KSBlocs.retirer(bas, true);
+            }
+            if (semence) {
+                KSBlocs.poser(bas, t, "pousse");
+            }
+        } else if (semence) {
+            KSBlocs.changerVariante(bas, "pousse");
+        } else {
+            KSBlocs.retirer(bas, true);
+        }
+        lacher(bas, recolte);
+        bas.getWorld().playSound(bas.getLocation(), Sound.BLOCK_CROP_BREAK, 1f, 1f);
+        return true;
+    }
+
+    /** Retire une semence (objet de KS_Cultures d'id donné) de la récolte ; faux s'il n'y en a pas. */
+    private static boolean reprendre(List<ItemStack> recolte, String id) {
+        for (ItemStack o : recolte) {
+            if (o != null && o.getAmount() > 0 && id.equals(KSCultures.id(o))) {
+                o.setAmount(o.getAmount() - 1);
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** Poudre d'os sur une culture : un stade de plus (la fleur fleurit), comme sur les cultures vanilla. */
     private void poudreDOs(Player joueur, Block b, TypeBloc t, ItemStack main) {
         if (!avancer(b, t.id(), KSBlocs.variante(b))) {

@@ -17,7 +17,8 @@ case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) SEP=';'; win() { cygpath -w "$1"; } ;;
   *) SEP=':'; win() { printf '%s' "$1"; } ;;
 esac
-CP="$(win "$TOOLS/classes/KLM_Menu")$SEP"
+# KS_Cultures et KS_Blocs (facultatifs sur le serveur : classe Cultures chargée seulement s'ils sont là)
+CP="$(win "$TOOLS/classes/KLM_Menu")$SEP$(win "$TOOLS/classes/KS_Cultures")$SEP$(win "$TOOLS/classes/KS_Blocs")$SEP"
 for j in "$TOOLS"/libs/*.jar; do CP="$CP$(win "$j")$SEP"; done
 OUT="$TOOLS/classes/KS_SuperTool"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"

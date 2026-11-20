@@ -48,9 +48,10 @@ import java.util.UUID;
  * - jamais : contenants, spawners, spawners des épreuves, coffres-forts, blocs incassables ; accroupi : un seul bloc ;
  * - chaque voisin est cassé par le joueur lui-même (Player#breakBlock) : claims, protections, butin, XP, Toucher de
  *   soie et 1 point de solidité par bloc passent par le jeu et les autres plugins ;
- * - Laboureuse, culture mûre (blé, carottes, pommes de terre, betteraves, verrues) : les cultures mûres en 3 × 3 à la
- *   même hauteur sont récoltées puis replantées, une graine (ou carotte, pomme de terre, verrue) reprise dans la
- *   récolte de chacune ; accroupi : seulement celle-ci ;
+ * - Laboureuse, culture mûre (blé, carottes, pommes de terre, betteraves, verrues ; et celles de KS_Cultures : légumes,
+ *   maïs, riz, kiwi) : les cultures mûres en 3 × 3 à la même hauteur sont récoltées puis replantées, une graine (ou
+ *   carotte, pomme de terre, verrue, grain de riz) reprise dans la récolte de chacune ; accroupi : seulement celle-ci.
+ *   Les cultures de KS_Cultures ne sont pas cassées : KS_Cultures les récolte et les remet au stade « pousse » ;
  * - Foreuse avec Aura de feu : les minerais cassés donnent le résultat du four, sans l'XP de la cuisson.
  */
 final class Minage implements Listener {
@@ -72,6 +73,8 @@ final class Minage implements Listener {
     }
 
     private final Plugin plugin;
+    /** KS_Cultures 1.1.0 ou plus est activé (sa classe n'est chargée qu'alors). */
+    private final boolean cultures;
     /** Dernière face frappée par chaque joueur (clic gauche sur un bloc, Java et Bedrock). */
     private final Map<UUID, Frappe> frappes = new HashMap<>();
     /** Cultures que la Laboureuse est en train de récolter (replantées à la chute de leur butin). */
@@ -82,8 +85,9 @@ final class Minage implements Listener {
     private record Frappe(Location bloc, BlockFace face) {
     }
 
-    Minage(Plugin plugin) {
+    Minage(Plugin plugin, boolean cultures) {
         this.plugin = plugin;
+        this.cultures = cultures;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -128,17 +132,50 @@ final class Minage implements Listener {
         List<Location> marquees = new ArrayList<>(List.of(centre.getLocation()));
         recoltes.add(centre.getLocation());
         if (!joueur.isSneaking()) {
-            casser(joueur, outil, voisins(centre, BlockFace.UP), b -> {
-                if (!mure(b)) {
-                    return false;
-                }
-                recoltes.add(b.getLocation());
-                marquees.add(b.getLocation());
-                return true;
-            });
+            recolterAutour(joueur, outil, centre, marquees);
         }
         // Le butin tombe pendant la casse : au tick suivant, une culture sans butin (créatif) n'est plus attendue.
         plugin.getServer().getScheduler().runTask(plugin, () -> marquees.forEach(recoltes::remove));
+    }
+
+    /** Les 8 cultures autour, à la même hauteur : celles du jeu cassées puis replantées, celles de KS_Cultures récoltées. */
+    private void recolterAutour(Player joueur, Outil outil, Block centre, List<Location> marquees) {
+        casser(joueur, outil, voisins(centre, BlockFace.UP), b -> {
+            if (cultures && Cultures.mure(b)) {
+                Cultures.recolter(joueur, b);
+                return false;
+            }
+            if (!mure(b)) {
+                return false;
+            }
+            recoltes.add(b.getLocation());
+            marquees.add(b.getLocation());
+            return true;
+        });
+    }
+
+    /**
+     * Culture de KS_Cultures mûre cassée avec la Laboureuse : la casse est annulée (le bloc custom serait perdu),
+     * KS_Cultures la récolte et la replante, puis les 8 autour. Priorité HIGH : après les claims, qui ont pu annuler.
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onCultureCustom(BlockBreakEvent event) {
+        if (enCours || !cultures) {
+            return;
+        }
+        Player joueur = event.getPlayer();
+        Outil outil = KSSuperTool.outil(joueur.getInventory().getItemInMainHand());
+        Block centre = event.getBlock();
+        if (outil == null || outil.machine() != Machine.LABOUREUSE || !Cultures.mure(centre)) {
+            return;
+        }
+        event.setCancelled(true);
+        Cultures.recolter(joueur, centre);
+        if (!joueur.isSneaking()) {
+            List<Location> marquees = new ArrayList<>();
+            recolterAutour(joueur, outil, centre, marquees);
+            plugin.getServer().getScheduler().runTask(plugin, () -> marquees.forEach(recoltes::remove));
+        }
     }
 
     private interface Filtre {
