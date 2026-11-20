@@ -7,7 +7,7 @@
 # <outils>/serveur/versions/26.3/paper-26.3.jar et <outils>/serveur/libraries, produits par telecharger-outils.sh.
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.2.0
+VERSION=1.3.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then

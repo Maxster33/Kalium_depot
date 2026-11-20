@@ -283,6 +283,12 @@ themes:
         texte: "L'alambic ne brasse plus qu'une fiole à la fois, dans la case du milieu, potions comme alcools. Il lui faut toujours de la poudre de blaze : une poudre pour 20 fioles."
         requiert: "KS_Alcools 1.2.0"
         nouveau: "2026-10-30"
+      shejiu:
+        nom: "Shéjiǔ"
+        icone: FERMENTED_SPIDER_EYE
+        texte: "Alcool neutre + œil d'araignée fermenté. Pendant 3 minutes (6 à la redstone), tu grimpes aux murs comme à une échelle : avance contre un mur pour monter, accroupis-toi pour rester accroché. Pas sous l'eau. Les autres joueurs ne voient rien de spécial."
+        requiert: "KS_Alcools:shejiu"
+        nouveau: "2026-11-20"
       molotov:
         nom: "Cocktail Molotov"
         icone: FIRE_CHARGE

@@ -104,6 +104,7 @@ final class Boire implements Listener {
             case Alcools.VODKA -> variante == Alcools.Variante.FORT ? EFFET_VODKA_2 : EFFET_VODKA;
             case Alcools.TABASCOOLISE -> EFFET_TABASCO;
             case Alcools.RHUM -> Rhum.EFFET_RHUM;
+            case Alcools.SHEJIU -> Shejiu.EFFET_SHEJIU;
             default -> null;
         };
         int secondes = (int) Math.round(variante.secondes * intensite);

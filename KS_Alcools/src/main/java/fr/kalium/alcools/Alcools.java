@@ -42,6 +42,7 @@ final class Alcools {
     static final String VODKA = "vodka";
     static final String TABASCOOLISE = "tabascoolise";
     static final String RHUM = "rhum";
+    static final String SHEJIU = "shejiu";
 
     /**
      * Durée de base, redstone, glowstone. 1.2.0 (LeKiwi06, 30/10/2026) : redstone 6 min au lieu des 8 des potions du
@@ -92,6 +93,8 @@ final class Alcools {
         ajouter(new Alcool(TABASCOOLISE, "Tabascoolisé", Color.fromRGB(0xC8261E), Material.MAGMA_CREAM, null, false));
         // 1.1.0 : rhum (étape 5) : musique d'un disque autour du buveur (Rhum) ; pas de niveau II.
         ajouter(new Alcool(RHUM, "Rhum", Color.fromRGB(0x8B4513), Material.SUGAR_CANE, null, false));
+        // 1.3.0 : Shéjiǔ (étape 6) : grimper aux murs (Shejiu) ; pas de niveau II.
+        ajouter(new Alcool(SHEJIU, "Shéjiǔ", Color.fromRGB(0x6B8E23), Material.FERMENTED_SPIDER_EYE, null, false));
     }
 
     private static void ajouter(Alcool alcool) {
@@ -186,6 +189,10 @@ final class Alcools {
             case RHUM -> {
                 lignes.add(ligne("Musique (" + duree(v.secondes) + ")", NamedTextColor.BLUE));
                 lignes.add(ligne("Un disque au hasard, entendu à 5 blocs", NamedTextColor.DARK_GRAY));
+            }
+            case SHEJIU -> {
+                lignes.add(ligne("Grimpe-murs (" + duree(v.secondes) + ")", NamedTextColor.BLUE));
+                lignes.add(ligne("Grimpe aux murs comme à une échelle", NamedTextColor.DARK_GRAY));
             }
             default -> {
             }

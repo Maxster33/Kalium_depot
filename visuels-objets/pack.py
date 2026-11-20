@@ -15,7 +15,7 @@ import re
 import sys
 import zipfile
 
-VERSION = "1.3.0"  # 1.2.0 : blocs custom de KS_Blocs ; 1.2.1 : jack o'lanterns lumineuses ; 1.3.0 : low fire, low shield
+VERSION = "1.4.0"  # 1.2.0 : blocs custom de KS_Blocs ; 1.2.1 : jack o'lanterns lumineuses ; 1.3.0 : low fire, low shield ; 1.4.0 : liane du Shejiu invisible
 # Blocs de base que KS_Blocs reecrit sur le serveur (version deployee) : voir plus bas
 BASES_BLOCS = {"note_block"}
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -98,6 +98,18 @@ def confort(jar):
         for main in ("firstperson_righthand", "firstperson_lefthand"):
             m["display"][main]["translation"][1] -= BOUCLIER_DECALAGE
         out[chemin] = json.dumps(m, indent=2)
+    # 1.4.0 : Shéjiǔ (KS_Alcools 1.3.0) : la liane sans aucune face, envoyee au seul buveur pour qu'il grimpe, n'a plus
+    # de modele (le jeu lui donne sinon celui de la liane cote nord). Cet etat n'existe jamais dans le monde.
+    vigne = json.loads(jar.read("assets/minecraft/blockstates/vine.json"))
+    sans_face = {"east": "false", "north": "false", "south": "false", "up": "false", "west": "false"}
+    # le jeu dessine la liane sans face sur ses 5 faces (5 cas) : remplaces par un seul cas au modele vide
+    reste = [c for c in vigne["multipart"] if c.get("when") != sans_face]
+    if len(vigne["multipart"]) - len(reste) != 5:
+        sys.exit("vine.json : cas de la liane sans face inattendus")
+    vigne["multipart"] = reste + [{"apply": {"model": "kalium:block/vide"}, "when": sans_face}]
+    out["assets/minecraft/blockstates/vine.json"] = json.dumps(vigne, indent=2)
+    out["assets/kalium/models/block/vide.json"] = json.dumps(
+        {"textures": {"particle": "minecraft:block/vine"}, "elements": []}, indent=2)
     return out
 
 
