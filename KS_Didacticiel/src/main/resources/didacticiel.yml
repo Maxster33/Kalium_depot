@@ -337,6 +337,33 @@ themes:
           - "ks_alcools:torche_augmentee"
         nouveau: "2026-10-28"
 
+  cultures:
+    nom: "Cultures"
+    icone: COMPOSTER
+    resume: "Nouveaux végétaux, graines de fleurs, composteur."
+    requiert: "KS_Cultures"
+    nouveautes:
+      vegetaux:
+        nom: "Nouveaux végétaux"
+        icone: WHEAT_SEEDS
+        texte: "Tomate, poivron, aubergine, oignon, salade et maïs poussent sur la terre labourée, le riz sous l'eau, le kiwi en arbuste (clic droit pour cueillir). Leurs graines se trouvent en cassant les herbes de certains biomes : savanes, badlands et déserts, jungles, taïgas, forêts, plaines, marais et rivières... Récolte à la main seulement ; tout se mange. Poudre d'os : un stade de plus."
+        nouveau: "2026-11-20"
+      cerises:
+        nom: "Cerises"
+        icone: CHERRY_LEAVES
+        texte: "Les feuilles de cerisier donnent des cerises à la place des pommes. Elles se mangent comme une pomme."
+        nouveau: "2026-11-20"
+      fleurs:
+        nom: "Fleurs"
+        icone: POPPY
+        texte: "Une graine de fleur sur la terre labourée : la fleur pousse. Les grandes fleurs (tournesol, lilas, rosier, pivoine) ne se multiplient plus à la poudre d'os : sème leurs graines."
+        nouveau: "2026-11-20"
+      composteur:
+        nom: "Composteur"
+        icone: COMPOSTER
+        texte: "Clic droit main vide sur un composteur. Une fleur y donne 1 à 3 graines ; un fruit d'un végétal que tu as déjà récolté donne sa graine. Les graines s'y rangent (64 par sorte) et tombent si le composteur est cassé. 9 sortes rangées : un mélange de graines, qui fait pousser un végétal au hasard."
+        nouveau: "2026-11-20"
+
   cuisine:
     nom: "Cuisine"
     icone: COOKIE

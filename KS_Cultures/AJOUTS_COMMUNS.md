@@ -6,6 +6,9 @@ l'unité.
 
 ## 1. KS_Economy (barème, `sortie/bareme`)
 
+**Fait le 20/11/2026 : KS_Economy 1.13.9 + KS_Textures 1.2.5 (33 objets, piles de 64), non déployés. Restent les
+grandes fleurs, au déploiement de KS_Cultures.**
+
 Objets marqués `ks_cultures:objet = <id>` (base : livre de connaissances).
 
 | Id | Objet | Prix | Décomposition |
@@ -44,6 +47,9 @@ Fait dans cette session (accord du brief) : KS_Crafts 1.24.0 retire `ks_crafts:p
 `ks_crafts:torchflower_seeds`. À déployer avec KS_Cultures.
 
 ## 3. KS_Didacticiel (`didacticiel.yml`)
+
+**Fait le 20/11/2026 : thème « Cultures » (requiert KS_Cultures : végétaux, cerises, fleurs, composteur). Reste la
+fiche « Crafts pratiques », à corriger au déploiement de KS_Crafts 1.24.0.**
 
 - Fiche « Crafts pratiques » (section `crafts`) : retirer `ks_crafts:pitcher_pod` et `ks_crafts:torchflower_seeds` de
   la liste des recettes et « graines » du texte.

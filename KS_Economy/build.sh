@@ -4,7 +4,7 @@
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.13.8
+VERSION=1.13.9
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then

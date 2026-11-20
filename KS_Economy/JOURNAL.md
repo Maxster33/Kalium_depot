@@ -1034,3 +1034,27 @@ Statut : compilé, non déployé, non testé. À déployer avec KS_SuperTool 1.0
   à aucun objet, rien ne casse.
 
 Contient la 1.13.7. **Déployé sur Kixster le 20/11/2026 à 15:25** (LeKiwi06 : « déploie tout sur kixster et le proxy »), avec KS_SuperTool 1.0.0, KS_Economy 1.13.8, KS_Textures 1.2.4, KS_KaliumGive 1.14.0 et `didacticiel.yml` ; jars de la même taille que ceux du dépôt. À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.13.9 - cultures de KS_Cultures (20/11/2026, LeKiwi06)
+
+33 objets de KS_Cultures au barème, prix **validés par LeKiwi06 le 02/11/2026** (`sortie/cultures/
+cultures-proposition.xlsx`, `KS_Cultures/AJOUTS_COMMUNS.md`). Chaque prix est la recette d'un objet du jeu
+(`custom(..., ing=...)` dans `sortie/bareme/bareme.py`, liste `CULTURES_KS`) :
+
+- tomate, poivron, aubergine, oignon, salade, riz = carotte (0,0293) ; kiwi = baies sucrées (0,0293) ; cerises = pomme
+  (0,03984) ; épi de maïs = blé (0,04883) ;
+- graines de légumes = graine de blé (0,01953) ; graines de fleurs = la moitié de la fleur (le composteur donne 2 graines
+  en moyenne : 0,01019 pissenlit et coquelicot, 0,01992 petites fleurs, 0,02 oeilchidée) ; graines de grandes fleurs =
+  1 colorant (grande fleur = 2 colorants : 0,0221 tournesol et rosier, 0,0332 lilas et pivoine) ;
+- mélange de graines = 9 graines de légume (0,1758).
+
+Cibles `pdc:ks_cultures:objet:s:<id>` (noms : `NOMS_CULTURES` dans `exporter_rachats.py`), **piles de 64** (sous
+1 émeraude, un objet en pile de 1 n'est jamais tiré aux rachats) ; familles des rachats : graines de fleurs avec les
+fleurs, le reste avec les cultures du jeu. Notes dans `remplir.py`, lignes dans `ids-26.3-et-custom.csv`. Chaîne
+relancée : `rachats.csv` gagne exactement ces 33 lignes, rien d'autre ne change.
+
+**Pas encore les grandes fleurs** (tournesol, rosier 0,0442 ; lilas, pivoine 0,0664) : à passer au barème au
+déploiement de KS_Cultures, qui coupe leur duplication à la poudre d'os.
+
+Statut : compilé, non déployé, non testé. À déployer avec KS_Textures 1.2.5. Sans KS_Cultures, ces lignes ne
+correspondent à aucun objet : rien ne casse.
