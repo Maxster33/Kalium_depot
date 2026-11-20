@@ -15,7 +15,9 @@ import re
 import sys
 import zipfile
 
-VERSION = "1.1.0"
+VERSION = "1.2.0"  # 1.2.0 : blocs custom de KS_Blocs (jack o'lanterns, boite aux lettres...)
+# Blocs de base que KS_Blocs reecrit sur le serveur (version deployee) : voir plus bas
+BASES_BLOCS = {"note_block"}
 DIR = os.path.dirname(os.path.abspath(__file__))
 PNG_DIR = os.path.join(DIR, "png")
 SORTIE = os.path.join(DIR, "..", "sortie")
@@ -26,6 +28,9 @@ FORMAT = 97  # ressources du jeu 26.3 (version.json du jar : resource_major)
 
 sys.path.insert(0, DIR)
 import dessiner  # noqa: E402  (liste des objets, la meme que la planche)
+
+sys.path.insert(0, os.path.join(DIR, "..", "KS_Blocs", "pack"))
+import blocs as ks_blocs  # noqa: E402  (blocs custom de KS_Blocs)
 
 # Objets de base de chaque texture : la definition vanilla utilisee par le jeu (item_model de l'objet, sinon son type)
 BASES = {
@@ -102,6 +107,15 @@ def main():
                                "cases": cas, "fallback": vanilla["model"]}
         fichiers[chemin] = json.dumps(definition, indent=2)
 
+    # 1.2.0 : blocs custom de KS_Blocs (KS_Blocs/pack/blocs.py), seulement ceux des blocs de base deja reecrits sur le
+    # serveur (KS_Blocs 0.1.1 deploye : bloc musical). Ajouter sugar_cane et kelp quand KS_Blocs 0.2.0 et KS_Cultures
+    # seront deployes, pas avant : la canne a sucre et le varech des joueurs prendraient l'aspect des cultures.
+    blocs, reserve = ks_blocs.fichiers_java(BASES_BLOCS)
+    for nom, donnees in blocs.items():
+        if nom in fichiers:
+            sys.exit(f"Fichier en double entre les objets et les blocs : {nom}")
+        fichiers[nom] = donnees
+
     os.makedirs(SORTIE, exist_ok=True)
     zip_chemin = os.path.abspath(os.path.join(SORTIE, f"KaLium-textures-{VERSION}.zip"))
     with zipfile.ZipFile(zip_chemin, "w", zipfile.ZIP_DEFLATED) as z:
@@ -112,7 +126,8 @@ def main():
             z.writestr(info, donnees.encode("utf-8") if isinstance(donnees, str) else donnees)
     with open(zip_chemin, "rb") as f:
         sha1 = hashlib.sha1(f.read()).hexdigest()
-    print(f"{len(ids)} textures, {len(par_base)} objets de base -> {zip_chemin}")
+    print(f"{len(ids)} textures, {len(par_base)} objets de base, "
+          f"{sum(len(p) for p in reserve.values())} etats de blocs custom ({', '.join(sorted(reserve))}) -> {zip_chemin}")
     print(f"SHA-1 : {sha1}")
 
 

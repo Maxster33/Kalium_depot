@@ -4,7 +4,7 @@
 # Sortie : <racine du depot>/sortie (PC local, ignore par git), sinon /mnt/user-data/outputs (espace cloud).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.0.0
+VERSION=1.1.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -27,7 +27,7 @@ OUT="$TOOLS/classes/KS_Boussole"
 rm -rf "$OUT" && mkdir -p "$OUT" "$DEST"
 java -jar "$(win "$TOOLS/ecj.jar")" -21 -proc:none -nowarn -encoding UTF-8 \
   -cp "$CP" -d "$(win "$OUT")" src/main/java
-cp src/main/resources/config.yml src/main/resources/biomes.yml "$OUT/"
+cp src/main/resources/config.yml src/main/resources/biomes.yml src/main/resources/familles.yml "$OUT/"
 sed "s/\${project.version}/$VERSION/" src/main/resources/plugin.yml > "$OUT/plugin.yml"
 jar cf "$DEST/KS_Boussole-$VERSION.jar" -C "$OUT" .
 echo "OK -> $DEST/KS_Boussole-$VERSION.jar"

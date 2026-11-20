@@ -15,9 +15,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
@@ -32,6 +34,8 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -96,6 +100,8 @@ public final class KSShulkerAmelioree extends JavaPlugin implements Listener {
         menu = new MenuShulker(this, lang, contenu);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(menu, this);
+        // 1.0.1 : menus d'une shulker retirée sans être cassée (encapsuleur, commande...) fermés aussitôt.
+        Bukkit.getScheduler().runTaskTimer(this, menu::fermerPerimes, 10L, 10L);
         recettes();
         lang.saveIfNeeded();
     }
@@ -207,6 +213,7 @@ public final class KSShulkerAmelioree extends JavaPlugin implements Listener {
         if (!marque(objet) || !Tag.SHULKER_BOXES.isTagged(bloc.getType())) {
             return;
         }
+        menu.oublier(bloc); // 1.0.1 : un menu resté sur cette place (shulker retirée juste avant) ne sert plus
         ItemStack[] cases = casesDe(objet);
         contenu.ecrire(bloc, cases);
         // Au cas où le bloc du jeu serait écrit après l'événement : on vérifie au tick suivant.
@@ -226,7 +233,34 @@ public final class KSShulkerAmelioree extends JavaPlugin implements Listener {
         });
     }
 
-    /** La vraie boîte ne s'ouvre jamais : le menu à la place (seulement si elle aurait pu s'ouvrir). */
+    /**
+     * 1.0.1 : clic droit sur la shulker améliorée posée : le menu s'ouvre directement, sans passer par l'ouverture du
+     * jeu, qui refuse une boîte de shulker dont le couvercle est gêné (bloc au-dessus : shulkers empilées, retour de
+     * LeKiwi06 du 20/11). Respecte les protections (clic refusé par un claim : rien) et le jeu (accroupi avec un objet en
+     * main : l'objet sert, comme sur une boîte du jeu).
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onClicBloc(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.useInteractedBlock() == Event.Result.DENY
+                || !contenu.est(event.getClickedBlock())) {
+            return;
+        }
+        Player joueur = event.getPlayer();
+        if (joueur.getGameMode() == GameMode.SPECTATOR || (joueur.isSneaking()
+                && (!joueur.getInventory().getItemInMainHand().isEmpty()
+                || !joueur.getInventory().getItemInOffHand().isEmpty()))) {
+            return;
+        }
+        event.setUseInteractedBlock(Event.Result.DENY);
+        event.setUseItemInHand(Event.Result.DENY);
+        if (event.getHand() != EquipmentSlot.HAND) {
+            return; // l'autre main : un seul menu
+        }
+        Block bloc = event.getClickedBlock();
+        Bukkit.getScheduler().runTask(this, () -> menu.ouvrir(joueur, bloc));
+    }
+
+    /** La vraie boîte ne s'ouvre jamais : le menu à la place (ouverture par un autre chemin que le clic). */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onOuvrir(InventoryOpenEvent event) {
         if (!(event.getInventory().getHolder(false) instanceof ShulkerBox shulker)

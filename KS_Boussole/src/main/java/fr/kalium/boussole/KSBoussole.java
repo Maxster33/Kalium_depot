@@ -12,6 +12,8 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.World;
+import org.bukkit.WorldType;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -37,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +51,8 @@ import java.util.UUID;
  * - Craft sans forme : une boussole et un Changeur de Biome neuf (KS_BiomeChanger, 10 utilisations sur 10 : choix de
  *   LeKiwi06 du 02/11) ; la recette est celle d'un Changeur tel que creerChangeur() le fabrique.
  * - Clic droit avec la boussole en main : menu en coffre (MenuBoussole) avec les biomes que la génération du monde du
- *   joueur peut produire (Terralith compris ; overworld, Nether et End, choix du 02/11), noms de biomes.yml.
+ *   joueur peut produire (Terralith compris ; overworld, Nether et End, choix du 02/11), noms de biomes.yml ; depuis la
+ *   1.1.0, regroupés en familles (familles.yml : « Jungle » pour toutes les jungles, demande du 20/11).
  * - Choix d'un biome : recherche de Paper (World#locateNearestBiome, la même que /locate biome : bruit de génération
  *   seulement, aucun chunk chargé ni généré) dans RAYON blocs autour du joueur, en asynchrone ; une recherche à la fois
  *   par joueur. Trouvé : la boussole devient magnétisée vers ce point (comme une boussole sur une magnétite, sans
@@ -59,7 +63,7 @@ import java.util.UUID;
 public final class KSBoussole extends JavaPlugin implements Listener {
 
     private static NamespacedKey marqueur;
-    /** Biome visé par une boussole réglée (« minecraft:plains »). */
+    /** Cible d'une boussole réglée : id de famille (« jungle », 1.1.0) ou clé de biome (« minecraft:plains », 1.0.0). */
     private static NamespacedKey cleBiome;
     /** Données du joueur : date de sa dernière recherche réussie (millisecondes). */
     private NamespacedKey cleRecharge;
@@ -84,6 +88,7 @@ public final class KSBoussole extends JavaPlugin implements Listener {
         rayon = getConfig().getInt("rayon", 2000);
         rechargeMs = Math.max(0, getConfig().getLong("recharge-minutes", 15)) * 60_000L;
         noms = YamlConfiguration.loadConfiguration(new InputStreamReader(getResource("biomes.yml"), StandardCharsets.UTF_8));
+        chargerFamilles();
         lang = new Lang(this);
         menu = new MenuBoussole(this, lang);
         getServer().getPluginManager().registerEvents(this, this);
@@ -144,15 +149,89 @@ public final class KSBoussole extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------ biomes
 
-    /** Biomes que la génération de ce monde peut produire, triés par nom français. */
-    List<Biome> biomes(World monde) {
-        BiomeProvider fournisseur = monde.getBiomeProvider();
-        if (fournisseur == null) {
-            fournisseur = monde.vanillaBiomeProvider();
+    /** Un bouton du menu : une famille de familles.yml, ou un biome seul qu'aucune famille ne contient. */
+    record Famille(String id, String nom, Material icone, List<Biome> biomes) {
+    }
+
+    /** Famille de familles.yml : nom et icône. */
+    private record Definition(String nom, Material icone) {
+    }
+
+    private final Map<String, Definition> definitions = new LinkedHashMap<>();
+    /** Clé d'un biome (« minecraft:jungle ») -> id de sa famille ; « _cache » : jamais montré. */
+    private final Map<String, String> familleDuBiome = new HashMap<>();
+
+    private void chargerFamilles() {
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(
+                new InputStreamReader(getResource("familles.yml"), StandardCharsets.UTF_8));
+        ConfigurationSection racine = yml.getConfigurationSection("familles");
+        for (String id : racine.getKeys(false)) {
+            ConfigurationSection f = racine.getConfigurationSection(id);
+            Material icone = Material.matchMaterial(f.getString("icone", "GRASS_BLOCK"));
+            definitions.put(id, new Definition(f.getString("nom", id), icone == null ? Material.GRASS_BLOCK : icone));
+            for (String biome : f.getStringList("biomes")) {
+                String deja = familleDuBiome.put(biome, id);
+                if (deja != null) {
+                    getLogger().warning("familles.yml : " + biome + " dans " + deja + " et " + id);
+                }
+            }
         }
-        List<Biome> liste = new ArrayList<>(fournisseur.getBiomes(monde));
-        liste.sort(Comparator.comparing(this::nom));
+    }
+
+    /** Familles que la génération de ce monde peut produire, triées par nom français. */
+    List<Famille> familles(World monde) {
+        Map<String, List<Biome>> parFamille = new LinkedHashMap<>();
+        for (Biome biome : biomes(monde)) {
+            String cle = biome.key().asString();
+            String id = familleDuBiome.getOrDefault(cle, cle);
+            if (!id.equals("_cache")) {
+                parFamille.computeIfAbsent(id, k -> new ArrayList<>()).add(biome);
+            }
+        }
+        List<Famille> liste = new ArrayList<>();
+        parFamille.forEach((id, biomes) -> {
+            Definition d = definitions.get(id);
+            liste.add(d != null ? new Famille(id, d.nom(), d.icone(), List.copyOf(biomes))
+                    : new Famille(id, nom(biomes.get(0)), MenuBoussole.icone(biomes.get(0)), List.copyOf(biomes)));
+        });
+        liste.sort(Comparator.comparing(Famille::nom));
         return liste;
+    }
+
+    /**
+     * Biomes que la génération de ce monde peut produire. Monde plat (monde de test « Kixster Test ») : ceux du
+     * premier monde du même type qui ne l'est pas, pour que le menu y soit le même qu'en survie (la recherche n'y
+     * trouve que des plaines).
+     */
+    private List<Biome> biomes(World monde) {
+        World source = monde;
+        if (monde.getWorldType() == WorldType.FLAT) {
+            for (World w : Bukkit.getWorlds()) {
+                if (w.getEnvironment() == monde.getEnvironment() && w.getWorldType() != WorldType.FLAT) {
+                    source = w;
+                    break;
+                }
+            }
+        }
+        BiomeProvider fournisseur = source.getBiomeProvider();
+        if (fournisseur == null) {
+            fournisseur = source.vanillaBiomeProvider();
+        }
+        return fournisseur.getBiomes(source);
+    }
+
+    /** Id de famille d'une cible de boussole (id de famille depuis la 1.1.0, clé de biome avant). */
+    String familleDe(String cible) {
+        if (cible == null || definitions.containsKey(cible)) {
+            return cible;
+        }
+        return familleDuBiome.getOrDefault(cible, cible);
+    }
+
+    /** Nom français d'une cible de boussole (famille, ou biome seul). */
+    String nomCible(String cible) {
+        Definition d = definitions.get(familleDe(cible));
+        return d != null ? d.nom() : nom(cible);
     }
 
     /** Nom français du biome (biomes.yml, vanilla et Terralith) ; absent : tiré de son identifiant. */
@@ -229,8 +308,8 @@ public final class KSBoussole extends JavaPlugin implements Listener {
         menu.ouvrir(joueur, 0);
     }
 
-    /** Choix d'un biome dans le menu : tout est revérifié ici. */
-    void chercher(Player joueur, Biome biome) {
+    /** Choix d'une famille dans le menu : tout est revérifié ici ; la recherche vise le plus proche de ses biomes. */
+    void chercher(Player joueur, Famille famille) {
         if (cherche(joueur)) {
             Contenant.message(joueur, lang.c("deja-en-cours", "<red>Une recherche est déjà en cours."), true);
             return;
@@ -251,24 +330,25 @@ public final class KSBoussole extends JavaPlugin implements Listener {
         UUID id = joueur.getUniqueId();
         enCours.add(id);
         Contenant.message(joueur, lang.c("recherche", "<gray>La boussole cherche : <white><biome></white>...",
-                "biome", nom(biome)), false);
+                "biome", famille.nom()), false);
+        Biome[] biomes = famille.biomes().toArray(new Biome[0]);
         // Recherche dans le bruit de génération (aucun chunk touché) : hors du fil principal pour ne pas le ralentir.
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             BiomeSearchResult resultat = null;
             boolean erreur = false;
             try {
-                resultat = monde.locateNearestBiome(origine, rayon, 32, 64, biome);
+                resultat = monde.locateNearestBiome(origine, rayon, 32, 64, biomes);
             } catch (RuntimeException e) {
                 erreur = true;
-                getLogger().warning("Recherche de " + biome.key() + " impossible : " + e);
+                getLogger().warning("Recherche de " + famille.id() + " impossible : " + e);
             }
             BiomeSearchResult trouve = resultat;
             boolean echec = erreur;
-            Bukkit.getScheduler().runTask(this, () -> terminer(id, monde, biome, trouve, echec));
+            Bukkit.getScheduler().runTask(this, () -> terminer(id, monde, famille, trouve, echec));
         });
     }
 
-    private void terminer(UUID id, World monde, Biome biome, BiomeSearchResult resultat, boolean erreur) {
+    private void terminer(UUID id, World monde, Famille famille, BiomeSearchResult resultat, boolean erreur) {
         enCours.remove(id);
         Player joueur = Bukkit.getPlayer(id);
         if (joueur == null || erreur) {
@@ -279,7 +359,7 @@ public final class KSBoussole extends JavaPlugin implements Listener {
         }
         if (resultat == null) {
             Contenant.message(joueur, lang.c("introuvable", "<red>Aucun biome <biome> à moins de <rayon> blocs.",
-                    "biome", nom(biome), "rayon", milliers(rayon)), true);
+                    "biome", famille.nom(), "rayon", milliers(rayon)), true);
             return;
         }
         if (joueur.getWorld() != monde) {
@@ -296,13 +376,13 @@ public final class KSBoussole extends JavaPlugin implements Listener {
         CompassMeta meta = (CompassMeta) boussole.getItemMeta();
         meta.setLodestone(resultat.getLocation());
         meta.setLodestoneTracked(false);
-        meta.getPersistentDataContainer().set(cleBiome, PersistentDataType.STRING, biome.key().asString());
-        meta.lore(description(Component.text(nom(biome))));
+        meta.getPersistentDataContainer().set(cleBiome, PersistentDataType.STRING, famille.id());
+        meta.lore(description(Component.text(famille.nom())));
         boussole.setItemMeta(meta);
         inventaire.setItem(place, boussole);
         joueur.getPersistentDataContainer().set(cleRecharge, PersistentDataType.LONG, System.currentTimeMillis());
         Contenant.message(joueur, lang.c("trouve", "<green>Ta boussole pointe vers : <white><biome></white>.",
-                "biome", nom(biome)), false);
+                "biome", famille.nom()), false);
     }
 
     /** Case de la boussole à régler : main, autre main, puis le reste de l'inventaire ; -1 si aucune. */

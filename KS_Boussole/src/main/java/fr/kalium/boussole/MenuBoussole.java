@@ -31,22 +31,23 @@ final class MenuBoussole {
     }
 
     void ouvrir(Player joueur, int page) {
-        List<Biome> biomes = plugin.biomes(joueur.getWorld());
+        List<KSBoussole.Famille> biomes = plugin.familles(joueur.getWorld());
         int pages = Math.max(1, (biomes.size() + Contenant.PAR_PAGE - 1) / Contenant.PAR_PAGE);
         int numero = Math.max(0, Math.min(page, pages - 1));
         String cible = plugin.cibleTenue(joueur);
+        String familleVisee = plugin.familleDe(cible);
         Contenant menu = Contenant.pour(joueur, lang.c("menu-titre", "Boussole du voyageur"), MARQUE);
         int debut = numero * Contenant.PAR_PAGE;
         for (int i = 0; i < Contenant.PAR_PAGE && debut + i < biomes.size(); i++) {
-            Biome biome = biomes.get(debut + i);
-            boolean vise = biome.key().asString().equals(cible);
+            KSBoussole.Famille biome = biomes.get(debut + i);
+            boolean vise = biome.id().equals(familleVisee);
             List<Component> lignes = new ArrayList<>();
             if (vise) {
                 lignes.add(lang.c("menu-biome-vise", "<green>Ta boussole pointe vers ce biome"));
             }
             lignes.addAll(Contenant.lignes(lang.c("menu-biome-clic",
                     "<gray>Clic : chercher ce biome à moins de <rayon> blocs", "rayon", KSBoussole.milliers(plugin.rayon()))));
-            ItemStack objet = Contenant.objet(icone(biome), Component.text(plugin.nom(biome), NamedTextColor.WHITE), lignes);
+            ItemStack objet = Contenant.objet(biome.icone(), Component.text(biome.nom(), NamedTextColor.WHITE), lignes);
             if (vise) {
                 ItemMeta meta = objet.getItemMeta();
                 meta.setEnchantmentGlintOverride(true);
@@ -74,7 +75,7 @@ final class MenuBoussole {
         List<Component> lignes = new ArrayList<>();
         lignes.add(cible == null
                 ? lang.c("menu-etat-sans-cible", "<gray>Pas encore réglée")
-                : lang.c("menu-etat-cible", "<gray>Pointe vers : <white><biome>", "biome", plugin.nom(cible)));
+                : lang.c("menu-etat-cible", "<gray>Pointe vers : <white><biome>", "biome", plugin.nomCible(cible)));
         long reste = plugin.recharge(joueur);
         lignes.add(reste > 0
                 ? lang.c("menu-etat-recharge", "<red>Recharge : <temps>", "temps", KSBoussole.duree(reste))

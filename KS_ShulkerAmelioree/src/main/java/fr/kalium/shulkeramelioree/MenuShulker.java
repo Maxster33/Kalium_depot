@@ -121,6 +121,39 @@ final class MenuShulker implements Listener {
         }
     }
 
+    /**
+     * 1.0.1 : la shulker n'est plus là (retirée sans BlockBreakEvent : encapsuleur, commande, WorldEdit...) : son menu
+     * n'est plus le contenu de rien. Il est fermé pour tout le monde sans être écrit nulle part, et plus aucun clic n'y
+     * passe : ce qu'il montrait est parti avec le bloc (l'encapsuleur ne prend qu'une shulker vide), rien ne peut en
+     * sortir une deuxième fois.
+     */
+    private boolean perime(Vue vue) {
+        return !contenu.est(vue.bloc);
+    }
+
+    void fermerPerimes() {
+        for (Vue vue : new ArrayList<>(vues.values())) {
+            if (perime(vue)) {
+                oublier(vue.bloc);
+            }
+        }
+    }
+
+    /**
+     * Menu de cette place oublié et fermé pour tout le monde SANS être écrit dans le bloc : shulker retirée, ou nouvelle
+     * shulker posée à la même place (son contenu vient de son objet, jamais d'un ancien menu).
+     */
+    void oublier(Block bloc) {
+        Vue vue = vues.remove(bloc);
+        if (vue == null) {
+            return;
+        }
+        aSauver.remove(vue);
+        for (HumanEntity joueur : new ArrayList<>(vue.inventaire.getViewers())) {
+            joueur.closeInventory();
+        }
+    }
+
     /** Contenu écrit maintenant (API : lecture d'une shulker dont le menu est ouvert). */
     void sauverMaintenant(Block bloc) {
         Vue vue = vues.get(bloc);
@@ -174,6 +207,11 @@ final class MenuShulker implements Listener {
         if (!(event.getView().getTopInventory().getHolder(false) instanceof Vue vue)) {
             return;
         }
+        if (perime(vue)) {
+            event.setCancelled(true);
+            Bukkit.getScheduler().runTask(plugin, () -> oublier(vue.bloc));
+            return;
+        }
         Inventory haut = event.getView().getTopInventory();
         boolean dansLeMenu = event.getClickedInventory() == haut;
         ItemStack entrant = null;
@@ -199,6 +237,11 @@ final class MenuShulker implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onGlisser(InventoryDragEvent event) {
         if (!(event.getView().getTopInventory().getHolder(false) instanceof Vue vue)) {
+            return;
+        }
+        if (perime(vue)) {
+            event.setCancelled(true);
+            Bukkit.getScheduler().runTask(plugin, () -> oublier(vue.bloc));
             return;
         }
         int taille = event.getView().getTopInventory().getSize();

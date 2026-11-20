@@ -119,24 +119,33 @@ def texture_provisoire(nom):
     print(f"texture provisoire : {chemin}")
 
 
-def main():
+def textures_de(a, variante):
+    return a.get("textures_variantes", {}).get(variante, a["textures"])
+
+
+def charger(bases=None):
+    """Registre (seulement les apparences de ces blocs de base si bases est donne) et ses textures du depot."""
     with open(APPARENCES, encoding="utf-8") as f:
-        registre = {k: v for k, v in json.load(f).items() if not k.startswith("_")}
-
-    def textures_de(a, variante):
-        return a.get("textures_variantes", {}).get(variante, a["textures"])
-
+        registre = {k: v for k, v in json.load(f).items() if not k.startswith("_")
+                    and (bases is None or v["bloc"] in bases)}
     textures = sorted({t for a in registre.values() for v in [None, *a["variantes"]]
                        for t in textures_de(a, v).values() if ":" not in t})
     for t in textures:
         texture_provisoire(t)
+    return registre, textures
+
+
+def fichiers_java(bases=None):
+    """Fichiers du pack Java (sans pack.mcmeta) : textures, modeles et definitions completes des blocs de base.
+    Aussi appele par visuels-objets/pack.py, qui fusionne les blocs dans le pack de KS_Textures : bases limite alors
+    aux blocs de base que la version DEPLOYEE de KS_Blocs reecrit (un bloc de base en trop changerait l'aspect des
+    vrais blocs de ce type, que le serveur envoie alors tels quels)."""
+    registre, textures = charger(bases)
 
     def ref_java(t):
         return t if ":" in t else f"kalium:block/{t}"
 
-    # ---------------------------------------------------------------- Java
-    fichiers = {"pack.mcmeta": json.dumps({"pack": {
-        "description": "Blocs custom de KaLium " + VERSION, "min_format": FORMAT, "max_format": FORMAT + 9}}, indent=2)}
+    fichiers = {}
     for t in textures:
         with open(os.path.join(PNG_DIR, t + ".png"), "rb") as f:
             fichiers[f"assets/kalium/textures/block/{t}.png"] = f.read()
@@ -168,6 +177,16 @@ def main():
         defaut = vanilla["variants"][""]
         variantes = {e: pris.get(e, defaut) for e in etats(bloc)}
         fichiers[f"assets/minecraft/blockstates/{bloc}.json"] = json.dumps({"variants": variantes}, indent=1)
+    return fichiers, reserve
+
+
+def main():
+    registre, textures = charger()
+
+    # ---------------------------------------------------------------- Java
+    fichiers, reserve = fichiers_java()
+    fichiers["pack.mcmeta"] = json.dumps({"pack": {
+        "description": "Blocs custom de KaLium " + VERSION, "min_format": FORMAT, "max_format": FORMAT + 9}}, indent=2)
 
     os.makedirs(SORTIE, exist_ok=True)
     zip_chemin = os.path.join(SORTIE, f"KaLium-blocs-{VERSION}.zip")
