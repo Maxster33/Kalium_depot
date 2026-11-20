@@ -67,5 +67,7 @@ netherite 2 228 ; livre de Magnétisme = livre enchanté, 6 ; un marteau usé n'
 (rareté : Épique, plancher du jeu), KS_KaliumGive 1.14.0 (`coeur_de_marteau`, `marteau`, `marteau_netherite`),
 `didacticiel.yml` (crafts > marteau, enclume > magnetisme ; `requiert: "KS_Marteau"` : visibles à la validation).
 
-Reste à faire : texture Java et apparence Bedrock (geyser-bedrock) ; pour l'instant, une masse et un noyau lourd du
-jeu (le Cœur avec l'aspect enchanté).
+Apparence (20/11) : textures dessinées par LeKiwi06, couleurs et ombres du jeu par Claude (`visuels-objets/png/marteau.png`,
+`marteau_netherite.png`, hors du dépôt) ; KS_Textures 1.2.3 (règles), pack Java 1.5.0 (SHA-1
+`0a0cdfc41bc4ca18094a8b948696bab2537350b6`), geyser-bedrock 1.12.0. Le Cœur de Marteau garde l'image du noyau lourd
+avec l'aspect enchanté (choix validé).

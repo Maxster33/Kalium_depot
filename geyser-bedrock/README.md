@@ -56,8 +56,13 @@ alcool a deux objets Bedrock (potion et potion jetable), un bateau à jukebox un
    sur `custom_model_data` = l'identifiant de la texture ; `components` si le plugin change la nourriture ou la
    taille de pile) et son icône dans `pack/textures/item_texture.json`.
 3. Changer la version du pack (`manifest.json`, `header.version`, et `VERSION=` dans `build.sh`) pour que les
-   joueurs Bedrock retéléchargent le pack ; retirer l'ancien `.mcpack` de `packs/` (le ranger dans un `_removed-…`).
-4. Redémarrer le proxy (l'humain).
+   joueurs Bedrock retéléchargent le pack.
+4. Envoyer le nouveau `.mcpack` dans `packs/` **en laissant l'ancien en place** : Geyser relit à chaque connexion
+   Bedrock les packs chargés au démarrage ; un pack retiré avant le redémarrage fait refuser TOUS les joueurs
+   Bedrock (`NoSuchFileException`, « An internal error occurred! » ; pannes du 28/10 et du 29/10 au soir).
+5. Redémarrer le proxy (l'humain) en rangeant l'ancien `.mcpack` dans un `_removed-…` **pendant que le proxy est
+   arrêté** (les deux packs ont le même identifiant : il ne faut pas que les deux soient là au démarrage), jamais
+   pendant qu'il tourne.
 
 ## Historique
 
@@ -176,3 +181,9 @@ alcool a deux objets Bedrock (potion et potion jetable), un bateau à jukebox un
   fichiers). Pack `KaLium-objets-1.11.0.mcpack` construit. **Envoyé sur le proxy le 02/11/2026 à 13:44 (LeKiwi06 : « Oui, déploie ») avec `kalium_blocs.json` ; le 1.10.0 laissé dans `packs/`, à ranger proxy arrêté. Non testé.** Mise en place :
   `kalium_blocs.json` dans `custom_mappings/` et le `.mcpack` dans `packs/`, puis rangement du 1.10.0 proxy arrêté (étapes
   4 et 5 ci-dessus).
+- **1.12.0 (20/11/2026, LeKiwi06)** : marteau et marteau en netherite de KS_Marteau 1.0.0 (base : masse ;
+  `custom_model_data` `marteau` / `marteau_netherite` posé par KS_Textures 1.2.3 ; tenus comme un outil,
+  `display_handheld`). Textures dessinées par LeKiwi06, couleurs du jeu par Claude (`visuels-objets/png`). Le Cœur de
+  Marteau garde l'image du noyau lourd. Pack `KaLium-objets-1.12.0.mcpack` construit, **non envoyé, non testé**.
+  Mise en place : `kalium_objets.json` dans `custom_mappings/` et le `.mcpack` dans `packs/`, puis rangement du 1.11.0
+  proxy arrêté (étapes 4 et 5 ci-dessus).

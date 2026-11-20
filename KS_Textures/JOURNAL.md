@@ -147,7 +147,14 @@ Compilé le 02/11/2026. À déployer avec KS_Economy 1.13.6 et KS_ShulkerAmelior
 Recompilé seulement, aucun changement de code : le barème copié de KS_Economy 1.13.7 contient le Cœur de Marteau
 (673,6), le Marteau (745,6) et le Marteau en netherite (2 228) de KS_Marteau 1.0.0 (prix validés par LeKiwi06 le
 20/11/2026). Le plancher du jeu les met tous en **Épique** (violet clair) : la masse et le noyau lourd sont déjà
-épiques dans le jeu. Aucune texture pour l'instant (masse et noyau lourd du jeu ; rien dans geyser-bedrock).
+épiques dans le jeu.
+
+Textures (même version, 20/11) : règles `marteau` (`ks_marteau:marteau` = `diamant`) et `marteau_netherite`
+(= `netherite`) dans `Regles.java` ; images dessinées par LeKiwi06, couleurs du jeu par Claude
+(`visuels-objets/png`). Pack Java **1.5.0** (`visuels-objets/pack.py` : base `mace`, tenu comme la masse avec
+`item/handheld_mace`, inclut la liane du Shéjiǔ de la 1.4.0), SHA-1 `0a0cdfc41bc4ca18094a8b948696bab2537350b6`, à
+déposer sur minepack.fr par LeKiwi06 puis à recopier dans `relay.properties` du proxy (KaliumRelay : pack-url,
+pack-sha1). Bedrock : geyser-bedrock 1.12.0. Le Cœur de Marteau garde l'image du noyau lourd (aspect enchanté).
 
 Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.7 et KS_Marteau 1.0.0.
 

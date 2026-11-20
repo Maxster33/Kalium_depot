@@ -306,6 +306,16 @@
       "textures": [
         "textures/items/kalium_amulette_mangeuse_de_mal"
       ]
+    },
+    "kalium.marteau": {
+      "textures": [
+        "textures/items/kalium_marteau"
+      ]
+    },
+    "kalium.marteau_netherite": {
+      "textures": [
+        "textures/items/kalium_marteau_netherite"
+      ]
     }
   }
 }

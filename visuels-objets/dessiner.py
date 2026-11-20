@@ -717,6 +717,11 @@ def objets():
     # KS_MaleficesNether (30/10/2026) : premier jet, à retoucher par LeKiwi06.
     add("amulette_mangeuse_de_mal", "Amulette mangeuse de mal", "KS_MaleficesNether", "item_model heart_of_the_sea",
         amulette())
+
+    # KS_Marteau (20/11/2026) : dessiné par LeKiwi06, couleurs et ombres du jeu par Claude (le PNG fait foi) ; sans PNG,
+    # l'image de la masse sert de base. Le Cœur de Marteau garde l'image du noyau lourd (aspect enchanté).
+    add("marteau", "Marteau", "KS_Marteau", "mace", vanilla("item/mace"))
+    add("marteau_netherite", "Marteau en netherite", "KS_Marteau", "mace", vanilla("item/mace"))
     return o
 
 

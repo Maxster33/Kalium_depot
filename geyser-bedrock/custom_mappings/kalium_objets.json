@@ -1449,6 +1449,42 @@
           "allow_offhand": true
         }
       }
+    ],
+    "minecraft:mace": [
+      {
+        "type": "definition",
+        "model": "minecraft:mace",
+        "bedrock_identifier": "kalium:marteau",
+        "display_name": "Marteau",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "marteau",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.marteau",
+          "allow_offhand": true,
+          "display_handheld": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:mace",
+        "bedrock_identifier": "kalium:marteau_netherite",
+        "display_name": "Marteau en netherite",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "marteau_netherite",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.marteau_netherite",
+          "allow_offhand": true,
+          "display_handheld": true
+        }
+      }
     ]
   }
 }
