@@ -15,9 +15,9 @@ import re
 import sys
 import zipfile
 
-VERSION = "1.6.0"  # 1.6.0 : rhum et Shejiu (KS_Alcools), Abatteuse, Excavatrice, Laboureuse (KS_SuperTool) ; 1.5.0 : Foreuse (KS_SuperTool) ; 1.2.0 : blocs custom de KS_Blocs ; 1.2.1 : jack o'lanterns lumineuses ; 1.3.0 : low fire, low shield ; 1.4.0 : liane du Shejiu invisible
+VERSION = "1.7.0"  # 1.7.0 : objets de KS_Cultures et stades de pousse (canne a sucre, varech) ; 1.6.0 : rhum et Shejiu (KS_Alcools), Abatteuse, Excavatrice, Laboureuse (KS_SuperTool) ; 1.5.0 : Foreuse (KS_SuperTool) ; 1.2.0 : blocs custom de KS_Blocs ; 1.2.1 : jack o'lanterns lumineuses ; 1.3.0 : low fire, low shield ; 1.4.0 : liane du Shejiu invisible
 # Blocs de base que KS_Blocs reecrit sur le serveur (version deployee) : voir plus bas
-BASES_BLOCS = {"note_block"}
+BASES_BLOCS = {"note_block", "sugar_cane", "kelp"}  # 1.7.0 : KS_Blocs 0.3.0 (protection) sur Lobby, Kanvas, Kixster, Event
 DIR = os.path.dirname(os.path.abspath(__file__))
 PNG_DIR = os.path.join(DIR, "png")
 SORTIE = os.path.join(DIR, "..", "sortie")
@@ -52,6 +52,14 @@ BASES = {
     "excavatrice": ["diamond_shovel"], "excavatrice_netherite": ["netherite_shovel"],
     "laboureuse": ["diamond_hoe"], "laboureuse_netherite": ["netherite_hoe"],
 }
+# 1.7.0 : objets de KS_Cultures : l'image du jeu de leur item_model, et la tarte ou le livre en dessous (en trop, sans gene)
+for _i, _n, _b in dessiner.FRUITS_CULTURES:
+    BASES[_i] = [_b, "pumpkin_pie"]
+for _i, _n, _b in dessiner.GRAINES_CULTURES:
+    BASES[_i] = [_b, "knowledge_book"]
+for _f, _n, _t in dessiner.FLEURS_CULTURES:
+    BASES["graine_" + _f] = ["beetroot_seeds", "knowledge_book"]
+BASES["melange"] = ["pitcher_pod", "knowledge_book"]
 # Textures de face de bloc : affichees en cube, comme le bloc vanilla
 BLOCS = {"bloc_charbon_de_bois"} | {f"emeraude_compressee_{t}" for t in range(1, 7)}
 # Tenues comme un outil
@@ -160,9 +168,10 @@ def main():
                                "cases": cas, "fallback": vanilla["model"]}
         fichiers[chemin] = json.dumps(definition, indent=2)
 
-    # 1.2.0 : blocs custom de KS_Blocs (KS_Blocs/pack/blocs.py), seulement ceux des blocs de base deja reecrits sur le
-    # serveur (KS_Blocs 0.1.1 deploye : bloc musical). Ajouter sugar_cane et kelp quand KS_Blocs 0.2.0 et KS_Cultures
-    # seront deployes, pas avant : la canne a sucre et le varech des joueurs prendraient l'aspect des cultures.
+    # 1.2.0 : blocs custom de KS_Blocs (KS_Blocs/pack/blocs.py), seulement ceux des blocs de base reecrits sur TOUS les
+    # serveurs Paper (le proxy envoie le pack a tout le reseau). 1.7.0 : canne a sucre et varech, depuis KS_Blocs 0.3.0
+    # sur Lobby, Kanvas, Kixster et Event (20/11) : leurs vrais blocs sont montres en age=0, jamais en culture. Un
+    # serveur Paper sans KS_Blocs 0.3.0 montrerait des cultures a la place de la canne a sucre et du varech.
     blocs, reserve = ks_blocs.fichiers_java(BASES_BLOCS)
     for nom, donnees in blocs.items():
         if nom in fichiers:

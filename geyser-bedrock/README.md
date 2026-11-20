@@ -196,3 +196,11 @@ alcool a deux objets Bedrock (potion et potion jetable), un bateau à jukebox un
   20/11. Pack `KaLium-objets-1.13.0.mcpack` construit. **Envoyé sur le proxy le 20/11/2026 à 15:25** (LeKiwi06 : « déploie tout sur kixster et le proxy ») dans `packs/` avec `kalium_objets.json` (ancien dans `_removed-kalium-objets-json-2026-11-20/`) ; le 1.11.0 rangé proxy arrêté (LeKiwi06 : « Proxy arrêté ») dans `_removed-kalium-objets-1.11.0-2026-11-20/`. Non testé. Mise en
   place : `kalium_objets.json` dans `custom_mappings/` et le `.mcpack` dans `packs/`, puis rangement du 1.11.0 proxy
   arrêté (étapes 4 et 5 ci-dessus).
+- **1.14.0 (20/11/2026, LeKiwi06)** : les 33 objets de KS_Cultures (LeKiwi06 : « Oui, les textures »). Fruits sur
+  `minecraft:pumpkin_pie` (aliments : nourriture et saturation du plugin), graines et mélange sur
+  `minecraft:knowledge_book`, piles de 64 ; modèle = l'`item_model` que KS_Cultures pose (betterave, carotte...),
+  `custom_model_data` = id de l'objet, posé par KS_Textures 1.2.6. Images : premier jet de Claude à partir des images du
+  jeu (`visuels-objets/dessiner.py`), à retoucher ; stades mûrs des végétaux redessinés de même
+  (`visuels-objets/png/blocs`, correspondance des blocs inchangée). Contient la 1.13.0. Pack
+  `KaLium-objets-1.14.0.mcpack` construit, **non envoyé, non testé**. Mise en place : `kalium_objets.json` dans
+  `custom_mappings/` et le `.mcpack` dans `packs/`, puis rangement du 1.13.0 proxy arrêté.

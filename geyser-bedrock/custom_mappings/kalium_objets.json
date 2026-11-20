@@ -204,6 +204,462 @@
           "icon": "kalium.amulette_mangeuse_de_mal",
           "allow_offhand": true
         }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:wheat_seeds",
+        "bedrock_identifier": "kalium:graine_tomate",
+        "display_name": "Graines de tomate",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_tomate",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_tomate",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:wheat_seeds",
+        "bedrock_identifier": "kalium:graine_poivron",
+        "display_name": "Graines de poivron",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_poivron",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_poivron",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:wheat_seeds",
+        "bedrock_identifier": "kalium:graine_aubergine",
+        "display_name": "Graines d'aubergine",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_aubergine",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_aubergine",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:wheat_seeds",
+        "bedrock_identifier": "kalium:graine_oignon",
+        "display_name": "Graines d'oignon",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_oignon",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_oignon",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:wheat_seeds",
+        "bedrock_identifier": "kalium:graine_salade",
+        "display_name": "Graines de salade",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_salade",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_salade",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:melon_seeds",
+        "bedrock_identifier": "kalium:graine_mais",
+        "display_name": "Graines de maïs",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_mais",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_mais",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_dandelion",
+        "display_name": "Graines de pissenlit",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_dandelion",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_dandelion",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_poppy",
+        "display_name": "Graines de coquelicot",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_poppy",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_poppy",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_blue_orchid",
+        "display_name": "Graines d'orchidée bleue",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_blue_orchid",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_blue_orchid",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_allium",
+        "display_name": "Graines d'allium",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_allium",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_allium",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_azure_bluet",
+        "display_name": "Graines de houstonie bleue",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_azure_bluet",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_azure_bluet",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_red_tulip",
+        "display_name": "Graines de tulipe rouge",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_red_tulip",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_red_tulip",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_orange_tulip",
+        "display_name": "Graines de tulipe orange",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_orange_tulip",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_orange_tulip",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_white_tulip",
+        "display_name": "Graines de tulipe blanche",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_white_tulip",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_white_tulip",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_pink_tulip",
+        "display_name": "Graines de tulipe rose",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_pink_tulip",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_pink_tulip",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_oxeye_daisy",
+        "display_name": "Graines de marguerite",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_oxeye_daisy",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_oxeye_daisy",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_cornflower",
+        "display_name": "Graines de bleuet",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_cornflower",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_cornflower",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_lily_of_the_valley",
+        "display_name": "Graines de muguet",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_lily_of_the_valley",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_lily_of_the_valley",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_eyeblossom",
+        "display_name": "Graines d'oeilchidée",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_eyeblossom",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_eyeblossom",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_sunflower",
+        "display_name": "Graines de tournesol",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_sunflower",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_sunflower",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_lilac",
+        "display_name": "Graines de lilas",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_lilac",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_lilac",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_rose_bush",
+        "display_name": "Graines de rosier",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_rose_bush",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_rose_bush",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot_seeds",
+        "bedrock_identifier": "kalium:graine_peony",
+        "display_name": "Graines de pivoine",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "graine_peony",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.graine_peony",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:pitcher_pod",
+        "bedrock_identifier": "kalium:melange",
+        "display_name": "Mélange de graines",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "melange",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.melange",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
       }
     ],
     "minecraft:pumpkin_pie": [
@@ -238,6 +694,213 @@
           "minecraft:food": {
             "nutrition": 10,
             "saturation": 10.0
+          },
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:beetroot",
+        "bedrock_identifier": "kalium:tomate",
+        "display_name": "Tomate",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "tomate",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.tomate",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 3,
+            "saturation": 3.6
+          },
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:carrot",
+        "bedrock_identifier": "kalium:poivron",
+        "display_name": "Poivron",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "poivron",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.poivron",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 3,
+            "saturation": 3.6
+          },
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:chorus_fruit",
+        "bedrock_identifier": "kalium:aubergine",
+        "display_name": "Aubergine",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "aubergine",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.aubergine",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 3,
+            "saturation": 3.6
+          },
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potato",
+        "bedrock_identifier": "kalium:oignon",
+        "display_name": "Oignon",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "oignon",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.oignon",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 3,
+            "saturation": 3.6
+          },
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:dried_kelp",
+        "bedrock_identifier": "kalium:salade",
+        "display_name": "Salade",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "salade",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.salade",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 3,
+            "saturation": 3.6
+          },
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:wheat",
+        "bedrock_identifier": "kalium:mais",
+        "display_name": "Épi de maïs",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "mais",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.mais",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 3,
+            "saturation": 3.6
+          },
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:pumpkin_seeds",
+        "bedrock_identifier": "kalium:riz",
+        "display_name": "Riz",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "riz",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.riz",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 2,
+            "saturation": 0.4
+          },
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:sweet_berries",
+        "bedrock_identifier": "kalium:cerises",
+        "display_name": "Cerises",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "cerises",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.cerises",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 4,
+            "saturation": 2.4
+          },
+          "minecraft:max_stack_size": 64
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:glow_berries",
+        "bedrock_identifier": "kalium:kiwi",
+        "display_name": "Kiwi",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "kiwi",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.kiwi",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:food": {
+            "nutrition": 2,
+            "saturation": 0.4
           },
           "minecraft:max_stack_size": 64
         }

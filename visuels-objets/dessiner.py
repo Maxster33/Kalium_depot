@@ -583,6 +583,251 @@ def fiole_experience(teinte):
     return teinter(px, teinte, contenu)
 
 
+# ---------------------------------------------------------------- KS_Cultures (20/11/2026, premier jet a retoucher)
+
+def recolorer(chemin, couleur, test=None):
+    """Texture du jeu dont les pixels (tous, ou ceux du test) prennent le degrade d'une couleur."""
+    px = vanilla(chemin)
+    appliquer(px, degrade(couleur, 7), masque(px, test) if test else None)
+    return px
+
+
+def _rouge(c, x, y):
+    return hsv(c)[1] > 0.35 and (hsv(c)[0] < 0.08 or hsv(c)[0] > 0.88)
+
+
+def _orange(c, x, y):
+    return hsv(c)[1] > 0.35 and 0.02 < hsv(c)[0] < 0.13
+
+
+def _pourpre(c, x, y):
+    return hsv(c)[1] > 0.3 and (hsv(c)[0] > 0.8 or hsv(c)[0] < 0.04)
+
+
+def kiwi_coupe():
+    """Kiwi coupe : peau brune, chair verte plus claire au centre, coeur creme, pepins noirs."""
+    px = vide()
+    peau, chair = degrade("#7A5530", 7), degrade("#7FC23A", 7)
+    for y in range(16):
+        for x in range(16):
+            r = math.hypot(x - 7.5, y - 7.5)
+            ombre = x + y > 16
+            if r <= 6.6:
+                if r > 5.6:
+                    px[y][x] = peau[1 if ombre else 3]
+                elif r <= 1.3:
+                    px[y][x] = rgb("#F3EDC8")
+                else:
+                    px[y][x] = chair[max(2, min(6, round(6 - (r - 1.3) / 4.3 * 3 - (1 if ombre else 0))))]
+    for k in range(8):
+        a = k * math.pi / 4 + 0.3
+        px[round(7.5 + 2.7 * math.sin(a))][round(7.5 + 2.7 * math.cos(a))] = rgb("#1E1A14")
+    return px
+
+
+def fruits_cultures():
+    f = {}
+    f["tomate"] = recolorer("item/apple", "#EE3F1A", _rouge)
+    appliquer(f["tomate"], degrade("#3F9A2C", 7), masque(f["tomate"], lambda c, x, y: not _rouge(c, x, y)))
+    f["poivron"] = recolorer("item/apple", "#3E9B2A", _rouge)
+    f["aubergine"] = recolorer("item/potato", "#6A2C82")
+    f["oignon"] = recolorer("item/beetroot", "#D29A4C", _pourpre)
+    f["salade"] = recolorer("block/spore_blossom", "#6CC24A")
+    f["mais"] = recolorer("item/carrot", "#F2C12E", _orange)
+    f["riz"] = recolorer("item/wheat_seeds", "#F4EFDC")
+    f["cerises"] = recolorer("item/sweet_berries", "#B01030", _rouge)
+    f["kiwi"] = kiwi_coupe()
+    return f
+
+
+def _cadre(px):
+    pts = [(x, y) for y in range(len(px)) for x in range(len(px[0])) if px[y][x]]
+    return (min(p[0] for p in pts), min(p[1] for p in pts), max(p[0] for p in pts), max(p[1] for p in pts))
+
+
+def miniature(px, taille=7):
+    """La partie dessinee de px reduite a taille x taille au plus (dans chaque carre, le pixel le plus colore)."""
+    x0, y0, x1, y1 = _cadre(px)
+    w, h = x1 - x0 + 1, y1 - y0 + 1
+    k = max(w, h) / taille if max(w, h) > taille else 1
+    nw, nh = max(1, round(w / k)), max(1, round(h / k))
+    out = [[None] * nw for _ in range(nh)]
+    for y in range(nh):
+        for x in range(nw):
+            best = None
+            for sy in range(int(y * k), max(int(y * k) + 1, int((y + 1) * k))):
+                for sx in range(int(x * k), max(int(x * k) + 1, int((x + 1) * k))):
+                    c = px[y0 + min(sy, h - 1)][x0 + min(sx, w - 1)]
+                    if c and (best is None or hsv(c)[1] * hsv(c)[2] > hsv(best)[1] * hsv(best)[2]):
+                        best = c
+            out[y][x] = best
+    return out
+
+
+def corolle(chemin):
+    """Le haut d'une petite fleur du jeu (sans la tige), 7 x 7 au plus."""
+    px = vanilla(chemin)
+    vert = lambda c: 0.17 < hsv(c)[0] < 0.45 and hsv(c)[1] > 0.3
+    pts = [(x, y) for y in range(16) for x in range(16) if px[y][x] and not vert(px[y][x])]
+    if not pts:
+        return miniature(px)
+    y0 = min(y for _, y in pts)
+    a = max(0, min(16 - 7, round(sum(x for x, _ in pts) / len(pts)) - 3))
+    haut = vide()
+    for y in range(y0, min(16, y0 + 7)):
+        haut[y - y0][:7] = px[y][a:a + 7]
+    return miniature(haut)
+
+
+def coller(fond, petit, x0, y0):
+    """petit pose sur fond en (x0, y0), avec un liseré sombre pour le detacher."""
+    out = copie(fond)
+    h, w = len(petit), len(petit[0])
+    for y in range(-1, h + 1):
+        for x in range(-1, w + 1):
+            X, Y = x0 + x, y0 + y
+            dedans = 0 <= y < h and 0 <= x < w and petit[y][x]
+            voisin = any(0 <= y + dy < h and 0 <= x + dx < w and petit[y + dy][x + dx]
+                         for dy in (-1, 0, 1) for dx in (-1, 0, 1))
+            if 0 <= X < 16 and 0 <= Y < 16 and voisin and not dedans:
+                out[Y][X] = (40, 30, 20, 255)
+    for y in range(h):
+        for x in range(w):
+            if petit[y][x] and 0 <= x0 + x < 16 and 0 <= y0 + y < 16:
+                out[y0 + y][x0 + x] = petit[y][x]
+    return out
+
+
+def graines(base, couleur, petit):
+    """Graines du jeu recolorees, avec en haut a droite la miniature de ce qu'elles donnent."""
+    return coller(recolorer(base, couleur), petit, 16 - len(petit[0]), 0)
+
+
+def melange_graines():
+    """Graines de ble, chacune d'une autre couleur."""
+    px = vanilla("item/wheat_seeds")
+    pal = ["#E8341C", "#F2C12E", "#3E9B2A", "#6A2C82", "#D29A4C", "#3060D0", "#F4EFDC", "#E070B0"]
+    vus, n = set(), 0
+    for y in range(16):
+        for x in range(16):
+            if px[y][x] and (x, y) not in vus:
+                pile, comp = [(x, y)], set()
+                vus.add((x, y))
+                while pile:
+                    a, b = pile.pop()
+                    comp.add((a, b))
+                    for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                        A, B = a + dx, b + dy
+                        if 0 <= A < 16 and 0 <= B < 16 and px[B][A] and (A, B) not in vus:
+                            vus.add((A, B))
+                            pile.append((A, B))
+                appliquer(px, degrade(pal[n % len(pal)], 7), [[(a, b) in comp for a in range(16)] for b in range(16)])
+                n += 1
+    return px
+
+
+# (id, nom, image de l'objet du jeu sous le livre de connaissances ou la tarte) : KS_Cultures (Vegetal.java, Fleurs.java)
+FRUITS_CULTURES = [("tomate", "Tomate", "beetroot"), ("poivron", "Poivron", "carrot"),
+                   ("aubergine", "Aubergine", "chorus_fruit"), ("oignon", "Oignon", "potato"),
+                   ("salade", "Salade", "dried_kelp"), ("mais", "Épi de maïs", "wheat"), ("riz", "Riz", "pumpkin_seeds"),
+                   ("cerises", "Cerises", "sweet_berries"), ("kiwi", "Kiwi", "glow_berries")]
+GRAINES_CULTURES = [("graine_tomate", "Graines de tomate", "wheat_seeds"),
+                    ("graine_poivron", "Graines de poivron", "wheat_seeds"),
+                    ("graine_aubergine", "Graines d'aubergine", "wheat_seeds"),
+                    ("graine_oignon", "Graines d'oignon", "wheat_seeds"),
+                    ("graine_salade", "Graines de salade", "wheat_seeds"),
+                    ("graine_mais", "Graines de maïs", "melon_seeds")]
+COULEUR_GRAINES = {"tomate": "#C9A46A", "poivron": "#E9DFA8", "aubergine": "#C9B27A", "oignon": "#3A3330",
+                   "salade": "#B88A4A", "mais": "#F0C030"}
+# (fleur, nom de la graine, texture du jeu) ; grandes fleurs : la texture entiere reduite
+FLEURS_CULTURES = [("dandelion", "pissenlit", "dandelion"), ("poppy", "coquelicot", "poppy"),
+                   ("blue_orchid", "orchidée bleue", "blue_orchid"), ("allium", "allium", "allium"),
+                   ("azure_bluet", "houstonie bleue", "azure_bluet"), ("red_tulip", "tulipe rouge", "red_tulip"),
+                   ("orange_tulip", "tulipe orange", "orange_tulip"), ("white_tulip", "tulipe blanche", "white_tulip"),
+                   ("pink_tulip", "tulipe rose", "pink_tulip"), ("oxeye_daisy", "marguerite", "oxeye_daisy"),
+                   ("cornflower", "bleuet", "cornflower"), ("lily_of_the_valley", "muguet", "lily_of_the_valley"),
+                   ("eyeblossom", "oeilchidée", "open_eyeblossom"), ("sunflower", "tournesol", "sunflower_front"),
+                   ("lilac", "lilas", "lilac_top"), ("rose_bush", "rosier", "rose_bush_top"),
+                   ("peony", "pivoine", "peony_top")]
+GRANDES_FLEURS = {"sunflower", "lilac", "rose_bush", "peony"}
+
+
+def _feuillage():
+    """Plants de carottes du jeu sans les carottes (les pixels orange deviennent des feuilles sombres)."""
+    px = vanilla("block/carrots_stage3")
+    appliquer(px, degrade("#2F6B22", 7), masque(px, lambda c, x, y: 0.02 < hsv(c)[0] < 0.14 and hsv(c)[1] > 0.4))
+    return px
+
+
+def _fruits_sur(px, couleur, points, forme):
+    r = degrade(couleur, 7)
+    for x0, y0 in points:
+        for dx, dy, n in forme:
+            px[y0 + dy][x0 + dx] = r[n]
+    return px
+
+
+_ROND = [(0, 0, 4), (1, 0, 3), (0, 1, 3), (1, 1, 1)]  # 2 x 2, reflet en haut a gauche
+_LONG = [(0, 0, 5), (1, 0, 3), (0, 1, 4), (1, 1, 2), (0, 2, 3), (1, 2, 1)]  # 2 x 3
+_POS = [(3, 6), (10, 5), (6, 9), (12, 10), (1, 11)]
+
+
+def stade_mur(nom):
+    """Stade mur d'un vegetal de KS_Cultures (bloc en croix, visuels-objets/png/blocs), premier jet du 20/11/2026 :
+    le feuillage d'une culture du jeu et les fruits de l'objet. Appele par KS_Blocs/pack/blocs.py (textures
+    provisoires)."""
+    if nom == "culture_tomate":
+        return _fruits_sur(_feuillage(), "#EE3F1A", _POS, _ROND)
+    if nom == "culture_poivron":
+        return _fruits_sur(_feuillage(), "#A8F050", _POS[:4], _LONG)
+    if nom == "culture_aubergine":
+        return _fruits_sur(_feuillage(), "#6A2C82", _POS[:4], _LONG)
+    if nom == "culture_oignon":  # betteraves du jeu, bulbes dores
+        return recolorer("block/beetroots_stage3", "#D29A4C",
+                         lambda c, x, y: hsv(c)[1] > 0.3 and (hsv(c)[0] > 0.8 or hsv(c)[0] < 0.06))
+    if nom == "culture_salade":  # la salade de l'objet, posee au sol
+        sal = fruits_cultures()["salade"]
+        bas = _cadre(sal)[3]
+        px = vide()
+        for y in range(16):
+            if 0 <= y - bas + 15 < 16:
+                px[y - bas + 15] = sal[y][:]
+        return px
+    if nom == "culture_mais_bas":  # ble du jeu en vert
+        return recolorer("block/wheat_stage6", "#4E9A2E")
+    if nom == "culture_mais_haut":  # ble du jeu en vert, epis jaunes sur les tiges, panicules claires en haut
+        px = recolorer("block/wheat_stage7", "#4E9A2E")
+        epi, panicule = degrade("#F2C12E", 7), degrade("#E8D27A", 7)
+        tiges = [x for x in range(16) if sum(1 for y in range(16) if px[y][x]) >= 8]
+        for x in tiges[::3][:4]:
+            for dy, n in ((0, 5), (1, 4), (2, 3)):
+                px[8 + x % 3 + dy][x] = epi[n]
+        for x in range(16):
+            for y in range(16):
+                if px[y][x]:
+                    if y < 4:
+                        px[y][x] = panicule[4]
+                    break
+        return px
+    raise KeyError(nom)
+
+
+def objets_cultures(add):
+    f = fruits_cultures()
+    for id_, nom, base in FRUITS_CULTURES:
+        add(id_, nom, "KS_Cultures", f"item_model {base} (base tarte)", f[id_])
+    for id_, nom, base in GRAINES_CULTURES:
+        v = id_[len("graine_"):]
+        add(id_, nom, "KS_Cultures", f"item_model {base} (base livre)",
+            graines("item/wheat_seeds", COULEUR_GRAINES[v], miniature(f[v])))
+    for fl, nom, tex in FLEURS_CULTURES:
+        nom = ("Graines d'" if nom[0] in "aeiouéo" else "Graines de ") + nom
+        petit = miniature(vanilla("block/" + tex)) if fl in GRANDES_FLEURS else corolle("block/" + tex)
+        add("graine_" + fl, nom, "KS_Cultures", "item_model beetroot_seeds (base livre)",
+            graines("item/beetroot_seeds", "#8A6A40", petit))
+    add("melange", "Mélange de graines", "KS_Cultures", "item_model pitcher_pod (base livre)", melange_graines())
+
+
 # ---------------------------------------------------------------- objets
 
 def objets():
@@ -739,6 +984,9 @@ def objets():
     add("excavatrice_netherite", "Excavatrice en netherite", "KS_SuperTool", "netherite_shovel", vanilla("item/netherite_shovel"))
     add("laboureuse", "Laboureuse", "KS_SuperTool", "diamond_hoe", vanilla("item/diamond_hoe"))
     add("laboureuse_netherite", "Laboureuse en netherite", "KS_SuperTool", "netherite_hoe", vanilla("item/netherite_hoe"))
+
+    # KS_Cultures (20/11/2026) : premier jet de Claude a partir des images du jeu, a retoucher par LeKiwi06
+    objets_cultures(add)
     return o
 
 

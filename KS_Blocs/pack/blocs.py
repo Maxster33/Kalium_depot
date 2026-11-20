@@ -63,13 +63,13 @@ PROVISOIRES = {
     "culture_pousse": ("block/wheat_stage1", None),
     "culture_jeune": ("block/carrots_stage1", None),
     "culture_fleur": ("block/torchflower_crop_stage1", None),
-    "culture_tomate": ("block/beetroots_stage3", None),
-    "culture_poivron": ("block/carrots_stage3", None),
-    "culture_aubergine": ("block/potatoes_stage3", None),
-    "culture_oignon": ("block/beetroots_stage2", None),
-    "culture_salade": ("block/potatoes_stage2", None),
-    "culture_mais_bas": ("block/wheat_stage6", None),
-    "culture_mais_haut": ("block/wheat_stage7", None),
+    "culture_tomate": ("dessiner", None),  # 20/11 : stades murs dessines (dessiner.stade_mur)
+    "culture_poivron": ("dessiner", None),
+    "culture_aubergine": ("dessiner", None),
+    "culture_oignon": ("dessiner", None),
+    "culture_salade": ("dessiner", None),
+    "culture_mais_bas": ("dessiner", None),
+    "culture_mais_haut": ("dessiner", None),
     "culture_kiwi": ("block/sweet_berry_bush_stage2", None),
     "culture_kiwi_fruits": ("block/sweet_berry_bush_stage3", 0.08),  # baies teintees en brun
     "riz_pousse": ("block/wheat_stage2", None),
@@ -105,7 +105,7 @@ def texture_provisoire(nom):
     if nom not in PROVISOIRES:
         sys.exit(f"Texture manquante, sans texture provisoire prevue : {chemin}")
     source, teinte = PROVISOIRES[nom]
-    px = dessiner.vanilla(source)
+    px = dessiner.stade_mur(nom) if source == "dessiner" else dessiner.vanilla(source)
     if teinte is not None:
         if nom.startswith("culture_"):  # les baies rouges
             rouges = dessiner.masque(px, lambda c, x, y: dessiner.hsv(c)[1] > 0.4

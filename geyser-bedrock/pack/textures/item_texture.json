@@ -356,6 +356,171 @@
       "textures": [
         "textures/items/kalium_laboureuse_netherite"
       ]
+    },
+    "kalium.tomate": {
+      "textures": [
+        "textures/items/kalium_tomate"
+      ]
+    },
+    "kalium.poivron": {
+      "textures": [
+        "textures/items/kalium_poivron"
+      ]
+    },
+    "kalium.aubergine": {
+      "textures": [
+        "textures/items/kalium_aubergine"
+      ]
+    },
+    "kalium.oignon": {
+      "textures": [
+        "textures/items/kalium_oignon"
+      ]
+    },
+    "kalium.salade": {
+      "textures": [
+        "textures/items/kalium_salade"
+      ]
+    },
+    "kalium.mais": {
+      "textures": [
+        "textures/items/kalium_mais"
+      ]
+    },
+    "kalium.riz": {
+      "textures": [
+        "textures/items/kalium_riz"
+      ]
+    },
+    "kalium.cerises": {
+      "textures": [
+        "textures/items/kalium_cerises"
+      ]
+    },
+    "kalium.kiwi": {
+      "textures": [
+        "textures/items/kalium_kiwi"
+      ]
+    },
+    "kalium.graine_tomate": {
+      "textures": [
+        "textures/items/kalium_graine_tomate"
+      ]
+    },
+    "kalium.graine_poivron": {
+      "textures": [
+        "textures/items/kalium_graine_poivron"
+      ]
+    },
+    "kalium.graine_aubergine": {
+      "textures": [
+        "textures/items/kalium_graine_aubergine"
+      ]
+    },
+    "kalium.graine_oignon": {
+      "textures": [
+        "textures/items/kalium_graine_oignon"
+      ]
+    },
+    "kalium.graine_salade": {
+      "textures": [
+        "textures/items/kalium_graine_salade"
+      ]
+    },
+    "kalium.graine_mais": {
+      "textures": [
+        "textures/items/kalium_graine_mais"
+      ]
+    },
+    "kalium.graine_dandelion": {
+      "textures": [
+        "textures/items/kalium_graine_dandelion"
+      ]
+    },
+    "kalium.graine_poppy": {
+      "textures": [
+        "textures/items/kalium_graine_poppy"
+      ]
+    },
+    "kalium.graine_blue_orchid": {
+      "textures": [
+        "textures/items/kalium_graine_blue_orchid"
+      ]
+    },
+    "kalium.graine_allium": {
+      "textures": [
+        "textures/items/kalium_graine_allium"
+      ]
+    },
+    "kalium.graine_azure_bluet": {
+      "textures": [
+        "textures/items/kalium_graine_azure_bluet"
+      ]
+    },
+    "kalium.graine_red_tulip": {
+      "textures": [
+        "textures/items/kalium_graine_red_tulip"
+      ]
+    },
+    "kalium.graine_orange_tulip": {
+      "textures": [
+        "textures/items/kalium_graine_orange_tulip"
+      ]
+    },
+    "kalium.graine_white_tulip": {
+      "textures": [
+        "textures/items/kalium_graine_white_tulip"
+      ]
+    },
+    "kalium.graine_pink_tulip": {
+      "textures": [
+        "textures/items/kalium_graine_pink_tulip"
+      ]
+    },
+    "kalium.graine_oxeye_daisy": {
+      "textures": [
+        "textures/items/kalium_graine_oxeye_daisy"
+      ]
+    },
+    "kalium.graine_cornflower": {
+      "textures": [
+        "textures/items/kalium_graine_cornflower"
+      ]
+    },
+    "kalium.graine_lily_of_the_valley": {
+      "textures": [
+        "textures/items/kalium_graine_lily_of_the_valley"
+      ]
+    },
+    "kalium.graine_eyeblossom": {
+      "textures": [
+        "textures/items/kalium_graine_eyeblossom"
+      ]
+    },
+    "kalium.graine_sunflower": {
+      "textures": [
+        "textures/items/kalium_graine_sunflower"
+      ]
+    },
+    "kalium.graine_lilac": {
+      "textures": [
+        "textures/items/kalium_graine_lilac"
+      ]
+    },
+    "kalium.graine_rose_bush": {
+      "textures": [
+        "textures/items/kalium_graine_rose_bush"
+      ]
+    },
+    "kalium.graine_peony": {
+      "textures": [
+        "textures/items/kalium_graine_peony"
+      ]
+    },
+    "kalium.melange": {
+      "textures": [
+        "textures/items/kalium_melange"
+      ]
     }
   }
 }

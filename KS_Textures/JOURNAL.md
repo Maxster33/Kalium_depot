@@ -185,3 +185,14 @@ Barème copié de KS_Economy 1.13.9 : les 33 objets de KS_Cultures (tous sous 10
 d'autre ne change.
 
 Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.9.
+
+## 1.2.6 - textures des cultures (20/11/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « Oui, les textures » (objets de KS_Cultures).
+
+- Les 33 objets de KS_Cultures (`ks_cultures:objet = <id>`) prennent la texture du même nom : 9 fruits, 6 graines de
+  végétaux, 17 graines de fleurs, mélange de graines. Images : premier jet de Claude à partir des images du jeu
+  (`visuels-objets/dessiner.py`), à retoucher. Pack Java 1.7.0 et geyser-bedrock 1.14.0.
+- Comprend la 1.2.5 (barème des cultures), jamais déployée.
+
+Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.9 et le pack Java 1.7.0.

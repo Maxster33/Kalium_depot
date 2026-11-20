@@ -67,6 +67,12 @@ fiche « Crafts pratiques », à corriger au déploiement de KS_Crafts 1.24.0.**
 
 ## 4. Textures (LeKiwi06) - textures provisoires en place
 
+**Fait le 20/11/2026 (premier jet de Claude, à retoucher) : 33 icônes (`visuels-objets/dessiner.py`), règles de
+KS_Textures 1.2.6, correspondances de geyser-bedrock 1.14.0, pack Java 1.7.0 avec les stades (canne à sucre et varech
+dans `BASES_BLOCS`, KS_Blocs 0.3.0 étant sur Lobby, Kanvas, Kixster et Event) ; stades mûrs des végétaux redessinés
+(`dessiner.stade_mur`). Rien de déployé. Les items gardent leur `item_model` provisoire : les packs s'en servent comme
+objet de base.**
+
 ### Blocs (stades de pousse) : `visuels-objets/png/blocs/<nom>.png`, 16 x 16, plante en croix
 
 Une même image sert à Java (modèle `cross`) et à Bedrock (`minecraft:geometry.cross`). 15 fichiers, provisoires créés

@@ -111,6 +111,16 @@ final class Regles {
         r("radeau_jukebox", "ks_jukeboxboat:bateau", null,
                 s -> s.is(Items.BAMBOO_RAFT) || s.is(Items.BAMBOO_CHEST_RAFT));
         r("bateau_jukebox", "ks_jukeboxboat:bateau");
+
+        // 1.2.6 : KS_Cultures (fruits sur une tarte à la citrouille, graines et mélange sur un livre de connaissances)
+        for (String o : List.of("tomate", "poivron", "aubergine", "oignon", "salade", "mais", "riz", "cerises", "kiwi",
+                "graine_tomate", "graine_poivron", "graine_aubergine", "graine_oignon", "graine_salade", "graine_mais",
+                "graine_dandelion", "graine_poppy", "graine_blue_orchid", "graine_allium", "graine_azure_bluet",
+                "graine_red_tulip", "graine_orange_tulip", "graine_white_tulip", "graine_pink_tulip",
+                "graine_oxeye_daisy", "graine_cornflower", "graine_lily_of_the_valley", "graine_eyeblossom",
+                "graine_sunflower", "graine_lilac", "graine_rose_bush", "graine_peony", "melange")) {
+            r(o, "ks_cultures:objet", o);
+        }
     }
 
     private Regles() {
