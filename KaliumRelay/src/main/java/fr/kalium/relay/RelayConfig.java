@@ -100,6 +100,23 @@ final class RelayConfig {
         return botToken;
     }
 
+    /** 1.12.0 (PackTextures) : pack de ressources propose a l'arrivee sur KaLium. */
+    private String packUrl = "";
+    private String packSha1 = "";
+    private String packMessage = "Textures de KaLium (facultatif)";
+
+    String packUrl() {
+        return packUrl;
+    }
+
+    String packSha1() {
+        return packSha1;
+    }
+
+    String packMessage() {
+        return packMessage;
+    }
+
     static RelayConfig loadOrCreate(Path dataDirectory, Logger logger) {
         try {
             Files.createDirectories(dataDirectory);
@@ -140,6 +157,16 @@ final class RelayConfig {
                 props.setProperty("bot-token", UUID.randomUUID().toString()); // 1.11.0, recopie dans le .env du bot
                 changed = true;
             }
+            for (String cle : new String[]{"pack-url", "pack-sha1"}) {
+                if (!props.containsKey(cle)) {
+                    props.setProperty(cle, ""); // 1.12.0, rempli a la main (adresse minepack, SHA-1 de pack.py)
+                    changed = true;
+                }
+            }
+            if (!props.containsKey("pack-message")) {
+                props.setProperty("pack-message", "Textures de KaLium (facultatif)");
+                changed = true;
+            }
             boolean generated = false;
             if (props.getProperty("token", "").isBlank()) {
                 props.setProperty("token", UUID.randomUUID().toString());
@@ -173,6 +200,9 @@ final class RelayConfig {
             }
             config.parrainageServeur = props.getProperty("parrainage-serveur", "kixster").trim();
             config.botToken = props.getProperty("bot-token", "").trim();
+            config.packUrl = props.getProperty("pack-url", "").trim();
+            config.packSha1 = props.getProperty("pack-sha1", "").trim().toLowerCase(java.util.Locale.ROOT);
+            config.packMessage = props.getProperty("pack-message", config.packMessage).trim();
             return config;
         } catch (IOException e) {
             logger.error("[KaliumRelay] Impossible de charger/creer relay.properties, valeurs par defaut utilisees.", e);

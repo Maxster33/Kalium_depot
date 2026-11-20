@@ -119,6 +119,23 @@ def texture_provisoire(nom):
     print(f"texture provisoire : {chemin}")
 
 
+def emetteur(modele, niveau):
+    """Modele plein (cube ou orientable) rendu comme un bloc lumineux du jeu (20/11, demande de LeKiwi06 : les jack
+    o'lanterns custom paraissaient plus sombres que celle du jeu) : light_emission sur l'element (eclairage minimal des
+    faces, comme la lumiere 14 que voit chaque face d'un bloc de lumiere 15) et sans occlusion ambiante (le jeu n'en met
+    pas aux blocs qui emettent de la lumiere). Java seulement."""
+    tx = dict(modele["textures"])
+    if modele["parent"].endswith("orientable"):
+        faces = {"down": "#top", "up": "#top", "north": "#front", "east": "#side", "south": "#side", "west": "#side"}
+        tx["particle"] = tx["front"]
+    else:
+        faces = {f: "#all" for f in ("down", "up", "north", "east", "south", "west")}
+        tx["particle"] = tx["all"]
+    return {"parent": "minecraft:block/block", "ambientocclusion": False, "textures": tx, "elements": [{
+        "from": [0, 0, 0], "to": [16, 16, 16], "light_emission": niveau,
+        "faces": {f: {"texture": t, "cullface": f} for f, t in faces.items()}}]}
+
+
 def textures_de(a, variante):
     return a.get("textures_variantes", {}).get(variante, a["textures"])
 
@@ -164,6 +181,8 @@ def fichiers_java(bases=None):
                 modele = {"parent": "minecraft:block/cross", "textures": {"cross": tx["cross"]}}
             else:
                 sys.exit(f"Modele inconnu pour {nom} : {a['modele']}")
+            if "emission" in a:
+                modele = emetteur(modele, a["emission"])
             fichiers[f"assets/kalium/models/block/{nom_modele}.json"] = json.dumps(modele, indent=2)
             v = {"model": f"kalium:block/{nom_modele}"}
             if a["modele"] == "orientable" and variante in FACES and FACES.index(variante):

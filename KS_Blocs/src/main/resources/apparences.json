@@ -8,12 +8,14 @@
     "modele : orientable (face avant + cotes + dessus), cube (une seule texture) ou croix (plante) ; textures : nom d'une",
     "image de visuels-objets/png/blocs (sans .png) ou texture du jeu (minecraft:block/...).",
     "0.2.0 : textures_variantes (facultatif) donne a une variante ses propres textures (un modele par variante : stades de",
-    "pousse). Canne a sucre et varech : modele croix seulement (plantes de KS_Cultures)."
+    "pousse). Canne a sucre et varech : modele croix seulement (plantes de KS_Cultures).",
+    "emission (facultatif, pack Java) : modele rendu comme un bloc lumineux (0-15 ; 14 = comme la jack o'lantern du jeu)."
   ],
   "jack_o_lantern_bleue": {
     "bloc": "note_block",
     "modele": "orientable",
     "textures": {"front": "jack_o_lantern_bleue", "side": "pumpkin_side", "top": "pumpkin_top"},
+    "emission": 14,
     "variantes": {
       "north": "instrument=harp,note=1,powered=false",
       "east": "instrument=harp,note=2,powered=false",
@@ -25,6 +27,7 @@
     "bloc": "note_block",
     "modele": "orientable",
     "textures": {"front": "jack_o_lantern_cuivre", "side": "pumpkin_side", "top": "pumpkin_top"},
+    "emission": 14,
     "variantes": {
       "north": "instrument=harp,note=5,powered=false",
       "east": "instrument=harp,note=6,powered=false",

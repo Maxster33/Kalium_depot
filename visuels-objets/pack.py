@@ -15,7 +15,7 @@ import re
 import sys
 import zipfile
 
-VERSION = "1.2.0"  # 1.2.0 : blocs custom de KS_Blocs (jack o'lanterns, boite aux lettres...)
+VERSION = "1.3.0"  # 1.2.0 : blocs custom de KS_Blocs ; 1.2.1 : jack o'lanterns lumineuses ; 1.3.0 : low fire, low shield
 # Blocs de base que KS_Blocs reecrit sur le serveur (version deployee) : voir plus bas
 BASES_BLOCS = {"note_block"}
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -66,6 +66,41 @@ def bases(id_, boats):
     return BASES[id_]
 
 
+FEU_DECALAGE = 6  # pixels (sur 16) dont la flamme du feu a l'ecran descend
+BOUCLIER_DECALAGE = 6  # unites de modele (1/16 de bloc) dont le bouclier descend en vue a la 1re personne
+
+
+def confort(jar):
+    """Low fire et low shield.
+    - Feu : le jeu dessine la flamme a l'ecran avec la texture block/fire_1 (ScreenEffectRenderer, FIRE_1 en 26.3) ;
+      chaque image de son animation est descendue de FEU_DECALAGE pixels (le haut devient transparent). Le feu pose
+      dans le monde utilise aussi fire_1 pour la moitie de ses faces : elles sont plus basses (comme avec tous les
+      packs « low fire »).
+    - Bouclier : modeles item/shield et item/shield_blocking du jeu, vue a la 1re personne descendue de
+      BOUCLIER_DECALAGE (au repos et en parade) ; le reste (3e personne, inventaire...) est inchange."""
+    out = {}
+    image = dessiner.lire_png(jar.read("assets/minecraft/textures/block/fire_1.png"), taille=0)
+    larg = len(image[0])
+    for debut in range(0, len(image), larg):  # images carrees l'une sous l'autre
+        cadre = image[debut:debut + larg]
+        image[debut:debut + larg] = [[None] * larg for _ in range(FEU_DECALAGE)] + cadre[:larg - FEU_DECALAGE]
+    temp = os.path.join(SORTIE, "_fire_1.png")
+    os.makedirs(SORTIE, exist_ok=True)
+    dessiner.ecrire_png(image, temp)
+    with open(temp, "rb") as f:
+        out["assets/minecraft/textures/block/fire_1.png"] = f.read()
+    os.remove(temp)
+    out["assets/minecraft/textures/block/fire_1.png.mcmeta"] = jar.read(
+        "assets/minecraft/textures/block/fire_1.png.mcmeta")
+    for modele in ("shield", "shield_blocking"):
+        chemin = f"assets/minecraft/models/item/{modele}.json"
+        m = json.loads(jar.read(chemin))
+        for main in ("firstperson_righthand", "firstperson_lefthand"):
+            m["display"][main]["translation"][1] -= BOUCLIER_DECALAGE
+        out[chemin] = json.dumps(m, indent=2)
+    return out
+
+
 def main():
     jar = zipfile.ZipFile(JAR)
     noms = set(jar.namelist())
@@ -114,6 +149,12 @@ def main():
     for nom, donnees in blocs.items():
         if nom in fichiers:
             sys.exit(f"Fichier en double entre les objets et les blocs : {nom}")
+        fichiers[nom] = donnees
+
+    # 1.3.0 : confort (demande de LeKiwi06 du 20/11, le pack est envoye par le proxy sur tout KaLium)
+    for nom, donnees in confort(jar).items():
+        if nom in fichiers:
+            sys.exit(f"Fichier en double (confort) : {nom}")
         fichiers[nom] = donnees
 
     os.makedirs(SORTIE, exist_ok=True)

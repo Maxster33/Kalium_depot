@@ -12,6 +12,9 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Directional;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -234,10 +237,10 @@ public final class KSShulkerAmelioree extends JavaPlugin implements Listener {
     }
 
     /**
-     * 1.0.1 : clic droit sur la shulker améliorée posée : le menu s'ouvre directement, sans passer par l'ouverture du
-     * jeu, qui refuse une boîte de shulker dont le couvercle est gêné (bloc au-dessus : shulkers empilées, retour de
-     * LeKiwi06 du 20/11). Respecte les protections (clic refusé par un claim : rien) et le jeu (accroupi avec un objet en
-     * main : l'objet sert, comme sur une boîte du jeu).
+     * 1.0.1 : clic droit sur la shulker améliorée posée : le menu s'ouvre directement (par l'ouverture du jeu annulée,
+     * le couvercle ne s'animait pas : retour de LeKiwi06 du 20/11). Respecte les protections (clic refusé par un claim :
+     * rien) et le jeu : accroupi avec un objet en main, l'objet sert ; 1.0.2 : couvercle gêné par un bloc, elle ne
+     * s'ouvre pas, comme une boîte du jeu (sauf si son menu est déjà ouvert par un autre joueur, couvercle levé).
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onClicBloc(PlayerInteractEvent event) {
@@ -257,7 +260,34 @@ public final class KSShulkerAmelioree extends JavaPlugin implements Listener {
             return; // l'autre main : un seul menu
         }
         Block bloc = event.getClickedBlock();
+        if (!menu.ouvert(bloc) && couvercleGene(bloc)) {
+            return;
+        }
         Bukkit.getScheduler().runTask(this, () -> menu.ouvrir(joueur, bloc));
+    }
+
+    /**
+     * Comme ShulkerBoxBlock.canOpen du jeu : le couvercle a besoin de la moitié du bloc voisin dans la direction de la
+     * boîte ; une forme de collision de ce bloc dans cette moitié l'en empêche (les entités sont ignorées).
+     */
+    private static boolean couvercleGene(Block bloc) {
+        BlockFace face = bloc.getBlockData() instanceof Directional d ? d.getFacing() : BlockFace.UP;
+        Block voisin = bloc.getRelative(face);
+        double e = 1.0E-6;
+        BoundingBox zone = switch (face) {
+            case DOWN -> new BoundingBox(e, 0.5 + e, e, 1 - e, 1 - e, 1 - e);
+            case NORTH -> new BoundingBox(e, e, 0.5 + e, 1 - e, 1 - e, 1 - e);
+            case SOUTH -> new BoundingBox(e, e, e, 1 - e, 1 - e, 0.5 - e);
+            case WEST -> new BoundingBox(0.5 + e, e, e, 1 - e, 1 - e, 1 - e);
+            case EAST -> new BoundingBox(e, e, e, 0.5 - e, 1 - e, 1 - e);
+            default -> new BoundingBox(e, e, e, 1 - e, 0.5 - e, 1 - e); // UP
+        };
+        for (BoundingBox forme : voisin.getCollisionShape().getBoundingBoxes()) {
+            if (forme.overlaps(zone)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** La vraie boîte ne s'ouvre jamais : le menu à la place (ouverture par un autre chemin que le clic). */
