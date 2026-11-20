@@ -31,7 +31,8 @@ import java.util.Map;
  * Enclume, marteau à gauche : KS_Marteau calcule le résultat lui-même, à la manière du jeu (AnvilMenu.createResult),
  * parce que le jeu traite le marteau comme une masse (il accepterait Densité, Brèche, Charge de vent, Châtiment et
  * refuserait Efficacité, Toucher de soie et Magnétisme d'un livre) :
- * - à droite : un livre enchanté ou un marteau du même niveau, rien d'autre (pas de réparation par matériau) ;
+ * - à droite : un livre enchanté, un marteau du même niveau, ou un noyau lourd ordinaire qui remet le marteau à neuf
+ *   (« renouveler le noyau », réponse de LeKiwi06 du 20/11) ; rien d'autre (ni diamant, ni baguette de breeze) ;
  * - seuls les enchantements permis passent ; un enchantement incompatible coûte 1 et n'est pas ajouté ; deux niveaux
  *   égaux donnent le niveau suivant (au plus le maximum) ;
  * - coût : celui du jeu (coût d'enclume × niveau, divisé par 2 pour un livre ; 2 pour une réparation par un autre
@@ -60,6 +61,10 @@ final class Enclume implements Listener {
         }
         if (droite == null || droite.getType().isAir()) {
             return; // renommage seul : le résultat du jeu garde tous les composants du marteau
+        }
+        if (droite.getType() == Material.HEAVY_CORE && !KSMarteau.estCoeur(droite)) {
+            renouvelerNoyau(event, gauche, droite);
+            return;
         }
         boolean livre = droite.getType() == Material.ENCHANTED_BOOK;
         Niveau autre = KSMarteau.niveau(droite);
@@ -127,22 +132,54 @@ final class Enclume implements Listener {
         resultat.addUnsafeEnchantments(actuels);
 
         AnvilView vue = event.getView();
-        String nom = vue.getRenameText();
-        if (nom != null && !nom.isBlank()) {
-            ItemMeta meta = resultat.getItemMeta();
-            Component actuel = meta.displayName();
-            String texteActuel = actuel == null ? "" : PlainTextComponentSerializer.plainText().serialize(actuel);
-            if (!nom.equals(texteActuel)) {
-                meta.displayName(Component.text(nom).decoration(TextDecoration.ITALIC, true));
-                resultat.setItemMeta(meta);
-                cout += 1;
-            }
-        }
+        cout += renommer(vue, resultat);
         int penaliteG = penalite(gauche);
         int penaliteD = penalite(droite);
         resultat.setData(DataComponentTypes.REPAIR_COST, Math.max(penaliteG, penaliteD) * 2 + 1);
         vue.setRepairCost(penaliteG + penaliteD + cout);
         event.setResult(resultat);
+    }
+
+    /**
+     * Renouveler le noyau (réponse de LeKiwi06 du 20/11) : un marteau usé + un noyau lourd ordinaire (pas un Cœur de
+     * Marteau) = le marteau remis à neuf, un seul noyau consommé. Coût comme une réparation par matériau du jeu :
+     * 1 niveau, plus les pénalités de travaux précédents (doublées ensuite).
+     */
+    private static void renouvelerNoyau(PrepareAnvilEvent event, ItemStack gauche, ItemStack droite) {
+        Damageable meta = (Damageable) gauche.getItemMeta();
+        if (meta.getDamage() <= 0) {
+            event.setResult(null);
+            return;
+        }
+        ItemStack resultat = gauche.clone();
+        resultat.setAmount(1);
+        Damageable mr = (Damageable) resultat.getItemMeta();
+        mr.setDamage(0);
+        resultat.setItemMeta(mr);
+        AnvilView vue = event.getView();
+        int cout = 1 + renommer(vue, resultat);
+        int penalite = penalite(gauche);
+        resultat.setData(DataComponentTypes.REPAIR_COST, penalite * 2 + 1);
+        vue.setRepairItemCountCost(1);
+        vue.setRepairCost(penalite + penalite(droite) + cout);
+        event.setResult(resultat);
+    }
+
+    /** Nom tapé dans l'enclume, s'il change : posé sur le résultat ; renvoie le coût (1 ou 0). */
+    private static int renommer(AnvilView vue, ItemStack resultat) {
+        String nom = vue.getRenameText();
+        if (nom == null || nom.isBlank()) {
+            return 0;
+        }
+        ItemMeta meta = resultat.getItemMeta();
+        Component actuel = meta.displayName();
+        String texteActuel = actuel == null ? "" : PlainTextComponentSerializer.plainText().serialize(actuel);
+        if (nom.equals(texteActuel)) {
+            return 0;
+        }
+        meta.displayName(Component.text(nom).decoration(TextDecoration.ITALIC, true));
+        resultat.setItemMeta(meta);
+        return 1;
     }
 
     /** Masse ordinaire (ou autre objet) à gauche : pas de Magnétisme, pas de marteau sacrifié pour une masse. */

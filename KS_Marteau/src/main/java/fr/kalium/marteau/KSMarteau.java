@@ -44,7 +44,7 @@ import java.util.List;
  * - Objet : une vraie masse du jeu (MACE) marquée par le plugin, pour garder le coup écrasé du jeu sans le recoder.
  *   Composants posés par le plugin : outil (règles de la pioche du même niveau, 1 point de solidité par bloc),
  *   solidité maximale (6 fois la pioche : 9 366 en diamant, 12 186 en netherite), dégâts (6, ou 7 en netherite),
- *   résistance au feu et à la lave (netherite), pas de réparation par matériau (choix à confirmer).
+ *   résistance au feu et à la lave (netherite), réparation par un noyau lourd seulement (remis à neuf).
  * - Cœur de Marteau : noyau lourd entouré de 8 blocs de diamant ; il ne se pose pas.
  * - Marteau : bloc de diamant, Cœur, bloc de diamant en haut, 2 bâtons en manche (comme une pioche).
  * - Marteau en netherite : table de forge, modèle d'amélioration en netherite + Marteau + bloc de netherite.
@@ -232,8 +232,8 @@ public final class KSMarteau extends JavaPlugin implements Listener {
                 .addModifier(Attribute.ATTACK_SPEED, new AttributeModifier(NamespacedKey.minecraft("base_attack_speed"),
                         -3.4, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.MAINHAND))
                 .build());
-        // La masse se répare avec une baguette de breeze : pas le marteau (choix de Claude, à faire confirmer : il ne se
-        // répare que par un autre marteau du même niveau et par Raccommodage).
+        // La masse se répare avec une baguette de breeze : pas le marteau. Il se répare par un noyau lourd (remis à neuf,
+        // classe Enclume), un autre marteau du même niveau et Raccommodage (réponse de LeKiwi06 du 20/11).
         item.unsetData(DataComponentTypes.REPAIRABLE);
         if (niveau == Niveau.NETHERITE) {
             item.setData(DataComponentTypes.DAMAGE_RESISTANT, DamageResistant.damageResistant(

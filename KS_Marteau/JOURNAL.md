@@ -19,7 +19,9 @@ publié dans `CAHIER_DES_CHARGES.md` au déploiement.
     la vitesse 8 en diamant, 9 en netherite ; 1 ailleurs) ; **1 point de solidité par bloc** (la masse en prend 2) ;
   - `max_damage` : 9 366 (diamant, 1 561 × 6) et 12 186 (netherite, 2 031 × 6) ;
   - dégâts : 6 (comme la masse) et 7 en netherite ; vitesse d'attaque de la masse ;
-  - `repairable` retiré (la masse se répare à la baguette de breeze) : **aucune réparation par matériau** ;
+  - `repairable` retiré (la masse se répare à la baguette de breeze) : le marteau se répare à l'enclume avec un
+    **noyau lourd** ordinaire, qui le remet à neuf (« renouveler le noyau », 1 niveau + pénalités du jeu), avec un
+    autre marteau du même niveau, ou par Raccommodage ;
   - netherite : `damage_resistant` au feu (feu et lave, comme les objets en netherite).
 - **Marteau en netherite** : table de forge, modèle d'amélioration en netherite + marteau en diamant + **bloc** de
   netherite. Recette sur n'importe quelle masse, le résultat n'est donné que pour un marteau en diamant (usé et
@@ -33,24 +35,21 @@ publié dans `CAHIER_DES_CHARGES.md` au déploiement.
   fragment de netherite), sans l'XP de la cuisson.
 - **Table d'enchantement** (`Table`) : pour un marteau et pour un livre, tirage refait par le plugin avec
   l'algorithme du jeu (`EnchantmentHelper.selectEnchantment`), coûts du jeu. Marteau : Efficacité, Toucher de soie,
-  Solidité, Aura de feu, Fléau des arthropodes, Magnétisme. Livre : enchantements du jeu + Magnétisme.
+  Solidité, Aura de feu, Magnétisme (pas Fléau des arthropodes, réponse du 20/11). Livre : enchantements du jeu + Magnétisme.
 - **Magnétisme** (`kalium:magnetisme`) : réglages de Fortune (poids 2, niveaux I à III, coût 15 + 9 par niveau à
   65 + 9 par niveau, enclume 4). Marteau tenu en main (ou dans l'autre main) : les objets au sol dans un rayon de
   3 / 5 / 7 blocs sont attirés vers le joueur (tous les 4 ticks), sauf les orbes d'XP, les objets d'un claim où il n'a
   pas les droits et les objets qu'il ne peut pas encore ramasser. Hors de tout tag du jeu : seul ce plugin le propose.
 - **Enclume** (`Enclume`) : marteau à gauche, résultat calculé par le plugin à la manière du jeu : livre enchanté ou
-  marteau du même niveau à droite ; enchantements permis = ceux de la table + Raccommodage + malédiction de
+  marteau du même niveau ou noyau lourd à droite ; enchantements permis = ceux de la table + Raccommodage + malédiction de
   disparition ; Toucher de soie et Aura de feu incompatibles ; coûts et pénalité de travaux du jeu. Masse ordinaire :
   ni Magnétisme, ni marteau sacrifié.
 - **Déploiement en deux temps** : nouveau plugin `KS_`, mis en test tout seul par KS_MondeTest (écouteurs et
   recettes). La tâche du Magnétisme demande `PhaseTest.ouvert("KS_Marteau", monde)`.
 
-Choix de Claude à faire confirmer :
-- Fléau des arthropodes gardé (enchantement de la masse du jeu, ni interdit ni cité dans le cahier).
-- Magnétisme actif quand le marteau est tenu (main ou autre main), pas quand il est rangé dans l'inventaire.
-- Pas de réparation par matériau (ni diamant, ni baguette de breeze) : seulement par un autre marteau du même niveau
-  et par Raccommodage.
-- Les voisins du 3 × 3 sont cassés quelle que soit leur dureté (obsidienne autour d'une pierre, par exemple).
+Réponses de LeKiwi06 du 20/11 aux choix de Claude : pas de Fléau des arthropodes ; Magnétisme actif quand le
+marteau est tenu (main ou autre main), pas rangé ; réparation par un noyau lourd (remis à neuf). En attente : les
+voisins du 3 × 3 sont cassés quelle que soit leur dureté (obsidienne autour d'une pierre, par exemple).
 
 Points à vérifier en premier, dans Kixster Test :
 - au démarrage : pas d'erreur de KS_Marteau, ni « Enchantement Magnétisme absent du registre » ;

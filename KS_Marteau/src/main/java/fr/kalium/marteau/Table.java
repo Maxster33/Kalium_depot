@@ -30,8 +30,8 @@ import java.util.UUID;
  * avec l'algorithme du jeu (EnchantmentHelper.selectEnchantment : niveau modifié par l'enchantabilité, tirage pondéré,
  * enchantements suivants avec 1 chance sur 50 par niveau, un enchantement retiré d'un livre qui en a plusieurs).
  * Les coûts en niveaux restent ceux du jeu (bibliothèques).
- * - Marteau : Efficacité, Toucher de soie, Solidité, Aura de feu, Fléau des arthropodes (masse du jeu) et Magnétisme ;
- *   ni Brèche, ni Densité, ni Charge de vent, ni Châtiment, ni Fortune.
+ * - Marteau : Efficacité, Toucher de soie, Solidité, Aura de feu et Magnétisme ; ni Brèche, ni Densité, ni Charge de
+ *   vent, ni Châtiment, ni Fléau des arthropodes (réponse de LeKiwi06 du 20/11), ni Fortune.
  * - Livre : les enchantements du jeu (tag in_enchanting_table) et Magnétisme, aussi fréquent que Fortune.
  * Seul ce tirage propose Magnétisme : dans un monde où KS_Marteau est en test, ses écouteurs ne sont pas appelés et la
  * table reste celle du jeu.
@@ -41,7 +41,7 @@ final class Table implements Listener {
     /** Enchantements du marteau à la table (ordre sans importance). */
     static List<Enchantment> enchantementsMarteau() {
         List<Enchantment> l = new ArrayList<>(List.of(Enchantment.EFFICIENCY, Enchantment.SILK_TOUCH,
-                Enchantment.UNBREAKING, Enchantment.FIRE_ASPECT, Enchantment.BANE_OF_ARTHROPODS));
+                Enchantment.UNBREAKING, Enchantment.FIRE_ASPECT));
         if (KSMarteau.magnetisme() != null) {
             l.add(KSMarteau.magnetisme());
         }
