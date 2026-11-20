@@ -34,6 +34,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 1.4.1 (LeKiwi06, 31/10/2026) : x-ray extrême en alerte grave seulement ; seul GrimAC lourd suspend encore.
  * 1.5.0 (LeKiwi06, 02/11/2026) : signalements GrimAC annulés et ignorés pendant une poussée de la fusée Hyperboost
  * (KS_Hyperboost).
+ * 1.6.0 (LeKiwi06, 20/11/2026) : anti-vol maison en mode « signaler seulement » (Vol), préalable au Shéjiǔ.
  *
  * Permission : ksanticheat.staff (opérateurs par défaut).
  */
@@ -69,6 +70,9 @@ public final class KSAntiCheat extends JavaPlugin {
         minage = new Minage(this);
         getServer().getPluginManager().registerEvents(detections, this);
         getServer().getPluginManager().registerEvents(minage, this);
+        Vol vol = new Vol(this);
+        getServer().getPluginManager().registerEvents(vol, this);
+        vol.demarrer();
         echanges = new Echanges(this);
         // Étape 4 : revente suspecte (signaux de KS_Economy 1.1.5 et KS_RewardsGUI 1.0.1 s'ils sont là).
         revente = new Revente(this);

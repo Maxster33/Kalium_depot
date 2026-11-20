@@ -27,6 +27,15 @@ xray:
   extreme-heures: 3
   fenetre-heures: 6
 
+# 1.6.0 - anti-vol maison, mode « signaler seulement » (rien n'est fait au joueur) : alerte legere apres N ticks en
+# l'air sans appui ni descente (60 = 3 s, avant l'expulsion du jeu a 4 s tant que allow-flight=false), alerte grave
+# apres N ticks (seulement possible avec allow-flight=true). Exemptes : creatif, vol autorise (KS_Fly), elytre,
+# levitation, chute lente, trident, vehicule, Hyperboost, monde de test.
+vol:
+  actif: true
+  ticks: 60
+  ticks-grave: 200
+
 # Macros : alerte si N actions sont faites sans bouger ni tourner la camera depuis X minutes.
 macros:
   minutes: 5
