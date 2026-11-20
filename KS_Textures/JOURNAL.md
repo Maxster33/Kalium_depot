@@ -162,6 +162,13 @@ Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.
 ## 1.2.4 - rareté de la boussole du voyageur (20/11/2026, LeKiwi06)
 
 Barème copié de KS_Economy 1.13.8 : boussole du voyageur à 513,2 (prix validé par LeKiwi06 le 02/11/2026), donc
-**Rare** (bleu clair, entre 100 et 1 000). Rien d'autre ne change (contient la 1.2.3, non déployée).
+**Rare** (bleu clair, entre 100 et 1 000). Contient la 1.2.3, non déployée.
+
+Textures du **rhum** et du **Shéjiǔ** (KS_Alcools 1.1.0 et 1.3.0 ; versions jetables comprises) : règles
+`alcool_rhum` et `alcool_shejiu` (`ks_alcools:alcool`) dans `Regles.java`. Images dessinées par Claude dans le style des
+autres alcools (`visuels-objets/dessiner.py`, à retoucher par LeKiwi06 s'il le souhaite) : rhum ambré à la cire noire,
+Shéjiǔ vert olive avec un serpent doré, bouchon rouge sombre. Pack Java **1.6.0** (`visuels-objets/pack.py`, contient la
+1.5.0 non envoyée : Foreuse, liane du Shéjiǔ), à déposer sur minepack.fr puis à recopier dans `relay.properties` du
+proxy. Bedrock : geyser-bedrock 1.13.0.
 
 Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.8.

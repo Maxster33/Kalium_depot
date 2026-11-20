@@ -40,7 +40,7 @@ planche : redécouper d'abord. Ne pas déplacer les cases ni redimensionner l'im
 | Plugin | Objets | Base vanilla |
 |---|---|---|
 | Déjà dans geyser-bedrock (18) | Estomac du gardien, Clé de l'End, Bedrock Breaker, Fragment et Cœur de Spawner, Changeur de Biome, 5 jetons, 4 badges, Cristal de purification, Casse-croûte doré, Bandage | sac, clé sinistre, pioche, fragment de disque, cœur de la mer, éclat d'améthyste, pain, papier ; jetons et badges dessinés |
-| KS_Alcools (9) | 7 alcools (la version jetable garde la même image), Cocktail Molotov, Torche augmentée | potion (hydromel : bouteille de miel), potion jetable, torche |
+| KS_Alcools (11) | 9 alcools (la version jetable garde la même image), Cocktail Molotov, Torche augmentée | potion (hydromel : bouteille de miel), potion jetable, torche |
 | KS_Elixir (11) | les 11 élixirs | potion au bouchon d'or, couleur propre |
 | KS_Trains, KS_VerrouVehicule (4) | Locomotive, Wagon contrôleur, Boussole du train, Verrou de véhicule | wagonnet à four, wagonnet, boussole ; verrou dessiné |
 | KS_Cuisine (6) | Cookie à la baie sucrée, Cookie à la baie lumineuse, Sandwich jambon-beurre, Brunch, Blé soufflé, Bol de céréales | cookie (pépites en baies), pain (jambon et beurre), côtelette cuite (œuf au plat), blé, bol de ragoût (lait et céréales) |

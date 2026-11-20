@@ -70,7 +70,8 @@ final class Regles {
         r("foreuse_netherite", "ks_supertool:outil", "foreuse_netherite");
 
         // KS_Alcools : la version jetable (potion jetable) garde l'image de l'alcool
-        for (String a : List.of("neutre", "tequila", "vodka", "hydromel", "manzana", "biere", "tabascoolise")) {
+        for (String a : List.of("neutre", "tequila", "vodka", "hydromel", "manzana", "biere", "tabascoolise", "rhum",
+                "shejiu")) {
             r("alcool_" + a, "ks_alcools:alcool", a);
         }
         r("molotov", "ks_alcools:molotov");

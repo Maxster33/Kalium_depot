@@ -400,6 +400,38 @@
       {
         "type": "definition",
         "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:alcool_rhum",
+        "display_name": "Rhum",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_rhum",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_rhum",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
+        "bedrock_identifier": "kalium:alcool_shejiu",
+        "display_name": "Shéjiǔ",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_shejiu",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_shejiu",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:potion",
         "bedrock_identifier": "kalium:elixir_super_gateau",
         "display_name": "Super Gâteau",
         "predicate": {
@@ -684,6 +716,38 @@
         },
         "bedrock_options": {
           "icon": "kalium.alcool_tabascoolise",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:splash_potion",
+        "bedrock_identifier": "kalium:alcool_rhum_jetable",
+        "display_name": "Rhum (jetable)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_rhum",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_rhum",
+          "allow_offhand": true
+        }
+      },
+      {
+        "type": "definition",
+        "model": "minecraft:splash_potion",
+        "bedrock_identifier": "kalium:alcool_shejiu_jetable",
+        "display_name": "Shéjiǔ (jetable)",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "alcool_shejiu",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.alcool_shejiu",
           "allow_offhand": true
         }
       },

@@ -4,7 +4,7 @@
 # Usage : sh geyser-bedrock/build.sh
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.12.0
+VERSION=1.13.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 DEST="$DIR/../sortie"
 WORK="$DIR/../sortie/geyser-pack-tmp"

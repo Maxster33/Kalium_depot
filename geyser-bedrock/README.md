@@ -187,3 +187,9 @@ alcool a deux objets Bedrock (potion et potion jetable), un bateau à jukebox un
   machine garde l'image du noyau lourd ; Abatteuse, Excavatrice, Laboureuse : pas encore d'image. Pack `KaLium-objets-1.12.0.mcpack` construit, **non envoyé, non testé**.
   Mise en place : `kalium_objets.json` dans `custom_mappings/` et le `.mcpack` dans `packs/`, puis rangement du 1.11.0
   proxy arrêté (étapes 4 et 5 ci-dessus).
+- **1.13.0 (20/11/2026, LeKiwi06)** : rhum et Shéjiǔ de KS_Alcools (fiole, versions normale et jetable ;
+  `custom_model_data` `alcool_rhum` / `alcool_shejiu` posé par KS_Textures 1.2.4). Dessinés par Claude dans le style des
+  autres alcools (`visuels-objets/dessiner.py`) : rhum ambré à la cire noire, Shéjiǔ vert olive avec un serpent doré.
+  Contient la 1.12.0 (non envoyée). Pack `KaLium-objets-1.13.0.mcpack` construit, **non envoyé, non testé**. Mise en
+  place : `kalium_objets.json` dans `custom_mappings/` et le `.mcpack` dans `packs/`, puis rangement du 1.11.0 proxy
+  arrêté (étapes 4 et 5 ci-dessus).

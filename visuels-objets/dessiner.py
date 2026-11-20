@@ -657,6 +657,15 @@ def objets():
             biere[y_mousse + 1][x] = rgb("#F1E2B8")
     add("alcool_biere", "Bière", "KS_Alcools", "potion", biere)
     add("alcool_tabascoolise", "Tabascoolisé", "KS_Alcools", "potion", potion("#C8261E", couleur_bouchon="#2E7D32"))
+    # KS_Alcools 1.1.0 / 1.3.0 : rhum ambré à la cire noire ; Shéjiǔ (« vin de serpent ») : un serpent doré dans le
+    # liquide vert olive, bouchon rouge
+    add("alcool_rhum", "Rhum", "KS_Alcools", "potion", potion("#9A5420", couleur_bouchon="#2B2B2B"))
+    shejiu = potion("#6B8E23", couleur_bouchon="#7A1414")
+    zl = zone_liquide()
+    serpent = [p for p in [(8, 9), (7, 10), (8, 11), (9, 12), (8, 13), (7, 13)] if zl[p[1]][p[0]]]
+    poser(shejiu, serpent, rgb("#D8B43A"))
+    poser(shejiu, [(9, 8)], rgb("#8A6A12"))  # tête
+    add("alcool_shejiu", "Shéjiǔ", "KS_Alcools", "potion", shejiu)
     add("molotov", "Cocktail Molotov", "KS_Alcools", "splash_potion",
         chiffon_et_flamme(potion("#FF7A1A", base="item/splash_potion")))
     add("torche_augmentee", "Torche augmentée", "KS_Alcools", "torch", torche_augmentee())

@@ -137,6 +137,16 @@
         "textures/items/kalium_alcool_tabascoolise"
       ]
     },
+    "kalium.alcool_rhum": {
+      "textures": [
+        "textures/items/kalium_alcool_rhum"
+      ]
+    },
+    "kalium.alcool_shejiu": {
+      "textures": [
+        "textures/items/kalium_alcool_shejiu"
+      ]
+    },
     "kalium.molotov": {
       "textures": [
         "textures/items/kalium_molotov"

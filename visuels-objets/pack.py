@@ -15,7 +15,7 @@ import re
 import sys
 import zipfile
 
-VERSION = "1.5.0"  # 1.5.0 : Foreuse (KS_SuperTool) ; 1.2.0 : blocs custom de KS_Blocs ; 1.2.1 : jack o'lanterns lumineuses ; 1.3.0 : low fire, low shield ; 1.4.0 : liane du Shejiu invisible
+VERSION = "1.6.0"  # 1.6.0 : rhum et Shejiu (KS_Alcools) ; 1.5.0 : Foreuse (KS_SuperTool) ; 1.2.0 : blocs custom de KS_Blocs ; 1.2.1 : jack o'lanterns lumineuses ; 1.3.0 : low fire, low shield ; 1.4.0 : liane du Shejiu invisible
 # Blocs de base que KS_Blocs reecrit sur le serveur (version deployee) : voir plus bas
 BASES_BLOCS = {"note_block"}
 DIR = os.path.dirname(os.path.abspath(__file__))
