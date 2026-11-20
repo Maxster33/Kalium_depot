@@ -1,0 +1,8 @@
+# KS_Blocs
+#
+# blocs-custom : true sur Kixster (blocs custom : jack o'lanterns, et ceux des autres plugins : cultures, boîte aux
+# lettres, répéteur wifi). false sur les autres serveurs de KaLium (Lobby, Kanvas, Event...) : protection seule. Le pack
+# de ressources et Geyser (envoyés par le proxy à tout le réseau) donnent une image à certains états du bloc musical,
+# de la canne à sucre et du varech ; KS_Blocs montre les vrais blocs dans un état unique pour qu'ils ne s'affichent
+# jamais en bloc custom. Changer cette valeur demande un redémarrage.
+blocs-custom: true

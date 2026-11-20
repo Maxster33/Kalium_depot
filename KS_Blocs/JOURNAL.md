@@ -4,6 +4,34 @@ Plugin de Kixster (survie). Socle des blocs custom (cahier local `Blocs_Cultures
 bloc : les jack o'lanterns bleue et cuivre (partie 8). Dépend de KLM_Menu (textes). Compilé contre le serveur Paper 26.3
 (paquets réseau, sections de chunk) : à revérifier à chaque mise à jour de Minecraft. Ne pas recharger à chaud.
 
+## 0.3.0 - protection seule sur les autres serveurs (20/11/2026, LeKiwi06)
+
+**Problème** (trouvé le 20/11 en préparant les cultures) : depuis KaliumRelay 1.12.0, le pack Java est envoyé par le
+proxy à tout KaLium, et Geyser (sur le proxy) applique `kalium_blocs.json` à tous les serveurs depuis le 02/11. Les
+états réservés du bloc musical (et bientôt de la canne à sucre et du varech) ont donc leur image de bloc custom partout,
+mais seul Kixster avait KS_Blocs pour montrer les vrais blocs dans leur état unique. Sur le Lobby, Kanvas et Event, un
+bloc musical de harpe réglé de 1 à 8 s'affiche en jack o'lantern ; sur Kixster même, KS_Blocs 0.1.1 ne réserve pas
+encore les états de la boîte aux lettres (flûte 1 à 4) et du répéteur (bit 1 à 3), qui sont dans le pack 1.3.0. Avec
+les cultures, toute canne à sucre et tout varech naturels (âges au hasard) s'afficheraient en culture.
+
+LeKiwi06 (« Oui, code-le ») : KS_Blocs sur chaque serveur Paper du réseau.
+
+- `config.yml` (nouveau) : `blocs-custom` (true par défaut). **false** = protection seule : les vrais blocs musicaux,
+  cannes à sucre et varechs sont montrés dans leur état unique (aucune différence visible, tous leurs états se
+  ressemblent) ; ni jack o'lanterns (types, recettes), ni aucun bloc custom. Le reste du plugin (événements, plantes)
+  ne réagit qu'aux blocs custom enregistrés : sans type, il ne fait rien. Bedrock aussi est corrigé : Geyser reçoit
+  les états déjà réécrits par le serveur.
+- Vérifié le 20/11 en lecture seule : Lobby, Kanvas, Kixster et Event tournent sur le même Paper (26.3, build 159),
+  avec KLM_Menu (2.11.0 ou 2.12.0, `Lang` présent). Serveur Jeux : connexion WinSCP refusée.
+- Contient la 0.2.0 (jamais déployée) : sur Kixster, la 0.3.0 réserve aussi les états de la boîte aux lettres, du
+  répéteur et des cultures (sans KS_Cultures, KS_Courrier ni KS_RepeteurWifi, rien d'autre ne change).
+
+Déploiement (à faire avec l'accord de LeKiwi06) : sur le Lobby, Kanvas et Event, envoyer **d'abord**
+`/plugins/KS_Blocs/config.yml` avec `blocs-custom: false` (sinon le premier démarrage crée la config en mode complet),
+puis le jar ; sur Kixster, le jar seul (la config créée garde `blocs-custom: true`). Redémarrer chaque serveur.
+
+Statut : compilé, non déployé, non testé.
+
 ## 0.2.0 - plantes custom : canne à sucre et varech (02/11/2026, pour KS_Cultures)
 
 **Demande de LeKiwi06** (cultures de Kixster, cahier local, parties 10 à 14, validées le 02/11) : les stades de pousse

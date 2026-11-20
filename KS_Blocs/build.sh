@@ -7,7 +7,7 @@
 # Compiler d'abord KLM_Menu (textes).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=0.2.0
+VERSION=0.3.0
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then
@@ -39,5 +39,6 @@ java -jar "$(win "$TOOLS/ecj.jar")" -21 -proc:none -nowarn -encoding UTF-8 \
   -cp "$CP" -d "$(win "$OUT")" src/main/java
 sed "s/\${project.version}/$VERSION/" src/main/resources/plugin.yml > "$OUT/plugin.yml"
 cp src/main/resources/apparences.json "$OUT/apparences.json"
+cp src/main/resources/config.yml "$OUT/config.yml"
 jar cf "$DEST/KS_Blocs-$VERSION.jar" -C "$OUT" .
 echo "OK -> $DEST/KS_Blocs-$VERSION.jar"

@@ -91,11 +91,20 @@ public final class KSBlocs extends JavaPlugin {
                 registre.charger(c);
             }
         }
-        jacks = new JackOLanterns(this);
-        jacks.demarrer();
+        // 0.3.0 : sur les autres serveurs de KaLium (blocs-custom: false), protection seule. Le pack Java (envoyé par le
+        // proxy à tout le réseau) et Geyser (sur le proxy) donnent une image aux états réservés : sans KS_Blocs, un vrai
+        // bloc musical, une canne à sucre ou un varech dans l'un de ces états s'afficherait en bloc custom. Ici, les
+        // vrais blocs sont montrés dans leur état unique, et aucun bloc custom n'existe (ni type, ni recette).
+        saveDefaultConfig();
+        if (getConfig().getBoolean("blocs-custom", true)) {
+            jacks = new JackOLanterns(this);
+            jacks.demarrer();
+        }
         getServer().getScheduler().runTaskTimer(this, this::chaqueSeconde, 20L, 20L);
         lang.saveIfNeeded();
-        getLogger().info(apparences.nombre() + " apparences, " + affichage.types.size() + " types de blocs custom");
+        getLogger().info(apparences.nombre() + " apparences, " + (jacks == null
+                ? "protection seule (blocs-custom: false) : vrais blocs montres dans leur etat unique, aucun bloc custom"
+                : affichage.types.size() + " types de blocs custom"));
     }
 
     @Override
