@@ -6,7 +6,7 @@
 # et <outils>/serveur/libraries, produits par telecharger-outils.sh (jamais embarques).
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.2.3
+VERSION=1.2.4
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then

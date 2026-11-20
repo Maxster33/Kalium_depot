@@ -192,6 +192,14 @@ themes:
         recettes:
           - "ks_crafts:changeur_biome"
         nouveau: "2026-10-25"
+      boussole_voyageur:
+        nom: "Boussole du voyageur"
+        icone: COMPASS
+        texte: "Une boussole et un Changeur de Biome neuf. Clic droit : choisis un biome (toutes les jungles sous « Jungle », etc.) et elle pointe vers le plus proche, jusqu'à 2 000 blocs. Monde normal, Nether et End. Recherches illimitées, 15 minutes d'attente après une recherche réussie."
+        recettes:
+          - "ks_boussole:boussole_voyageur"
+        requiert: "KS_Boussole 1.1.0"
+        nouveau: "2026-11-20"
       bedrock:
         nom: "Bedrock Breaker"
         icone: BLAZE_ROD
@@ -367,6 +375,12 @@ themes:
           - "ks_cuisine:ble_souffle_fumoir"
           - "ks_cuisine:bol_cereales"
         nouveau: "2026-10-29"
+      manger-boire:
+        nom: "Manger et boire"
+        icone: GOLDEN_CARROT
+        texte: "Un aliment et une boisson (potion, alcool, élixir, bus ou reçus) qui donnent le même effet le font monter d'un niveau, jusqu'à III, tant que les deux durent. Deux aliments ou deux boissons ne se cumulent pas. Ça marche aussi pour les mauvais effets ! Les effets sans niveau (vision nocturne, résistance au feu...) ne changent pas."
+        requiert: "KS_Effets 1.1.0"
+        nouveau: "2026-11-20"
 
   atouts:
     nom: "Atouts d'équipement"

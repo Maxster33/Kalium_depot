@@ -1021,3 +1021,16 @@ KS_SuperTool 1.0.0 (ex-KS_Marteau, jamais déployé).
   doit avoir toute sa solidité (une machine aussi).
 
 Statut : compilé, non déployé, non testé. À déployer avec KS_SuperTool 1.0.0 et KS_Textures 1.2.3 (rareté).
+
+## 1.13.8 - boussole du voyageur (20/11/2026, LeKiwi06)
+
+- **Prix** : `boussole_voyageur` = boussole + Changeur de Biome neuf (0,5 + 512,7 = 513,2), **validé par LeKiwi06 le
+  02/11/2026** (« Oui, 513,2 ») et resté en attente depuis. Cible `pdc:ks_boussole:boussole_voyageur:b` (la boussole
+  marquée par KS_Boussole, quel que soit le biome qu'elle suit). Barème : `custom(...)` dans `sortie/bareme/bareme.py`,
+  note dans `remplir.py` (avec les objets ajoutés après la liste de LeKiwi06), cible dans `exporter_rachats.py`, ligne
+  dans `ids-26.3-et-custom.csv` ; chaîne d'abord relancée sans changement (fichier identique), puis avec la boussole :
+  `rachats.csv` gagne exactement cette ligne. Pas de dimension (comme le Changeur de Biome).
+- Contient aussi les 9 prix de la 1.13.7 (machines de KS_SuperTool) : sans KS_SuperTool, ces lignes ne correspondent
+  à aucun objet, rien ne casse.
+
+Statut : compilé, non déployé, non testé. À déployer avec KS_Textures 1.2.4 (rareté de la boussole : Rare).

@@ -158,3 +158,10 @@ Bedrock : geyser-bedrock 1.12.0. Abatteuse, Excavatrice, Laboureuse : pas encore
 netherite du jeu). Le Cœur de machine garde l'image du noyau lourd (aspect enchanté).
 
 Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.7 et KS_SuperTool 1.0.0.
+
+## 1.2.4 - rareté de la boussole du voyageur (20/11/2026, LeKiwi06)
+
+Barème copié de KS_Economy 1.13.8 : boussole du voyageur à 513,2 (prix validé par LeKiwi06 le 02/11/2026), donc
+**Rare** (bleu clair, entre 100 et 1 000). Rien d'autre ne change (contient la 1.2.3, non déployée).
+
+Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.8.
