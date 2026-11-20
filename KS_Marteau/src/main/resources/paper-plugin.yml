@@ -1,0 +1,13 @@
+name: KS_Marteau
+version: '${project.version}'
+main: fr.kalium.marteau.KSMarteau
+bootstrapper: fr.kalium.marteau.Demarrage
+api-version: '26.2'
+description: "Marteau de Kixster - masse qui mine en 3 x 3, enchantement Magnetisme, version netherite."
+authors: [KaLium]
+dependencies:
+  server:
+    SimpleClaimSystem:
+      load: BEFORE
+      required: false
+      join-classpath: true
