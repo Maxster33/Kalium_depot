@@ -40,7 +40,8 @@ import java.util.UUID;
  * Minage du marteau (cahier § 3) :
  * - un bloc qu'une pioche du même niveau mine (tag mineable/pickaxe, sans les blocs trop durs pour ce niveau) casse
  *   aussi les 8 blocs autour, dans le plan de la face frappée ; parmi eux, seuls ceux qu'une pioche mine sont cassés
- *   (terre, bois, gravier... restent en place) ;
+ *   (terre, bois, gravier... restent en place), et seulement s'ils ne sont pas plus durs que le bloc frappé
+ *   (réponse de LeKiwi06 du 20/11) ;
  * - jamais : contenants, spawners (KS_Spawners compris), spawners des épreuves, coffres-forts, blocs incassables ;
  * - accroupi : un seul bloc ; sur un bloc qu'une pioche ne mine pas, un seul bloc, lentement, comme une pioche ;
  * - chaque bloc voisin est cassé par le joueur lui-même (Player#breakBlock) : claims, protections, butin, XP,
@@ -93,6 +94,9 @@ final class Minage implements Listener {
             return;
         }
         List<Block> voisins = voisins(centre, face(joueur, centre));
+        // Le temps de casse est celui du bloc frappé (calculé par le client) : un voisin plus dur que lui reste en place
+        // (réponse de LeKiwi06 du 20/11 : pas d'obsidienne cassée en visant de la pierre).
+        float durete = centre.getType().getHardness();
         enCours = true;
         try {
             for (Block bloc : voisins) {
@@ -100,7 +104,7 @@ final class Minage implements Listener {
                 if (KSMarteau.niveau(joueur.getInventory().getItemInMainHand()) != niveau) {
                     break;
                 }
-                if (compatible(bloc, niveau)) {
+                if (compatible(bloc, niveau) && bloc.getType().getHardness() <= durete) {
                     joueur.breakBlock(bloc);
                 }
             }

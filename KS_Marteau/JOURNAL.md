@@ -27,7 +27,8 @@ publié dans `CAHIER_DES_CHARGES.md` au déploiement.
   netherite. Recette sur n'importe quelle masse, le résultat n'est donné que pour un marteau en diamant (usé et
   enchanté compris) ; enchantements, usure et nom donné gardés.
 - **Minage en 3 × 3** (`Minage`) : un bloc qu'une pioche du même niveau mine casse aussi les 8 blocs autour, dans le
-  plan de la face frappée (dernier clic gauche, sinon le regard) ; seuls ceux qu'une pioche mine sont cassés. Jamais :
+  plan de la face frappée (dernier clic gauche, sinon le regard) ; seuls ceux qu'une pioche mine et qui ne sont pas
+  plus durs que le bloc frappé sont cassés (en visant de la pierre, l'obsidienne voisine reste). Jamais :
   contenants, spawners, spawners des épreuves, coffres-forts, blocs incassables. Accroupi : un seul bloc. Chaque
   voisin est cassé par `Player#breakBlock` : claims, protections des autres plugins, butin, XP, Toucher de soie,
   Solidité et 1 point de solidité par bloc passent par le jeu.
@@ -48,8 +49,8 @@ publié dans `CAHIER_DES_CHARGES.md` au déploiement.
   recettes). La tâche du Magnétisme demande `PhaseTest.ouvert("KS_Marteau", monde)`.
 
 Réponses de LeKiwi06 du 20/11 aux choix de Claude : pas de Fléau des arthropodes ; Magnétisme actif quand le
-marteau est tenu (main ou autre main), pas rangé ; réparation par un noyau lourd (remis à neuf). En attente : les
-voisins du 3 × 3 sont cassés quelle que soit leur dureté (obsidienne autour d'une pierre, par exemple).
+marteau est tenu (main ou autre main), pas rangé ; réparation par un noyau lourd (remis à neuf) ; voisins du 3 × 3 pas plus durs que le
+bloc frappé.
 
 Points à vérifier en premier, dans Kixster Test :
 - au démarrage : pas d'erreur de KS_Marteau, ni « Enchantement Magnétisme absent du registre » ;
