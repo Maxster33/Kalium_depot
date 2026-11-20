@@ -1,0 +1,166 @@
+# Familles de biomes du menu de la boussole du voyageur (1.1.0, demande de LeKiwi06 du 20/11/2026 : « pour les jungles
+# on ne précise que jungle, ça englobe toutes les variantes »). Une famille = un bouton du menu ; la recherche vise le
+# plus proche de ses biomes. Un biome du monde absent de cette liste a son propre bouton (nom de biomes.yml).
+# Un biome dans une seule famille. Seuls les biomes que le monde du joueur peut produire comptent : une famille sans
+# aucun d'eux n'est pas montrée. icone : nom d'un objet du jeu.
+familles:
+  # ---------------------------------------------------------------- surface
+  plaines:
+    nom: "Plaines"
+    icone: GRASS_BLOCK
+    biomes: [minecraft:plains, minecraft:sunflower_plains]
+  prairie:
+    nom: "Prairie"
+    icone: CORNFLOWER
+    biomes: [minecraft:meadow]
+  plaines_enneigees:
+    nom: "Plaines enneigées"
+    icone: SNOW_BLOCK
+    biomes: [minecraft:snowy_plains]
+  stalagmites_glace:
+    nom: "Stalagmites de glace"
+    icone: PACKED_ICE
+    biomes: [minecraft:ice_spikes]
+  foret:
+    nom: "Forêt"
+    icone: OAK_LOG
+    biomes: [minecraft:forest, terralith:forested_highlands]
+  foret_fleurie:
+    nom: "Forêt fleurie"
+    icone: POPPY
+    biomes: [minecraft:flower_forest]
+  foret_bouleaux:
+    nom: "Forêt de bouleaux"
+    icone: BIRCH_LOG
+    biomes: [minecraft:birch_forest, minecraft:old_growth_birch_forest]
+  foret_sombre:
+    nom: "Forêt sombre"
+    icone: DARK_OAK_LOG
+    biomes: [minecraft:dark_forest]
+  jardin_pale:
+    nom: "Jardin pâle"
+    icone: PALE_OAK_LOG
+    biomes: [minecraft:pale_garden]
+  cerisiers:
+    nom: "Bosquet de cerisiers"
+    icone: CHERRY_LEAVES
+    biomes: [minecraft:cherry_grove]
+  taiga:
+    nom: "Taïga"
+    icone: SPRUCE_LOG
+    biomes: [minecraft:taiga, minecraft:old_growth_pine_taiga, minecraft:old_growth_spruce_taiga, terralith:siberian_taiga]
+  taiga_enneigee:
+    nom: "Taïga enneigée"
+    icone: SPRUCE_LEAVES
+    biomes: [minecraft:snowy_taiga, minecraft:grove, terralith:wintry_forest]
+  jungle:
+    nom: "Jungle"
+    icone: JUNGLE_LOG
+    biomes: [minecraft:jungle, minecraft:sparse_jungle, minecraft:bamboo_jungle]
+  savane:
+    nom: "Savane"
+    icone: ACACIA_LOG
+    biomes: [minecraft:savanna, minecraft:savanna_plateau, minecraft:windswept_savanna]
+  desert:
+    nom: "Désert"
+    icone: SAND
+    biomes: [minecraft:desert]
+  badlands:
+    nom: "Badlands"
+    icone: TERRACOTTA
+    biomes: [minecraft:badlands, minecraft:eroded_badlands, minecraft:wooded_badlands]
+  marais:
+    nom: "Marais"
+    icone: LILY_PAD
+    biomes: [minecraft:swamp]
+  mangroves:
+    nom: "Marais à mangroves"
+    icone: MANGROVE_ROOTS
+    biomes: [minecraft:mangrove_swamp]
+  champignons:
+    nom: "Champs de champignons"
+    icone: RED_MUSHROOM_BLOCK
+    biomes: [minecraft:mushroom_fields]
+  collines_venteuses:
+    nom: "Collines venteuses"
+    icone: GRAVEL
+    biomes: [minecraft:windswept_hills, minecraft:windswept_gravelly_hills, minecraft:windswept_forest]
+  montagnes:
+    nom: "Montagnes"
+    icone: STONE
+    biomes: [minecraft:stony_peaks, minecraft:jagged_peaks, minecraft:frozen_peaks, minecraft:snowy_slopes,
+             terralith:rocky_mountains, terralith:frozen_cliffs, terralith:white_cliffs, terralith:glacial_chasm,
+             terralith:shield]
+  volcan:
+    nom: "Volcan"
+    icone: MAGMA_BLOCK
+    biomes: [terralith:volcanic_crater, terralith:volcanic_peaks]
+  plage:
+    nom: "Plage"
+    icone: SAND
+    biomes: [minecraft:beach, minecraft:snowy_beach, minecraft:stony_shore]
+  riviere:
+    nom: "Rivière"
+    icone: WATER_BUCKET
+    biomes: [minecraft:river, minecraft:frozen_river, terralith:warm_river]
+  ocean:
+    nom: "Océan"
+    icone: PRISMARINE
+    biomes: [minecraft:ocean, minecraft:deep_ocean, minecraft:cold_ocean, minecraft:deep_cold_ocean,
+             minecraft:lukewarm_ocean, minecraft:deep_lukewarm_ocean, minecraft:frozen_ocean, minecraft:deep_frozen_ocean]
+  ocean_chaud:
+    nom: "Océan chaud"
+    icone: BRAIN_CORAL_BLOCK
+    biomes: [minecraft:warm_ocean]
+  # ---------------------------------------------------------------- sous terre
+  cavernes_luxuriantes:
+    nom: "Cavernes luxuriantes"
+    icone: MOSS_BLOCK
+    biomes: [minecraft:lush_caves]
+  speleothemes:
+    nom: "Cavernes de spéléothèmes"
+    icone: POINTED_DRIPSTONE
+    biomes: [minecraft:dripstone_caves]
+  soufre:
+    nom: "Cavernes de soufre"
+    icone: YELLOW_CONCRETE_POWDER
+    biomes: [minecraft:sulfur_caves]
+  abimes:
+    nom: "Abîmes"
+    icone: SCULK
+    biomes: [minecraft:deep_dark]
+  # ---------------------------------------------------------------- Nether
+  terres_desolees:
+    nom: "Terres désolées du Nether"
+    icone: NETHERRACK
+    biomes: [minecraft:nether_wastes]
+  foret_carmin:
+    nom: "Forêt carmin"
+    icone: CRIMSON_NYLIUM
+    biomes: [minecraft:crimson_forest]
+  foret_biscornue:
+    nom: "Forêt biscornue"
+    icone: WARPED_NYLIUM
+    biomes: [minecraft:warped_forest]
+  vallee_ames:
+    nom: "Vallée des âmes"
+    icone: SOUL_SAND
+    biomes: [minecraft:soul_sand_valley]
+  deltas_basalte:
+    nom: "Deltas de basalte"
+    icone: BASALT
+    biomes: [minecraft:basalt_deltas]
+  # ---------------------------------------------------------------- End
+  ile_centrale:
+    nom: "Île centrale de l'End"
+    icone: DRAGON_EGG
+    biomes: [minecraft:the_end]
+  iles_end:
+    nom: "Îles extérieures de l'End"
+    icone: END_STONE
+    biomes: [minecraft:end_highlands, minecraft:end_midlands, minecraft:end_barrens, minecraft:small_end_islands]
+  # Jamais montré : le vide n'est pas une destination
+  _cache:
+    nom: ""
+    icone: BLACK_CONCRETE
+    biomes: [minecraft:the_void]
