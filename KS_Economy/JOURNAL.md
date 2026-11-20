@@ -1033,4 +1033,4 @@ Statut : compilé, non déployé, non testé. À déployer avec KS_SuperTool 1.0
 - Contient aussi les 9 prix de la 1.13.7 (machines de KS_SuperTool) : sans KS_SuperTool, ces lignes ne correspondent
   à aucun objet, rien ne casse.
 
-Statut : compilé, non déployé, non testé. À déployer avec KS_Textures 1.2.4 (rareté de la boussole : Rare).
+Contient la 1.13.7. **Déployé sur Kixster le 20/11/2026 à 15:25** (LeKiwi06 : « déploie tout sur kixster et le proxy »), avec KS_SuperTool 1.0.0, KS_Economy 1.13.8, KS_Textures 1.2.4, KS_KaliumGive 1.14.0 et `didacticiel.yml` ; jars de la même taille que ceux du dépôt. À redémarrer par LeKiwi06. Statut : non testé en jeu.

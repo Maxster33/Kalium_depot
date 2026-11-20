@@ -26,7 +26,7 @@ Format d'une demande : `- <Plugin> — demandé par <pseudo> à <pseudo> — cr�
 - KS_Textures (nouveau), geyser-bedrock — LeKiwi06 — depuis le 2026-10-29 04:14 — pack de ressources des objets custom : textures ajoutées aux objets dans ce qui est envoyé aux joueurs, pack proposé aux joueurs Java ; couleur de rareté dans le nom des objets custom (depuis le 2026-10-29, même plugin, affichage seul) ; geyser-bedrock 1.8.0 (mêmes textures sur Bedrock), aussi réservé par le chantier aliments ci-dessus : accord de LeKiwi06 le 29/10
 - KG_BingoGame — LeKiwi06 — depuis le 2026-10-30 13:27 — Halloween : ghast d'Halloween dans chaque monde d'équipe, tué par sa boule renvoyée = un joker (case au choix) ; du 31/10 au 14/11 (cahier local validé le 30/10) ; 0.13.0 déployée sur Serveur Jeux le 30/10 à 18:46, à redémarrer, non testée
 - KG_BoatRace — LeKiwi06 — depuis le 2026-10-30 13:31 — montée des marches en blocs de piste, réglages par map (paliers, tours, records), plafond du bonus de tour propre (Manoir Hanté)
-- KS_SuperTool (nouveau, ex-KS_Marteau) — LeKiwi06 — depuis le 2026-11-20 11:46 — machines de Kixster (Foreuse, Abatteuse, Excavatrice, Laboureuse : outils en 3 × 3, Magnétisme, versions netherite ; cahiers locaux Marteau.md et Outils_3x3.md validés le 20/11)
+- KS_SuperTool (nouveau, ex-KS_Marteau) — LeKiwi06 — depuis le 2026-11-20 11:46 — machines de Kixster ; déployé sur Kixster le 20/11 à 15:25 avec KS_Economy 1.13.8, KS_Textures 1.2.4, KS_KaliumGive 1.14.0, didacticiel.yml et geyser-bedrock 1.13.0 sur le proxy, en test (réservation gardée jusqu'au test) (Foreuse, Abatteuse, Excavatrice, Laboureuse : outils en 3 × 3, Magnétisme, versions netherite ; cahiers locaux Marteau.md et Outils_3x3.md validés le 20/11)
 
 ## Requis parfois
 

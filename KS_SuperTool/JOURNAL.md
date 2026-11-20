@@ -6,7 +6,7 @@ Ancien nom : KS_Marteau (jamais déployé, renommé le 20/11 à la demande de Le
 
 ## 1.0.0 - Foreuse, Abatteuse, Excavatrice, Laboureuse, Magnétisme (20/11/2026, LeKiwi06)
 
-**Statut : compilé, non déployé, non testé en jeu.**
+**Statut : déployé sur Kixster le 20/11/2026 à 15:25 (LeKiwi06 : « déploie tout sur kixster et le proxy »), en test (KS_MondeTest : « Kixster Test » seulement jusqu'à `/mondetest valider KS_SuperTool`) ; à redémarrer, non testé en jeu. KS_Cultures 1.1.0 pas envoyé (facultatif).**
 
 - **Plugin Paper** (`paper-plugin.yml`, pas `plugin.yml`) : l'enchantement Magnétisme est enregistré au démarrage par
   `Demarrage` (bootstrapper), le registre des enchantements se ferme ensuite. SimpleClaimSystem facultatif

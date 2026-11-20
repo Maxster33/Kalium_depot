@@ -193,6 +193,6 @@ alcool a deux objets Bedrock (potion et potion jetable), un bateau à jukebox un
   Contient la 1.12.0 (non envoyée). Aussi : Abatteuse, Excavatrice, Laboureuse de KS_SuperTool, diamant et netherite
   (bases `diamond_axe`, `netherite_axe`, `diamond_shovel`, `netherite_shovel`, `diamond_hoe`, `netherite_hoe` ;
   `custom_model_data` = id de la machine, posé par KS_Textures 1.2.4 ; `display_handheld`), validées par LeKiwi06 le
-  20/11. Pack `KaLium-objets-1.13.0.mcpack` construit, **non envoyé, non testé**. Mise en
+  20/11. Pack `KaLium-objets-1.13.0.mcpack` construit. **Envoyé sur le proxy le 20/11/2026 à 15:25** (LeKiwi06 : « déploie tout sur kixster et le proxy ») dans `packs/` avec `kalium_objets.json` (ancien dans `_removed-kalium-objets-json-2026-11-20/`) ; **le 1.11.0 est resté dans `packs/` : à ranger proxy ARRÊTÉ**. Non testé. Mise en
   place : `kalium_objets.json` dans `custom_mappings/` et le `.mcpack` dans `packs/`, puis rangement du 1.11.0 proxy
   arrêté (étapes 4 et 5 ci-dessus).
