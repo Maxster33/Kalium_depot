@@ -1549,6 +1549,120 @@
           "display_handheld": true
         }
       }
+    ],
+    "minecraft:diamond_axe": [
+      {
+        "type": "definition",
+        "model": "minecraft:diamond_axe",
+        "bedrock_identifier": "kalium:abatteuse",
+        "display_name": "Abatteuse",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "abatteuse",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.abatteuse",
+          "allow_offhand": true,
+          "display_handheld": true
+        }
+      }
+    ],
+    "minecraft:netherite_axe": [
+      {
+        "type": "definition",
+        "model": "minecraft:netherite_axe",
+        "bedrock_identifier": "kalium:abatteuse_netherite",
+        "display_name": "Abatteuse en netherite",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "abatteuse_netherite",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.abatteuse_netherite",
+          "allow_offhand": true,
+          "display_handheld": true
+        }
+      }
+    ],
+    "minecraft:diamond_shovel": [
+      {
+        "type": "definition",
+        "model": "minecraft:diamond_shovel",
+        "bedrock_identifier": "kalium:excavatrice",
+        "display_name": "Excavatrice",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "excavatrice",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.excavatrice",
+          "allow_offhand": true,
+          "display_handheld": true
+        }
+      }
+    ],
+    "minecraft:netherite_shovel": [
+      {
+        "type": "definition",
+        "model": "minecraft:netherite_shovel",
+        "bedrock_identifier": "kalium:excavatrice_netherite",
+        "display_name": "Excavatrice en netherite",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "excavatrice_netherite",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.excavatrice_netherite",
+          "allow_offhand": true,
+          "display_handheld": true
+        }
+      }
+    ],
+    "minecraft:diamond_hoe": [
+      {
+        "type": "definition",
+        "model": "minecraft:diamond_hoe",
+        "bedrock_identifier": "kalium:laboureuse",
+        "display_name": "Laboureuse",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "laboureuse",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.laboureuse",
+          "allow_offhand": true,
+          "display_handheld": true
+        }
+      }
+    ],
+    "minecraft:netherite_hoe": [
+      {
+        "type": "definition",
+        "model": "minecraft:netherite_hoe",
+        "bedrock_identifier": "kalium:laboureuse_netherite",
+        "display_name": "Laboureuse en netherite",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "laboureuse_netherite",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.laboureuse_netherite",
+          "allow_offhand": true,
+          "display_handheld": true
+        }
+      }
     ]
   }
 }

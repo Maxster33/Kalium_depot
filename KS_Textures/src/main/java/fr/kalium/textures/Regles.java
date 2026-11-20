@@ -68,6 +68,11 @@ final class Regles {
         // image gardent celle de l'outil du jeu)
         r("foreuse", "ks_supertool:outil", "foreuse");
         r("foreuse_netherite", "ks_supertool:outil", "foreuse_netherite");
+        // 1.2.4 : Abatteuse, Excavatrice, Laboureuse (diamant et netherite)
+        for (String m : List.of("abatteuse", "excavatrice", "laboureuse")) {
+            r(m, "ks_supertool:outil", m);
+            r(m + "_netherite", "ks_supertool:outil", m + "_netherite");
+        }
 
         // KS_Alcools : la version jetable (potion jetable) garde l'image de l'alcool
         for (String a : List.of("neutre", "tequila", "vodka", "hydromel", "manzana", "biere", "tabascoolise", "rhum",

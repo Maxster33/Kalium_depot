@@ -326,6 +326,36 @@
       "textures": [
         "textures/items/kalium_foreuse_netherite"
       ]
+    },
+    "kalium.abatteuse": {
+      "textures": [
+        "textures/items/kalium_abatteuse"
+      ]
+    },
+    "kalium.abatteuse_netherite": {
+      "textures": [
+        "textures/items/kalium_abatteuse_netherite"
+      ]
+    },
+    "kalium.excavatrice": {
+      "textures": [
+        "textures/items/kalium_excavatrice"
+      ]
+    },
+    "kalium.excavatrice_netherite": {
+      "textures": [
+        "textures/items/kalium_excavatrice_netherite"
+      ]
+    },
+    "kalium.laboureuse": {
+      "textures": [
+        "textures/items/kalium_laboureuse"
+      ]
+    },
+    "kalium.laboureuse_netherite": {
+      "textures": [
+        "textures/items/kalium_laboureuse_netherite"
+      ]
     }
   }
 }

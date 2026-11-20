@@ -15,7 +15,7 @@ import re
 import sys
 import zipfile
 
-VERSION = "1.6.0"  # 1.6.0 : rhum et Shejiu (KS_Alcools) ; 1.5.0 : Foreuse (KS_SuperTool) ; 1.2.0 : blocs custom de KS_Blocs ; 1.2.1 : jack o'lanterns lumineuses ; 1.3.0 : low fire, low shield ; 1.4.0 : liane du Shejiu invisible
+VERSION = "1.6.0"  # 1.6.0 : rhum et Shejiu (KS_Alcools), Abatteuse, Excavatrice, Laboureuse (KS_SuperTool) ; 1.5.0 : Foreuse (KS_SuperTool) ; 1.2.0 : blocs custom de KS_Blocs ; 1.2.1 : jack o'lanterns lumineuses ; 1.3.0 : low fire, low shield ; 1.4.0 : liane du Shejiu invisible
 # Blocs de base que KS_Blocs reecrit sur le serveur (version deployee) : voir plus bas
 BASES_BLOCS = {"note_block"}
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -48,11 +48,14 @@ BASES = {
     "fiole_experience_mort": ["experience_bottle"], "radeau_jukebox": ["bamboo_raft", "bamboo_chest_raft"],
     "amulette_mangeuse_de_mal": ["heart_of_the_sea"],
     "foreuse": ["mace"], "foreuse_netherite": ["mace"],
+    "abatteuse": ["diamond_axe"], "abatteuse_netherite": ["netherite_axe"],
+    "excavatrice": ["diamond_shovel"], "excavatrice_netherite": ["netherite_shovel"],
+    "laboureuse": ["diamond_hoe"], "laboureuse_netherite": ["netherite_hoe"],
 }
 # Textures de face de bloc : affichees en cube, comme le bloc vanilla
 BLOCS = {"bloc_charbon_de_bois"} | {f"emeraude_compressee_{t}" for t in range(1, 7)}
 # Tenues comme un outil
-OUTILS = {"bedrock_breaker"}
+OUTILS = {"bedrock_breaker"} | {"abatteuse", "abatteuse_netherite", "excavatrice", "excavatrice_netherite", "laboureuse", "laboureuse_netherite"}  # + machines de KS_SuperTool
 # Tenues avec un modele du jeu precis (1.5.0 : la Foreuse, une masse, tenue comme la masse)
 PARENTS = {"foreuse": "minecraft:item/handheld_mace", "foreuse_netherite": "minecraft:item/handheld_mace"}
 

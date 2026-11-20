@@ -171,4 +171,10 @@ Shéjiǔ vert olive avec un serpent doré, bouchon rouge sombre. Pack Java **1.6
 1.5.0 non envoyée : Foreuse, liane du Shéjiǔ), à déposer sur minepack.fr puis à recopier dans `relay.properties` du
 proxy. Bedrock : geyser-bedrock 1.13.0.
 
+Textures de l'**Abatteuse**, de l'**Excavatrice** et de la **Laboureuse** (KS_SuperTool, diamant et netherite) : règles
+`abatteuse`, `excavatrice`, `laboureuse` et leurs `_netherite` (`ks_supertool:outil`). Images dessinées par Claude,
+validées par LeKiwi06 le 20/11/2026 : hache double à deux lames en croissant (d'après son croquis), pelle et houe à
+dents des deux côtés, noyau lourd gris au centre ; tenues comme un outil (`item/handheld`). Pack Java 1.6.0 reconstruit
+(SHA-1 `6103cbe46df1ace070d8fd090759511164f01f15`), geyser-bedrock 1.13.0 aussi.
+
 Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.8.

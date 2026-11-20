@@ -73,5 +73,5 @@ Points à vérifier en premier, dans Kixster Test :
 - recettes de forge sur Bedrock ;
 - alertes de KS_AntiCheat (x-ray en alertes) quand 9 minerais tombent d'un coup.
 
-Reste à faire :
-- textures de l'Abatteuse, de l'Excavatrice et de la Laboureuse (en attendant : outils du jeu).
+Textures de l'Abatteuse (hache double en croissants), de l'Excavatrice et de la Laboureuse validées par LeKiwi06 le
+20/11 : KS_Textures 1.2.4, pack Java 1.6.0, geyser-bedrock 1.13.0 (construits, non envoyés).

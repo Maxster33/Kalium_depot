@@ -731,6 +731,14 @@ def objets():
     # foi) ; sans PNG, l'image de la masse sert de base. Le Cœur de machine garde l'image du noyau lourd.
     add("foreuse", "Foreuse", "KS_SuperTool", "mace", vanilla("item/mace"))
     add("foreuse_netherite", "Foreuse en netherite", "KS_SuperTool", "mace", vanilla("item/mace"))
+    # Abatteuse (hache double à croissants, d'après un croquis de LeKiwi06), Excavatrice, Laboureuse : dessinées par
+    # Claude, validées par LeKiwi06 le 20/11/2026 (le PNG fait foi).
+    add("abatteuse", "Abatteuse", "KS_SuperTool", "diamond_axe", vanilla("item/diamond_axe"))
+    add("abatteuse_netherite", "Abatteuse en netherite", "KS_SuperTool", "netherite_axe", vanilla("item/netherite_axe"))
+    add("excavatrice", "Excavatrice", "KS_SuperTool", "diamond_shovel", vanilla("item/diamond_shovel"))
+    add("excavatrice_netherite", "Excavatrice en netherite", "KS_SuperTool", "netherite_shovel", vanilla("item/netherite_shovel"))
+    add("laboureuse", "Laboureuse", "KS_SuperTool", "diamond_hoe", vanilla("item/diamond_hoe"))
+    add("laboureuse_netherite", "Laboureuse en netherite", "KS_SuperTool", "netherite_hoe", vanilla("item/netherite_hoe"))
     return o
 
 
