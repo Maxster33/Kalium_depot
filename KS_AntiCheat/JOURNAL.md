@@ -97,3 +97,23 @@ Demande (chantier Kixster du 01-02/11, fusée Hyperboost) : ne pas sanctionner u
 - Sans KS_Hyperboost : rien ne change.
 
 **Compilé, non déployé. Statut : non testé en jeu. À déployer avec KS_Hyperboost 1.0.0.**
+
+## 1.6.0 - anti-vol en mode « signaler seulement » (20/11/2026, LeKiwi06)
+
+Cahier « Atouts, alcools, aliments », section 3.6. LeKiwi06 (20/11/2026) : « on fait l'anti-vol en mode signaler
+seulement ». Préalable au Shéjiǔ, qui demandera `allow-flight=true` sur Kixster. Contient la 1.5.0 (Hyperboost).
+
+- Nouvelle classe `Vol` : même règle que le jeu (Paper 26.3, `noBlocksAround`) : un joueur « flotte » quand il ne
+  descend pas (moins de 0,03125 bloc par tick) et qu'aucun bloc ne touche sa boîte élargie de 0,0625 et prolongée de
+  0,55 vers le bas. Eau, lave, échelles, lianes, échafaudages, miel, slime... comptent comme appuis, comme dans le jeu.
+- Jamais d'alerte : créatif et spectateur, vol autorisé (jetons et badges de KS_Fly), élytre, lévitation, chute lente,
+  trident, véhicule, fusée Hyperboost, sommeil, mort, monde de test, debout sur une entité (bateau, wagonnet, shulker...).
+- Rien n'est fait au joueur : alerte légère après `vol.ticks` (60 = 3 s, avant l'expulsion du jeu à 4 s tant que
+  `allow-flight=false`), alerte grave après `vol.ticks-grave` (200, possible seulement avec `allow-flight=true`). Une
+  alerte de chaque par épisode ; un appui, une descente ou une téléportation le termine.
+- `config.yml` : section `vol` (`actif`, `ticks`, `ticks-grave`), valeurs par défaut dans le code (clé absente d'un
+  `config.yml` déjà déployé : valeurs du code).
+- Limite : compté sur la position connue du serveur, un joueur qui lague en l'air peut être signalé.
+
+**Déployé sur Kixster le 20/11/2026** (Claude de LeKiwi06 ; ancien jar dans `_removed-ks_anticheat-1.4.1`), actif
+depuis le redémarrage de 15:31, **non testé en jeu**. Section complétée le 21/11/2026 d'après le commit 67337d4.

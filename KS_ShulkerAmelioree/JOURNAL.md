@@ -49,3 +49,24 @@ vide ; jamais contenant de boutique), KS_CoffreRenforce 1.3.1 (refuse une shulke
 (rareté Rare) et `didacticiel.yml` (2 entrées dans « Crafts »).
 
 **Déployé sur Kixster le 02/11/2026 à 14:28** (LeKiwi06 : « Oui, envoie »), avec KS_ShulkerAmelioree 1.0.0, KS_Encapsuleur 1.0.0, KS_Economy 1.13.6, KS_CoffreRenforce 1.3.1, KS_Textures 1.2.2 et `didacticiel.yml` ; jars de la même taille que ceux du dépôt. À redémarrer par LeKiwi06. Statut : non testé en jeu.
+
+## 1.0.1 — 2026-11-20 — ouverture au clic, menus fermés si la boîte disparaît
+
+Retour de LeKiwi06 du 20/11 : le couvercle ne s'animait pas et l'ouverture ne marchait pas toujours.
+
+- Clic droit sur la shulker améliorée posée : le menu s'ouvre directement, même si elle est empilée. Les protections
+  sont respectées (clic refusé par un claim : rien) ; accroupi avec un objet en main, l'objet sert, comme dans le jeu.
+- Shulker retirée sans être cassée (encapsuleur, commande, WorldEdit...) : ses menus ouverts se ferment aussitôt,
+  sans rien écrire ; un menu resté sur cette place est oublié quand une nouvelle shulker y est posée.
+
+Déployée sur Kixster le 20/11/2026 (ancien jar dans `_removed-ks_shulkeramelioree-1.0.0`), remplacée le même jour
+par la 1.0.2.
+
+## 1.0.2 — 2026-11-20 — couvercle gêné : pas d'ouverture
+
+- Couvercle gêné par un bloc : la shulker améliorée ne s'ouvre pas, comme une boîte du jeu (sauf si son menu est déjà
+  ouvert par un autre joueur, couvercle levé).
+
+**Déployée sur Kixster le 20/11/2026** (Claude de LeKiwi06 ; ancien jar dans `_removed-ks_shulkeramelioree-1.0.1`),
+active depuis le redémarrage de 15:31, **non testée en jeu**. Sections complétées le 21/11/2026 d'après les commits
+4955f74 et 3912799.

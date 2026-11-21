@@ -111,8 +111,6 @@ Relevé le 21/11/2026 en comparant le `JOURNAL.md` de chaque plugin aux serveurs
 - **Lobby, Kixster, Serveur Jeux** : KLM_Chat 1.1.0 (1.0.0 en place) ; **Lobby, Serveur Jeux** : KLM_Menu 2.12.0
   (2.11.0 en place).
 - Jamais déployés : KG_Pong 0.1.0 (prototype), KaliumCore 1.4.0 (bibliothèque).
-- Écarts inverses (serveur plus récent que le journal, journal à compléter) : KS_AntiCheat 1.6.0, KS_Boussole 1.1.0,
-  KS_ShulkerAmelioree 1.0.2, KaliumRelay 1.12.0.
 - Pack Java 1.7.0 + geyser-bedrock 1.14.0 (cultures) : construits, non envoyés.
 
 ## Chantiers en cours

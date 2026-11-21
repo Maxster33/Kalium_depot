@@ -199,3 +199,23 @@ bot sur Dishost non plus).
 
 **Compilé, non déployé.** À déployer avec KG_ScoreBoards 1.10.0 (Kanvas) et KLM_DiscordBot 0.3.0 ; redémarrage du
 proxy nécessaire.
+Déployé le 20/11/2026 dans la 1.12.0 (voir plus bas) ; KG_ScoreBoards 1.10.0 toujours pas déployé sur Kanvas.
+
+## 1.12.0 - pack de ressources envoyé par le proxy (20/11/2026, LeKiwi06)
+
+LeKiwi06 (20/11/2026) : « que le pack s'active sur tout le serveur kalium, c'est embêtant d'avoir à le reload chaque
+fois qu'on rejoint kixster ».
+
+- Avant, KS_Textures proposait le pack à chaque arrivée sur Kixster ; Velocity retire les packs d'un serveur quand le
+  joueur en change, d'où un nouveau téléchargement à chaque retour. Envoyé par le proxy (nouvelle classe
+  `PackTextures`), il reste chargé d'un serveur à l'autre : proposé une seule fois, au premier serveur rejoint.
+  Facultatif ; jamais envoyé aux joueurs Bedrock (identifiant Floodgate).
+- `relay.properties` : `pack-url`, `pack-sha1` (vides par défaut, remplis à la main : adresse du pack et SHA-1 donné par
+  `visuels-objets/pack.py`), `pack-message` (« Textures de KaLium (facultatif) »). `pack-url` vide : rien n'est envoyé.
+- Même identifiant de pack que KS_Textures : le `pack.url` de KS_Textures doit rester **vide** sur Kixster (vidé le
+  20/11), sinon le pack du serveur remplacerait celui du proxy.
+- Contient la 1.11.0 (jeton du bot Discord), jamais déployée seule.
+
+**Déployé sur le proxy le 20/11/2026 à 15:25** (Claude de LeKiwi06 ; ancien jar et `relay.properties` dans
+`_removed-kaliumrelay-1.10.2`), redémarré à 15:31 sans erreur, **non testé en jeu**. Pack Java 1.6.0 dans
+`relay.properties` depuis le 20/11. Section complétée le 21/11/2026 d'après le commit 3912799.

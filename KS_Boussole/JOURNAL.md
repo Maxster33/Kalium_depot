@@ -42,3 +42,18 @@ Limites : un joueur dans une autre dimension que celle du point visé voit l'aig
 point trouvé est une cellule de biome à la hauteur où la recherche l'a trouvé (biomes de grottes : sous terre).
 
 Compilé ; **déployé sur Kixster le 02/11/2026 à 13:19** (jar de 14 511 octets, même taille que celui du dépôt ; nouveau plugin, rien rangé), **à redémarrer, non testé en jeu**. Prix validé par LeKiwi06 le 02/11 : **513,2** (boussole 0,5 + Changeur de Biome 512,7), à ajouter dans `rachats.csv` de KS_Economy (ligne `boussole_voyageur;boussole_voyageur;513.2;pdc:ks_boussole:boussole_voyageur:b;Boussole du voyageur;1;`). Restent à ajouter : entrée du didacticiel (KS_Didacticiel).
+
+## 1.1.0 - familles de biomes (20/11/2026, LeKiwi06)
+
+LeKiwi06 (20/11/2026) : « pour les jungles on ne précise que jungle, ça englobe toutes les variantes ».
+
+- Nouveau `familles.yml` : une famille = un bouton du menu (ex. « Jungle » pour toutes les jungles) ; la recherche vise
+  le plus proche des biomes de la famille. Un biome absent de la liste garde son propre bouton (nom de `biomes.yml`) ;
+  une famille dont aucun biome ne peut exister dans le monde du joueur n'est pas montrée.
+- Une boussole réglée vise un id de famille (« jungle ») ; une boussole réglée en 1.0.0 (clé de biome,
+  « minecraft:plains ») reste lue.
+- Dans le monde plat de test, le menu montre la liste du monde normal (pour pouvoir tester).
+
+**Déployé sur Kixster le 20/11/2026** (Claude de LeKiwi06 ; ancien jar dans `_removed-ks_boussole-1.0.0`), actif
+depuis le redémarrage de 15:31, **non testé en jeu**. `familles.yml` commité après coup (1ec0914), il était déjà dans
+le jar. Prix de 513,2 : dans KS_Economy 1.13.8. Section complétée le 21/11/2026 d'après les commits 4955f74 et 1ec0914.
