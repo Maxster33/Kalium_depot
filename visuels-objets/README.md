@@ -47,7 +47,7 @@ planche : redécouper d'abord. Ne pas déplacer les cases ni redimensionner l'im
 | KS_Economy, KS_Crafts (7) | Bloc d'émeraude compressé tiers 1 à 6, Bloc de charbon de bois | bloc d'émeraude, bloc de charbon |
 | KS_FioleExp, KS_CoffreMort (2) | les deux fioles d'expérience | fiole d'expérience (bleue, violette) |
 | KS_JukeboxBoat, KS_Trains (3) | Bateau à jukebox, Radeau à jukebox, Wagon jukebox | dessinés par LeKiwi06 (bateau, radeau, wagonnet) |
-| KS_Cultures (33, premier jet de Claude du 20/11/2026, à retoucher) | 9 fruits, 6 graines de végétaux, 17 graines de fleurs, mélange de graines ; stades mûrs des végétaux dans `png/blocs` (`dessiner.stade_mur`, appelé par `KS_Blocs/pack/blocs.py`) | pomme (tomate, poivron), pomme de terre, betterave, fleur de spores (salade), carotte (maïs), graines de blé (riz), baies sucrées (cerises) ; kiwi dessiné ; graines de blé ou de betterave avec la miniature du fruit ou de la fleur |
+| KS_Cultures (33, dessinés par Claude les 20-21/11/2026, fruits dans le style de Croptopia sans en reprendre d'image) | 9 fruits, 6 graines de végétaux, 17 graines de fleurs, mélange de graines ; stades mûrs des végétaux dans `png/blocs` (`dessiner.stade_mur`, appelé par `KS_Blocs/pack/blocs.py`) | fruits dessinés pixel par pixel (`FRUITS_DESSINES`) ; graines de blé ou de betterave avec la miniature du fruit ou de la fleur |
 
 Sans texture propre (choix de LeKiwi06, 29/10/2026) : le coffre renforcé, le bateau, le radeau et le minecart avec
 coffre renforcé, et la pomme d'amour gardent l'image vanilla avec l'aspect enchanté (KS_CoffreRenforce 1.3.0 ;

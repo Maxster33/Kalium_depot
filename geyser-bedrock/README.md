@@ -199,8 +199,8 @@ alcool a deux objets Bedrock (potion et potion jetable), un bateau à jukebox un
 - **1.14.0 (20/11/2026, LeKiwi06)** : les 33 objets de KS_Cultures (LeKiwi06 : « Oui, les textures »). Fruits sur
   `minecraft:pumpkin_pie` (aliments : nourriture et saturation du plugin), graines et mélange sur
   `minecraft:knowledge_book`, piles de 64 ; modèle = l'`item_model` que KS_Cultures pose (betterave, carotte...),
-  `custom_model_data` = id de l'objet, posé par KS_Textures 1.2.6. Images : premier jet de Claude à partir des images du
-  jeu (`visuels-objets/dessiner.py`), à retoucher ; stades mûrs des végétaux redessinés de même
+  `custom_model_data` = id de l'objet, posé par KS_Textures 1.2.6. Images : fruits dessinés par Claude le 21/11 (style inspiré
+  de Croptopia, sans en reprendre d'image), graines à partir des images du jeu (`visuels-objets/dessiner.py`) ; stades mûrs des végétaux redessinés de même
   (`visuels-objets/png/blocs`, correspondance des blocs inchangée). Contient la 1.13.0. Pack
   `KaLium-objets-1.14.0.mcpack` construit, **non envoyé, non testé**. Mise en place : `kalium_objets.json` dans
   `custom_mappings/` et le `.mcpack` dans `packs/`, puis rangement du 1.13.0 proxy arrêté.
