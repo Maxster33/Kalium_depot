@@ -5,7 +5,7 @@
 # Depend de KLM_Menu et KS_Blocs (compiles d abord, classes jamais embarquees) ; SimpleClaimSystem dans libs.
 set -e
 export JAVA_TOOL_OPTIONS=
-VERSION=1.0.0
+VERSION=1.0.1
 DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$DIR"
 if [ -d "$DIR/../outils-build" ]; then

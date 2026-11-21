@@ -2001,6 +2001,7 @@ shulker_amelioree;shulker_amelioree;129.5;pdc:ks_shulkeramelioree:shulker:b;Shul
 encapsuleur;encapsuleur;1037;pdc:ks_encapsuleur:objet:s:encapsuleur;Encapsuleur;1;nether+end
 coeur_de_machine;coeur_de_machine;673.6;pdc:ks_supertool:coeur_de_machine:b;Cœur de machine;1;
 boussole_voyageur;boussole_voyageur;513.2;pdc:ks_boussole:boussole_voyageur:b;Boussole du voyageur;1;
+repeteur_wifi;repeteur_wifi;3.173;pdc:ks_blocs:type:s:ks_repeteurwifi:emetteur;Répéteur wifi;64;nether
 tomate;culture;0.0293;pdc:ks_cultures:objet:s:tomate;Tomate;64;
 poivron;culture;0.0293;pdc:ks_cultures:objet:s:poivron;Poivron;64;
 aubergine;culture;0.0293;pdc:ks_cultures:objet:s:aubergine;Aubergine;64;

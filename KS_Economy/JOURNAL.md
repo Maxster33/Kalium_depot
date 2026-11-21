@@ -84,3 +84,18 @@ déploiement de KS_Cultures, qui coupe leur duplication à la poudre d'os.
 
 Statut : compilé, non déployé, non testé. À déployer avec KS_Textures 1.2.5. Sans KS_Cultures, ces lignes ne
 correspondent à aucun objet : rien ne casse.
+
+## 1.13.10 - répéteur wifi (21/11/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « Oui, complète » (ce qui manquait au répéteur wifi, dont le prix proposé dans
+`KS_RepeteurWifi/JOURNAL.md`).
+
+- Répéteur wifi (KS_RepeteurWifi) : **3,1725** = somme des ingrédients du craft (capteur sculk calibré 0,25 + 3
+  répéteurs 0,3425 + 3 comparateurs 0,365 + 2 lingots d'or 0,4). Cible `pdc:ks_blocs:type:s:ks_repeteurwifi:emetteur`
+  (marque de KS_Blocs ; la valeur contient un « : », lu par `split(":", 5)`), pile de 64 (bloc cible). Dimension
+  Nether (le quartz des comparateurs), comme les comparateurs : jamais tiré si le Nether est fermé.
+- Chaîne d'abord relancée sans changement (fichier identique), puis avec le répéteur : `rachats.csv` gagne exactement
+  cette ligne.
+- Contient la 1.13.9 (cultures), jamais déployée.
+
+Statut : compilé, non déployé, non testé. À déployer avec KS_Textures 1.2.7.

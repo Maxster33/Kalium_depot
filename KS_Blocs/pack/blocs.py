@@ -76,9 +76,9 @@ PROVISOIRES = {
     "riz_jeune": ("block/wheat_stage4", None),
     "riz_mur": ("block/wheat_stage7", None),
     # 0.2.0 : répéteur wifi (KS_RepeteurWifi) et boîte aux lettres (KS_Courrier)
-    "repeteur_wifi_emetteur": ("block/target_side", None),
-    "repeteur_wifi_recepteur": ("block/redstone_lamp", None),
-    "repeteur_wifi_recepteur_allume": ("block/redstone_lamp_on", None),
+    "repeteur_wifi_emetteur": ("dessiner", None),  # 21/11 : faces dessinees (dessiner.bloc_dessine)
+    "repeteur_wifi_recepteur": ("dessiner", None),
+    "repeteur_wifi_recepteur_allume": ("dessiner", None),
     "boite_aux_lettres_face": ("block/barrel_top", None),
     "boite_aux_lettres_cote": ("block/barrel_side", None),
     "boite_aux_lettres_dessus": ("block/barrel_bottom", None),
@@ -105,7 +105,7 @@ def texture_provisoire(nom):
     if nom not in PROVISOIRES:
         sys.exit(f"Texture manquante, sans texture provisoire prevue : {chemin}")
     source, teinte = PROVISOIRES[nom]
-    px = dessiner.stade_mur(nom) if source == "dessiner" else dessiner.vanilla(source)
+    px = dessiner.bloc_dessine(nom) if source == "dessiner" else dessiner.vanilla(source)
     if teinte is not None:
         if nom.startswith("culture_"):  # les baies rouges
             rouges = dessiner.masque(px, lambda c, x, y: dessiner.hsv(c)[1] > 0.4

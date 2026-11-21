@@ -121,6 +121,9 @@ final class Regles {
                 "graine_sunflower", "graine_lilac", "graine_rose_bush", "graine_peony", "melange")) {
             r(o, "ks_cultures:objet", o);
         }
+
+        // 1.2.7 : répéteur wifi (KS_RepeteurWifi), bloc cible marqué par KS_Blocs
+        r("repeteur_wifi", "ks_blocs:type", "ks_repeteurwifi:emetteur");
     }
 
     private Regles() {

@@ -77,3 +77,18 @@ apparence, et les textures d'une apparence sont communes à ses variantes).
   `kalium.repeteur_wifi` dans `pack/textures/item_texture.json`).
 
 **Compilé le 02/11/2026, non déployé, non testé en jeu.**
+
+## 1.0.1 - prêt à tester (21/11/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « Oui, complète ».
+
+- **Déploiement en deux temps** (KS_MondeTest, règle du 03/11, postérieure à la 1.0.0) : la boucle de chaque tick
+  n'allume plus rien dans un monde où le plugin n'est pas ouvert (`PhaseTest.ouvert("KS_RepeteurWifi", monde)`, classe
+  copiée de KS_Contrats) : un émetteur n'y émet pas, un récepteur ne s'y allume pas. Les recettes, menus et écouteurs
+  sont déjà mis en quarantaine par KS_MondeTest (plugin dans `premiers-en-test`).
+- Fait ailleurs : apparences dans KS_Blocs 0.3.0 (déployé) ; prix 3,1725 (KS_Economy 1.13.10) ; règle d'icône
+  (KS_Textures 1.2.7) ; pack Java 1.7.0 et geyser-bedrock 1.14.0 (icône et faces dessinées par Claude : boîtier à
+  rivets, émetteur aux ondes cyan qui montent, récepteur aux ondes qui descendent, grises éteint, rouges allumé) ;
+  didacticiel (Crafts, `requiert: "KS_RepeteurWifi"`).
+
+Statut : compilé, non déployé, non testé.

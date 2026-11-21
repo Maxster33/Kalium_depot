@@ -1049,6 +1049,95 @@ def objets_cultures(add):
     add("melange", "Mélange de graines", "KS_Cultures", "item_model pitcher_pod (base livre)", melange_graines())
 
 
+# ---------------------------------------------------------------- KS_RepeteurWifi (21/11/2026)
+
+def _boitier_wifi():
+    px = vide()
+    for y in range(16):
+        for x in range(16):
+            if x in (0, 15) or y in (0, 15):
+                px[y][x] = rgb("#23262B")
+            elif x in (1, 2) or y in (1, 2) or x in (13, 14) or y in (13, 14):
+                if x in (1, 2) and y <= 13 or y in (1, 2) and x <= 13:
+                    px[y][x] = rgb("#7C838E") if (x == 1 or y == 1) else rgb("#626973")
+                else:
+                    px[y][x] = rgb("#3E434B") if (x == 14 or y == 14) else rgb("#4E545D")
+    for x, y in ((2, 2), (13, 2), (2, 13), (13, 13)):
+        px[y][x] = rgb("#A9B0BA")
+    return px
+
+def _ondes_wifi(px, cx, cy, vers_haut, couleur_arcs, couleur_point, fond, halo=None):
+    for y in range(3, 13):
+        for x in range(3, 13):
+            px[y][x] = rgb(fond)
+    for y in range(3, 13):
+        for x in range(3, 13):
+            dx, dy = x + 0.5 - cx, y + 0.5 - cy
+            r = math.hypot(dx, dy)
+            haut = dy < -0.3 if vers_haut else dy > 0.3
+            if not haut or abs(dx) > abs(dy) * 1.9 + 0.4:
+                continue
+            for k, R in enumerate((2.8, 5.0)):
+                if abs(r - R) < 0.62:
+                    px[y][x] = rgb(couleur_arcs[k])
+    py = int(cy - 0.5)
+    for x in (7, 8):
+        for y in ((py, py + 1) if vers_haut else (py - 1, py)):
+            px[y][x] = rgb(couleur_point)
+    if halo:
+        for y in range(3, 13):
+            for x in range(3, 13):
+                if px[y][x] == rgb(fond):
+                    r = math.hypot(x + 0.5 - 8, y + 0.5 - 8)
+                    if r < 3.2:
+                        px[y][x] = rgb(halo)
+    return px
+
+def _wifi_emetteur():
+    return _ondes_wifi(_boitier_wifi(), 8, 11.5, True, ("#3FD7E0", "#2AA7B8"), "#BFF6FA", "#16202A")
+
+def _wifi_recepteur():
+    return _ondes_wifi(_boitier_wifi(), 8, 4.5, False, ("#56606B", "#454E58"), "#5A1E18", "#16202A")
+
+def _wifi_recepteur_allume():
+    return _ondes_wifi(_boitier_wifi(), 8, 4.5, False, ("#FF6A3D", "#E03A22"), "#FFD9A0", "#2A1612")
+
+def repeteur_wifi_icone():
+    """Objet du repeteur wifi : boitier a ecran cyan, antenne et ondes (21/11/2026)."""
+    px = vide()
+    # boitier
+    for y in range(8, 15):
+        for x in range(2, 14):
+            bord = x in (2, 13) or y in (8, 14)
+            px[y][x] = rgb("#23262B") if bord else (rgb("#7C838E") if (x == 3 or y == 9) else rgb("#4E545D"))
+    for y in range(10, 13):
+        for x in range(5, 11):
+            px[y][x] = rgb("#16202A")
+    for x in range(6, 10):
+        px[11][x] = rgb("#3FD7E0")
+    px[11][9] = rgb("#BFF6FA")
+    # antenne
+    for y in range(3, 8):
+        px[y][4] = rgb("#A9B0BA")
+        px[y][5] = rgb("#23262B")
+    px[2][4] = rgb("#3FD7E0"); px[2][5] = rgb("#23262B"); px[1][4] = rgb("#23262B"); px[2][3] = rgb("#23262B")
+    # ondes, a droite de la pointe de l'antenne
+    for (x, y) in ((6, 1), (7, 2), (6, 3)):
+        px[y][x] = rgb("#3FD7E0")
+    for (x, y) in ((8, 0), (9, 1), (9, 2), (9, 3), (8, 4)):
+        px[y][x] = rgb("#2AA7B8")
+    return px
+
+
+def bloc_dessine(nom):
+    """Texture de bloc dessinee ici (visuels-objets/png/blocs), pour KS_Blocs/pack/blocs.py : stades murs des cultures
+    et faces du repeteur wifi (boitier a rivets ; emetteur : ondes cyan qui montent ; recepteur : ondes qui descendent,
+    grises eteint, rouges allume)."""
+    faces = {"repeteur_wifi_emetteur": _wifi_emetteur, "repeteur_wifi_recepteur": _wifi_recepteur,
+             "repeteur_wifi_recepteur_allume": _wifi_recepteur_allume}
+    return faces[nom]() if nom in faces else stade_mur(nom)
+
+
 # ---------------------------------------------------------------- objets
 
 def objets():
@@ -1208,6 +1297,8 @@ def objets():
 
     # KS_Cultures (20/11/2026) : premier jet de Claude a partir des images du jeu, a retoucher par LeKiwi06
     objets_cultures(add)
+    add("repeteur_wifi", "Répéteur wifi", "KS_RepeteurWifi", "item_model calibrated_sculk_sensor (base bloc cible)",
+        repeteur_wifi_icone())
     return o
 
 

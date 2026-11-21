@@ -15,7 +15,7 @@ import re
 import sys
 import zipfile
 
-VERSION = "1.7.0"  # 1.7.0 : objets de KS_Cultures et stades de pousse (canne a sucre, varech) ; 1.6.0 : rhum et Shejiu (KS_Alcools), Abatteuse, Excavatrice, Laboureuse (KS_SuperTool) ; 1.5.0 : Foreuse (KS_SuperTool) ; 1.2.0 : blocs custom de KS_Blocs ; 1.2.1 : jack o'lanterns lumineuses ; 1.3.0 : low fire, low shield ; 1.4.0 : liane du Shejiu invisible
+VERSION = "1.7.0"  # 1.7.0 : objets de KS_Cultures et stades de pousse (canne a sucre, varech), repeteur wifi ; 1.6.0 : rhum et Shejiu (KS_Alcools), Abatteuse, Excavatrice, Laboureuse (KS_SuperTool) ; 1.5.0 : Foreuse (KS_SuperTool) ; 1.2.0 : blocs custom de KS_Blocs ; 1.2.1 : jack o'lanterns lumineuses ; 1.3.0 : low fire, low shield ; 1.4.0 : liane du Shejiu invisible
 # Blocs de base que KS_Blocs reecrit sur le serveur (version deployee) : voir plus bas
 BASES_BLOCS = {"note_block", "sugar_cane", "kelp"}  # 1.7.0 : KS_Blocs 0.3.0 (protection) sur Lobby, Kanvas, Kixster, Event
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -60,6 +60,7 @@ for _i, _n, _b in dessiner.GRAINES_CULTURES:
 for _f, _n, _t in dessiner.FLEURS_CULTURES:
     BASES["graine_" + _f] = ["beetroot_seeds", "knowledge_book"]
 BASES["melange"] = ["pitcher_pod", "knowledge_book"]
+BASES["repeteur_wifi"] = ["calibrated_sculk_sensor", "target"]  # KS_RepeteurWifi : bloc cible, item_model du capteur
 # Textures de face de bloc : affichees en cube, comme le bloc vanilla
 BLOCS = {"bloc_charbon_de_bois"} | {f"emeraude_compressee_{t}" for t in range(1, 7)}
 # Tenues comme un outil

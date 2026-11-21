@@ -219,6 +219,8 @@ final class Repeteurs implements EcouteurBloc {
         if (index.isEmpty()) {
             return;
         }
+        // 1.0.1 : déploiement en deux temps (KS_MondeTest) : rien ne transmet dans un monde où le plugin n'est pas ouvert
+        Map<UUID, Boolean> ouverts = new HashMap<>();
         // émetteurs alimentés, par code
         Map<String, List<Pos>> actifs = new HashMap<>();
         List<Repeteur> recepteurs = new ArrayList<>();
@@ -236,12 +238,13 @@ final class Repeteurs implements EcouteurBloc {
                 it.remove();
                 continue;
             }
-            if (b.isBlockIndirectlyPowered()) {
+            if (b.isBlockIndirectlyPowered() && ouvert(ouverts, b.getWorld())) {
                 actifs.computeIfAbsent(r.code, k -> new ArrayList<>()).add(r.pos);
             }
         }
         for (Repeteur r : recepteurs) {
-            boolean voulu = r.code != null && aPortee(r.pos, actifs.get(r.code));
+            boolean voulu = r.code != null && aPortee(r.pos, actifs.get(r.code))
+                    && Boolean.TRUE.equals(ouverts.get(r.pos.monde()));
             boolean libre = tick - r.dernier >= intervalle;
             if (r.allume) {
                 r.enAttente = false;
@@ -256,6 +259,11 @@ final class Repeteurs implements EcouteurBloc {
                 }
             }
         }
+    }
+
+    /** Le plugin est-il ouvert dans ce monde (KS_MondeTest) ? Une fois par monde et par tick. */
+    private static boolean ouvert(Map<UUID, Boolean> ouverts, World monde) {
+        return ouverts.computeIfAbsent(monde.getUID(), u -> PhaseTest.ouvert("KS_RepeteurWifi", monde));
     }
 
     private boolean aPortee(Pos p, List<Pos> emetteurs) {

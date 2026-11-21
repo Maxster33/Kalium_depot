@@ -2326,6 +2326,27 @@
           "display_handheld": true
         }
       }
+    ],
+    "minecraft:target": [
+      {
+        "type": "definition",
+        "model": "minecraft:calibrated_sculk_sensor",
+        "bedrock_identifier": "kalium:repeteur_wifi",
+        "display_name": "Répéteur wifi",
+        "predicate": {
+          "type": "match",
+          "property": "custom_model_data",
+          "value": "repeteur_wifi",
+          "index": 0
+        },
+        "bedrock_options": {
+          "icon": "kalium.repeteur_wifi",
+          "allow_offhand": true
+        },
+        "components": {
+          "minecraft:max_stack_size": 64
+        }
+      }
     ]
   }
 }

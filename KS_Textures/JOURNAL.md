@@ -196,3 +196,12 @@ Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.
 - Comprend la 1.2.5 (barème des cultures), jamais déployée.
 
 Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.9 et le pack Java 1.7.0.
+
+## 1.2.7 - répéteur wifi (21/11/2026, LeKiwi06)
+
+- Règle `repeteur_wifi` : objet marqué `ks_blocs:type = ks_repeteurwifi:emetteur` (bloc cible, `item_model` du capteur
+  sculk calibré). Icône dessinée par Claude (boîtier, antenne, ondes cyan) ; faces des blocs dans
+  `visuels-objets/png/blocs`. Pack Java 1.7.0, geyser-bedrock 1.14.0.
+- Barème copié de KS_Economy 1.13.10 (répéteur wifi 3,1725, commun). Contient la 1.2.6, jamais déployée.
+
+Statut : compilé, non déployé, non testé. À déployer avec KS_Economy 1.13.10 et le pack Java 1.7.0.

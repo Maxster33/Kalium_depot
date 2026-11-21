@@ -200,6 +200,14 @@ themes:
           - "ks_boussole:boussole_voyageur"
         requiert: "KS_Boussole 1.1.0"
         nouveau: "2026-11-20"
+      repeteur_wifi:
+        nom: "Répéteur wifi"
+        icone: CALIBRATED_SCULK_SENSOR
+        texte: "Transmet la redstone sans fil. Pose-le, puis clic droit : choisis Émission ou Réception, et le bouton « Code » pour taper 6 lettres ou chiffres. Un émetteur qui reçoit du courant allume tous les récepteurs du même code à 64 blocs ou moins, dans le même monde. Un récepteur change d'état au plus toutes les 0,5 seconde. Dans un claim, seuls le propriétaire et les membres le règlent. Cassé, il redonne un répéteur neuf, sans code."
+        recettes:
+          - "ks_repeteurwifi:repeteur_wifi"
+        requiert: "KS_RepeteurWifi"
+        nouveau: "2026-11-21"
       bedrock:
         nom: "Bedrock Breaker"
         icone: BLAZE_ROD

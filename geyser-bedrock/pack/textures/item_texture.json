@@ -521,6 +521,11 @@
       "textures": [
         "textures/items/kalium_melange"
       ]
+    },
+    "kalium.repeteur_wifi": {
+      "textures": [
+        "textures/items/kalium_repeteur_wifi"
+      ]
     }
   }
 }

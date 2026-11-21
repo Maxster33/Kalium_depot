@@ -2,7 +2,7 @@
   "format_version": 2,
   "header": {
     "name": "KaLium - objets custom",
-    "description": "Apparence Bedrock des objets custom de KaLium (104 textures, les mêmes que le pack Java de KS_Textures), musiques du rhum de KS_Alcools et blocs custom de KS_Blocs.",
+    "description": "Apparence Bedrock des objets custom de KaLium (105 textures, les mêmes que le pack Java de KS_Textures), musiques du rhum de KS_Alcools et blocs custom de KS_Blocs.",
     "uuid": "e1a636c2-30f1-4e58-8f86-0017f0092296",
     "version": [1, 14, 0],
     "min_engine_version": [1, 21, 0]
