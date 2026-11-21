@@ -6,7 +6,11 @@ Chaque règle est suivie de sa raison (« Pourquoi ») : en cas de situation non
 ## 1. Avant de commencer
 
 1. `git pull`, puis lire dans l'ordre : ce fichier, `TRAVAIL_EN_COURS.md`, `REPRISE_PROJET.md`, puis le
-   `JOURNAL.md` du ou des plugins concernés.
+   `JOURNAL.md` du ou des plugins concernés. **Les archives ne se lisent jamais en entier** (`archive_reprise.md`,
+   `archive_versions.md`, `<plugin>/JOURNAL_ARCHIVE.md`) : on y cherche un mot précis (grep) en cas de doute.
+
+   Pourquoi : pour Claude, tout ce qui est lu occupe la mémoire de la session jusqu'à la fin ; les fichiers
+   d'historique (plus de 400 Ko au 21/11/2026) épuisaient la limite d'une session avant le vrai travail.
 2. **Réserver le ou les plugins** dans `TRAVAIL_EN_COURS.md` avant de toucher au code :
    - vérifier qu'aucun des plugins voulus n'y figure déjà ; s'il y figure, **ne pas commencer** et avertir son humain ;
    - ajouter une ligne `- <Plugin> — <pseudo> — depuis le <aaaa-mm-jj hh:mm> — <objet du travail>` ;
@@ -145,14 +149,16 @@ mot de passe : sessions enregistrées, ou mot de passe tapé par l'humain.
 
    Pourquoi : des versions encore buggées ont déjà été utilisées ou annoncées trop tôt.
 7. Dans le même push, juste après le déploiement : copie du nouveau jar dans `jars-deployes/` (ancien jar
-   retiré de ce dossier) et mise à jour du tableau des versions de `REPRISE_PROJET.md`.
+   retiré de ce dossier) et mise à jour du tableau des versions de `REPRISE_PROJET.md` : **remplacer** la version
+   dans la ligne du serveur, sans empiler d'historique (date, raison et test en jeu vont dans le `JOURNAL.md`).
 
    Pourquoi : `jars-deployes/` et `REPRISE_PROJET.md` sont la seule façon pour l'autre équipe de savoir ce qui
    tourne réellement sur les serveurs.
 
 ## 5. Fin de session
 
-1. `git pull`, puis commit avec un message clair en français, puis `git push`.
+1. `git pull`, puis commit avec un message clair en français, puis `git push`. Message court (une ligne de moins
+   de 150 caractères ; le détail va dans le `JOURNAL.md`).
 2. **Libérer ses réservations** dans `TRAVAIL_EN_COURS.md` (même si le travail est abandonné), et pousser.
 3. Mettre à jour `REPRISE_PROJET.md` :
    - partie **permanente** (état actuel, versions en service, points ouverts, procédures) : toujours à jour,
@@ -165,6 +171,11 @@ mot de passe : sessions enregistrées, ou mot de passe tapé par l'humain.
    sessions suivantes de lire des informations dépassées. Les archives ne se consultent qu'en cas de doute.
 
 5. Ajouter un fichier dans `historique-conversations/` (voir son README).
+6. **Journaux courts** : un `JOURNAL.md` ne garde que ses 4 dernières versions (plus son introduction et ses
+   sections de contexte) ; à chaque nouvelle version, la plus ancienne part à la fin de `JOURNAL_ARCHIVE.md`.
+   `REPRISE_PROJET.md` reste sous 40 Ko : un point ouvert réglé part dans `archive_reprise.md`.
+
+   Pourquoi : même raison que la section 1 (limite des sessions de Claude).
 
 ## Rôle de chaque fichier
 
@@ -173,7 +184,9 @@ mot de passe : sessions enregistrées, ou mot de passe tapé par l'humain.
 | `REGLES.md` | Ces règles |
 | `TRAVAIL_EN_COURS.md` | Plugins réservés en ce moment |
 | `REPRISE_PROJET.md` | État actuel du projet + derniers comptes rendus signés |
-| `archive_reprise.md` | Anciens comptes rendus (consultation en cas de doute) |
-| `<plugin>/JOURNAL.md` | Détail technique de chaque version d'un plugin |
+| `archive_reprise.md` | Anciens comptes rendus et points ouverts réglés (recherche en cas de doute) |
+| `archive_versions.md` | Historique des déploiements par serveur jusqu'au 21/11/2026 (recherche en cas de doute) |
+| `<plugin>/JOURNAL.md` | Détail technique des 4 dernières versions d'un plugin |
+| `<plugin>/JOURNAL_ARCHIVE.md` | Versions plus anciennes (recherche en cas de doute) |
 | `historique-conversations/` | Un fichier par session : demandes, décisions, reste à faire |
 | `jars-deployes/` | Copie exacte des jars en service |

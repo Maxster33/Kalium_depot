@@ -1,0 +1,1542 @@
+# KG_BingoGame - archive du journal
+
+Sections déplacées de `JOURNAL.md` le 21/11/2026 (seules les 4 dernières versions y restent).
+
+## État au 22/09/2026 (historique - l'état actuel est dans `REPRISE_PROJET.md` et dans les dernières sections ci-dessous)
+
+Étapes 1 à 3 du cahier des charges (section 16, ordre de priorité) :
+1. **Architecture parties/instances** — fait, par équipe (pas par joueur, voir plus bas).
+2. **Création/réinitialisation des mondes à seed partagée** — fait.
+3. **Gestion des joueurs** (salle d'attente, choix d'équipe, réception de l'affectation réseau) — fait.
+
+Pas encore fait : grille (étape 4), validation des objectifs (5), interface/carte custom (6),
+chronomètre/compte à rebours automatique (7), détection de ligne (8), fin de partie/classement (9),
+administration complète (10), intégration récompenses (11).
+
+Déployé sur Kixster (7003.mystrator.com) le 22/09/2026, première installation (pas de version
+antérieure à déplacer). **Redémarrage du serveur requis pour que le plugin s'active.**
+
+## 0.1.2 — generateur de monde vide pour la map par defaut de Kixster
+
+Demande utilisateur : sauvegarder la map actuelle de Kixster en renommant son dossier, puis la
+remplacer par un monde vide. `BingoPlugin` surcharge desormais `getDefaultWorldGenerator(worldName, id)`
+et retourne `VoidGenerator` (deja utilise pour `bingo_lobby`) — ce mecanisme standard Bukkit permet a
+un plugin de fournir le generateur d'un monde arbitraire, y compris le monde par defaut du serveur, via
+le mapping `worlds: <nom>: generator: KalBingo` dans `bukkit.yml` (pas besoin de Multiverse ou autre
+plugin tiers). Le monde par defaut de Kixster s'appelle `Kixster SMP` (level-name dans
+`server.properties`) — c'est le dossier `/Kixster SMP/` a la racine du serveur qui doit etre renomme
+(le dossier `/world/` a la racine est un ancien monde inutilise, different, a ne pas toucher).
+
+Important : renommer le dossier d'un monde activement charge pendant que le serveur tourne est risque
+(fichiers ouverts, `session.lock`). Le serveur doit etre arrete avant le renommage, puis redemarre pour
+qu'il recree `Kixster SMP` a partir de zero avec le generateur vide. Aucun outil console/RCON
+disponible dans cette session — l'arret/redemarrage doit etre fait par l'utilisateur.
+
+## 0.1.3 — correctif : le monde genere n'etait pas vide (load: STARTUP)
+
+Apres le renommage + redemarrage (fait par l'utilisateur), le nouveau monde `Kixster SMP` n'etait PAS
+vide. Diagnostic via `logs/latest.log` sur Kixster (pas de suppositions) :
+```
+[Server thread/ERROR]: Could not set generator for default world 'Kixster SMP': Plugin 'KalBingo v0.1.2' is not enabled yet (is it load:STARTUP?)
+```
+Cause : le monde principal du serveur est cree AVANT l'activation des plugins charges normalement
+(`load: POSTWORLD`, valeur par defaut) — a ce moment-la, CraftBukkit cherche le plugin "KalBingo" pour
+recuperer son generateur, ne le trouve pas encore active, et abandonne silencieusement en generant un
+monde vanilla normal a la place (aucune exception cote plugin, juste ce warning serveur, d'ou
+l'importance d'avoir verifie le log plutot que de deviner). Corrige en ajoutant `load: STARTUP` dans
+`plugin.yml` de KalBingo : le plugin est alors active avant la creation des mondes, comme le font les
+plugins de generation de monde (void/skyblock) en general.
+
+Sequence a refaire par l'utilisateur avec la 0.1.3 : arreter Kixster, renommer/deplacer le dossier
+`Kixster SMP` actuel (celui-la n'est PAS le monde original — c'est la tentative ratee avec du terrain
+normal, generee apres le premier redemarrage ; le vrai monde original est `Kixster SMP_bak`, deja en
+lieu sur), redemarrer. Verifier `logs/latest.log` : la ligne d'erreur "Could not set generator" ne doit
+plus apparaitre.
+
+## 0.1.4 — correctif : load: STARTUP cassait la creation du monde bingo_lobby
+
+L'utilisateur a refait la sequence (arret, dossier `Kixster SMP` supprime lui-meme, redemarrage) avec
+la 0.1.3 : toujours pas vide. Nouveau diagnostic via `logs/latest.log` (encore une fois, pas de
+suppositions) :
+```
+[Server thread/ERROR]: Error occurred while enabling KalBingo v0.1.3 (Is it up to date?)
+java.lang.IllegalStateException: Cannot create additional worlds on STARTUP
+    at org.bukkit.craftbukkit.CraftServer.createWorld(CraftServer.java:1167)
+    at KalBingo-0.1.3.jar//fr.kalium.bingo.world.LobbySlots.init(LobbySlots.java:49)
+    at KalBingo-0.1.3.jar//fr.kalium.bingo.BingoPlugin.onEnable(BingoPlugin.java:61)
+[KalBingo] Disabling KalBingo v0.1.3
+[Server thread/ERROR]: Could not set generator for default world 'Kixster SMP': Plugin 'KalBingo v0.1.3' is not enabled yet (is it load:STARTUP?)
+```
+Cause : `load: STARTUP` (ajoute en 0.1.3) fait tourner `onEnable()` — qui appelait directement
+`lobbySlots.init()`, donc `Bukkit.createWorld()` pour `bingo_lobby` — pendant la phase STARTUP, qui
+n'autorise QUE la creation du monde principal, pas de mondes supplementaires. `onEnable()` plantait
+avec une exception, Bukkit desactivait alors le plugin automatiquement, et le generateur du monde par
+defaut redevenait indisponible (meme symptome qu'en 0.1.2, cause differente).
+
+Corrige en reportant `lobbySlots.init()` (creation de `bingo_lobby`) a `ServerLoadEvent`
+(`BingoPlugin` enregistre un `Listener` inline dans `onEnable()`) : cet evenement se declenche une
+seule fois, une fois le serveur completement demarre (tous les mondes crees y compris ceux des
+plugins, tous les plugins actives) — c'est le hook standard pour ce genre de creation de monde
+differee quand un plugin est en `load: STARTUP`. Le reste de `onEnable()` (managers, commandes,
+canaux reseau) ne cree aucun monde et continue de s'executer immediatement, sans changement.
+
+Sequence a refaire par l'utilisateur avec la 0.1.4 : arreter Kixster, verifier qu'il ne reste qu'un
+dossier `Kixster SMP_bak` (le vrai original) a la racine — sinon supprimer/deplacer tout ce qui
+s'appelle `Kixster SMP`, redemarrer, verifier `logs/latest.log` (ni "Could not set generator" ni
+"Cannot create additional worlds").
+
+## 0.1.5 — les operateurs ne sont plus renvoyes vers kal-games sans partie en cours
+
+Demande utilisateur : pouvoir construire ET modifier la salle d'attente a l'avenir sans etre coupe.
+Probleme : `PlayerConnectListener` appelle `AssignmentService.requestAssignment()` pour CHAQUE joueur
+qui rejoint Bingo (y compris un admin qui vient juste pour `/bingoadmin lobby tp`) ; si kal-games ne
+connait pas de partie pour lui (ce qui est le cas normal pour un admin hors contexte de partie), il
+etait renvoye vers kal-games au bout de `reconnect-during-game.assignment-wait-seconds` (15s par
+defaut) - bien trop court pour construire/modifier la salle d'attente tranquillement.
+
+Corrige dans `AssignmentService` (nouvelle methode privee `handleNoGameFound`, appelee a la fois par le
+timeout et par une reponse explicite "found=false" de kal-games) : un joueur avec la permission
+`bingo.admin` (la meme qui protege `/bingoadmin`, "les operateurs" demandes par l'utilisateur) reste
+sur le serveur au lieu d'etre renvoye - message l'invitant a utiliser `/bingoadmin lobby tp`. Un joueur
+normal sans partie garde l'ancien comportement (renvoi vers kal-games). Rien ne change quand une partie
+EST trouvee (le flux salle d'attente/equipe normal continue de s'appliquer a tout le monde, y compris
+aux admins qui rejoignent une vraie partie).
+
+## 0.1.6 — menu graphique /menu pour la salle d'attente (opérateurs)
+
+Demande utilisateur : "je ne comprends pas l'utilisation de la commande" pour capturer la salle
+d'attente → un menu graphique plutot que des sous-commandes a taper, reserve aux operateurs.
+
+Refactor prealable : la logique de `/bingoadmin lobby tp/pos1/pos2/spawn/capture/info` (jusque-la
+inline dans `BingoAdminCommand`) a ete extraite dans une nouvelle classe partagee
+`world.LobbyCaptureService` (etat pos1/pos2/spawn par joueur + actions), pour que les commandes texte
+(gardees, pour ceux qui les preferent) ET le nouveau menu appellent exactement le meme code - aucune
+logique dupliquee, aucun comportement nouveau, juste une presentation en plus.
+
+Nouveau : `gui.LobbyMenu` (inventaire Bukkit 1 ligne, identifie de maniere fiable via un
+`InventoryHolder` marqueur dedie plutot que le titre, pour eviter tout faux-positif avec un autre menu
+d'un autre plugin) et `command.MenuCommand` (`/menu`, alias `/bingomenu`). Boutons : "Aller dans la
+salle d'attente" (teleport + ferme le menu), "Coin 1"/"Coin 2"/"Point d'apparition" (laine verte/grise
+selon si deja defini, re-cliquable a tout moment pour redefinir), "Capturer" (bloc emeraude/redstone
+selon si les 3 sont prets), "Infos" (definie ou non, nombre d'emplacements). Le menu se rafraichit apres
+chaque clic pour montrer l'etat a jour.
+
+Acces reserve aux operateurs : commande protegee par la permission `bingo.admin` (meme permission que
+`/bingoadmin`, `default: op` dans plugin.yml) a la fois au niveau de plugin.yml (Bukkit refuse
+l'execution avant meme d'appeler l'executor) et re-verifiee dans `MenuCommand` pour un message en
+francais coherent avec le reste du plugin plutot que le message par defaut de Bukkit.
+
+## 0.1.7 — grille Bingo configurable (section 2 du cahier des charges, étape 4)
+
+Étape suivante de l'ordre de priorité (section 16), demandée par l'utilisateur en même temps que
+l'intégration du menu Bingo côté kal-games (1.10.1, voir JOURNAL.md de KalGames).
+
+Nouveau package `fr.kalium.bingo.grid` :
+- `Objective` (record) : item (`Material`), quantité, `Difficulty` (EASY/MEDIUM/HARD/EXTREME — mêmes
+  paliers que "bleu/jaune/orange/rouge" section 1 étape 11), `condition` (texte libre, **pas encore
+  interprétée** : la validation automatique est la section 3, pas encore traitée — ce champ ne fait que
+  capturer la donnée en attendant).
+- `ObjectiveLibrary` : charge la liste depuis **`objectives.yml`, dans le dossier de données du plugin,
+  PAS dans le `.jar` ni `config.yml`** — modifiable librement sans recompiler ni remplacer le plugin
+  (exigence explicite du cahier des charges, section 2 : "configurable sans devoir modifier le plugin
+  principal" + "système permettant de modifier facilement les listes d'items"). `load()` copie le fichier
+  d'exemples par défaut au premier démarrage si absent ; `reload()` recharge à chaud.
+- `BingoGrid`/`GridCell` : grille carrée `size x size`, une case = un objectif (+ un `boolean validated`
+  présent mais **totalement inerte** pour l'instant — rien ne le fait passer à `true`, la détection
+  automatique n'existe pas encore).
+- `GridGenerator` : tirage aléatoire **sans répétition** dans le pool d'objectifs. Erreur explicite si le
+  pool est trop petit pour la taille demandée. Aucun mode "grille fixe" construit — non demandé
+  explicitement, et section 14 du cahier des charges liste "objectifs fixes ou aléatoires" comme "à
+  définir avant l'ouverture", donc pas anticipé.
+
+Intégration : `BingoGame` porte maintenant un champ `BingoGrid grid` (une seule grille par partie,
+**partagée par toutes les équipes** — hypothèse de travail, pas une décision finale : la section 14 liste
+"génération identique ou différente entre les joueurs" comme non tranché). `GameManager.assignGrid(game)`
+génère et attache la grille ; `PartyStarter.start()` l'appelle juste après `prepareInstances()`, donc
+`/bingoadmin start <gameId>` génère maintenant aussi la grille de la partie.
+
+Nouveau fichier `objectives.yml` (ressource par défaut, copiée au premier démarrage) : **26 objectifs
+d'exemple clairement marqués PLACEHOLDER** dans l'en-tête du fichier (pas une liste validée — section 13
+du cahier des charges interdit explicitement d'inventer la liste finale). Assez pour tester une grille
+5x5 par défaut (`grid.size: 5` dans `config.yml`, nouvelle section, valeur de départ raisonnable mais pas
+définitive — section 14 : "taille exacte" non tranchée).
+
+Nouvelles sous-commandes admin (`BingoAdminCommand`, ajoutées uniquement pour pouvoir tester/vérifier
+cette étape, section 11 : "ne créer que les commandes réellement nécessaires") :
+- `/bingoadmin grid reload` : recharge `objectives.yml` depuis le disque sans redémarrer le serveur.
+- `/bingoadmin grid show <gameId>` : affiche en chat la grille générée pour une partie en cours (liste
+  numérotée item/quantité/difficulté/condition) — en attendant l'interface/carte custom (étape suivante
+  de l'ordre de priorité, pas encore traitée).
+
+**Assomption prise sans confirmation explicite de l'utilisateur** (question posée mais seule la question
+sur l'intégration menu a reçu une réponse) : liste d'objectifs livrée avec des exemples placeholder
+clairement marqués plutôt qu'un fichier vide ou une vraie liste fournie par l'utilisateur — à corriger
+facilement si ce n'est pas ce qui était voulu, le fichier n'est qu'un point de départ éditable.
+
+## 0.1.8 — premier test de bout en bout : 5 correctifs remontés par l'utilisateur
+
+Après déploiement + redémarrage des deux serveurs (0.1.7 / KalGames 1.10.1), l'utilisateur a pu pour la
+première fois créer une partie depuis kal-games et arriver dans la salle d'attente sur Kixster. Retour
+détaillé avec 5 problèmes, traités un par un ci-dessous.
+
+### 1. Salle d'attente trop proche du modèle construit par l'admin
+`LobbySlots.slotOrigin(slot)` plaçait l'emplacement 0 directement à l'origine du monde
+(`0, 64, 0` + `slot * spacing`) — or c'est justement là, près du spawn du monde void, que l'admin
+construit naturellement son modèle avec `/menu`/`/bingoadmin lobby capture`. Les deux se retrouvaient
+visibles en même temps. Corrigé en ajoutant un décalage de départ configurable,
+`lobby.slots-start-offset` dans `config.yml` (2000 blocs par défaut, le long de l'axe X, avant le premier
+emplacement) : `slotOrigin` devient `(startOffset + slot * spacing, 64, 0)`. À augmenter encore si 2000
+blocs restent insuffisants (dépend de la taille du modèle capturé).
+
+### 2. Configuration du nombre d'équipes/joueurs à la création
+Traité côté KalGames (1.10.2, voir son JOURNAL.md) : nouveau formulaire à la création avec deux champs
+numériques. Côté KalBingo, le protocole réseau (`AssignmentNetworkListener`/`AssignmentService`) et
+`BingoParty`/`PartyManager.getOrCreate(...)` ont été étendus pour recevoir et porter ces valeurs
+(`host`, `teamCount`, `teamSize`) par partie, à la place des anciennes constantes globales — nécessaire
+aussi pour les points 3 et 4 ci-dessous (l'hôte doit être identifié pour le menu, et `trySetTeam` doit
+connaître les bornes réelles de la partie).
+
+### 3. Aucun moyen de configurer les équipes une fois dans la salle d'attente
+Demande : redonner la nether star bloquée (menu de partie) une fois dans la salle d'attente. Nouveau
+`gui.LobbyItems` (même pattern PDC que `ItemService`/`HubListener` côté KalGames) : donne une nether
+star "Menu de la partie" au joueur dès qu'il est téléporté dans la salle d'attente
+(`AssignmentService`, juste après le téléport de succès). Nouveau `gui.PartyMenu` (inventaire Bukkit,
+même pattern que `LobbyMenu`) : boutons d'équipe (1 par équipe, laine/teinture selon complet/occupé/
+libre, liste des membres en lore), case info (hôte + équipe du joueur), et — **uniquement si le joueur
+est l'hôte de la partie** (`party.isHost`) — "Lancer la partie"/"Annuler la partie". Le clic sur une
+équipe appelle `BingoParty.trySetTeam(...)` (même méthode que `/bingoteam`, aucune logique dupliquée,
+refactor de `TeamCommand` pour l'utiliser aussi).
+
+**Assomption non confirmée par l'utilisateur** : "lancer"/"annuler" réservés à l'hôte uniquement, par
+analogie avec le fonctionnement des menus de partie côté KalGames (`PlayerMenus.openGameMenu`). À
+confirmer/corriger si un autre fonctionnement était voulu (ex. n'importe quel joueur peut annuler, ou
+un admin doit pouvoir le faire aussi).
+
+### 4. Expulsion rapide de la salle d'attente (aucune partie en cours)
+Cause exacte non confirmée avec certitude (pas de log d'erreur trouvé permettant de trancher) : le seul
+chemin de code menant à cette expulsion est `AssignmentService.handleNoGameFound` (déclenché soit par une
+réponse explicite "aucune partie trouvée" de kal-games, soit par l'absence de réponse dans le délai de
+`reconnect-during-game.assignment-wait-seconds`, 15s par défaut). Hypothèse : en test solo, kal-games peut
+se retrouver momentanément sans aucun joueur connecté juste après le transfert de l'hôte vers Kixster, ce
+qui casserait la livraison du message `Forward` de la demande d'affectation (Bingo → kal-games) — le même
+type de problème de fiabilité que celui déjà identifié et contourné, dans l'autre sens, par le design
+"pull" original (voir plus haut dans ce journal). **Correctif défensif appliqué sans confirmation du
+diagnostic** : `AssignmentService` renvoie maintenant la demande d'affectation toutes les 2 secondes
+(`scheduleRetries`) tant que le délai d'attente n'est pas écoulé, au lieu d'un unique envoi initial — si
+le premier essai échoue à être livré, un des suivants a de bonnes chances de passer une fois kal-games de
+nouveau peuplé. **À signaler à l'utilisateur : si le problème se reproduit malgré ce correctif, il faudra
+creuser plus profondément (logs serveur des deux côtés au moment précis de l'expulsion).**
+
+### 5. Salle d'attente non protégée
+Nouveau `world.LobbyProtectionListener` (enregistré uniquement pour le monde `bingo_lobby`, jamais pour
+les mondes de partie) : bloque casse de bloc, pose de bloc, interaction avec les blocs (clic droit,
+plaques de pression), interaction avec un seau (vider/remplir), empêche le spawn de monstres
+(`CreatureSpawnEvent` sur toute entité `Monster`), désactive le PvP (dégâts joueur→joueur annulés). La
+nether star du menu de partie (point 3) reste utilisable : le listener laisse passer les interactions
+sur l'item du menu avant d'appliquer les restrictions générales.
+
+## 0.1.9 — menu en Dialog natif, assignation des équipes par l'hôte, correctifs
+
+Après le premier test de bout en bout (0.1.8), retours complémentaires de l'utilisateur :
+
+### Nether star trop proche du modèle / expulsion : confirmé fonctionnel pour l'hôte
+Contrairement à ce qui avait été supposé un temps pendant le diagnostic, la nether star et la
+distance de la salle d'attente fonctionnaient déjà correctement pour l'hôte (0.1.8 était bon sur
+ces deux points) - fausse piste écartée en cours de route.
+
+### Bug réel trouvé : un joueur qui REJOINT (pas l'hôte) arrive sur le modèle puis se fait expulser
+Deux causes identifiées, corrigées toutes les deux :
+1. **`PartyManager.getOrCreate` utilisait `computeIfAbsent`** : quand l'hôte se connecte le
+   premier (créant l'objet `BingoParty` côté KalBingo avec le roster attendu tel qu'il était à CE
+   moment-là), puis qu'un second joueur rejoint la partie et se connecte à son tour, le second
+   appel à `getOrCreate` pour le MÊME `gameId` était ignoré par `computeIfAbsent` (l'objet existe
+   déjà) - le roster plus à jour envoyé par kal-games (incluant le nouveau joueur) était donc
+   silencieusement perdu. Corrigé : `getOrCreate` fusionne désormais le roster reçu dans la partie
+   existante (`BingoParty.mergeExpectedRoster`) au lieu de l'ignorer.
+2. **Le spawn du monde `bingo_lobby` restait fixé à `(0, 80, 0)`**, jamais décalé par
+   `lobby.slots-start-offset` (contrairement aux emplacements collés, eux bien corrigés en 0.1.8) :
+   tant que l'affectation réseau d'un joueur n'est pas encore résolue (le temps d'un aller-retour
+   avec kal-games), Bukkit le place à ce spawn par défaut - c'est-à-dire pile sur le modèle
+   original de l'admin. Corrigé : le spawn du monde suit désormais le même décalage
+   (`slotOrigin`-compatible : `(startOffset, 80, 0)`).
+
+**Limite connue, PAS résolue** (voir commentaire ajouté dans `config.yml`,
+`reconnect-during-game.assignment-wait-seconds`) : le message d'affectation (Bingo → kal-games)
+passe par un canal réseau qui exige qu'au moins un joueur soit connecté sur kal-games pour être
+livré. En test à 2 comptes, si l'hôte ET le second joueur se retrouvent TOUS LES DEUX sur Kixster
+en même temps, kal-games tombe à 0 joueur et la demande ne peut tout simplement pas être livrée,
+quel que soit le délai configuré ou le nombre de réessais - le joueur reste bloqué au spawn (donc
+plus près du modèle que prévu, mais plus autant qu'avant grâce au correctif du point 2) puis est
+expulsé au bout du délai (`assignment-wait-seconds`, remonté de 15 à 30s par prudence, mais ça ne
+résout pas le cas décrit). **Si ça se reproduit** : la vraie solution serait que kal-games transmette
+l'affectation de manière proactive au moment du transfert (`transferToBingo`, où le joueur
+transféré est justement encore présent pour porter le message), plutôt que Bingo l'interroge après
+coup - je ne l'ai pas implémenté sans votre confirmation, c'est un changement de protocole plus
+large que je préfère proposer avant de faire.
+
+### Menu en Dialog natif (remplace l'inventaire Bukkit)
+Demande explicite : "je préfère que la nether star ouvre un menu plutôt qu'une page type
+inventaire". Nouveau `gui.DialogGui` (même principe que `Gui.java` côté KalGames : Dialog natif
+Minecraft, boutons avec callback, MiniMessage pour le texte - volontairement plus simple, pas de
+système de traduction multi-langue puisque KalBingo n'en a pas). `PartyMenu` entièrement réécrit
+pour l'utiliser : n'implémente plus `Listener` (plus de clic d'inventaire à intercepter, seulement
+des boutons de Dialog).
+
+### Assignation des équipes réservée à l'hôte (remplace le choix libre par chaque joueur)
+Demande explicite : "le créateur de la partie doit assigner les équipes aux joueurs lui même" -
+remplace la décision confirmée précédemment ("choix manuel OU aléatoire, par chaque joueur pour
+lui-même", encore listée plus haut dans ce journal sous "Décisions confirmées" - **cette section
+n'est donc plus à jour sur ce point précis**). Dans le nouveau `PartyMenu` : un joueur normal voit
+la composition des équipes en LECTURE SEULE ; seul l'hôte a des boutons, un par joueur connecté,
+qui le font passer à l'équipe suivante non complète en cliquant dessus (même principe de cycle que
+`PlayerMenus.openTeams` côté KalGames). `/bingoteam` a été adapté en conséquence : réservé à
+l'hôte, nouvelle syntaxe `/bingoteam <joueur> <équipe>` (assignation directe d'un joueur précis, en
+complément du clic-pour-cycler du menu). Validation toujours partagée via `BingoParty.trySetTeam`
+entre les deux points d'entrée, aucune logique dupliquée.
+
+## 0.1.10 — relais HTTP KaliumRelay (résout la limite réseau connue en 0.1.9)
+
+Suite à la question de l'utilisateur ("est-il possible de charger en continue une zone sur
+kal-games sans joueur pour que les informations puissent s'envoyer sur le serveur bingo ?") : j'ai
+expliqué que le chargement de chunks ne changerait rien (la contrainte est au niveau du protocole
+Minecraft - le canal de messagerie plugin BungeeCord/Velocity a besoin d'un JOUEUR connecté des
+deux côtés pour livrer un message, pas d'un chunk chargé), puis proposé plusieurs options via
+AskUserQuestion. L'utilisateur a choisi "Plugin Velocity qui relaie les messages", confirmé pouvoir
+ouvrir un port sur l'hébergement Minestrator du proxy, et fourni le port **46199**.
+
+**Nouveau projet `KaliumRelay`** (plugin Velocity, sur le proxy `ProxyVelocity` uniquement - pas un
+plugin des serveurs kal-games/Kixster) : petit serveur HTTP autonome (`com.sun.net.httpserver`,
+sans dépendance externe) qui permet à KalGames de DÉPOSER (POST) l'affectation d'un joueur au
+moment de `transferToBingo`, et à KalBingo de la RÉCUPÉRER (GET, consomme/supprime) dès que ce
+joueur se connecte chez lui - complètement indépendant de toute connexion joueur sur l'un ou
+l'autre serveur, contrairement au canal BungeeCord existant. Jeton partagé fixe (même valeur dans
+les 3 projets, pas de copier-coller manuel nécessaire), purge automatique des entrées non
+récupérées après 2 minutes. Voir `KaliumRelay/JOURNAL.md` (nouveau) pour le détail.
+
+Ce relais est un COMPLÉMENT au canal BungeeCord existant, pas un remplacement : `AssignmentService`
+interroge maintenant les deux chemins EN PARALLÈLE (nouveau `RelayClient` + méthode `pollRelay`),
+la première réponse gagne (`handleResponse` ignore désormais toute résolution tardive grâce à
+`pending.remove()` vérifié). Si `network.relay-url` est vide ou le relais injoignable, tout continue
+de fonctionner comme en 0.1.9 (silencieux, aucune casse).
+
+Côté KalGames : `BingoPartyManager.transferToBingo` dépose l'affectation sur le relais juste avant
+le transfert du joueur (nouvelle méthode `pushAssignment`, appel HTTP asynchrone, échec loggé mais
+jamais bloquant). Nouvelles clés `bingo.relay-url` / `bingo.relay-token` dans `config.yml`.
+
+**Déployé le 23/09/2026 via WinSCP** : `KalBingo-0.1.10.jar` sur Kixster (ancien `0.1.9.jar` archivé
+dans `/plugins/_removed-kalbingo-0.1.9/`), `KalGames-1.10.3.jar` sur kal-games (ancien `1.10.2.jar`
+archivé dans `/plugins/_removed-kalgames-1.10.2/`, voir son JOURNAL.md), et `KaliumRelay-1.0.0.jar`
+sur le proxy `ProxyVelocity` (première installation, rien à archiver). **Les TROIS serveurs
+(kal-games, Kixster, ET le proxy Velocity) doivent être redémarrés** pour ce déploiement - pas fait
+par Claude (pas d'accès console, juste SFTP). C'est un redémarrage supplémentaire par rapport aux
+déploiements précédents (le proxy n'avait encore jamais eu besoin d'être redémarré pour KalBingo).
+
+## 0.1.10 (suite) — le relais ne fonctionnait toujours pas : deux bugs trouvés par diagnostic de logs
+
+Après le déploiement ci-dessus, l'utilisateur a signalé que le bug persistait exactement à
+l'identique : l'hôte crée/assigne bien la partie, mais le joueur qui rejoint arrive quand même dans
+une autre salle d'attente et se fait expulser après quelques secondes. Diagnostic mené en
+téléchargeant `logs/latest.log` de `kal-games`, `Kixster` et `ProxyVelocity` via WinSCP (pas
+d'accès console/SSH) plutôt qu'en devinant. Deux causes INDÉPENDANTES trouvées :
+
+1. **KaliumRelay ne démarrait pas du tout sur le proxy** (`com.google.inject.CreationException: No
+   injectable constructor for type KaliumRelay` dans `proxy-latest.log`) - annotation `@Inject`
+   JSR-330 au lieu de Guice, corrigé en 1.0.1. Voir `KaliumRelay/JOURNAL.md` pour le détail complet.
+2. **Le `config.yml` réellement déployé sur Kixster (et sur kal-games) datait d'avant TOUS les ajouts
+   liés au relais** - `saveDefaultConfig()` (Paper/Bukkit) ne fusionne jamais de nouvelles clés dans
+   un `config.yml` déjà présent sur le disque, il ne l'écrit que si le fichier n'existe pas encore.
+   Résultat : `network.relay-url` résolvait au repli code (`""`, désactivé) malgré un code et un
+   `config.yml` bundlé corrects depuis la 0.1.10, ET `assignment-wait-seconds` était resté à
+   l'ancienne valeur `15` au lieu de `30`. `kixster-latest.log` le confirmait précisément : le second
+   joueur connecté dans le mauvais monde (`overworld` au lieu de `bingo_lobby`, preuve que
+   l'affectation n'avait jamais été résolue) puis expulsé exactement 15 secondes plus tard - la durée
+   exacte de l'ancienne valeur, signature du timeout de `handleNoGameFound()`, pas d'un kick ou d'une
+   déconnexion volontaire.
+
+**Corrigé le 23/09/2026, sans nouveau bump de version côté KalBingo** (pas de changement de code, le
+0.1.10 déployé était déjà correct - seul le fichier de config sur le disque du serveur était en
+retard) : `config.yml` de Kixster téléchargé, `assignment-wait-seconds` remis à `30`,
+`network.relay-url`/`network.relay-token` et `lobby.slots-start-offset` ajoutés (absents jusque-là),
+aucune autre clé touchée, puis ré-uploadé au même chemin via WinSCP. Le `config.yml` de kal-games a
+reçu le même traitement pour la section `bingo:` manquante (voir JOURNAL.md de KalGames). `KaliumRelay`
+redéployé en 1.0.1 sur le proxy (ancien 1.0.0 archivé dans `/plugins/_removed-kaliumrelay-1.0.0/`).
+Cette limite de `saveDefaultConfig()` n'est pas spécifique à Bingo/relais : à garder en tête pour
+CHAQUE future clé de config ajoutée à n'importe quel plugin de ce workspace, puisqu'elle a affecté
+silencieusement KalGames ET KalBingo sur plusieurs versions sans qu'aucune erreur ne soit levée.
+
+## 0.1.11 — retrait de la Nether Star sur la carte, objectifs (papier + validation auto), reconnexion en partie
+
+Suite au premier test complet reussi (creation/assignation d'equipes/generation des maps OK, voir
+JOURNAL.md de KaliumRelay 1.0.1 pour le correctif qui l'a permis), l'utilisateur a remonte trois
+demandes explicites :
+
+1. **La Nether Star (menu de salle d'attente) restait dans la hotbar sur la carte de jeu**, inutilisable
+   ("il n'y a pas de partie en attente" au clic - `PartyMenu.open` echoue car `partyManager` ne
+   connait plus cette partie une fois lancee). `LobbyItems.remove(Player)` (nouveau) retire l'objet de
+   TOUTE la hotbar/l'inventaire, appele dans `PartyStarter.start()` au moment de la teleportation dans
+   l'instance.
+2. **Pas de liste d'objectifs a recolter** : nouvel objet papier "Objectifs" (`GameItems`, slot 8,
+   donne au meme moment que ci-dessus) - MOUVABLE dans l'inventaire (contrairement a la Nether Star)
+   mais pas jetable (`GameItemListener.onDrop`), demande explicite de l'utilisateur. Clic droit ouvre
+   `GameMenu` (Dialog, lecture seule) : temps restant (`BingoGame.getRemaining()`, nouveau), nombre de
+   cases validees par CHAQUE equipe (`BingoGame.countValidated`), et la liste complete des objectifs de
+   la grille avec coche pour ceux deja valides par l'equipe du joueur qui consulte.
+   - **Validation des objectifs elle-meme (section 3 du cahier des charges) : jamais implementee avant
+     cette version** (`GridCell.validated` existait mais restait totalement inerte, et etait de toute
+     facon un booleen unique PARTAGE par case - incompatible avec un suivi par equipe). Mecanique
+     confirmee par l'utilisateur via AskUserQuestion le 23/09/2026 (deux choix distincts) : (a)
+     detection AUTOMATIQUE - une case se valide des qu'UN membre de l'equipe possede, a lui seul, la
+     quantite requise dans son inventaire (pas de somme entre plusieurs joueurs, pas de depot manuel
+     dans un coffre) ; (b) une fois validee, la case reste acquise DEFINITIVEMENT pour le reste de la
+     partie, meme si l'objet est ensuite perdu/depense (pas de reverification). Nouvelle classe
+     `ObjectiveValidationTask`, verifiee chaque seconde (`runTaskTimer`, 20 ticks) pour toutes les
+     parties `IN_PROGRESS`. Etat de progression stocke dans `BingoGame.teamProgress` (nouveau,
+     `Map<Integer, boolean[]>` par numero d'equipe - `GridCell.validated` reste inerte, non reutilise
+     pour ne pas melanger un etat partage et un etat par equipe).
+3. **Reconnexion en cours de partie** : "si un joueur est deconnecte durant une partie et qu'il se
+   reconnecte avant la fin de la partie il faut que le proxy le renvoi directement sur la partie".
+   Aucun mecanisme de reconnexion en jeu n'existait avant cette version (`GameManager.onPlayerDisconnect/
+   onPlayerReconnect` existaient deja mais n'etaient JAMAIS appeles - code mort depuis leur creation).
+   Deux volets necessaires, aucun ne suffisant seul :
+   - **Cote proxy (routage initial)** : nouveau registre `ActiveGameRegistry` dans KaliumRelay (voir son
+     JOURNAL.md, version 1.1.0) - KalBingo y enregistre chaque joueur comme "en partie sur kixster" des
+     que `PartyStarter.start()` le teleporte dans son instance (`RelayClient.registerActiveGame`,
+     nouveau, POST `/active-game/{playerId}`). Le proxy consulte ce registre a CHAQUE nouvelle connexion
+     (`PlayerChooseInitialServerEvent`) et route directement vers Kixster si le joueur y figure, au lieu
+     du routage habituel (kal-games/lobby).
+   - **Cote KalBingo (etat du joueur une fois sur Kixster)** : `PlayerConnectListener` reecrit pour
+     distinguer un NOUVEL arrivant (comportement inchange : `AssignmentService.requestAssignment`) d'une
+     RECONNEXION en cours de partie (`GameManager.findGameOf`, nouveau, cherche dans TOUTES les parties
+     actives) - dans ce second cas, `AssignmentService` n'est PAS sollicite du tout (la BingoParty de ce
+     joueur a deja ete consommee/supprimee au lancement, voir `PartyStarter` : l'interroger aurait
+     provoque un "aucune partie trouvee" et un renvoi a tort vers kal-games, exactement le bug qu'on
+     corrige). Bukkit replace de lui-meme le joueur a sa derniere position dans le monde de son instance
+     (jamais supprime tant que la partie est active) - aucune teleportation manuelle necessaire cote
+     Kixster, seulement la mise a jour de `BingoInstance.setPlayerConnected`/`GameManager.onPlayerReconnect`.
+   - **Limite connue, assumee (hors sujet de cette demande)** : aucune fin de partie automatique n'existe
+     encore cote KalBingo (`GameManager.cleanupGame` n'est appele nulle part, `BingoGame.isTimeUp()` n'est
+     verifie par personne) - une partie ne se termine donc jamais d'elle-meme, et l'enregistrement
+     "en partie" cote KaliumRelay n'est jamais retire automatiquement non plus (voir son JOURNAL.md). Pas
+     un probleme concret tant que la fin de partie n'existe pas ailleurs non plus - a revisiter ensemble
+     le jour ou section 3 (validation) et section 9 (fin de partie/classement) seront traitees.
+
+Nouvelle cle `network.self-server-name: "kixster"` dans `config.yml` (nom de CE serveur cote proxy,
+transmis au relais pour le routage de reconnexion) - valeur par defaut deja correcte dans le code
+(`"kixster"`) si jamais absente du fichier deploye, donc pas de nouveau risque lie a la staleness de
+`saveDefaultConfig()` documentee le 23/09/2026 (voir plus haut) meme si le `config.yml` deploye n'est
+pas repatché.
+
+**Deploye le 23/09/2026 via WinSCP** : ancien `KalBingo-0.1.10.jar` archive (non detruit) dans
+`/plugins/_removed-kalbingo-0.1.10/`, `KalBingo-0.1.11.jar` envoye dans `/plugins/` sur Kixster.
+`KaliumRelay-1.1.0.jar` deploye le meme jour sur le proxy (voir son JOURNAL.md). **Redemarrage de
+Kixster ET du proxy Velocity requis** - kal-games N'A PAS besoin d'etre redemarre cette fois (aucune
+modification cote KalGames).
+
+## 0.1.12 — fin de partie (temps écoulé + victoire), salle d'attente post-victoire, durée choisie côté Kal
+
+Demandes explicites de l'utilisateur (23/09/2026, en deux temps) :
+> "la partie doit se terminée à la fin du temps règlementaire (1h par défaut)" / "il faut ajouter la
+> possibilité de choisir la durée de la partie lorsqu'on la crée sur Kal"
+
+puis, en précision/extension :
+> "Kalgames, le temps par defaut maximum doit être 1h, cette limite doit pouvoir etre changée via les
+> parametres de kalgames. le createur de la partie doit pouvoir réduire le temps mais ne doit pas
+> pouvoir dépasser le temps maximum défini par les opérateurs." / "Si une équipe rempli tous les
+> objectifs alors tous les joueurs sont renvoyés en salle d'attente, ils reçoivent la nether star, et
+> peuvent partir quand ils le souhaitent. si ils reste trop longtemps dans la salle d'attente apres la
+> partie alors ils sont expulsés (apres 10 minutes)"
+
+Comble la limite documentée depuis la 0.1.11 : `GameManager.cleanupGame`/`BingoGame.isTimeUp()` étaient
+définis mais jamais appelés par personne — aucune partie ne se terminait jamais d'elle-même.
+
+- **`GameEndService` (nouvelle classe)** : centralise les DEUX déclencheurs de fin de partie, jamais
+  fusionnés (l'utilisateur les a décrits différemment) :
+  - **Temps écoulé** (`tick()`, appelé chaque seconde par `BingoPlugin`, comme `ObjectiveValidationTask`) :
+    dès que `BingoGame.isTimeUp()` pour une partie `IN_PROGRESS`, TOUS les joueurs (en ligne) sont
+    renvoyés directement vers kal-games (`AssignmentService.sendBackToKalGames`), le papier "Objectifs"
+    retiré (`GameItems.remove`).
+  - **Victoire** (`checkWin(game, teamNumber)`, appelé par `ObjectiveValidationTask` juste après CHAQUE
+    nouvelle case validée, avant qu'un `tick()` de timeout ne puisse s'exécuter sur la même partie) : dès
+    qu'une équipe atteint `grid.getSize() * grid.getSize()` cases validées, TOUS les joueurs (équipe
+    gagnante ET perdantes) sont téléportés dans la salle d'attente Bingo (`LobbySlots.reserve(gameId)` —
+    le même mécanisme que la salle d'attente pré-partie, ré-invoqué avec le même gameId puisque
+    `PartyStarter.start()` l'avait déjà libéré au lancement), reçoivent la Nether Star
+    (`LobbyItems.give`), et sont suivis dans une file d'attente interne (`lingeringDeadlines`) avec une
+    échéance de `game.post-game-lobby-timeout-seconds` (10 min par défaut).
+  - Dans les deux cas : `RelayClient.clearActiveGame(playerId)` est appelé pour CHAQUE membre de la
+    partie (en ligne ou non, async) — une future reconnexion doit suivre le routage normal (kal-games),
+    pas être renvoyée indéfiniment vers Kixster (voir 0.1.11/1.1.0) — puis `GameManager.cleanupGame` est
+    différé de `game.end-cleanup-delay-seconds` (5s par défaut) pour laisser le temps au transfert
+    (Connect ou téléportation) de sortir effectivement les joueurs du monde avant que
+    `InstanceWorldManager.deleteInstanceWorld()` ne tente de le décharger (échoue/log un avertissement
+    si des joueurs y sont encore présents).
+  - **Départ volontaire** (`leaveVoluntarily`) : un joueur "lingering" peut repartir à tout moment (clic
+    sur la Nether Star, voir `LobbyProtectionListener` ci-dessous) — renvoyé immédiatement vers
+    kal-games, sans attendre les 10 minutes.
+  - **Expulsion automatique** (`sweepLingering`, appelée depuis le même `tick()`) : au-delà de
+    l'échéance, un joueur encore présent est renvoyé vers kal-games de la même façon.
+  - L'emplacement de salle d'attente réservé pour la partie (`LobbySlots`) est libéré
+    (`releaseSlotIfEmpty`) dès qu'il ne reste plus personne en attente (parti volontairement ou expulsé),
+    pour qu'il puisse resservir à une AUTRE partie qui se terminerait ensuite par victoire.
+- **`ObjectiveValidationTask`** : appelle désormais `GameEndService.checkWin(game, team)` juste après
+  chaque `markValidated` réussi ; si la partie n'est plus `IN_PROGRESS` juste après (victoire), arrête
+  immédiatement de traiter les cases restantes de cette partie pour ce tick (`break outer`) — inutile de
+  continuer à valider des cases pour une partie déjà terminée.
+- **`LobbyProtectionListener`** : le clic sur la Nether Star a désormais DEUX comportements selon le
+  contexte — salle d'attente AVANT une partie (cas normal) : ouvre `PartyMenu` comme avant ; salle
+  d'attente APRÈS une victoire (`GameEndService.isLingering`) : `PartyMenu` échouerait avec "aucune
+  partie en attente" (la `BingoParty` a déjà été consommée au lancement) — déclenche donc directement
+  `GameEndService.leaveVoluntarily` à la place.
+- **`PlayerConnectListener`** : `findGameOf` est désormais filtré sur `GameState.IN_PROGRESS` — une
+  partie qui vient de se terminer reste quelques secondes dans `GameManager.getActiveGames()` le temps
+  du nettoyage différé (voir `GameEndService.scheduleCleanup`) ; sans ce filtre, un joueur qui se
+  reconnecterait pendant cette fenêtre aurait été à tort traité comme "encore en partie" (papier
+  Objectifs redonné, message de reconnexion) alors que la partie est déjà finie.
+- **Nouvelles clés `config.yml`** (section `game:`) : `end-cleanup-delay-seconds: 5` et
+  `post-game-lobby-timeout-seconds: 600` — **à ajouter manuellement dans le `config.yml` déployé sur
+  Kixster** (staleness de `saveDefaultConfig()` documentée le 23/09/2026, voir plus haut : ces deux clés
+  seraient sinon absentes, mais le code utilise les mêmes valeurs par défaut en repli, donc pas de casse
+  si l'ajout manuel est oublié dans l'immédiat — juste pas modifiable sans redeploiement tant que ce
+  n'est pas fait).
+
+**Durée de partie choisie côté KalGames** (répond à la demande initiale, hors KalBingo — voir aussi le
+JOURNAL.md de KalGames pour le détail) : KalBingo ne change pas ici, il continue de recevoir la durée
+telle que décidée côté kal-games (`BingoPartyManager.create`, transmise via `party.duration()` au
+lancement) — aucun plafond n'est imposé localement par ce plugin, comme documenté depuis l'origine.
+
+**Déployé le 23/09/2026 via WinSCP** : ancien `KalBingo-0.1.11.jar` archivé (non détruit) dans
+`/plugins/_removed-kalbingo-0.1.11/`, `KalBingo-0.1.12.jar` envoyé dans `/plugins/` sur Kixster.
+`KalGames-1.10.4.jar` déployé le même jour sur kal-games (voir son JOURNAL.md). **Redémarrage de
+Kixster ET de kal-games requis** (le proxy/KaliumRelay n'a pas changé cette fois, pas besoin de le
+redémarrer).
+
+## 0.1.13 — abandon de partie, persistance (redémarrage/crash), fin de partie unifiée, pré-génération en cascade des maps
+
+Quatre demandes explicites de l'utilisateur, 23/09/2026, une fois le bug de déploiement 1.10.3/1.10.4
+côté kal-games corrigé (voir son JOURNAL.md) :
+
+> « il faudrait que la partie se termine si personne n'est connecté dessus depuis 10 minutes. la partie
+> doit continuer meme si le serveur est redémarré ou si il crash. à la fin d'une partie on clear les
+> inventaires des joueurs, on leur redonne une netherstar pour qu'ils puissent retourner au hub kalgames
+> (via un menu) et on efface les maps. […] »
+
+> « a chaque partie il faut générer de nouvelles maps donc il serait préférable de générer les maps
+> directement après la création de la partie et en cascade pour éviter les lags »
+
+Quatre décisions ont été confirmées via `AskUserQuestion` avant l'implémentation (voir choix ci-dessous),
+conformément à la règle du projet ("proposer avant d'implémenter en cas de doute").
+
+**1. Fin de partie par abandon (aucun joueur connecté depuis 10 min)** — `GameManager.hasAnyConnectedPlayer`
++ `GameEndService` : un TROISIÈME déclencheur de fin de partie (en plus de timeout et victoire), suivi via
+une nouvelle map `emptySince` (gameId → instant depuis lequel plus aucun joueur n'est connecté à aucune
+instance de la partie), vérifiée à chaque `tick()`. Au-delà de `game.no-players-abandon-after-seconds`
+(600s par défaut), `endByNoPlayers()` termine la partie SILENCIEUSEMENT (aucun joueur en ligne pour
+recevoir un message ou une salle d'attente) : juste le nettoyage habituel (relais, mondes différés,
+fichier de sauvegarde). Distinct de `GameManager.hasAbandoned` (suivi PAR JOUEUR, resté du code mort,
+action jamais définie) : celui-ci suit la PARTIE entière et la termine réellement.
+
+**2. Persistance (survie à un redémarrage/crash)** — nouveau package `fr.kalium.bingo.persistence`,
+classe `GamePersistence` : sauvegarde un fichier YAML par partie EN COURS (`games/<gameId>.yml`, dossier
+de données du plugin) — seed, durée, TEMPS RESTANT (pas l'instant de départ absolu), instances (équipe,
+monde, joueurs), grille complète (chaque case : item/quantité/difficulté/condition) et progression par
+équipe (indices de cases validées). Sauvegarde synchrone (fichier minuscule, même convention que
+`plugin.saveConfig()` ailleurs dans ce projet) déclenchée : au lancement de la partie (`PartyStarter`),
+à chaque nouvelle case validée (`ObjectiveValidationTask`), et périodiquement toutes les 60s en filet de
+sécurité (`BingoPlugin`). Rechargée au démarrage (`GamePersistence.loadAll`, appelé depuis
+`ServerLoadEvent` — même contrainte que `LobbySlots.init()`, création de monde interdite en phase
+STARTUP) : les mondes d'instance sont RECHARGÉS depuis le disque (pas régénérés — `WorldCreator` charge
+le dossier existant), la grille et la progression sont reconstruites telles quelles, et le fichier est
+supprimé dès la fin réelle de la partie (`GameEndService.scheduleCleanup`) pour ne jamais restaurer une
+partie déjà terminée.
+- **Chronomètre : mis en PAUSE pendant l'arrêt** (choix confirmé via `AskUserQuestion`) — le temps
+  restant sauvegardé est restauré tel quel (`BingoGame.restoreInProgress`, qui recalcule un `startedAt`
+  fictif à partir de maintenant), quelle que soit la durée réelle de l'interruption. Une partie dont le
+  temps était déjà écoulé AVANT l'arrêt ne se termine donc PAS immédiatement au redémarrage — elle
+  reprend avec le temps qu'il lui restait à la dernière sauvegarde, et se terminera normalement au
+  prochain `tick()` si ce temps est nul/négatif.
+- **Portée volontairement limitée aux parties DÉJÀ LANCÉES** (choix confirmé via `AskUserQuestion`) : une
+  salle d'attente pas encore lancée (choix des équipes en cours, `PartyManager`/`BingoParty`) N'EST PAS
+  persistée — elle repart de zéro si le serveur redémarre avant le lancement de la partie.
+- `GameManager.restoreGame` (+ record `RestoredInstance`) : reconstruit une `BingoGame` directement à
+  l'état `IN_PROGRESS` sans repasser par `createGame` (pas de nouvelle seed, pas de vérification de
+  `max-simultaneous-games` — la partie existait déjà avant l'arrêt).
+
+**3. Fin de partie unifiée (timeout ET victoire)** — choix confirmé via `AskUserQuestion` : le timeout
+utilise désormais EXACTEMENT le même traitement que la victoire (auparavant : renvoi direct vers
+kal-games, sans salle d'attente). `GameEndService.endByTimeout`/`endByWin` délèguent tous les deux à une
+nouvelle méthode commune `finishAndSendToLobby` (seul le message affiché diffère). Nouveautés dans ce
+traitement commun :
+- **Inventaire ENTIÈREMENT vidé** (`clearInventory` : contenu principal, armure, main secondaire) —
+  demande explicite ("on clear les inventaires des joueurs"), remplace l'ancien retrait ciblé du seul
+  papier "Objectifs" (`GameItems.remove`), qu'un vidage complet couvre déjà.
+- **La nether star ouvre désormais un MENU** (`fr.kalium.bingo.gui.PostGameMenu`, un seul bouton "Retour
+  à kal-games") au lieu de déclencher un départ immédiat sans confirmation — demande explicite : "une
+  netherstar pour qu'ils puissent retourner au hub kalgames (via un menu)". `LobbyProtectionListener`
+  ouvre ce menu si `GameEndService.isLingering`, `PartyMenu` sinon. `LobbyItems.givePostGame` donne le
+  même objet verrouillé qu'en salle d'attente AVANT partie mais avec un nom/lore différent ("Partie
+  terminée" / "Clic droit : retourner à kal-games").
+- "Efface les maps" : déjà couvert par le nettoyage différé existant (`GameManager.cleanupGame` via
+  `InstanceWorldManager.deleteInstanceWorld`), aucun changement nécessaire ici — confirmé que "maps"
+  désigne bien les mondes d'instance (cohérent avec la demande suivante).
+
+**4. Pré-génération en cascade des mondes d'instance** — nouvelle classe `fr.kalium.bingo.world.
+InstanceWorldPreparer` : génère les mondes d'instance UN PAR UN, espacés de
+`instances.pregeneration-stagger-seconds` (10s par défaut, choix confirmé via `AskUserQuestion`), DÈS LA
+CRÉATION de la salle d'attente (`PartyManager.getOrCreate`, nouveau callback `onCreated` invoqué
+uniquement à la création d'une NOUVELLE `BingoParty`, pas en cas de fusion) — le nom du monde et la seed
+sont déjà connus à ce moment (`BingoParty.getTeamCount()`), sans dépendre du choix des équipes. Les
+mondes prêts sont mis en cache (`ready`, monde → `World`) et RÉCLAMÉS par `GameManager.prepareInstances`
+au lancement réel de la partie, avec repli sur la génération synchrone habituelle si l'hôte lance avant
+la fin de la pré-génération (jamais bloquant). `PartyCanceller.cancel` annule/supprime les mondes déjà
+pré-générés pour une partie annulée avant son lancement (jamais réclamés, sinon orphelins sur le disque).
+Limite connue, non traitée (même catégorie que `InstanceWorldManager`) : ne tient pas compte de
+`instances.max-simultaneous-games`, qui ne s'applique qu'au lancement réel.
+
+**Nouvelles clés `config.yml`** : `game.no-players-abandon-after-seconds: 600` (section `game:`) et
+`instances.pregeneration-stagger-seconds: 10` (section `instances:`) — **à ajouter manuellement dans le
+`config.yml` déployé sur Kixster** (staleness de `saveDefaultConfig()`, voir plus haut), sinon valeurs de
+repli déjà correctes dans le code, juste pas modifiables sans redéploiement en attendant.
+
+**Nouveau dossier de données** : `plugins/KalBingo/games/` (créé automatiquement à la première
+sauvegarde) — contient un `.yml` par partie EN COURS. Ne pas le supprimer manuellement pendant qu'une
+partie tourne (perte de la persistance pour cette partie en cas de crash ultérieur) ; les fichiers de
+parties déjà terminées sont normalement déjà nettoyés automatiquement.
+
+## 0.1.14
+
+**1. Seed déjà aléatoire — aucun correctif nécessaire.** Vérification demandée par l'utilisateur ("la
+seed de génération de map doit changer à chaque fois de manière aléatoire") : `BingoPartyManager`
+(côté KalGames) utilise déjà `SecureRandom.nextLong()` à CHAQUE création de partie (pas de cache, pas de
+valeur codée en dur), et cette seed est propagée telle quelle jusqu'à `InstanceWorldManager.
+createInstanceWorld` sans jamais être réutilisée entre deux parties. Si des maps identiques ont été
+observées, la cause la plus probable était le bug de jar ambigu déjà corrigé précédemment (plugin non
+redéployé) — pas un problème de génération de seed.
+
+**2. Menu Objectifs réécrit en INVENTAIRE** (`fr.kalium.bingo.gui.GameMenu`, remplace l'ancien Dialog
+texte) — demande explicite : "il serait préférable de visualiser la liste dans une page type
+inventaire". Grille 5×5 centrée dans un inventaire 6 lignes/54 cases (`GRID_COL_OFFSET`), chaque case =
+un objet représentant l'objectif (matériau + quantité = taille de pile). Menu strictement en LECTURE
+SEULE (`fr.kalium.bingo.gui.GameMenuListener` annule tout clic/glisser-déposer) à l'exception de deux
+objets verrouillés en dernière rangée :
+- **Fermer** (Barrière, case en bas à droite, `GameMenu.CLOSE_SLOT`) — demande explicite : "un objet
+  bloqué en bas à droite pour fermer la liste".
+- **Abandonner la partie** (Porte en chêne, juste au-dessus, `GameMenu.ABANDON_SLOT`) — voir point 5.
+
+**3. Infobulle par équipe au survol** — demande explicite : "quand on survole un objet on doit voir...
+équipe A : complété (vert) / non complété (rouge), équipe B : ...". Implémenté via le lore natif de
+l'`ItemStack` (aucun code de survol personnalisé nécessaire, le tooltip Minecraft s'en charge) : une
+ligne par équipe, générée dynamiquement selon le nombre d'équipes réel de la partie.
+
+**4. Effet brillant sur objectif validé (grille uniquement)** — demande explicite : "quand un objectif
+de la grille a été rempli, alors il doit être brillant... comme pour les livres enchantés". Seule la
+case validée PAR L'ÉQUIPE DU JOUEUR QUI REGARDE brille (logique : chaque joueur ne voit sa propre
+progression briller, pas celle des autres équipes). Technique : `ItemStack.addUnsafeEnchantment(...)`
+(contourne les vérifications "cet enchantement s'applique-t-il à cet objet") + `ItemFlag.HIDE_ENCHANTS`
+sur l'`ItemMeta` → effet visuel brillant SANS aucun texte d'enchantement dans le tooltip, exactement le
+rendu d'un livre enchanté.
+
+**5. Système de score** — confirmé via `AskUserQuestion` (lignes uniquement, pas de colonnes/diagonales) :
+`BingoGame.score(teamNumber)` = 1 point par objectif validé + 1 point par ligne entièrement validée
+(5 lignes possibles max) + 5 points bonus si la grille entière est complétée. Purement informatif/
+compétitif (affiché dans le HUD et l'infobulle) — NE CHANGE PAS la condition de victoire, qui reste
+"première équipe à valider toute la grille" (`GameEndService.checkWin`, inchangé).
+
+**6. Chronomètre + scores permanents au-dessus de la barre de vie** (nouvelle classe `fr.kalium.bingo.
+game.GameHudService`, rafraîchie chaque seconde via `runTaskTimer`) — demande explicite : "le chrono de
+la partie doit être affiché sur l'écran au dessus de la barre de vie, avec les scores actuels de chaque
+équipe." Choix technique : action bar (`Player.sendActionBar`, PAS une boss bar) — se situe visuellement
+juste au-dessus de la barre de vie/faim (contrairement à une boss bar, tout en haut de l'écran), et
+réutilise le même mécanisme qu'un affichage persistant déjà utilisé côté KalGames (`RaceInstance`/
+`GameInstance`).
+
+**7. Abandon définitif d'une partie** — demande explicite : "un objet qui permet d'abandonner la
+partie... êtes-vous sûr de vouloir abandonner ? (attention vous ne pourrez pas revenir)... oui/non".
+- `fr.kalium.bingo.gui.AbandonConfirmMenu` : fenêtre de confirmation (Dialog, même mécanisme que les
+  autres menus de confirmation du plugin) avec les deux boutons demandés — "Oui, abandonner" déclenche
+  `AbandonService.abandon`, "Non, revenir en jeu" ne fait que fermer la fenêtre (le joueur reste en jeu,
+  aucun état modifié).
+- `fr.kalium.bingo.game.AbandonService` : marque le joueur comme abandonné sur SON instance
+  (`BingoInstance.markAbandoned`, nouvel ensemble `abandoned` distinct de `playerConnected` — une simple
+  déconnexion reste réversible, un abandon ne l'est JAMAIS, même en cas de reconnexion), retire l'objet
+  "Objectifs", le renvoie sur kal-games (`AssignmentService.sendBackToKalGames`), prévient le relais
+  (`RelayClient.clearActiveGame`, async) et vérifie si son équipe/la partie doit se terminer
+  immédiatement (`GameEndService.checkImmediateAbandonment` — si plus AUCUN joueur actif sur la partie
+  après cet abandon, inutile d'attendre les 10 minutes de `no-players-abandon-after-seconds`).
+- Un joueur abandonné est exclu de `BingoInstance.hasAnyActivePlayer()`, `GameManager.findGameOf()` et
+  `ObjectiveValidationTask.teamHasObjective()` — il n'est plus jamais traité comme "en jeu" même s'il se
+  reconnecte au serveur, mais reste listé dans le roster de son équipe (informatif uniquement). Le reste
+  de son équipe et les autres équipes continuent normalement.
+
+**Aucune nouvelle clé `config.yml`** dans cette version — pas de patch manuel du `config.yml` déployé sur
+Kixster nécessaire pour cette mise à jour.
+
+## 0.1.15
+
+**Moitié KalBingo de la demande ci-dessus** (voir JOURNAL.md de KalGames, 1.10.5, pour la moitié
+kal-games — les deux vont ensemble, l'une ne fonctionne pas sans l'autre). Investigation : côté
+kal-games, `BingoPartyManager` gardait déjà TOUTES les infos nécessaires pour lister une partie (hôte,
+code, équipes/taille, joueurs inscrits) — la seule chose manquante était de savoir QUAND une partie
+encore listée là-bas avait en réalité déjà démarré ou été annulée sur Kixster, pour la retirer de la
+liste au bon moment. Confirmé via `AskUserQuestion` : ajouter un signal réseau pour ça plutôt qu'une
+liste approximative (recommandé, retenu).
+
+- **`fr.kalium.bingo.network.PartyStatusNotifier`** (NOUVEAU) : prévient kal-games qu'une partie en
+  salle d'attente (pas encore lancée) vient de disparaître, via un `Forward` BungeeCord/Velocity —
+  même mécanisme que `AssignmentService`/`BingoNetworkListener` déjà en place pour l'affectation des
+  joueurs (nouveau sous-canal `KalBingoPartyClosed`, transporte juste le `gameId`). Pas besoin du
+  relais HTTP ici (contrairement à l'affectation) : ce signal part TOUJOURS d'un joueur réellement
+  connecté à Bingo au moment de l'appel (l'hôte qui vient de cliquer sur "Lancer"/"Annuler"), donc
+  toujours livrable sans filet de sécurité supplémentaire.
+- **`fr.kalium.bingo.game.PartyStarter.start()`** : capture un joueur en ligne pendant la téléportation
+  des équipes (`carrier`), puis appelle `partyStatusNotifier.notifyClosed(gameId, carrier)` juste après
+  `partyManager.remove(gameId)`.
+- **`fr.kalium.bingo.game.PartyCanceller.cancel()`** : même principe — cherche un joueur encore connecté
+  dans le roster AVANT de les renvoyer vers kal-games, appelle `notifyClosed` une fois.
+- **`BingoPlugin.java`** : construit `PartyStatusNotifier` (réutilise `kalGamesServerName` déjà
+  disponible dans `onEnable`), l'injecte dans `PartyStarter` et `PartyCanceller`.
+
+**Aucune nouvelle clé `config.yml`** — `kalGamesServerName` (network.kal-games-server-name) était déjà
+configuré et suffit.
+
+**Déployé le 24/09/2026 via WinSCP**, en même temps que KalGames 1.10.5 (voir son JOURNAL.md pour le
+plan de test complet des deux côtés — la fonctionnalité ne peut être testée qu'avec les deux plugins à
+jour et les deux serveurs (kal-games ET Kixster) redémarrés).
+
+## 0.1.16
+
+**Correctif rapporté par l'utilisateur** : "lorsque une partie est en cours, un joueur abandonne la
+partie, ensuite il essaye de rejoindre la partie et ça le remet en salle d'attente. on dirait que
+l'info du démarrage de la partie n'est pas arrivée sur KalGames".
+
+Cause probable : le signal `PartyStatusNotifier` (0.1.15) prévient bien kal-games qu'une partie a
+démarré, mais rien ne garantissait qu'il arrive TOUJOURS (message réseau perdu, ou l'un des deux
+serveurs pas encore redémarré avec la bonne version au moment du test). Si kal-games pense encore
+qu'une partie est "en salle d'attente" alors qu'elle a réellement démarré ici, un joueur qui la
+rejoint (bouton de la liste, ou `/bingo join <code>`) est renvoyé vers Bingo avec ce `gameId` déjà
+actif - et `PartyManager.getOrCreate` (voir 0.1.13/InstanceWorldPreparer) ne sait pas faire la
+différence entre "partie jamais vue" et "partie déjà démarrée" : il créait une salle d'attente
+FANTÔME, vide, jamais réclamée par personne (exactement le symptôme observé - "ça le remet en salle
+d'attente").
+
+- **`fr.kalium.bingo.network.AssignmentService`** : constructeur reçoit désormais `GameManager` en
+  plus de `PartyManager`. Dans `handleResponse`, AVANT d'appeler `partyManager.getOrCreate(...)`, un
+  garde-fou vérifie `gameManager.getGame(gameId) != null` — si cette partie est déjà une partie ACTIVE
+  connue ici, on refuse de créer une salle d'attente fantôme : le joueur reçoit un message ("cette
+  partie a déjà démarré, vous ne pouvez plus la rejoindre depuis kal-games") et est renvoyé vers
+  kal-games au lieu d'être laissé dans une salle vide qui ne deviendra jamais une vraie partie. Ce
+  correctif protège contre ce symptôme précis QUEL QUE SOIT la cause exacte de la perte du signal de
+  fermeture (fiabilité réseau ponctuelle, ou serveurs pas encore synchronisés) - défense en profondeur
+  plutôt qu'une dépendance à 100% sur `PartyStatusNotifier`.
+- **`BingoPlugin.java`** : passe `gameManager` (déjà construit plus tôt dans `onEnable`) au
+  constructeur d'`AssignmentService`.
+
+**Limite connue, non traitée** : ce garde-fou ne couvre que le cas "partie encore active ici". Une
+partie déjà TERMINÉE ET NETTOYÉE (`GameManager.cleanupGame`, plusieurs minutes après la fin) n'est
+plus non plus connue de `GameManager` - dans ce cas (très improbable en pratique : il faudrait que
+kal-games propose encore le même vieux code ET que le joueur clique dessus après la fin complète de
+la partie), le même symptôme fantôme pourrait théoriquement se reproduire. Pas traité ici (pas
+demandé, cas marginal) ; si ça se reproduit en pratique, la vraie source à vérifier en premier reste
+si les DEUX serveurs (kal-games ET Kixster) tournent bien avec les dernières versions déployées.
+
+**Voir aussi JOURNAL.md de KalGames (1.10.6)** pour le correctif lié : la capacité affichée/appliquée
+d'une partie utilisait le plafond global au lieu de la config choisie par l'hôte.
+
+**Déployé le 24/09/2026 via WinSCP**, en même temps que KalGames 1.10.6.
+
+## 0.1.17
+
+**Demande explicite de l'utilisateur** : "il faut ajouter un délai de: [10 secondes*le nombre
+d'équipe] entre l'arrivée dans la salle d'attente et le début de la partie. si le createur de la
+partie lance la partie avant, alors un chrono s'affiche : début de la partie dans : [temps
+restant]".
+
+But : laisser le temps à la pré-génération en cascade des mondes (voir `InstanceWorldPreparer`,
+`instances.pregeneration-stagger-seconds`) de finir avant que la partie ne démarre réellement,
+plutôt que de risquer un démarrage sur des mondes pas encore prêts.
+
+Deux questions posées à l'utilisateur avant implémentation (règle du projet : proposer avant de
+faire en cas d'ambiguïté) :
+- Un opérateur qui force le démarrage via `/bingoadmin start` doit-il pouvoir contourner ce délai ?
+  → Réponse : non, il respecte le même délai que l'hôte.
+- Affichage du chronomètre : action bar (au-dessus de la barre de vie, même mécanisme que
+  `GameHudService`) ou boss bar ? → Réponse : action bar.
+
+- **`fr.kalium.bingo.game.BingoParty`** : nouveau champ `createdAt` (`Instant.now()` à la
+  construction) + getter `getCreatedAt()` — sert de référence pour calculer le délai écoulé.
+- **`fr.kalium.bingo.game.PartyCountdownService`** (nouveau) : calcule le délai minimum
+  (`10s * party.getTeamCount()`), expose `isReady(party)` / `remaining(party)`, et
+  `scheduleStart(party, onReady)` qui programme un rappel automatique de `onReady` une fois le délai
+  écoulé tout en diffusant un chronomètre en action bar toutes les secondes ("Début de la partie
+  dans : Xs") à tous les joueurs connectés de la partie. `cancel(gameId)` arrête un compte à rebours
+  en cours (partie annulée entre-temps). Un seul compte à rebours actif par partie — un second appel
+  à `scheduleStart` pendant qu'un compte à rebours est déjà en cours ne fait rien de plus (évite de
+  le relancer à chaque clic sur "Lancer la partie").
+- **`fr.kalium.bingo.game.PartyStarter`** : `Result` devient `(game, failure, message, scheduled)`
+  avec des fabriques statiques `immediate()` / `scheduled()` / `failure()` — plus clair qu'un simple
+  booléen `ok()` pour distinguer "partie lancée", "compte à rebours programmé (pas un échec)" et
+  "échec réel". `start()` vérifie désormais `countdownService.isReady(party)` avant de créer la
+  partie : si le délai n'est pas écoulé, programme le démarrage automatique (`scheduleStart` rappelle
+  `start(gameId)` lui-même une fois prêt) et renvoie `Result.scheduled(...)` avec le temps restant au
+  lieu d'échouer. Nettoyage défensif de `countdownService.cancel(gameId)` juste avant le retour
+  réussi final.
+- **`fr.kalium.bingo.game.PartyCanceller`** : appelle désormais `countdownService.cancel(gameId)` —
+  sinon un compte à rebours en cours déclencherait `start()` sur une partie qui vient d'être annulée.
+- **`fr.kalium.bingo.gui.PartyMenu.launch()`** et **`command.BingoAdminCommand`** (`/bingoadmin
+  start`) : gèrent désormais le cas `result.scheduled()` AVANT `result.ok()` (sinon `result.game()`
+  serait `null` et provoquerait une erreur) — affichent simplement le message du compte à rebours.
+- **`BingoPlugin.java`** : construit `PartyCountdownService` (ne dépend que du plugin lui-même) juste
+  avant `PartyStarter`/`PartyCanceller`, l'injecte dans les deux.
+
+**Aucune nouvelle clé `config.yml`** — formule fixe (10s * nombre d'équipes) telle que demandée
+littéralement par l'utilisateur, cohérente avec le principe déjà suivi pour `PartyStatusNotifier` et
+`BingoParty.maxPlayers()` (pas de configuration ajoutée sans demande explicite).
+
+**KalBingo uniquement** — fonctionnalité entièrement contenue dans la salle d'attente du serveur
+Bingo, aucun changement côté KalGames nécessaire.
+
+**Déployé le 23/09/2026 via WinSCP sur Kixster.**
+
+## 0.1.18
+
+**Demandes explicites de l'utilisateur** (retour de test de la 0.1.17) :
+- "si tous les membres d'une équipe ont abandonné, fin de la partie" ;
+- "les maps ne sont toujours pas générées à l'avance, il faut que la génération des maps commence
+  dès l'arrivée dans la salle d'attente" ;
+- "l'endroit où les joueurs apparaissent sur la map doit devenir leur point de spawn (actuellement si
+  on meurt on est renvoyé sur le modèle de la salle d'attente). à la fin d'une partie ou si un joueur
+  abandonne il faut clear son inventaire et supprimer son point de spawn".
+
+Précisions obtenues via AskUserQuestion : la partie ne s'arrête que si l'abandon complet d'une équipe
+ne laisse plus qu'**une seule équipe en jeu** (4 équipes dont 1 abandonne : les 3 autres continuent),
+message **neutre** (pas de gagnant déclaré) ; rayon de pré-génération **~200 blocs**.
+
+"Pas de délai avant le début de la partie" (0.1.17) : vérifié dans le log de Kixster - 0.1.17 bien
+chargée, partie à 2 équipes créée à 18:00:46, les 2 mondes prêts à 18:01:13, partie ensuite jouée.
+Délai de 20 s (10 s x 2 équipes) compté depuis l'arrivée : très probablement appliqué mais court et
+peu visible. Aucun bug trouvé, rien changé.
+
+- **Terrain pré-généré** (`world.InstanceWorldPreparer`) : créer le monde ne génère que la petite zone
+  de spawn, le reste était généré à la volée pendant l'exploration (le lag signalé). Dès qu'un monde
+  est créé (donc pendant la salle d'attente), les chunks dans un rayon de
+  `instances.pregeneration-radius-blocks` (200 par défaut, nouvelle clé, 0 = désactivé) autour de son
+  spawn sont générés du centre vers l'extérieur, en asynchrone (`getChunkAtAsync` de Paper), 4 à la
+  fois maximum. Log au début et à la fin ("Terrain de '...' pré-généré (N chunks en X s)") pour pouvoir
+  mesurer. S'arrête si la partie est annulée. Un monde créé au lancement faute d'être prêt à temps
+  (`GameManager.prepareInstances`) est pré-généré de la même façon, en arrière-plan.
+- **Point de spawn** (`game.PlayerResetService`, nouveau) : au lancement (`PartyStarter`), le point
+  d'apparition sur la map devient le point de spawn du joueur (`setRespawnLocation(..., force=true)`,
+  sauvegardé avec les données du joueur, survit à une déconnexion/redémarrage). Posé aussi à la
+  reconnexion en cours de partie si besoin (joueur hors ligne au lancement), sans écraser un lit posé
+  sur sa propre map. Filet de sécurité `game.GameRespawnListener` : un joueur en partie qui
+  réapparaîtrait ailleurs que sur SA map (ex : lit détruit -> le jeu le renverrait sur le monde par
+  défaut, c'est-à-dire le modèle de salle d'attente) est renvoyé sur le point d'apparition de sa map.
+- **Remise à zéro** (inventaire ENTIÈREMENT vidé + point de spawn supprimé) : à l'abandon
+  (`AbandonService`, remplace l'ancien retrait du seul papier "Objectifs") et à toute fin de partie
+  (`GameEndService` : victoire, temps écoulé, abandon d'équipe, plus personne connecté). Un joueur
+  **hors ligne** au moment de la fin est noté dans `plugins/KalBingo/pending-resets.yml` et remis à
+  zéro à sa prochaine connexion à Kixster (`PlayerConnectListener`, avant tout le reste) - sinon il
+  retrouverait son ancien inventaire à la partie suivante.
+- **Fin si une équipe abandonne** (`GameEndService.checkTeamAbandonment`, appelé par
+  `AbandonService` après chaque abandon) : si une équipe est entièrement abandonnée
+  (`BingoInstance.isFullyAbandoned`, une simple déconnexion ne compte pas) et qu'il ne reste plus
+  qu'une équipe en jeu -> fin normale (salle d'attente post-partie, nether star de retour) avec
+  "L'équipe X a entièrement abandonné. La partie est terminée." Partie à une seule équipe : inchangé
+  (c'est `checkImmediateAbandonment` qui la termine, personne à prévenir).
+- `GameEndService.finishAndSendToLobby` ignore désormais les joueurs qui ont abandonné (déjà remis à
+  zéro et renvoyés vers kal-games : ne pas les rapatrier dans la salle d'attente), et libère
+  l'emplacement de salle d'attente si personne n'y a été placé (sinon il restait réservé pour rien -
+  défaut latent, qui aurait été déclenché plus souvent par la nouvelle fin sur abandon d'équipe).
+
+**KalBingo uniquement**, aucun changement côté KalGames.
+
+**Déployé le 23/09/2026 via WinSCP sur Kixster** (0.1.17 archivée dans `_removed-kalbingo-0.1.17/`). Redémarrage de Kixster requis.
+
+## 0.1.19
+
+**Demandes explicites de l'utilisateur** :
+- "les parties qui sont terminées ne doivent plus apparaître dans la liste des parties sur le menu de
+  KalGames" ;
+- "au début de la partie la vie et la nourriture des joueurs doit être remontée à fond" ;
+- "il faut ajouter un effet de regen dans la salle d'attente" ;
+- "il faut ajouter un kit de départ aux joueurs quand la partie commence : 8 steak cuits, pioche en
+  pierre, hache en pierre, houe en pierre, pelle en pierre, épée en pierre".
+
+- **Parties terminées encore listées sur kal-games - cause** : `PartyStatusNotifier` (0.1.15)
+  n'envoyait le signal "partie fermée" que par le canal Forward, en supposant qu'il était toujours
+  livrable parce qu'il part d'un joueur connecté sur Kixster. Faux : un Forward n'est livré que si au
+  moins un joueur est connecté sur le serveur CIBLE (kal-games). Au démarrage d'une partie, tout le
+  monde est en général sur Kixster : kal-games est vide, le signal était perdu, la partie restait
+  listée pour toujours.
+  **Correctif** : le signal est aussi publié sur le relais HTTP (`RelayClient.postPartyClosed`, clé
+  `party-closed-<gameId>` sur l'endpoint générique `/assignment/` de KaliumRelay - aucun changement
+  côté proxy), et republié toutes les minutes pendant 6 h (une entrée du relais expire en 2 min : si
+  kal-games ne l'a pas lue entre-temps, par ex. serveur vide mis en pause, elle revient). kal-games
+  l'interroge toutes les 5 s (KalGames 1.10.7). Le Forward est gardé (instantané quand kal-games a du
+  monde). `PartyCanceller` publie désormais même sans aucun joueur connecté (le relais suffit).
+- **Début de partie** (`game.StarterKit`, appelé par `PartyStarter` pour chaque joueur téléporté) :
+  inventaire vidé, vie au maximum, faim et saturation au maximum (+ feu éteint), puis kit en barre
+  rapide : épée (0), pioche (1), hache (2), pelle (3), houe (4), 8 steaks cuits (5). Emplacement 8
+  inchangé (papier "Objectifs"). Inventaire vidé AVANT le kit pour que tout le monde parte avec la
+  même chose.
+- **Régénération en salle d'attente** (`world.LobbyRegenTask`, chaque seconde) : Régénération I sans
+  limite de durée, sans particules, pour tout joueur dans le monde des salles d'attente
+  (`lobby.world-name`, avant ET après une partie) ; retirée dès qu'il en sort.
+
+**Voir aussi KalGames 1.10.7** (lecture du signal sur le relais). Les deux plugins doivent être à
+jour ; redémarrage de Kixster ET de kal-games requis.
+
+**Déployé le 23/09/2026 via WinSCP** (0.1.18 archivée dans `_removed-kalbingo-0.1.18/`), avec KalGames 1.10.7.
+
+## 0.1.20
+
+**Demandes explicites de l'utilisateur** : "quand tu as protégé la salle d'attente contre la casse de
+bloc, le dépôt de bloc etc... il fallait bloquer que pour les salles d'attente, pas le modèle. il faut
+débloquer le modèle sinon je ne peux pas le modifier. assure-toi que lorsqu'un modèle est recapturé,
+les salles d'attente déjà générées doivent se supprimer".
+
+- **Protection limitée aux salles d'attente** (`world.LobbyProtectionListener`) : la protection
+  s'appliquait à TOUT le monde `bingo_lobby`, donc aussi au modèle de l'admin, impossible à modifier.
+  La casse/pose de blocs, les seaux et l'interaction avec les blocs ne sont désormais bloqués que dans
+  la zone des salles collées (`LobbySlots.isInSlotArea` : tous les emplacements + une marge de
+  `lobby.spacing / 2` autour, sur toute la hauteur - avec la config actuelle, X de ~1850 à ~3100). Le
+  modèle, construit près de l'origine du monde (loin des emplacements grâce à
+  `lobby.slots-start-offset`), est de nouveau modifiable. Le blocage des monstres et du PvP reste
+  valable dans tout le monde (n'empêche pas de modifier le modèle). La nether star reste verrouillée.
+- **Recapture = anciennes salles supprimées** (`LobbyCaptureService.capture`,
+  `LobbySlots.clearAllSlots`, `LobbyTemplateService.clear`) : avant, le nouveau modèle était collé
+  PAR-DESSUS les anciennes salles, et tout ce qui dépassait de l'ancien modèle restait en place.
+  Désormais, la zone de l'ancien modèle est vidée (air) sur chaque emplacement, puis le nouveau est
+  collé. Limite : seuls les emplacements actuellement configurés (`instances.max-simultaneous-games`)
+  sont nettoyés - si ce nombre a été réduit depuis le dernier collage, les emplacements en trop ne
+  sont pas effacés.
+
+**KalBingo uniquement.**
+
+**Déployé le 23/09/2026 via WinSCP sur Kixster** (0.1.19 archivée dans `_removed-kalbingo-0.1.19/`).
+
+## 0.1.21 — Salle d'attente : capture jusqu'à 256 blocs par côté
+
+**Demande explicite de l'utilisateur** : "augmente la taille maximale de capture de la salle d'attente du
+serveur Bingo. actuellement 64 bloc par coté, je souhaiterais 256 bloc par coté".
+
+- `lobby.max-size` : 256 par défaut (le code plafonne à 256). Le config.yml DÉPLOYÉ contenait `max-size: 64` :
+  modifié à la main sur Kixster (256).
+- Une salle de 256 × 256 × 256 = 16,7 millions de blocs, collée sur 4 emplacements : faite d'un seul coup comme
+  avant, la capture / l'effacement / le collage auraient bloqué le serveur (arrêt par le watchdog, comme sur
+  kal-games le 23/09). Donc, dans `LobbyTemplateService` :
+  - capture, effacement des anciennes salles et collage se font petit à petit, chunk par chunk (chunks chargés
+    en arrière-plan), avec un budget par tick : nouveau réglage `lobby.blocks-per-tick` (30 000 par défaut,
+    1 par bloc lu, 4 par bloc modifié). Une opération à la fois (file d'attente) ;
+  - collage : un bloc n'est modifié que s'il diffère du modèle ;
+  - capture refusée si une capture / mise à jour des salles est déjà en cours ; messages au joueur au début,
+    à la fin de la capture puis à la fin du collage sur tous les emplacements ;
+  - au démarrage du serveur, le recollage des salles est lui aussi progressif.
+- `LobbyTemplate` : blocs stockés en palette + indice 16 bits (2 octets par bloc au lieu d'une chaîne), fichier
+  `lobby_template.kgt` binaire compressé. L'ancien format texte reste lisible (converti à la prochaine capture).
+- Limite : `lobby.spacing` (300) doit rester supérieur à la taille de la salle.
+
+**Déployé le 23/09/2026 via WinSCP sur Kixster** (0.1.20 et l'ancien config.yml archivés dans `_removed-kalbingo-0.1.20/`).
+
+## 0.1.22 — Nether et End propres à chaque équipe, keepInventory
+
+**Demandes explicites de l'utilisateur** : "pour bingo, le nether et l'end doivent être généré comme
+l'overworld (chacun le sien)" ; "il faut activer le keep inventory pour les joueurs du Bingo lorsqu'ils sont
+dans une partie et dans les 3 dimensions".
+
+Avant : un portail pris dans une map de partie menait au Nether / à l'End PAR DÉFAUT du serveur (`the_nether`,
+`the_end`), partagés par toutes les équipes et toutes les parties.
+
+- **Mondes** (`InstanceWorldManager`) : chaque équipe a `bingo_<partie>_<n>_nether` et `bingo_<partie>_<n>_the_end`,
+  même seed que son overworld. `deleteInstanceWorld` supprime les trois ; une partie restaurée après
+  redémarrage recharge aussi son Nether / End s'ils existent.
+- **Pré-génération** (`InstanceWorldPreparer`) : la cascade crée d'abord les overworlds de toutes les équipes
+  (indispensables au lancement), puis les Nether, puis les End, un monde toutes les
+  `instances.pregeneration-stagger-seconds`. Terrain pré-généré avec le même rayon
+  (`instances.pregeneration-radius-blocks`) : Nether autour de l'équivalent (÷ 8) du spawn, End autour de
+  l'île principale. La cascade continue après le lancement et s'arrête à la fin de la partie
+  (`GameManager.cleanupGame` → `cancel`). Si un joueur prend un portail avant que son Nether / End soit prêt,
+  il est généré à ce moment-là (quelques secondes de blocage, comme la génération de repli d'un overworld).
+- **Portails** (nouveau `DimensionPortalListener`) : Nether ↔ overworld de l'équipe (coordonnées ÷ 8 / × 8, le
+  serveur retrouve ou construit le portail) ; portail de l'End → plateforme d'obsidienne (100, 49, 0) de l'End
+  de l'équipe ; sortie de l'End → point de réapparition du joueur s'il est sur les mondes de son équipe, sinon
+  le point d'apparition de la partie. Objets et créatures suivent les mêmes règles.
+- **Réapparition** (`GameRespawnListener`, `PlayerConnectListener`) : un point de réapparition dans le Nether ou
+  l'End de l'équipe (ancre de réapparition) est respecté.
+- **keepInventory** activé sur les 3 mondes de chaque équipe (règle de jeu du monde : seuls les joueurs en partie
+  y sont ; la salle d'attente n'est pas concernée).
+
+**Bug corrigé au passage (constaté pendant ce travail)** : sur Paper 26.x les mondes ajoutés sont rangés dans
+`Kixster SMP/dimensions/minecraft/<nom>` et non à la racine du serveur ; la suppression des maps en fin de partie
+cherchait à la racine et n'effaçait donc rien. Elle cherche maintenant aux deux endroits (garde-fou : seuls les
+noms de mondes de partie `..._<uuid>_<n>[_nether|_the_end]` peuvent être supprimés). Les 18 anciens dossiers
+`bingo_...` déjà présents (parties terminées avant cette version) n'ont PAS été touchés : à supprimer par
+l'utilisateur s'il le souhaite.
+
+**Déployé le 23/09/2026 via WinSCP sur Kixster** (0.1.21 archivée dans `_removed-kalbingo-0.1.21/`).
+
+## 0.1.23 — jeton du relais retiré du config.yml fourni (24/09/2026)
+
+**Demande de LeKiwi06** : ne plus jamais publier le jeton du relais dans le dépôt public (voir
+`KaliumRelay/JOURNAL.md`, 1.1.1, et `REGLES.md`, section 2).
+
+- `config.yml` fourni avec le plugin : `network.relay-token: ""` (au lieu de l'ancien jeton fixe) et commentaire
+  « à renseigner uniquement dans le config.yml du serveur ». Aucun changement de code.
+- Le `config.yml` déployé sur Kixster n'est pas concerné (le plugin ne réécrit jamais un fichier existant) : il
+  contient déjà le nouveau jeton, mis à la main le 24/09/2026.
+
+À déployer avec KaliumRelay 1.1.1 et KalGames 1.12.4 - pas urgent. Aussi dans cette version (même jour, demande de LeKiwi06) : commentaires du code et de `config.yml` /
+`objectives.yml` qui décrivaient des fonctions « pas encore implémentées » alors qu'elles existent (validation,
+fin de partie...) corrigés ; titre « État actuel » en tête de ce journal renommé en « État au 22/09/2026 ».
+Aucun changement de comportement.
+
+**Statut : compilé, non déployé.**
+
+## 0.2.0 — renommé KG_BingoGame (24/09/2026)
+
+**Demande de LeKiwi06** : « renommer Kalbingo (tout ce que le serveur exécute pour concrètement jouer la partie) en
+KG_BingoGame, pour coller au nouveau format de noms ». Étape B du découpage du Bingo (étape A : KG_Bingo, voir son
+JOURNAL). Décision : noms internes du code conservés (`fr.kalium.bingo`, classe principale `BingoPlugin`).
+
+- `plugin.yml` : `name: KG_BingoGame` ; dossier du dépôt `KalBingo/` → `KG_BingoGame/` ; jar `KG_BingoGame-0.2.0.jar`.
+- Messages de la console : préfixe `[KalBingo]` → `[KG_BingoGame]` ; commentaires mis à jour.
+- Vérifié : code compilé identique à 0.1.22 hormis le nom du plugin. Inclut 0.1.23 (jamais déployée).
+
+**Ce que le changement de nom implique sur Kixster** (à faire serveur ARRÊTÉ, sans partie en cours) :
+- le dossier de données devient `plugins/KG_BingoGame/` : y déplacer tout le contenu de `plugins/KalBingo/`
+  (`config.yml`, `objectives.yml`, `lobby_template.kgt`, `games/`, `pending-resets.yml`), sinon la salle d'attente,
+  les objectifs et les réglages (dont le jeton du relais) sont perdus ;
+- `bukkit.yml` (racine du serveur) : `generator: KalBingo` → `generator: KG_BingoGame`, sinon le monde principal
+  vide (`Kixster SMP`) n'a plus son générateur et du terrain normal peut y apparaître ;
+- les objets marqués par le plugin (Nether Star de la salle d'attente, papier « Objectifs ») changent d'étiquette
+  interne : un objet de l'ancienne version encore dans un inventaire ne serait plus reconnu. D'où : aucune partie en
+  cours au moment du déploiement.
+
+**Procédure de déploiement** (Kixster arrêté) :
+1. Déplacer `/plugins/KalBingo-0.1.22.jar` dans `/plugins/_removed-kalbingo-0.1.22/`, et y copier aussi le dossier
+   `/plugins/KalBingo/` (copie de sauvegarde) et `/bukkit.yml`.
+2. Renommer `/plugins/KalBingo/` en `/plugins/KG_BingoGame/`.
+3. Envoyer `KG_BingoGame-0.2.0.jar` dans `/plugins/`.
+4. Dans `/bukkit.yml`, remplacer `generator: KalBingo` par `generator: KG_BingoGame`.
+5. Démarrer Kixster ; dans `logs/latest.log`, vérifier l'absence de « Could not set generator » et la ligne
+   « [KG_BingoGame] Plugin active ».
+
+À déployer avec KaliumRelay 1.1.1, KalGames 1.13.0 et KG_Bingo 1.0.0. **Statut : compilé, non déployé.**
+
+## 0.3.0 — nouveau Bingo : barème de points, modes, nulle, inactivité (24/09/2026)
+
+**Demande de LeKiwi06** (cahier des charges du 24/09, précisé au fil de la conversation). Décisions : multiplicateurs
+**additifs** ; points en **temps réel** avec annonces ; la victoire va à la 1re équipe qui atteint son objectif.
+
+- **Liste d'objectifs validée** (`objectives.yml`) : 100 faciles, 50 normaux, 25 difficiles, 25 extrêmes.
+- **Modes** (`BingoSettings`, choisis dans le menu de création de KG_Bingo 1.1.0) :
+  - *Bingos* : lignes, colonnes et diagonales au choix, 3 à 12 à achever ; la 1re équipe qui y parvient gagne ;
+    chrono : à la fin du temps, le meilleur score gagne, meilleurs scores égaux = **« Égalité »** (compte comme une
+    nulle pour les points) ;
+  - *Blackout* : sans chrono, la 1re équipe qui remplit la grille gagne ; nulle proposée automatiquement à chaque
+    heure de jeu ;
+  - composition de la grille par difficulté (25 cases) ; défaut 10 F / 10 N / 5 D / 0 X.
+- **Barème** (`score/ScoreEngine`, valeurs dans `Difficulty`) : 1/3/5/10 ; 1re équipe sur un objectif +0/+1/+2/+3 ;
+  1re équipe à achever un bingo +0,5 au coefficient de ses cases, bingo uniquement difficile/extrême +0,5 pour toute
+  équipe ; victoire +1/+2/+3/+5 par objectif ; bonus ajoutés avant les coefficients ; classement cumulé en cas de
+  victoire (points + ceux des équipes derrière). Points solo : objectifs validés par le joueur + gain complet des
+  bingos auxquels il a participé (+ bonus de victoire sur ses objectifs) ; classement solo avec les MÊMES règles que
+  les équipes (victoire : joueurs gagnants en tête, abandons en dernier, points + ceux des joueurs derrière ; nulle
+  ou égalité : points propres). Joueur seul dans son équipe : pas de pseudo dans les annonces ni l'info-bulle.
+  Testé hors serveur (11 vérifications).
+- **Annonces** à tous les joueurs de la partie : objectif validé (en 1er, pseudo, points), bingo (participants, points).
+  Classements d'équipe et solo affichés en fin de partie.
+- **Info-bulle** des objectifs : nom français, difficulté et valeur ; par équipe : pseudo, bonus de 1re, coefficient,
+  points ; bingos passant par la case affichés seulement s'ils ont été achevés.
+- **Nulle** (`DrawVoteService`, bouton du menu Objectifs, `/bingonulle proposer|oui|non`) : vote de l'équipe du
+  proposant puis de toutes les autres (majorité interne, **égalité de votes = oui**), 3 min, délai global de 30 min ;
+  nulle = chaque équipe garde ses propres points. Proposée aussi quand une équipe abandonne.
+- **Abandon** : déconnecté 10 min (`game.disconnect-abandon-seconds`) = abandon définitif ; équipe entièrement
+  abandonnée = perd, classée dernière ; s'il ne reste qu'une équipe, la partie s'arrête et elle vote la nulle (sinon
+  elle gagne).
+- **Inactivité** (`InactivityService`) : 5 min sans action (`game.inactivity-kick-seconds`) = expulsion, puis compte
+  à rebours de déconnexion.
+- **Invincibilité** entre la fin de partie et le départ de la salle d'attente (dégâts et faim annulés, feu / chute /
+  effets retirés avant la téléportation).
+- **keepInventory** garanti à la mort d'un joueur en partie (plus seulement par la règle du monde, qui ne s'était pas
+  appliquée en test) ; nouvelle API `GameRules.KEEP_INVENTORY`.
+- **Papier Objectifs** : ne peut plus quitter l'inventaire du joueur (artisanat, coffres, villageois, cadres...),
+  jamais lâché à la mort ; il ne compte plus pour l'objectif PAPER (bug).
+- Supprimée : clé `reconnect-during-game.abandon-after-seconds` (remplacée par `game.disconnect-abandon-seconds`).
+- **Nether commun vu en test : pas un bug de la 0.1.22.** Les journaux de Kixster montrent que cette partie (23/09,
+  21 h 50 – 22 h 52) tournait encore avec la **0.1.20**, d'avant les Nether / End par équipe et le keepInventory ; la
+  0.1.22 a été déposée à 23 h 15. La seule partie jouée en 0.1.22 (24/09, 3 h 35, test du jeton) a bien généré un
+  Nether et un End par équipe (`..._1_nether`, `..._2_the_end`...), mais s'est terminée au bout d'une minute : les
+  portails n'ont jamais été essayés. À tester : Nether et End de chaque équipe, et keepInventory.
+
+**Déploiement** : avec KG_Bingo 1.1.0 (et les versions en attente : KaliumRelay 1.1.1, KalGames 1.13.0). Suivre la
+procédure de migration de la 0.2.0 ci-dessus (jamais déployée), avec en plus : déplacer l'ancien
+`plugins/KG_BingoGame/objectives.yml` dans le dossier `_removed-...` pour que la nouvelle liste soit installée.
+Aucune partie en cours. **Statut : déployé sur Kixster le 24/09/2026 (migration faite, journal de démarrage OK : 200 objectifs), non testé en jeu.**
+
+## 0.3.1 — correctifs après le 1er test (24/09/2026)
+
+Test de LeKiwi06 avec 2 comptes : annonces, coefficients, Nether / End par équipe, nulle en solo et invincibilité
+de fin de partie OK.
+- **Points solo** : le bonus de victoire n'était pas multiplié par les coefficients des bingos dans les points
+  solo (un joueur seul avait 91 en solo pour 101 en équipe). Corrigé : un joueur seul a exactement les points de son
+  équipe (vérifié hors serveur, 13 vérifications).
+- **Modes de jeu** (demande de LeKiwi06) : aventure dans la salle d'attente (avant et après la partie), survie sur la
+  map (lancement et reconnexion).
+
+À tester plus tard : pseudos dans les annonces à plus de 2 comptes, nulle en groupe.
+**Statut : jamais déployée seule, incluse dans la 0.4.0.**
+
+## 0.4.0 — carte de la grille, têtes, couleurs d'équipe, résumé de fin de partie (24/09/2026)
+
+**Demande de LeKiwi06** (inclut les correctifs de la 0.3.1).
+- **Couleurs d'équipe** (`TeamStyle`) : A rouge, B bleu, C jaune, D verte (numéro interne 1 à 4 inchangé), dans le
+  tchat, la barre d'action, le menu Objectifs, les classements et la carte. La salle d'attente (avant la partie)
+  garde les numéros d'équipe.
+- **Carte de la grille en main secondaire** (`map/`) : une seule carte par partie, la même pour tous. Fond blanc,
+  séparations noires ; case validée à la couleur de l'équipe, partagée en 2, 3 ou 4 bandes verticales de même
+  largeur si plusieurs équipes l'ont validée ; icône de l'objet centrée dans sa case (16x16, jamais sur les lignes) ;
+  quantité en bas à droite de l'icône, en blanc entouré de noir. Redessinée à chaque validation. Verrouillée comme le
+  papier (pas de jet, d'artisanat, de coffre, de cadre ; gardée à la mort, redonnée à la réapparition et à la
+  reconnexion ; remplacée si elle date d'avant un redémarrage). Le papier Objectifs est conservé.
+- **Icônes des objets** : prises dans le jeu officiel (demande de LeKiwi06 : « prends les textures vanilla du jeu »).
+  Au 1er démarrage d'une version du jeu, le plugin télécharge le jeu chez Mojang (~40 Mo), en extrait une icône par
+  objet dans `plugins/KG_BingoGame/icons/<version>/`, puis supprime le téléchargement ; aucune image dans le dépôt
+  (public). Objets sans image à plat (coffre, coffre de l'Ender, bouclier, têtes) : face avant découpée dans la
+  texture du modèle 3D. Testé hors serveur sur les 200 objectifs : 200 icônes trouvées. Tant que les icônes ne sont
+  pas prêtes (ou si le téléchargement échoue), la carte affiche « ? ».
+- **Têtes des coéquipiers** à gauche du menu Objectifs (équipe seulement) : points solo, objectifs validés (dont en
+  1er) et leur liste, bingos.
+- **Résumé de fin de partie** (`SummaryMenu`), bouton « Résumé de la partie » du menu de la nether star en salle
+  d'attente post-partie : une rangée par équipe dans l'ordre du classement (laine de sa couleur avec ses points, puis
+  les têtes de ses joueurs : points solo finaux, objectifs, bingos).
+
+**Déploiement** : remplacer le jar sur Kixster (aucune autre modification). Au 1er démarrage, attendre dans le
+journal « icône(s) d'objets chargée(s) pour la carte ». **Statut : déployé sur Kixster le 24/09/2026, non testé en jeu.**
+
+**Partie à une seule équipe (mode « solo », pour s'entraîner ou faire du speedrun) : comportement VOULU, à garder**
+(LeKiwi06, 24/09/2026, testé : « je veux que ça reste si un joueur veut try hard du speedrun »). Victoire aux bingos
+demandés ou à la grille complète, pas de nulle possible (message « Une nulle n'a de sens qu'à plusieurs équipes »,
+à garder aussi), pas de nulle automatique en blackout.
+Démarrage 0.4.0 sur Kixster : icônes préparées en 3 s (1508 objets, 28 sans icône, aucun parmi les objectifs).
+Test de LeKiwi06 (24/09/2026) : carte, têtes, résumé « propres et sans bugs ». Limite connue, acceptée : les têtes
+des joueurs s'affichent sur Java mais pas sur Bedrock (Geyser).
+
+## 0.4.1 — contour des objets blancs sur la carte (24/09/2026)
+
+**Demande de LeKiwi06** : « mets un contour gris foncé pour les items de couleur blanche pour qu'ils ressortent
+mieux ». Une icône dont au moins la moitié des pixels visibles sont blancs ou gris très clair (clairs et peu
+colorés) reçoit un contour gris foncé d'un pixel autour de sa silhouette, sans toucher les lignes de la grille.
+Parmi les 200 objectifs, 18 sont concernés (bûche de bouleau, diorite, sable, verre, vitre, fer, ficelle, os, plume,
+laine et lit blancs, papier, sucre, carte, gâteau...) ; l'or et le diamant n'en ont pas. Vérifié sur un aperçu
+dessiné hors serveur. **Statut : jamais déployée seule, incluse dans la 0.4.2.**
+
+## 0.4.2 — multiplicateur de vitesse du blackout (24/09/2026)
+
+**Demande de LeKiwi06** : en blackout, si l'équipe gagnante remplit la grille en moins de 2 h, ses points finaux sont
+multipliés, APRÈS l'ajout des points des équipes classées derrière :
+- grille normale : **×2 en moins d'1 h**, **×1,5 entre 1 h et 2 h** ;
+- grille uniquement difficile / extrême (0 facile, 0 normal) : **×5 en moins d'1 h**, **×2 entre 1 h et 2 h**
+  (« c'est une prouesse de faire un blackout comme ça en moins d'une heure, même en équipe »).
+Temps = temps de jeu de la partie. Appliqué aussi aux points solo finaux des joueurs de l'équipe gagnante et aux
+parties sans adversaire (confirmé par LeKiwi06). Affiché dans la raison de la victoire
+(« blackout en 0 h 52 : ×2 »), dans le classement du tchat et dans le résumé. Inclut la 0.4.1.
+**Statut : déployé sur Kixster le 24/09/2026, non testé en jeu.**
+
+## 0.5.0 — interface dans le catalogue de KLM_Menu (24/09/2026)
+
+- Déclare **« Salle d'attente Bingo »** (admins, permission `bingo.admin` : le même menu que `/menu`) dans le
+  catalogue de KLM_Menu. Dépend de KLM_Menu (qui démarre lui aussi en `load: STARTUP`).
+**Déploiement** : avec KLM_Menu 2.0.0 sur Kixster (config avec `compass.enabled: false`). **Statut : déployé le 24/09/2026,
+non testé en jeu.**
+
+## 0.6.0 — allègement : génération des maps étalée, plusieurs parties simultanées (24/09/2026)
+
+**Demande de LeKiwi06** : « le bingo lag, les recaptures de map sont trop gourmandes (on va alléger ça en allongeant
+dans le temps), on aimerait pouvoir faire plusieurs games en simultanée sans que ça crash » ; précisé : « ralentir la
+vitesse de génération, pas grave si la game met 5 minutes à se lancer, on veut que ce soit fluide, on verra pour
+accélérer les processus quand on pourra se le permettre » (création des maps de partie ET salle d'attente).
+
+**Cause** : chaque partie avait sa propre cascade de création (jusqu'à 12 mondes par partie : overworld, Nether, End
+par équipe) et chaque monde pré-générait 4 chunks à la fois. 4 parties = jusqu'à 48 mondes et 192 chunks générés en
+parallèle, zones de spawn gardées en mémoire. Et si l'hôte lançait avant la fin, tous les overworlds manquants
+étaient créés dans le même tick (plusieurs secondes chacun : risque d'arrêt par le watchdog).
+
+**Changements**
+- `InstanceWorldPreparer` : **une seule file d'attente pour tout le serveur**. Un monde créé à la fois, espacé de
+  `instances.pregeneration-stagger-seconds` (10 s) du précédent, toutes parties confondues ; overworlds toujours avant
+  les Nether / End. Terrain : débit total limité, nouveaux réglages `instances.pregeneration-chunks-per-second` (20)
+  et `instances.pregeneration-max-chunks-in-flight` (2) ; terrain des overworlds servi en premier.
+- **Le lancement attend les maps** (`PartyStarter`, `PartyCountdownService.waitForMaps`) : après le délai de 10 s ×
+  équipes, si les overworlds des équipes et leur terrain ne sont pas prêts, la partie attend et affiche
+  « Préparation des maps : X % » dans la barre d'action, puis démarre seule. Plus de création de maps en bloc au
+  lancement (le repli synchrone ne sert plus qu'à un overworld dont la création a échoué).
+- Au lancement, les maps des **équipes restées vides** (salle prévue pour plus d'équipes) ne sont plus générées et
+  celles déjà créées sont supprimées tout de suite (moins de charge ; signalé, techniquement lié à la demande).
+- `InstanceWorldManager` : `keepSpawnLoaded(FALSE)` sur les mondes de partie (création plus courte, zone de spawn
+  plus gardée en mémoire) ; les dossiers des maps terminées sont effacés **en arrière-plan** (5 s après le
+  déchargement).
+- Salle d'attente (`LobbyTemplateService`) : `lobby.blocks-per-tick` 10 000 par défaut au lieu de 30 000, minimum
+  500 au lieu de 2 000.
+
+**Ordre de grandeur** (rayon 200 blocs = 729 chunks par monde, 20 chunks/s) : ~40 s pour une partie solo, ~2 min 30
+pour 4 équipes, plus si d'autres parties sont en file. Les Nether / End continuent en arrière-plan après le lancement.
+
+**Limites**
+- La création d'un monde reste une opération bloquante de Paper (plus courte sans la zone de spawn, non mesurée).
+- Un joueur qui prend un portail avant que son Nether / End soit prêt le fait toujours créer à ce moment-là (petit
+  blocage), plus probable qu'avant puisque la file est plus lente.
+- Nouvelles clés **absentes du config.yml déployé** : valeurs par défaut du code. Sur Kixster, `lobby.blocks-per-tick`
+  est écrit à 30000 : **le passer à la main à 10000** (ou moins) pour alléger la salle d'attente.
+
+**Statut : déployé sur Serveur Jeux (7015) le 24/09/2026 par LeKiwi06 (0.5.0 rangée dans `_removed-kg_bingogame-0.5.0-b/`), testé et confirmé par LeKiwi06 le 24/09/2026 : préparation des maps fluide (~2 min, « plus aucun lag à la génération »), partie complète, Bedrock OK ; à confirmer : Nether / End de l'équipe, 2 parties simultanées à 2 joueurs. 2 parties simultanées confirmées le 25/09/2026. `lobby.blocks-per-tick` du serveur : 5000 (choix de LeKiwi06).**
+
+## 0.7.0 — succès limités à la partie (25/09/2026)
+
+**Demande de LeKiwi06** (test à 2 parties simultanées, réussi) : « on voit juste les achievements vanilla des autres
+parties, pas les points et annonces du bingo ; j'aimerais que ce ne soit pas le cas, mais qu'on voie quand même les
+achievements de nos coéquipiers et adversaires ».
+- `AdvancementScopeListener` : l'annonce d'un succès d'un joueur en partie n'est envoyée qu'aux joueurs de sa partie
+  (coéquipiers et adversaires, pas ceux qui ont abandonné) ; celle d'un joueur hors partie (salle d'attente, après une
+  partie) seulement aux joueurs hors partie. Le succès est toujours obtenu normalement.
+**Déploiement** : seul, sur Serveur Jeux (7015). **Statut : déployé le 25/09/2026 à 15 h 16, testé et confirmé par LeKiwi06 le 25/09/2026 (succès limités à la partie, 2 parties simultanées).**
+
+## 0.7.1 — correctif : préparation des maps bloquée à 0 % (25/09/2026)
+
+**Signalé par LeKiwi06** : « la partie restait à 0 % de préparation ».
+- Cause (journal du 25/09, 16 h 18-16 h 20) : une partie annulée pendant sa préparation (tous les joueurs partis) a
+  vu ses maps supprimées alors que des chunks étaient en cours de génération ; ces demandes ne se terminaient jamais
+  et le compteur « chunks en cours », commun à tout le serveur (0.6.0), restait bloqué au maximum : plus aucun terrain
+  n'avançait, la partie suivante restait à 0 %. Bug présent depuis la 0.6.0.
+- Correctif : chaque terrain compte ses propres demandes en cours ; celles d'une map supprimée ne comptent plus.
+- Rappel : la préparation démarre dès que le créateur arrive sur Serveur Jeux (quelques secondes après la création
+  sur le hub) ; la vitesse dépend de `instances.pregeneration-chunks-per-second` (20) et
+  `instances.pregeneration-stagger-seconds` (10), pas de `lobby.blocks-per-tick` (salle d'attente).
+**Déploiement** : seul, sur Serveur Jeux (7015). **Statut : déployé le 25/09/2026 à 16 h 29 ; correctif incomplet : toujours bloqué à 0 % après une partie annulée (voir 0.7.2).**
+
+## 0.7.2 — correctif complet du blocage à 0 % ; préparation plus rapide (25/09/2026)
+
+**Constaté par LeKiwi06** (capture d'écran, 16 h 32) : toujours « Préparation des maps : 0 % » avec la 0.7.1.
+- Cause : en 0.7.1, un terrain de map supprimée n'était marqué « arrêté » qu'au moment de chercher le prochain chunk ;
+  or on ne cherchait plus de chunk, justement parce que ses demandes perdues occupaient toutes les places : blocage
+  en boucle (scénario : créer une partie, la quitter pendant la préparation, en recréer une).
+- Correctif : à chaque tick, les terrains des maps supprimées et les terrains finis sont retirés AVANT de compter les
+  demandes en cours ; une demande de chunk restée sans réponse 60 s est oubliée et comptée comme faite (plus aucun
+  blocage possible).
+- **Vitesse** : les journaux montraient ~94 s par map de 441 chunks, quel que soit le débit réglé : la vraie limite
+  était `instances.pregeneration-max-chunks-in-flight` (2 chunks générés en même temps). Valeur par défaut portée à
+  **8** (clé absente du config.yml de Serveur Jeux : 8 appliqué). Config de Serveur Jeux modifiée le 25/09/2026 :
+  `pregeneration-chunks-per-second: 40`, `pregeneration-stagger-seconds: 5`, `lobby.blocks-per-tick: 10000`.
+**Déploiement** : seul, sur Serveur Jeux (7015). **Statut : déployé le 25/09/2026 à 16 h 37, testé et confirmé par LeKiwi06 le 25/09/2026 : plus de blocage après une partie annulée ; map de 441 chunks préparée en 29 s (au lieu de ~94 s).**
+
+## 0.7.3 — salle d'attente : invincibilité, nether star bloquée, plaques de pression, entités (25/09/2026)
+
+**Signalé par LeKiwi06** : « on n'est pas réellement invincible dans le hub, on perd notre vie et notre barre de
+nourriture » ; « on peut dropper la nether star (bloque-la dans sa case) » ; « les plaques de pression ne fonctionnent
+pas » ; « l'entité que j'avais placée dans le hub n'a pas été dupliquée dans les autres hubs (la vache) » ; « rends la
+vache invulnérable ».
+- **Invincibilité** dans tout le monde de la salle d'attente (avant la partie aussi, plus seulement après) : dégâts et
+  perte de nourriture annulés. Chute dans le vide : retour au point d'apparition de la salle la plus proche
+  (`LobbySlots.nearestSpawn`). Les blocs invisibles (barrières) des salles pourront être retirés (à faire).
+- **Nether star** bloquée : ni jetée, ni déplacée (clic, touche numérique, main secondaire, glisser).
+- **Plaques de pression** et fils de déclenchement actifs dans les salles (le reste des interactions reste bloqué).
+- **Entités copiées** avec la salle : relevées à la capture (hors joueurs, objets au sol, projectiles), enregistrées
+  dans le modèle (nouveau format `KLT3`, l'ancien `KLT2` reste lisible), recréées à chaque collage (anciennes copies
+  retirées d'abord : pas de doublons) et **invulnérables** ; toute entité des salles est protégée des dégâts.
+  ⚠️ Le modèle actuel a été capturé avant : **recapturer la salle** pour que la vache soit copiée.
+**Déploiement** : seul, sur Serveur Jeux (modèle d'avant dans `_removed-kg_bingogame-0.7.2/`). **Statut : déployé le
+25/09/2026 à 20 h 51, testé par LeKiwi06 (recapture : 19 entités copiées ; noms des copies corrigés en 0.7.4).**
+
+## 0.7.4 — nom des entités copiées (25/09/2026)
+
+**Signalé par LeKiwi06** (0.7.3 testée : recapture faite, 19 entités copiées dans les 4 salles, dont 12 cristaux de
+l'End et 7 vaches) : « les vaches ne sont pas bien nommées » (les copies de « Giselle ( Check meuhmeuh ) » n'avaient
+pas le bon nom).
+- À la recréation, le nom personnalisé est relu dans la copie enregistrée (SNBT, `CustomName`) et réappliqué
+  explicitement, ainsi que son affichage permanent (`CustomNameVisible`). Pas besoin de recapturer.
+**Déploiement** : seul, sur Serveur Jeux. **Statut : déployée avec 0.7.5 le 25/09/2026 à 21 h 18, testée avec 0.7.8.**
+
+## 0.7.5 — positions de capture de la salle d'attente conservées (25/09/2026)
+
+**Demandé par LeKiwi06** : « note bien les coordonnées de la dernière recapture pour éviter de les perdre au restart ».
+- Les coins et le point d'apparition ne sont plus gardés en mémoire par joueur : ce sont les derniers définis (par
+  n'importe quel opérateur), enregistrés dans `plugins/KG_BingoGame/lobby_capture.yml` à chaque pos1/pos2/spawn et
+  rechargés au démarrage. `/bingoadmin lobby capture` suffit après un redémarrage, y compris depuis la console.
+- `/bingoadmin lobby info` affiche aussi les trois positions (marche depuis la console). Chaque définition et chaque
+  capture écrit les coordonnées dans la console.
+- Positions de la dernière capture (25/09 à 21 h 04, modèle 64x46x82), retrouvées à partir des 12 cristaux de l'End
+  (position dans le modèle comparée à leur position dans le monde, résultat identique pour les 12) : monde
+  `bingo_lobby`, coin 1 `-69 63 -14`, coin 2 `-6 108 67`, apparition `-13.49 79 2.77` (orientation 144.0 / 13.5).
+  LeKiwi06 a demandé X -5 pour le coin 2 « pour être sûr » : `lobby_capture.yml` déposé avec coin 1 `-69 63 -14`,
+  coin 2 `-5 108 67` et cette apparition.
+- Inclut 0.7.4.
+**Déploiement** : seul, sur Serveur Jeux, le 25/09/2026 à 21 h 18 (0.7.3 rangée dans `_removed-kg_bingogame-0.7.3`).
+**Statut : démarrée à 21 h 19 : salles collées, 17 entités recréées dans chacune, mais positions NON rechargées
+(corrigé en 0.7.7).**
+
+## 0.7.6 — plus de barrières dans les salles d'attente (25/09/2026)
+
+**Demandé par LeKiwi06** : « tu n'as pas enlevé les blocs invisibles maintenant que l'on est invulnérable ».
+- Au collage des salles d'attente, les barrières du modèle (157 dans la capture de 21 h 04) sont remplacées par de
+  l'air. Le modèle et la salle d'origine les gardent : pas besoin de recapturer. Les salles étant recollées à chaque
+  démarrage, un redémarrage suffit. Un joueur qui tombe dans le vide est ramené à la salle la plus proche (0.7.3).
+**Déploiement** : déposée le 25/09/2026 à 21 h 22 puis remplacée par 0.7.7 avant tout démarrage
+(`_removed-kg_bingogame-0.7.6`). **Statut : jamais démarrée (voir 0.7.7).**
+
+## 0.7.7 — positions de capture réellement rechargées (25/09/2026)
+
+**Constaté dans la console de Serveur Jeux** (démarrage de 0.7.5 à 21 h 19) : pas de ligne « positions de capture
+rechargées ». Le fichier était lu à la construction du service, avant la création du monde `bingo_lobby` (reportée à
+ServerLoadEvent), donc jamais chargé.
+- Les positions sont maintenant chargées au premier usage (menu, `/bingoadmin lobby ...`, capture), une fois le monde
+  prêt. `lobby_capture.yml` n'avait pas été modifié (toujours celui déposé à 21 h 18).
+- Inclut 0.7.6 (barrières non recopiées).
+**Déploiement** : seul, sur Serveur Jeux, le 25/09/2026 à 21 h 23 (0.7.5 et 0.7.6 dans leurs `_removed-…`), remplacée
+par 0.7.8 à 21 h 31 (`_removed-kg_bingogame-0.7.7`). **Statut : testée avec 0.7.8.**
+
+## 0.7.8 — XP retirée entre les parties, convertie en points bonus (25/09/2026)
+
+**Demandé par LeKiwi06** : « on ne perd pas notre xp d'une partie à l'autre de bingo, fais en sorte de les retirer et
+ajoute-les aux points des joueurs en fin de partie comme points bonus ». Choix de LeKiwi06 :
+- **0,1 point par niveau d'XP** du joueur à la fin de la partie (niveau 30 = 3 points) ;
+- compté **en solo et pour l'équipe** (somme des bonus de ses joueurs) ;
+- **ajouté à la fin**, sans cumul des équipes derrière ni multiplicateur de blackout ; il ne change pas l'ordre du
+  classement ;
+- seulement pour les joueurs **présents à la fin** (pas d'abandon, connectés).
+Mise en œuvre :
+- XP (niveaux, barre, total) remise à zéro au lancement de la partie (PartyStarter) : seule l'XP gagnée pendant la
+  partie compte ; puis à la fin (après le calcul du bonus), à l'abandon et au retour d'un joueur déconnecté
+  (PlayerResetService.reset / remise à zéro différée).
+- Résumé de fin : « Équipe A : 42 pts (… + 1,5 XP) », solo « Pseudo 12 (dont 0,8 XP) » ; idem dans le menu du
+  résumé (SummaryMenu) et dans la console.
+**Déploiement** : seul, sur Serveur Jeux, le 25/09/2026 à 21 h 31 (inclut 0.7.4 à 0.7.7). **Statut : déployé,
+testé et confirmé par LeKiwi06 le 25/09/2026 (« tout est bon »).** Avec elle : noms des entités (0.7.4), positions de capture rechargées (0.7.5/0.7.7), barrières
+retirées (0.7.6).
+
+## 0.8.0 — barème doublé ; résultats envoyés au hub pour les classements (26/09/2026)
+
+**Demande de LeKiwi06** : équilibrer les barèmes des jeux (`EQUILIBRAGE_POINTS.md` : 30 min à fond = autant de points
+qu'à la course de bateau ; mesuré : le Bingo rapportait environ 2 fois moins) ; brancher les points du Bingo sur les
+classements.
+- **Barème doublé** (`Difficulty`) : objectifs 2 / 6 / 10 / 20 (au lieu de 1 / 3 / 5 / 10), bonus de la 1re équipe
+  0 / 2 / 4 / 6, bonus de victoire 2 / 4 / 6 / 10. Coefficients des bingos, multiplicateur de vitesse du blackout et
+  bonus d'XP (0,1 par niveau) inchangés.
+- **Résultats envoyés au hub** (`ResultsOutbox`) : à la fin d'une partie, les points solo finaux (ceux du résumé,
+  une ligne par joueur : uuid;pseudo;points) sont publiés sur le relais HTTP (clé `bingo-results-<gameId>`), puis
+  republiés toutes les minutes pendant 6 h ; gardés dans `results-outbox.yml` (survivent à un redémarrage). KG_Bingo
+  1.5.0 les lit et les crédite une seule fois dans les classements.
+- Tous les joueurs du résumé sont envoyés, abandons compris (leurs points propres, comme dans le résumé).
+**Déploiement** : avec **KG_Bingo 1.5.0** (hub), sur Serveur Jeux le 26/09/2026 à 5 h 23 (`_removed-kg_bingogame-0.7.8/`). **Statut : testé et confirmé par LeKiwi06 le 26/09/2026.**
+
+## 0.8.1 — bonus du 1er ; partie à 4 équipes ; icônes de la carte en 3D ; Nether (26/09/2026)
+
+**Demande de LeKiwi06** : « le bonus pour avoir un item en 1er est la moitié des points de base de l'item (avant ce
+n'était pas exactement 50 % et les faciles n'en avaient pas) ».
+- `Difficulty` : bonus de la 1re équipe 1 / 3 / 5 / 10 pour des objectifs à 2 / 6 / 10 / 20 (était 0 / 2 / 4 / 6).
+  Le reste du barème est inchangé (bonus de victoire 2 / 4 / 6 / 10, coefficients des bingos...).
+Autres corrections (même version), **partie à 4 équipes buggée** (LeKiwi06) :
+- « Des gens ne sont pas TP » au lancement. Deux causes trouvées (journal de la partie du 25/09 à 22 h 45 : 12 mondes
+  préparés en 4 min, Maaxster déconnecté la seconde où la dernière map était prête, revenu dans la salle d'attente et
+  resté là) :
+  1. un joueur d'une partie en cours qui se reconnecte n'était **pas téléporté** (le code supposait qu'il était déjà
+     sur sa map) : s'il n'est pas sur sa map (Nether et End compris), il y est maintenant envoyé comme au lancement
+     (téléportation, point de réapparition, XP remise à zéro, kit de départ, papier « Objectifs », survie) ;
+  2. un joueur connecté **sans équipe** au lancement n'était mis dans aucune équipe et restait dans la salle
+     d'attente : il est placé dans l'équipe la moins remplie parmi celles déjà formées (pas de nouvelle équipe, le
+     nombre de maps préparées reste juste), avec un message.
+- Barre d'action illisible à 4 équipes : **à partir de 3 équipes**, format court demandé par LeKiwi06 :
+  « ⏱ 45m12s | A:42pts·1/3 | B:30pts·0/3 | C:18pts·0/3 | D:7pts·0/3 » (blackout : sans « ·n/m »). La barre d'action de
+  Minecraft n'a qu'une ligne (un retour à la ligne y est ignoré). 1 et 2 équipes : format inchangé.
+- **Icônes de la carte** (LeKiwi06 : piston collant = piston, juke-box = bloc musical, bois, lits réduits à
+  l'oreiller, enclume et longue-vue méconnaissables ; « vérifie si d'autres exemples existent ») : les 200 icônes
+  comparées (6 paires identiques au pixel près : piston / piston collant, juke-box / bloc musical, verre / vitre,
+  planches / barrière en chêne, pierre / bouton en pierre, pomme dorée / pomme dorée enchantée).
+  - Nouveau `ModelRenderer` : les objets dont le modèle a des « elements » (tous les blocs, enclume, barrière,
+    bouton, lit en deux parties...) sont dessinés **en 3D comme dans l'inventaire** (dessus + faces nord et est
+    ombrées, tampon de profondeur, rendu à 3 fois la taille puis réduit). Dessus du piston collant, du juke-box, cernes
+    des bûches visibles ; lit entier ; formes de l'enclume, de la barrière, du bouton.
+  - Longue-vue : modèle d'inventaire (« gui ») pris avant le modèle tenu en main.
+  - Pomme dorée enchantée : lueur violette.
+  - Icônes refaites dans `icons/<version>-3d/` (les anciennes, dans `icons/<version>/`, ne sont plus lues) : au
+    premier démarrage, le jeu est retéléchargé chez Mojang (~40 Mo, comme en 0.4.0) pour les fabriquer.
+  - Vérifié hors serveur avec le code du plugin et le client officiel 26.2 : 200 icônes sur 200, plus aucune paire
+    identique. Restent proches (vraies icônes du jeu) : torche / levier ; bois très proches à cause des couleurs
+    limitées de la carte.
+- **Objets du Nether** (LeKiwi06 : « rangés difficiles pour rien ») : quartz, poudre lumineuse, sable des âmes,
+  basalte, roche noire, tige biscornue, champignon carmin passés de Difficile à **Normal** dans `objectives.yml` (57
+  normaux, 18 difficiles). **Le fichier du serveur (`plugins/KG_BingoGame/objectives.yml`) est à remplacer au
+  déploiement** (il n'est copié du jar qu'à la première installation), puis `/bingoadmin grid reload` ou redémarrage.
+**Déployé sur Serveur Jeux le 26/09/2026 à 6 h 15** (0.8.0 et l'ancien `objectives.yml` dans `_removed-kg_bingogame-0.8.0/` ; nouveau
+`objectives.yml` envoyé). **Statut : non testé en jeu.**
+
+## 0.8.2 — icônes des blocs aux bonnes proportions (26/09/2026)
+
+**Retour de LeKiwi06 en jeu** (capture de la carte) : « les blocs ont l'air compressés, tu ne peux pas utiliser
+simplement les logos des items ? ».
+- Le jeu n'a pas d'image plate pour les blocs (il les dessine en 3D dans l'inventaire) : le rendu 3D reste la seule
+  façon de les montrer comme en jeu. Proportions de la vue d'inventaire corrigées : une arête verticale = 1,22 fois
+  la largeur d'une face (vue inclinée de 30°), au lieu de 1 fois.
+- Puis (LeKiwi06 : « on ne peut pas les détailler un peu plus ? encore trop écrasé en hauteur pour obsidienne,
+  bibliothèque, TNT ») : blocs dessinés **en 22 pixels** (cases de 24 sur une grille 5 x 5) au lieu de 16, et dessus un
+  peu moins haut que la vue du jeu (les côtés, qui font reconnaître ces blocs, prennent plus de place). La carte centre
+  chaque icône selon sa taille.
+- Puis (LeKiwi06 : « les items sont un peu petits à côté ») : objets plats agrandis aussi à 22 pixels (plus proche
+  voisin : pixels nets, quelques rangées doublées).
+- Icônes refaites dans `icons/<version>-22px/` (celles de la 0.8.1, dans `-3d/`, ne sont plus lues : dossier à
+  supprimer par l'humain) ; le jeu est retéléchargé une fois chez Mojang au premier démarrage.
+**Déployé sur Serveur Jeux le 26/09/2026 à 6 h 27** (0.8.1 dans `_removed-kg_bingogame-0.8.1/`). Aperçu validé par LeKiwi06
+(« c'est beaucoup mieux comme ça »). **Statut : icônes de la carte testées et confirmées par LeKiwi06 le 26/09/2026 ;
+reste à tester en jeu : bonus du 1er, Nether en Normal, partie à 3-4 équipes (0.8.1).**
+
+## 0.8.3 — nombre de joueurs publié sur le relais, menus lisibles sur Bedrock (28/09/2026)
+
+**Demandes de LeKiwi06 (28/09/2026)** : nombre de joueurs sur le bouton du Bingo à kal-games ; couleurs trop claires
+illisibles sur Bedrock.
+- Toutes les 5 s, le nombre de joueurs dans les mondes du Bingo (`bingo_...` : salles d'attente et parties) est publié
+  sur le relais (clé `compteur-bingo`), lu par KG_Bingo 1.6.0. Échec silencieux, nouvel essai 5 s plus tard.
+- Menus : couleurs trop claires assombries pour les joueurs Bedrock (`BedrockColors` de KLM_Menu 2.4.0).
+- **`/menu` devient `/bingomenu`** (menu de la salle d'attente, opérateurs ; aussi dans « Informations > Paramètres ») :
+  `/menu` est maintenant celui de KLM_Menu sur tous les serveurs. `/menu on | off` refusé dans les mondes du Bingo.
+
+**Déploiement** : avec **KLM_Menu 2.4.0 sur Serveur Jeux** (obligatoire : il y est en 2.0.0). **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**
+
+## 0.8.4 - aucun texte qui défile dans les menus (01/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (voir KLM_Menu 2.5.0) : `DialogGui` ajuste ses boutons avec `Lisible` de KLM_Menu 2.5.0 avant de
+les afficher (largeur fixe de 240 pixels avant). Aucun autre changement.
+
+**Déployé le 01/10/2026 à 23:42 (LeKiwi06) : KLM_Menu 2.5.0 sur les 6 serveurs Paper (2.4.0 dans
+`_removed-klm_menu-2.4.0/` sur lobby, Kal-Games, Serveur Jeux, Kanvas ; 2.4.1 dans `_removed-klm_menu-2.4.1/` sur
+Kixster et Event), KalGames 1.22.1 (`_removed-kalgames-1.22.0/`), KG_BingoGame 0.8.4 (`_removed-kg_bingogame-0.8.3/`),
+KS_Economy 1.0.3 (`_removed-ks_economy-1.0.2/`) ; actifs après redémarrage de chaque serveur. Statut : **testé et confirmé par LeKiwi06 le 02/10/2026** (menus : plus aucun texte qui défile).**
+
+## 0.8.5 - objectifs difficiles, lancement bloqué, abandon puni, contre la montre (03/10/2026, Maxster33)
+
+**Constat de Maxster33 (03/10/2026, logs de Serveur Jeux)** : deux parties créées avec 25 objectifs difficiles ne se
+lançaient pas (`Pas assez d'objectifs de difficulte Difficile dans objectives.yml (25 demandes, 18 disponibles)`) :
+depuis la 0.8.1, il n'y avait plus que 18 difficiles, alors que le menu de création de KG_Bingo en permet 25.
+
+**Demande de Maxster33** : ajouter à la liste Difficile :
+- bloc de cuivre ciré ×6 (`WAXED_COPPER_BLOCK`) ;
+- jambières en diamant (`DIAMOND_LEGGINGS`) ;
+- ghast desséché (`DRIED_GHAST`) ;
+- briques rouges du Nether ×16 (`RED_NETHER_BRICKS`) ;
+- briques de roche noire polie craquelées ×4 (`CRACKED_POLISHED_BLACKSTONE_BRICKS`, « pierre noire taillée
+  craquelée ») ;
+- seau de neige poudreuse (`POWDER_SNOW_BUCKET`) ;
+- axolotl dans un seau (`AXOLOTL_BUCKET`).
+
+Identifiants vérifiés dans Paper 26.2. Total : 207 objectifs (100 faciles, 57 normaux, **25 difficiles**, 25
+extrêmes) : une grille entièrement difficile est de nouveau possible. Icônes de la carte : déjà préparées pour tous
+les objets du jeu (`icons/<version>-22px/`), rien à refaire.
+
+**Déploiement** : le jar seul ne suffit pas, **le fichier du serveur `plugins/KG_BingoGame/objectives.yml` est à
+remplacer** (il n'est copié du jar qu'à la première installation), puis `/bingoadmin grid reload` ou redémarrage.
+(voir la fin de la section pour le déploiement et le statut)
+
+
+**Partie bloquée après un échec du lancement** (constat de Maxster33, logs du 03/10/2026) : la partie était inscrite
+« en cours » avant le tirage de la grille ; si le tirage échouait, rien n'était annulé et chaque relance échouait
+(`Une partie '…' existe deja`, puis `Un monde nomme '…' existe deja`), sans aucun message au joueur.
+- La grille est tirée **avant** de réclamer les mondes préparés ; en cas d'échec, la partie est oubliée
+  (`GameManager.discard`) sans toucher aux mondes : l'hôte peut relancer.
+- Les joueurs de la salle d'attente reçoivent la raison de l'échec dans le tchat (avant : console seulement).
+
+**Demandes de Maxster33 (03/10/2026)** :
+- **Abandon puni** (bouton « Abandonner » **et** déconnexion de plus de 10 min, choix de Maxster33) : le joueur perd
+  tous ses points de la partie (ils ne comptent plus non plus pour les joueurs classés devant lui) et reçoit
+  **-15** au classement (le résultat envoyé au hub vaut -15). Si plus personne ne reste en jeu (partie terminée
+  « sans joueur », ex. un joueur seul qui abandonne), la pénalité est quand même envoyée au hub. Le score
+  d'**équipe** affiché en fin de partie n'est pas modifié (seuls les points solo vont aux classements).
+- **Une seule équipe = aucun bonus « en 1er »** (objectif validé en 1er, bingo achevé en 1er ; choix de Maxster33 :
+  les deux). Le bonus des bingos uniquement difficiles / extrêmes reste.
+- **Mode contre la montre** (`mode=CHRONO`, choisi à la création sur Kal-Games, une seule équipe) :
+  - chrono à **10 min** au départ (la durée choisie à la création ne compte pas), **+5 min par objectif validé**
+    (message « +5 minutes au chrono ! ») ; barre d'action : temps restant et « n/25 objectifs » ;
+  - victoire **seulement si toute la grille est remplie** avant la fin du chrono : bonus de victoire habituel
+    **+ 1 point par tranche de 20 s restantes** (« + N temps » dans le résumé), pour l'équipe et chacun de ses
+    joueurs encore en jeu, sans multiplicateur (le multiplicateur de vitesse reste propre au blackout) ;
+  - chrono à zéro : **défaite** (« Temps écoulé »), les points des objectifs validés restent (choix de Maxster33) ;
+    plus aucune validation une fois le chrono à zéro ;
+  - pas de vote de nulle (comme le mode bingos). Partie restaurée après un redémarrage : la durée allongée et le
+    temps restant sont sauvegardés (inchangé).
+
+**Déploiement** : **ensemble** avec KG_Bingo 1.7.0 et KG_ScoreBoards 1.9.0 sur Kal-Games (le mode contre la montre
+et la pénalité passent par eux ; un KG_Bingo plus ancien n'envoie jamais `CHRONO` et ignore les points négatifs).
+Remplacer aussi `plugins/KG_BingoGame/objectives.yml` sur Serveur Jeux (voir plus haut). **Déployé le 03/10/2026 à 09:41 sur Serveur Jeux (Maxster33) avec le nouveau `objectives.yml` (0.8.4 et l'ancien `objectives.yml` dans `_removed-kg_bingogame-0.8.4/`) ; KG_Bingo 1.7.0 et KG_ScoreBoards 1.9.0 déployés à 09:44 sur Kal-Games. Actif après redémarrage. Statut : non
+testé en jeu.**
+
+### 0.8.5 (suite) - plus de gel du serveur à la création d'une partie (03/10/2026, Maxster33)
+
+**Constat de Maxster33** : quand une partie est créée pendant qu'une autre est en cours, le serveur gèle 3 à 5 s.
+**Cause** (logs) : la création de l'overworld de chaque équipe bloque le thread principal 5 à 6,5 s (« Selecting spawn
+point ... Prepared spawn area in 5049 ms ») : Minecraft cherche le point d'apparition du nouveau monde en générant le
+terrain. Nether 0,3 s, End 0,1 s. Une partie à 4 équipes = 4 gels.
+
+**Solution 1 - point d'apparition fourni** (`FixedSpawnGenerator`) : les overworlds de partie sont créés avec un
+générateur qui garde toute la génération normale (même terrain, structures, créatures pour une même seed) mais fournit
+lui-même le point d'apparition : la recherche de 5 s est sautée. Le vrai point de départ est placé une fois le terrain
+pré-généré (`InstanceWorldManager.placeSpawnOnLand`) : colonne la plus proche de (0, 0), de 16 en 16 blocs, qui n'est
+ni de l'eau, ni de la lave, ni de la glace ; même seed = même point pour toutes les équipes. Différence avec avant : le
+point de départ ne tient plus compte du biome choisi par Minecraft (il peut tomber dans n'importe quel biome terrestre).
+Mondes créés avant cette version : inchangés.
+
+**Solution 2 - réserve de 2 mondes** (demande de Maxster33) :
+- 2 mondes d'avance (overworld + Nether + End + terrain pré-généré), même seed, créés **uniquement quand aucune partie
+  n'est en cours** (un monde à la fois, après les mondes des parties) ;
+- partie créée alors qu'**aucune partie n'est en cours** : mondes neufs, comme avant ; la réserve est gardée ;
+- partie créée **pendant une partie en cours** : elle prend les mondes de la réserve déjà créés (et leur seed) ; s'il en
+  manque (3-4 équipes), les autres sont créés comme avant (gel réduit par la solution 1) ;
+- monde de réserve d'une partie annulée ou d'une équipe restée vide : remis dans la réserve ;
+- noms `bingo_reserve-<uuid>_1` (gardés pendant la partie) ; mondes de réserve restés d'un arrêt du serveur supprimés au
+  démarrage, après la restauration des parties en cours (les leurs sont épargnés).
+
+**À vérifier en jeu** (Paper 26.2, jamais essayé) : plus de « Prepared spawn area in 5000 ms » dans les logs ; terrain
+et structures normaux ; départ sur la terre ferme, identique pour toutes les équipes ; une 2e partie créée pendant
+une partie en cours démarre sans gel ; logs « Réserve : ... ».
+
+## 0.8.6 - point de départ dans l'océan (03/10/2026, Maxster33)
+
+**Constat de Maxster33** (après le déploiement de la 0.8.5) : « j'ai crée une partie de bingo et le point de spawn
+était au milieu de l'océan ».
+**Cause** : la 0.8.5 cherchait la terre ferme seulement dans les 160 blocs autour de (0, 0) (zone pré-générée) ; sur une
+carte d'océan il n'y en a pas, et le départ retombait en (0, 0), dans l'eau. Minecraft, lui, cherchait bien plus loin.
+(Le gel, lui, a bien disparu : « Prepared spawn area in 0 ms » dans les logs.)
+- Dès la création de l'overworld, le point provisoire est déplacé vers le **biome terrestre le plus proche de (0, 0)**
+  dans un rayon de 3000 blocs (recherche dans les biomes, sans générer de terrain, comme `/locate biome`, pas de 32
+  blocs) : plaines, plaines de tournesols, forêts (classique, fleurie, de bouleaux, sombre), taïga, savane, prairie,
+  cerisaie, plaines enneigées, désert. La pré-génération du terrain se fait autour de ce point, puis le bloc exact est
+  choisi sur la terre ferme (comme en 0.8.5). Rien de trouvé : départ au-dessus du point provisoire.
+- Le choix « point déjà placé ou non » ne dépend plus des coordonnées (0, 100, 0) : liste des mondes neufs non placés
+  (un monde rechargé d'une partie restaurée n'est jamais déplacé).
+
+Mondes de réserve déjà créés par la 0.8.5 : supprimés au redémarrage et refaits. **Déployé le 03/10/2026 à 12:51 sur Serveur Jeux (Maxster33 ; 0.8.5 dans `_removed-kg_bingogame-0.8.5/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 0.8.7 - contre la montre : temps gagné selon la difficulté (03/10/2026, Maxster33)
+
+**Demande de Maxster33** : « il faut que le temps ajouté soit en fonction de la difficulté de l'objectif : facile =
+2 minutes et 30 secondes, moyen = 4 minutes, difficile = 6 minutes et 30 secondes, extrême = 10 minutes ».
+- `BingoSettings.chronoBonus(difficulté)` remplace les 5 min fixes de la 0.8.5 ; message « +2 min 30 au chrono ! »,
+  « +4 min au chrono ! »... Départ inchangé (10 min). Description de la partie mise à jour.
+- Partie en cours au moment de la mise à jour : le temps déjà gagné est gardé (sauvegardé), les objectifs suivants
+  rapportent le nouveau temps.
+
+**Déploiement** : avec KG_Bingo 1.7.1 (texte d'aide du menu de création, seulement un texte : pas obligatoire
+ensemble). **Déployé le 03/10/2026 à 17:05 sur Serveur Jeux (Maxster33 ; 0.8.6 dans `_removed-kg_bingogame-0.8.6/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 0.9.0 - moyenne des équipes et des joueurs classés derrière au lieu de leur somme (04/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (04/10/2026)** : « nouvelle règle pour tous les jeux : en multijoueur on ne gagne plus la somme des
+joueurs en dessous de nous, mais la moyenne ; fais en sorte que ce changement soit rétroactif ».
+- Victoire : chaque équipe gagne ses points + la **moyenne** des points des équipes classées derrière elle (avant : leur
+  somme) ; classement solo (celui qui est crédité dans les classements du hub) : ses points + la **moyenne** des points
+  des joueurs classés derrière. Multiplicateur de vitesse du blackout, XP et bonus de temps inchangés, appliqués après.
+- Tous ceux classés derrière comptent dans la moyenne, y compris un joueur qui a abandonné (0 point) : un abandon fait
+  donc toujours baisser le gain de ceux classés devant, comme avant.
+- À 2 joueurs (ou 2 équipes), rien ne change. Égalité, nulle, temps écoulé : inchangé (chacun garde ses points).
+- Texte du résumé : « Classement des équipes (points + moyenne des équipes derrière) ».
+
+Même règle dans KG_BoatRace 1.5.0. Rétroactif : fait dans les classements de Kal-Games le 05/10/2026, voir
+`REPRISE_PROJET.md`.
+
+**Déployé sur Serveur Jeux le 05/10/2026 à 12:33 (LeKiwi06 ; 0.8.7 dans `_removed-kg_bingogame-0.8.7/`), actif après
+redémarrage. Statut : non testé en jeu.**

@@ -1227,3 +1227,227 @@ commande) :
   Changeur de Biome (sphère / cube, biome, région WorldGuard refusée, historique, téléportation opérateur), apparence
   Bedrock, `/kaliumgive`. **Nettoyage possible par l'humain** (règle des 3 versions) : sur Event,
   `_removed-ks_crafts-1.0.0/` à `1.3.0/`, `_removed-ks_kaliumgive-1.0.0/` à `1.2.0/`.
+
+## Déplacé de REPRISE_PROJET.md le 21/11/2026 (allègement)
+
+### Points ouverts terminés ou historiques
+
+- **Passage de Kixster en Paper 26.3 (Maxster33, 07/10/2026)** — étape 1 d'un chantier en 4 étapes (26.3, puis
+  Tectonic + quelques biomes Terralith, prégénération d'une carte de 40 000 blocs, puis plugins d'Event sur Kixster).
+  - Sauvegarde complète de Kixster en 26.2 sur le PC de Maxster33 : `Documents\Sauvegardes_KaLium\kixster-2026-10-07-paper-26.2`
+    (629 Mo, sans `libraries/`, `cache/`, `versions/`).
+  - Plugins de Kixster (serveur arrêté) : ViaVersion 5.12.1-SNAPSHOT (+1069), **ViaBackwards 5.12.1-SNAPSHOT (+634) ajouté**
+    (Geyser parle Java 26.2 : sans lui, joueurs Bedrock et clients 26.2 refusés sur un serveur 26.3), voicechat 2.6.24 ;
+    FairMinimap 1.0.0+1.21.7 gardé (déjà compatible 26.3). Retirés à la demande de Maxster33 (rangés dans
+    `plugins/_removed-<plugin>-<version>/`, avec leur dossier de données) : Skript 2.16.2, SimpleClaimSystem 1.13.1,
+    TradeShop 1.7, LegacyFreecam 2.0.0, WoodCutter 1.0.2, AnvilUnlocker 1.1.3, Geyser-Spigot 2.11.2 ; anciens ViaVersion
+    5.12.0 et voicechat 2.6.23 rangés de même. Restent : LuckPerms 5.5.71, WorldEdit 7.4.6-beta-01, RideOnHead 1.1.3,
+    KLM_Menu 2.9.0, KLM_Chat 1.0.0.
+  - **Kixster démarré en Paper 26.3-159 le 07/10/2026 à 08:55** : les 9 plugins chargés sans erreur. Paper 26.3
+    absent de l'onglet « Versions » du panneau : `paper-26.3-159.jar` déposé à la racine et choisi dans Paramètres >
+    Hébergement > « Changer le paramètre de démarrage ». `spigot-26.3.jar` posé par le panneau rangé dans
+    `_removed-spigot-26.3/` (jamais lancé).
+  - **Étape 2 faite (07/10/2026, 09:25)** : nouveau monde `Kixster SMP` créé (graine aléatoire) avec Tectonic 3.0.29
+    + `kalium-terralith-1.0.0` (11 biomes Terralith, aucune structure Terralith ; voir `KX_Monde/README.md`), chargés
+    sans erreur. `generate-structures=true` (structures vanilla, décision de Maxster33). Ancien monde (et ancien
+    `server.properties`) rangé dans `/_removed-monde-kixster-smp-2026-10-07/` ; aussi dans la sauvegarde du PC.
+    Prochaine étape : prégénération d'une carte de 40 000 blocs de côté.
+  - **Étape 3 en cours (lancée le 07/10/2026 vers 09:34)** : Chunky 1.5.3 (Modrinth) ; `worldborder center 0 0` +
+    `worldborder set 40000` ; `chunky center 0 0`, `radius 20000`, `shape square` (X et Z de -20 000 à +20 000,
+    ~6,25 millions de chunks). ~32 chunks/s au départ (1 worker thread) ; à 09:50, Maxster33 a ajouté 2 cœurs à
+    Kixster et `chunk-system.worker-threads: 3` a été mis dans `config/paper-global.yml` (original `-1` dans
+    `config/_removed-paper-global-2026-10-07/`) : ~100 chunks/s, fin estimée le 08/10/2026 vers 3 h. Penser à
+    remettre `-1` (ou moins de fils) si le jeu rame une fois la prégénération finie. Config Chunky : `continue-on-restart: true`, `update-interval: 60` (original dans
+    `plugins/_removed-chunky-config-2026-10-07/`). Place disque à surveiller (estimation grossière 40 à 70 Go).
+  - **Event passé en Paper 26.3-159 le 07/10/2026 (serveur de test 26.3, décision de Maxster33)** : sauvegarde 26.2
+    sur le PC de Maxster33 (`Documents\Sauvegardes_KaLium\event-2026-10-07-paper-26.2`, 2,6 Go). Nos 29 plugins
+    (KS_*, KLM_Menu, KLM_Chat) recompilés ensemble contre paper-api 26.3.build.159-beta : 0 erreur (comme en 26.2),
+    jars inchangés. Mis à jour (anciens dans `plugins/_removed-…`) : WorldEdit 7.4.6-beta-02, ViaVersion/ViaBackwards
+    5.12.1-SNAPSHOT, voicechat 2.6.24, JourneyMap 26.3-6.0.10, VaultUnlocked 2.20.3, **GrimAC 2.3.74-abb95b6** (alpha
+    Modrinth du 01/10, contient « support 26.3 » ; 8eb5f28 plantait) ; LegacyFreecam 2.0.0 retiré (CommandAPI 12.0.0
+    sans 26.3). Redémarrage de 11:25 : 44 plugins, aucune erreur. Avant cela, 43/45 OK :
+    GrimAC 8eb5f28 et LegacyFreecam plantaient. Tests en jeu à faire.
+    Ensuite : préparer nos plugins pour Kixster (étape 4).
+  - **Étape 4 préparée (07/10/2026), à envoyer quand la prégénération sera finie** : tout est dans
+    **`KX_Monde/deploiement-kixster/`** (mode d'emploi : son `LISEZMOI.md` ; `sh envoyer.sh <session Kixster>
+    <session Event>`, testé à blanc avec `DRY_RUN=1`). Probablement repris par LeKiwi06. Secrets jamais dans le
+    dépôt : lus sur Event par le script (jeton du relais, clé Floodgate) ; plugins externes téléchargés par
+    `telecharger-externes.sh` (empreintes vérifiées). 27 KS_ (dont KS_Menu 1.1.0, `commande: kixster`),
+    externes « seulement le nécessaire » (décision de Maxster33) : SimpleClaimSystem 1.13.1, VaultUnlocked 2.20.3,
+    Floodgate, GrimAC 2.3.74-abb95b6, + WorldGuard 7.0.19 (magasins KS_Economy) et JourneyMap 26.3-6.0.10 (porte le
+    fair-play de LeKiwi06), ajoutés à la demande de Maxster33 ; réglages de serveur de LeKiwi06 (anti-xray, pistons,
+    suivi des entités, JourneyMap) appliqués aux fichiers de Kixster dans `racine/` du paquet. Réglages
+    d'Event repris sans les données de jeu ; adaptés : textes « Kixster » (KS_Menu, KS_Tableau, KS_AntiCheat),
+    `boite: kixster` (KS_RewardsGUI ; **KG_Rewards de Kal-Games à passer en `boite: kixster` à l'ouverture**),
+    noms de mondes de SimpleClaimSystem.
+  - **Étape 3 terminée** : prégénération finie le 08/10/2026 vers 05:33 (`plugins/Chunky/tasks/Kixster SMP.properties` :
+    6 254 953 chunks, `cancelled=true` = tâche finie ; d'où « No tasks to continue » au démarrage).
+  - **Étape 4 envoyée le 08/10/2026 à 15:06** (Maxster33, avec Claude ; Kixster arrêté) : `sh envoyer.sh`, aucune
+    erreur ; originaux dans `/_removed-config-avant-plugins-event-20261008-1506/`. Redémarrage de 15:20 (après ajout
+    de RAM par Maxster33) : **43 plugins activés, aucune erreur** (seul avertissement : GrimAC + ViaBackwards, comme
+    sur Event). **Non testé en jeu.** Reste à faire : points 2 à 6 de « Après l'envoi » du `LISEZMOI.md` (noms des
+    mondes de SimpleClaimSystem, `boite: kixster` de KG_Rewards, permissions LuckPerms, régions WorldGuard
+    `zone_shop` et `ile_du_dragon`, `worker-threads`).
+  - **Proxy redémarré en Velocity 4.2.0-30 le 07/10/2026 à 08:59** (Maxster33, fichier de démarrage choisi dans le
+    panneau) : floodgate, Geyser 2.11.3, KaliumRelay 1.4.0, velocity-command-forward OK. **LibertyBans 1.1.4 plantait**
+    (premier chargement depuis son installation du 03/10 ; incompatible avec tout Velocity 4, `NoSuchMethodError`
+    Adventure `TextComponent.ofChildren`) : remplacé par **LibertyBans 1.2.0-M1** (préversion, gère Velocity 4),
+    1.1.4 rangé dans `plugins/_removed-libertybans-1.1.4/`. **Actif au prochain redémarrage du proxy, non vérifié** ;
+    tant que ce n'est pas fait, le bouton « Bannir de KaLium » (KS_AntiCheat → KaliumRelay) ne marche pas.
+    `geyserupdater-spigot.jar` (plugin Bukkit, ignoré par Velocity) toujours en erreur au démarrage, sans effet.
+  - Proxy (avant) : Velocity 4.1.2-SNAPSHOT-27 ne gère pas la 26.3. `velocity-4.2.0-30.jar` (stable, gère aussi toutes les
+    versions plus anciennes) déposé à la racine du proxy **à côté** de l'ancien jar, sans rien remplacer : à activer
+    dans le panneau (fichier de démarrage) puis redémarrer le proxy (déconnecte tout le réseau).
+- **Tout le réseau en 26.3 (08/10/2026, Maxster33 avec Claude)** : paquet `mise-a-jour-26.3/` (mode d'emploi :
+  son `LISEZMOI.md`). Nos 22 plugins de ces serveurs compilent contre paper-api 26.3.build.159-beta sans erreur : jars
+  inchangés. Serveurs arrêtés vers 16:15, sauvegardés sur le PC de Maxster33 (`Documents\Sauvegardes_KaLium\<serveur>-avant-26.3`,
+  sans `libraries/`, `logs/`, `_removed-*/` ; Serveur Jeux sans les mondes `bingo_reserve-*`, décision de Maxster33),
+  anciens jars dans `/plugins/_removed-avant-26.3/`, démarrage sur `paper-26.3-159.jar` choisi dans le panneau :
+  - **Proxy** (16:28) : Velocity 4.2.0, Geyser-Velocity 2.11.3-b1249 (ancien et `geyserupdater-spigot.jar` dans
+    `plugins/_removed-avant-geyser-b1249/`), **LibertyBans 1.2.0-M1 chargé sans erreur** ; aucune erreur.
+  - **Lobby** (16:29) : WorldEdit 7.4.6-beta-02, WorldGuard 7.0.19, voicechat 2.6.24, + ViaVersion / ViaBackwards
+    5.12.1-SNAPSHOT, Geyser-Spigot rangé ; 14 plugins, aucune erreur.
+  - **Kanvas** : préparé par LeKiwi06 le 08/10 vers 08:47 (FAWE 2.16.0, Via 5.12.1-SNAPSHOT, voicechat 2.6.24) ;
+    16 plugins, aucune erreur.
+  - **Serveur Jeux** (17:21) : ViaVersion 5.12.1-SNAPSHOT, WorldEdit 7.4.6-beta-02, + ViaBackwards ; rangés :
+    LegacyFreecam (plante en 26.3), Skript (aucun script), TradeShop, WoodCutter, Geyser-Spigot ; 16 plugins, aucune erreur.
+  - **Kal-Games** (17:23) : Via 5.12.1-SNAPSHOT, WorldEdit 7.4.6-beta-02, voicechat 2.6.24, GrimAC 2.3.74-abb95b6,
+    ConditionalEvents 4.80.3, PlayerKits2 1.24.1 ; 28 plugins ; seule erreur : config de ConditionalEvents (ligne 10,
+    `register_commands`), déjà là avant.
+  - **Non testé en jeu.** `paper-26.2-121.jar` reste à la racine (retour en arrière : voir le `LISEZMOI.md`).
+  - **Interface de craft fausse pour les joueurs Bedrock (signalé par LeKiwi06, 08/10/2026)** : cause probable =
+    ViaBackwards 5.12.1-SNAPSHOT+634 (22/09), qui traduit mal le livre de recettes 26.3 → 26.2 (Geyser fait entrer
+    les joueurs Bedrock en 26.2 ; corrigé dans ViaBackwards le 29/09, ViaVersion/ViaVersion#5072). Correctif :
+    **ViaVersion + ViaBackwards 5.12.1 stables** (Modrinth, 08/10/2026). `mise-a-jour-26.3/telecharger.sh` et
+    `envoyer.sh` les prennent maintenant pour tous les serveurs Paper (`kixster` et `event` ajoutés : ces deux jars
+    seulement, sans sauvegarde ; `SESSION_WINSCP=` pour un autre nom de session).
+    - **Kixster : envoyé le 08/10/2026 à 23:42** (LeKiwi06, avec Claude ; serveur allumé), anciens jars dans
+      `/plugins/_removed-via-5.12.1-snapshot/`. Actif depuis le redémarrage du 09/10/2026 à 00:12 (journal :
+      ViaVersion et ViaBackwards 5.12.1). **Testé par LeKiwi06 le 09/10/2026 : « les crafts ont l'air bon pour les
+      joueurs bedrock ».** Avant ce redémarrage, les ingrédients des outils s'affichaient en planches.
+    - **Event, lobby, Kanvas, Serveur Jeux, Kal-Games : envoyés le 09/10/2026 entre 00:40 et 00:41** (demande de
+      LeKiwi06 : « il faut aussi effectuer la réparation sur tous les serveurs » ; serveurs allumés, sans sauvegarde,
+      seuls ces deux jars changent). Anciens jars dans `/plugins/_removed-avant-26.3/` (Event :
+      `_removed-via-5.12.1-snapshot/`). **Actifs depuis les redémarrages du 09/10/2026 vers 00:46** (journaux des 6
+      serveurs Paper : ViaVersion et ViaBackwards 5.12.1, aucune erreur nouvelle) ; craft Bedrock testé sur Kixster seulement.
+    - Si le craft reste lent ou faux après cela : GeyserMC/Geyser#6744 (ouvert) ; le support de la 26.3 par Geyser
+      est en cours (GeyserMC/Geyser#6712, sans date).
+- **KS_Crafts 1.11.0 (LeKiwi06, 09/10/2026) : déployé sur Kixster et Event le 09/10/2026 à 00:39, actif depuis le
+  redémarrage de 00:46 (journaux : 1.11.0, 44 crafts, aucun avertissement), non testé en jeu.** Le livre de recettes montre les vrais objets des réparations de la tête de wither
+  squelette (bloc d'émeraude compressé tier 2, fiole de 15 niveaux, bloc de charbon de bois, tête marquée du défaut,
+  autres états en alternance) ; ingrédients acceptés inchangés. Supprimables par l'humain sur Event :
+  `_removed-ks_crafts-1.0.0/` à `1.8.0/` (9 dossiers).
+- **Plugins externes qui ne servent plus, rangés le 09/10/2026 à 00:58** (demande de LeKiwi06 : « on peut enlever
+  pyxelregion, conditional event, playerkits, skript, etc. de tous les serveurs, normalement on ne s'en sert plus » ;
+  rien n'est supprimé) :
+  - **Kal-Games** : seuls jars encore en service, rangés dans `/plugins/_removed-conditionalevents-4.80.3/`,
+    `_removed-playerkits2-1.24.1/` et `_removed-pyxelregions-1.3.0/` (kits déjà convertis dans `KG_PvpKit/kits.yml`).
+    **Effectif depuis le redémarrage de Kal-Games du 09/10/2026 à 01:01** (journal : 3 plugins absents, aucune erreur,
+    l'erreur de config de ConditionalEvents a disparu, PvP Kit : 7 kits) ; leurs 3 dossiers de données rangés à 01:02
+    dans les mêmes `_removed-…`.
+  - **Event, lobby, Kanvas** : les jars étaient déjà rangés ; dossiers de données `ConditionalEvents`, `PyxelRegions`
+    (et `PlayerKits2` sur Kanvas) déplacés dans les `_removed-<plugin>-<version>/` déjà présents.
+  - **Serveur Jeux** : dossier `Skript` (aucun script) déplacé dans `/plugins/_removed-skript-2.16.2/` ; le jar est dans
+    `_removed-avant-26.3/`. Kixster : rien à faire.
+  - « etc. » : rien d'autre n'a été touché ; liste des autres restes proposée à LeKiwi06, en attente de sa réponse.
+- (Historique, dépassé depuis le passage en 26.3 du 08/10/2026) **KalGames2 et Serveur Jeux repassés en Paper 26.2-121** (24/09/2026, 13 h) : créés en Paper 26.3 alpha, ils ne
+  démarraient pas (WorldEdit 7.4.5 incompatible → crash au démarrage). `server.jar` remplacé par le
+  `paper-26.2-121.jar` du lobby ; jar 26.3 et monde généré en 26.3 rangés dans `_removed-paper-26.3/`. Si le panneau
+  Minestrator réinstalle la 26.3 au démarrage, choisir la 26.2 dans le panneau.
+- **Raccordement du 24/09/2026 (Maxster33)** : actif seulement après redémarrage de KalGames2, Serveur Jeux,
+  Kal-Test-Dev, du lobby (voicechat, destinations KLM_Menu) puis du proxy. À vérifier dans les journaux : Floodgate
+  sans erreur de clé, KLM_Menu chargé, connexion par le proxy (`/server kalgames2`...).
+- **voicechat réglé sur les 6 serveurs Paper le 09/10/2026 à 18:32 (LeKiwi06, avec Claude ; serveurs allumés) :
+  actif depuis les redémarrages de 18:36, testé et confirmé par LeKiwi06 le 09/10/2026 (« c'est bon », après les
+  permissions LuckPerms ci-dessous).** `voice_host` posé partout (lobby
+  `91.197.6.152:43841`, Kal-Games `91.197.6.24:43374`, Kanvas `91.197.6.215:45595`, Kixster `91.197.6.212:40046`,
+  Event `51.254.174.133:40002`, Serveur Jeux `91.197.6.65:43131`) ; `port` corrigé sur Kixster et Event (ils étaient
+  restés à 24454, port par défaut jamais attribué). Rien d'autre ne change (voicechat 2.6.24, distance 48 blocs,
+  groupes activés). Anciens fichiers dans `/plugins/_removed-voicechat-config-2026-10-09/` de chaque serveur. Rien
+  sur le proxy. **Journaux lus après les redémarrages de 18:36 - 18:37 (lecture seule, copies hors dépôt)** : sur
+  les 6 serveurs, `Voice host is '<IP>:<port>'` et `Voice chat server started at 0.0.0.0:<port>` avec les valeurs
+  envoyées, aucune erreur, fichiers de réglage non réécrits. **Lobby : LeKiwi06 et Maaxster « successfully
+  connected to voice chat » à 18:37** (la liaison par le proxy marche) ; sur les 5 autres, aucun joueur n'était
+  encore entré au moment de la lecture, liaison non vérifiée. Avertissement attendu partout : « Running in offline
+  mode - Voice chat encryption is not secure » (`online-mode=false` derrière Velocity). Reste à vérifier : entrer
+  sur chacun des 5 autres avec le mod, et s'entendre à deux (Kixster : LeKiwi06 connecté au chat vocal à 18:40, le
+  port 40046 marche). **« on n'a pas la permission de parler » (LeKiwi06, 18:45)** : le `plugin.yml` de voicechat
+  2.6.24 déclare `voicechat.speak`, `voicechat.listen` et `voicechat.groups` sans valeur par défaut (donc
+  « opérateurs seulement » pour Bukkit), et LuckPerms suit cette déclaration : refusé à tout joueur non opérateur
+  (lobby : seul Maaxster est opérateur). Correction **faite par LeKiwi06 en jeu le 09/10/2026 entre 18:55 et
+  19:02** (LuckPerms est en H2, une base par serveur) : sur chacun des 6 serveurs, `/lp group default permission
+  set voicechat.speak true`, puis `voicechat.listen` et `voicechat.groups` ; effet immédiat, sans redémarrage.
+  **Confirmé par LeKiwi06 le 09/10/2026 (« c'est bon »).** Journaux relus à 19:08 : les trois permissions
+  enregistrées par LuckPerms sur les 6 serveurs, au moins une connexion vocale réussie sur chacun (donc les 6 ports
+  UDP marchent, 40002 d'Event compris), aucune erreur. **À refaire sur tout nouveau serveur, ou si une base
+  LuckPerms est remplacée.** Les joueurs Bedrock n'ont pas le chat vocal (pas de mod).
+
+### Comptes rendus remplacés (un seul par personne dans REPRISE_PROJET.md)
+
+### 2026-10-26 — LeKiwi06 (Hide and Seek, retours de test)
+
+*(Session du 26/10/2026 de 12 h 34 à 15 h 05. Réservation de KG_HideAndSeek libérée.)*
+
+**KG_HideAndSeek 0.3.0, déployé sur Kanvas (Kal-Games) le 26/10/2026 à 15:03, à redémarrer, non testé en jeu** : retours de test du Hide and Seek (composteur,
+barrière, fleurs et trappes, orientation et posture du bloc, évasions cumulables, soundboard, liste des blocs en vie,
+points selon la proximité des seekers et la rareté du bloc, petite partie enfermée dans le bâtiment). Détail :
+`historique-conversations/2026-10-26-hide-and-seek-retours-2.md`.
+
+### 2026-10-25 — LeKiwi06 (votes des concours terminés)
+
+*(Session du 25/10/2026 vers 21 h 20, heure de Paris. Fin de session : réservation de KV_Plots libérée.)*
+
+**KV_Plots 1.8.0, compilé, non déployé, non testé en jeu** : on peut noter les plots des concours de build après la fin
+des votes (comme un plot normal), le classement annoncé reste figé. Détail :
+`historique-conversations/2026-10-25-votes-concours-termines.md`. Attention à l'heure : le PC est réglé en UTC (pas
+à l'heure de Paris) ; la session précédente a daté ses commits en +09:30.
+
+### 2026-10-26 — LeKiwi06 (historique de la whitelist)
+
+*(Session du 26/10/2026 à 00 h 43, déploiement à 01 h 11. Fin de session : réservation de KaliumRelay et KLM_Contacts du
+26/10 libérée ; celle du 21/10 (fusion de Kal-Games) reste.)*
+
+**KaliumRelay 1.10.2 (proxy) et KLM_Contacts 1.5.2 (lobby, Kixster, Kanvas, Serveur Jeux), déployés le 26/10/2026 à
+01:11, actifs après redémarrage (à faire par l'humain), non testés en jeu** : historique des demandes de whitelist
+traitées (Modération › Demandes de whitelist › « Demandes traitées ») et rappel du nombre de demandes en attente à chaque
+arrivée au lobby. Cadrés dans la même session, **non commencés** : link d'un compte Java et d'un compte Bedrock sur
+Kixster (KS_Liaison) et didacticiel du lobby ; cahier et brouillon chez LeKiwi06, hors dépôt, à valider. Détail :
+`historique-conversations/2026-10-26-whitelist-link-didacticiel.md`.
+
+### 2026-10-25 — LeKiwi06 (kits du PvP Kit)
+
+*(Session du 25/10/2026 à 13 h 10, déploiement le 26/10/2026 à 00 h 33. Fin de session : réservation de KG_PvpKit libérée.)*
+
+**KG_PvpKit 1.2.0, déployé sur Kanvas (espace Kal-Games) le 26/10/2026 à 00:33, actif après redémarrage (à faire par
+l'humain), non testé en jeu** : bouton « Charger dans mon inventaire » dans la fiche d'un
+kit (gestion des kits) pour le retoucher, puis « Remplacer par mon inventaire actuel » ; confirmation si l'inventaire
+n'est pas vide. 1.1.0 dans `_removed-kg_pvpkit-1.1.0/`. Détail :
+`historique-conversations/2026-10-25-pvpkit-charger-kit.md`.
+
+### 2026-10-25 — LeKiwi06 (outils des opérateurs)
+
+*(Session du 25/10/2026, de 02 h 15 à 03 h 15. Fin de session : réservations de KS_CoffreMort et KS_RewardsGUI libérées.)*
+
+**KS_CoffreMort 1.1.0 + KS_RewardsGUI 1.9.0, déployés ensemble sur Kixster le 25/10/2026 à 03:09, actifs après
+redémarrage (à faire par l'humain), non testés en jeu** : bouton « Outils des opérateurs » dans /rewards (don d'un coffre de récompense : joueur, nom, valeur ;
+historique des dons) et `/coffres tous` (coffres de mort de tous les joueurs, transfert dans /rewards du mort). Détail
+et tests à faire : `historique-conversations/2026-10-25-outils-operateurs-rewards.md`.
+
+### 2026-10-21 — LeKiwi06
+
+*(Session du 21/10/2026, de 01 h 25 à 01 h 50. Fin de session : réservations de KG_Bingo et KG_BuildBattle libérées.)*
+
+**Ajout (22/10/2026, 12:06, autre session de LeKiwi06) : KS_Trains 1.4.8 et KS_LaisseBateau 1.0.2 testés en jeu par LeKiwi06 : « j'ai testé tout marche bien ».** Tests faits sur Event (retiré depuis le 21/10). Reste : déploiement sur Kixster (avec KS_Crafts 1.19.0, KS_VerrouVehicule 1.1.1, KLM_Contacts 1.3.0 et la nouvelle physique des wagonnets), à demander à LeKiwi06.
+
+**KG_Bingo 1.11.0 + KG_BuildBattle 0.6.0, déployés sur Kal-Games le 21/10/2026 à 01:29, actifs après redémarrage
+(à faire par l'humain), non testés en jeu** (LeKiwi06 ne pouvait pas tester ce soir) : réglages en coffre (Bingo :
+jauges, composition de la grille dans une seule fenêtre ; Build Battle : tempo, équipes, thèmes écrits), Échap =
+Retour, réglages retenus, « Recréer ma dernière partie », parties dans « Rejoindre une partie ». Vérifié dans le code :
+même classe `Contenant` (KLM_Menu) et mêmes jauges que KalGames 1.26.0. Anciens jars dans
+`_removed-kg_bingo-1.10.0/` et `_removed-kg_buildbattle-0.5.0/`.
+
+- Supprimables par l'humain sur Kal-Games : `_removed-kg_bingo-1.8.0` et plus anciens (1.7.3, 1.7.2, 1.7.1, 1.7.0,
+  1.6.1, 1.6.0, 1.5.1, 1.5.0, 1.4.0, 1.3.0) ; `_removed-kg_buildbattle-0.3.0`, `0.2.0`, `0.1.0`.
+- Reste à tester en jeu : liste dans `historique-conversations/2026-10-21-deploiement-bingo-buildbattle.md`.
+- Le filtre de permissions (mode auto) a d'abord refusé l'envoi (« Production Deploy ») ; l'accord écrit de LeKiwi06
+  a suffi.

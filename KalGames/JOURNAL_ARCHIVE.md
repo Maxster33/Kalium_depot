@@ -1,0 +1,826 @@
+# KalGames - archive du journal
+
+Sections déplacées de `JOURNAL.md` le 21/11/2026 (seules les 4 dernières versions y restent).
+
+## État au 22/09/2026 (historique - l'état actuel est dans `REPRISE_PROJET.md` et dans les dernières sections ci-dessous)
+
+- Version déployée à cette date (`kalgames@7021`) : **KalGames 1.9.5**, jar en place dans `/plugins/`,
+  ancien jar renommé en `.bak`.
+- `build.sh` et `pom.xml` étaient alors sur `1.9.5`.
+- **22/09/2026 : tous les serveurs ont été redémarrés par l'utilisateur, et il confirme que tout fonctionne
+  très bien.** Les changements 1.9.0 → 1.9.5 sont donc vérifiés et validés en jeu (spectateur : vol libre,
+  spawn au point de fin, sortie via /hub ; persistance des arènes ; suppression d'arène ; courses de bateau
+  sans préchargement ; blocage de /kit et /kits).
+- Aucune tâche en attente côté code à ce stade : tout ce qui a été demandé a été livré et confirmé
+  fonctionnel. En attente de nouvelles demandes.
+
+## Historique des versions (cette session)
+
+### 1.9.0 — mode spectateur + persistance des arènes
+- Bug spawn spectateur (chute, blocage) corrigé : spawn au point "gradins", téléportation cadrée dans
+  l'arène (`clampSpectator`, depuis retiré en 1.9.3, voir plus bas).
+- Nouveau système `matchSpectators` (participants ayant fini leur partie avant les autres) distinct des
+  vrais spectateurs externes (`spectators`) : `GameInstance.becomeMatchSpectator(Player)`.
+- Persistance des arènes générées entre redémarrages propres (marqueur `kalgames-clean-shutdown.txt` +
+  signature de layout dans `InstanceWorld`, sauvegarde des cells de `ArenaPool` dans
+  `instances-cells.yml`). Fallback sur l'ancien comportement (wipe complet) si arrêt sale ou config de
+  grille changée.
+- Scores des joueurs qui ne finissent pas à temps un mini-jeu : comptabilisés dans le classement
+  (`RaceInstance.finishRace()`).
+- Points par checkpoint/ligne d'arrivée : déjà configurables (aucun changement nécessaire, juste vérifié).
+
+### 1.9.1 — fix suppression d'arène
+- Bug découvert : la persistance de 1.9.0 a révélé que supprimer une arène ne supprimait pas réellement
+  les blocs de ses copies générées (avant, le monde entier était wipé à chaque redémarrage donc ça ne se
+  voyait pas). Ajout de `TemplateService.clearArea(...)` (nettoyage budgété par tick) utilisé uniquement
+  pour les suppressions définitives (`ArenaPool.purgeArena` / `purgeMinigame`), pas pour le recyclage
+  normal entre parties (coût perf).
+
+### 1.9.2 — plus de préchargement pour les courses de bateau
+- `BOAT_RACE` avait un défaut caché de 5 arènes préchargées (`prewarm-arenas`), unique parmi les
+  mini-jeux (les autres sont à 0 par défaut). Réglage retiré du `MinigameType.BOAT_RACE` (disparaît du
+  menu admin) + `ArenaPool.prewarm()` renvoie `0` en dur pour `BOAT_RACE`, quel que soit un éventuel
+  réglage déjà enregistré côté serveur.
+
+### 1.9.3 — spectateur : vol libre, spawn au point de fin, vol activé par défaut
+- Suppression totale du cantonnement à la zone de l'arène pour les spectateurs (vrais spectateurs et
+  participants ayant fini leur partie) : suppression de `GameInstance.clampSpectator(...)`, de
+  `GameListener.onSpectatorMove`, et du filet de sécurité "chute sous l'arène" pour les spectateurs dans
+  `GameInstance.tick()`.
+- `becomeMatchSpectator` ne téléporte plus le joueur : son point d'apparition devient l'endroit exact où
+  il a terminé sa partie (arrivée, élimination, timeout).
+- Mode vol (`setAllowFlight(true)` + `setFlying(true)`) activé automatiquement dans
+  `HubService.applySpectatorState`, pour tous les cas de mode spectateur.
+
+### 1.9.4 — sortie du mode spectateur
+- Constat : en mode spectateur vanilla, la barre d'objets est masquée par le client Minecraft — le menu
+  (objet verrouillé cliquable) devient donc inatteignable, plus aucun moyen de "arrêter de regarder".
+- `HubService.sendToHub` détecte maintenant si le joueur est un spectateur externe (`spectatorOf`) et
+  délègue proprement à `leaveSpectator` (au lieu de laisser un état incohérent). Ça rend `/hub` et
+  `/kalgames quitter` utilisables comme sortie de secours en toutes circonstances, y compris en spectateur.
+- Message automatique envoyé dès l'entrée en mode spectateur (`HubService.applySpectatorState`) : rappelle
+  de taper `/hub` pour arrêter de regarder.
+- Textes de menus mis à jour (ne mentionnent plus l'ancien cantonnement à la zone, retiré en 1.9.3).
+
+### 1.9.5 — blocage de /kit et /kits pour les joueurs
+- PlayerKits2 (plugin tiers) ne sert dans KalGames que de bibliothèque de données pour les kits du vote
+  PvP (`KitLibrary` relit ses fichiers `.yml`), mais sa propre commande `/kit` restait utilisable par tout
+  le monde et permettait de s'équiper instantanément avec n'importe quel kit, hors vote et hors règles de
+  partie.
+- Nouveau listener `HubListener.onCommand` (`PlayerCommandPreprocessEvent`) : bloque `/kit` et `/kits`
+  (avec ou sans préfixe `plugin:`) pour tout joueur n'ayant pas la permission `kalgames.bypass` (staff),
+  avec message d'explication.
+
+### 1.10.0 — intégration Bingo (côté kal-games)
+- Nouveau mini-jeu Bingo, mais sur un **serveur séparé** (KalBingo, projet à part, voir son propre
+  JOURNAL.md) : décision explicite de l'utilisateur (monde Overworld généré à la volée par seed, pas
+  compatible avec le système de mondes-void/arènes-collées existant). KalGames ne fait que créer/rejoindre
+  la partie et transférer les joueurs — toute la logique de jeu (équipes, mondes, validation...) vit dans
+  KalBingo.
+- Nouveau package `fr.kalium.games.bingo` :
+  - `BingoParty`/`BingoPartyManager` : création (code à 4 caractères, seed aléatoire, durée lue depuis
+    `config.yml`), jointure par code, transfert (`Connect` BungeeCord vers `bingo.server-name`).
+  - `BingoNetworkListener` : répond aux demandes d'affectation envoyées par KalBingo (canal BungeeCord,
+    sous-canaux `KalBingoAssignRequest`/`KalBingoAssignResponse`, `Forward`). Design **pull** (Bingo
+    demande, kal-games répond) choisi avec l'utilisateur pour éviter un problème de fiabilité réseau : un
+    message poussé vers un serveur sans aucun joueur connecté n'est pas garanti d'être livré.
+  - `BingoCommand` (`/bingo create`, `/bingo join <code>`) : **commande de test minimale**, PAS encore
+    intégrée au hub (pas d'entrée de menu dédiée) - à faire une fois le flux validé de bout en bout.
+- Nouvelle section `bingo` dans `config.yml` : `server-name` (kixster pour les tests, facilement
+  modifiable), `duration-seconds` (1h par défaut - **c'est ici, côté kal-games, que la durée de partie
+  est modifiable par un admin**, transmise à KalBingo à chaque partie), `max-party-size`.
+- Incidemment : `KalGames.java` reçoit maintenant aussi un canal BungeeCord **entrant**
+  (`registerIncomingPluginChannel`), qui n'existait pas avant (seul le canal sortant était enregistré).
+- Déployé sur kal-games (7021.mystrator.com) le 22/09/2026, ancien 1.9.5 déplacé (non détruit) dans
+  `_removed-kalgames-1.9.5/`. **Redémarrage du serveur requis pour que le nouveau code prenne effet.**
+
+### 1.10.1 — Bingo : vraie entrée de menu dans le hub (en plus des commandes)
+- Demande explicite de l'utilisateur : "vraie intégration au menu, tout en laissant les commandes
+  actuelles fonctionnelles" — `/bingo create` et `/bingo join <code>` restent disponibles telles quelles
+  (`BingoCommand`, inchangé), le menu est un second point d'entrée vers exactement la même logique.
+- `PlayerMenus.openGames()` (hub "Mini-jeux") : ajout d'un bouton "Bingo" manuel, à part de la boucle sur
+  `plugin.repository().minigames()` — Bingo n'est PAS un `Minigame`/`GameInstance` classique (pas
+  d'arène locale, la partie se déroule entièrement sur le serveur Bingo séparé une fois le joueur
+  transféré), donc pas d'intégration dans le modèle `Arena`/`GameInstance`/`InstanceManager` existant
+  (celui utilisé par PvP/Race) : ça aurait forcé Bingo dans un modèle pensé pour des mini-jeux locaux.
+  Visible de tous les joueurs (pas admin-only), comme les commandes texte.
+- Nouveau `PlayerMenus.openBingoMenu()` : bouton "Créer une partie Bingo" + formulaire "Rejoindre avec un
+  code" (champ texte, même pattern que `openJoinPrivate`). `bingoCreate()`/`bingoJoin()` appellent
+  directement `plugin.bingoParties().create()/join()/transferToBingo()` — **aucune logique dupliquée**
+  avec `BingoCommand`, juste un autre appelant.
+
+### 1.10.2 — Bingo : configuration du nombre d'équipes/joueurs à la création
+- Demande explicite de l'utilisateur : pouvoir régler le nombre d'équipes et le nombre de joueurs par
+  équipe **directement en créant la partie** depuis le hub, plutôt qu'avec des valeurs fixes.
+- `PlayerMenus.openBingoCreate()` (remplace l'ancien bouton qui appelait `bingoCreate` directement) :
+  formulaire avec deux champs numériques (`gui.number`, bornés par `bingo.max-team-count`/
+  `max-team-size` dans `config.yml`, valeurs par défaut lues dans `bingo.default-team-count`/
+  `default-team-size`) puis bouton "Créer la partie".
+- `BingoParty`/`BingoPartyManager.create(host, teamCount, teamSize)` : la partie porte désormais son
+  propre nombre d'équipes/joueurs par équipe (plus une constante globale), avec bornage défensif côté
+  serveur (indépendant des bornes déjà imposées par le formulaire, au cas où l'appel viendrait d'ailleurs
+  qu'un jour).
+- Nouvelle section `config.yml` : `bingo.max-team-count`/`max-team-size` (4/4 par défaut — plafond
+  confirmé dans le cahier des charges) et `bingo.default-team-count`/`default-team-size` (2/4).
+- Protocole réseau étendu en conséquence (voir aussi JOURNAL.md de KalBingo) : `BingoNetworkListener`
+  transmet maintenant aussi l'UUID de l'hôte et le `teamCount`/`teamSize` de la partie dans la réponse
+  d'affectation (`KalBingoAssignResponse`), pour que KalBingo puisse les exploiter côté salle d'attente
+  (menu joueur, validation des choix d'équipe).
+- Déployé le 23/09/2026 sur kal-games (7021.mystrator.com) via WinSCP : ancien `KalGames-1.10.1.jar`
+  déplacé (non détruit) dans `/plugins/_removed-kalgames-1.10.1/`, `KalGames-1.10.2.jar` envoyé dans
+  `/plugins/`. **Redémarrage du serveur toujours requis.**
+
+### 1.10.3 — dépôt de l'affectation sur le relais HTTP KaliumRelay
+- Suite à un bug remonté par l'utilisateur : un second joueur qui rejoint une partie Bingo arrivait
+  sur le modèle construit par l'admin au lieu de la salle d'attente, puis se faisait expulser
+  quelques secondes après. Deux causes trouvées et corrigées côté KalBingo (voir son JOURNAL.md,
+  section 0.1.9), plus une limite de fond identifiée : le canal de messagerie BungeeCord/Velocity
+  utilisé par `BingoNetworkListener`/`AssignmentService` exige qu'AU MOINS UN joueur soit connecté
+  sur kal-games pour livrer un message, dans les deux sens — en test à 2 comptes, si l'hôte ET le
+  second joueur se retrouvent tous les deux sur Kixster, kal-games tombe à 0 joueur et la demande
+  ne peut plus être livrée, quel que soit le délai ou le nombre de réessais.
+- L'utilisateur a demandé si charger en continu une zone sur kal-games (sans joueur) résoudrait le
+  problème — expliqué que non, la contrainte est au niveau du protocole (joueur connecté, pas chunk
+  chargé). Proposé plusieurs options via AskUserQuestion ; l'utilisateur a choisi un plugin Velocity
+  qui relaie les messages, confirmé pouvoir ouvrir un port sur l'hébergement Minestrator du proxy, et
+  fourni le port **46199**.
+- Nouveau projet **KaliumRelay** (plugin Velocity séparé, sur le proxy uniquement — voir son propre
+  JOURNAL.md) : petit serveur HTTP autonome, complètement indépendant de toute connexion joueur.
+  `BingoPartyManager.transferToBingo` dépose maintenant l'affectation du joueur sur ce relais
+  (nouvelle méthode `pushAssignment`, appel HTTP asynchrone, non bloquant — échec loggé seulement)
+  juste avant le transfert BungeeCord habituel, qui reste inchangé. KalBingo récupère cette
+  affectation en interrogeant le relais en parallèle du canal BungeeCord existant (voir son
+  JOURNAL.md, section 0.1.10) — le canal BungeeCord reste actif comme filet de sécurité.
+- Nouvelles clés `bingo.relay-url` (`http://7018.mystrator.com:46199`) et `bingo.relay-token` dans
+  `config.yml` — vides ou relais injoignable = fonctionnement inchangé par rapport à 1.10.2 (aucune
+  casse).
+- Déployé le 23/09/2026 sur kal-games (7021.mystrator.com) via WinSCP : ancien `KalGames-1.10.2.jar`
+  déplacé (non détruit) dans `/plugins/_removed-kalgames-1.10.2/`, `KalGames-1.10.3.jar` envoyé dans
+  `/plugins/`. `KaliumRelay-1.0.0.jar` déployé le même jour sur le proxy (`ProxyVelocity`, première
+  installation) et `KalBingo-0.1.10.jar` sur Kixster — voir leurs JOURNAL.md respectifs. **Les TROIS
+  serveurs (kal-games, Kixster, ET le proxy Velocity) doivent être redémarrés** — le proxy est un
+  redémarrage supplémentaire par rapport aux déploiements précédents.
+
+**Correctif du même jour, sans bump de version — `config.yml` déployé jamais mis à jour.** Après ce
+déploiement, l'utilisateur a signalé que le bug persistait exactement à l'identique côté joueur qui
+rejoint. Diagnostic par logs (téléchargés via WinSCP, pas de console) : `com.google.inject.CreationException`
+dans `proxy-latest.log` montrait que KaliumRelay ne démarrait pas du tout sur le proxy (voir son
+JOURNAL.md, section 1.0.1, pour cette partie) — MAIS même en supposant le relais réparé, `kalgames-latest.log`
+ne montrait AUCUNE ligne `[Bingo]`, donc `pushAssignment` ne s'exécutait jamais. Cause : `saveDefaultConfig()`
+(Paper/Bukkit) ne fusionne jamais de nouvelles clés dans un `config.yml` déjà présent sur le disque — le
+fichier réellement déployé sur kal-games datait d'avant l'ajout de la section `bingo:` entière (créé à la
+première installation, jamais régénéré depuis), donc `bingo.relay-url` résolvait au repli code (`""`),
+qui désactive silencieusement le dépôt sur le relais. Une limite de fond, pas spécifique à ce plugin : à
+surveiller pour CHAQUE future clé de config ajoutée ici ou ailleurs dans le workspace. **Corrigé** en
+téléchargeant le `config.yml` réellement en place, en y insérant la section `bingo:` manquante (toutes
+les autres clés déjà présentes/customisées par l'admin conservées telles quelles, notamment
+`hub.use-world-spawn: false` et les coordonnées associées), puis en le ré-uploadant au même chemin via
+WinSCP — pas de nouveau jar, juste le fichier de config corrigé en place.
+
+## 1.10.4 — durée de partie choisie à la création, plafond admin dans Paramètres > Bingo
+
+Demandes explicites de l'utilisateur (23/09/2026, en deux temps) :
+> "il faut ajouter la possibilité de choisir la durée de la partie lorsqu'on la crée sur Kal"
+
+puis, en précision :
+> "Kalgames, le temps par defaut maximum doit être 1h, cette limite doit pouvoir etre changée via les
+> parametres de kalgames. le createur de la partie doit pouvoir réduire le temps mais ne doit pas
+> pouvoir dépasser le temps maximum défini par les opérateurs."
+
+- **`BingoPartyManager.create(host, teamCount, teamSize, Duration duration)`** (nouvelle surcharge) :
+  borne la durée demandée à `[bingo.min-duration-minutes, bingo.max-duration-minutes]` (5-60 min par
+  défaut), exactement comme `teamCount`/`teamSize` sont déjà bornés à `max-team-count`/`max-team-size` —
+  la validation cote SERVEUR (jamais de confiance au client) est ce qui garantit que l'hôte ne peut
+  jamais dépasser le plafond admin, quel que soit ce que le formulaire aurait laissé passer. L'ancienne
+  surcharge à 3 arguments délègue désormais à celle-ci avec `bingo.duration-seconds` comme repli (gardée
+  pour `/bingo create`, la commande texte de test — voir `BingoCommand`, non modifiée).
+- **`PlayerMenus.openBingoCreate()`** : nouveau champ `duration` (minutes) dans le formulaire de création
+  de partie du hub, à côté de `teamCount`/`teamSize` — **pré-rempli avec `bingo.max-duration-minutes`**
+  (le plafond admin), et borné par ce même plafond côté formulaire : l'hôte ne peut donc que RÉDUIRE la
+  valeur affichée, jamais la dépasser (conforme au modèle "plafond unique" clarifié par l'utilisateur —
+  pas de valeur par défaut séparée du plafond).
+- **`AdminMenus.openBingoSettings()`** (nouvel écran admin) : un unique champ numérique
+  `bingo.max-duration-minutes` (borné à `[bingo.min-duration-minutes, 24h]`), sauvegardé directement via
+  `plugin.getConfig().set(...)` + `plugin.saveConfig()` (pas via le système `Minigame`/`SettingSpec`
+  utilisé par les autres mini-jeux : Bingo n'est pas un `Minigame`, voir `BingoPartyManager`). Accessible
+  depuis un nouveau bouton "Bingo" dans `AdminMenus.openHome()` (menu "Paramètres Kal-Games"), au même
+  niveau que "Hub de Kal-Games" — répond directement à la demande "cette limite doit pouvoir etre changée
+  via les parametres de kalgames".
+- **`config.yml`** (section `bingo:`) : `max-duration-minutes` passé de `180` à `60` (1h, la nouvelle
+  valeur par défaut demandée) ; commentaires réécrits pour clarifier que `duration-seconds` ne sert plus
+  QUE de repli pour `/bingo create` (la commande texte), tandis que `max-duration-minutes` est
+  désormais LE réglage admin-facing, modifiable en jeu via Paramètres > Bingo ; `min-duration-minutes`
+  (5 min) reste un plancher technique non exposé (non demandé), pour éviter une partie dégénérément
+  courte.
+- Corrigé au passage : le repli Java codé en dur `plugin.getConfig().getInt("bingo.max-duration-minutes",
+  180)` dans `BingoPartyManager.create()` était resté à `180`, incohérent avec le nouveau défaut `60` du
+  `config.yml` — corrigé à `60` (n'affecte que le cas, très improbable après ce déploiement, où la clé
+  serait totalement absente du fichier).
+
+Côté KalBingo : aucun changement nécessaire pour cette moitié de la demande — la durée choisie ici est
+simplement transmise telle quelle au lancement de la partie (`party.duration()`), comme c'était déjà le
+cas. Voir en revanche le JOURNAL.md de KalBingo (0.1.12) pour la fin de partie automatique (temps écoulé
++ victoire), traitée dans la même session suite à une demande liée de l'utilisateur.
+
+**Déployé le 23/09/2026 via WinSCP** : ancien `KalGames-1.10.3.jar` archivé (non détruit) dans
+`/plugins/_removed-kalgames-1.10.3/`, `KalGames-1.10.4.jar` envoyé dans `/plugins/` sur kal-games.
+`KalBingo-0.1.12.jar` déployé le même jour sur Kixster (voir son JOURNAL.md). **Redémarrage de kal-games
+ET de Kixster requis** (le proxy/KaliumRelay n'a pas changé cette fois).
+
+## 1.10.5
+
+**Liste des parties Bingo encore en salle d'attente, cliquables dans le menu** — demande explicite de
+l'utilisateur : "il faut pouvoir voir les parties qui sont créées et encore en salle d'attente dans le
+menu kalgames de manière à pouvoir la rejoindre facilement". Trois choix confirmés via
+`AskUserQuestion` avant implémentation :
+1. **Fiabilité de la liste** : ajout d'un signal réseau KalBingo → kal-games (recommandé et retenu)
+   plutôt qu'une liste approximative côté kal-games seul.
+2. **Parties pleines** : affichées mais non cliquables (montrent "(complet)"), pas masquées.
+3. **Nombre max affiché** : 6 parties (les plus récemment créées), au-delà les plus anciennes ne
+   s'affichent pas.
+
+**Correctif de fond découvert en creusant le sujet** : `BingoPartyManager.remove(gameId)` existait déjà
+mais n'était JAMAIS appelé — une partie restait indéfiniment dans `byCode`/`byGameId` côté kal-games
+même après son démarrage réel sur Kixster (aucune conséquence visible avant cette fonctionnalité, la
+liste n'existait pas encore, mais aurait rendu n'importe quelle liste de parties "ouvertes" fausse dès
+le premier essai). Corrigé en branchant ce nettoyage sur le nouveau signal ci-dessous.
+
+- **`fr.kalium.games.bingo.BingoPartyManager`** : nouvelle méthode `openParties(int limit)` — les
+  parties encore présentes dans `byGameId` (donc ni démarrées ni annulées), triées de la plus récente
+  à la plus ancienne, limitées à `limit`.
+- **`fr.kalium.games.bingo.BingoNetworkListener`** : gère désormais un nouveau sous-canal
+  `KalBingoPartyClosed` (en plus de `KalBingoAssignRequest` existant) — reçoit juste un `gameId` et
+  appelle `parties.remove(gameId)` (donne enfin un appelant à cette méthode).
+- **`fr.kalium.games.gui.PlayerMenus.openBingoMenu`** : sous les boutons "Créer"/"Rejoindre avec un
+  code" existants, un bouton par partie encore en salle d'attente (nom de l'hôte, format équipes x
+  taille, joueurs actuels/max) - clic direct = rejoint immédiatement (réutilise
+  `BingoPartyManager.join` avec le code de la partie, aucune nouvelle logique de jointure) ; une partie
+  pleine affiche "(complet)" et son clic se contente d'un message, sans inscrire le joueur.
+
+**Côté KalBingo (voir son JOURNAL.md, 0.1.15)** : nouvelle classe `PartyStatusNotifier`, appelée par
+`PartyStarter.start()` et `PartyCanceller.cancel()` juste après avoir retiré la partie de son propre
+`PartyManager` - prévient kal-games via le même mécanisme "Forward" que l'affectation existante
+(`KalBingoAssignRequest`/`Response`), donc pas de nouvelle dépendance réseau (pas besoin du relais HTTP
+ici : le message part toujours d'un joueur réellement connecté à ce moment-là, l'hôte qui vient de
+lancer/annuler).
+
+**Aucune nouvelle clé `config.yml`** — réutilise `bingo.max-party-size` déjà existant (capacité max
+d'une partie, déjà utilisé par `BingoPartyManager.join`).
+
+**Déployé le 24/09/2026 via WinSCP** avec KalBingo 0.1.15 (les deux moitiés vont ensemble, l'une ne
+fonctionne pas sans l'autre) - voir section déploiement plus bas / JOURNAL.md de KalBingo.
+
+## 1.10.6
+
+**Deux correctifs rapportés par l'utilisateur après test de la 1.10.5/0.1.15** :
+
+**1. Capacité affichée/appliquée fausse** : "il faut limiter le nombre de joueur possible dans une
+partie à maximum = nombre d'équipe * nombre de joueurs par équipe. (on a testé avec 2 équipes de 1 et
+la partie marquait 2/16 dans le menu KalGames)". Le code utilisait le plafond GLOBAL
+`bingo.max-party-size` (16 par défaut) au lieu de la configuration choisie par l'hôte pour CETTE
+partie précise.
+- **`fr.kalium.games.bingo.BingoParty`** : nouvelle méthode `maxPlayers()` = `teamCount * teamSize`.
+- **`fr.kalium.games.bingo.BingoPartyManager.join()`** : compare désormais `party.roster().size()` à
+  `party.maxPlayers()` au lieu du plafond global.
+- **`fr.kalium.games.gui.PlayerMenus.bingoPartyButton`** : idem pour l'affichage "actuel/max" et le
+  statut "(complet)" dans la liste du menu Bingo.
+- **`config.yml`** : `bingo.max-party-size` n'est plus lu nulle part - laissé en place (commentaire mis
+  à jour) pour ne pas casser un fichier déjà déployé, peut être supprimé sans risque plus tard.
+
+**2. Joueur qui abandonne puis rejoint se retrouve en salle d'attente fantôme** : "un joueur abandonne
+la partie, ensuite il essaye de rejoindre la partie et ça le remet en salle d'attente. on dirait que
+l'info du démarrage de la partie n'est pas arrivée sur KalGames". Correctif principal côté KalBingo
+(voir son JOURNAL.md, 0.1.16) : un garde-fou refuse désormais de créer une salle d'attente fantôme pour
+un `gameId` déjà actif, quelle que soit la cause exacte de la perte du signal `PartyStatusNotifier`.
+Rien à changer ici côté KalGames pour ce point précis, mais **à surveiller** : si ce symptôme se
+reproduit malgré le correctif KalBingo, vérifier en premier que les DEUX serveurs tournent bien avec
+les dernières versions déployées (une désynchronisation de versions entre kal-games et Kixster
+reproduirait exactement ce symptôme, puisque l'ancienne 1.10.4/0.1.14 ne savaient pas du tout gérer le
+signal `KalBingoPartyClosed`).
+
+**Déployé le 24/09/2026 via WinSCP**, en même temps que KalBingo 0.1.16 - **redémarrage des DEUX
+serveurs requis, en même temps**, comme pour la 1.10.5/0.1.15.
+
+## 1.10.7
+
+**Bug rapporté par l'utilisateur** : "les parties qui sont terminées ne doivent plus apparaître dans
+la liste des parties sur le menu de KalGames".
+
+Cause (détail dans le JOURNAL de KalBingo 0.1.19) : le signal "partie fermée" de KalBingo passait
+uniquement par le canal Forward, qui n'est livré ICI que si au moins un joueur est connecté sur
+kal-games - au démarrage d'une partie, tout le monde est en général sur Kixster, donc il se perdait.
+
+- **`bingo.BingoPartyManager.pollClosedParties()`** (nouveau) : toutes les 5 s (tâche lancée dans
+  `KalGames.onEnable`), pour chaque partie encore listée, lit la clé `party-closed-<gameId>` sur le
+  relais HTTP (même `bingo.relay-url` / `bingo.relay-token` que pour les affectations) ; si elle
+  existe, la partie est retirée de la liste (`remove(gameId)`). Appels asynchrones, jamais sur le
+  thread principal. Rien à configurer, aucun changement côté proxy (KaliumRelay).
+
+À déployer avec KalBingo 0.1.19 (qui publie ce signal sur le relais).
+
+**Déployé le 23/09/2026 via WinSCP** (1.10.6 archivée dans `_removed-kalgames-1.10.6/`), avec KalBingo 0.1.19.
+
+## 1.11.0 — Rush, étape 1 (configuration)
+
+**Demande explicite de l'utilisateur** : nouveau mini-jeu **Rush** (chaque équipe défend un lit ; ressources,
+ponts, équipement, destruction du lit adverse, dernière équipe en vie). Cahier des charges complet donné en
+deux étapes : étape 1 = modèle de mini-jeu configurable (arènes 2 ou 4 équipes, jusqu'à 4 joueurs par équipe,
+toutes les règles dans les Paramètres, choix de l'arène par le joueur) ; étape 2 = objets, PNJ marchands et
+moteur de jeu (voir le message d'origine, recopié dans la section "Rush — cahier des charges" plus bas).
+
+Décisions confirmées via AskUserQuestion :
+- **Une partie publique par arène** : Rush → choix de l'arène → jouer en public (la partie publique ouverte
+  sur cette arène, créée au besoin ; dès qu'elle démarre, une nouvelle s'ouvre) / privée / regarder.
+- **N'importe qui peut casser n'importe quel lit** (y compris le sien : "ramassé").
+- **Monnaies : une zone par base** (2 coins), Bronze / Silver / Gold y apparaissent au hasard aux rythmes
+  indiqués.
+- **"Arènes en couche 300"** : rien à coder — l'utilisateur construit ses arènes vers Y=300 ; les copies sont
+  recollées à la même hauteur, donc le plafond du monde (Y=319) limite déjà les constructions.
+
+Ce qui est livré (1.11.0) :
+- `MinigameType.RUSH` (non jouable pour l'instant : "configuration seule", invisible des joueurs) avec ses
+  réglages : joueurs max par équipe (4), joueurs minimum en public (2), attente avant lancement (30 s), délai
+  de réapparition (3 s), autodestruction des lits (15 min, 0 = jamais), intervalle Bronze/Silver/Gold en ticks
+  (10 / 20 / 60 = 2 par s / 1 par s / 1 toutes les 3 s, par base), casser la carte (non), délai après victoire,
+  points par victoire, arènes préchargées, parties privées max, spectateurs.
+- `model.RushLayout` : équipes (bleue, rouge, jaune, verte), 7 PNJ (Trader, Trader #2, Rusher, Archer, Maçon,
+  Armurier, Secret Trader) et points d'arène : salle d'attente + par base : apparition, lit (pied du lit,
+  regard vers la tête), zone des monnaies (2 coins), un point par PNJ = 11 points par base. Bases bleue et
+  rouge obligatoires ; jaune et verte : toutes les deux complètes (arène à 4 équipes) ou toutes les deux vides
+  (arène à 2 équipes) — vérifié dans `Arena.missing`.
+- `PointSpec.group` (nouveau, optionnel) + `AdminMenus` : les points d'un même groupe sont réunis dans un
+  sous-menu ("Base bleue (x/11)"...) au lieu de ~45 boutons à la suite. Aucun effet sur les autres mini-jeux.
+
+### Rush — cahier des charges (étape 2, à implémenter)
+
+Monnaies : Bronze = brique renommée, Silver = lingot de fer renommé, Gold = lingot d'or renommé.
+PNJ (mêmes échanges pour toutes les équipes, un exemplaire par base, positions dans les paramètres) :
+- TRADER : Bronze x10 → Silver x1 ; Silver x3 → Gold x1 ; Gold x10 → Émeraude x1.
+- TRADER #2 : Bronze x4 → Steak cuit x2 ; Silver x31 + Émeraude x1 → Enclume ; Silver x3 → Pomme dorée ;
+  Émeraude x30 → Lit.
+- RUSHER : Silver x5 → Épée en or Sharpness I ; Silver x10 → Sharpness II ; Silver x15 → Sharpness II +
+  Knockback I ; Émeraude x1 → Sharpness IV ; Émeraude x3 → Sharpness IV + Knockback I ; Silver x10 → TNT ;
+  Gold x2 → Briquet ; Bronze x32 → Coffre.
+- ARCHER : Gold x3 → Arc Power I ; Gold x7 → Power I + Infinity I ; Gold x13 → Power II + Infinity I ;
+  Émeraude x1 → Flèche ; Émeraude x3 → Livre Flame I ; Émeraude x3 → Livre Infinity I.
+- MAÇON : Bronze x1 → Sable rouge x4 ; Bronze x4 → Glowstone x2 ; Bronze x4 → End Stone ; Bronze x4 → Pioche
+  en bois Efficiency I ; Silver x2 → Pioche en pierre Efficiency II ; Gold x1 → Pioche en fer Efficiency III ;
+  Bronze x4 → Verre teinté x2 (couleur de l'équipe).
+- ARMURIER : Bronze x8 → Bottes / Pantalon / Casque en cuir Protection II (couleur de l'équipe) ; Silver x3 /
+  x7 / x12 → Plastron en cotte de mailles Protection I / II / III.
+- SECRET TRADER : Silver x1 → Fiole d'XP ; Émeraude x3 → Carroteur3000 (carotte sur un bâton Knockback II) ;
+  Silver x8 → Boules de neige x16 ; Émeraude x2 → Coffre de l'End ; Gold x3 → Toile d'araignée.
+Règles : parties simultanées publiques ou privées ; à l'arrivée, choix de l'équipe (bleu, rouge, jaune, vert),
+équipe pleine = non rejoignable ; un lit posé dans chaque base ; tout joueur peut définir son point de spawn
+sur n'importe quel lit ; à la mort : spectateur (vol), réapparition après 3 s (réglable, compte à rebours
+visible) si son point de spawn est toujours sur un lit — sinon (lit cassé, ramassé, replacé) pas de
+réapparition ; déconnexion = éliminé ; /hub ou /lobby à tout moment = quitte la partie ; lits autodétruits
+après 15 min (réglable) ; monnaies générées dans la zone de chaque base : Bronze 2/s, Silver 1/s, Gold 1/3 s.
+
+**Déployé le 23/09/2026** (1.10.7 archivée dans `_removed-kalgames-1.10.7/`).
+
+## 1.12.0 — Rush, étape 2 (jeu jouable)
+
+Suite du cahier des charges Rush (voir 1.11.0). Décision supplémentaire via AskUserQuestion : **à la mort,
+tout l'inventaire tombe au sol** (objets, armure, monnaies), le joueur réapparaît les mains vides.
+
+Nouveaux fichiers :
+- `game.RushInstance` — moteur. Salle d'attente (point "stands") avec choix d'équipe (menu ouvert à
+  l'arrivée, équipe pleine = refusée) ; public : lancement automatique dès `min-players` (compte à rebours
+  `gather-seconds`) à condition d'avoir au moins 2 équipes différentes ; privé : lancé par l'hôte. Joueurs sans
+  équipe au lancement → équipes les moins remplies. Au lancement : lit posé dans la base de chaque équipe
+  présente (orientation = regard du point "lit"), 7 PNJ par base présente, inventaire + coffre de l'End vidés,
+  téléportation au point d'apparition, point de réapparition = lit de sa base.
+  Lits : chaque joueur est lié à UN lit précis ; clic droit sur n'importe quel lit = point de réapparition
+  déplacé dessus (lits de décor de la carte compris). Un lit cassé / explosé / ramassé puis reposé = nouveau
+  lit : les points de réapparition liés à l'ancien sont perdus. N'importe qui peut casser n'importe quel lit.
+  Annonce + titre quand un lit de base est détruit. Autodestruction de tous les lits après
+  `bed-destroy-minutes` (avertissement 1 min avant) ; ensuite, plus aucun lit ne peut être posé.
+  Mort : dégâts mortels interceptés (pas d'écran de mort) → inventaire au sol (perdu si chute dans le vide),
+  spectateur en vol à l'endroit de la mort ; réapparition sur son lit après `respawn-seconds` (titre avec
+  compte à rebours) si le lit existe toujours (vérifié à la mort ET à la fin du compte à rebours), sinon
+  éliminé. Mort attribuée au dernier agresseur (10 s) pour les chutes. Déconnexion, /hub, /lobby = éliminé
+  (inventaire lâché). Équipe éliminée quand plus aucun joueur vivant ni en attente de réapparition ; la
+  dernière équipe en jeu gagne (`points-win` à chacun de ses joueurs), puis retour au hub après
+  `end-delay-seconds`.
+  Monnaies : dans la zone de chaque base présente, au hasard entre les 2 coins (hauteur = le plus haut des
+  deux coins), selon `bronze/silver/gold-interval-ticks`.
+  Action bar : équipes (✔/✘ lit de base, joueurs encore en jeu) + temps avant autodestruction des lits.
+- `game.RushItems` — monnaies (Bronze = brique, Silver = lingot de fer, Gold = lingot d'or, renommés) et les 45
+  échanges. Menu d'échange vanilla construit pour chaque acheteur : verre teinté, armure en cuir et lit (Trader
+  #2) à la couleur de SON équipe (vert = lime). Échanges illimités (echanges_PNJ_Rush.txt : "les utilisations
+  déjà effectuées ne sont pas prises en compte").
+- `listener.RushListener` — PNJ (clic → échanges), clic sur lit, pose/casse de lits, TNT (même règle que la
+  casse : blocs posés + lits, ou toute la carte si `break-map`), dégâts mortels.
+
+Modifié : `MinigameType.RUSH` jouable ; `InstanceManager` (création RushInstance, `joinPublicArena` = une
+partie publique par arène, rouverte dès que la précédente démarre ou est pleine ; `spectatable` liste toutes
+les parties publiques en cours) ; `ConnectionListener.onRespawn` (mort non interceptée, ex. /kill → retour en
+spectateur) ; `PlayerMenus` (Rush → liste des arènes "(2/4 équipes)" → partie publique / privée ; menu
+"Choisir mon équipe" ; pas de file d'attente pour Rush) ; `KalGames` (enregistre RushListener).
+
+Décisions prises sans question (faciles à changer) : pas de tir ami entre coéquipiers ; les bases des équipes
+sans joueur restent vides (ni lit, ni PNJ, ni monnaies) ; le coffre de l'End est vidé au lancement et au
+départ (il est commun à tout le serveur) ; échanges non modifiables depuis les Paramètres (seuls les réglages
+listés en 1.11.0 le sont).
+
+À vérifier en jeu en priorité : que les PNJ acceptent bien les monnaies (le menu d'échange vanilla compare
+l'objet exact, nom compris — les monnaies générées et demandées sont fabriquées de la même façon).
+
+**Déployé le 23/09/2026 via WinSCP** (1.11.0 archivée dans `_removed-kalgames-1.11.0/`). Redémarrage de kal-games requis. Non testé en jeu au moment du déploiement.
+
+## 1.12.1 — Rush : carte remise à l'identique, casse libre
+
+**Demandes explicites de l'utilisateur** : "il faudrait que comme pour les autres jeux la map soit vidée et
+réutilisée, donc il faut remplacer tous les blocs qui ne sont plus comme le modèle de la map, y compris les
+blocs d'air" puis "l'option protection casse est inutile. les joueurs peuvent casser des blocs ou en poser mais
+la map doit revenir à son état initial après chaque fin de partie".
+
+- **Remise à l'identique complète** (`TemplateService.reconcile`, appelée par `ArenaPool.release` pour Rush) :
+  jusqu'ici une copie réutilisée n'était remise en état que pour les blocs SUIVIS pendant la partie (posés,
+  cassés, explosés...) ; ce qui échappait au suivi (réactions en chaîne, moitié d'un lit de décor soufflée par la
+  TNT...) restait. Désormais, après chaque partie Rush, TOUTE la zone de l'arène est comparée au modèle — une
+  position absente du modèle doit être de l'air — et chaque bloc différent est remplacé. Lecture par instantané
+  de chunk, étalée sur plusieurs ticks (budget `instances.paste-blocks-per-tick`). La copie n'est proposée à une
+  nouvelle partie qu'une fois la vérification terminée ; le nombre de blocs corrigés est écrit dans la console
+  ("Arène X remise à l'identique du modèle : N bloc(s) corrigé(s)"). Réservé à Rush pour l'instant (les arènes
+  de course peuvent être immenses) — extensible aux autres jeux si demandé. Limite : le contenu des coffres de
+  la carte n'est pas comparé (le modèle ne stocke que les blocs).
+- **Casse libre** : réglage "Casser les blocs de la carte" supprimé pour Rush ; tout bloc de l'arène est
+  cassable à la main et par la TNT (`RushInstance.canBreak` / `explosionMayBreak` : dans les limites de
+  l'arène), **sauf les zones d'apparition des monnaies** (demande explicite : "seule la zone d'apparition des
+  monnaies doit être protégée contre la casse") : blocs entre les deux coins de chaque base, sol juste en
+  dessous compris (`inCurrencyZone`). Le réglage `break-map` du PvP n'est pas concerné.
+- **PNJ impossibles à tuer** (demande explicite) : déjà invulnérables ; en plus, gravité désactivée (ils ne
+  tombent plus si on casse le bloc en dessous, maintenant que la casse est libre) et tout dégât sur un PNJ est
+  annulé (`RushListener.onShopDamage`).
+
+**Déployé le 23/09/2026 via WinSCP** (1.12.0 archivée dans `_removed-kalgames-1.12.0/`). Redémarrage de kal-games requis.
+
+## 1.12.2 — Recapture d'arène : parties en cours préservées
+
+**Demande explicite de l'utilisateur** : "lorsqu'on refait une capture d'arène suite à une modification il
+faut que les arènes d'instances déjà générées se suppriment, sauf si une partie est en cours alors elle devra
+être supprimée à la fin de la partie".
+
+Avant : la capture FERMAIT toutes les parties de l'arène (joueurs renvoyés au hub) puis supprimait les copies
+libres — et ce AVANT la capture elle-même, si bien qu'une pré-génération pouvait recoller l'ancien modèle
+entre-temps.
+- `AdminMenus.capture` : plus aucune partie fermée ; APRÈS une capture réussie, `InstanceManager.
+  retireArenaCopies` supprime (blocs réellement effacés) les copies libres de l'ancien modèle et relance la
+  pré-génération. Si la capture échoue, rien n'est supprimé (l'ancien modèle reste valable).
+- `ArenaPool.release` : à la fin d'une partie dont la copie est d'un ancien modèle, la copie est supprimée avec
+  effacement réel des blocs (auparavant simple déchargement). Idem pour une copie libre périmée trouvée par
+  `acquire`.
+- Une salle d'attente déjà ouverte sur l'ancienne copie (partie pas encore lancée) compte comme une partie en
+  cours : elle se joue sur l'ancienne version, puis sa copie est supprimée.
+- "Supprimer le modèle" et "Supprimer l'arène" ferment toujours les parties (inchangé, pas demandé).
+
+**Déployé le 23/09/2026 via WinSCP** (1.12.1 archivée dans `_removed-kalgames-1.12.1/`), avec KaliumMenu 1.5.0.
+
+## 1.12.3 — Correctif : serveur arrêté pendant une capture d'arène
+
+**Demande explicite de l'utilisateur** : "le serveur crash quand on fais des capture de zone (on a tenté de
+mettre à jour le parkour) fais en sorte que le processus soit plus lent si nécessaire afin d'éviter que le
+serveur crash".
+
+**Cause (journaux kal-games du 23/09, 18:33 et 18:43)** : arrêt par le watchdog de Paper (serveur bloqué plus de
+10 s). La capture elle-même se terminait ; c'est l'étape suivante, ajoutée en 1.12.2
+(`retireArenaCopies` → `ArenaPool.purgeArena` → `TemplateService.clearArea`), qui posait d'un coup un ticket sur
+les 96 × 96 = 9 216 chunks de chaque emplacement à effacer. `addPluginChunkTicket` charge (et génère) chaque chunk
+de façon SYNCHRONE : des dizaines de milliers de chargements dans un seul tick.
+
+Changements (tous dans `TemplateService`) :
+- **Effacement d'une ancienne copie** (`clearArea`) : file d'attente, une copie à la fois. Chaque chunk est
+  demandé en arrière-plan SANS génération (`getChunkAtAsync(x, z, false)` : un chunk jamais généré n'a rien à
+  effacer), 16 à la fois ; il est vidé puis relâché (sauvegardé vide). Budget : `instances.wipe-blocks-per-tick`
+  (20 000 par défaut, la moitié du collage). Une ligne dans la console à la fin de chaque effacement.
+- **Collage d'une copie** (`paste`) : les chunks de l'arène ne sont plus chargés de façon synchrone au départ ;
+  ils sont chargés en arrière-plan (16 à la fois) avant le collage. Chaque chunk de l'arène est vidé avant le
+  collage (quasi gratuit s'il est déjà vide) : un reste d'ancienne copie sur le disque ne laisse plus de blocs.
+  `release` retire les tickets de tout l'emplacement (un collage interrompu peut en avoir posé hors de l'arène).
+- **Capture** : chunks chargés en arrière-plan (8 à la fois, jamais générés), lus dans une photo du chunk
+  (`ChunkSnapshot`), sections vides sautées, palette mise en cache par état de bloc. Le rythme est un nombre de
+  blocs lus par tick, avec reprise au milieu d'un chunk : nouveau réglage `arenas.capture-blocks-per-tick`
+  (30 000 par défaut), qui REMPLACE `arenas.capture-chunks-per-tick` (ignoré désormais). Progression dans la
+  console toutes les 10 s.
+- `clearChunk` : lecture dans la photo du chunk, écriture seulement des blocs non vides.
+
+Les nouvelles clés ont une valeur par défaut dans le code : inutile de modifier le config.yml déployé.
+
+## 1.12.4 — jeton du relais retiré du config.yml fourni (24/09/2026)
+
+**Demande de LeKiwi06** : ne plus jamais publier le jeton du relais dans le dépôt public (voir
+`KaliumRelay/JOURNAL.md`, 1.1.1, et `REGLES.md`, section 2).
+
+- `config.yml` fourni avec le plugin : `bingo.relay-token: ""` (au lieu de l'ancien jeton fixe) et commentaire
+  « à renseigner uniquement dans le config.yml du serveur ». Aucun changement de code.
+- Le `config.yml` déployé sur kal-games n'est pas concerné (le plugin ne réécrit jamais un fichier existant) : il
+  contient déjà le nouveau jeton, mis à la main le 24/09/2026.
+
+Aussi dans cette version (même jour, demande de LeKiwi06) : commentaires obsolètes corrigés (la commande
+`/bingo` n'est plus un « placeholder de test » : le menu Bingo du hub existe) et description de `/bingo` dans
+`plugin.yml` ; titre « État actuel » en tête de ce journal renommé en « État au 22/09/2026 ». Aucun
+changement de comportement.
+
+À déployer avec KaliumRelay 1.1.1 et KalBingo 0.1.23 - pas urgent. **Statut : compilé, non déployé.**
+
+## 1.13.0 — le Bingo sort de KalGames (plugin KG_Bingo), menus ouverts aux autres plugins (24/09/2026)
+
+**Demande de LeKiwi06** : appliquer la règle « un plugin = un rôle » (`REGLES.md`, section 2) au Bingo : « il faut
+donc isoler KG_bingo (tout ce que kal-games doit gérer pour le bingo) de kal_games ». Étape A d'un découpage en
+deux étapes (étape B : renommer KalBingo en KG_BingoGame). Choix validé : une « prise » générique plutôt qu'un
+bouton Bingo écrit en dur dans KalGames.
+
+- **Retiré** (déplacé tel quel dans le nouveau plugin `KG_Bingo`, voir son JOURNAL) : package
+  `fr.kalium.games.bingo` (`BingoCommand`, `BingoNetworkListener`, `BingoParty`, `BingoPartyManager`), menus Bingo de
+  `PlayerMenus` (bouton du hub, création, liste des parties, jointure), écran Paramètres > Bingo d'`AdminMenus`,
+  section `bingo:` de `config.yml`, commande `/bingo` de `plugin.yml`, canal BungeeCord entrant (ne servait qu'au
+  Bingo), tâche `pollClosedParties`.
+- **Ajouté** : `gui.MenuEntry` + `PlayerMenus.addGameEntry/removeGameEntry` (boutons du menu Mini-jeux, après les
+  mini-jeux de KalGames) et `AdminMenus.addSettingsEntry/removeSettingsEntry` (accueil des Paramètres, après « Hub de
+  Kal-Games », clic réservé aux modérateurs). Ces prises suivront le menu quand il sortira dans `KG_Menu` (prévu).
+- Comportement pour les joueurs inchangé si KG_Bingo est installé (même bouton, même place, mêmes textes). Sans
+  KG_Bingo, le bouton Bingo n'apparaît simplement plus.
+- Vérifié : les autres classes compilées sont identiques à 1.12.3 (seules `KalGames`, `PlayerMenus`, `AdminMenus`
+  changent, `MenuEntry` est nouvelle). Inclut les changements de 1.12.4 (jamais déployée).
+
+**Déploiement** : obligatoirement **en même temps que KG_Bingo 1.0.0** (sinon le Bingo disparaît du hub). Le
+`config.yml` déployé sur kal-games garde sa section `bingo:` : sans effet désormais, à recopier dans
+`plugins/KG_Bingo/config.yml` (jeton compris) avant le redémarrage. **Statut : déployé sur kal-games le 24/09/2026 avec KG_Bingo 1.1.0, non testé en jeu.**
+
+## 1.14.0 — classements sortis dans KG_ScoreBoards (24/09/2026)
+
+**Demande de LeKiwi06** : découpage de KalGames, les classements deviennent le plugin autonome **KG_ScoreBoards**
+(voir son JOURNAL). Aucun changement pour les joueurs.
+- Retirés de KalGames : `StatsService`, `BoardService`, `RankingMenus` (déplacés). KalGames dépend désormais de
+  KG_ScoreBoards (`depend:`) ; il lui fournit ses mini-jeux comme classements (nom, type parcours / course de bateau),
+  sa règle « modérateur » (`kalgames.admin`) et le monde des parties (pas de panneau dedans).
+- Inchangés : `ScoreBridge` (attribution des points, commandes du datapack, `stats.exclude-operators`), limite des
+  parties privées classées (`stats.count-private-games`, `stats.private-daily-limit`), menus des mini-jeux (le bouton
+  Classements ouvre les menus de KG_ScoreBoards, « Retour » revient au mini-jeu).
+- Les clés `stats.timezone` et `boards.scale` sont désormais lues dans la config de KG_ScoreBoards.
+
+**Déploiement** : obligatoirement avec KG_ScoreBoards 1.0.0 (migration des données dans son JOURNAL).
+KG_Bingo 1.1.0 fonctionne sans changement. **Statut : déployé sur kal-games le 24/09/2026, démarrage vérifié.**
+
+## 1.15.0 — interfaces dans le catalogue de KLM_Menu (24/09/2026)
+
+- Déclare **« Hub Kal-Games »** (joueurs : menu du hub) et **« Paramètres Kal-Games »** (admins : mini-jeux,
+  arènes, kits, hub) dans le catalogue de KLM_Menu ; fournit la liste de ses mini-jeux à KG_ScoreBoards (ils
+  apparaissent dans « Classements »). Dépend de KLM_Menu. Rien d'autre ne change.
+**Déploiement** : avec KLM_Menu 2.0.0 et KG_ScoreBoards 1.1.0. **Statut : déployé le 24/09/2026, non testé en jeu.**
+
+## 1.15.1 — correctif : boussole du hub après le renommage de KaliumMenu (24/09/2026)
+
+**Bug vu par LeKiwi06** : plus de boussole dans le hub de kal-games après le déploiement de KLM_Menu 2.0.0. Cause
+(erreur de Claude : les mentions de l'ancien nom n'avaient pas été recherchées dans tout le dépôt avant le
+renommage) : KalGames redonne la boussole au hub (après avoir vidé l'inventaire) seulement si un plugin nommé
+« KaliumMenu » est actif. Corrigé : `KLM_Menu` (ou l'ancien nom) ; l'outil « créer un kit depuis mon inventaire »
+écarte aussi les boussoles à la nouvelle étiquette (`klm_menu:menu_compass`). `softdepend` : KaliumMenu retiré
+(KLM_Menu est déjà dans `depend`). **Statut : déployé sur kal-games le 24/09/2026 (redémarrage à faire).**
+
+## 1.16.0 — menus du hub dans KG_Menu (24/09/2026)
+
+**Demande de LeKiwi06** : menu du serveur kal-games séparé (KG_Menu), boussole gérée par KLM_Menu. Les protections
+de zone du hub restent dans KalGames (« on s'en occupera plus tard »).
+- Retirés : le cadre de l'accueil joueur (liste des jeux) et de l'accueil Paramètres (prises `MenuEntry` supprimées),
+  l'objet « Mini-jeux » du hub (dans KG_Menu ; les anciens encore en inventaire ouvrent KG_Menu).
+- KalGames fournit à KG_Menu : ses mini-jeux (même contenu qu'avant), « Mini-jeux Kal-Games » dans Paramètres (son
+  ancien accueil admin : mini-jeux, arènes, kits, hub, parties en cours, recharger ; titre « Mini-jeux Kal-Games :
+  paramètres » ; son bouton « Retour » ramène aux Paramètres de KG_Menu) et le menu de la partie en cours.
+- Au hub : objet du hub donné par KG_Menu, boussole par KLM_Menu (`giveNavigation`) - plus de commande console.
+- N'inscrit plus rien directement dans KLM_Menu (c'est KG_Menu qui y apparaît). `items.games` retiré de la config
+  (voir `hub-item` dans celle de KG_Menu). Dépend de KG_Menu.
+**Déploiement** : avec KG_Menu 1.0.0, KLM_Menu 2.1.0, KG_Bingo 1.3.0, KG_ScoreBoards 1.2.0. **Statut : déployé sur
+Kal-Games (7001) le 24/09/2026 par LeKiwi06 (anciens jars et configs dans les `_removed-…` de chaque plugin), testé et
+confirmé par LeKiwi06 le 24/09/2026** : menus du hub, course de bateau (grille, menu de la partie), Parkour,
+classements, Java et Bedrock. Constaté : les joueurs Bedrock accélèrent plus vite et gardent mieux leur vitesse en
+virage (voir `KG_BoatRace/CAHIER_DES_CHARGES.md`).
+
+## 1.17.0 — types de mini-jeux ouverts aux autres plugins, la course de bateau sort dans KG_BoatRace (24/09/2026)
+
+**Demande de LeKiwi06** : sortir la course de bateau de KalGames dans son propre plugin (KG_BoatRace), étape 0 de
+`KG_BoatRace/CAHIER_DES_CHARGES.md`, dans le cadre de l'architecture cible (`ARCHITECTURE_CIBLE.md`).
+- `MinigameType` n'est plus une énumération fermée mais un **registre** : un plugin de jeu séparé enregistre son type
+  (réglages, points d'arène, **moteur**, genre de classement, options de création de partie privée, préchargement
+  autorisé ou non) avec `MinigameType.register(...)`. Les types restants dans KalGames : PvP Kit, Parcours, Rush,
+  Hunger Games, Manhunt, Build Battle.
+- **BOAT_RACE retiré de KalGames** (enregistré par KG_BoatRace). Les mini-jeux d'un type pas encore enregistré au
+  démarrage sont **gardés de côté** (réécrits à l'identique dans `minigames.yml`, jamais perdus) puis rattachés dès que
+  le type est enregistré (journal : « Mini-jeu <id> rattaché au type BOAT_RACE »).
+- Crochets génériques dans `GameInstance` (`racing`, `useCheckpointItem`, `releaseHold`) à la place des tests
+  `instanceof RaceInstance` du hub, des écouteurs et d'`InstanceManager`. Création de partie : moteur fourni par le
+  type. Classements : genre donné par le type. Menu de création de partie privée : options déclarées par le type
+  (nombre de tours de la course). Préchargement des arènes : autorisé par le type (jamais pour la course de bateau).
+- `RaceInstance` ne sert plus qu'au Parcours ; sa partie « bateau » est inactive et disparaîtra à la sortie du Parcours
+  (KG_Parkour).
+**Déploiement** : **avec KG_BoatRace 1.0.0** (sinon la course de bateau n'est plus jouable : ses mini-jeux restent
+gardés de côté, sans perte). Aucune clé de config nouvelle. **Statut : déployé sur Kal-Games (7001) le 24/09/2026 à 19 h 47 avec KG_BoatRace 1.0.0 (1.16.0 et copies de config.yml, minigames.yml, arenas.yml dans `_removed-kalgames-1.16.0/`), testé et confirmé par LeKiwi06 le 24/09/2026 (course de bateau, journal de démarrage : mini-jeu boatrace rattaché).**
+
+## 1.18.0 — éditeur de listes de points (checkpoints...) et réglages par point (24/09/2026)
+
+**Demande de LeKiwi06** (cahiers des charges KG_BoatRace / KG_Parkour) : pouvoir poser soi-même plus de checkpoints
+avec une vraie interface, et régler chaque checkpoint (temps ajouté, difficulté, paliers : Parcours).
+- **Éditeur de liste** (Paramètres > Arènes > une arène > une liste de points, ex. Points de contrôle, Grille de
+  départ) : « Ajouter à la fin (ma position) », un bouton par point (n°, position, ⚙ s'il a des réglages), pages de
+  18 points (plus de limite d'affichage à 24), « Tout effacer » avec confirmation.
+- **Fiche d'un point** : Y aller, Remplacer par ma position, **Insérer un point AVANT** (les suivants sont décalés),
+  Point précédent / suivant, **Supprimer ce point** (confirmation, les suivants sont renumérotés), Réglages.
+- **Réglages par point** (`PointSpec.withPointSettings`) : déclarés par le type de jeu (aucun pour l'instant ; le
+  Parcours les utilisera), enregistrés dans `arenas.yml` sous `point-settings.<liste>` (un dictionnaire par point,
+  dans l'ordre), et **déplacés avec leur point** lors d'une insertion ou d'une suppression.
+**Déploiement** : avec KG_BoatRace 1.1.0 (KG_BoatRace 1.0.0 reste compatible). **Statut : déployé sur Kal-Games le 24/09/2026 à 20 h 07 (1.17.0 et arenas.yml dans `_removed-kalgames-1.17.0/`), testé et confirmé par LeKiwi06 le 24/09/2026 : 7 checkpoints posés avec l'éditeur sur la course, compteur OK.**
+
+## 1.19.0 — plus de limite de parties privées ; chaque attribution de points enregistrée (25/09/2026)
+
+**Signalé par LeKiwi06** : « sur la course de bateau les points ne sont pas comptabilisés » (.PatientLime2170 : record
+battu et points non pris en compte). Cause : la limite de **5 parties privées classées par jour et par jeu**
+(`stats.private-daily-limit`), dont la suppression avait été décidée le 24/09/2026 mais pas encore faite : à partir
+de la 6e partie privée de la journée, ni points ni records ne comptaient.
+- **Limite supprimée** pour tous les jeux (ancienne clé ignorée) : toute partie classée compte, publique ou privée,
+  solo compris. Seuls les opérateurs restent exclus (`stats.exclude-operators`).
+- **Demande de LeKiwi06** : pouvoir vérifier les parties des 7 derniers jours. Chaque match reçoit un identifiant
+  (`matchId`) et **chaque attribution** de points (PvP Kit, Parcours, Rush) et chaque temps de parcours est
+  enregistrée dans le journal de KG_ScoreBoards (`points` / `time`), **comptée ou non**, avec la raison
+  (`operateur`, `partie-non-classee`). Les jeux appellent toujours `ScoreBridge.award(partie, joueur, points)`.
+**Déploiement** : avec KG_ScoreBoards 1.5.0 (commande de vérification). **Statut : déployé le 25/09/2026 à 20 h 37, testé et confirmé par LeKiwi06 le 25/09/2026.**
+
+## 1.19.1 — Parcours : orientation de la caméra gardée aux points de contrôle (25/09/2026)
+
+**Signalé par LeKiwi06** : « les cp nous font spawn dans le mauvais sens parfois, enregistre l'angle de caméra du
+joueur quand il les passe ». Le retour au point de contrôle reprenait l'orientation enregistrée avec l'arène.
+- En passant un point de contrôle (ou la ligne d'arrivée entre deux tours), le point de retour prend l'orientation
+  (yaw et pitch) de la caméra du joueur à ce moment. Vaut pour toutes les courses de RaceInstance (Parcours et
+  courses de bateaux de KalGames). Le départ garde l'orientation de l'arène.
+- Correctif mis dans KalGames en attendant le futur KG_Parkour (demande de LeKiwi06).
+**Déploiement** : seul, sur kal-games, le 25/09/2026 à 21 h 31 (`_removed-kalgames-1.19.0`). **Statut : déployé,
+testé et confirmé par LeKiwi06 le 25/09/2026 (« tout est bon »).**
+
+## 1.20.0 — le Parcours sort dans KG_Parkour (26/09/2026)
+
+**Demande de LeKiwi06** : « isoler KG_Parkour du reste en suivant le cahier des charges » (`KG_Parkour/CAHIER_DES_CHARGES.md`),
+comme la course de bateau en 1.17.0.
+- **PARKOUR retiré de KalGames** (enregistré par KG_Parkour 1.0.0) ; `RaceInstance` supprimé (plus aucun jeu ne
+  l'utilisait). Les mini-jeux Parcours sont gardés de côté au démarrage puis rattachés dès que KG_Parkour enregistre
+  le type (mécanisme de la 1.17.0, rien n'est perdu).
+- Nouveaux crochets génériques à la place des tests « Parcours » des menus : `MinigameType.CreateToggle` (case à
+  cocher déclarée par le type à la création d'une partie privée : le « Mode entraînement » du Parcours) ;
+  `GameInstance.menuInfo` / `menuActions` (lignes et boutons fournis par le jeu dans le menu de la partie :
+  « Mode entraînement… », « Recommencer depuis le départ »).
+- Menu admin « Nouveau mini-jeu » : type proposé par défaut = PvP Kit (c'était Parcours).
+- Textes inchangés (`race.*`, `game.body-training`, `game.training-restart`, `menu.create-training` n'est plus utilisé :
+  le libellé de la case vient de KG_Parkour).
+**Déploiement** : **avec KG_Parkour 1.0.0** (sinon le Parcours n'est plus jouable : ses mini-jeux restent gardés de
+côté, sans perte). KG_BoatRace 1.4.1, KG_Bingo, KG_Menu, KG_ScoreBoards recompilés sans changement. Aucune clé de config
+nouvelle. Déployé sur Kal-Games (7001) le 26/09/2026 à 4 h 41 avec KG_Parkour 1.0.0 (1.19.1 et copies de config.yml,
+minigames.yml, arenas.yml dans `_removed-kalgames-1.19.1/`). Anciens dossiers `_removed-kalgames-…` (1.9.5 à
+1.18.0) supprimés le 26/09/2026 par LeKiwi06 (règle des 3 versions). **Statut : testé et confirmé par LeKiwi06 le 26/09/2026.**
+
+## 1.21.0 — paramètres par jeu, boutons obsolètes retirés (28/09/2026)
+
+**Demande de LeKiwi06 (28/09/2026)** : dans « Mini-jeux Kal-Games », « un bouton mini-jeux (obsolète maintenant que les
+jeux se déclarent d'eux-mêmes) ; le bouton kit, qui n'a rien à faire perdu ici ; le bouton arènes est utile mais mal
+organisé, il faudrait une catégorie par jeu puis chaque jeu a sa liste de maps, au lieu de devoir lire l'entre
+parenthèses et que tout soit mélangé ; hub de Kal-Games, obsolète depuis KLM_Portal » ; « tu vas enlever tout ce qui est
+obsolète ».
+- **Plus d'accueil « Mini-jeux Kal-Games : paramètres »** : chaque mini-jeu est un bouton de « Informations >
+  Paramètres » (KLM_Menu 2.4.0, par KG_Menu 1.1.0) qui ouvre directement sa page : activé / publiques / privées, nom et
+  description, réglages, **ses arènes (maps) seulement**, kits (PvP Kit). Un bouton « Parties en cours » en plus (avec
+  l'état des emplacements d'arène et « Recharger la configuration », repris de l'ancien accueil).
+- **Retirés** : liste « Mini-jeux » et « + Nouveau mini-jeu » (chaque type de jeu jouable enregistré reçoit
+  automatiquement son mini-jeu au démarrage s'il n'en a pas, message dans la console), liste de toutes les arènes
+  mélangées, bouton « Kits » de l'accueil (les kits se gèrent depuis la page du PvP Kit > Kits du mini-jeu > Gérer les
+  kits), page « Hub de Kal-Games » (le point de retour après une partie reste réglé dans `config.yml`, section `hub`),
+  « Supprimer le mini-jeu » (un mini-jeu par jeu) et « Classements » dans la page d'un jeu (la modération est dans le
+  classement lui-même, KG_ScoreBoards 1.6.0).
+- **Emplacement « Build Battle » retiré** (sans moteur ; le jeu est KG_BuildBattle / KV_BuildBattle). Un mini-jeu de
+  ce type déjà créé reste gardé de côté dans `minigames.yml` (mécanisme de la 1.17.0), jamais perdu.
+- Nombre de joueurs de chaque mini-jeu fourni à KG_Menu (affiché sur le bouton du jeu).
+- Menus lisibles sur Bedrock (couleurs trop claires assombries, `BedrockColors` de KLM_Menu 2.4.0).
+- Le comparateur « Informations » n'est jamais copié dans un kit créé depuis l'inventaire (comme la boussole).
+- `/menu on | off` (KLM_Menu 2.4.0) refusé pendant une partie, dans les gradins ou en spectateur.
+- `/kalgames admin` ouvre « Informations > Paramètres ». Hunger Games et Manhunt (configuration seule) : pas de bouton
+  tant qu'aucun mini-jeu de ce type n'existe (ils ne se créent plus à la main).
+
+**Déploiement** : avec KLM_Menu 2.4.0 et KG_Menu 1.1.0 (obligatoires), KG_ScoreBoards 1.6.0, KG_Bingo 1.6.0,
+KG_BuildBattle 0.2.0. Aucune clé de config nouvelle. **Statut : déployé le 28/09/2026 à 3 h 40 (ancien jar dans `_removed-…`), non testé en jeu.**
+
+## 1.22.0 — le PvP Kit sort dans KG_PvpKit (28/09/2026)
+
+**Demande de LeKiwi06** : « créer le plugin de PvP Kit, en sortant le code de KalGames » (kits compris ; voir
+`KG_PvpKit/JOURNAL.md`).
+- **PVP_KIT retiré de KalGames** (enregistré par KG_PvpKit 1.0.0) ; `PvpInstance`, `Kit`, `KitLibrary`, menus du vote,
+  des équipes et des kits supprimés (repris dans KG_PvpKit). Le mini-jeu PvP Kit est gardé de côté au démarrage puis
+  rattaché dès que KG_PvpKit enregistre le type (mécanisme de la 1.17.0). La liste des kits proposés reste enregistrée
+  dans `minigames.yml` (`Minigame.kits()`).
+- Plus de PvP Kit créé au tout premier démarrage (fichiers absents) ; section `kits` (PlayerKits2) retirée du
+  `config.yml` fourni (ignorée si présente sur le serveur). `kits.yml` de KalGames n'est plus lu (KG_PvpKit le recopie).
+- Nouveaux crochets génériques : `MinigameType.CreateForm` (formulaire de partie privée fourni par le jeu),
+  `AdminAction` / `adminInfo` (boutons et lignes du jeu dans sa page de paramètres), `GameInstance.onRespawned`
+  (réapparition), `GameInstance.openVote` (`/kalgames vote`).
+- Page des paramètres d'un jeu : l'info-bulle ne mentionne plus « , kits ».
+- Non retiré (pas demandé) : le blocage de `/kit` et `/kits` pour les joueurs (`HubListener`), sans effet une fois
+  PlayerKits2 retiré.
+**Déploiement** : **avec KG_PvpKit 1.0.0** (obligatoire). KG_BoatRace, KG_Parkour recompilés sans changement. Aucune
+clé de config nouvelle. Attention : 1.21.0 n'est pas encore testée en jeu (on empile sur une version non testée, à la
+demande de LeKiwi06). **Déployé sur Kal-Games (7001) le 28/09/2026 à 21 h 44 avec KG_PvpKit 1.0.0** (1.21.0 et copies de config.yml, minigames.yml, arenas.yml, kits.yml dans `_removed-kalgames-1.21.0/` ; copies aussi dans ``Téléchargementskalgames-1.21.0-config`` du PC de LeKiwi06, la copie à distance n'étant pas acceptée par le serveur). Supprimables par l'humain (règle des 3 versions) : `_removed-kalgames-1.19.0/` et `_removed-kalgames-1.19.1/`. **Statut : non testé en jeu.**
+
+## 1.22.1 - aucun texte qui défile dans les menus (01/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (voir KLM_Menu 2.5.0) : la copie de `Gui` de KalGames (menus de KalGames, KG_Bingo, KG_PvpKit)
+ajuste ses boutons et ses champs avec `Lisible` de KLM_Menu 2.5.0 avant de les afficher (ex. création d'une partie de
+Bingo : « Mode de jeu: Bingos (lignes, colonnes, diagonales) avec chrono » dépassait les 260 pixels du champ).
+Aucun autre changement.
+
+**Déployé le 01/10/2026 à 23:42 (LeKiwi06) : KLM_Menu 2.5.0 sur les 6 serveurs Paper (2.4.0 dans
+`_removed-klm_menu-2.4.0/` sur lobby, Kal-Games, Serveur Jeux, Kanvas ; 2.4.1 dans `_removed-klm_menu-2.4.1/` sur
+Kixster et Event), KalGames 1.22.1 (`_removed-kalgames-1.22.0/`), KG_BingoGame 0.8.4 (`_removed-kg_bingogame-0.8.3/`),
+KS_Economy 1.0.3 (`_removed-ks_economy-1.0.2/`) ; actifs après redémarrage de chaque serveur. Statut : **testé et confirmé par LeKiwi06 le 02/10/2026** (menus : plus aucun texte qui défile).**
+
+## 1.22.2 - réglages : nom court dans la jauge, explication au-dessus (02/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (02/10/2026) : dans les réglages des jeux pour les opérateurs, les jauges étaient très longues
+(nom et explication dans la jauge, élargie par KLM_Menu 2.5.0) ; Minecraft ne permettant du texte qu'en haut d'une
+fenêtre, « écrit des textes plus courts dans les champs de jauge et boutons ». Mesure de tous les textes (police de
+Minecraft) : chaque champ et bouton tient maintenant dans sa largeur normale (260 / 240 pixels).
+- Réglages d'un mini-jeu et réglages d'un point (menus des opérateurs) : chaque champ n'affiche plus que le nom du
+  réglage ; les explications sont écrites en texte en haut du menu (« Nom : explication »).
+- Noms raccourcis (le détail passe dans l'explication) : « Attente avant lancement (s) », « Bronze / Silver / Gold :
+  ticks par objet », « Arènes préchargées ».
+
+**Déployé sur Kal-Games le 02/10/2026 à 17:49 (LeKiwi06 ; 1.22.1 dans `_removed-kalgames-1.22.1/`), actif après redémarrage.
+Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**
+
+## 1.23.0 - nombre de joueurs possibles au survol des jeux (06/10/2026, Maxster33)
+
+**Demande de Maxster33** : « dans le menu Kal-Games, quand on survole un jeu avec la souris, il faut donner l'info du
+nombre de joueurs possibles, exemple 1 à 16 pour le Bingo ou 4 à 8 pour les Piliers de la Fortune ». Accord de LeKiwi06
+pour réserver KalGames, KG_PvpKit, KG_Bingo et KG_BuildBattle en même temps (au-delà de la limite de 2).
+
+- Au survol d'un jeu de KalGames dans le menu de Kal-Games : ligne « Joueurs : 4 à 8 » (« Joueurs : 2 » si le minimum et
+  le maximum sont égaux), sous la description. Textes : `menu.player-range`, `menu.player-range-one`.
+- `MinigameType.playerRange(...)` : chaque jeu peut déclarer sa plage {minimum, maximum} (avec les arènes utilisables du
+  mini-jeu). Par défaut : ses réglages « Joueurs minimum » / « Joueurs maximum » (`min-players`, `max-players`) s'il a
+  les deux : Course de bateau, Parcours, Hide and Seek, Piliers de la Fortune. Rush : 2 à taille des équipes x le plus
+  grand nombre de bases des arènes. PvP Kit : déclaré par KG_PvpKit 1.1.0. Pong (pas de réglage) : rien d'affiché tant
+  que KG_Pong ne déclare pas sa plage (`.playerRange((m, a) -> new int[]{2, 2})`).
+- Ajout seulement : les jeux compilés contre 1.22.2 continuent de fonctionner (recompilés pour vérifier : KG_BoatRace,
+  KG_Parkour, KG_HideAndSeek, KG_Pong, KG_PiliersFortune). **À déployer avec KG_PvpKit 1.1.0** (qui exige 1.23.0).
+
+Limite : pour la Course de bateau et le Parcours, le minimum affiché est le réglage « Joueurs minimum » (parties
+publiques).
+
+**Déployé sur Kal-Games le 06/10/2026 à 13:55 (Maxster33 ; 1.22.2 dans `_removed-kalgames-1.22.2/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.24.0 - objet « Rejouer » à la fin d'une partie (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « pour tous les mini-jeux : faire un bouton à la fin de la partie pour relancer une partie
+avec les mêmes paramètres » ; « il faut proposer ça aux joueurs pendant 30 secondes à la fin d'une partie, il faut aussi
+le proposer aux joueurs qui étaient en train de regarder la partie en spectateur ». Réponses du 09/10/2026 : objet dans
+la barre ; partie privée : le premier qui clique la recrée ; un spectateur choisit entre jouer et regarder. Accord
+explicite de LeKiwi06 pour empiler sur la 1.23.0 (non testée en jeu).
+
+- À la fin d'un match (`GameInstance.endMatch`, donc les 7 jeux du moteur : PvP Kit, Parcours, Course de bateau, Hide
+  and Seek, Piliers de la Fortune, Pong, Rush, sans rien changer dans leurs plugins), les joueurs et les spectateurs
+  renvoyés au hub reçoivent l'objet **« Rejouer »** (totem, case 7 de la barre) pendant **30 s**.
+- **Partie publique** : clic = retour dans la file publique du même jeu (Rush : même arène si elle existe encore).
+- **Partie privée** : le premier qui clique recrée la partie (même mini-jeu, même arène, mêmes réglages, même choix
+  « listée ») et en devient l'hôte ; l'objet des autres devient **« Rejoindre la partie de X »** (message dans le
+  tchat) ; clic = entrée dans cette partie. L'hôte la lance comme d'habitude depuis le menu de la partie.
+- **Spectateur** de la partie précédente : clic = menu « Jouer » / « Regarder » (« Regarder » grisé tant qu'il n'y a
+  rien à regarder).
+- Pas d'objet si la partie est fermée autrement que par une fin de match (modérateur, salle vide, rechargement), ni
+  pour un joueur parti avant la fin. Les refus habituels s'appliquent au clic (parties privées au maximum, partie
+  pleine, mini-jeu désactivé) : le motif est affiché et l'objet reste.
+- L'objet est verrouillé comme les autres objets du hub ; il disparaît après usage, à l'entrée dans une partie, à la
+  déconnexion ou au bout du délai. Il est donné même avec `/menu off`.
+- Nouveau : `ReplayService` (`KalGames.replay()`), avec l'interface publique `ReplayService.Replay` et `give(...)` pour
+  les jeux qui se terminent sur un autre serveur (**KG_BuildBattle 0.4.0**).
+- **Nouvelles clés de `config.yml`** (valeurs par défaut dans le code ; à ajouter à la main sur le serveur pour les
+  changer) : `replay.enabled` (true), `replay.seconds` (30), `replay.slot` (6), `replay.material`
+  (TOTEM_OF_UNDYING). Textes : `replay.*`, `item.replay.*`.
+
+Limites : si l'arène d'origine n'est plus utilisable, une autre est tirée au hasard ; les 30 s ne sont pas prolongées
+quand quelqu'un a relancé la partie (ensuite : liste des parties ou code).
+
+**À déployer avec KG_BuildBattle 0.4.0** (qui exige 1.24.0). **Compilé le 09/10/2026. Statut : non testé en jeu.**
+
+## 1.25.0 - groupes de jeu de KLM_Contacts : le groupe entre en partie avec son chef (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « code l'étape 3 sans attendre le test » (étape 3 du cahier de KLM_Contacts : le groupe de jeu
+entre ensemble dans une partie, « Inviter dans ma partie », le groupe suit son chef quand il clique sur « Rejouer »).
+Empilé sur la 1.24.0 non testée : accord explicite.
+
+- Nouveau `ContactsLink` (chargé seulement si KLM_Contacts est installé : `softdepend`) : les jeux du moteur se
+  déclarent à KLM_Contacts (`JeuDeGroupe`, identifiant `kalgames`).
+- **Chaque entrée d'un joueur dans une partie** (`InstanceManager.enter` : partie privée créée ou rejointe, file
+  publique, « Rejouer ») est annoncée à KLM_Contacts. Si ce joueur est chef d'un groupe, ses membres entrent dans la
+  même partie (même code) ou la même file ; pour les autres joueurs, rien ne se passe.
+- Références : `code:<code>` (partie privée), `public:<mini-jeu>` (file publique), `public:<mini-jeu>@<arène>` (Rush).
+- **« Inviter dans ma partie »** (fiche d'un ami dans KLM_Contacts) : possible quand on est dans une partie privée.
+- Un membre entre par le même chemin que le menu (`joinPrivate`, `joinPublic`) : partie pleine ou fermée, le motif
+  habituel lui est affiché.
+- Avec un KLM_Contacts sans cette fonction (avant la 1.2.0) : un avertissement au démarrage, rien d'autre ne change.
+
+**À déployer après KLM_Contacts 1.2.0 et KaliumRelay 1.8.0.** **Déployé sur Kal-Games le 09/10/2026 à 06:50 (LeKiwi06 ; 1.24.0 dans `_removed-kalgames-1.24.0/`), actif après redémarrage. Statut : non testé en jeu.**

@@ -1,0 +1,139 @@
+# KG_BoatRace - archive du journal
+
+Sections déplacées de `JOURNAL.md` le 21/11/2026 (seules les 4 dernières versions y restent).
+
+## 1.0.0 — sortie de KalGames (24/09/2026)
+
+**Demande de LeKiwi06** : étape 0 du cahier des charges, sortir la course de bateau de KalGames.
+- `BoatRaceInstance` : la course de bateau reprise **telle quelle** de `RaceInstance` (KalGames 1.16.0), partie
+  « bateau » seulement : grille de départ, compte à rebours, bateau remis sous le joueur, checkpoints, ligne d'arrivée
+  à deux points, tours, meilleur temps sur 1 tour, points du podium, temps limite proportionnel au nombre de tours,
+  30 s de grâce après le 1er. Aucun changement de comportement. Textes : ceux du `lang.yml` de KalGames (`race.*`).
+- `KGBoatRace` : enregistre le type `BOAT_RACE` auprès de KalGames 1.17.0 (mêmes réglages et points d'arène
+  qu'avant, moteur, classement au meilleur tour, option « nombre de tours » en partie privée, pas de préchargement).
+  Même nom de type : mini-jeux, arènes et classements existants repris sans rien reconfigurer.
+- À l'arrêt du serveur, ferme lui-même ses courses en cours (Paper le désactive avant KalGames).
+- Dépend de KalGames (1.17.0 minimum) et KG_ScoreBoards.
+**Déploiement** : avec KalGames 1.17.0, sur Kal-Games (7001). **Statut : déployé le 24/09/2026 à 19 h 47, testé et confirmé par LeKiwi06 le 24/09/2026 (course de bateau, journal de démarrage : mini-jeu boatrace rattaché).**
+
+## 1.1.0 — étape 1 : vitesse, seuil des meilleurs temps, passages aux checkpoints (24/09/2026)
+
+**Demandes de LeKiwi06** (cahier des charges, étape 1).
+- **Vitesse en km/h** dans la barre d'action (`race.status-speed`), calculée à partir du déplacement horizontal
+  (1 bloc = 1 m), lissée ; ignorée après une téléportation.
+- **Seuil des meilleurs temps** : seuls les tours de 45 s ou moins entrent dans les meilleurs temps (nouveau réglage
+  « Meilleurs temps : tours enregistrés jusqu'à (s) », `record-max-lap-seconds`, 0 = tous). Un tour plus long est
+  annoncé « non enregistré ». Clé absente des configs existantes : 45 par défaut.
+- **Passages aux checkpoints mesurés** : pour chaque checkpoint et la ligne d'arrivée, temps depuis le début du tour,
+  place au passage et vitesse d'entrée ; le tour précédent est gardé. Pas encore affichés ni enregistrés : base du
+  classement en direct et des écarts (étape 2) et des données envoyées à KG_ScoreBoards (à faire, KG_ScoreBoards à
+  réserver).
+- Placement des checkpoints : nouvel éditeur de KalGames 1.18.0.
+**Déploiement** : avec KalGames 1.18.0. **Statut : déployé sur Kal-Games le 24/09/2026 à 20 h 07 (1.0.0 dans `_removed-kg_boatrace-1.0.0/`), testé et confirmé par LeKiwi06 le 24/09/2026 : vitesse cohérente, tour de plus de 45 s « non enregistré », checkpoints.**
+
+## 1.2.0 — étape 2 : classement en direct, écarts, données dans KG_ScoreBoards (24/09/2026)
+
+**Demandes de LeKiwi06** (cahier des charges, étape 2 et données de l'étape 1).
+- **Classement en direct** : tableau latéral propre à la course (mis à jour chaque seconde) : position, pseudo (vert
+  si arrivé), écart avec le premier au dernier point de passage commun, « +N t » pour les tours de retard, temps final
+  des arrivés. Titre : tour du premier / nombre de tours. Réglage « Classement en direct (tableau latéral) »
+  (`live-ranking`, activé par défaut). Le tableau que le joueur avait avant lui est rendu à la fin, à la sortie de la
+  partie et à la fermeture.
+- **Écarts à chaque checkpoint et à la ligne d'arrivée** (barre d'action, 2,5 s) : place au passage (P1 « en tête »),
+  écart avec le coureur passé juste avant, et écart avec son propre passage au tour précédent (vert = plus rapide).
+- **Données envoyées au journal de KG_ScoreBoards** (`journal/<aaaa-mm>/<mini-jeu>.jsonl`) :
+  - `lap` à chaque tour : `match` (identifiant unique de la course), `arena`, `public`, `player`, `name`, `platform`
+    (`java` / `bedrock`), `ranked`, `lap`, `laps`, `lapMillis`, `recorded` (sous le seuil des meilleurs temps),
+    `checkpoints`, `splits` (pour chaque passage : `cp`, `ms` depuis le début du tour, `place`, `kmh` d'entrée ; le
+    dernier = ligne d'arrivée) ;
+  - `race` en fin de course : `match`, `arena`, `public`, `laps`, `checkpoints`, `results` (`player`, `name`,
+    `platform`, `rank`, `finished`, `totalMillis`, `lapsDone`).
+  Servira aussi à mesurer l'écart Java / Bedrock (voir cahier des charges).
+**Déploiement** : **avec KG_ScoreBoards 1.3.0** (obligatoire) et KalGames 1.18.0. **Statut : compilé, non déployé, non
+testé en jeu.**
+
+## 1.3.0 — barème, hors-piste, anti-collision, tableau aéré (24/09/2026)
+
+**Demandes de LeKiwi06** : « fais le barème de point et le hors piste, et surtout l'anticollision des bateaux » ;
+tableau latéral « un peu trop compact à 2 joueurs » (proposition validée : lignes vides + meilleur tour).
+- **Barème** (remplace les points du podium et par checkpoint, réglages `points-win` / `points-checkpoint` retirés) :
+  par tour, d'abord les points (1 par tour, +1 sans hors-piste, +n à chaque série de 3 tours propres d'affilée,
+  n = numéro de la série, remis à zéro par un hors-piste), puis les multiplicateurs **additifs** : chrono (moins de
+  45 s x1,5, 40 s x2, 35 s x3, 30 s x5) et tour en tête (tous les checkpoints du tour passés 1er, x1,5). Grand Prix
+  (course de 40 tours terminée) : x1,5 sur le total. Tout est réglable dans les réglages de la course (coefficients
+  en dixièmes : 15 = x1,5). Détail affiché au joueur à chaque tour.
+- **Fin de course** : classement au temps avec les points entre parenthèses, puis classement aux points avec le cumul
+  (ses points + ceux de tous les joueurs en dessous) ; c'est le cumul qui est crédité (points décimaux,
+  KG_ScoreBoards 1.4.0), pour les joueurs classés hors opérateurs.
+- **Hors-piste** : le bateau touche, sous lui ou sur ses côtés (mur, bordure), un bloc autre qu'un bloc de piste
+  (réglage `track-blocks`, « PACKED_ICE,BLUE_ICE » par défaut) ; en l'air, rien n'est compté. Une fois par tour :
+  message, son, tour non « propre ». Attention : un marquage au sol d'un autre bloc (tapis, neige...) compte comme
+  hors-piste s'il n'est pas ajouté à la liste.
+- **Anti-collision** (`CollisionShield`, réglage `anti-collision`, activé) : pour chaque coureur Java, les vrais
+  bateaux et pilotes adverses sont cachés et remplacés par une copie sans collision (coque en dalle du bois du bateau,
+  tête du joueur, pseudo) qui suit leur position. Joueurs Bedrock : voient les vrais bateaux (à tester). Protection
+  levée pour un coureur arrivé ou sorti, et pour tous en fin de course. Limite : un adversaire caché disparaît aussi
+  de la liste Tab pendant la course.
+- **Tableau latéral** : lignes vides autour des positions (10 au plus) et « Meilleur tour » de la course en cours.
+- Journal : `lap` gagne `points`, `base`, `multiplier`, `clean`, `seriesBonus`, `lead`, `timeCoefficient` ; les
+  résultats de `race` gagnent `points`, `cumulative`, `offTracks`.
+**Déploiement** : **avec KG_ScoreBoards 1.4.0** (obligatoire). **Statut : déployé sur Kal-Games le 24/09/2026 à 21 h 14, testé par LeKiwi06 et des joueurs (15 courses) : barème validé, tableau validé ; anti-collision inopérant pour les joueurs Bedrock et hors-piste irrégulier (corrigés en 1.4.0).**
+
+## 1.4.0 — retours de test : anti-collision Bedrock, hors-piste fiable, record personnel (25/09/2026)
+
+**Retours de LeKiwi06** après les courses du 24/09 au soir (15 courses, presque toutes entre joueurs Bedrock, journal
+de KG_ScoreBoards) : « l'anti-collision n'avait pas l'air de marcher », « le hors-piste est un peu capricieux, des fois
+il ne détecte pas les blocs jaunes sur le bord de la piste, des fois il détecte à peine on frôle », « est-ce que tu as
+aussi le PB du joueur, pour qu'il sache son objectif à battre ? ». Barème et tableau aéré validés.
+- **Anti-collision** : en 1.3.0 les joueurs Bedrock voyaient encore les vrais bateaux, d'où les collisions. Ils sont
+  maintenant protégés aussi : leur copie est un porte-armure invisible sans collision (tête + pseudo, que Geyser
+  affiche bien). Les bateaux de course sont en plus placés dans une équipe « sans collision » du tableau principal
+  (`kg_boatrace_nc`) : le serveur ne les pousse plus l'un contre l'autre.
+- **Hors-piste** : vérifié sur **tout le trajet** depuis le contrôle précédent (tous les 0,4 bloc), et plus seulement à
+  la position du moment (à 140 km/h, ~4 blocs entre deux contrôles : bordures ratées). Un contact **latéral** (mur,
+  bordure) ne compte que s'il **ralentit** le bateau (vitesse en baisse de plus de 15 %) : un simple frôlement ne
+  compte plus. Un bloc sous le bateau qui n'est pas un bloc de piste compte toujours.
+- **Record personnel** : le tableau latéral est maintenant propre à chaque joueur : mêmes positions et meilleur tour de
+  la course, plus « Ton record » (meilleur tour enregistré dans les classements, ou « aucun »).
+**Déploiement** : seul (KG_ScoreBoards 1.4.0 déjà en place). **Statut : déployé le 25/09/2026 à 12 h 44, testé par LeKiwi06 : anti-collision OK (Java et Bedrock), record dans le tableau OK ; hors-piste trop sévère au bord (corrigé en 1.4.1).**
+
+## 1.4.1 — hors-piste : seulement sous le joueur (25/09/2026)
+
+**Retour de LeKiwi06** (1.4.0 testée : anti-collision réparé, Java et Bedrock ; tableau latéral « bien mieux ») :
+« je suis au bord sans toucher et ça me le compte quand même ; le mieux est de vérifier le bloc sous le joueur dans le
+bateau et pas sous le bateau entier, comme ça le hors-piste ne compte que pour une vraie bonne sortie de piste ».
+- Contrôle au sol : un seul point, sous le joueur (centre du bateau), au lieu des 4 coins + centre. Le trajet reste
+  vérifié tous les 0,4 bloc. Le contact latéral qui ralentit (mur, bordure surélevée) compte toujours.
+- Détail des points du tour en gris clair (« trop foncé ») : nouvelle clé `race.lap-points-2` (l'ancienne
+  `race.lap-points` est déjà figée dans le `lang.yml` du serveur, elle n'est plus utilisée).
+**Déploiement** : seul. **Statut : déployé sur Kal-Games le 25/09/2026 à 12 h 59 (1.4.0 dans `_removed-kg_boatrace-1.4.0/`), testé et confirmé par LeKiwi06 le 25/09/2026.**
+
+## 1.4.2 - noms de réglages plus courts (02/10/2026, LeKiwi06)
+
+Demande de LeKiwi06 (02/10/2026) : dans les réglages des jeux pour les opérateurs, les jauges étaient très longues
+(nom et explication dans la jauge, élargie par KLM_Menu 2.5.0) ; Minecraft ne permettant du texte qu'en haut d'une
+fenêtre, « écrit des textes plus courts dans les champs de jauge et boutons ». Mesure de tous les textes (police de
+Minecraft) : chaque champ et bouton tient maintenant dans sa largeur normale (260 / 240 pixels).
+Noms raccourcis (détail dans l'explication, affichée au-dessus des champs par KalGames 1.22.2) : « Tours par défaut »,
+« Barème : longueur d'une série », « Palier 1 à 4 : tour en moins de (s) », « Blocs de piste », « Meilleurs temps : tour
+max (s) », « Rayon des points de contrôle ». Clés des réglages inchangées (valeurs gardées).
+
+**Déployé sur Kal-Games le 02/10/2026 à 17:49 (LeKiwi06 ; 1.4.1 dans `_removed-kg_boatrace-1.4.1/`), actif après redémarrage.
+Statut : **testé et confirmé par LeKiwi06 le 02/10/2026**.**
+
+## 1.5.0 - moyenne des joueurs en dessous au lieu de leur somme (04/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (04/10/2026)** : « nouvelle règle pour tous les jeux : en multijoueur on ne gagne plus la somme des
+joueurs en dessous de nous, mais la moyenne ; fais en sorte que ce changement soit rétroactif ».
+- Classement aux points de fin de course : le total crédité est **ses points + la moyenne des points des joueurs classés
+  en dessous** (avant : + leur somme). Le dernier, ou un joueur seul, ne gagne que ses points ; à 2 joueurs rien ne
+  change (la moyenne d'un seul joueur = ses points). Exemple à 4 joueurs (10, 8, 5, 2) : 15 / 11,5 / 7 / 2 au lieu de
+  25 / 15 / 7 / 2.
+- Texte des résultats : « (crédité n) » au lieu de « (cumul n) » (nouvelle clé `race.points-line-2`).
+- Journal de KG_ScoreBoards : le champ `cumulative` du résultat garde son nom et contient le nouveau total.
+
+Même règle dans KG_BingoGame 0.9.0. Rétroactif : fait dans les classements de Kal-Games le 05/10/2026, voir
+`REPRISE_PROJET.md`.
+
+**Déployé sur Kal-Games le 05/10/2026 à 12:33 (LeKiwi06, serveur arrêté ; 1.4.2 dans `_removed-kg_boatrace-1.4.2/`).
+Statut : non testé en jeu.**

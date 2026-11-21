@@ -1,0 +1,298 @@
+# KaliumRelay - archive du journal
+
+Sections déplacées de `JOURNAL.md` le 21/11/2026 (seules les 4 dernières versions y restent).
+
+## 1.0.0 — première version
+
+Voir section "Contexte" ci-dessus pour le détail complet. Résumé : `POST`/`GET
+/assignment/{playerId}`, jeton partagé, purge automatique après 2 minutes.
+
+**Déployé le 23/09/2026 sur le proxy `ProxyVelocity` (7018.mystrator.com) via WinSCP** :
+`KaliumRelay-1.0.0.jar` envoyé dans `/plugins/` — première installation, aucun ancien jar à archiver.
+**Redémarrage du proxy Velocity requis** pour que le plugin démarre (en plus des redémarrages de
+kal-games et Kixster déjà nécessaires pour KalGames 1.10.3 / KalBingo 0.1.10 — voir leurs JOURNAL.md
+respectifs) — c'est un TROISIÈME serveur à redémarrer, qui n'avait encore jamais eu besoin de l'être
+pour l'intégration Bingo jusqu'ici.
+
+## 1.0.1 — deux bugs trouvés au diagnostic par logs (23/09/2026)
+
+Après le déploiement de la 1.0.0 et des mises à jour associées de KalGames 1.10.3 / KalBingo 0.1.10,
+l'utilisateur a signalé que le bug persistait à l'identique : l'hôte crée/assigne bien la partie, mais
+le joueur qui rejoint atterrit quand même dans une mauvaise salle d'attente et se fait expulser après
+quelques secondes. N'ayant pas de console/SSH sur les trois serveurs, diagnostic mené en téléchargeant
+`logs/latest.log` de `kal-games`, `Kixster` et `ProxyVelocity` via WinSCP (F5 vers le PC local), puis
+lecture des fichiers. Deux causes INDÉPENDANTES trouvées, les deux nécessaires pour que le bug
+disparaisse :
+
+**Bug 1 — KaliumRelay ne démarrait jamais sur le proxy.** `proxy-latest.log` montrait
+`com.google.inject.CreationException: [Guice/MissingConstructor]: No injectable constructor for type
+KaliumRelay` au démarrage — le plugin échouait silencieusement au chargement, donc le serveur HTTP
+relais n'existait tout simplement pas, quel que soit le reste. Cause : le constructeur était annoté
+`javax.inject.Inject` (JSR-330), pas `com.google.inject.Inject` (Guice). Le jar livré ne contient QUE
+nos propres classes compilées (même convention que velocity-api/paper-api : les jars de libs/ servent
+uniquement à compiler, jamais embarqués) — rien ne garantissait que `javax.inject.Inject` soit résolu
+correctement par l'injecteur au runtime. Le système de plugins de Velocity repose entièrement sur
+Guice : son propre Injector garantit que `com.google.inject.Inject` est toujours présent et
+correctement résolu, contrairement à l'annotation JSR-330 séparée. **Corrigé en 1.0.1** : import changé
+vers `com.google.inject.Inject`, `guice-5.1.0.jar` récupéré depuis `repo.papermc.io` (scope `provided`
+dans le pom.xml cosmétique, jamais embarqué dans le jar livré — confirmé par `unzip -l` : seulement nos
+4 classes + `velocity-plugin.json` + `META-INF/`).
+
+**Bug 2 — les `config.yml` déjà déployés sur kal-games et Kixster étaient obsolètes.**
+`saveDefaultConfig()` (Paper/Bukkit) n'écrit le `config.yml` par défaut QUE si le fichier n'existe pas
+encore sur le disque — il ne fusionne JAMAIS de nouvelles clés dans un `config.yml` déjà existant. Les
+fichiers réellement déployés sur kal-games et Kixster dataient d'avant les modifs relais (créés à la
+première installation, jamais régénérés depuis), donc malgré un code source à jour et un
+`config.yml` bundlé correct dans les jars 1.10.3/0.1.10 : `bingo.relay-url` (KalGames) et
+`network.relay-url` (KalBingo) résolvaient tous les deux à `""` (repli code), le relais n'était donc
+JAMAIS interrogé ni alimenté même une fois le Bug 1 corrigé. `kalgames-latest.log` confirmait : zéro
+ligne `[Bingo]` (donc `pushAssignment` ne s'exécutait jamais). Par ailleurs `assignment-wait-seconds`
+était resté à l'ancienne valeur `15` sur Kixster (pas `30` comme prévu depuis la 0.1.10) : le log
+`kixster-latest.log` montrait le second joueur connecté dans le mauvais monde (`overworld` au lieu de
+`bingo_lobby`) puis expulsé exactement 15 secondes plus tard — signature exacte du timeout, pas d'un
+kick ou d'une déconnexion volontaire. **Corrigé en patchant les `config.yml` EN PLACE sur les deux
+serveurs** (téléchargés/édités/ré-uploadés via WinSCP, aucune valeur admin existante touchée - voir
+JOURNAL.md de KalGames et de KalBingo pour le détail par projet). Cette limite de
+`saveDefaultConfig()` peut resurgir à chaque future clé de config ajoutée à n'importe quel plugin de ce
+workspace : à garder en tête, pas spécifique à Bingo/relais.
+
+**Déployé le 23/09/2026** : `KaliumRelay-1.0.0.jar` archivé dans `/plugins/_removed-kaliumrelay-1.0.0/`
+(Shift+F6, non destructif), `KaliumRelay-1.0.1.jar` envoyé dans `/plugins/`. **Proxy à redémarrer** (en
+plus de kal-games et Kixster, déjà nécessaires — voir JOURNAL.md respectifs) avant de retester.
+
+## 1.1.0 — routage initial pour la reconnexion en cours de partie (23/09/2026)
+
+Suite au premier test complet réussi (voir JOURNAL.md de KalBingo, section 0.1.11) : demande explicite
+de l'utilisateur, "si un joueur est déconnecté durant une partie et qu'il se reconnecte avant la fin de
+la partie il faut que le proxy le renvoi directement sur la partie". KaliumRelay est le seul endroit du
+projet qui tourne DANS le processus du proxy (KalGames et KalBingo ne peuvent pas, eux, décider vers
+quel serveur router une connexion entrante) - extension naturelle du même plugin plutôt qu'un nouveau,
+pas de dépendance supplémentaire.
+
+**Nouveau `ActiveGameRegistry`** : `Map<UUID, String>` en mémoire (joueur -&gt; nom du serveur où il est
+"en partie"), alimenté par KalBingo via deux nouvelles routes HTTP sur le serveur existant (voir
+`RelayHttpServer`, même serveur/port/jeton que `/assignment/`) :
+- `POST /active-game/{playerId}` (corps = nom du serveur, ex. "kixster") : appelé par
+  `PartyStarter.start()` côté KalBingo dès qu'un joueur est téléporté dans son instance (voir JOURNAL.md
+  de KalBingo, 0.1.11).
+- `DELETE /active-game/{playerId}` : existe côté serveur (endpoint prêt) mais **n'est appelé nulle part
+  pour l'instant** — aucune fin de partie n'existe encore côté KalBingo (`GameManager.cleanupGame`
+  jamais invoqué). Purge de sécurité à 6h (`ActiveGameRegistry.sweep`, très large — pas une vraie
+  expiration de partie, juste un garde-fou mémoire en cas de crash/oubli) en attendant qu'une vraie fin
+  de partie existe et appelle ce DELETE.
+
+**Nouvel abonnement `PlayerChooseInitialServerEvent`** (`KaliumRelay.onChooseInitialServer`) : à CHAQUE
+nouvelle connexion au proxy (y compris une reconnexion après déconnexion complète - c'est le seul
+moment où cet événement se déclenche), consulte `ActiveGameRegistry` AVANT que Velocity ne choisisse le
+serveur initial habituel (try list de `velocity.toml`, normalement kal-games/lobby). Si le joueur y
+figure et que le serveur enregistré est bien déclaré sur ce proxy (`server.getServer(name)`), redirige
+directement vers lui (`event.setInitialServer(...)`) - sinon (joueur absent du registre, ou serveur non
+déclaré : garde-fou anti config incohérente) le routage habituel s'applique sans aucun changement.
+Lecture 100% en mémoire, aucun appel HTTP nécessaire ici (même JVM que le serveur HTTP qui alimente le
+registre).
+
+**Déployé le 23/09/2026 via WinSCP** : ancien `KaliumRelay-1.0.1.jar` archivé (non détruit) dans
+`/plugins/_removed-kaliumrelay-1.0.1/`, `KaliumRelay-1.1.0.jar` envoyé dans `/plugins/` sur le proxy.
+**Redémarrage du proxy requis** (en plus de Kixster, voir JOURNAL.md de KalBingo 0.1.11 — kal-games
+n'a pas besoin d'être redémarré cette fois, aucune modification côté KalGames).
+
+## 1.1.1 — plus de jeton écrit dans le code (24/09/2026)
+
+**Demande de LeKiwi06** : « comment on fait en sorte que le token ne leak pas de nouveau ? [...] si on change pas
+le système, ça va re leak au prochain dépôt ».
+
+**Cause** : le jeton partagé était une valeur fixe écrite dans `RelayConfig.java` et dans les `config.yml` fournis
+avec KalGames et KalBingo, donc publiée dans le dépôt GitHub public ; il était aussi affiché dans la console du
+proxy à chaque démarrage. Le jeton a été changé le 24/09/2026 à la main sur les 3 serveurs (`relay.properties` du
+proxy, `config.yml` de kal-games et de Kixster), test Bingo réussi, sans redéploiement.
+
+- `RelayConfig` : plus de `DEFAULT_TOKEN`. Si `relay.properties` n'a pas de jeton (ou un jeton vide), un jeton
+  aléatoire (`UUID.randomUUID()`) y est écrit, avec un avertissement dans la console indiquant de le recopier dans
+  les `config.yml` de KalGames et KalBingo - **sans afficher sa valeur**.
+- La ligne qui affichait le jeton à chaque démarrage est supprimée.
+- Aucun changement de comportement pour le proxy en service : son `relay.properties` contient déjà un jeton.
+
+Aussi dans cette version : commentaires de `ActiveGameRegistry` et `RelayHttpServer` corrigés (ils disaient
+qu'aucune fin de partie Bingo n'existait et que DELETE n'était appelé nulle part : KalBingo l'appelle en fin de
+partie et à l'abandon depuis 0.1.12 / 0.1.14). Les « Pour reprendre » plus haut qui disent le contraire sont
+historiques.
+
+À déployer en même temps que KalGames 1.12.4 et KalBingo 0.1.23 (même nettoyage, voir leurs JOURNAL) - pas urgent.
+**Statut : déployé sur le proxy le 24/09/2026 (démarrage vérifié dans le journal).**
+
+## 1.2.0 — /server réservé aux admins (26/09/2026)
+
+**Demande de LeKiwi06** : « désactiver la commande /server pour les joueurs (pas les admins) sur tous les serveurs ».
+- `/server` est une commande du proxy (Velocity), autorisée à tous par défaut. Le proxy n'a pas de gestionnaire de
+  permissions (pas de LuckPerms) et ne connaît pas les opérateurs des serveurs : KaliumRelay bloque `/server` (et
+  `/velocity:server`) pour tout joueur absent de la liste **`admins`** de `relay.properties` (pseudos ou UUID séparés
+  par des virgules, insensible à la casse ; **LeKiwi06,Maaxster** par défaut, ajoutée au fichier au premier démarrage),
+  avec un message (« réservée aux admins, utilise la boussole ») ; la commande est aussi retirée des suggestions (Tab).
+- Pour ajouter un admin : modifier `admins=` dans `plugins/kaliumrelay/relay.properties` sur le proxy, puis
+  redémarrer le proxy.
+- Compilation : adventure-api / adventure-key / brigadier ajoutés au classpath (déjà dans `outils-build/libs`).
+**Déployé sur le proxy le 26/09/2026 à 7 h 21** (1.1.1 dans `_removed-kaliumrelay-1.1.1/`). **Statut : testé et confirmé par LeKiwi06 le
+26/09/2026 (« /server est bien fix »).**
+
+## 1.3.0 - boîte aux lettres durable (03/10/2026, LeKiwi06)
+
+Catégorie 4 « Récompenses » (cahier : « KaliumRelay modifié si nécessaire ») : `/assignment` garde un message 2 minutes
+en mémoire, trop peu pour des récompenses. Nouveau `/mail/<boîte>` (même jeton `X-Kalium-Relay-Token`) :
+- `POST /mail/event` : dépose un message (texte, 256 Ko au plus) ; réponse : son id.
+- `GET /mail/event` : messages en attente, une ligne « id TAB texte en base64 » par message.
+- `DELETE /mail/event/<id>` : confirme (retire) un message.
+- Rien n'expire : un message reste jusqu'à sa confirmation, même après un redémarrage du proxy (un fichier par boîte dans
+  `plugins/kaliumrelay/mail/`, écriture atomique). 20 000 messages au plus par boîte. Refusé (401) si le jeton du relais
+  est vide.
+
+**Déployé sur proxy le 03/10/2026 à 01:05 (LeKiwi06, catégorie 4 « Récompenses » et correctif des claims) (ancienne version dans `_removed-kaliumrelay-1.2.0/`), actif après redémarrage. Statut : non testé en jeu.**
+
+## 1.4.0 - bannissement de KaLium (03/10/2026, LeKiwi06)
+
+Catégorie 6 (anti-triche) : `POST /ban` (jeton `X-Kalium-Relay-Token`), corps de 3 lignes : pseudo, raison, staff.
+Lance sur la console du proxy `libertybans ban <pseudo> <raison (staff)>` (sans durée) ; seule commande possible par ce
+chemin ; pseudo vérifié (lettres, chiffres, _ ; 16 au plus), raison nettoyée (200 caractères) ; 200 : lancé, 503 :
+LibertyBans absent, 400 : pseudo invalide, 401 : jeton. Utilisé par le bouton « Bannir de KaLium » de KS_AntiCheat.
+
+**Déployé sur le proxy le 03/10/2026 à 06:45 (LeKiwi06 ; 1.3.0 dans `_removed-kaliumrelay-1.3.0/`) avec LibertyBans 1.1.4 (nouveau), actif après redémarrage du proxy. Statut : non testé.**
+
+## 1.5.0 - joueur Bedrock expulsé d'un serveur : déconnecté de KaLium (08/10/2026, LeKiwi06)
+
+Signalé par LeKiwi06 (test de la suspension de KS_AntiCheat sur Kixster avec Maxster33 en Bedrock) : « après avoir
+levé la suspension il ne peut pas bouger ». Choix de LeKiwi06 parmi deux corrections proposées : celle du proxy.
+- **Constat (journaux de Kixster, du lobby et du proxy)** : la suspension et la levée ont fonctionné. Expulsé de
+  Kixster à 20:31:32, le joueur Bedrock a été renvoyé au lobby par Velocity, sur la même session Geyser ; à chaque
+  retour sur Kixster il était figé en l'air, puis expulsé pour « vol » (20:32:47, 20:36:38, 20:40:55), chaque
+  expulsion le renvoyant de nouveau au lobby. Sa sauvegarde joueur était saine. Une reconnexion complète à KaLium l'a
+  débloqué (confirmé par LeKiwi06). Même enchaînement le 02/10/2026 sans KS_AntiCheat (`.MRMister7866`, serveur-jeux
+  redémarré, puis 3 expulsions pour « vol »). Mécanisme exact côté Geyser non trouvé.
+- **Changement** (`KickedFromServerEvent`) : quand Velocity s'apprête à renvoyer vers un autre serveur un joueur
+  **Bedrock** (UUID Floodgate, qui commence par `00000000-0000-0000`) expulsé de son serveur, il est déconnecté de
+  KaLium avec le message de l'expulsion (sans message : « Tu as été déconnecté de <serveur>. Reconnecte-toi. »).
+  Une ligne dans la console du proxy à chaque fois.
+- **Inchangé** : joueurs Java ; connexion refusée à un serveur (liste blanche, suspension en cours) : le joueur reste
+  où il est.
+- **Conséquences à connaître** : un joueur Bedrock est déconnecté de KaLium (au lieu d'arriver au lobby) à chaque
+  redémarrage du serveur où il se trouve, à l'expulsion pour inactivité de KS_AntiCheat (60 min) et à celle du Bingo
+  (5 min ; il revient directement dans sa partie en se reconnectant, routage de la 1.1.0), et à une expulsion pour
+  « vol ».
+- **Limite** : un compte Bedrock lié à un compte Java (UUID Java) n'est pas reconnu comme Bedrock.
+- Empilé sur la 1.4.0 (bannissement, jamais testé) à la demande explicite de LeKiwi06.
+
+**Déployé sur le proxy le 08/10/2026 à 20:54 (LeKiwi06 ; 1.4.0 dans `_removed-kaliumrelay-1.4.0/`), actif après redémarrage du proxy. Statut : non testé en jeu.**
+
+## 1.6.0 - contacts : amis, présence, messages privés (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « un KLM_Contacts pour ajouter nos amis, créer des groupes avec eux, voir dans quels serveurs
+de KaLium ils sont, etc. » (étape 1 du cahier : amis). Les données sont gardées ici parce que le proxy est le seul
+endroit qui voit tous les joueurs et tous les serveurs ; le plugin KLM_Contacts (serveurs Paper) fournit les menus.
+Empilé sur la 1.5.0, non testée en jeu : nécessaire pour la demande, signalé à LeKiwi06.
+
+- **Données** (`ContactsStore`) : `plugins/kaliumrelay/contacts/<uuid>.txt` (amis, demandes reçues et envoyées,
+  bloqués, réglages) et `contacts/noms.txt` (pseudo -> UUID, mis à jour à chaque connexion ; un changement de pseudo
+  libère l'ancien). Rien n'expire. Seuls les joueurs venus depuis cette version sont connus.
+- **`POST /contacts/<action>`** (jeton du relais ; corps : lignes `cle=valeur` ; réponse `ok`, `ok:<détail>` ou
+  `err:<code>`) : `list` (amis avec leur serveur, demandes, bloqués, réglages), `add`, `accept`, `deny`, `cancel`,
+  `remove`, `block`, `unblock`, `set` (invisible, notify, mp), `join` (le proxy déplace le joueur vers le serveur de
+  son ami), `msg` (champ « Envoyer un message » du menu).
+- **Commandes du proxy `/mp <pseudo> <message>` et `/r <message>`** : message privé d'un serveur à l'autre. Refus :
+  destinataire hors ligne ou invisible (sauf pour répondre à quelqu'un qui vient d'écrire), messages privés coupés ou
+  réservés aux amis, joueur que l'on a bloqué. Un joueur bloqué par le destinataire voit son message partir mais rien
+  n'est livré (il n'est pas prévenu). 256 caractères au plus, texte brut. Le champ du menu rejoue `/mp` au nom du
+  joueur : mêmes règles.
+- **Modération** (accord de LeKiwi06 du 09/10/2026) : chaque message privé est écrit dans le journal du proxy
+  (`[Contacts] MP A -> B : texte`). Pour qu'un joueur rendu muet par LibertyBans ne puisse pas en envoyer, **ajouter
+  `mp` (et `r` s'il n'y est pas) aux commandes bloquées de LibertyBans** sur le proxy (réglage à faire par l'humain,
+  comme pour `/global` de KLM_Chat).
+- **Notifications** envoyées par le proxy : « X s'est connecté / déconnecté » aux amis (sauf mode invisible, sauf amis
+  qui les ont coupées), demande d'ami reçue (avec `/amis accepter X` cliquable), demande acceptée, rappel des demandes
+  en attente à la connexion.
+- **Demandes** : 30 en attente au plus par joueur ; bloqué par le destinataire : la demande n'arrive pas, sans le dire.
+- **Nouvelles clés de `relay.properties`** (ajoutées au démarrage avec leur valeur par défaut) : `contacts-max-friends`
+  (100), `contacts-no-join` (`serveur-jeux` : serveurs qu'on ne rejoint pas par « Rejoindre son serveur »).
+
+Limite : les données sont en clair sur le proxy (pseudos, listes d'amis), comme le reste du dossier du relais.
+
+**À déployer avec KLM_Contacts 1.0.0** (sans lui : seules `/mp` et `/r` existent, entre joueurs en ligne). **Déployé sur le proxy le
+09/10/2026 à 06:06 (LeKiwi06 ; 1.5.0 dans `_removed-kaliumrelay-1.5.0/`), actif après redémarrage du proxy. Statut : non testé en jeu** (logique des demandes, du blocage, des réglages et de la relecture
+après redémarrage essayée hors jeu avec un faux proxy).
+
+## 1.7.0 - contacts : groupes de jeu (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « code l'étape 2 sans attendre le test » (étape 2 du cahier de KLM_Contacts : groupe de jeu).
+Réponses du 09/10/2026 : groupe temporaire avec un chef, tchat de groupe, les membres suivent le chef d'office, réglable
+par membre ; invitations ouvertes à tous, réglables en « amis seulement » ; plafond de 8 joueurs. Empilé sur la 1.6.0
+non testée : accord explicite de LeKiwi06.
+
+- Nouveau `ContactsGroups`. Les groupes vivent **en mémoire** sur le proxy : ils disparaissent quand il ne reste qu'une
+  personne, et au redémarrage du proxy.
+- **Créer un groupe = inviter quelqu'un** : à l'acceptation (60 s), celui qui a invité devient le chef. Le chef invite,
+  exclut, nomme un autre chef, dissout ; chacun peut quitter.
+- **Commandes du proxy** : `/groupe` (alias `/group`) `inviter | exclure | chef <pseudo>`, `accepter | refuser |
+  quitter | dissoudre | suivre | info` ; `/groupe` seul demande au serveur du joueur d'ouvrir le menu « Groupe de
+  jeu » (KLM_Contacts 1.1.0). **`/gc <message>`** : tchat de groupe, d'un serveur à l'autre, écrit dans le journal du
+  proxy (`[Contacts] GC (groupe de X) Y : texte`). **Ajouter `gc` aux commandes bloquées de LibertyBans** (comme `mp`
+  et `r`).
+- **Suivre le chef** : quand le chef arrive sur un serveur, chaque membre connecté ailleurs est déplacé d'office, ou
+  reçoit une proposition (`/groupe suivre`, cliquable) s'il a choisi « me demander avant », s'il a une partie de Bingo
+  en cours, s'il est sur un serveur de `contacts-no-join` (Serveur Jeux : salle d'attente, partie, salle
+  d'après-partie) ou si son serveur répond qu'il est en partie. Le proxy pose la question au serveur du membre par un
+  message de plugin (canal `kalium:contacts`, « follow ») ; KLM_Contacts répond par `POST /contacts/gfollow`
+  (`busy=true|false`) ; sans réponse sous 3 s : proposition. Jamais de déplacement vers un serveur de
+  `contacts-no-join`. Un membre qui accepte une invitation ou qui se reconnecte rejoint le chef selon la même règle.
+- **Déconnexions** : la place d'un membre déconnecté est gardée 5 minutes, puis il sort du groupe ; si c'est le chef, le
+  plus ancien membre connecté devient chef tout de suite.
+- **Invitations** : refusées si le joueur est hors ligne ou invisible, déjà dans un groupe, s'il n'accepte que celles
+  de ses amis, si le groupe est complet ; invité qui a bloqué l'inviteur : rien n'arrive, sans le dire.
+- `POST /contacts/` : nouvelles actions `group` (état du groupe et invitation en attente), `ginvite`, `gaccept`,
+  `gdeny`, `gleave`, `gkick`, `gleader`, `gdisband`, `ggo`, `gfollow` ; `set` accepte `follow` (auto, ask) et `invites`
+  (all, friends), ajoutés à la réponse de `list`. Le résultat d'une action de groupe est dit au joueur par le proxy.
+- Les messages du canal `kalium:contacts` venant d'un joueur ou d'un serveur ne sont jamais relayés.
+- **Nouvelle clé de `relay.properties`** : `contacts-max-group` (8).
+
+Pas dans cette version (étape 3 du cahier) : le groupe entre ensemble dans une partie ou une file, « Inviter dans ma
+partie », lien avec « Rejouer ».
+
+**À déployer avec KLM_Contacts 1.1.0.** **Déployé sur le proxy le 09/10/2026 à 06:29 (LeKiwi06 ; 1.6.0 dans `_removed-kaliumrelay-1.6.0/`), actif après redémarrage du proxy. Statut : non testé en jeu** (logique
+essayée hors jeu avec un faux proxy et de faux joueurs : 64 cas pour les groupes, 32 pour les amis, tout passe).
+
+## 1.8.0 - contacts : le groupe entre en partie, invitations en partie (09/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06** : « code l'étape 3 sans attendre le test » (étape 3 du cahier de KLM_Contacts : le groupe de jeu
+entre ensemble dans une partie, « Inviter dans ma partie », le groupe suit son chef quand il clique sur « Rejouer »).
+Empilé sur la 1.7.0 non testée : accord explicite de LeKiwi06.
+
+- **Le chef entre dans une partie** (annoncé par le plugin du jeu, `POST /contacts/ggame` : jeu, référence, nom affiché,
+  serveur où l'on y entre) : chaque membre connecté reçoit cette partie (2 minutes). Sur le même serveur et libre : son
+  serveur le fait entrer tout de suite. Sur un autre serveur : même règle que « suivre le chef » (déplacé d'office s'il
+  est libre), puis entrée dans la partie à l'arrivée. En « me demander avant », déjà en partie, ou sur Serveur Jeux :
+  proposition **`/partie accepter`** (cliquable), et rien ne bouge avant.
+- L'annonce d'un joueur qui n'est pas chef d'un groupe est ignorée (les plugins de jeu annoncent toutes les entrées).
+- **« Inviter dans ma partie »** (`ginvitegame`) : l'invité a 60 s ; `/partie accepter` l'amène sur le serveur de la
+  partie et l'y fait entrer, `/partie refuser` prévient l'inviteur. Mêmes refus que pour une invitation de groupe
+  (hors ligne ou invisible, « amis seulement », bloqué).
+- **Nouvelle commande du proxy `/partie accepter | refuser`**. `/groupe suivre` vaut `/partie accepter` quand le chef est
+  en partie.
+- L'entrée elle-même est faite par le serveur : message de plugin « game » sur `kalium:contacts`, auquel KLM_Contacts
+  1.2.0 répond par `ggameget` (`busy=true|false`) ; le proxy rend alors le jeu et la référence, une seule fois.
+- Une partie qui se joue ailleurs (Bingo, Build Battle) est annoncée avec le serveur où l'on y entre (kal-games) :
+  le départ du chef vers Kanvas juste après ne rappelle pas les membres, c'est la partie proposée qui les emmène.
+- Autres actions : `ggameaccept`, `ggamedeny` (menu), `whereami` (nom Velocity du serveur d'un joueur, demandé une fois
+  par chaque serveur). La réponse de `group` contient la partie proposée (ligne « O »).
+
+**À déployer avec KLM_Contacts 1.2.0** (puis KalGames 1.25.0, KG_Bingo 1.10.0, KG_BuildBattle 0.5.0 sur kal-games).
+**Déployé sur le proxy le 09/10/2026 à 06:50 (LeKiwi06 ; 1.7.0 dans `_removed-kaliumrelay-1.7.0/`), actif après redémarrage du proxy. Statut : non testé en jeu** (logique essayée hors jeu avec un faux proxy : 48 cas
+pour les parties, 64 pour les groupes, 32 pour les amis, tout passe).
+
+## 1.9.0 - serveurs partagés : espace demandé, passage direct refusé (21/10/2026, LeKiwi06)
+
+**Demande de LeKiwi06 (21/10/2026)** : Kal-Games et Serveur Jeux expirent dans 3 jours ; « on va fusionner kal-games et kanvas en utilisant le même principe que pour les mondes simultanés dans serveur jeux » ; « les gens ne pourront pas passer de kanvas à kal-games sans le lobby, tout sera sur le même serveur mais de façon hermétique, on fera même des tchats séparés » ; inventaires séparés ; deux noms Velocity gardés (`kal-games` et `Kanvas`, même adresse). Plan : [Plan de migration](https://claude.ai/artifact/MyTJxpL8zq1XCy1sTZKdZh).
+
+- À chaque connexion à un serveur, le nom Velocity demandé est déposé sur le relais (clé `arrivee-<uuid>`, 2 minutes,
+  lue une fois) : KLM_Espaces le lit à la pré-connexion pour mettre le joueur dans le bon espace.
+- Passer d'un nom Velocity à un autre qui a la **même adresse** (Kanvas et kal-games après la fusion) est refusé, avec
+  « Pour aller sur <serveur>, passe par le lobby. » (espaces étanches ; sans ce refus, Velocity reconnecterait le
+  joueur au serveur où il est déjà). Concerne aussi « Rejoindre son serveur » et « suivre le chef » de KLM_Contacts.
+- Aucun réglage nouveau.
+
+**Compilé, non déployé, non testé en jeu.** À déployer avec KLM_Espaces 1.0.0 et KaliumRelay 1.9.0 (fusion de Kal-Games dans Kanvas).
