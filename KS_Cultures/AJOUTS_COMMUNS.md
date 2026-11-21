@@ -1,5 +1,18 @@
 # KS_Cultures 1.0.0 - ajouts à faire dans les plugins et fichiers communs
 
+**21/11/2026 - en deux temps** (KS_Cultures arrive en test : en survie, ses écouteurs ne reçoivent rien, donc la
+poudre d'os y duplique encore les grandes fleurs et le composteur n'y donne pas de graines). Au premier déploiement :
+KS_Cultures 1.1.0, KS_LootBlocs 1.4.0 (cerises liées à la phase de KS_Cultures), KS_Economy 1.13.10, KS_Textures
+1.2.7, `didacticiel.yml` (thème Cultures caché jusqu'à la validation). **À faire seulement à la validation
+(`/mondetest valider KS_Cultures`)** :
+
+1. Grandes fleurs au barème : `GRANDES_FLEURS_2_COLORANTS = True` dans `sortie/bareme/bareme.py`, relancer la chaîne
+   (vérifié le 21/11 : seules 4 lignes changent, tournesol et rosier 0,0442, lilas et pivoine 0,0664), nouvelle version de
+   KS_Economy et KS_Textures.
+2. KS_Crafts 1.24.0 (retire les crafts de graines de torchiflore et de cosses de plante carnivore) : en survie,
+   KS_Crafts est déjà ouvert, le retrait s'y appliquerait tout de suite, sans le composteur pour les remplacer.
+3. Fiche « Crafts pratiques » du didacticiel (section 3 ci-dessous), en même temps que KS_Crafts 1.24.0.
+
 KS_Cultures enregistre lui-même tout ce qui lui est propre ; ces ajouts reviennent aux sessions qui tiennent les
 plugins communs (02/11/2026). Prix validés le 02/11 (`sortie/cultures/cultures-proposition.xlsx`), en émeraudes à
 l'unité.

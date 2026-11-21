@@ -73,3 +73,6 @@ sont retirés.
   `didacticiel.yml` sans ces deux recettes (fiche « Crafts pratiques » de KS_Didacticiel).
 
 Compilé le 02/11/2026 (`sortie/KS_Crafts-1.24.0.jar`). **Statut : non déployé, non testé en jeu.**
+
+**21/11/2026 :** à déployer seulement à la **validation** de KS_Cultures en survie (`/mondetest valider KS_Cultures`),
+pas à son premier déploiement : KS_Cultures arrive en test, et ce retrait s'appliquerait tout de suite en survie.
